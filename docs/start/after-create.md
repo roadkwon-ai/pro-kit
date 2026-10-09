@@ -1,0 +1,53 @@
+# 만든 뒤 개발하기
+https://prokit-web.vercel.app/docs/start/after-create/
+
+> 한눈에: 프로젝트를 만들었으면 새 프로젝트 폴더에서 새 세션을 열어 개발해요. 그 세션에서만 전용 스킬과 에이전트가 켜져요. 평소 말로 요청하면 에이전트가 설계부터 확인까지 순서대로 진행해요.
+
+## 새 세션 열기
+
+pro-kit 폴더의 세션(생성기 세션)에서 이어서 개발하지 않아요. 새 프로젝트의 스킬, 에이전트, dev-cycle 규칙은 그 프로젝트에서 연 세션에서만 불러와요.
+
+```bash
+cd ../my-app
+.agents/skills/impeccable/scripts/impeccable hooks on   # 화면 디자인 검사 켜기. 처음 한 번만
+claude                                                   # 신뢰 질문에 동의한다. Codex는 codex, Antigravity는 agy, Grok Build는 grok --trust
+```
+
+도구마다 신뢰 질문이 켜는 것은 [지원하는 에이전트](https://prokit-web.vercel.app/docs/start/supported-agents/#신뢰-질문)에 있어요.
+
+## 이렇게 요청해요
+
+처음에는 어떤 서비스인지부터 알려 주세요.
+
+| 할 일 | 예시 프롬프트 |
+|---|---|
+| 서비스 소개 (처음 한 번) | 필라테스 수업 예약 앱이야. 강사가 수업을 열고 회원이 예약해. 회원은 자기 예약만 봐. 이 내용으로 GLOSSARY.md와 docs/domain/project.md를 채워줘 |
+| 첫 화면 디자인 | 수업 예약 첫 화면 디자인해줘. 서비스에 맞는 스타일도 추천해줘 |
+| 랜딩페이지 | 서비스 소개 랜딩페이지 만들어줘. 눈에 띄는 스타일로 추천해줘 |
+| 기능 만들기 | 회원이 수업을 예약하고 취소하는 화면 만들어줘 |
+| 기능 바꾸기 | 수업 정원이 차면 예약 버튼을 막아줘 |
+| 고치기 | 예약을 취소했는데 목록에 계속 보여. 고쳐줘 |
+| 화면 다듬기 | 예약 화면을 휴대폰에서도 쓰기 편하게 다듬어줘 |
+| 확인 | 지금까지 만든 거 검증해줘 |
+| 이어 하기 (새 세션) | 하던 작업 이어서 해줘 |
+| 스킬 업데이트 | 스킬 최신인지 확인하고 업데이트해줘 |
+| 배포 준비 (처음 한 번) | Vercel 배포 준비해줘 |
+| 배포 | 운영에 배포해줘 · develop에 배포해줘 |
+
+스킬 이름을 몰라도 돼요. 요청에 맞는 스킬을 에이전트가 스스로 불러요([prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)).
+
+## 자세히
+
+- **만들기 전에 확인받아요**: 에이전트는 만들기 전에 스펙과 화면 설계(브리프)를 보여 주고 확인을 받아요. 첫 화면은 디자인 카탈로그가 추천하는 스타일 1~3위 중에서 골라요([UI/UX 흐름](https://prokit-web.vercel.app/docs/design/ui-flow/)).
+- **끝나면 직접 확인해요**: 기능이 끝나면 직접 써 보고 확인해 달라고 해요. 확인하면 운영 배포까지 할지 물어요(기본은 릴리스 후 배포, 원하면 건너뛰어요). 그다음 커밋과 push를 해요. 배포 준비가 안 됐으면 묻지 않고 커밋과 push까지만 해요([사용자 확인](https://prokit-web.vercel.app/docs/concepts/audit-and-confirm/)).
+- **스킬 업데이트는 하루 한 번 확인해요**: 작업을 시작할 때 하루 한 번 외부 스킬에 새 버전이 있는지 확인해요. 있으면 업데이트할지 물어요(지금, 항상 자동, 나중에, 다시 묻지 않기)([설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)).
+- **첫 배포는 운영이에요**: Vercel 계정, 원격 DB, GitHub 저장소가 필요하고 에이전트가 준비 순서를 안내해요. 운영에 배포할 때마다 버전과 릴리스 노트를 보여 주고 동의를 받아요([Vercel 배포와 되돌리기](https://prokit-web.vercel.app/docs/deploy/vercel/)).
+- **화면 디자인 검사는 명령으로 켜요**: `impeccable hooks on`은 스킬을 불러서 켜지 않아요. 개인(전역) impeccable 스킬이 있으면 훅 경로가 깨지기 때문이에요.
+- **프로젝트 소개를 채워 두세요**: `GLOSSARY.md`(용어집)와 `docs/domain/project.md`(프로젝트 소개)는 에이전트가 작업마다 읽어요. 채워 두면 새 세션에서 프로젝트를 다시 설명하지 않아도 돼요.
+
+## 관련 문서
+
+- [dev-cycle 라운드](https://prokit-web.vercel.app/docs/concepts/dev-cycle/)
+- [증거와 audit, 사용자 확인](https://prokit-web.vercel.app/docs/concepts/audit-and-confirm/)
+- [UI/UX 흐름](https://prokit-web.vercel.app/docs/design/ui-flow/)
+- [명령 모음](https://prokit-web.vercel.app/docs/reference/commands/)

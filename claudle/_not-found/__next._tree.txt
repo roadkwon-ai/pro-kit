@@ -1,0 +1,3 @@
+:HL["/pro-kit/claudle/_next/static/chunks/0zg3vdp4h1s8n.css","style"]
+:HL["/pro-kit/claudle/_next/static/chunks/39lakc-xatnv9.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":4112,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":4160,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"O8pQNMg_VUVuz5iAjyNTw"}

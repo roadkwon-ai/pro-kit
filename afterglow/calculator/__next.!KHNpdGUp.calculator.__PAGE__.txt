@@ -1,0 +1,22 @@
+1:"$Sreact.fragment"
+2:"$Sreact.view_transition"
+3:"$Sreact.suspense"
+4:I[63959,["/pro-kit/afterglow/_next/static/chunks/29yky2tclxstb.js","/pro-kit/afterglow/_next/static/chunks/2al36_bklnnsq.js","/pro-kit/afterglow/_next/static/chunks/1id7s_sylvzre.js","/pro-kit/afterglow/_next/static/chunks/12mxirk9egjaa.js","/pro-kit/afterglow/_next/static/chunks/0l1-fd4o8-u3j.js","/pro-kit/afterglow/_next/static/chunks/09ktq99c3cz9h.js","/pro-kit/afterglow/_next/static/chunks/32rn10uuetxpk.js","/pro-kit/afterglow/_next/static/chunks/0_zs5hi1vkanr.js","/pro-kit/afterglow/_next/static/chunks/1898xa8gu2i3k.js","/pro-kit/afterglow/_next/static/chunks/3uk145r70j-6-.js","/pro-kit/afterglow/_next/static/chunks/1kwld1euju241.js"],"Calculator"]
+5:I[26785,["/pro-kit/afterglow/_next/static/chunks/29yky2tclxstb.js","/pro-kit/afterglow/_next/static/chunks/2al36_bklnnsq.js","/pro-kit/afterglow/_next/static/chunks/1id7s_sylvzre.js","/pro-kit/afterglow/_next/static/chunks/12mxirk9egjaa.js"],"OutletBoundary"]
+9:I[26785,["/pro-kit/afterglow/_next/static/chunks/29yky2tclxstb.js","/pro-kit/afterglow/_next/static/chunks/2al36_bklnnsq.js","/pro-kit/afterglow/_next/static/chunks/1id7s_sylvzre.js","/pro-kit/afterglow/_next/static/chunks/12mxirk9egjaa.js"],"ViewportBoundary"]
+a:I[26785,["/pro-kit/afterglow/_next/static/chunks/29yky2tclxstb.js","/pro-kit/afterglow/_next/static/chunks/2al36_bklnnsq.js","/pro-kit/afterglow/_next/static/chunks/1id7s_sylvzre.js","/pro-kit/afterglow/_next/static/chunks/12mxirk9egjaa.js"],"MetadataBoundary"]
+b:I[75418,["/pro-kit/afterglow/_next/static/chunks/29yky2tclxstb.js","/pro-kit/afterglow/_next/static/chunks/2al36_bklnnsq.js","/pro-kit/afterglow/_next/static/chunks/1id7s_sylvzre.js","/pro-kit/afterglow/_next/static/chunks/12mxirk9egjaa.js"],"IconMark"]
+d:I[30180,["/pro-kit/afterglow/_next/static/chunks/29yky2tclxstb.js","/pro-kit/afterglow/_next/static/chunks/2al36_bklnnsq.js","/pro-kit/afterglow/_next/static/chunks/1id7s_sylvzre.js","/pro-kit/afterglow/_next/static/chunks/12mxirk9egjaa.js"],"default"]
+e:I[79297,["/pro-kit/afterglow/_next/static/chunks/29yky2tclxstb.js","/pro-kit/afterglow/_next/static/chunks/2al36_bklnnsq.js","/pro-kit/afterglow/_next/static/chunks/1id7s_sylvzre.js","/pro-kit/afterglow/_next/static/chunks/12mxirk9egjaa.js"],"default"]
+8:X
+10:X
+10:C
+0:{"buildId":"TTMR9oxWdbg4RJKvn2lCa","data":[{"rsc":["$","$1","c",{"children":[["$","$2",null,{"enter":{"nav-forward":"nav-forward","nav-back":"nav-back","default":"page-enter"},"exit":{"nav-forward":"nav-forward","nav-back":"nav-back","default":"page-exit"},"default":"none","children":["$","div",null,{"className":"px-5 sm:px-8 lg:px-16 pt-10 pb-32 lg:pt-16 lg:pb-24","children":["$","$3",null,{"fallback":["$","div",null,{"className":"min-h-screen"}],"children":["$","$L4",null,{}]}]}]}],[["$","script","script-0",{"src":"/pro-kit/afterglow/_next/static/chunks/1898xa8gu2i3k.js","async":true}],["$","script","script-1",{"src":"/pro-kit/afterglow/_next/static/chunks/3uk145r70j-6-.js","async":true}],["$","script","script-2",{"src":"/pro-kit/afterglow/_next/static/chunks/1kwld1euju241.js","async":true}]],["$","$L5",null,{"children":["$","$3",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"isPartial":"$@7","staleTime":"$8","varyParams":null},{"rsc":["$","$1","h",{"children":[null,["$","$L9",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$La",null,{"children":["$","$3",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"절감액 계산 | AFTERGLOW"}],["$","meta","1",{"name":"description","content":"월 전기요금과 태양광 용량, 지역을 고르면 연 절감액과 투자 회수 기간을 바로 계산합니다."}],["$","link","2",{"rel":"icon","href":"/pro-kit/afterglow/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$Lb","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":"$@c","staleTime":"$8","varyParams":null},{"rsc":["$","$1","c",{"children":[null,["$","$Ld",null,{"parallelRouterKey":"children","template":["$","$Le",null,{}]}]]}],"isPartial":"$@f","staleTime":"$8","varyParams":"$10"}],"isUpgradeableISRFallback":false,"a":"$@11","rootVaryParams":null,"needsRuntimeRequest":"$@12"}
+6:null
+12:true
+8:300
+8:C
+11:0
+c:"$undefined"
+f:"$undefined"
+7:"$undefined"

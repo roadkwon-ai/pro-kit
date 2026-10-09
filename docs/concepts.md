@@ -1,0 +1,12 @@
+# 핵심 개념
+https://prokit-web.vercel.app/docs/concepts/
+
+> 한눈에: 프로킷이 에이전트를 어떻게 일하게 하는지 설명해요. 작업 한 번(라운드)마다 체크 표(대조표)를 만들고, 검사와 리뷰 칸을 모두 채워야 일이 끝나요. 처음 보는 말은 [처음 보는 용어](https://prokit-web.vercel.app/tutorials/reference/glossary/)에서 찾아보세요.
+
+| 쪽 | 내용 |
+|---|---|
+| [하네스 엔지니어링](https://prokit-web.vercel.app/docs/concepts/harness/) | 규칙 문서, 스킬, 역할 나누기, 대조표, 자동 검사로 순서를 지키게 하는 틀 |
+| [dev-cycle 라운드](https://prokit-web.vercel.app/docs/concepts/dev-cycle/) | 코드를 바꾸는 작업 하나가 거치는 순서와 대조표 |
+| [케이스 A\~F·H와 대조표](https://prokit-web.vercel.app/docs/concepts/cases/) | 작업 종류에 따라 정해지는 검사와 리뷰 행 |
+| [증거와 audit, 사용자 확인](https://prokit-web.vercel.app/docs/concepts/audit-and-confirm/) | 증거를 남기는 규칙, 자동 감사, 사용자가 직접 확인하는 행 |
+| [구현 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/) | 구현과 리뷰를 다른 에이전트가 나눠 맡는 방식 |

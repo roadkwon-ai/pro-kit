@@ -1,0 +1,22 @@
+1:"$Sreact.fragment"
+2:"$Sreact.view_transition"
+3:I[41240,["/pro-kit/ullim/_next/static/chunks/0gn6h5d3hch-v.js","/pro-kit/ullim/_next/static/chunks/1gmcqhqax2kh1.js","/pro-kit/ullim/_next/static/chunks/42pba9rcga3nd.js","/pro-kit/ullim/_next/static/chunks/0-8q-z3xpysg_.js","/pro-kit/ullim/_next/static/chunks/0er_d0pl6n9rt.js","/pro-kit/ullim/_next/static/chunks/16n8j23elpzs3.js","/pro-kit/ullim/_next/static/chunks/1wdivj678qb3z.js","/pro-kit/ullim/_next/static/chunks/2-eoitwh1rm8g.js","/pro-kit/ullim/_next/static/chunks/36-pupv9ep_-_.js","/pro-kit/ullim/_next/static/chunks/0xttwspmmybh9.js","/pro-kit/ullim/_next/static/chunks/3kebmm5tohi-z.js"],"HelpCenter"]
+4:I[26785,["/pro-kit/ullim/_next/static/chunks/0gn6h5d3hch-v.js","/pro-kit/ullim/_next/static/chunks/1gmcqhqax2kh1.js","/pro-kit/ullim/_next/static/chunks/42pba9rcga3nd.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+9:I[26785,["/pro-kit/ullim/_next/static/chunks/0gn6h5d3hch-v.js","/pro-kit/ullim/_next/static/chunks/1gmcqhqax2kh1.js","/pro-kit/ullim/_next/static/chunks/42pba9rcga3nd.js"],"ViewportBoundary"]
+a:I[26785,["/pro-kit/ullim/_next/static/chunks/0gn6h5d3hch-v.js","/pro-kit/ullim/_next/static/chunks/1gmcqhqax2kh1.js","/pro-kit/ullim/_next/static/chunks/42pba9rcga3nd.js"],"MetadataBoundary"]
+b:I[75418,["/pro-kit/ullim/_next/static/chunks/0gn6h5d3hch-v.js","/pro-kit/ullim/_next/static/chunks/1gmcqhqax2kh1.js","/pro-kit/ullim/_next/static/chunks/42pba9rcga3nd.js"],"IconMark"]
+d:I[30180,["/pro-kit/ullim/_next/static/chunks/0gn6h5d3hch-v.js","/pro-kit/ullim/_next/static/chunks/1gmcqhqax2kh1.js","/pro-kit/ullim/_next/static/chunks/42pba9rcga3nd.js"],"default"]
+e:I[79297,["/pro-kit/ullim/_next/static/chunks/0gn6h5d3hch-v.js","/pro-kit/ullim/_next/static/chunks/1gmcqhqax2kh1.js","/pro-kit/ullim/_next/static/chunks/42pba9rcga3nd.js"],"default"]
+8:X
+10:X
+10:C
+0:{"buildId":"gs9dkRou1yNz4IFMSAkMw","data":[{"rsc":["$","$1","c",{"children":[["$","$2",null,{"enter":"page-enter","exit":"page-exit","default":"none","children":["$","main",null,{"className":"font-full","children":["$","$L3",null,{}]}]}],[["$","script","script-0",{"src":"/pro-kit/ullim/_next/static/chunks/2-eoitwh1rm8g.js","async":true}],["$","script","script-1",{"src":"/pro-kit/ullim/_next/static/chunks/36-pupv9ep_-_.js","async":true}],["$","script","script-2",{"src":"/pro-kit/ullim/_next/static/chunks/0xttwspmmybh9.js","async":true}],["$","script","script-3",{"src":"/pro-kit/ullim/_next/static/chunks/3kebmm5tohi-z.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"isPartial":"$@7","staleTime":"$8","varyParams":null},{"rsc":["$","$1","h",{"children":[null,["$","$L9",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$La",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"도움말 · 울림"}],["$","meta","1",{"name":"description","content":"대본을 붙여 넣고 문장마다 억양과 쉼을 다듬으면, 30분 안에 방송용 내레이션이 됩니다. 한국어 목소리 24종과 영어 목소리 8종이 있고, 카드 등록 없이 매달 10분까지 무료예요."}],["$","link","2",{"rel":"icon","href":"/pro-kit/ullim/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$Lb","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":"$@c","staleTime":"$8","varyParams":null},{"rsc":["$","$1","c",{"children":[null,["$","$Ld",null,{"parallelRouterKey":"children","template":["$","$Le",null,{}]}]]}],"isPartial":"$@f","staleTime":"$8","varyParams":"$10"}],"isUpgradeableISRFallback":false,"a":"$@11","rootVaryParams":null,"needsRuntimeRequest":"$@12"}
+6:null
+12:true
+8:300
+8:C
+11:0
+c:"$undefined"
+f:"$undefined"
+7:"$undefined"

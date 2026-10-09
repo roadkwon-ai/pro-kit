@@ -1,0 +1,23 @@
+1:"$Sreact.fragment"
+2:"$Sreact.view_transition"
+3:I[67285,["/pro-kit/studyday/_next/static/chunks/2p110iotz5tsh.js","/pro-kit/studyday/_next/static/chunks/219rtnaie-pvy.js","/pro-kit/studyday/_next/static/chunks/0bsc4h4vv8pqw.js","/pro-kit/studyday/_next/static/chunks/1xrqr59_uw1k_.js","/pro-kit/studyday/_next/static/chunks/2x5-h75bj7bu9.js","/pro-kit/studyday/_next/static/chunks/0er_d0pl6n9rt.js","/pro-kit/studyday/_next/static/chunks/08a-u1zj8dubh.js","/pro-kit/studyday/_next/static/chunks/2u8perwe4pci_.js","/pro-kit/studyday/_next/static/chunks/16epfzgv9h1w3.js","/pro-kit/studyday/_next/static/chunks/2_ga7jjrm4r_v.js"],"default"]
+4:I[26785,["/pro-kit/studyday/_next/static/chunks/2p110iotz5tsh.js","/pro-kit/studyday/_next/static/chunks/219rtnaie-pvy.js","/pro-kit/studyday/_next/static/chunks/0bsc4h4vv8pqw.js","/pro-kit/studyday/_next/static/chunks/1xrqr59_uw1k_.js","/pro-kit/studyday/_next/static/chunks/2x5-h75bj7bu9.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+9:I[26785,["/pro-kit/studyday/_next/static/chunks/2p110iotz5tsh.js","/pro-kit/studyday/_next/static/chunks/219rtnaie-pvy.js","/pro-kit/studyday/_next/static/chunks/0bsc4h4vv8pqw.js","/pro-kit/studyday/_next/static/chunks/1xrqr59_uw1k_.js","/pro-kit/studyday/_next/static/chunks/2x5-h75bj7bu9.js"],"ViewportBoundary"]
+a:I[26785,["/pro-kit/studyday/_next/static/chunks/2p110iotz5tsh.js","/pro-kit/studyday/_next/static/chunks/219rtnaie-pvy.js","/pro-kit/studyday/_next/static/chunks/0bsc4h4vv8pqw.js","/pro-kit/studyday/_next/static/chunks/1xrqr59_uw1k_.js","/pro-kit/studyday/_next/static/chunks/2x5-h75bj7bu9.js"],"MetadataBoundary"]
+b:I[75418,["/pro-kit/studyday/_next/static/chunks/2p110iotz5tsh.js","/pro-kit/studyday/_next/static/chunks/219rtnaie-pvy.js","/pro-kit/studyday/_next/static/chunks/0bsc4h4vv8pqw.js","/pro-kit/studyday/_next/static/chunks/1xrqr59_uw1k_.js","/pro-kit/studyday/_next/static/chunks/2x5-h75bj7bu9.js"],"IconMark"]
+d:I[30180,["/pro-kit/studyday/_next/static/chunks/2p110iotz5tsh.js","/pro-kit/studyday/_next/static/chunks/219rtnaie-pvy.js","/pro-kit/studyday/_next/static/chunks/0bsc4h4vv8pqw.js","/pro-kit/studyday/_next/static/chunks/1xrqr59_uw1k_.js","/pro-kit/studyday/_next/static/chunks/2x5-h75bj7bu9.js"],"default"]
+e:I[79297,["/pro-kit/studyday/_next/static/chunks/2p110iotz5tsh.js","/pro-kit/studyday/_next/static/chunks/219rtnaie-pvy.js","/pro-kit/studyday/_next/static/chunks/0bsc4h4vv8pqw.js","/pro-kit/studyday/_next/static/chunks/1xrqr59_uw1k_.js","/pro-kit/studyday/_next/static/chunks/2x5-h75bj7bu9.js"],"default"]
+8:X
+10:X
+10:C
+0:{"buildId":"Fl7AXg3vsR9UZdNZdNdXQ","data":[{"rsc":["$","$1","c",{"children":[["$","$2",null,{"enter":"page-enter","exit":"page-exit","default":"none","children":["$","main",null,{"id":"main","className":"mx-auto w-full max-w-screen-2xl flex-1 px-5 pt-3 pb-16 md:px-8 xl:px-10 xl:pb-24 lg:pt-6","children":["$","$L3","database",{"id":"database"}]}]}],[["$","script","script-0",{"src":"/pro-kit/studyday/_next/static/chunks/16epfzgv9h1w3.js","async":true}],["$","script","script-1",{"src":"/pro-kit/studyday/_next/static/chunks/2_ga7jjrm4r_v.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"isPartial":"$@7","staleTime":"$8","varyParams":null},{"rsc":["$","$1","h",{"children":[null,["$","$L9",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$La",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"데이터베이스 구축 · 하루공부"}],["$","meta","1",{"name":"description","content":"시험일까지 남은 분량을 하루 할 일로 나눠 주는 공부 플래너"}],["$","link","2",{"rel":"icon","href":"/pro-kit/studyday/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$Lb","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":"$@c","staleTime":"$8","varyParams":null},{"rsc":["$","$1","c",{"children":[null,["$","$Ld",null,{"parallelRouterKey":"children","template":["$","$Le",null,{}]}]]}],"isPartial":"$@f","staleTime":"$8","varyParams":"$10"},{"rsc":["$","$1","c",{"children":[null,["$","$Ld",null,{"parallelRouterKey":"children","template":["$","$Le",null,{}]}]]}],"isPartial":"$@11","staleTime":"$8","varyParams":"$10"}],"isUpgradeableISRFallback":false,"a":"$@12","rootVaryParams":null,"needsRuntimeRequest":"$@13"}
+6:null
+13:true
+8:300
+8:C
+12:0
+c:"$undefined"
+f:"$undefined"
+11:"$undefined"
+7:"$undefined"

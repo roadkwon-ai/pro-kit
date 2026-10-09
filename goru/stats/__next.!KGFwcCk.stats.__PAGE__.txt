@@ -1,0 +1,22 @@
+1:"$Sreact.fragment"
+2:"$Sreact.view_transition"
+3:I[72786,["/pro-kit/goru/_next/static/chunks/3xi4e5ixy12qu.js","/pro-kit/goru/_next/static/chunks/0g-tl0hvo3ab6.js","/pro-kit/goru/_next/static/chunks/1cc00d0dfsccv.js","/pro-kit/goru/_next/static/chunks/0n7q4j1sqsbkg.js","/pro-kit/goru/_next/static/chunks/12czhrs46kolz.js","/pro-kit/goru/_next/static/chunks/0btstc0nal7ea.js","/pro-kit/goru/_next/static/chunks/1hobkjsv52bor.js","/pro-kit/goru/_next/static/chunks/0-vjrboxr_44n.js","/pro-kit/goru/_next/static/chunks/1f6etisly4b2o.js"],"default"]
+4:I[26785,["/pro-kit/goru/_next/static/chunks/3xi4e5ixy12qu.js","/pro-kit/goru/_next/static/chunks/0g-tl0hvo3ab6.js","/pro-kit/goru/_next/static/chunks/1cc00d0dfsccv.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+9:I[26785,["/pro-kit/goru/_next/static/chunks/3xi4e5ixy12qu.js","/pro-kit/goru/_next/static/chunks/0g-tl0hvo3ab6.js","/pro-kit/goru/_next/static/chunks/1cc00d0dfsccv.js"],"ViewportBoundary"]
+a:I[26785,["/pro-kit/goru/_next/static/chunks/3xi4e5ixy12qu.js","/pro-kit/goru/_next/static/chunks/0g-tl0hvo3ab6.js","/pro-kit/goru/_next/static/chunks/1cc00d0dfsccv.js"],"MetadataBoundary"]
+b:I[75418,["/pro-kit/goru/_next/static/chunks/3xi4e5ixy12qu.js","/pro-kit/goru/_next/static/chunks/0g-tl0hvo3ab6.js","/pro-kit/goru/_next/static/chunks/1cc00d0dfsccv.js"],"IconMark"]
+d:I[30180,["/pro-kit/goru/_next/static/chunks/3xi4e5ixy12qu.js","/pro-kit/goru/_next/static/chunks/0g-tl0hvo3ab6.js","/pro-kit/goru/_next/static/chunks/1cc00d0dfsccv.js"],"default"]
+e:I[79297,["/pro-kit/goru/_next/static/chunks/3xi4e5ixy12qu.js","/pro-kit/goru/_next/static/chunks/0g-tl0hvo3ab6.js","/pro-kit/goru/_next/static/chunks/1cc00d0dfsccv.js"],"default"]
+8:X
+10:X
+10:C
+0:{"buildId":"DRR-W-jV8Z89CVItwebOx","data":[{"rsc":["$","$1","c",{"children":[["$","$2",null,{"enter":"page-in","default":"none","children":["$","main",null,{"id":"main","className":"mx-auto flex w-full max-w-screen-2xl flex-1 flex-col gap-4 px-4 pt-2 pb-10 md:gap-5 md:px-12 md:pb-16","children":["$","$L3",null,{}]}]}],[["$","script","script-0",{"src":"/pro-kit/goru/_next/static/chunks/1f6etisly4b2o.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"isPartial":"$@7","staleTime":"$8","varyParams":null},{"rsc":["$","$1","h",{"children":[null,["$","$L9",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$La",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"통계 · 고루"}],["$","meta","1",{"name":"description","content":"함께 사는 사람끼리 쓴 생활비를 적어 두면, 월말에 누가 누구에게 얼마를 보내면 되는지 알려 줘요."}],["$","link","2",{"rel":"icon","href":"/pro-kit/goru/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$Lb","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":"$@c","staleTime":"$8","varyParams":null},{"rsc":["$","$1","c",{"children":[null,["$","$Ld",null,{"parallelRouterKey":"children","template":["$","$Le",null,{}]}]]}],"isPartial":"$@f","staleTime":"$8","varyParams":"$10"}],"isUpgradeableISRFallback":false,"a":"$@11","rootVaryParams":null,"needsRuntimeRequest":"$@12"}
+6:null
+12:true
+8:300
+8:C
+11:0
+c:"$undefined"
+f:"$undefined"
+7:"$undefined"
