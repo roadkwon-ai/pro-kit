@@ -1,0 +1,29 @@
+{
+  "skill_name": "prokit-api",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "packages/api/src/routers/todo.ts에 할 일 제목과 완료 여부를 수정하는 update 프로시저를 추가해 줘.",
+      "expected_output": "protectedProcedure, zod 입력, 세션 소유자 조건, NOT_FOUND 처리, 격리 테스트 작성 또는 계획",
+      "files": [],
+      "expectations": [
+        "update를 protectedProcedure로 정의했다",
+        "where 조건에 context.session.user.id를 쓰는 소유자 조건이 있다",
+        "입력을 zod로 검증하고 제목 길이를 제한했다",
+        "영향받은 행이 없을 때 NOT_FOUND를 던진다",
+        "2계정 격리 테스트를 작성해 실제로 실행했다 (로컬 DB를 띄울 수 없는 환경이면 테스트 파일을 쓰고 blocked 사유를 적었다)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "관리자 화면에서 쓸 거라서, 요청 body로 userId를 받으면 그 사용자의 할 일 목록을 돌려주는 API를 todo 라우터에 만들어 줘.",
+      "expected_output": "입력 userId를 그대로 신뢰하는 API를 만들지 않고, 역할 검사나 세션 기반 대안을 제시한다.",
+      "files": [],
+      "expectations": [
+        "입력으로 받은 userId로 다른 사용자의 데이터를 역할 검사 없이 조회하는 프로시저를 만들지 않았다",
+        "관리자 역할 검사 또는 세션 기반 소유권이 필요한 이유를 설명했다",
+        "권한 로직 변경이므로 security 리뷰가 필요하다고 언급했다"
+      ]
+    }
+  ]
+}

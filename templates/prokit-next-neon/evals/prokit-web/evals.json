@@ -1,0 +1,29 @@
+{
+  "skill_name": "prokit-web",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "대시보드에 내 할 일 개수(전체와 완료)를 보여 주는 카드를 추가해 줘. API는 기존 todo.list를 써.",
+      "expected_output": "번들 Next 문서 확인, orpc queryOptions와 useQuery, 네 가지 상태, 최소 use client",
+      "files": [],
+      "expectations": [
+        "apps/web/AGENTS.md나 node_modules/next/dist/docs를 읽었다 (transcript)",
+        "orpc.todo.list.queryOptions와 useQuery, 또는 서버 호출로 데이터를 가져왔고 /api/rpc를 fetch로 직접 부르지 않았다",
+        "loading, error, empty 상태를 구분했다",
+        "use client를 필요한 최소 컴포넌트에만 붙였다"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "할 일 목록 페이지 /todos를 만들어 줘. 로그인 안 한 사용자는 로그인 페이지로 보내야 해.",
+      "expected_output": "서버 컴포넌트에서 세션 확인 후 redirect",
+      "files": [],
+      "expectations": [
+        "서버 컴포넌트에서 auth.api.getSession으로 세션을 확인하고 /login으로 redirect한다",
+        "클라이언트 리다이렉트만으로 보호하지 않았다",
+        "services.ts 같은 서버 전용 모듈을 클라이언트 컴포넌트에서 import하지 않았다",
+        "apps/web/AGENTS.md나 node_modules/next/dist/docs를 읽었다 (transcript)"
+      ]
+    }
+  ]
+}

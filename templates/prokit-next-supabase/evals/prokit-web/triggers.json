@@ -1,0 +1,22 @@
+[
+  {"query": "/todos 페이지 새로고침할 때마다 데이터가 깜빡이면서 늦게 떠. 서버에서 미리 불러오게 바꿔줘", "should_trigger": true},
+  {"query": "할 일 상세 페이지 /todos/[id] 라우트 만들어줘", "should_trigger": true},
+  {"query": "dashboard.tsx에 use client가 통째로 붙어 있는데 서버 컴포넌트로 뺄 수 있는 부분 나눠줘", "should_trigger": true},
+  {"query": "완료 체크 눌러도 목록이 바로 안 바뀌어. 쿼리 무효화 제대로 되게 해줘", "should_trigger": true},
+  {"query": "로그인 안 한 상태로 /settings 들어오면 로그인 페이지로 보내줘", "should_trigger": true},
+  {"query": "Cache Components 켜서 홈 화면 캐시하고 싶어", "should_trigger": true},
+  {"query": "목록 불러오다 에러 나면 흰 화면만 떠. 에러 상태 처리해줘", "should_trigger": true},
+  {"query": "링크 hover 할 때 프리패치가 너무 많이 일어나는 것 같아 줄여줘", "should_trigger": true},
+  {"query": "orpc로 todo.list 불러오는 훅을 페이지에서 어떻게 쓰는지 알려주고 적용해줘", "should_trigger": true},
+  {"query": "번들 사이즈가 커. lucide 아이콘 import 방식 최적화해줘", "should_trigger": true},
+  {"query": "할 일 목록 카드 디자인이 너무 밋밋해. 좀 더 세련되게 바꿔줘", "should_trigger": false},
+  {"query": "todo 테이블에 priority 컬럼 추가해줘", "should_trigger": false},
+  {"query": "todo.update 프로시저에서 남의 할 일도 수정되는 버그 고쳐줘", "should_trigger": false},
+  {"query": "다크모드에서 글씨 대비가 약해서 잘 안 보여", "should_trigger": false},
+  {"query": "Supabase 스테이징 프로젝트 하나 새로 만들어줘", "should_trigger": false},
+  {"query": "Vercel에 배포하는 방법 알려줘", "should_trigger": false},
+  {"query": "회원가입 폼 안내 문구를 더 친절하게 바꿔줘", "should_trigger": false},
+  {"query": "로그인 세션 쿠키 SameSite 설정 확인해줘", "should_trigger": false},
+  {"query": "이걸로 React Native 앱도 만들 수 있어?", "should_trigger": false},
+  {"query": "대조표 audit 돌려서 빈 칸 알려줘", "should_trigger": false}
+]

@@ -1,0 +1,2 @@
+<!-- 프리셋 쪽 "시간과 비용"의 첫 문단(프리셋 팩으로 만들 때와 처음부터 만들 때의 시간 범위와 최소 토큰). tutorials/samples/ 쪽에서 올곧(olgot)을 뺀 프리셋이 쓴다. 인자: name(프리셋 이름) -->
+위 "프리셋 팩으로 만들어 보기" 프롬프트로 만들 때 **{{v:preset.{{name}}.pack.time.text}}** 걸리고, 토큰은 최소 **약 {{v:preset.{{name}}.pack.tokens}}**(캐시 포함 약 {{v:preset.{{name}}.pack.cached}})이 들어요. 팩 없이 [이 컨셉으로 처음부터](#이-컨셉으로-처음부터-만들기) 만들 때는 {{v:preset.{{name}}.scratch.time.text}} 걸리고, 토큰은 최소 약 {{v:preset.{{name}}.scratch.tokens}}이 들어요.

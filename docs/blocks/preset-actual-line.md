@@ -1,0 +1,2 @@
+<!-- 프리셋 쪽 "만든 사람이 실제로 쓴 값"의 문단(프리셋을 만들 때 든 시간과 토큰). 값은 doc-values.json presets.<이름>.actual.total(토큰과 캐시 포함은 달러에서 계산). tutorials/samples/ 쪽에서 올곧(olgot)을 뺀 프리셋이 쓴다. 인자: name(프리셋 이름) -->
+{{v:preset.{{name}}.title}} 프리셋을 만들 때는 첫 화면 리디자인과 모든 페이지로 넓히기에 약 {{v:preset.{{name}}.actual.total.time}}, 약 {{v:preset.{{name}}.actual.total.tokens}} 토큰(캐시 포함 약 {{v:preset.{{name}}.actual.total.cached}}, API 요금 환산 약 {{v:preset.{{name}}.actual.total.usd}}달러)이 들었어요. **사이트에 실으려고 다시 디자인하고 다듬은 값이라 위 예상보다 커요.** 버린 첫 초안과 나중의 문구 바꾸기는 넣지 않았어요.

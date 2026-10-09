@@ -1,0 +1,22 @@
+[
+  {"query": "방금 만든 todo 삭제 기능 제대로 되는지 검증해줘", "should_trigger": true},
+  {"query": "대조표 증거 칸 채워줘", "should_trigger": true},
+  {"query": "테스트 돌려보고 결과 알려줘", "should_trigger": true},
+  {"query": "빌드 통과했으니까 이번 라운드 끝내도 되지?", "should_trigger": true},
+  {"query": "브라우저에서 /todos 실제로 열어서 확인해줘, 모바일 화면도", "should_trigger": true},
+  {"query": "2계정 격리 테스트 돌려줘", "should_trigger": true},
+  {"query": "타입 체크랑 린트만 확인해줘", "should_trigger": true},
+  {"query": "이 기능 완료라고 보고해도 될지 체크해줘", "should_trigger": true},
+  {"query": "next-dev-loop로 런타임 에러 있는지 봐줘", "should_trigger": true},
+  {"query": "vitest 아직 없는데 테스트 러너 세팅하고 첫 테스트 돌려줘", "should_trigger": true},
+  {"query": "todo 삭제 API 만들어줘", "should_trigger": false},
+  {"query": "할 일 화면 디자인 리뷰해줘", "should_trigger": false},
+  {"query": "단위 테스트랑 통합 테스트 차이 설명해줘", "should_trigger": false},
+  {"query": "대시보드에 통계 카드 추가해줘", "should_trigger": false},
+  {"query": "마이그레이션 SQL 작성해줘", "should_trigger": false},
+  {"query": "Playwright랑 Cypress 비교해줘", "should_trigger": false},
+  {"query": "security 관점으로 코드 리뷰 해줘", "should_trigger": false},
+  {"query": "커밋 메시지 써줘", "should_trigger": false},
+  {"query": "GitHub Actions로 CI에서 테스트 돌게 만들어줘", "should_trigger": false},
+  {"query": "Supabase 스테이징 프로젝트 지워줘", "should_trigger": false}
+]

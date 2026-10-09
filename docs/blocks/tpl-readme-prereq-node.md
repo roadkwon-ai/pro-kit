@@ -1,0 +1,2 @@
+<!-- 두 템플릿 README "준비물" 목록의 Node 줄. 목록 중간이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 이 줄의 값 표시는 README에 그대로 둔다(테스트 "Node 판"이 본다) -->
+- Node {{v:node.min}} 이상({{v:node.recommended}} 권장), pnpm, git. {{v:node.min}}은 skills CLI가 요구하는 하한이라 설치기는 그보다 낮으면 멈추고, {{v:node.recommended}} 미만이면 권장 경고만 낸다. Node 20은 {{v:node.eol}}에 지원이 끝났다. Vercel 프로젝트의 Node.js는 {{v:vercel.node}}로 둔다(Vercel은 {{v:vercel.node20Stop}}부터 Node 20으로 새 배포를 만들지 않는다).

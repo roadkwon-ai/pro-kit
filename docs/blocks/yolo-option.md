@@ -1,0 +1,2 @@
+<!-- 묻지 않고 진행하는 옵션(`--dangerously-skip-permissions`, Codex는 `--yolo`) 설명 문단. tutorials/start/README.md, tutorials/samples/README.md, 클론 튜토리얼 README(01-nextflix, 02-claudle)가 쓴다. 인자: tail(끝에 붙는 문장. 앞에 띄어쓰기를 둔다. 기본은 폴더 신뢰 안내, 빈 값이면 붙이지 않는다) -->
+`--dangerously-skip-permissions`(Codex는 `--yolo`)는 **명령마다 허락을 묻지 않고 진행하는 옵션**이에요. 설치하고 검사하는 명령이 많아서 편의상 이 옵션으로 열어요. Claude Code는 처음 한 번 경고 화면이 나와요. 읽어 보고 `Yes, I accept`를 고르세요.{{tail| 폴더를 믿을지 물으면 "예"를 고르세요.}}

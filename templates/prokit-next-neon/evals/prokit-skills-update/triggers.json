@@ -1,0 +1,20 @@
+[
+  {"query": "에이전트 스킬들 최신 버전인지 한번 확인해 줘. 오래된 거 있으면 싹 업데이트하고", "should_trigger": true},
+  {"query": "shadcn 스킬이 새로 나왔다던데 우리 프로젝트에도 반영해 줘", "should_trigger": true},
+  {"query": "pnpm skills:update --if-due 돌렸더니 UPDATE_AVAILABLE mode=ask 3: next-dev-loop, shadcn, turborepo 라고 나와. 어떻게 해?", "should_trigger": true},
+  {"query": "npx skills update 한 번 돌려서 스킬 다 올려 줘", "should_trigger": true},
+  {"query": "UPSTREAM_GONE 1: next-best-practices 이거 무슨 뜻이야? 지워야 해?", "should_trigger": true},
+  {"query": "스킬 업데이트 알림이 너무 자주 떠. 일주일 정도 안 보이게 해 줘", "should_trigger": true},
+  {"query": "앞으로 스킬 새 버전 나오면 묻지 말고 알아서 업데이트하게 해 줘", "should_trigger": true},
+  {"query": "vercel-react-best-practices 스킬 최신이야? 마지막으로 언제 받았는지도 알려 줘", "should_trigger": true},
+  {"query": "ops 묶음 설치해 줘. vercel-optimize 쓰고 싶어", "should_trigger": false},
+  {"query": "새로 클론했는데 스킬이 하나도 없어. 설치해 줘", "should_trigger": false},
+  {"query": "prokit-web 스킬에 캐시 규칙 한 줄 추가하고 싶어", "should_trigger": false},
+  {"query": "템플릿 저장소에 새 버전 나왔대. prokit-dev-cycle 바뀐 거 우리 프로젝트에 반영해 줘", "should_trigger": false},
+  {"query": "gstack 업그레이드해 줘", "should_trigger": false},
+  {"query": "superpowers 플러그인 버전 올려 줘", "should_trigger": false},
+  {"query": "next.js를 16.4로 업그레이드해 줘", "should_trigger": false},
+  {"query": "package.json 의존성 중에 오래된 거 업데이트해 줘", "should_trigger": false},
+  {"query": "vercel-labs/next-skills에 있는 next-upgrade 스킬 새로 설치해 줘", "should_trigger": false},
+  {"query": "skills-lock.json이 뭐 하는 파일이야?", "should_trigger": false}
+]

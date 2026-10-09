@@ -1,0 +1,223 @@
+{
+	"skillsCli": "skills@latest",
+	"skills": [
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "vercel/next.js",
+			"skills": [
+				"next-dev-loop",
+				"next-cache-components-adoption",
+				"next-cache-components-optimizer",
+				"next-partial-prefetching-adoption",
+				"next-partial-prefetching-optimizer"
+			]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "vercel-labs/agent-skills",
+			"skills": [
+				"vercel-react-best-practices",
+				"vercel-composition-patterns",
+				"web-design-guidelines",
+				"deploy-to-vercel",
+				"vercel-cli-with-tokens"
+			]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "vercel/vercel-plugin",
+			"skills": ["access-protected-vercel-deployment"]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "vercel-labs/agent-browser",
+			"skills": ["agent-browser"]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "shadcn/ui",
+			"skills": ["shadcn"]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "better-auth/skills",
+			"skills": [
+				"better-auth-best-practices",
+				"better-auth-security-best-practices",
+				"email-and-password-best-practices"
+			]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "neondatabase/agent-skills",
+			"skills": [
+				"neon",
+				"neon-postgres",
+				"neon-postgres-branches",
+				"neon-postgres-egress-optimizer"
+			]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "supabase/agent-skills",
+			"skills": ["supabase-postgres-best-practices"]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "pbakaus/impeccable",
+			"skills": ["impeccable"]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "GENEXIS-AI/gpt-image-skill",
+			"skills": ["gpt-image"]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "CaesiumY/ko-design-md",
+			"skills": ["use-design-md"]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "vercel/turborepo",
+			"skills": ["turborepo"]
+		},
+		{
+			"agents": ["claude-code", "codex"],
+			"source": "mattpocock/skills",
+			"skills": ["domain-modeling", "grilling", "grill-with-docs"]
+		},
+		{
+			"agents": ["codex"],
+			"source": "obra/superpowers",
+			"skills": [
+				"using-superpowers",
+				"brainstorming",
+				"writing-plans",
+				"executing-plans",
+				"subagent-driven-development",
+				"dispatching-parallel-agents",
+				"test-driven-development",
+				"systematic-debugging",
+				"requesting-code-review",
+				"receiving-code-review",
+				"verification-before-completion",
+				"finishing-a-development-branch",
+				"using-git-worktrees",
+				"writing-skills",
+				"diagnosing-superpowers"
+			]
+		},
+		{
+			"agents": ["codex"],
+			"source": "anthropics/skills",
+			"skills": ["skill-creator"]
+		},
+		{
+			"agents": ["codex"],
+			"source": "DietrichGebert/ponytail",
+			"skills": ["ponytail", "ponytail-review"]
+		}
+	],
+	"optional": {
+		"ops": {
+			"description": "운영 환경: 배포한 프로젝트의 비용·성능 점검, Neon 함수·파일 저장·LLM 게이트웨이",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "vercel-labs/agent-skills",
+					"skills": ["vercel-optimize"]
+				},
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "neondatabase/agent-skills",
+					"skills": ["neon-functions", "neon-object-storage", "neon-ai-gateway"]
+				}
+			]
+		},
+		"motion": {
+			"description": "화면 전환과 공유 요소 애니메이션(React <ViewTransition>)",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "vercel-labs/agent-skills",
+					"skills": ["vercel-react-view-transitions"]
+				}
+			]
+		},
+		"mobile": {
+			"description": "React Native·Expo 모바일 앱(이 템플릿은 웹 앱만 만든다)",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "vercel-labs/agent-skills",
+					"skills": ["vercel-react-native-skills"]
+				}
+			]
+		}
+	},
+	"claude": {
+		"marketplaces": {
+			"claude-plugins-official": {
+				"source": "github",
+				"repo": "anthropics/claude-plugins-official"
+			},
+			"omc": {
+				"source": "git",
+				"url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
+			},
+			"ponytail": {
+				"source": "github",
+				"repo": "DietrichGebert/ponytail"
+			}
+		},
+		"plugins": [
+			"superpowers@claude-plugins-official",
+			"skill-creator@claude-plugins-official",
+			"oh-my-claudecode@omc",
+			"ponytail@ponytail"
+		]
+	},
+	"omx": ["setup", "--scope", "project", "--no-merge-agents"],
+	"global": [
+		{
+			"name": "OMX CLI",
+			"check": "command -v omx",
+			"install": "npm install -g oh-my-codex"
+		},
+		{
+			"name": "gstack(Claude)",
+			"check": "test -d \"$HOME/.claude/skills/gstack/bin\"",
+			"install": "command -v bun >/dev/null || { echo 'gstack 설치에는 bun이 필요하다: https://bun.sh'; exit 1; }; git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git \"$HOME/.claude/skills/gstack\" && cd \"$HOME/.claude/skills/gstack\" && ./setup",
+			"hint": "pnpm skills:setup --with-global (bun 필요) 또는 https://github.com/garrytan/gstack"
+		},
+		{
+			"name": "gstack(Codex)",
+			"check": "test -d \"$HOME/.codex/skills/gstack\"",
+			"install": "test -x \"$HOME/.claude/skills/gstack/setup\" && cd \"$HOME/.claude/skills/gstack\" && ./setup --host codex",
+			"hint": "pnpm skills:setup --with-global (gstack(Claude) 설치 뒤)"
+		},
+		{
+			"name": "agent-browser CLI(npm 최신판)",
+			"check": "v=$(agent-browser --version 2>/dev/null | awk '{print $2}'); want=$(npm view agent-browser version --fetch-timeout=5000 --fetch-retries=0 2>/dev/null); want=${want:-0.31.1}; [ -n \"$v\" ] && [ \"$(printf '%s\\n' \"$want\" \"$v\" | sort -V | head -n1)\" = \"$want\" ]",
+			"install": "if brew list agent-browser >/dev/null 2>&1; then brew upgrade agent-browser; else npm install -g agent-browser@latest; fi && agent-browser install",
+			"hint": "npm install -g agent-browser@latest && agent-browser install (Homebrew 설치본은 brew upgrade agent-browser. 올린 뒤에도 남으면 PATH 앞쪽의 다른 설치본(command -v agent-browser)을 지운다)",
+			"auto": true
+		},
+		{
+			"name": "Vercel CLI",
+			"check": "command -v vercel",
+			"install": "npm install -g vercel"
+		},
+		{
+			"name": "ego-browser",
+			"check": "command -v ego-browser",
+			"hint": "https://lite.ego.app/ 에서 ego lite(macOS 앱)를 설치하고 첫 실행 설정을 마친다"
+		},
+		{
+			"name": "Neon CLI",
+			"check": "command -v neon",
+			"install": "npm install -g neon"
+		}
+	]
+}

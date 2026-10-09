@@ -1,0 +1,861 @@
+{
+	"node": {
+		"min": "22.20",
+		"recommended": "24",
+		"eol": "2026-04-30"
+	},
+	"supabaseCli": {
+		"min": "2.117"
+	},
+	"vercel": {
+		"node": "24.x",
+		"node20Stop": "2026-10-01"
+	},
+	"meta": {
+		"presetModel": "Opus 5.5"
+	},
+	"limits": {
+		"window": "5시간",
+		"pro5h": {
+			"tokens": "170만",
+			"usd": "30",
+			"date": "2026-10-05",
+			"plans": "Claude Pro · ChatGPT Plus(Codex)"
+		}
+	},
+	"catalogs": {
+		"kr": {
+			"name": "getdesign.kr",
+			"url": "https://www.getdesign.kr",
+			"count": "23",
+			"date": "2026-10-04"
+		},
+		"awesome": {
+			"name": "awesome-design-md",
+			"url": "https://github.com/VoltAgent/awesome-design-md",
+			"count": "74",
+			"date": "2026-09-30"
+		},
+		"refero": {
+			"name": "Refero Styles",
+			"url": "https://styles.refero.design",
+			"count": "1,342",
+			"date": "2026-10-04"
+		}
+	},
+	"cost": {
+		"tokensPerUsd": "5.5만",
+		"cachedPerUsd": "275만",
+		"multiplier": "2~3",
+		"multiplierModel": "1~2",
+		"multiplierRefine": "1.1~3",
+		"timeRange": {
+			"oneShotMax": 2,
+			"reviseMax": 3
+		},
+		"revise": {
+			"fix": "2~12분",
+			"check": "1~3분",
+			"recheck": {
+				"13": "5분"
+			},
+			"review": "4~10분",
+			"close": "1~15분",
+			"reviewRound": "2~3시간",
+			"examples": {
+				"twoSpotsOlgot": {
+					"total": "43분",
+					"recheck": "37분",
+					"fix": "5분"
+				},
+				"reviewRoundOlgot": {
+					"total": "2시간 20분",
+					"recheck": "1시간 36분",
+					"review": {
+						"agents": 10.5,
+						"design": 4.2
+					},
+					"fix": "19분"
+				},
+				"reviewRoundClaudle": {
+					"total": "2시간 48분",
+					"recheck": "1시간 14분",
+					"review": {
+						"agents": 20.7,
+						"design": 28.7
+					},
+					"fix": "34분"
+				}
+			},
+			"flow": {
+				"oneSpot": {
+					"read": "1분",
+					"before": "2분",
+					"fix": "1분",
+					"build": "1분",
+					"recheck": "4분",
+					"report": "1분"
+				},
+				"twoSpotsClaudle": {
+					"fix": "5분",
+					"dev": "4분",
+					"recheck": "6분",
+					"review": "5분",
+					"refix": "5분",
+					"report": "3분"
+				}
+			}
+		},
+		"stage": {
+			"setup": "5분",
+			"plan": {
+				"pack": "5분",
+				"scratch": "10분"
+			},
+			"design": {
+				"pack": "5분",
+				"scratch": "8분"
+			},
+			"mockup": "10분",
+			"packImages": "1분",
+			"first": {
+				"pack": "10분",
+				"scratch": "15분"
+			},
+			"page": {
+				"pack": "4분",
+				"scratch": "5분"
+			},
+			"export": "2분",
+			"pages": "5분",
+			"clone": {
+				"design": "10분",
+				"mockup": "5분",
+				"check": "20분",
+				"deploy": "15분"
+			}
+		},
+		"unit": {
+			"setup": {
+				"time": "3.2분",
+				"usd": "0.9"
+			},
+			"recommend": {
+				"usd": "0.95"
+			},
+			"designMd": {
+				"usd": "2.45"
+			},
+			"first": {
+				"time": "12~19분",
+				"usd": "4.45~6.34"
+			},
+			"second": {
+				"time": "6~10분",
+				"usd": "2.74~3.05"
+			}
+		},
+		"feature": {
+			"time": "15분",
+			"usd": "7"
+		},
+		"image": {
+			"tokens": "1.7만",
+			"time": "30초"
+		},
+		"date": "2026-10-05"
+	},
+	"agents": {
+		"claude": {
+			"name": "Claude Code",
+			"open": "claude",
+			"start": "claude",
+			"yolo": "claude --dangerously-skip-permissions",
+			"install": "curl -fsSL https://claude.ai/install.sh | bash"
+		},
+		"codex": {
+			"name": "Codex",
+			"open": "codex",
+			"start": "codex",
+			"yolo": "codex --yolo",
+			"imageTool": true,
+			"install": "curl -fsSL https://chatgpt.com/codex/install.sh | sh"
+		},
+		"agy": {
+			"name": "Antigravity",
+			"open": "agy -i \"<요청>\"",
+			"start": "agy",
+			"yolo": "agy --dangerously-skip-permissions",
+			"imageTool": true
+		},
+		"grok": {
+			"name": "Grok Build",
+			"open": "grok --trust \"<요청>\"",
+			"start": "grok --trust",
+			"yolo": "grok --permission-mode bypassPermissions",
+			"imageTool": true
+		}
+	},
+	"ports": {
+		"web": "3001",
+		"neonDb": "5432",
+		"supabaseDb": "54322",
+		"supabasePooler": "6543"
+	},
+	"presets": {
+		"ullim": {
+			"title": "울림",
+			"kind": "landing",
+			"field": "AI 내레이션 스튜디오",
+			"summary": "대본을 한국어 내레이션으로 만드는 AI 스튜디오",
+			"difficulty": "어려움",
+			"pages": "11",
+			"pack": {
+				"time": "1시간 15분",
+				"tokens": "170만",
+				"cached": "8,300만",
+				"usd": "30"
+			},
+			"scratch": {
+				"time": "2시간 10분",
+				"tokens": "300만",
+				"cached": "1.5억",
+				"usd": "55"
+			},
+			"stages": {
+				"check": "8분"
+			},
+			"actual": {
+				"total": {
+					"time": "3시간 25분",
+					"usd": "170"
+				}
+			},
+			"design": {
+				"recs": [
+					{
+						"name": "MasterClass",
+						"src": "refero"
+					},
+					{
+						"name": "Runway",
+						"src": "awesome"
+					},
+					{
+						"name": "Fable",
+						"src": "refero"
+					}
+				],
+				"color": "마젠타",
+				"hex": "#e32652",
+				"images": "41",
+				"clicks": "270",
+				"critique": "29"
+			}
+		},
+		"jecheol": {
+			"title": "제철상자",
+			"kind": "landing",
+			"field": "제철 농산물 정기배송",
+			"summary": "제철 농산물 정기배송",
+			"difficulty": "어려움",
+			"pages": "21",
+			"pack": {
+				"time": "2시간",
+				"tokens": "280만",
+				"cached": "1.4억",
+				"usd": "50"
+			},
+			"scratch": {
+				"time": "2시간 55분",
+				"tokens": "410만",
+				"cached": "2.1억",
+				"usd": "75"
+			},
+			"stages": {
+				"check": "11분"
+			},
+			"actual": {
+				"total": {
+					"time": "3시간 25분",
+					"usd": "150"
+				}
+			},
+			"design": {
+				"recs": [
+					{
+						"name": "Oakâme",
+						"src": "refero"
+					},
+					{
+						"name": "Telescope",
+						"src": "refero"
+					},
+					{
+						"name": "Hungry Tiger",
+						"src": "refero"
+					}
+				],
+				"color": "사과 빨강",
+				"hex": "#ba2b28",
+				"images": "32",
+				"clicks": "121",
+				"critique": "35"
+			}
+		},
+		"pacecrew": {
+			"title": "PACECREW",
+			"kind": "landing",
+			"field": "동네 러닝 크루 매칭",
+			"summary": "동네 러닝 크루 매칭과 레이스 신청",
+			"difficulty": "어려움",
+			"pages": "22",
+			"pack": {
+				"time": "2시간 5분",
+				"tokens": "280만",
+				"cached": "1.4억",
+				"usd": "50"
+			},
+			"scratch": {
+				"time": "3시간 10분",
+				"tokens": "440만",
+				"cached": "2.2억",
+				"usd": "80"
+			},
+			"stages": {
+				"check": "12분"
+			},
+			"actual": {
+				"total": {
+					"time": "4시간 25분",
+					"usd": "170"
+				}
+			},
+			"design": {
+				"recs": [
+					{
+						"name": "Vodafone",
+						"src": "awesome"
+					},
+					{
+						"name": "Lightship",
+						"src": "refero"
+					},
+					{
+						"name": "Hungry Tiger",
+						"src": "refero"
+					}
+				],
+				"color": "형광 노랑",
+				"hex": "#f4ed36",
+				"comp": "B",
+				"compName": "잡지 표지",
+				"images": "46",
+				"clicks": "84",
+				"critique": "31"
+			}
+		},
+		"afterglow": {
+			"title": "AFTERGLOW",
+			"kind": "landing",
+			"field": "태양광 배터리 판매·설치 상담",
+			"summary": "가정용 태양광 배터리 소개와 설치 상담",
+			"difficulty": "어려움",
+			"pages": "17",
+			"pack": {
+				"time": "1시간 40분",
+				"tokens": "220만",
+				"cached": "1.1억",
+				"usd": "40"
+			},
+			"scratch": {
+				"time": "2시간 30분",
+				"tokens": "330만",
+				"cached": "1.7억",
+				"usd": "60"
+			},
+			"stages": {
+				"check": "10분"
+			},
+			"actual": {
+				"total": {
+					"time": "3시간 20분",
+					"usd": "125"
+				}
+			},
+			"design": {
+				"recs": [
+					{
+						"name": "ORYZO AI",
+						"src": "refero"
+					},
+					{
+						"name": "bugatti",
+						"src": "awesome"
+					},
+					{
+						"name": "Lamborghini",
+						"src": "refero"
+					}
+				],
+				"color": "불씨 주황",
+				"hex": "#dc5000",
+				"images": "22",
+				"clicks": "277",
+				"critique": "29"
+			}
+		},
+		"goru": {
+			"title": "고루",
+			"kind": "app",
+			"field": "공동 생활비 정산",
+			"summary": "같이 사는 사람들의 생활비 정산",
+			"difficulty": "쉬움",
+			"pages": "7",
+			"pack": {
+				"time": "1시간",
+				"tokens": "125만",
+				"cached": "6,900만",
+				"usd": "25"
+			},
+			"scratch": {
+				"time": "1시간 30분",
+				"tokens": "190만",
+				"cached": "9,600만",
+				"usd": "35"
+			},
+			"stages": {
+				"check": "7분"
+			},
+			"actual": {
+				"total": {
+					"time": "2시간 50분",
+					"usd": "90"
+				},
+				"redesign": {
+					"time": "56분"
+				}
+			},
+			"design": {
+				"recs": [
+					{
+						"name": "Monzo",
+						"src": "refero"
+					},
+					{
+						"name": "당근 SEED",
+						"src": "kr"
+					},
+					{
+						"name": "Monarch",
+						"src": "refero"
+					}
+				],
+				"color": "홍시색",
+				"hex": "#c9421d",
+				"comp": "A",
+				"compName": "9월 타임라인",
+				"images": "5",
+				"clicks": "67",
+				"critique": "30"
+			}
+		},
+		"fitslot": {
+			"title": "핏슬롯",
+			"kind": "app",
+			"field": "필라테스 수업 예약",
+			"summary": "필라테스 수업 예약과 수강권 관리",
+			"difficulty": "보통",
+			"pages": "20",
+			"pack": {
+				"time": "1시간 55분",
+				"tokens": "250만",
+				"cached": "1.2억",
+				"usd": "45"
+			},
+			"scratch": {
+				"time": "2시간 45분",
+				"tokens": "360만",
+				"cached": "1.8억",
+				"usd": "65"
+			},
+			"stages": {
+				"check": "11분"
+			},
+			"actual": {
+				"total": {
+					"time": "2시간 25분",
+					"usd": "100"
+				}
+			},
+			"design": {
+				"recs": [
+					{
+						"name": "sweetgreen",
+						"src": "refero"
+					},
+					{
+						"name": "Oakâme",
+						"src": "refero"
+					},
+					{
+						"name": "MasterClass",
+						"src": "refero"
+					}
+				],
+				"color": "짙은 숲색",
+				"hex": "#00473c",
+				"comp": "C",
+				"compName": "시간 기둥",
+				"images": "18",
+				"clicks": "153",
+				"critique": "28"
+			}
+		},
+		"uptrail": {
+			"title": "Uptrail",
+			"kind": "app",
+			"field": "개발팀 서비스 모니터링",
+			"summary": "개발팀의 서비스 상태와 배포 모니터링",
+			"difficulty": "올곧 다음으로 어려움",
+			"pages": "22",
+			"pack": {
+				"time": "2시간 5분",
+				"tokens": "280만",
+				"cached": "1.4억",
+				"usd": "50"
+			},
+			"scratch": {
+				"time": "2시간 50분",
+				"tokens": "360만",
+				"cached": "1.8억",
+				"usd": "65"
+			},
+			"stages": {
+				"check": "12분"
+			},
+			"actual": {
+				"total": {
+					"time": "2시간 20분",
+					"usd": "75"
+				}
+			},
+			"design": {
+				"recs": [
+					{
+						"name": "Default",
+						"src": "refero"
+					},
+					{
+						"name": "리멤버",
+						"src": "kr"
+					},
+					{
+						"name": "ClickHouse",
+						"src": "awesome"
+					}
+				],
+				"color": "시그널 블루",
+				"hex": "#3b82f6",
+				"comp": "B",
+				"compName": "관제 벽",
+				"images": "2",
+				"clicks": "282",
+				"critique": "28"
+			}
+		},
+		"studyday": {
+			"title": "하루공부",
+			"kind": "app",
+			"field": "시험 학습 플래너",
+			"summary": "시험 날짜까지 하루 공부 나누기와 공부 기록",
+			"difficulty": "가장 쉬움",
+			"pages": "14",
+			"pack": {
+				"time": "1시간 30분",
+				"tokens": "190만",
+				"cached": "9,600만",
+				"usd": "35"
+			},
+			"scratch": {
+				"time": "2시간 5분",
+				"tokens": "280만",
+				"cached": "1.4억",
+				"usd": "50"
+			},
+			"stages": {
+				"check": "9분"
+			},
+			"actual": {
+				"total": {
+					"time": "2시간 15분",
+					"usd": "65"
+				}
+			},
+			"design": {
+				"recs": [
+					{
+						"name": "Wise",
+						"src": "awesome"
+					},
+					{
+						"name": "Bento",
+						"src": "refero"
+					},
+					{
+						"name": "Clay",
+						"src": "awesome"
+					}
+				],
+				"color": "라임색",
+				"hex": "#9fe870",
+				"comp": "A",
+				"compName": "이번 주 무대",
+				"images": "3",
+				"clicks": "181",
+				"critique": "33"
+			}
+		},
+		"olgot": {
+			"title": "올곧",
+			"kind": "app",
+			"field": "입시학원 수강 신청·상담",
+			"summary": "고등부 수학·과학 입시학원 웹 앱",
+			"difficulty": "가장 어려움",
+			"pages": "203",
+			"pageTypes": "48",
+			"pack": {
+				"time": "3시간 55분",
+				"tokens": "550만",
+				"cached": "2.8억",
+				"usd": "100"
+			},
+			"scratch": {
+				"time": "5시간 45분",
+				"tokens": "800만",
+				"cached": "4.0억",
+				"usd": "145"
+			},
+			"stages": {
+				"check": "19분"
+			},
+			"actual": {
+				"total": {
+					"time": "8시간 20분",
+					"usd": "115"
+				}
+			},
+			"design": {
+				"comp": "B",
+				"compName": "학년 카드",
+				"images": "81",
+				"clicks": "2,025",
+				"critique": "30"
+			},
+			"prep": {
+				"research": {
+					"time": "43분",
+					"tokens": "81.5만",
+					"cached": "5,267만"
+				},
+				"expand": {
+					"time": "7분",
+					"tokens": "72.6만",
+					"cached": "1,123만"
+				}
+			}
+		},
+		"nextflix": {
+			"title": "Nextflix",
+			"kind": "clone",
+			"field": "영상 구독 서비스",
+			"screens": {
+				"time": "2시간 25분",
+				"tokens": "440만",
+				"cached": "2.2억"
+			},
+			"full": {
+				"time": "5시간 15분",
+				"tokens": "770만",
+				"cached": "3.9억"
+			},
+			"chapters": {
+				"2": "8분",
+				"4": "2시간",
+				"5": "25분",
+				"6": "40분",
+				"7": "15분",
+				"8": "15분",
+				"9": "15분",
+				"10": "25분"
+			},
+			"actual": {
+				"build": {
+					"time": "2시간 25분",
+					"usd": "90"
+				},
+				"plan": {
+					"time": "24분",
+					"usd": "11"
+				},
+				"fix": {
+					"time": "75분",
+					"usd": "20"
+				},
+				"expand": {
+					"time": "4시간"
+				}
+			},
+			"made": [
+				"build",
+				"fix"
+			],
+			"prep": {
+				"research": {
+					"time": "1시간 22분",
+					"tokens": "216.2만",
+					"cached": "6,575만"
+				},
+				"plan": {
+					"time": "49분",
+					"tokens": "53만",
+					"cached": "1,414만"
+				},
+				"pack": {
+					"time": "1시간 26분",
+					"tokens": "403.7만",
+					"cached": "7,240만"
+				}
+			},
+			"packFix": {
+				"time": "1시간 7분",
+				"tokens": "228.6만",
+				"cached": "4,887만"
+			}
+		},
+		"claudle": {
+			"title": "Claudle",
+			"kind": "clone",
+			"field": "AI 대화 서비스",
+			"dailyLimit": "200",
+			"screens": {
+				"time": "2시간 25분",
+				"tokens": "300만",
+				"cached": "1.5억"
+			},
+			"full": {
+				"time": "5시간",
+				"tokens": "610만",
+				"cached": "3억"
+			},
+			"chapters": {
+				"2": "8분",
+				"5": "30분",
+				"6": "15분",
+				"7": "25분",
+				"8": "15분",
+				"9": "20분",
+				"10": "15분"
+			},
+			"actual": {
+				"plan": {
+					"time": "18분",
+					"usd": "7"
+				},
+				"screens": {
+					"time": "2시간",
+					"usd": "46"
+				},
+				"review": {
+					"time": "2시간 50분",
+					"usd": "51"
+				},
+				"polish": {
+					"time": "42분",
+					"usd": "11"
+				}
+			},
+			"prep": {
+				"research": {
+					"time": "1시간 28분",
+					"tokens": "267.4만",
+					"cached": "19,175만"
+				},
+				"pack": {
+					"time": "35분",
+					"tokens": "43만",
+					"cached": "2,460만"
+				}
+			},
+			"pages": "13"
+		}
+	},
+	"gloss": {
+		"presetPack": "만들 서비스의 화면 구성, 디자인, 예시 데이터, 그림을 묶어 둔 폴더",
+		"clonePack": "만들 서비스의 화면 구성, 기능 규칙, 디자인 노트, 예시 데이터, 그림을 묶어 둔 폴더",
+		"round": "기능 하나를 만들거나 요청한 것을 고치고 확인까지 마치는 작업 묶음",
+		"migration": "DB의 표를 만들거나 바꾸는 기록",
+		"spec": "기능의 범위와 동작을 적은 문서"
+	},
+	"policy": {
+		"agentBrowser": {
+			"da": "agent-browser CLI가 없거나 npm 최신판보다 낮으면 전역에 최신판을 설치한다",
+			"yo": "agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요",
+			"cell": "없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치"
+		}
+	},
+	"process": {
+		"research": {
+			"claudle": {
+				"scope": 2.8,
+				"first": 33.5,
+				"more": 20.7,
+				"features": 31.2,
+				"firstSummary": 9.3,
+				"moreSummary": 7.8,
+				"decide": 2.8
+			},
+			"nextflix": {
+				"scope": 3.9,
+				"public": 17.8,
+				"login": 26.7,
+				"features": 62,
+				"summary": 8.8,
+				"verify": 3.7
+			}
+		},
+		"scopeTokens": {
+			"public": "30만",
+			"login": "75만",
+			"all": "180만"
+		},
+		"pie": {
+			"claudle": {
+				"recheck": 122.3,
+				"model": 108.5,
+				"review": 55,
+				"impl": 21.5,
+				"browser": 19.1,
+				"build": 20.3,
+				"other": 1.6
+			},
+			"olgot": {
+				"recheck": 271.7,
+				"model": 120.1,
+				"review": 25.9,
+				"impl": 7.8,
+				"browser": 1.7,
+				"build": 12.4,
+				"other": 13.6
+			}
+		},
+		"olgot": {
+			"plan": 19.5,
+			"expand": 12.7,
+			"first": 156.6,
+			"rest": 110.6,
+			"close": 9.6,
+			"wait": 48.3
+		}
+	}
+}

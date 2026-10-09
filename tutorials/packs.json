@@ -1,0 +1,68 @@
+{
+  "nextflix": {
+    "release": "pack-nextflix",
+    "url": "https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/download/pack-nextflix/nextflix-pack.zip",
+    "sha256": "12c4f5b482d01531c7d801bf05581869c69189c00cd7da368274a7552044fbf1",
+    "bytes": 7516780
+  },
+  "claudle": {
+    "release": "pack-claudle",
+    "url": "https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/download/pack-claudle/claudle-pack.zip",
+    "sha256": "505669d6535fb2be3b7a3d08b81e52f9daae98300643c923d27180da019d97bd",
+    "bytes": 1066567
+  },
+  "goru": {
+    "release": "pack-goru",
+    "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-goru/goru-pack.zip",
+    "sha256": "2f26de94a28598704b0b23ae97b3394f2c7c6e3dfcf06b32f09a207dfe8f74a0",
+    "bytes": 3060530
+  },
+  "ullim": {
+    "release": "pack-ullim",
+    "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-ullim/ullim-pack.zip",
+    "sha256": "9c067483b42306e0443279d055889802c89dc96b115d883df7aef7b4853b94b2",
+    "bytes": 11873027
+  },
+  "studyday": {
+    "release": "pack-studyday",
+    "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-studyday/studyday-pack.zip",
+    "sha256": "d137be4369c6b7b213ac05f0ae667f0499d1ed06453c656b33e23f602a3ff51d",
+    "bytes": 3759774
+  },
+  "afterglow": {
+    "release": "pack-afterglow",
+    "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-afterglow/afterglow-pack.zip",
+    "sha256": "992ceb9de88c6897d825369b89c2ad6cb34ffa8163ed904aa79dc19de0860c70",
+    "bytes": 22540208
+  },
+  "fitslot": {
+    "release": "pack-fitslot",
+    "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-fitslot/fitslot-pack.zip",
+    "sha256": "074ea2d732a811ee951e2733dc57431ce64bf1d9722f6f0933ae1a2b12b517d7",
+    "bytes": 11128062
+  },
+  "jecheol": {
+    "release": "pack-jecheol",
+    "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-jecheol/jecheol-pack.zip",
+    "sha256": "83fa5b1558ba223475a8b25c03ffbff9d78a20d990eb3a74fb9a646485de050e",
+    "bytes": 19039126
+  },
+  "pacecrew": {
+    "release": "pack-pacecrew",
+    "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-pacecrew/pacecrew-pack.zip",
+    "sha256": "a3542628d1ca1e9f2d64958eace6ecfca2ec7f131998a24073f6ff4f2d4a9650",
+    "bytes": 17432690
+  },
+  "uptrail": {
+    "release": "pack-uptrail",
+    "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-uptrail/uptrail-pack.zip",
+    "sha256": "1687c607c7c49fb1a25f5711fa5e3a6ea563fa027d867a164c408cff1864fdd8",
+    "bytes": 3338563
+  },
+  "olgot": {
+    "release": "pack-olgot",
+    "url": "https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/download/pack-olgot/olgot-pack.zip",
+    "sha256": "2b2a58eca9200cc211d0a4f27d9f99d072f0b25129541b953337536540ef3913",
+    "bytes": 31309963
+  }
+}

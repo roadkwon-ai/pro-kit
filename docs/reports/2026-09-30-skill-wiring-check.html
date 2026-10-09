@@ -1,0 +1,355 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>BTS 스킬 연결 점검</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 레이아웃: 한 열 보고서. 요약 → 측정 방법 → 차트 → 결함·수정 → 표 → 한계 순서. 대조표(행·증거 칸) 문법을 표와 칩에 빌린다 */
+:root {
+  --bg: #f4f6f8;
+  --surface: #fcfcfb;
+  --ink: #111418;
+  --ink-2: #4a515b;
+  --muted: #7b828c;
+  --line: #dde1e6;
+  --axis: #c3c7cd;
+  --before: #8c929b;
+  --after: #2a78d6;
+  --after-soft: #d6e6f8;
+  --good: #0a7d24;
+  --bad: #c43232;
+  --warn: #9a6400;
+  --chip: #eceff2;
+  --font-body: "IBM Plex Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1113; --surface: #17191c; --ink: #f2f3f4; --ink-2: #c1c6cc; --muted: #8d949c;
+    --line: #2a2e33; --axis: #3a3f45; --before: #8d939b; --after: #3987e5; --after-soft: #1d3350;
+    --good: #3cbf5a; --bad: #ec6b6b; --warn: #e0a534; --chip: #23272c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1113; --surface: #17191c; --ink: #f2f3f4; --ink-2: #c1c6cc; --muted: #8d949c;
+  --line: #2a2e33; --axis: #3a3f45; --before: #8d939b; --after: #3987e5; --after-soft: #1d3350;
+  --good: #3cbf5a; --bad: #ec6b6b; --warn: #e0a534; --chip: #23272c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.65 var(--font-body); padding-inline: 20px; padding-block: 32px 64px; }
+main { max-width: 980px; margin: 0 auto; display: grid; gap: 40px; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.3; margin: 0; }
+h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 20px; font-weight: 700; }
+h3 { font-size: 15px; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+code, .mono { font-family: var(--font-mono); font-size: 0.88em; }
+code { background: var(--chip); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+section { display: grid; gap: 14px; min-width: 0; }
+.eyebrow { font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 16px; color: var(--ink-2); }
+.note { font-size: 13px; color: var(--muted); }
+header { display: grid; gap: 10px; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 6px; align-content: start; }
+.tile .label { font-size: 13px; color: var(--ink-2); }
+.tile .fig { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; font-weight: 700; }
+.tile .from { font-size: 20px; color: var(--muted); }
+.tile .arrow { color: var(--muted); font-size: 16px; }
+.tile .to { font-size: 30px; color: var(--ink); }
+.tile .sub { font-size: 12px; color: var(--muted); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; min-width: 0; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
+
+/* 시나리오 막대 */
+.bars { display: grid; gap: 18px; }
+.bar-row { display: grid; gap: 6px; }
+.bar-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; }
+.bar-head .stage { font-weight: 600; }
+.bar-head .delta { font: 500 13px var(--font-mono); }
+.track { position: relative; height: 14px; }
+.track .grid { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--line) 1px, transparent 1px); background-size: 25% 100%; border-left: 1px solid var(--axis); }
+.bar { position: absolute; left: 0; top: 2px; height: 10px; border-radius: 0 4px 4px 0; }
+.bar.before { background: var(--before); }
+.bar.after { background: var(--after); }
+.bar-vals { font: 12px var(--font-mono); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.fix-table td:first-child { min-width: 11em; }
+.bar-val { position: absolute; top: -2px; font: 500 12px/14px var(--font-mono); color: var(--ink-2); padding-left: 6px; white-space: nowrap; }
+.axis { display: flex; justify-content: space-between; font: 12px var(--font-mono); color: var(--muted); padding-right: 2px; }
+.pending { font-size: 12px; color: var(--muted); }
+
+/* 스킬별 점 차트 */
+.dumb { display: grid; grid-template-columns: minmax(0, 15em) minmax(0, 1fr) 7.5em; gap: 4px 12px; align-items: center; font-size: 13px; }
+.dumb .name { overflow-wrap: anywhere; line-height: 1.3; }
+.dumb .name small { color: var(--muted); font-size: 11px; margin-left: 4px; }
+.dumb .lane { position: relative; height: 22px; }
+.dumb .lane .grid { position: absolute; inset: 5px 0; background-image: linear-gradient(to right, var(--line) 1px, transparent 1px); background-size: 25% 100%; border-left: 1px solid var(--axis); }
+.dumb .seg { position: absolute; top: 10px; height: 2px; background: var(--after-soft); }
+.dumb .dot { position: absolute; top: 5px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface); }
+.dumb .dot.before { background: var(--before); }
+.dumb .dot.after { background: var(--after); }
+.dumb .vals { font: 12px var(--font-mono); color: var(--ink-2); text-align: right; font-variant-numeric: tabular-nums; }
+.dumb .hit { cursor: default; }
+.dumb .hdr { font-size: 12px; color: var(--muted); }
+
+/* 표 */
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--ink-2); font-size: 12px; white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); white-space: nowrap; }
+.chip { display: inline-block; font: 500 11px/1.6 var(--font-mono); padding: 0 7px; border-radius: 999px; background: var(--chip); color: var(--ink-2); white-space: nowrap; }
+.chip.sev { color: var(--bad); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+
+.defects { display: grid; gap: 12px; }
+.defect { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 8px; }
+.defect .top { display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+.defect pre { margin: 0; font: 12px/1.5 var(--font-mono); background: var(--chip); padding: 10px; border-radius: 6px; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.rowdiff { display: grid; gap: 6px; font: 12px/1.55 var(--font-mono); }
+.rowdiff div { padding: 8px 10px; border-radius: 6px; background: var(--chip); overflow-wrap: anywhere; }
+.rowdiff .was { color: var(--muted); }
+.rowdiff .now { color: var(--ink); box-shadow: inset 3px 0 0 var(--after); }
+
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; }
+details + details { margin-top: 8px; }
+summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+summary:focus-visible, a:focus-visible { outline: 2px solid var(--after); outline-offset: 2px; }
+details .prompt { font-size: 13px; color: var(--ink-2); margin: 8px 0; }
+ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 72ch; }
+
+#tip { position: fixed; z-index: 10; pointer-events: none; background: var(--ink); color: var(--surface); font: 12px/1.45 var(--font-body); padding: 6px 9px; border-radius: 6px; max-width: 260px; }
+@media (max-width: 560px) {
+  h1 { font-size: 24px; }
+  .dumb { grid-template-columns: minmax(0, 1fr) 6.5em; }
+  .dumb .lane { grid-column: 1 / -1; order: 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bar { transition: width .4s ease-out; }
+}
+</style>
+
+<main>
+  <header>
+    <div class="eyebrow">bts-starter-kit · bts-next-neon fixture · 2026-09-30</div>
+    <h1>BTS 스킬 연결 점검</h1>
+    <p class="lede" id="lede"></p>
+  </header>
+
+  <section aria-labelledby="h-sum">
+    <h2 id="h-sum">요약</h2>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <section aria-labelledby="h-how">
+    <h2 id="h-how">무엇을 어떻게 쟀나</h2>
+    <ul class="plain">
+      <li>BTS 3.44.1로 새 프로젝트를 만들고 bts-next-neon 템플릿(v0.6.1)을 설치한 fixture에서, 사용자가 새 세션에 칠 법한 요청 7개를 <code>claude -p</code>(Opus 5.5, 이 기기의 전역 스킬·플러그인 그대로)로 실행했다.</li>
+      <li>before는 v0.6.1 그대로, after는 같은 fixture에 이번 템플릿 변경분(13개 파일)만 덮어쓴 것이다. 시나리오마다 설정별로 두 번씩 돌렸다.</li>
+      <li>채점 기준(시나리오마다 그 단계에서 불려야 할 스킬 목록, 모두 55개 항목)은 개선하기 전에 고정했다. 로그에서 Skill 도구 호출, 스킬 폴더 파일 읽기(Read·cat·grep), CLI 사용(<code>ego-browser</code>, <code>/_next/mcp</code>, impeccable 스크립트), 에이전트 호출을 뽑아 대조했다. 서브에이전트 안의 호출도 센다.</li>
+      <li>정적 지표는 두 템플릿의 지침 문서(AGENTS.md, CLAUDE.md, dev-workflow, bts-* 스킬, 에이전트)를 스크립트로 훑어, 설치된 공식 스킬마다 dev-cycle 행에 이름이 나오는지(T3), 라우팅 표·에이전트에만 있는지(T2), 본문 언급뿐인지(T1), 연결이 없는지(T0)를 셌다.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-scen">
+    <h2 id="h-scen">시나리오별 기대 스킬 호출률</h2>
+    <div class="card">
+      <div class="legend" style="margin-bottom:14px"><span><i style="background:var(--before)"></i>before (v0.6.1)</span><span><i style="background:var(--after)"></i>after (이번 변경)</span><span class="note">두 run 평균. 괄호는 run별 통과 항목/전체</span></div>
+      <div class="axis" aria-hidden="true"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+      <div class="bars" id="bars"></div>
+    </div>
+    <p class="note" id="scen-note"></p>
+  </section>
+
+  <section aria-labelledby="h-skill">
+    <h2 id="h-skill">스킬별 변화</h2>
+    <p>기대 항목을 스킬 단위로 모았다. 한 스킬이 여러 시나리오에 나오면 그 run들을 합쳐 호출률을 냈다. 위에서부터 개선 폭이 큰 순서다.</p>
+    <div class="card">
+      <div class="legend" style="margin-bottom:12px"><span><i style="background:var(--before);border-radius:50%"></i>before</span><span><i style="background:var(--after);border-radius:50%"></i>after</span></div>
+      <div class="dumb" id="dumb"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-def">
+    <h2 id="h-def">찾은 결함</h2>
+    <div class="defects">
+      <div class="defect">
+        <div class="top"><span class="chip sev">로드 불가</span><h3><code>bts-skills-update</code>가 Skill 도구로 로드되지 않았다</h3></div>
+        <p>본문의 예시 문구 <code>`` !`명령` ``</code>를 Claude Code가 로드 시점 셸 명령으로 실행했다. dev-cycle 시작 때 외부 스킬 업데이트 알림이 오면 이 스킬로 가게 되어 있는데, 그 경로가 막혀 있었다. 문구를 바꾸고, bts 스킬 본문에 느낌표+백틱이 들어가면 실패하는 테스트를 넣었다. after fixture에서 정상 로드를 확인했다.</p>
+        <pre>Shell command failed for pattern "!`명령`": [stderr]
+(eval):1: command not found: 명령</pre>
+      </div>
+      <div class="defect">
+        <div class="top"><span class="chip sev">로드 불가</span><h3>공식 <code>shadcn</code> 스킬이 모노레포 루트에서 로드되지 않는다</h3></div>
+        <p>스킬이 로드될 때 루트에서 <code>npx shadcn@latest info --json</code>을 실행하는데, BTS 모노레포 루트라 실패한다. 그래서 B 라운드의 <code>shadcn</code>은 Skill 도구로는 쓸 수 없었다. 외부 스킬 스크립트는 고치지 않고, bts-ui와 CLAUDE.md가 <code>.agents/skills/shadcn/SKILL.md</code>를 읽게 했다.</p>
+        <pre>{ "error": "monorepo_root", "message": "You are running info from a monorepo root. Use the -c flag to specify a workspace." }</pre>
+      </div>
+      <div class="defect">
+        <div class="top"><span class="chip sev">다른 판 로드</span><h3>전역 스킬이 프로젝트에 고정한 공식 스킬을 가린다</h3></div>
+        <p>Claude Code의 Skill 도구는 같은 이름이면 개인 스킬(<code>~/.claude/skills</code>)을 먼저 불러온다. 이 기기에서는 프로젝트 도메인 스킬 34개 가운데 12개(<code>impeccable</code>, <code>next-dev-loop</code>, <code>supabase-postgres-best-practices</code>, <code>vercel-react-best-practices</code>, <code>web-design-guidelines</code>, <code>agent-browser</code> 등)가 가려져, 템플릿이 고정하고 검증한 판 대신 전역 판이 로드됐다. 외부 스킬은 프로젝트 경로로 읽도록 AGENTS.md, CLAUDE.md, 에이전트에 적었다.</p>
+        <pre id="origin-pre"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-fix">
+    <h2 id="h-fix">무엇을 고쳤나</h2>
+    <p>원칙은 두 가지다. before run에서 행 문구에 이름이 있는 스킬은 거의 항상 불렸고, 계층 스킬의 "공식 스킬 연결" 표에만 있는 스킬은 대부분 무시됐다. 그래서 그 상황이 오는 행에 스킬 이름을 넣고, 증거 칸에 읽은 스킬을 적게 했다.</p>
+    <div class="rowdiff" aria-label="대조표 행 변경 예">
+      <div class="was">E 행 전: 스키마 수정 + dbGenerate, 생성 SQL 검토 (bts-db) → 마이그레이션 파일 경로와 요약</div>
+      <div class="now">E 행 후: 스키마 수정 + dbGenerate, 생성 SQL 검토 (bts-db, 컬럼 타입·제약·인덱스는 supabase-postgres-best-practices) → 마이그레이션 파일 경로와 요약, 사용한 스킬</div>
+    </div>
+    <div class="table-wrap"><table class="fix-table">
+      <thead><tr><th>파일</th><th>바꾼 내용</th><th>근거가 된 before 관찰</th></tr></thead>
+      <tbody>
+        <tr><td><code>docs/dev-workflow.md</code> (두 템플릿)</td><td>B 구현 행에 shadcn·vercel-react-best-practices, B audit 행에 web-design-guidelines, D 구현 행에 test-driven-development·better-auth-best-practices, E 행에 supabase-postgres-best-practices와 neon-postgres-branches(supabase는 supabase 스킬 체크리스트), F 계획 행에 "바꿀 계층의 bts-*와 공식 스킬 연결 표", 공통 문서 행에 domain-modeling 형식</td><td>B의 shadcn·vercel-react-best-practices 0/2, D의 test-driven-development·turborepo 0/2, F의 supabase-postgres-best-practices 0/2·bts-web 1/2, 인증의 better-auth-best-practices·email-and-password-best-practices 0/2</td></tr>
+        <tr><td><code>bts-dev-cycle</code> (두 템플릿)</td><td>첫 증거 전에 bts-verify 불러오기, 새 용어는 domain-modeling 형식, 괄호 안 스킬을 외부 스킬까지 넓힘, turbo.json은 turborepo 번들 문서, 확인 전 verification-before-completion, 리뷰 응답 skills_read 확인</td><td>E에서 bts-verify를 읽지 않아 금지된 <code>git stash</code>로 lint 기준을 비교, domain-modeling 0/2, verification-before-completion 0/2</td></tr>
+        <tr><td><code>AGENTS.md</code>, <code>CLAUDE.md</code></td><td>bts-*가 가리키는 외부 스킬은 그 상황에서 실제로 읽고, 프로젝트 판 <code>.agents/skills/&lt;이름&gt;/SKILL.md</code>를 읽으며, 행 증거에 적는다. Claude Code는 Skill 도구 대신 Read</td><td>프로젝트에 설치된 외부 스킬 로드 19건 중 11건이 전역 판, shadcn 로드 실패</td></tr>
+        <tr><td><code>bts-reviewer</code>, <code>bts-implementer</code></td><td>리뷰어: 외부 스킬은 프로젝트 경로로 읽고 React 코드면 vercel-react-best-practices, 응답 JSON에 <code>skills_read</code>. 구현자: 지정 스킬의 공식 스킬 연결 표에서 해당 스킬을 읽고 보고에 "읽은 스킬"</td><td>db 리뷰어가 절차 1의 supabase-postgres-best-practices를 읽지 않음</td></tr>
+        <tr><td><code>bts-web</code></td><td>느림·깜빡임·번들·캐시·프리패치는 분석 전에 vercel-react-best-practices와 해당 Next 스킬을 읽고 규칙 이름을 붙이며, 동작은 next-dev-loop로 본다</td><td>성능 분석이 공식 스킬 4종을 하나도 읽지 않음(1/7)</td></tr>
+        <tr><td><code>bts-ui</code>, <code>impeccable-map.md</code></td><td>shadcn과 impeccable을 프로젝트 경로로 읽는다</td><td>shadcn 로드 실패, impeccable 전역 판 로드</td></tr>
+        <tr><td><code>bts-skills-update</code>, <code>bts-deploy</code></td><td>느낌표+백틱 문구 제거. bts-deploy는 준비 확인 때 migration-flow 배포 환경 절을 읽는다고 명시</td><td>bts-skills-update 로드 실패</td></tr>
+        <tr><td><code>bts-verify</code>, <code>evidence.md</code></td><td>외부 스킬을 읽었으면 적용한 규칙과 함께 증거에 적는다</td><td>증거 칸에 외부 스킬 흔적이 없어 사후 확인이 어려움</td></tr>
+        <tr><td>테스트</td><td><code>skills.test.mjs</code>에 느낌표+백틱 금지, <code>template-docs.test.mjs</code>에 스킬 연결 회귀 검사. 둘 다 before 판에서 실패, 지금 판에서 통과(두 템플릿 157/157)</td><td></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="h-static">
+    <h2 id="h-static">정적 연결 지표</h2>
+    <p>설치된 공식 도메인 스킬이 지침 문서 어디에 연결되어 있는지 스크립트로 셌다. T3는 dev-cycle 행에 이름이 나오는 스킬, T2는 라우팅 표나 에이전트에만 있는 스킬, T1은 본문 언급뿐, T0은 연결 없음이다.</p>
+    <div class="table-wrap"><table id="static-table"></table></div>
+    <p class="note">T0로 남은 <code>grilling</code>은 <code>grill-with-docs</code>가 안에서 부르는 의존 스킬이다. 프로세스 스킬 가운데 연결이 없는 6개(<code>using-superpowers</code>, <code>requesting-code-review</code> 등)는 Codex용 superpowers 묶음에 딸린 것으로, superpowers 스킬끼리 부른다.</p>
+  </section>
+
+  <section aria-labelledby="h-cost">
+    <h2 id="h-cost">비용과 시간</h2>
+    <div class="table-wrap"><table id="cost-table"></table></div>
+    <p id="cost-sum"></p>
+    <p class="note">run 한 번의 평균. 비용은 <code>claude -p</code>가 보고한 API 환산값(서브에이전트 포함), 시간은 실제 경과 시간이다.</p>
+  </section>
+
+  <section aria-labelledby="h-detail">
+    <h2 id="h-detail">시나리오별 세부 결과</h2>
+    <div id="details"></div>
+  </section>
+
+  <section aria-labelledby="h-limit">
+    <h2 id="h-limit">한계</h2>
+    <ul class="plain">
+      <li>설정마다 run이 두 번뿐이다. F 스펙·계획은 before 두 run이 11/12와 9/12로 갈렸다. 차이가 한 항목 안팎인 시나리오는 편차로 본다.</li>
+      <li>채점 기준은 제가 정했다. 개선 전에 고정했고 before와 after에 똑같이 적용했지만, 어떤 스킬이 "그 단계에서 불려야 하는지"는 판단이 들어간다. 성능 분석 요청에 dev-cycle 라운드를 기대한 항목은 해석이 갈릴 수 있다(요청이 "고쳐 줘"가 아니라 "개선안 정리"였다).</li>
+      <li>배포 준비 시나리오는 before도 3/3이라 개선을 가르지 못했다.</li>
+      <li>이 기기 하나(전역 스킬과 플러그인이 많은 환경)에서만 쟀다. 전역 스킬이 없는 팀원 환경에서는 전역 판 가림 문제가 없고, before 점수가 다를 수 있다.</li>
+      <li>before 인증 run-1과 B run-2는 같은 시간대에 같은 웹 포트(3401)를 썼다. 스킬 호출 측정에는 영향이 없지만 화면 검증의 품질 비교에는 쓰지 않았다.</li>
+      <li>측정은 neon 템플릿으로만 했다. supabase 템플릿은 같은 변경을 넣었고(E 행은 supabase 문구) 테스트는 통과했지만, 동작 run은 돌리지 않았다.</li>
+      <li>스킬을 "읽었는지"를 셌지, 읽은 내용을 제대로 적용했는지는 채점하지 않았다. 적용 품질은 증거 칸과 최종 보고로 일부만 확인했다(예: after E의 enum 선택 근거, after D의 turbo 번들 문서 인용).</li>
+    </ul>
+  </section>
+</main>
+<div id="tip" hidden></div>
+
+<script>
+const D = {"scenarios":[{"name":"f-spec-plan","stage":"F 스펙·계획·계획 리뷰","prompt":"할 일마다 마감일을 정할 수 있게 해 줘. 목록에 마감일이 보이고, 마감일이 지난 할 일은 눈에 띄게 표시되면 좋겠어. 오늘은 구현하지 말고 스펙, 구현 계획, 계획 리뷰까지만 해 줘. 나한테 물어볼 게 생기면 합리적인 기본값을 가정해 스펙에 적고, 질문은 마지막 보고에 모아 줘.","expected":["bts-dev-cycle","brainstorming","domain-modeling","writing-plans","plan-eng-review","plan-design-review","ponytail-review","impeccable|bts-ui","bts-db","bts-api","bts-web","supabase-postgres-best-practices"],"configs":{"old_template":{"runs":2,"passed":[11,9],"total":12,"passRate":0.83335,"cost":6.393152750000002,"seconds":1034.5,"turns":62.5,"tokens":8179384,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill,Bash","bts-dev-cycle: Skill,Bash"]},{"key":"brainstorming","text":"brainstorming 스킬을 불러 썼다","flags":[1,1],"evidence":["brainstorming: Skill","brainstorming: Skill"]},{"key":"domain-modeling","text":"domain-modeling 스킬을 불러 썼다","flags":[1,1],"evidence":["domain-modeling: Skill,Bash","domain-modeling: Bash,Bash"]},{"key":"writing-plans","text":"writing-plans 스킬을 불러 썼다","flags":[1,1],"evidence":["writing-plans: Skill","writing-plans: Skill"]},{"key":"plan-eng-review","text":"plan-eng-review 스킬을 불러 썼다","flags":[1,1],"evidence":["plan-eng-review: Skill(sub)","plan-eng-review: Skill(sub)"]},{"key":"plan-design-review","text":"plan-design-review 스킬을 불러 썼다","flags":[1,1],"evidence":["plan-design-review: Skill(sub)","plan-design-review: Skill(sub)"]},{"key":"ponytail-review","text":"ponytail-review 스킬을 불러 썼다","flags":[1,1],"evidence":["ponytail-review: Skill(sub)","ponytail-review: Skill(sub)"]},{"key":"impeccable|bts-ui","text":"impeccable 또는 bts-ui 스킬을 불러 썼다","flags":[1,0],"evidence":["impeccable: Bash,Bash; bts-ui: Bash","로드 없음"]},{"key":"bts-db","text":"bts-db 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-db: Bash,Bash","bts-db: Bash,Bash(sub)"]},{"key":"bts-api","text":"bts-api 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-api: Bash,Bash","bts-api: Bash,Bash,Bash(sub)"]},{"key":"bts-web","text":"bts-web 스킬을 불러 썼다","flags":[1,0],"evidence":["bts-web: Bash","로드 없음"]},{"key":"supabase-postgres-best-practices","text":"supabase-postgres-best-practices 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]}]},"new_template":{"runs":2,"passed":[12,12],"total":12,"passRate":1,"cost":7.586029,"seconds":1156.5,"turns":64.5,"tokens":9556914,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill,Read","bts-dev-cycle: Skill,Bash"]},{"key":"brainstorming","text":"brainstorming 스킬을 불러 썼다","flags":[1,1],"evidence":["brainstorming: Skill","brainstorming: Skill"]},{"key":"domain-modeling","text":"domain-modeling 스킬을 불러 썼다","flags":[1,1],"evidence":["domain-modeling: Bash,Bash,Bash","domain-modeling: Bash,Bash"]},{"key":"writing-plans","text":"writing-plans 스킬을 불러 썼다","flags":[1,1],"evidence":["writing-plans: Skill","writing-plans: Skill"]},{"key":"plan-eng-review","text":"plan-eng-review 스킬을 불러 썼다","flags":[1,1],"evidence":["plan-eng-review: Skill(sub)","plan-eng-review: Skill(sub)"]},{"key":"plan-design-review","text":"plan-design-review 스킬을 불러 썼다","flags":[1,1],"evidence":["plan-design-review: Skill(sub)","plan-design-review: Skill(sub)"]},{"key":"ponytail-review","text":"ponytail-review 스킬을 불러 썼다","flags":[1,1],"evidence":["ponytail-review: Skill(sub)","ponytail-review: Skill(sub)"]},{"key":"impeccable|bts-ui","text":"impeccable 또는 bts-ui 스킬을 불러 썼다","flags":[1,1],"evidence":["impeccable: cli/hint; bts-ui: Bash,Bash(sub)","impeccable: Bash,Bash,Bash(sub),Bash(sub); bts-ui: Bash,Bash"]},{"key":"bts-db","text":"bts-db 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-db: Bash","bts-db: Bash,Bash"]},{"key":"bts-api","text":"bts-api 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-api: Bash,Bash","bts-api: Bash,Bash,Bash(sub)"]},{"key":"bts-web","text":"bts-web 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-web: Bash","bts-web: Bash"]},{"key":"supabase-postgres-best-practices","text":"supabase-postgres-best-practices 스킬을 불러 썼다","flags":[1,1],"evidence":["supabase-postgres-best-practices: Bash,Bash","supabase-postgres-best-practices: Bash"]}]}}},{"name":"e-db-priority","stage":"E 스키마·마이그레이션·DB 리뷰","prompt":"할 일에 우선순위(낮음·보통·높음)를 넣을 거야. 이번에는 DB만 해 줘: todo 테이블에 우선순위 컬럼(기본값 보통)을 추가하고, 목록을 우선순위 높은 순으로 정렬할 거라 인덱스도 만들어 줘. 로컬 DB에 적용하고 리뷰까지 끝낸 뒤, 사용자 확인 요청 전에 멈추고 보고해 줘.","expected":["bts-dev-cycle","bts-db","supabase-postgres-best-practices","domain-modeling","bts-verify","agent:bts-reviewer"],"configs":{"old_template":{"runs":2,"passed":[4,4],"total":6,"passRate":0.6667,"cost":3.3020998,"seconds":532.5,"turns":44,"tokens":3945108.5,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill","bts-dev-cycle: Skill,Bash,Bash"]},{"key":"bts-db","text":"bts-db 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-db: Skill,Bash,Skill(sub),Read(sub)","bts-db: Skill,Bash,Bash(sub),Bash(sub)"]},{"key":"supabase-postgres-best-practices","text":"supabase-postgres-best-practices 스킬을 불러 썼다","flags":[1,0],"evidence":["supabase-postgres-best-practices: Skill,Bash[global]","로드 없음"]},{"key":"domain-modeling","text":"domain-modeling 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"bts-verify","text":"bts-verify 스킬을 불러 썼다","flags":[0,1],"evidence":["로드 없음","bts-verify: Bash,Bash(sub)"]},{"key":"agent:bts-reviewer","text":"bts-reviewer 에이전트를 불렀다","flags":[1,1],"evidence":["1회: DB review of todo priority","1회: DB review of priority change"]}]},"new_template":{"runs":2,"passed":[6,6],"total":6,"passRate":1,"cost":4.5848121,"seconds":674.5,"turns":62,"tokens":7075837.5,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill,Bash","bts-dev-cycle: Skill,Bash"]},{"key":"bts-db","text":"bts-db 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-db: Bash,Bash,Read(sub),Read(sub)","bts-db: Skill,Bash,Read(sub),Read(sub)"]},{"key":"supabase-postgres-best-practices","text":"supabase-postgres-best-practices 스킬을 불러 썼다","flags":[1,1],"evidence":["supabase-postgres-best-practices: Read(sub),Read(sub),Read(sub)","supabase-postgres-best-practices: Bash,Read(sub),Read(sub),Read(sub),Read(sub)"]},{"key":"domain-modeling","text":"domain-modeling 스킬을 불러 썼다","flags":[1,1],"evidence":["domain-modeling: Bash","domain-modeling: Bash"]},{"key":"bts-verify","text":"bts-verify 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-verify: Bash,Bash","bts-verify: Skill,Bash"]},{"key":"agent:bts-reviewer","text":"bts-reviewer 에이전트를 불렀다","flags":[1,1],"evidence":["1회: bts-reviewer db focus review","1회: DB review of todo priority"]}]}}},{"name":"d-api-edit-delete","stage":"D 프로시저·격리 테스트·코드 리뷰","prompt":"할 일 제목 수정과 삭제 API를 만들어 줘. 로그인한 사용자가 자기 할 일만 고치고 지울 수 있어야 해. 화면은 다음에 할 거야. 테스트와 리뷰까지 끝낸 뒤 사용자 확인 요청 전에 멈추고 보고해 줘.","expected":["bts-dev-cycle","bts-api","test-driven-development","turborepo","bts-verify","verification-before-completion","agent:bts-reviewer","ponytail-review"],"configs":{"old_template":{"runs":2,"passed":[5,5],"total":8,"passRate":0.625,"cost":4.368635800000001,"seconds":493,"turns":52.5,"tokens":4975897,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill,Bash,Bash","bts-dev-cycle: Skill,Bash"]},{"key":"bts-api","text":"bts-api 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-api: Bash,Bash,Read(sub),Read(sub),Bash(sub),Bash(sub),Read(sub),Bash(sub)","bts-api: Skill,Bash,Read(sub),Read(sub),Read(sub),Bash(sub),Bash(sub)"]},{"key":"test-driven-development","text":"test-driven-development 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"turborepo","text":"turborepo 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"bts-verify","text":"bts-verify 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-verify: Bash,Bash,Bash,Bash","bts-verify: Bash,Bash,Bash(sub)"]},{"key":"verification-before-completion","text":"verification-before-completion 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"agent:bts-reviewer","text":"bts-reviewer 에이전트를 불렀다","flags":[1,1],"evidence":["2회: Code review of todo update/delete / Security review of todo ownership","2회: bts-reviewer(code) 리뷰 / bts-reviewer(security) 리뷰"]},{"key":"ponytail-review","text":"ponytail-review 스킬을 불러 썼다","flags":[1,1],"evidence":["ponytail-review: Skill","ponytail-review: Skill(sub)"]}]},"new_template":{"runs":2,"passed":[8,8],"total":8,"passRate":1,"cost":5.0206018,"seconds":569.5,"turns":66,"tokens":6769232,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill,Bash","bts-dev-cycle: Skill,Bash,Bash"]},{"key":"bts-api","text":"bts-api 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-api: Skill,Bash,Bash(sub),Skill(sub),Read(sub),Read(sub),Read(sub)","bts-api: Skill,Bash,Read(sub),Read(sub),Read(sub)"]},{"key":"test-driven-development","text":"test-driven-development 스킬을 불러 썼다","flags":[1,1],"evidence":["test-driven-development: Skill(sub)","test-driven-development: Skill,Bash"]},{"key":"turborepo","text":"turborepo 스킬을 불러 썼다","flags":[1,1],"evidence":["turborepo: Bash","turborepo: Bash"]},{"key":"bts-verify","text":"bts-verify 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-verify: Skill,Bash","bts-verify: Skill,Bash"]},{"key":"verification-before-completion","text":"verification-before-completion 스킬을 불러 썼다","flags":[1,1],"evidence":["verification-before-completion: Skill","verification-before-completion: Skill"]},{"key":"agent:bts-reviewer","text":"bts-reviewer 에이전트를 불렀다","flags":[1,1],"evidence":["2회: bts-reviewer code focus / bts-reviewer security focus","2회: Code review of todo update/delete / Security review of todo ownership"]},{"key":"ponytail-review","text":"ponytail-review 스킬을 불러 썼다","flags":[1,1],"evidence":["ponytail-review: Skill(sub),Skill(sub)","ponytail-review: Skill(sub)"]}]}}},{"name":"b-ui-summary-card","stage":"B 화면 구현·런타임·디자인 리뷰","prompt":"대시보드에 내 할 일 요약 카드(전체 몇 개, 완료 몇 개)를 하나 추가해 줘. 데이터는 이미 있는 todo 목록 API를 써. 검증과 리뷰까지 끝낸 뒤 사용자 확인 요청 전에 멈추고 보고해 줘.","expected":["bts-dev-cycle","bts-ui","impeccable","bts-web","shadcn","vercel-react-best-practices","next-dev-loop","ego-browser|agent-browser","web-design-guidelines","bts-verify","agent:bts-reviewer","ponytail-review"],"configs":{"old_template":{"runs":2,"passed":[10,10],"total":12,"passRate":0.8333,"cost":7.3817421,"seconds":994,"turns":107.5,"tokens":14058948.5,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill,Bash","bts-dev-cycle: Skill,Bash"]},{"key":"bts-ui","text":"bts-ui 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-ui: Skill,Bash","bts-ui: Skill,Bash,Read(sub)"]},{"key":"impeccable","text":"impeccable 스킬을 불러 썼다","flags":[1,1],"evidence":["impeccable: Bash,Skill,Bash[global],Bash[global],Bash[global],Bash[global],Read,Bash,Bash,Bash,Bash","impeccable: Bash,Skill,Bash,Bash,Bash,Read(sub),Bash(sub),Bash,Bash,Bash,Bash,Bash"]},{"key":"bts-web","text":"bts-web 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-web: Bash(sub),Read(sub),Bash,Bash","bts-web: Skill,Read(sub)"]},{"key":"shadcn","text":"shadcn 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"vercel-react-best-practices","text":"vercel-react-best-practices 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"next-dev-loop","text":"next-dev-loop 스킬을 불러 썼다","flags":[1,1],"evidence":["next-dev-loop: Skill","next-dev-loop: Skill"]},{"key":"ego-browser|agent-browser","text":"ego-browser 또는 agent-browser 스킬을 불러 썼다","flags":[1,1],"evidence":["ego-browser: Bash(sub),Bash(sub),Bash(sub),Bash(sub); agent-browser: cli/hint","ego-browser: Skill,Skill(sub),Skill(sub); agent-browser: cli/hint"]},{"key":"web-design-guidelines","text":"web-design-guidelines 스킬을 불러 썼다","flags":[1,1],"evidence":["web-design-guidelines: Skill","web-design-guidelines: Skill"]},{"key":"bts-verify","text":"bts-verify 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-verify: Skill,Bash","bts-verify: Skill,Bash"]},{"key":"agent:bts-reviewer","text":"bts-reviewer 에이전트를 불렀다","flags":[1,1],"evidence":["1회: bts-reviewer code review","1회: bts-reviewer code review"]},{"key":"ponytail-review","text":"ponytail-review 스킬을 불러 썼다","flags":[1,1],"evidence":["ponytail-review: Skill","ponytail-review: Skill(sub)"]}]},"new_template":{"runs":2,"passed":[12,12],"total":12,"passRate":1,"cost":9.620092900000003,"seconds":1269,"turns":124,"tokens":19759456.5,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill,Bash","bts-dev-cycle: Skill,Bash"]},{"key":"bts-ui","text":"bts-ui 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-ui: Bash,Bash,Bash(sub),Bash(sub)","bts-ui: Skill,Bash"]},{"key":"impeccable","text":"impeccable 스킬을 불러 썼다","flags":[1,1],"evidence":["impeccable: Bash,Bash,Bash,Bash,Bash,Bash,Bash,Read,Bash,Bash,Bash(sub),Read(sub),Bash(sub),Bash(sub),Bash(sub),Bash(sub),Bash,Bash","impeccable: Bash,Bash,Bash,Bash,Bash,Read(sub),Read(sub),Read(sub),Bash,Bash,Bash,Bash"]},{"key":"bts-web","text":"bts-web 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-web: Bash,Read(sub)","bts-web: Skill,Read(sub)"]},{"key":"shadcn","text":"shadcn 스킬을 불러 썼다","flags":[1,1],"evidence":["shadcn: Bash,Bash,Read","shadcn: Bash,Bash,Bash"]},{"key":"vercel-react-best-practices","text":"vercel-react-best-practices 스킬을 불러 썼다","flags":[1,1],"evidence":["vercel-react-best-practices: Bash,Bash,Read(sub)","vercel-react-best-practices: Bash,Bash,Read(sub)"]},{"key":"next-dev-loop","text":"next-dev-loop 스킬을 불러 썼다","flags":[1,1],"evidence":["next-dev-loop: Bash,Read","next-dev-loop: Bash"]},{"key":"ego-browser|agent-browser","text":"ego-browser 또는 agent-browser 스킬을 불러 썼다","flags":[1,1],"evidence":["ego-browser: Bash[global],Read[global],Read[global]; agent-browser: cli/hint","ego-browser: Skill; agent-browser: cli/hint"]},{"key":"web-design-guidelines","text":"web-design-guidelines 스킬을 불러 썼다","flags":[1,1],"evidence":["web-design-guidelines: Bash,Bash","web-design-guidelines: Bash,Bash"]},{"key":"bts-verify","text":"bts-verify 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-verify: Skill,Bash,Bash,Bash,Bash","bts-verify: Skill,Bash,Bash,Bash"]},{"key":"agent:bts-reviewer","text":"bts-reviewer 에이전트를 불렀다","flags":[1,1],"evidence":["1회: bts-reviewer code review","1회: bts-reviewer code review"]},{"key":"ponytail-review","text":"ponytail-review 스킬을 불러 썼다","flags":[1,1],"evidence":["ponytail-review: Skill(sub)","ponytail-review: Skill(sub)"]}]}}},{"name":"web-perf-analysis","stage":"C 성능 원인 분석(Next 캐시·프리패치)","prompt":"대시보드가 처음 열릴 때 느리고 화면이 깜빡여. 원인을 찾아서 어떻게 개선할지 정리해 줘. 캐시나 프리패치로 나아질 수 있으면 그것도 검토해 줘. 오늘은 분석과 개선안까지만 하고 코드는 고치지 마.","expected":["bts-dev-cycle","systematic-debugging|investigate","bts-web","vercel-react-best-practices","next-cache-components-adoption|next-cache-components-optimizer","next-partial-prefetching-adoption|next-partial-prefetching-optimizer","next-dev-loop"],"configs":{"old_template":{"runs":2,"passed":[1,1],"total":7,"passRate":0.1429,"cost":1.8093704,"seconds":315,"turns":26.5,"tokens":2343067.5,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"systematic-debugging|investigate","text":"systematic-debugging 또는 investigate 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"bts-web","text":"bts-web 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-web: Skill","bts-web: Skill"]},{"key":"vercel-react-best-practices","text":"vercel-react-best-practices 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"next-cache-components-adoption|next-cache-components-optimizer","text":"next-cache-components-adoption 또는 next-cache-components-optimizer 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"next-partial-prefetching-adoption|next-partial-prefetching-optimizer","text":"next-partial-prefetching-adoption 또는 next-partial-prefetching-optimizer 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"next-dev-loop","text":"next-dev-loop 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]}]},"new_template":{"runs":2,"passed":[5,5],"total":7,"passRate":0.7143,"cost":3.4547915000000002,"seconds":528,"turns":58,"tokens":6869925.5,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"systematic-debugging|investigate","text":"systematic-debugging 또는 investigate 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"bts-web","text":"bts-web 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-web: Skill","bts-web: Skill"]},{"key":"vercel-react-best-practices","text":"vercel-react-best-practices 스킬을 불러 썼다","flags":[1,1],"evidence":["vercel-react-best-practices: Bash","vercel-react-best-practices: Bash"]},{"key":"next-cache-components-adoption|next-cache-components-optimizer","text":"next-cache-components-adoption 또는 next-cache-components-optimizer 스킬을 불러 썼다","flags":[1,1],"evidence":["next-cache-components-adoption: Bash","next-cache-components-adoption: Bash; next-cache-components-optimizer: Bash,Bash"]},{"key":"next-partial-prefetching-adoption|next-partial-prefetching-optimizer","text":"next-partial-prefetching-adoption 또는 next-partial-prefetching-optimizer 스킬을 불러 썼다","flags":[1,1],"evidence":["next-partial-prefetching-adoption: Bash,Bash","next-partial-prefetching-adoption: Bash; next-partial-prefetching-optimizer: Bash"]},{"key":"next-dev-loop","text":"next-dev-loop 스킬을 불러 썼다","flags":[1,1],"evidence":["next-dev-loop: Bash","next-dev-loop: Bash"]}]}}},{"name":"auth-password-policy","stage":"D 인증 설정·보안 리뷰","prompt":"회원가입 비밀번호를 최소 12자로 바꾸고, 로그인 시도 횟수 제한도 켜 줘. 검증과 리뷰까지 끝낸 뒤 사용자 확인 요청 전에 멈추고 보고해 줘.","expected":["bts-dev-cycle","bts-api","better-auth-best-practices","better-auth-security-best-practices","email-and-password-best-practices","bts-verify","agent:bts-reviewer(security)"],"configs":{"old_template":{"runs":2,"passed":[5,5],"total":7,"passRate":0.7143,"cost":17.84259987500001,"seconds":1714,"turns":145.5,"tokens":28132513.5,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill,Bash","bts-dev-cycle: Skill,Bash"]},{"key":"bts-api","text":"bts-api 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-api: Skill,Bash,Skill(sub),Bash(sub),Bash(sub),Skill(sub)","bts-api: Skill,Bash,Skill(sub),Skill(sub),Bash(sub),Bash(sub),Bash(sub),Skill(sub)"]},{"key":"better-auth-best-practices","text":"better-auth-best-practices 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"better-auth-security-best-practices","text":"better-auth-security-best-practices 스킬을 불러 썼다","flags":[1,1],"evidence":["better-auth-security-best-practices: Bash,Skill(sub)","better-auth-security-best-practices: Skill,Bash(sub)"]},{"key":"email-and-password-best-practices","text":"email-and-password-best-practices 스킬을 불러 썼다","flags":[0,0],"evidence":["로드 없음","로드 없음"]},{"key":"bts-verify","text":"bts-verify 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-verify: Bash,Bash","bts-verify: Bash,Bash"]},{"key":"agent:bts-reviewer(security)","text":"bts-reviewer(security) 에이전트를 불렀다","flags":[1,1],"evidence":["1회: bts-reviewer security review","1회: bts-reviewer security focus"]}]},"new_template":{"runs":2,"passed":[6,7],"total":7,"passRate":0.92855,"cost":20.14844955000001,"seconds":1854,"turns":162.5,"tokens":35645162,"expectations":[{"key":"bts-dev-cycle","text":"bts-dev-cycle 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-dev-cycle: Skill,Bash","bts-dev-cycle: Skill,Bash"]},{"key":"bts-api","text":"bts-api 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-api: Bash,Bash,Skill(sub),Read(sub),Read(sub),Read(sub),Read(sub)","bts-api: Bash,Bash,Read(sub),Bash(sub),Bash(sub),Read(sub),Read(sub)"]},{"key":"better-auth-best-practices","text":"better-auth-best-practices 스킬을 불러 썼다","flags":[0,1],"evidence":["로드 없음","better-auth-best-practices: Bash,Read(sub)"]},{"key":"better-auth-security-best-practices","text":"better-auth-security-best-practices 스킬을 불러 썼다","flags":[1,1],"evidence":["better-auth-security-best-practices: Bash,Bash,Read(sub),Read(sub)","better-auth-security-best-practices: Bash,Read(sub)"]},{"key":"email-and-password-best-practices","text":"email-and-password-best-practices 스킬을 불러 썼다","flags":[1,1],"evidence":["email-and-password-best-practices: Bash,Bash","email-and-password-best-practices: Bash"]},{"key":"bts-verify","text":"bts-verify 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-verify: Skill,Bash,Bash","bts-verify: Skill,Bash"]},{"key":"agent:bts-reviewer(security)","text":"bts-reviewer(security) 에이전트를 불렀다","flags":[1,1],"evidence":["1회: bts-reviewer security review","1회: bts-reviewer security focus"]}]}}},{"name":"deploy-readiness","stage":"배포 준비 확인(Vercel)","prompt":"이 프로젝트를 Vercel develop 환경에 올리려면 뭐가 준비돼야 하는지 확인해 줘. 지금 빠진 것과 해야 할 순서만 알려 주고, 연결이나 배포는 하지 마.","expected":["bts-deploy","bts-db","!vercel:"],"configs":{"old_template":{"runs":2,"passed":[3,3],"total":3,"passRate":1,"cost":0.8117198999999999,"seconds":96.5,"turns":11,"tokens":685067,"expectations":[{"key":"bts-deploy","text":"bts-deploy 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-deploy: Skill","bts-deploy: Skill"]},{"key":"bts-db","text":"bts-db 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-db: Bash","bts-db: Bash"]},{"key":"!vercel:","text":"프로젝트 밖 vercel:* 스킬을 쓰지 않았다","flags":[1,1],"evidence":["없음","없음"]}]},"new_template":{"runs":2,"passed":[3,3],"total":3,"passRate":1,"cost":0.8581497,"seconds":118,"turns":13,"tokens":667039.5,"expectations":[{"key":"bts-deploy","text":"bts-deploy 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-deploy: Skill","bts-deploy: Skill"]},{"key":"bts-db","text":"bts-db 스킬을 불러 썼다","flags":[1,1],"evidence":["bts-db: Bash,Bash","bts-db: Bash"]},{"key":"!vercel:","text":"프로젝트 밖 vercel:* 스킬을 쓰지 않았다","flags":[1,1],"evidence":["없음","없음"]}]}}}],"totals":{"old_template":{"passed":76,"total":110,"runs":14},"new_template":{"passed":105,"total":110,"runs":14}},"skillHits":{"bts-dev-cycle":{"old_template":{"rate":0.8333333333333334,"n":12},"new_template":{"rate":0.8333333333333334,"n":12}},"brainstorming":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"domain-modeling":{"old_template":{"rate":0.5,"n":4},"new_template":{"rate":1,"n":4}},"writing-plans":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"plan-eng-review":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"plan-design-review":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"ponytail-review":{"old_template":{"rate":1,"n":6},"new_template":{"rate":1,"n":6}},"impeccable|bts-ui":{"old_template":{"rate":0.5,"n":2},"new_template":{"rate":1,"n":2}},"bts-db":{"old_template":{"rate":1,"n":6},"new_template":{"rate":1,"n":6}},"bts-api":{"old_template":{"rate":1,"n":6},"new_template":{"rate":1,"n":6}},"bts-web":{"old_template":{"rate":0.8333333333333334,"n":6},"new_template":{"rate":1,"n":6}},"supabase-postgres-best-practices":{"old_template":{"rate":0.25,"n":4},"new_template":{"rate":1,"n":4}},"bts-verify":{"old_template":{"rate":0.875,"n":8},"new_template":{"rate":1,"n":8}},"agent:bts-reviewer":{"old_template":{"rate":1,"n":6},"new_template":{"rate":1,"n":6}},"test-driven-development":{"old_template":{"rate":0,"n":2},"new_template":{"rate":1,"n":2}},"turborepo":{"old_template":{"rate":0,"n":2},"new_template":{"rate":1,"n":2}},"verification-before-completion":{"old_template":{"rate":0,"n":2},"new_template":{"rate":1,"n":2}},"bts-ui":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"impeccable":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"shadcn":{"old_template":{"rate":0,"n":2},"new_template":{"rate":1,"n":2}},"vercel-react-best-practices":{"old_template":{"rate":0,"n":4},"new_template":{"rate":1,"n":4}},"next-dev-loop":{"old_template":{"rate":0.5,"n":4},"new_template":{"rate":1,"n":4}},"ego-browser|agent-browser":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"web-design-guidelines":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"systematic-debugging|investigate":{"old_template":{"rate":0,"n":2},"new_template":{"rate":0,"n":2}},"next-cache-components-adoption|next-cache-components-optimizer":{"old_template":{"rate":0,"n":2},"new_template":{"rate":1,"n":2}},"next-partial-prefetching-adoption|next-partial-prefetching-optimizer":{"old_template":{"rate":0,"n":2},"new_template":{"rate":1,"n":2}},"better-auth-best-practices":{"old_template":{"rate":0,"n":2},"new_template":{"rate":0.5,"n":2}},"better-auth-security-best-practices":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"email-and-password-best-practices":{"old_template":{"rate":0,"n":2},"new_template":{"rate":1,"n":2}},"agent:bts-reviewer(security)":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"bts-deploy":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}},"!vercel:":{"old_template":{"rate":1,"n":2},"new_template":{"rate":1,"n":2}}},"origins":{"old_template":{"project":8,"global":11},"new_template":{"project":60,"global":0}},"failed":{"old_template":[],"new_template":[]},"st":{"neon":{"before":{"n":26,"tiers":[1,1,19,5],"cases":{"A":0,"B":3,"C":0,"D":0,"E":0,"F":5,"H":0,"공통":0},"weak":["shadcn(T1)","grilling(T0)"]},"after":{"n":26,"tiers":[1,0,14,11],"cases":{"A":0,"B":6,"C":0,"D":1,"E":2,"F":11,"H":0,"공통":1},"weak":["grilling(T0)"]}},"supabase":{"before":{"n":23,"tiers":[1,1,16,5],"cases":{"A":0,"B":3,"C":0,"D":0,"E":0,"F":5,"H":0,"공통":0},"weak":["shadcn(T1)","grilling(T0)"]},"after":{"n":23,"tiers":[1,0,12,10],"cases":{"A":0,"B":6,"C":0,"D":1,"E":1,"F":10,"H":0,"공통":1},"weak":["grilling(T0)"]}}}};
+const C = ["old_template", "new_template"];
+const pct = (x) => x == null ? "–" : Math.round(x * 100) + "%";
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const PROCESS = new Set(["brainstorming", "writing-plans", "test-driven-development", "verification-before-completion", "systematic-debugging|investigate", "ponytail-review", "plan-eng-review", "plan-design-review"]);
+const kind = (k) => k.startsWith("agent:") ? "에이전트" : k.startsWith("!") ? "금지" : k.startsWith("bts-") || k === "impeccable|bts-ui" ? "bts" : PROCESS.has(k) ? "프로세스" : "공식";
+const label = (k) => k.startsWith("agent:") ? k.slice(6) + " 에이전트" : k.startsWith("!") ? "프로젝트 밖 vercel:* 스킬을 쓰지 않음" : k.split("|").join(" 또는 ");
+
+// 요약 수치
+const T = D.totals;
+const rate = (c) => T[c].total ? T[c].passed / T[c].total : null;
+const offKeys = Object.keys(D.skillHits).filter((k) => kind(k) === "공식");
+const offRate = (c) => { let h = 0, n = 0; for (const k of offKeys) { const v = D.skillHits[k][c]; if (v.n) { h += v.rate * v.n; n += v.n; } } return n ? h / n : null; };
+const org = (c) => { const o = D.origins[c]; const n = o.project + o.global; return n ? o.project / n : null; };
+const nb = D.st.neon.before, na = D.st.neon.after;
+document.getElementById("lede").textContent =
+  `dev-cycle 라운드 7종을 before와 after로 두 번씩 실행해, 그 단계에서 불려야 할 스킬을 실제로 불렀는지 셌다. 기대 스킬 호출률은 ${pct(rate(C[0]))}에서 ${pct(rate(C[1]))}로, 그 가운데 공식 스킬(vercel·next.js·neon·supabase·better-auth·shadcn 등)만 보면 ${pct(offRate(C[0]))}에서 ${pct(offRate(C[1]))}로 올랐다. 스킬이 아예 로드되지 않는 결함 2건과, 전역 스킬이 프로젝트 판을 가리는 문제도 찾아 고쳤다.`;
+const tiles = [
+  { label: "기대 스킬 호출률 (전체 항목)", from: pct(rate(C[0])), to: pct(rate(C[1])), sub: `before ${T[C[0]].passed}/${T[C[0]].total} · after ${T[C[1]].passed}/${T[C[1]].total} (run ${T[C[0]].runs}회 · ${T[C[1]].runs}회)` },
+  { label: "공식 스킬만의 호출률", from: pct(offRate(C[0])), to: pct(offRate(C[1])), sub: `기대 항목 ${offKeys.reduce((a, k) => a + D.skillHits[k][C[0]].n, 0)}개(스킬 ${offKeys.length}종), bts·프로세스 스킬 제외` },
+  { label: "외부 스킬을 프로젝트 고정 판에서 읽은 비율", from: pct(org(C[0])), to: pct(org(C[1])), sub: `before ${D.origins[C[0]].project}/${D.origins[C[0]].project + D.origins[C[0]].global} · after ${D.origins[C[1]].project}/${D.origins[C[1]].project + D.origins[C[1]].global}. 나머지는 전역 판. gstack·ego-browser처럼 전역에만 있는 도구는 뺐다` },
+  { label: "dev-cycle 행에 이름이 나오는 공식 도메인 스킬", from: String(nb.tiers[3]), to: String(na.tiers[3]), sub: `neon 템플릿 도메인 스킬 ${nb.n}개 중 (supabase ${D.st.supabase.before.tiers[3]} → ${D.st.supabase.after.tiers[3]} / ${D.st.supabase.before.n})` },
+];
+document.getElementById("tiles").innerHTML = tiles.map((t) => `<div class="tile"><div class="label">${t.label}</div><div class="fig"><span class="from">${t.from}</span><span class="arrow" aria-hidden="true">→</span><span class="to">${t.to}</span></div><div class="sub">${t.sub}</div></div>`).join("");
+
+// 시나리오 막대
+const bars = D.scenarios.map((s) => {
+  const [o, n] = C.map((c) => s.configs[c]);
+  const one = (v, cls, name) => v
+    ? `<div class="track" data-tip="${esc(`${name}: run별 ${v.passed.map((p) => `${p}/${v.total}`).join(", ")}`)}"><div class="grid"></div><div class="bar ${cls}" style="width:${v.passRate * 100}%"></div></div>`
+    : `<div class="track"><div class="grid"></div><span class="pending" style="position:absolute;left:8px;top:-1px">${name} 실행 중</span></div>`;
+  const delta = o && n ? Math.round((n.passRate - o.passRate) * 100) : null;
+  const vt = (v, name) => v ? `${name} ${pct(v.passRate)} (${v.passed.join("·")}/${v.total})` : `${name} 실행 중`;
+  return `<div class="bar-row"><div class="bar-head"><span class="stage">${esc(s.stage)}</span><span class="delta" style="color:${delta > 0 ? "var(--good)" : "var(--muted)"}">${delta == null ? "" : (delta > 0 ? "+" : "") + delta + "%p"}</span></div><div class="bar-vals">${vt(o, "before")} → ${vt(n, "after")}</div>${one(o, "before", "before")}${one(n, "after", "after")}</div>`;
+});
+document.getElementById("bars").innerHTML = bars.join("");
+document.getElementById("scen-note").textContent = "배포 준비는 before와 after 모두 만점이라 bts-deploy는 이미 제 역할을 하고 있었다. 성능 분석 after에서 빠진 두 항목(dev-cycle 라운드, systematic-debugging)은 요청이 \"개선안 정리까지\"라 라운드를 열지 않은 것으로, 기대가 갈리는 항목이다. 이 시나리오의 공식 스킬 4종은 after 두 run 모두 읽었다.";
+
+// 스킬별 점 차트
+const rows = Object.entries(D.skillHits)
+  .map(([k, v]) => ({ k, b: v[C[0]].rate, a: v[C[1]].rate, nb: v[C[0]].n, na: v[C[1]].n }))
+  .sort((x, y) => ((y.a ?? 0) - (y.b ?? 0)) - ((x.a ?? 0) - (x.b ?? 0)) || (x.b ?? 0) - (y.b ?? 0) || x.k.localeCompare(y.k));
+document.getElementById("dumb").innerHTML =
+  `<div class="hdr">스킬</div><div class="hdr" aria-hidden="true" style="display:flex;justify-content:space-between"><span>0%</span><span>50%</span><span>100%</span></div><div class="hdr" style="text-align:right">before → after</div>` +
+  rows.map((r) => {
+    const lo = Math.min(r.b ?? 0, r.a ?? r.b ?? 0), hi = Math.max(r.b ?? 0, r.a ?? r.b ?? 0);
+    const tip = `${label(r.k)} · before ${pct(r.b)} (run ${r.nb}) · after ${pct(r.a)} (run ${r.na})`;
+    return `<div class="name">${esc(label(r.k))}<small>${kind(r.k)}</small></div>` +
+      `<div class="lane hit" data-tip="${esc(tip)}"><div class="grid"></div><div class="seg" style="left:${lo * 100}%;width:${(hi - lo) * 100}%"></div>` +
+      (r.b != null ? `<div class="dot before" style="left:${r.b * 100}%"></div>` : "") +
+      (r.a != null ? `<div class="dot after" style="left:${r.a * 100}%"></div>` : "") + `</div>` +
+      `<div class="vals">${pct(r.b)} → ${r.na ? pct(r.a) : "실행 중"}</div>`;
+  }).join("");
+
+document.getElementById("origin-pre").textContent =
+  `프로젝트에 설치된 외부 스킬의 로드 출처(run 전체, 스킬·run당 한 번 셈)\nbefore: 프로젝트 ${D.origins[C[0]].project} · 전역 ${D.origins[C[0]].global}\nafter:  프로젝트 ${D.origins[C[1]].project} · 전역 ${D.origins[C[1]].global}`;
+
+// 정적 표
+const caseList = ["B", "C", "D", "E", "F", "공통"];
+const sr = (t, w, v) => `<tr><td>${t}</td><td>${w}</td><td class="num">${v.n}</td>${v.tiers.map((x) => `<td class="num">${x}</td>`).join("")}${caseList.map((c) => `<td class="num">${v.cases[c] ?? 0}</td>`).join("")}</tr>`;
+document.getElementById("static-table").innerHTML =
+  `<thead><tr><th>템플릿</th><th>판</th><th class="num">도메인 스킬</th><th class="num">T0</th><th class="num">T1</th><th class="num">T2</th><th class="num">T3</th>${caseList.map((c) => `<th class="num">${c} 행</th>`).join("")}</tr></thead><tbody>` +
+  sr("neon", "before", D.st.neon.before) + sr("neon", "after", D.st.neon.after) + sr("supabase", "before", D.st.supabase.before) + sr("supabase", "after", D.st.supabase.after) + `</tbody>` +
+  `<caption class="note" style="caption-side:bottom;text-align:left;padding-top:8px">"B 행" 등은 그 케이스 대조표 행에 이름이 나온 공식 도메인 스킬 수(F는 E·D·B를 포함)</caption>`;
+
+// 비용 표
+const f1 = (x) => x == null ? "–" : x.toFixed(2);
+const min = (x) => x == null ? "–" : (x / 60).toFixed(1);
+document.getElementById("cost-table").innerHTML =
+  `<thead><tr><th>시나리오</th><th class="num">비용 before</th><th class="num">비용 after</th><th class="num">분 before</th><th class="num">분 after</th><th class="num">턴 before</th><th class="num">턴 after</th></tr></thead><tbody>` +
+  D.scenarios.map((s) => { const [o, n] = C.map((c) => s.configs[c]); return `<tr><td>${esc(s.stage)}</td><td class="num">$${f1(o?.cost)}</td><td class="num">${n ? "$" + f1(n.cost) : "–"}</td><td class="num">${min(o?.seconds)}</td><td class="num">${min(n?.seconds)}</td><td class="num">${o ? Math.round(o.turns) : "–"}</td><td class="num">${n ? Math.round(n.turns) : "–"}</td></tr>`; }).join("") + `</tbody>`;
+
+const sum = (c, f) => D.scenarios.reduce((a, s) => a + (s.configs[c]?.[f] ?? 0), 0);
+{ const cb = sum(C[0], "cost"), ca = sum(C[1], "cost"), tb = sum(C[0], "seconds"), ta = sum(C[1], "seconds");
+  document.getElementById("cost-sum").textContent = `일곱 시나리오를 한 번씩 돌리는 데 before는 $${cb.toFixed(1)}·${(tb / 60).toFixed(0)}분, after는 $${ca.toFixed(1)}·${(ta / 60).toFixed(0)}분이 들었다(비용 +${Math.round((ca / cb - 1) * 100)}%, 시간 +${Math.round((ta / tb - 1) * 100)}%). 같은 run들에서 프로젝트 외부 스킬을 읽은 횟수는 ${D.origins[C[0]].project + D.origins[C[0]].global}건에서 ${D.origins[C[1]].project + D.origins[C[1]].global}건으로 늘었다. 늘어난 비용 가운데 스킬 읽기가 차지하는 몫은 따로 재지 않았다.`; }
+// 세부
+document.getElementById("details").innerHTML = D.scenarios.map((s) => {
+  const [o, n] = C.map((c) => s.configs[c]);
+  const mark = (v, i) => v ? v.expectations[i].flags.map((f) => f ? `<span class="ok" aria-label="통과">✓</span>` : `<span class="no" aria-label="실패">✗</span>`).join(" ") : "실행 중";
+  const ev = (v, i) => v ? esc(v.expectations[i].evidence.filter(Boolean).join(" / ")) : "";
+  return `<details><summary>${esc(s.stage)} · before ${o ? o.passed.join(",") : "–"} / after ${n ? n.passed.join(",") : "–"} (항목 ${s.expected.length})</summary>` +
+    `<p class="prompt">요청: ${esc(s.prompt)}</p><div class="table-wrap"><table><thead><tr><th>기대 항목</th><th>before</th><th>after</th><th>after 근거</th></tr></thead><tbody>` +
+    s.expected.map((k, i) => `<tr><td>${esc(label(k))}</td><td>${mark(o, i)}</td><td>${mark(n, i)}</td><td class="note">${ev(n, i)}</td></tr>`).join("") + `</tbody></table></div></details>`;
+}).join("");
+
+// 툴팁
+const tip = document.getElementById("tip");
+document.addEventListener("pointermove", (e) => {
+  const t = e.target.closest && e.target.closest("[data-tip]");
+  if (!t) { tip.hidden = true; return; }
+  tip.textContent = t.dataset.tip; tip.hidden = false;
+  const x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+  tip.style.left = x + "px"; tip.style.top = (e.clientY + 16) + "px";
+});
+document.addEventListener("pointerleave", () => { tip.hidden = true; });
+</script>
+
+</body></html>

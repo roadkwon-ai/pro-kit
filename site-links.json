@@ -1,0 +1,8 @@
+{
+	"home": "https://prokit-web.vercel.app",
+	"pages": "https://roadkwon-ai.github.io/pro-kit",
+	"repo": "https://github.com/roadkwon-ai/pro-kit",
+	"packs": "https://github.com/roadkwon-ai/pro-kit-packs",
+	"premiumPacks": "https://github.com/roadkwon-ai/pro-kit-premium-packs",
+	"aiService": "https://prokit-ai-relay-puce.vercel.app"
+}

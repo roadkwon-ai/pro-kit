@@ -1,0 +1,40 @@
+# OS·에디터
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# 의존성·캐시·로그
+node_modules/
+__pycache__/
+*.log
+
+# 비밀값. .env.schema와 .env.example은 커밋한다
+.env
+.env.*
+!.env.schema
+!.env.example
+
+# 외부 서비스 연결 정보 (neon, vercel link)
+.neon
+.vercel/
+
+# 에이전트 런타임 상태
+.omc/
+.omx/
+.superpowers/
+
+# 요청 원본 자료 (데모 계정, 실명 포함). 로컬에만 둔다
+request/
+
+# 템플릿을 만들 때 참고한 자료 (외부 키트 사본, 순수 BTS 튜토리얼). 로컬에만 둔다
+/references/
+/boilerplate/
+
+# 로컬 전용 기록
+/personal_branding/
+/CLAUDE.local.md
+
+# 튜토리얼 프리셋 팩(scripts/pack.mjs로 받음). 팩은 릴리스 zip으로만 둔다
+/packs/

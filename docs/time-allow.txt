@@ -1,0 +1,11 @@
+# 맨시간 허용 목록. scripts/doc-values.test.mjs의 맨시간 검사가 읽는다. 짧게 유지하고, 항목마다 이유를 적는다.
+# 줄 꼴: `파일(글롭) 위치 :: 이유`. 위치가 `#절 제목 앞부분`이면 그 절 아래 전체, `#`뿐이면 파일 전체, 아니면 그 글이 든 줄이다.
+# 두 곳 이상에 같은 뜻으로 쓰는 시간과 자주 바뀌는 시간은 여기 두지 않고 값 키로 쓴다(docs/common-values.md 규칙).
+tutorials/samples/*.md | 3. 리디자인 | :: 프리셋 쪽 "실제로 거친 과정" 표의 리디자인 행에만 쓰는 제작 기록(리디자인에 걸린 시간, 시안 속 서비스 문구)이다. 절 전체가 아니라 이 행만 연다. 다른 곳에서도 쓰면 값으로 옮긴다(고루의 56분은 preset.goru.actual.redesign.time)
+tutorials/samples/*.md #실제 서비스로 만들 때 :: 만들 서비스의 규칙과 기능(수업 4시간 전 취소, 1분마다 확인)이라 pro-kit의 시간 값이 아니다
+tutorials/samples/02-concept.md 월말 정산이 5분 안에 :: 예시 컨셉(living)의 성공 기준 글이라 pro-kit의 시간 값이 아니다
+tutorials/01-nextflix/10-watch.md # :: 만들 서비스의 동작(예고편 5초)과 확인 방법(30초쯤 보기)이라 pro-kit의 시간 값이 아니다
+handbook/design/design-md.md #효과 :: 2026-09-30 DESIGN.md A/B 비교 실험의 측정 기록이라 바뀌지 않는다(지금 쓰는 단위값은 cost.unit.*)
+tutorials/reference/process-and-time.md 10분 넘게 아무 일도 없던 :: 실측에서 멈춘 구간을 빼는 기준(측정 방법)이라 한 곳에만 쓴다
+tutorials/reference/deploy.md 1분쯤 지나야 열려요 :: 문제 해결의 기다림 안내(GitHub Pages 반영)라 시간 값이 아니다
+handbook/deploy/github-pages.md 보통 1분 안 :: 절차의 기다림 안내(GitHub Pages 반영)라 시간 값이 아니다

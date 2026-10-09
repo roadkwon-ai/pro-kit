@@ -1,0 +1,22 @@
+[
+  {"query": "todo 삭제 API 만들어줘. 본인 것만 지울 수 있어야 해", "should_trigger": true},
+  {"query": "다른 계정으로 로그인했는데 남의 할 일이 보여요!!", "should_trigger": true},
+  {"query": "oRPC 라우터에 할 일 통계(stats) 프로시저 추가해줘", "should_trigger": true},
+  {"query": "Better Auth에 GitHub 로그인 추가하고 싶어", "should_trigger": true},
+  {"query": "비밀번호 재설정 이메일 흐름 만들어줘", "should_trigger": true},
+  {"query": "privateData 프로시저 지우고 me 프로시저로 바꿔줘", "should_trigger": true},
+  {"query": "API 입력값 검증이 없어서 빈 제목으로도 저장돼. 막아줘", "should_trigger": true},
+  {"query": "로그인 시도를 너무 많이 하면 막는 rate limit 걸어줘", "should_trigger": true},
+  {"query": "trusted origins에 스테이징 도메인 staging.example.com 추가해줘", "should_trigger": true},
+  {"query": "할 일 공유 기능인데 내가 초대한 사람만 볼 수 있게 권한 로직 짜줘", "should_trigger": true},
+  {"query": "todo 테이블에 shared_with 컬럼 추가하는 마이그레이션 만들어줘", "should_trigger": false},
+  {"query": "로그인 페이지 레이아웃 좀 예쁘게 다듬어줘", "should_trigger": false},
+  {"query": "로그인 폼 제출 버튼에 로딩 스피너 넣어줘", "should_trigger": false},
+  {"query": "할 일 목록 쿼리가 느려서 인덱스 추가해줘", "should_trigger": false},
+  {"query": "JWT랑 세션 쿠키 방식 차이를 개념적으로 설명해줘", "should_trigger": false},
+  {"query": "Supabase에서 read replica 쓰는 법", "should_trigger": false},
+  {"query": "todos 페이지를 서버 컴포넌트로 바꿔줘", "should_trigger": false},
+  {"query": "express 서버를 따로 두는 게 나을까? 장단점만", "should_trigger": false},
+  {"query": "Auth0랑 Clerk 가격 비교해줘", "should_trigger": false},
+  {"query": "이번 라운드 대조표 close 해줘", "should_trigger": false}
+]

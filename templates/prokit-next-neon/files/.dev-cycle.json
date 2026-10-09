@@ -1,0 +1,31 @@
+{
+	"todoPath": "tasks/todo.md",
+	"archiveDir": "tasks/archive",
+	"workflowDoc": "docs/dev-workflow.md",
+	"defaultBranch": "main",
+	"rules": [
+		{
+			"case": "E",
+			"match": "^packages/db/",
+			"why": "DB 스키마·마이그레이션·연결"
+		},
+		{
+			"case": "D",
+			"match": "^(packages/api/|apps/web/src/app/api/)",
+			"why": "서버·API"
+		},
+		{
+			"case": "B",
+			"match": "^(apps/web/src/(app|components)/|packages/ui/)",
+			"why": "화면·UI"
+		},
+		{
+			"case": "H",
+			"match": "^(\\.agents/(skills|agents)/|\\.claude/(agents|skills)/|\\.claude/settings\\.json$|\\.codex/(agents|skills|prompts)/|skills-lock\\.json$|skills\\.manifest\\.json$|scripts/(dev-cycle|sync-agents|skills-setup|vercel-deploy)\\.mjs$|\\.dev-cycle\\.json$|\\.vercelignore$|docs/dev-workflow\\.md$)",
+			"why": "하네스"
+		}
+	],
+	"authPaths": "^(packages/auth/|apps/web/src/app/api/auth/|apps/web/src/lib/auth-client\\.ts$|apps/web/src/(proxy|middleware|services|context|env\\.server)\\.ts$|packages/api/src/(index|context)\\.ts$|packages/db/src/schema/auth\\.ts$|(.*/)?\\.env\\.schema$)",
+	"ui": { "auditMin": 16, "a11yMin": 3 },
+	"commands": {}
+}

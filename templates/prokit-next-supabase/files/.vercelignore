@@ -1,0 +1,22 @@
+# vercel deploy(CLI)는 .gitignore를 따르지 않는다. 로컬 비밀값이 든 .env가 배포 소스에 올라가지 않게 뺀다.
+# .env.schema는 varlock이 빌드 때 환경변수를 검사하는 데 쓰므로 올린다.
+.env
+.env.*
+!.env.schema
+# git이 무시하는 로컬 캐시와 에이전트 상태·로그. 빌드에 쓰지 않고, 올리면 배포 소스로 팀에 보인다.
+.turbo
+.omc
+.omx
+.impeccable
+tasks/evidence
+coverage
+# pnpm export:html이 만든 정적 사이트(화면만 프로젝트에서 실제 서비스로 바꾼 뒤에도 남을 수 있다)
+/html
+# 로컬 경로와 에이전트 지시가 든 OMX 설정(.codex), Neon 연결 정보(.neon), Supabase CLI 연결 정보(supabase/.temp),
+# 인증서와 개인 키(*.pem), 로컬 전용 파일(*.local, settings.local.json 같은 *.local.*)
+.codex
+.neon
+**/supabase/.temp
+*.pem
+*.local
+*.local.*

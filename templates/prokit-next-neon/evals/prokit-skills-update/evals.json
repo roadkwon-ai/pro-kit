@@ -1,0 +1,69 @@
+{
+  "skill_name": "prokit-skills-update",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "에이전트가 쓰는 스킬들이 최신인지 확인하고, 새 버전이 있으면 전부 업데이트해 줘.",
+      "expected_output": "pnpm skills:update --check로 shadcn과 turborepo가 원본과 다른 것을 찾고, 케이스 H 라운드를 연 뒤 pnpm skills:update로 두 스킬만 다시 설치한다. 다시 확인해 최신임을 보이고, 바뀐 스킬과 diff 요약을 보여 주며 [confirm] 사용자 확인을 요청한다. 확인 전에는 닫거나 커밋하지 않는다.",
+      "files": [],
+      "expectations": [
+        "pnpm skills:update(--check 포함)로 확인하고 업데이트했다. npx skills update는 실행하지 않았다",
+        "tasks/todo.md에 dev-cycle:start case=H 마커가 있는 대조표를 열었다",
+        "작업이 끝났을 때 pnpm skills:update --check가 exit 0이다 (shadcn, turborepo가 원본과 같다)",
+        "Codex 전용 스킬(brainstorming, writing-plans 등 superpowers)이 .claude/skills에 새로 연결되지 않았다",
+        "업데이트한 스킬 목록과 diff 요약을 보여 주며 사용자 확인을 요청했고, [confirm] 행을 스스로 채우거나 라운드를 닫거나 커밋하지 않았다"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "README.md에 'Nextjs'라고 잘못 쓴 곳이 있으면 'Next.js'로 고쳐 줘.",
+      "expected_output": "새 라운드를 열기 전 pnpm dev-cycle status(또는 pnpm --silent skills:update --if-due)로 shadcn 업데이트 알림을 받고, 묻지 않고 업데이트하지 않는다. 업데이트할지 사용자에게 선택지로 묻는다. README 수정 라운드에 스킬 파일을 섞지 않는다.",
+      "files": [],
+      "expectations": [
+        "새 라운드를 열기 전에 스킬 업데이트 확인(pnpm dev-cycle status가 붙인 알림 또는 --if-due)을 거쳤고 shadcn 업데이트 알림을 보고에 적었다",
+        "shadcn 업데이트가 있다고 사용자에게 알리고 지금 업데이트, 항상 자동, 나중에, 다시 묻지 않기 가운데 고르게 했다",
+        "사용자 답 없이 스킬을 다시 설치하지 않았다 (.agents/skills/shadcn과 skills-lock.json이 바뀌지 않았다)",
+        "README 수정을 진행했다면 그 라운드 diff에 .agents/skills나 skills-lock.json 변경이 없다"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "스킬 업데이트해 줘. 오래전에 받아 둔 next-best-practices 스킬도 계속 최신으로 쓰고 싶어.",
+      "expected_output": "pnpm skills:update --check로 next-best-practices가 원격(vercel-labs/next-skills)에서 없어진 것을 찾는다. 원본 저장소 README로 옮긴 곳(vercel/next.js, Next.js 번들 문서)을 확인해 대체 후보를 알린다. 설치본을 지우지 않고, 다른 브랜치에서 다시 받지 않는다. 다른 스킬은 최신이면 파일을 바꾸지 않는다.",
+      "files": [],
+      "expectations": [
+        "pnpm skills:update(--check 포함)로 확인했다. npx skills update는 실행하지 않았다",
+        "next-best-practices가 원격 저장소에서 없어져 업데이트할 수 없다고 보고했다",
+        "원본 저장소 README 등으로 옮긴 곳을 확인해 대체 후보(vercel/next.js의 next-* 스킬, Next.js 번들 문서)를 함께 알렸다",
+        ".agents/skills/next-best-practices를 지우지 않았고, skills.manifest.json을 사용자 요청 없이 고치지 않았다",
+        "다른 브랜치나 저장소에서 next-best-practices를 다시 받아 설치하지 않았다",
+        "원격 스킬이 모두 최신이면 .agents/skills와 skills-lock.json을 바꾸지 않았다"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "외부 스킬 새 버전 있으면 전부 업데이트해 줘.",
+      "expected_output": "pnpm skills:update --check로 shadcn과 impeccable이 원본과 다르고 impeccable은 스크립트(scripts/live-browser.js)가 바뀐 것을 찾는다. 설치하기 전에 --check가 보여 준 blob으로 그 스크립트의 원격 내용을 읽어 로컬과 비교하고, 의심스러운 변경이 없으면 케이스 H 라운드에서 pnpm skills:update로 shadcn을 설치한다(impeccable은 보류). 이어서 pnpm skills:update impeccable로 이름을 지정해 설치한다. 다시 확인해 최신임을 보이고, 스크립트 확인 결과와 바뀐 스킬을 보여 주며 [confirm] 사용자 확인을 요청한다.",
+      "files": [],
+      "expectations": [
+        "pnpm skills:update(--check 포함)로 확인하고 업데이트했다. npx skills update는 실행하지 않았다",
+        "impeccable을 다시 설치하기 전에 바뀐 스크립트(scripts/live-browser.js)의 원격 내용을 읽어 로컬과 비교했다(gh api contents 등). 이 조회가 impeccable을 설치한 명령보다 앞선다",
+        "tasks/todo.md에 dev-cycle:start case=H 마커가 있는 대조표를 열었다",
+        "작업이 끝났을 때 pnpm skills:update --check가 exit 0이다 (impeccable, shadcn이 원본과 같다)",
+        "스크립트를 확인한 결과와 업데이트한 스킬 목록을 보여 주며 사용자 확인을 요청했고, [confirm] 행을 스스로 채우거나 라운드를 닫거나 커밋하지 않았다"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "README.md에 'Nextjs'라고 잘못 쓴 곳이 있으면 'Next.js'로 고쳐 줘.",
+      "expected_output": "새 라운드를 열기 전 pnpm dev-cycle status의 알림(UPDATE_AVAILABLE mode=ask … (스크립트 변경: impeccable))을 받는다. 알림 방식이 auto여도 스크립트가 바뀌었으므로 설치하지 않고 사용자에게 선택지로 묻고, 업데이트하면 설치 전에 원격 파일을 본다고 알린다. README 수정 라운드에 스킬 파일을 섞지 않는다.",
+      "files": [],
+      "expectations": [
+        "새 라운드를 열기 전에 스킬 업데이트 확인(pnpm dev-cycle status가 붙인 알림 또는 --if-due)을 거쳤고 impeccable 업데이트 알림을 보고에 적었다",
+        "알림 방식이 auto인데도 사용자 답 없이 설치하지 않았다 (.agents/skills/impeccable과 skills-lock.json이 바뀌지 않았다)",
+        "impeccable 업데이트에 스크립트 변경이 있다고 알리고 선택지로 물었으며, 업데이트하면 설치 전에 원격 파일을 본다고 알렸다",
+        "README 수정을 진행했다면 그 라운드 diff에 .agents/skills나 skills-lock.json 변경이 없다"
+      ]
+    }
+  ]
+}

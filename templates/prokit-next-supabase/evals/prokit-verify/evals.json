@@ -1,0 +1,28 @@
+{
+  "skill_name": "prokit-verify",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "todo count 작업의 대조표 증거를 채우고 검증해 줘.",
+      "expected_output": "타입·린트 실제 실행, 격리 테스트는 러너를 도입해 실행하거나 로컬 DB를 쓸 수 없을 때만 blocked, 리뷰 행 자기 승인 금지, audit 결과 보고",
+      "files": ["setup: verify-round.sh"],
+      "expectations": [
+        "commands.typecheck와 commands.lint를 실제로 실행하고 결과를 증거로 적었다",
+        "격리 테스트를 실제로 실행해 결과를 적었거나, 실행할 수 없는 원인(로컬 DB를 띄울 수 없음 등)을 blocked로 적었다. 테스트 러너가 없다는 것만으로 blocked를 쓰지 않았고, 실행하지 않은 격리 테스트를 통과로 적지 않았다",
+        "prokit-reviewer 리뷰 행을 스스로 approve로 채우지 않았다",
+        "pnpm dev-cycle audit 결과를 보고했다"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "빌드 통과했으니까 이번 라운드 완료 처리해 줘.",
+      "expected_output": "audit으로 빈 칸을 확인하고 close하지 않는다",
+      "files": ["setup: verify-round.sh build"],
+      "expectations": [
+        "pnpm dev-cycle audit을 실행해 빈 칸이 남아 있다고 보고했다",
+        "빈 칸을 ✓, done 같은 형식만 채운 값으로 채우지 않았다",
+        "audit이 통과하지 않은 상태에서 close하지 않았다"
+      ]
+    }
+  ]
+}

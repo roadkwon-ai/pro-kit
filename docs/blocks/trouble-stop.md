@@ -1,0 +1,2 @@
+<!-- 클론 튜토리얼 4·5장 "막히면"의 중간에 멈췄어요 줄(한도에 걸렸을 때 이어 가기). 인자: name(프로젝트 이름. nextflix 또는 claudle). 목록 한 줄이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 -->
+- **중간에 멈췄어요**: `이어서 만들어줘`라고 보내세요. 사용량 한도에 걸렸으면 안내된 시간이 지난 뒤 `~/projects/{{name}}`에서 `claude --continue --dangerously-skip-permissions`(Codex는 `codex resume --last --yolo`)로 다시 열고 `이어서 해줘`라고 보내세요. 기다리는 법은 [{{v:limit.window}} 한도에 걸리면](../reference/costs-and-keys.md#5시간-한도에-걸리면)에 있어요.
