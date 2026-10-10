@@ -4,6 +4,11 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 모든 값은 2026-09-27에 측정한 실측값이다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [bts-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 프리셋 기본 모드·언어 규칙 (2026-10-10)
+
+앞으로 제작하는 프리셋에 시스템·라이트·다크와 한국어·영어를 기본으로 요구하는 규칙, 번역 사전·정적 HTML·프로킷 미리보기 연결 참조를 추가했다. 검사와 native 계획 행동 평가, 실제 사이트 기능과 기존 공개 프리셋의 차이는 [프리셋 디자인 설정과 제작 기본 기능](../../docs/reports/2026-10-10-preset-design-controls/README.md)에 기록한다. 기존 프리셋을 전환 완료로 선언하지 않는다.
+
+
 ## 재사용·설정 설계 보강 (2026-10-09)
 
 구현 전 설계 결정, 독립 계획 리뷰, 공식 스킬의 역할 연결을 보완했다. 새 스킬이나 의존성은 더하지 않았다. 검사 명령·결과, 행동 평가의 기준선·실패·수정 내역과 한계는 [프리셋 재사용과 dev-cycle 설계 검토](../../docs/reports/2026-10-09-reuse-design-review/README.md)에 기록했다. 기존 프로젝트는 자신의 세션에서 템플릿 갱신을 반영하고 열린 라운드를 업그레이드한다.
@@ -738,3 +743,19 @@ Supabase DB 사례는 수정한 판으로 실행했다. BTS 3.44.2, Codex CLI 0.
 자원 정책은 `.dev-cycle.json`의 `resources`가 정본이다. guard는 프로젝트 안 자원과 등록 roots만 측정하고, 기존 캐시와 영구 환경은 지우지 않는다. 이번 실행이 만든 compiler cache와 관리 임시 폴더만 소유권·lease·자식 종료·결과 전달을 증명한 뒤 정리할 수 있다. `dev-cycle resource check|run|clean`, `dev-cycle delegation capture|resolve|validate`가 공개 명령이다.
 
 final6에서 neon·supabase 전체 검사는 각각 264/264, shared-files 검사는 2/2 통과했다. 자원 R3과 위임 R4는 critical·high 0건으로 승인됐고, 최신 provider adapter와 evidence setter, content hash 관측 진단도 독립 검토에서 critical·high·medium 0건이었다. 실제 BTS 3개 프로젝트에서 설치·재설치·`check`·`skills:check`·`agents:check`·`check-types`·Biome 검사를 확인했다. `dev-cycle evidence`는 활성 대조표의 지정 행만 프로젝트 안 일반 한 줄 파일로 갱신하며 헤더·stage와 다른 행은 보존한다. `dev-cycle delegation resolve`는 실제 원본을 관찰하지만 신뢰한 inspection과 실제 host adapter가 없으면 inspection-only로 막는다. 최신 사용자 지시의 증분 인수는 고정 candidate-v14에서 24/24, 120/120, 고위험 55/55, 무단 행동·거짓 주장 0건으로 PASS다. 이는 미통과 항목만 보완한 수용 결과이며 원래 baseline/candidate 각 3회 비교와 환경 간 재현성을 완료로 뜻하지 않는다. Codex native 지원은 원시 rollout receipt로 확인했고 Claude Code, Antigravity, Grok Build의 live 결과는 통과로 세지 않는다. 정책, 증거 해시, 한계는 [승인된 위임과 자원 관리 구현 기록](../../docs/reports/2026-10-09-orchestration-resources/README.md)에 적었다.
+
+## 디자인 설정 제작 계약과 완료 검사 (2026-10-11)
+
+선택값을 실제 디자인 토큰에 고정하고, `docs/preset-design.json`과 `DESIGN.md`를 대조 기준으로 삼도록 `prokit-ui` 계약을 보완했다. 실제 서체 로딩·computed style·대비, 모드·언어와 입력 유지, 내보낸 HTML의 증거를 요구한다. 내보내기 명령 성공만으로 선택 디자인의 적용을 판정하지 않는다.
+
+두 템플릿 전체 검사는 각각 274개, 공유 파일 검사는 두 개가 통과했다. 사이트에서 공통 프롬프트의 자동 블록 재삽입·본문 보존·즉시 복사/전송 일치도 회귀 검사했다. 기존 앱 구현과 Ego 검증의 범위·남은 한계는 [프리셋 디자인 검증 기록](../../docs/reports/2026-10-10-preset-design-controls/README.md)에 둔다. 새 서비스 하나를 이 프롬프트로 처음부터 제작하는 반복 행동 평가는 이번에 다시 하지 않았다.
+
+## 최근 기능 변경의 문서 반영 (2026-10-11 추가)
+
+Ponytail 프로젝트 스킬과 선택 플러그인, 프리셋 디자인 설정, 공식 스킬 위임·병렬 배정·검사 재사용과 최종 검수 안내를 실제 정본과 대조했다. 기존 프로젝트 H 이행, 인증 설정 확인과 재발 원인 기록도 관련 문서에 연결했다. 공통 제작 프롬프트와 두 템플릿 README·튜토리얼 사본을 함께 맞췄다.
+
+- 이 템플릿 전체 테스트: `node --test --test-concurrency=2 'templates/prokit-next-supabase/tests/*.test.mjs'`, 274개 통과, 실패·건너뜀 없음.
+- 두 템플릿의 공유 파일 바이트 일치는 전체 테스트에서 확인했다.
+- 문서 검수·공통 값·링크와 반영 범위는 [문서 반영 점검](../../docs/reports/2026-10-11-documentation-alignment/README.md)에 기록한다.
+
+이번 작업은 문서와 공통 값 관리 변경이다. 실제 설치·UI·훅 동작의 이전 검증을 새 실측으로 바꾸지 않으며, 홈페이지 문서 사본 동기화·배포·팩 재발행·다른 프로젝트 이행·릴리스는 하지 않았다.

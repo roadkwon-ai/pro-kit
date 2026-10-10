@@ -486,6 +486,7 @@
 | `b:preset-next-steps` | (글 묶음) | 프리셋 쪽 프롬프트 아래의 다음 할 일 안내(tutorials/samples/README.md의 1·3·4단계로 보낸다) | docs/blocks/preset-next-steps.md | 묶음 원본을 고친다 | 18 |
 | `b:preset-pack-get` | (글 묶음) | 프리셋 팩을 쓰는 프롬프트의 팩 받기 줄(다음 줄이 "그 팩…"으로 할 일을 잇는다). preset-pack, preset-remix가 품고, 클론 튜토리얼 README 첫 프롬프트는 표시 없이 같은 글로 둔다(CASES). AGENTS.md의 팩 받기 규칙은 이 줄의 packs/<이름>으로 팩을 알아본다. 인자: name(팩 이름) | docs/blocks/preset-pack-get.md | 묶음 원본을 고친다 | 20 |
 | `b:preset-pack-source` | (글 묶음) | 프리셋 팩 받는 곳 상자(첫 줄: 프롬프트만 보내면 에이전트가 자동으로 받아 설치한다. 둘째 문단: 직접 받기 zip 링크와 크기, 직접 받았으면 경로 한 줄). 문단 하나로 따로 둔다(preset-pack은 프롬프트 뒤, clone-readme-paste는 프롬프트 앞). 받는 곳 안내는 이 묶음 하나뿐이라, 홈페이지가 다른 곳(예: 자체 저장소)으로 알리려면 이 상자의 링크와 문장을 바꿔 그린다. 인자: name(팩 이름) | docs/blocks/preset-pack-source.md | 묶음 원본을 고친다 | 11 |
+| `b:preset-default-features` | (글 묶음) | 신규 프리셋과 팩 기반 화면 제작 프롬프트의 모드·언어 기본 기능. 다른 묶음 안에서 함께 쓴다 | docs/blocks/preset-default-features.md | 묶음 원본을 고친다 | 30 |
 | `b:preset-pack` | (글 묶음) | 프리셋 쪽 "프리셋 팩으로 만들어 보기"의 설명, 프롬프트, 팩 안내. 인자: name(프리셋 이름). 서비스 이름은 preset.<name>.title 값 | docs/blocks/preset-pack.md | 묶음 원본을 고친다 | 9 |
 | `b:preset-real-service` | (글 묶음) | 프리셋 쪽 "실제 서비스로 만들 때" 첫 문단의 끝 문장(바꾸는 순서와 기능 요청). 인자: tail(뒤에 붙는 말. 앞에 띄어쓰기를 둔다. 없으면 붙이지 않는다) | docs/blocks/preset-real-service.md | 묶음 원본을 고친다 | 9 |
 | `b:preset-remix` | (글 묶음) | 프리셋 쪽 "프리셋 팩으로 나만의 서비스 만들기"의 설명, 프롬프트, 바꿀 것 예시. 인자: name(프리셋 이름), folder·title·changes(예시의 프로젝트 폴더, 새 이름, 바꿀 것), topic(바꿀 것 예시의 주제) | docs/blocks/preset-remix.md | 묶음 원본을 고친다 | 9 |

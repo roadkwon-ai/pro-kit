@@ -42,6 +42,7 @@ export const TPL_README = [
 ];
 export const CASES = [
   ["tutorials/samples/README.md", "screen-prompt", LIVING],
+  ["tutorials/samples/ullim.md", "preset-default-features", {}],
   ["tutorials/reference/deploy.md", "screen-prompt", { ...LIVING, end: "[GitHub Pages]에 배포해줘" }],
   ["tutorials/reference/process-and-time.md", "screen-prompt", { folder: "my-bakery", concept: "동네 빵집에서 빵을 미리 주문하고 찾아가는 서비스", ref: " [참고할 서비스 주소]의 공개 페이지를 먼저 둘러보고 화면 구성과 디자인 값을 정리한 뒤, 그걸 바탕으로 기획하고 디자인해줘. 로고와 이름, 문구, 사진은 가져오지 말고, 원래 서비스와 관계없는 연습용이라고 화면에 밝혀줘.", design: "디자인은 정리한 디자인 값을 따르되 색과 서체는 비슷한 계열의 다른 것으로 바꾸고, " }],
   ["tutorials/reference/process-and-time.md", "process-flow-diagram", {}],
