@@ -1087,8 +1087,13 @@ export function stagedSecrets(root) {
 		else if (inHunk && line.startsWith("+")) {
 			for (const e of env)
 				if (line.includes(e.value)) hits.add(`${file}: ${e.name} 값`);
+			// 문법 강조 번들의 정확한 식별자만 제외하고 실제 env 값은 원문에서 검사한다.
+			const secretLine = line.replace(
+				/(?<![A-Za-z0-9_-])erilog-sk-prompt-state-selector(?![A-Za-z0-9_-])/g,
+				"",
+			);
 			for (const [label, re] of SECRET_PATTERNS)
-				if (re.test(line)) hits.add(`${file}: ${label}`);
+				if (re.test(secretLine)) hits.add(`${file}: ${label}`);
 		}
 	}
 	return [...hits];
