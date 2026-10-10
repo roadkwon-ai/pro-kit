@@ -26,6 +26,9 @@ description: >-
 | DB 비용, 데이터 전송량(egress), 과다 조회 점검 | `neon-postgres-egress-optimizer` (운영 DB 통계 조회와 `pg_stat_statements` 설치·초기화는 사용자가 요청할 때만 한다) |
 | Neon 부가 기능: 오래 도는 함수, 파일 저장, LLM 호출 | `neon-functions`, `neon-object-storage`, `neon-ai-gateway` (선택 묶음 `ops`. 새 서비스 의존이 생기므로 도입 전에 사용자에게 묻고 `docs/adr/`에 남긴다) |
 
+## 위임
+외부 전문 스킬이나 수행자에게 DB 작업을 넘길 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 실제 provider의 scope·의존성·side effect를 확인하고, Drizzle 마이그레이션과 DB별 운영 계약은 유지한다.
+
 ## 스키마 변경 절차
 1. 스키마 파일을 고친다. 새 테이블은 `schema/index.ts`에서 export한다.
 2. `.dev-cycle.json`의 `commands.dbGenerate`(예: `pnpm --filter @<프로젝트>/db db:generate`)로 SQL 마이그레이션을 만든다. 루트 `pnpm db:generate`는 turbo interactive 태스크라 TTY 없는 에이전트 셸에서 실패하므로 쓰지 않는다.

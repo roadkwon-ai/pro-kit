@@ -39,6 +39,30 @@ function tokens(s) {
 const KO = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "열한", "열두"];
 const ko = (n) => KO[n] ?? String(n);
 const tableLinks = (md) => [...md.matchAll(/^\|\s*\[[^\]]+\]\(([^)#\s]+\.md)\)\s*\|/gm)].map((m) => m[1]);
+const GiB = 1024 ** 3;
+const merge = (base, extra) => Object.fromEntries(
+  [...new Set([...Object.keys(base ?? {}), ...Object.keys(extra ?? {})])].map((key) => {
+    const left = base?.[key];
+    const right = extra?.[key];
+    return [key, left && right && typeof left === "object" && typeof right === "object" && !Array.isArray(left) && !Array.isArray(right) ? merge(left, right) : right ?? left];
+  }),
+);
+
+function resourcePolicy(root) {
+  const templates = ["prokit-next-neon", "prokit-next-supabase"];
+  const policies = templates.map((template) => {
+    const config = join(root, "templates", template, "files", ".dev-cycle.json");
+    const guard = join(root, "templates", template, "files", "scripts", "resource-guard.mjs");
+    if (!existsSync(config) || !existsSync(guard)) return null;
+    const program = `import { DEFAULT_RESOURCE_POLICY } from ${JSON.stringify(pathToFileURL(guard).href)}; process.stdout.write(JSON.stringify(DEFAULT_RESOURCE_POLICY));`;
+    const defaults = JSON.parse(execFileSync(process.execPath, ["--input-type=module", "--eval", program], { encoding: "utf8" }));
+    return merge(defaults, JSON.parse(readFileSync(config, "utf8")).resources);
+  });
+  if (policies.every((policy) => policy === null)) return null;
+  if (policies.some((policy) => policy === null) || policies.some((policy) => JSON.stringify(policy) !== JSON.stringify(policies[0])))
+    throw new Error("두 템플릿의 resources 정책이 다르다");
+  return policies[0];
+}
 
 // 키 → { value, src(정본), desc(뜻) }
 export function loadValues(root = ROOT) {
@@ -65,6 +89,23 @@ export function loadValues(root = ROOT) {
   add("policy.agentBrowser.da", d.policy.agentBrowser.da, "doc-values.json policy.agentBrowser.da", "agent-browser CLI 설치 정책 문장(~다체. 에이전트·템플릿 README용). 기본 실행도 이 정책을 따른다");
   add("policy.agentBrowser.yo", d.policy.agentBrowser.yo, "doc-values.json policy.agentBrowser.yo", "agent-browser CLI 설치 정책 문장(~요체. handbook용)");
   add("policy.agentBrowser.cell", d.policy.agentBrowser.cell, "doc-values.json policy.agentBrowser.cell", "같은 정책의 표 칸 꼴(주어와 끝맺음 없이 \"…설치\"). 행 이름이 agent-browser CLI인 칸, \"agent-browser CLI는\" 뒤, \"agent-browser CLI(\" 괄호 안에 쓴다");
+  const resources = resourcePolicy(root);
+  if (resources) {
+    const src = "templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources";
+    const gib = (bytes) => `${bytes / GiB}GiB`;
+    const timeout = (ms) => ms % 60_000 === 0 ? `${ms / 60_000}분` : `${ms / 1_000}초`;
+    add("policy.resource.environmentWarn", gib(resources.environment.warn), src, "영구 활성 환경 하나의 정보 경고 한계. 정리·차단하지 않는다");
+    add("policy.resource.cacheWarn", gib(resources.cache.warn), src, "캐시 경고 한계");
+    add("policy.resource.cacheBlock", gib(resources.cache.block), src, "캐시 실행 차단 한계");
+    add("policy.resource.totalWarn", gib(resources.total.warn), src, "관리 대상 합계 경고 한계");
+    add("policy.resource.totalBlock", gib(resources.total.block), src, "새 무거운 작업의 관리 대상 합계 차단 한계");
+    add("policy.resource.freeWarn", gib(resources.free.warn), src, "파일 시스템 여유 공간 경고 한계");
+    add("policy.resource.freeBlock", gib(resources.free.block), src, "파일 시스템 여유 공간 차단 한계");
+    add("policy.resource.fastTimeout", timeout(resources.fast.timeoutMs), src, "빠른 점검 주기");
+    add("policy.resource.fastWorkerTimeout", timeout(resources.fast.workerTimeoutMs), src, "빠른 점검이 부르는 별도 bounded worker 측정 예산");
+    add("policy.resource.fullTimeout", timeout(resources.full.timeoutMs), src, "전체 inventory 점검 주기");
+    add("policy.resource.fullWorkerTimeout", timeout(resources.full.workerTimeoutMs), src, "전체 inventory 점검이 부르는 별도 bounded worker 측정 예산");
+  }
   add("meta.presetModel", d.meta.presetModel, "doc-values.json meta.presetModel", "프리셋을 만든 모델");
   const glossDesc = { presetPack: "프리셋 팩", round: "라운드", migration: "마이그레이션", spec: "스펙" };
   for (const [k, v] of Object.entries(d.gloss)) add(`gloss.${k}`, v, `doc-values.json gloss.${k}`, k === "clonePack" ? "클론 튜토리얼(Nextflix, Claudle) 팩의 풀이(features.md·design-notes.md가 든다). 화면 프리셋 팩 9개에는 없으니 용어집은 gloss.presetPack을 쓴다" : `용어 "${glossDesc[k] ?? k}"의 짧은 풀이(본문에서 용어 링크 뒤 괄호에 쓴다). 용어집 tutorials/reference/glossary.md도 이 값을 쓴다`);
@@ -381,8 +422,8 @@ export function loadValues(root = ROOT) {
   add("templates.count.ko", ko(vals.get("templates.count").value), "templates/prokit-next-* 수", "템플릿 수의 한글 수 관형사");
   same("prokit.skills.count", (t) => readdirSync(tpl(t, "files", ".agents", "skills")).filter((n) => n.startsWith("prokit-")).length, "templates/*/files/.agents/skills/prokit-* 수", "프로젝트 스킬(prokit-*) 수");
   add("prokit.skills.count.ko", ko(vals.get("prokit.skills.count").value), "templates/*/files/.agents/skills/prokit-* 수", "프로젝트 스킬 수의 한글 수 관형사");
-  same("prokit.agents.count", (t) => readdirSync(tpl(t, "files", ".claude", "agents")).filter((n) => n.endsWith(".md")).length, "templates/*/files/.claude/agents/*.md 수", "구현·리뷰 에이전트 수");
-  add("prokit.agents.count.ko", ko(vals.get("prokit.agents.count").value), "templates/*/files/.claude/agents/*.md 수", "구현·리뷰 에이전트 수의 한글 수 관형사");
+  same("prokit.agents.count", (t) => readdirSync(tpl(t, "files", ".claude", "agents")).filter((n) => n.endsWith(".md")).length, "templates/*/files/.claude/agents/*.md 수", "구현 수행·전문 리뷰·최종 리뷰 에이전트 수");
+  add("prokit.agents.count.ko", ko(vals.get("prokit.agents.count").value), "templates/*/files/.claude/agents/*.md 수", "구현 수행·전문 리뷰·최종 리뷰 에이전트 수의 한글 수 관형사");
   const cases = (t) => JSON.parse(readFileSync(tpl(t, "files", "scripts", "dev-cycle.mjs"), "utf8").match(/export const CASES = (\[[^\]]*\])/)[1]);
   same("devCycle.cases.count", (t) => cases(t).length, "templates/*/files/scripts/dev-cycle.mjs CASES", "dev-cycle 케이스 수");
   add("devCycle.cases.count.ko", ko(vals.get("devCycle.cases.count").value), "templates/*/files/scripts/dev-cycle.mjs CASES", "dev-cycle 케이스 수의 한글 수 관형사");

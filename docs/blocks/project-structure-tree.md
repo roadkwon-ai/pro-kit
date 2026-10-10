@@ -15,10 +15,10 @@ my-app/
 ├── .agents/agents/             에이전트 생성물(Antigravity)
 ├── .claude/                    agents/(정본), skills/(링크), settings.json(플러그인, 키 훅)
 ├── .codex/                     agents/(생성물), skills·prompts(OMX)
-├── scripts/                    dev-cycle.mjs, sync-agents.mjs, skills-setup.mjs, vercel-deploy.mjs, release.mjs,
-│                               export-html.mjs, load-keys.mjs
+├── scripts/                    dev-cycle.mjs, sync-agents.mjs, skills-setup.mjs, delegation.mjs, resource-guard.mjs,
+│                               vercel-deploy.mjs, release.mjs, export-html.mjs, load-keys.mjs
 ├── release/                    production 배포마다 릴리스 노트 (pnpm release)
 ├── skills.manifest.json, skills-lock.json, .dev-cycle.json, .vercelignore
 ├── docs/                       dev-workflow.md, adr/, domain/project.md
-└── tasks/                      todo.md(진행 중 대조표), 닫은 라운드는 archive/
+└── tasks/                      todo.md(남은 할 일·진행 중 대조표), archive/(날짜별 완료 기록·README 색인)
 ```

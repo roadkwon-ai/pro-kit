@@ -11,6 +11,9 @@ description: >-
 
 # 검증과 증거
 
+## 위임
+검증 또는 전문 리뷰를 위임할 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 실제 artifact hash와 명령 exit를 남기며, provider가 없거나 검증하지 못한 결과를 PASS로 적지 않는다.
+
 원칙: **실행하지 않은 검사는 통과가 아니다.** 결과를 얻지 못했으면 `blocked: 사유` 또는 `미실행: 사유`로 적는다. `blocked`는 에이전트가 이번 세션에서 해소할 수 없는 원인(외부 DB·서비스, 권한, 개발 서버를 띄울 수 없는 환경, 도구 미설치·버전 미달, 리뷰어 응답 실패나 서브에이전트를 쓸 수 없는 환경)에 쓴다. 여기서 도구는 사용자 허락 없이 설치할 수 없는 전역 도구와 CLI다. 테스트 러너(vitest 도입 행)와 로컬 테스트 DB처럼 라운드 안에서 준비하게 되어 있는 것이 없다는 이유로는 blocked를 쓰지 않고, 그 준비부터 한다. `미실행`은 사용자가 범위에서 뺀 단계나, 앞 단계가 blocked여서 할 수 없는 뒤 단계에 쓴다. 다른 검사가 통과했다고 해서 실행하지 못한 검사를 통과로 합치지 않는다.
 
 ## 검사 고르기
@@ -21,7 +24,7 @@ description: >-
 | 모든 코드 | `commands.typecheck`, `commands.lint` |
 | 화면과 라우트 | 모든 코드 검사 + `commands.build`, 런타임 확인, desktop과 mobile 스크린샷 |
 | 프로시저와 인증 | 모든 코드 검사 + `commands.test`, **2계정 격리 테스트** |
-| 스키마 | 모든 코드 검사 + 로컬 Supabase DB에 `commands.dbMigrate` 적용 출력 + `supabase db advisors` 보안 결과(병합 전에는 스테이징에도). 사용자 소유 테이블이면 그 테이블을 쓰는 프로시저의 2계정 격리 테스트도(D 행) |
+| 스키마 | 모든 코드 검사 + 로컬 개발 DB에 `commands.dbMigrate` 적용 출력(병합 전에는 Neon 개발 브랜치에도). 사용자 소유 테이블이면 그 테이블을 쓰는 프로시저의 2계정 격리 테스트도(D 행) |
 | 스킬, 에이전트, dev-cycle | `pnpm agents:check`, `pnpm skills:check`, `pnpm dev-cycle case`, `pnpm dev-cycle status`. 스킬 본문을 바꿨으면 skill-creator eval 재실행 |
 
 여러 행에 해당하면 해당하는 행의 검사를 모두 한다.
@@ -38,7 +41,7 @@ description: >-
 
 ## 테스트 러너
 - 테스트 러너가 없으면 첫 D·E 라운드나 서버·DB 코드를 고치는 C 라운드에서 vitest를 도입한다. 대조표에 `vitest 도입(최초 1회)` 행을 추가하고, 루트 `test` 스크립트와 `.dev-cycle.json`의 `commands.test`를 함께 등록한다. 절차는 `.agents/skills/prokit-api/references/ownership-test.md`에 있다.
-- 격리 테스트는 개발·운영 DB가 아닌 전용 테스트 DB(`TEST_DATABASE_URL`: 로컬 Supabase 컨테이너의 `<이름>_test`. 공유 DB인 스테이징에는 격리 테스트를 돌리지 않는다)에서 돈다. `skipped`로 끝난 테스트는 통과가 아니다. 프로시저를 거치지 않고 SQL로 같은 조건을 흉내 낸 수동 확인도 격리 테스트를 대신하지 못한다. 격리 테스트는 프로시저를 두 계정의 세션으로 호출한다.
+- 격리 테스트는 개발·운영 DB가 아닌 전용 테스트 DB(`TEST_DATABASE_URL`: 로컬 컨테이너의 `<이름>_test`, 병합 전 확인은 Neon 테스트 브랜치)에서 돈다. `skipped`로 끝난 테스트는 통과가 아니다. 프로시저를 거치지 않고 SQL로 같은 조건을 흉내 낸 수동 확인도 격리 테스트를 대신하지 못한다. 격리 테스트는 프로시저를 두 계정의 세션으로 호출한다.
 
 ## 증거 적는 법
 형식은 [references/evidence.md](references/evidence.md). 요약하면 다음과 같다.

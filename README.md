@@ -27,7 +27,7 @@
 > **사용 전에**: 프로킷 자체 코드·스킬·문서는 [MIT License](LICENSE)로 제공합니다. 상업적 이용, 유료 고객 개발, 수정·재판매와 비공개 제품 개발을 허용하며, 재배포할 때 저작권 표시와 허가문을 함께 유지해야 합니다. 외부 스킬에는 [원래 조건](THIRD_PARTY_NOTICES.md)이 적용됩니다.
 
 <p align="center">
-  <strong>템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개 &middot; 구현·리뷰 에이전트 <!-- v:prokit.agents.count -->2<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->7<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
+  <strong>템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개 &middot; 구현·리뷰 에이전트 <!-- v:prokit.agents.count -->3<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->7<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
 </p>
 
 <p align="center">
@@ -49,6 +49,8 @@
 ## 프로킷이란
 AI 코딩 에이전트가 일할 개발 환경을 새 프로젝트에 설치하는 생성기입니다. 에이전트가 요구사항 정리, 직접 실행해 확인, 독립 리뷰, 비밀값 관리 같은 전문 개발자의 순서를 지키며 일하게 하고, 사용자는 "할 일에 마감일 붙여줘"처럼 평소 말로 요청하고 확인 질문에 답하면 됩니다. <!-- v:templates.count.ko -->두<!-- /v --> 템플릿 모두 실제로 설치해 확인했고, 결과는 [검증 결과](handbook/reference/verification.md)에 있습니다.
 
+전문 작업은 공식 스킬과 사용자 지정 스킬에 맡기고, 프로킷은 범위·증거·재검토·최종 수용을 관리합니다. 개발 중에는 캐시와 설치 환경의 용량도 감시합니다([위임과 자원 관리](handbook/concepts/delegation-and-resources.md)).
+
 더 알아보기: [프로킷이란](handbook/start/what-is-prokit.md) · [이런 분께 추천해요](handbook/start/who-is-it-for.md) · [처음 보는 용어](tutorials/reference/glossary.md)
 
 ## 프로킷은 이렇게 일합니다
@@ -65,10 +67,11 @@ flowchart LR
 | 하네스를 이루는 것 | 하는 일 |
 |---|---|
 | 규칙 문서 | 에이전트가 시작할 때 `AGENTS.md`, 용어집, 프로젝트 소개를 읽어 새 세션도 같은 원칙으로 일합니다 |
-| 스킬 | 전용 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개가 분야마다 공식 스킬(설치할 때의 최신판)을 불러 쓰고, 필요하면 선택 스킬 묶음을 더합니다. [prokit 스킬](handbook/skills/prokit-skills.md) · [공식 스킬과 연결](handbook/skills/official-skills.md) |
-| 역할 나누기 | 구현 에이전트가 만들고, 구현에 참여하지 않은 읽기 전용 리뷰 에이전트가 따로 봅니다. [구현 에이전트와 리뷰 에이전트](handbook/concepts/agent-roles.md) |
+| 스킬 | 전용 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개가 프로젝트 계약을 지키며 공식·사용자 지정 전문 스킬에 작업을 맡기고 결과를 검수합니다. 필요하면 선택 스킬 묶음을 더합니다. [prokit 스킬](handbook/skills/prokit-skills.md) · [공식 스킬과 연결](handbook/skills/official-skills.md) |
+| 역할 나누기 | 수행자가 전문 작업을 맡고, 필요한 전문 리뷰와 프로킷의 최종 검수를 분리합니다. [위임 에이전트와 리뷰 에이전트](handbook/concepts/agent-roles.md) |
 | 대조표와 audit | 작업을 케이스로 나눠 대조표를 열고, 모든 칸에 실행한 증거가 있어야 라운드를 닫습니다. [dev-cycle 라운드](handbook/concepts/dev-cycle.md) · [케이스와 대조표](handbook/concepts/cases.md) |
 | 자동 검사 | 타입, 린트, 빌드, 테스트, 화면 디자인, 커밋 전 비밀값, 배포 준비를 명령으로 확인합니다 |
+| 개발 자원 보호 | 관리하는 캐시·설치 환경의 용량과 여유 공간을 확인합니다. [감시 범위와 안전한 정리](handbook/concepts/delegation-and-resources.md#관리-범위-안-자원만-다루기) |
 
 화면은 스타일 추천부터 `DESIGN.md`, 모든 페이지까지 [UI/UX 흐름](handbook/design/ui-flow.md)을 따르고, 배포는 내 컴퓨터의 Vercel CLI로 develop과 운영에 올리며 릴리스를 남깁니다([Vercel 배포와 되돌리기](handbook/deploy/vercel.md)). 전체 그림은 [하네스 엔지니어링](handbook/concepts/harness.md)에 있습니다.
 
@@ -169,7 +172,7 @@ git clone https://github.com/roadkwon-ai/pro-kit
 ## 문서 지도
 | 어디 | 무엇이 있나요 |
 |---|---|
-| [문서(handbook)](handbook/README.md) | 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->33<!-- /v -->개. [시작하기](handbook/start/README.md), [핵심 개념](handbook/concepts/README.md), [템플릿](handbook/templates/README.md), [스킬과 에이전트](handbook/skills/README.md), [디자인](handbook/design/README.md), [배포와 릴리스](handbook/deploy/README.md), [레퍼런스](handbook/reference/README.md) |
+| [문서(handbook)](handbook/README.md) | 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->34<!-- /v -->개. [시작하기](handbook/start/README.md), [핵심 개념](handbook/concepts/README.md), [템플릿](handbook/templates/README.md), [스킬과 에이전트](handbook/skills/README.md), [디자인](handbook/design/README.md), [배포와 릴리스](handbook/deploy/README.md), [레퍼런스](handbook/reference/README.md) |
 | [튜토리얼](tutorials/README.md) | 코드를 몰라도 프롬프트를 붙여 넣으며 화면을 만드는 단계별 안내. [시작하기](tutorials/start/README.md), [컨셉으로 화면 만들기](tutorials/samples/README.md), [Nextflix](tutorials/01-nextflix/README.md), [Claudle](tutorials/02-claudle/README.md), 비용과 키·배포·용어·문제 해결·Windows 가이드. [프로킷 사이트](https://prokit-web.vercel.app/tutorials/)에서도 읽을 수 있습니다 |
 | 템플릿 README와 검증 기록 | 명령과 옵션의 정본은 템플릿 README([neon](templates/prokit-next-neon/README.md) · [supabase](templates/prokit-next-supabase/README.md)), 검증 결과와 한계는 VERIFICATION.md([neon](templates/prokit-next-neon/VERIFICATION.md) · [supabase](templates/prokit-next-supabase/VERIFICATION.md)) |
 | [AGENTS.md](AGENTS.md) | 에이전트가 새 프로젝트를 만들 때 따르는 절차와 이 저장소의 규칙 |

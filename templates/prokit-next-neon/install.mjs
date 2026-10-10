@@ -179,7 +179,19 @@ export function configureDevCycle(target) {
   return { commands: cfg.commands, defaultBranch: cfg.defaultBranch };
 }
 
-export function addScripts(target, { dryRun = false } = {}) {
+const RESOURCE_ORIGINALS = ["dev", "dev:web", "build"];
+
+// 첫 설치에서만 BTS 명령을 이름 있는 별칭으로 보존한 뒤 guard를 앞에 둔다.
+// 이미 설치된 프로젝트는 원본 명령을 바꾸지 않고 H 라운드에서 명시적으로 전환한다.
+export function isFreshBtsInstall(target) {
+  const agents = join(target, "AGENTS.md");
+  const scripts = JSON.parse(readFileSync(join(target, "package.json"), "utf8")).scripts ?? {};
+  return !existsSync(join(target, ".dev-cycle.json")) &&
+    !(existsSync(agents) && readFileSync(agents, "utf8").includes(MARK_START)) &&
+    !Object.keys(scripts).some((name) => name.startsWith("prokit:"));
+}
+
+export function addScripts(target, { dryRun = false, wrapResources = false } = {}) {
   const p = join(target, "package.json");
   const text = readFileSync(p, "utf8");
   const pkg = JSON.parse(text);
@@ -193,13 +205,35 @@ export function addScripts(target, { dryRun = false } = {}) {
     "skills:update": "node scripts/skills-setup.mjs --update",
     "vercel:deploy": "node scripts/vercel-deploy.mjs",
     "export:html": "node scripts/export-html.mjs",
+    "resource:check": "node scripts/resource-guard.mjs check",
+    "resource:run": "node scripts/resource-guard.mjs run",
+    "resource:clean": "node scripts/resource-guard.mjs clean",
+    "delegation:capture": "node scripts/delegation.mjs capture",
+    "delegation:validate": "node scripts/delegation.mjs validate",
     release: "node scripts/release.mjs",
   };
   pkg.scripts ??= {};
   const added = Object.keys(want).filter((k) => !(k in pkg.scripts));
   for (const k of added) pkg.scripts[k] = want[k];
-  if (added.length && !dryRun) writeFileSync(p, `${JSON.stringify(pkg, null, indent)}\n`);
-  return added;
+  const wrapped = [];
+  if (wrapResources) {
+    for (const name of RESOURCE_ORIGINALS) {
+      const original = pkg.scripts[name];
+      if (!original) continue;
+      const saved = `prokit:original:${name}`;
+      const guarded = `prokit:resource:${name}`;
+      const kind = name.replace(":", "-");
+      if (pkg.scripts[saved] || pkg.scripts[guarded]) {
+        throw new Error(`${saved} 또는 ${guarded}가 이미 있어 resource 래퍼 전환을 멈췄다`);
+      }
+      pkg.scripts[saved] = original;
+      pkg.scripts[guarded] = `node scripts/resource-guard.mjs run --kind ${kind} -- pnpm run ${saved}`;
+      pkg.scripts[name] = `pnpm run ${guarded}`;
+      wrapped.push(name);
+    }
+  }
+  if ((added.length || wrapped.length) && !dryRun) writeFileSync(p, `${JSON.stringify(pkg, null, indent)}\n`);
+  return { added, wrapped };
 }
 
 const GITIGNORE = [
@@ -362,6 +396,7 @@ export function main(argv) {
     return 1;
   }
   const diff = flags.has("--diff");
+  const freshBts = isFreshBtsInstall(target);
   const files = copyFiles(target, { diff });
   const kept = files.kept.map((k) => k.rel).join(", ") || "없음";
   if (diff) {
@@ -373,7 +408,10 @@ export function main(argv) {
       `파일: 복사 예정 ${files.copied.join(", ") || "없음"}, 덧붙임 예정 ${files.appended.join(", ") || "없음"}, 동일 ${files.same.length}, 유지(템플릿과 다름) ${kept}`,
       ...files.kept.map((k) => k.diff),
       ...files.filled.map((f) => `${f}: 설치기가 채움, 유지`),
-      `package.json scripts 추가 예정: ${addScripts(target, { dryRun: true }).join(", ") || "없음"}`,
+      (() => {
+        const scripts = addScripts(target, { dryRun: true, wrapResources: freshBts });
+        return `package.json scripts 추가 예정: ${scripts.added.join(", ") || "없음"}${scripts.wrapped.length ? `, resource 래퍼 ${scripts.wrapped.join(", ")}` : ""}`;
+      })(),
       `.gitignore 추가 예정: ${ensureGitignore(target, { dryRun: true }).join(", ") || "없음"}`,
       `biome.json 추가 예정: ${biome?.join(", ") || "없음"}`,
       ...jsoncWarning(target, biome),
@@ -388,14 +426,14 @@ export function main(argv) {
   }
   const links = linkSkills(target);
   const dc = files.copied.includes(".dev-cycle.json") ? configureDevCycle(target) : null;
-  const scripts = addScripts(target);
+  const scripts = addScripts(target, { wrapResources: freshBts });
   const gitignore = ensureGitignore(target);
   const biomeConfig = ensureBiomeConfig(target);
   const turbo = ensureTurboAgentGuidance(target);
   const hook = ensureClaudeHook(target);
   const toFormat = [
     ...files.copied.filter((f) => /\.(mjs|js|json)$/.test(f)),
-    ...(scripts.length ? ["package.json"] : []),
+    ...(scripts.added.length || scripts.wrapped.length ? ["package.json"] : []),
     ...(biomeConfig?.length ? ["biome.json"] : []),
   ];
   const biome = formatWithBiome(target, toFormat);
@@ -414,7 +452,8 @@ export function main(argv) {
     ...files.filled.map((f) => `${f}: 설치기가 채움, 유지`),
     `스킬 링크: 생성 ${links.created.join(", ") || "없음"}${links.conflicts.length ? `, 충돌 ${links.conflicts.join(", ")} (직접 확인)` : ""}`,
     ...(dc ? [`.dev-cycle.json: 기본 브랜치 ${dc.defaultBranch}, commands ${Object.keys(dc.commands).join(", ") || "없음"}`] : []),
-    `package.json scripts 추가: ${scripts.join(", ") || "없음"}`,
+    `package.json scripts 추가: ${scripts.added.join(", ") || "없음"}${scripts.wrapped.length ? `, resource 래퍼 ${scripts.wrapped.join(", ")}` : ""}`,
+    ...(!freshBts ? ["기존 설치본: resource 래퍼 전환은 H 라운드에서 원본 명령과 증거를 확인한 뒤 한다"] : []),
     ...(gitignore.length ? [`.gitignore: ${gitignore.join(", ")} 추가`] : []),
     ...(biomeConfig?.length ? [`biome.json 추가: ${biomeConfig.join(", ")}`] : []),
     ...jsoncWarning(target, biomeConfig),

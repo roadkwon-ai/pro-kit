@@ -1,0 +1,5 @@
+{
+  "apps/web/src/app/campaign/page.tsx": "// 이번 기간에만 쓰는 캠페인 페이지",
+  "packages/ui/src/components/alert.tsx": "export function Alert({children}) { return <aside role=\"status\">{children}</aside>; }",
+  "apps/web/src/lib/site.ts": "export const SUPPORT_URL = \"https://example.test/help\";"
+}

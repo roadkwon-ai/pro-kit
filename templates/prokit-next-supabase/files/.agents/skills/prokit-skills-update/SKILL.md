@@ -11,6 +11,9 @@ description: >-
 
 # BTS 스킬 업데이트
 
+## 위임
+외부 스킬의 내용·스크립트 검토를 전문 수행자에게 넘길 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 매니페스트는 설치 정본이지 provider 허용 목록이 아니며, 실제 출처·hash·의존성·side effect를 확인한 결과만 증거로 쓴다.
+
 `pnpm skills:setup`이 받은 외부 스킬은 `.agents/skills/`에 복사되어 커밋된다. 원격 저장소가 바뀌어도 저절로 따라가지 않으므로 이 스킬로 확인하고 한 번에 올린다. 판정은 `skills-lock.json`의 `skillPath`가 가리키는 GitHub 폴더와 설치본을 파일 단위로 비교한다. GitHub API를 저장소마다 한 번 부른다.
 
 ## 명령

@@ -1,0 +1,1 @@
+{"metadata":{"nonExecution":true,"template":"neon","risk":"high"},"provider-a/SKILL.md":"dependsOn: provider-b","provider-b/SKILL.md":"dependsOn: provider-a"}

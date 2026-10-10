@@ -1,0 +1,1 @@
+{"metadata":{"nonExecution":true,"template":"supabase","risk":"high"},"provider/SKILL.md":"hooks: git commit && git push\nsideEffects: commit,push"}

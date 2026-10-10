@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { TEMPLATE_FILES } from "./helpers.mjs";
 
-const { copyFilter, findLeaks, imageLoader, main, parseArgs, patchNextConfig, secretValues, staleRefs } = await import(
+const { copyFilter, findLeaks, imageLoader, main, parseArgs, patchNextConfig, resourceExcludedPaths, secretValues, staleRefs } = await import(
   join(TEMPLATE_FILES, "scripts/export-html.mjs")
 );
 
@@ -58,13 +58,43 @@ test("이미지 로더: 하위 경로를 한 번만 붙이고 외부 주소는 �
   assert.equal((await load(""))({ src: "/images/a.webp" }), "/images/a.webp");
 });
 
-test("복사: 의존성·빌드 캐시·git은 어느 깊이든, 결과물은 그 경로만 뺀다", () => {
+test("복사: 의존성·빌드 캐시·git과 실제 Python 환경·등록한 resource 경로만 뺀다", () => {
   const root = "/p";
-  const keep = copyFilter(root);
+  const keep = copyFilter(root, { excludedPaths: [".prokit/resource-cache", "tools/.venv"] });
   for (const rel of ["node_modules", "apps/web/node_modules/x", ".git", "apps/web/.next", ".turbo", "html", "apps/web/out"])
     assert.equal(keep(join(root, rel)), false, rel);
-  for (const rel of ["apps/web/src/components/html", "apps/web/src/app/out", "packages/ui", ".claude/skills", "apps/web/.env"])
+  for (const rel of [".prokit/resource-cache", ".prokit/resource-cache/a", "tools/.venv", "tools/.venv/lib/site.py", "apps/web/src/__pycache__", "apps/web/src/main.pyc"])
+    assert.equal(keep(join(root, rel)), false, rel);
+  for (const rel of ["apps/web/src/components/html", "apps/web/src/app/out", "packages/ui", ".claude/skills", "apps/web/.env", "dist", "apps/web/.cache"])
     assert.equal(keep(join(root, rel)), true, rel);
+});
+
+test("복사: pyvenv.cfg가 있는 Python 가상 환경을 제외한다", () => {
+	const root = tree({ "env/pyvenv.cfg": "home = /python\n", "env/lib/site.py": "x\n", "docs/guide.md": "설명\n" });
+	const keep = copyFilter(root);
+	try {
+		assert.equal(keep(join(root, "env")), false);
+		assert.equal(keep(join(root, "docs")), true);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("복사: resource 등록 경로 중 프로젝트 내부의 알려진 종류만 제외한다", () => {
+	const root = tree({
+		".dev-cycle.json": JSON.stringify({ resources: { roots: [
+			{ path: "tools/env", kind: "pythonVenv", lifetime: "project" },
+			{ path: "cache/build", kind: "buildCache" },
+			{ path: "/outside/env", kind: "pythonVenv" },
+			{ path: "docs", kind: "workspace" },
+			{ path: "../escape", kind: "managedTemp" },
+		] } }),
+	});
+	try {
+		assert.deepEqual(resourceExcludedPaths(root), ["tools/env", "cache/build"]);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
 });
 
 test("비밀값: 공개 표시·NEXT_PUBLIC_·짧은 값·계정 없는 http 주소는 빼고, 작업 폴더 .env까지 값을 이름과 함께 모은다", () => {
@@ -107,10 +137,10 @@ test("인자: --base는 /로 시작하는 하위 경로이고 끝 /는 뗀다. �
   for (const bad of [["--base", "my-app"], ["--base", "/"], ["--base", "//"], ["--base", "/a//b"], ["--base"], ["--prod"], ["/x"]]) assert.ok(parseArgs(bad).error, bad.join(" "));
 });
 
-test("프로젝트 루트가 아니면(next.config.ts 없음) 복사 전에 exit 1", () => {
-  const root = tree({ "package.json": "{}" });
-  assert.equal(main([], root), 1);
-  assert.equal(main(["--base", "x"], root), 1);
+test("프로젝트 루트가 아니면(next.config.ts 없음) 복사 전에 exit 1", async () => {
+	const root = tree({ "package.json": "{}" });
+	assert.equal(await main([], root), 1);
+	assert.equal(await main(["--base", "x"], root), 1);
 });
 
 test("남은 서버 부품: /dashboard 링크가 있는 페이지 수와 authClient를 알린다", () => {
@@ -132,7 +162,7 @@ for (const [name, output, want] of [
   ["첫 페이지가 없으면 기존 html을 보존하고 실패한다", { "about/index.html": "<p>소개</p>" }, 1],
   ["비밀값이 있으면 제작 표시와 관계없이 기존 html을 보존하고 차단한다", { "index.html": "<p>test-sensitive-value-123456</p>" }, 2],
 ]) {
-  test(`내보내기: ${name}`, () => {
+	test(`내보내기: ${name}`, async () => {
     const root = tree({
       "apps/web/next.config.ts": BTS_CONFIG,
       ".env": "SERVER_SECRET=test-sensitive-value-123456\n",
@@ -151,9 +181,10 @@ cpSync(resolve("../../fixture-output"), "out", { recursive: true });
     const priorPath = process.env.PATH;
     try {
       process.env.PATH = `${join(root, "bin")}:${priorPath}`;
-      assert.equal(main([], root), want);
-      assert.equal(readFileSync(join(root, "html/index.html"), "utf8"), want === 0 ? "<p>새 화면</p>" : "기존 결과");
-      assert.equal(existsSync(join(root, "html/.nojekyll")), want === 0);
+		assert.equal(await main([], root), want);
+		assert.equal(readFileSync(join(root, "html/index.html"), "utf8"), want === 0 ? "<p>새 화면</p>" : "기존 결과");
+		assert.equal(existsSync(join(root, ".prokit")), false, "내보내기가 프로젝트 소스를 건드리지 않는다");
+		assert.equal(existsSync(join(root, "html/.nojekyll")), want === 0);
       if (want === 0) assert.equal(readFileSync(join(root, "html/login/index.html"), "utf8"), "<p>로그인</p>");
     } finally {
       process.env.PATH = priorPath;

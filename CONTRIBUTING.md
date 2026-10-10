@@ -21,7 +21,7 @@ pro-kit/
 └── packs/                      받은 프리셋 팩 (scripts/pack.mjs. git에 넣지 않음)
 ```
 
-문서 원본 `handbook/`은 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->33<!-- /v -->개입니다. 템플릿 하나의 안쪽은 이렇습니다. 설치된 프로젝트의 구조는 [폴더 구조](handbook/reference/project-structure.md)에 있습니다.
+문서 원본 `handbook/`은 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->34<!-- /v -->개입니다. 템플릿 하나의 안쪽은 이렇습니다. 설치된 프로젝트의 구조는 [폴더 구조](handbook/reference/project-structure.md)에 있습니다.
 
 ```text
 templates/prokit-next-supabase/
@@ -47,13 +47,22 @@ node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, h
 
 규칙의 원문은 [AGENTS.md "템플릿 수정 규칙"](AGENTS.md#템플릿-수정-규칙)입니다. 요약하면 저장소 루트에서 작업하고, 공유 파일은 두 템플릿에서 바이트가 같게 두고, 설치기를 바꾸면 실제 BTS 프로젝트에 설치해 확인하고, 검증 결과는 템플릿의 `VERIFICATION.md`에 적습니다. 이미 만든 프로젝트에 변경을 옮기는 절차는 [AGENTS.md](AGENTS.md#기존-프로젝트에-템플릿-갱신-반영)와 [갱신 반영](handbook/templates/update-existing.md)에 있습니다. 설계 문서는 [docs/superpowers/specs](docs/superpowers/specs/)에 있습니다.
 
+### 스킬·에이전트 계약을 바꿀 때
+
+- 일반 기술 지침을 프로킷에 다시 쓰기 전에 현재 외부 전문 스킬의 역할을 확인합니다. 프로킷에는 프로젝트 계약, 위임·진행 관리와 최종 검수에 필요한 규칙을 남깁니다([위임과 자원 관리](handbook/concepts/delegation-and-resources.md)).
+- 계획에는 기존 코드와 소비자, 공통 설정·환경 변수의 정본, 재사용하거나 분리할 이유를 적습니다. 한 번만 쓰는 구조를 미리 공통화하지 않습니다([계획 리뷰](handbook/concepts/agent-roles.md#리뷰가-보는-것)).
+- 스킬과 라우팅, 에이전트와 생성 프로필, 평가 입력, 연결 문서 중 영향받는 곳을 함께 맞춥니다. 두 템플릿의 공유 파일을 일치시키고, 설치기를 바꿨으면 실제 BTS 설치도 확인합니다.
+- 검증은 변경 영향을 기준으로 고릅니다. 이전 통과 증거는 출처·계약·환경·입력이 그대로인 범위에서만 재사용하고, 미통과 항목과 영향받은 검사를 다시 합니다. 이전 기록을 덮어쓰거나 확인하지 못한 환경을 통과로 바꾸지 않습니다.
+- 결과와 한계는 각 템플릿의 `VERIFICATION.md`에 적고, 상세 기록은 `docs/reports/`에서 연결합니다. 현재 결정은 [재사용 설계](docs/reports/2026-10-09-reuse-design-review/README.md), [위임·자원 인수](docs/reports/2026-10-09-orchestration-resources/README.md), [Karpathy 미도입 검토](docs/reports/2026-10-09-karpathy-skill-adoption/README.md)에 있습니다.
+
 ## 문서
 
-- 문서 쪽을 쓰거나 구조를 바꿀 때는 `prokit-docs`, 문장을 쓰고 다듬을 때는 `prokit-writing` 스킬을 씁니다. 두 스킬의 원본은 `roadkwon-ai/pro-kit-docs-skills` 저장소이고, 이 저장소에는 `.agents/skills`에 설치한 사본을 커밋합니다. 스킬을 갱신할 때는 저장소 루트에서 `npx -y skills@latest add roadkwon-ai/pro-kit-docs-skills -a claude-code -a codex -y`를 다시 실행하고 바뀐 파일을 커밋합니다.
+- 문서 쪽을 쓰거나 구조를 바꿀 때는 `prokit-docs`, 문장을 쓰고 다듬을 때는 `prokit-writing` 스킬을 씁니다. 두 스킬의 원본은 `roadkwon-ai/pro-kit-docs-skills` 저장소이고, 이 저장소에는 `.agents/skills`에 설치한 사본을 커밋합니다. 스킬을 갱신할 때는 저장소 루트에서 `npx -y skills@latest add roadkwon-ai/pro-kit-docs-skills -a claude-code -a codex -y`를 다시 실행하고 바뀐 파일을 커밋합니다. 이 원본은 pro-kit 관리용이며, 템플릿으로 만든 프로젝트에는 문서 스킬을 임의로 복사하지 않습니다.
 - 루트 `README.md`에는 요약과 링크만 둡니다. 상세는 `handbook/`, `tutorials/`, 템플릿 README에 쓰고 README에서 링크합니다.
 - `handbook/`의 순서는 문서 홈과 묶음마다 `README.md`의 쪽 표가 정합니다. 쪽은 `# 제목`, 빈 줄, `> 한눈에: …`로 시작합니다.
 - 홈페이지는 문서 쪽마다 마크다운 복사, AI로 보내기, `<쪽>.md` 주소, 도식 내려받기를 붙입니다. 새 문서 묶음을 더하면 홈페이지에도 붙는지 확인합니다([AGENTS.md](AGENTS.md#템플릿-수정-규칙)).
 - 두 곳 이상에 쓰는 값(프리셋 수, 에이전트 목록, 쪽 수, Node 최소 판, 공개 주소 등)은 `<!-- v:키 -->값<!-- /v -->` 표시로, 여러 줄 글은 `docs/blocks/<이름>.md` 묶음과 `<!-- b:이름 … -->`·`<!-- /b -->` 표시로 쓰고 `node scripts/doc-values.mjs`로 채웁니다. 목록이나 표 중간이라 표시를 달 수 없는 글은 표시 없이 같은 글로 두고 `scripts/doc-values.cases.mjs`의 CASES에 더합니다. 키 목록은 `--list`, 어긋남 확인은 `--check`입니다. 같은 글이 표시 없이 두 문서에 남으면 `node --test scripts/doc-values.test.mjs`의 중복 검사가 잡고, 정당한 반복만 `docs/dupes-allow.txt`에 이유와 함께 둡니다. 표시 밖 맨시간(분·시간·초)도 같은 테스트가 잡고, 값이 아닌 시간만 `docs/time-allow.txt`에 둡니다. 모든 값을 홈페이지용 JSON으로 내보내려면 `--json <파일>`입니다. 목록과 규칙은 [docs/common-values.md](docs/common-values.md)입니다.
+- `dev-cycle evidence` 명령과 위임·자원 문서를 고칠 때는 명령의 입력 제약과 증거 경계만 적습니다. private guard token·owner receipt를 예시나 로그에 넣지 않고, 메타데이터 캐시를 Main 승인 권위처럼 설명하지 않습니다. 템플릿 스킬·역할·API 본문은 해당 작업의 동결 범위 밖이면 바꾸지 않습니다.
 - 공개 주소의 정본은 `site-links.json`입니다. `node scripts/site-links.mjs set <home|pages|repo|packs> <새 주소>`가 추적 파일 전체의 주소를 바꾼 뒤 `node scripts/doc-values.mjs`를 돌립니다.
 
 ## 릴리스

@@ -1,0 +1,8 @@
+{
+  "apps/web/.env.schema": "# @required\nPAYMENT_API_KEY=\n# @public\nNEXT_PUBLIC_CURRENCY=KRW\n",
+  "apps/web/src/env.server.ts": "import \"server-only\"; // 서버 변수 검증 위치",
+  "apps/web/src/services.ts": "import \"server-only\"; // 서버 서비스 조립 위치",
+  "packages/config/src/pricing.ts": "export const MAX_ITEMS = 10;",
+  "turbo.json": "{\"tasks\":{\"build\":{\"dependsOn\":[\"^build\"],\"outputs\":[\".next/**\"]}}}",
+  "packages/env/src/index.ts": "// BTS 기존 환경 변수 검증 패키지"
+}

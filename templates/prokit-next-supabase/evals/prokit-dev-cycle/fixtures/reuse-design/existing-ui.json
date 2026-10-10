@@ -1,0 +1,6 @@
+{
+  "packages/ui/src/components/input.tsx": "export function Input(props) { return <input {...props} />; }",
+  "apps/web/src/components/empty-state.tsx": "export function EmptyState({title,children}) { return <section><h2>{title}</h2>{children}</section>; }",
+  "apps/web/src/app/members/page.tsx": "// 회원 목록, 아직 검색 없음",
+  "apps/web/src/app/groups/page.tsx": "// 그룹 목록, 아직 검색 없음"
+}

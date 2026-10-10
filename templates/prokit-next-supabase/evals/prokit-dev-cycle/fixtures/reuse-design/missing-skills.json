@@ -1,0 +1,6 @@
+{
+  "apps/web/src/components/search-box.tsx": "export function SearchBox({showIcon,showClear,isCompact,onSearch}) { /* 분기 3개 */ }",
+  "apps/web/src/app/members/page.tsx": "// SearchBox(showIcon=true,showClear=true)",
+  "apps/web/src/app/groups/page.tsx": "// SearchBox(isCompact=true)",
+  "packages/ui/src/components/input.tsx": "export function Input(props) { return <input {...props} />; }"
+}

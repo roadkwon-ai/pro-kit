@@ -1,22 +1,168 @@
 import assert from "node:assert/strict";
-import { readFileSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { readFileSync, truncateSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
-  SECURITY_ROW, buildRows, classify, loadConfig, parseActive, parseWorkflow, readWorkflow, renderBlock, writeTable,
+  SECURITY_ROW, audit, buildRows, classify, loadConfig, parseActive, parseWorkflow, readWorkflow, renderBlock, setEvidence, status, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
 import { makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
 
 const wf = parseWorkflow(readFileSync(join(TEMPLATE_FILES, "docs/dev-workflow.md"), "utf8"));
+const CLI = join(TEMPLATE_FILES, "scripts/dev-cycle.mjs");
 const cls = (over = {}) => ({ pathCase: "A", layers: [], harness: false, auth: false, evidence: [], ...over });
 const texts = (rows) => rows.map((r) => r.text);
+
+test("evidence setter는 지정 행의 증거 셀만 바꾸고 단계·메모·다른 행을 보존한다", () => {
+	const { root, write } = makeRepo();
+	const config = loadConfig(root);
+	writeTable(root, config, "A", { write: true, title: "증거 입력" });
+	const todo = join(root, config.todoPath);
+	const before = readFileSync(todo, "utf8").replace(
+		"<!-- dev-cycle:end -->",
+		"메모: 그대로 둔다\n```txt\n| 1 | 코드 예시 | 유지 |\n```\n<!-- dev-cycle:end -->",
+	);
+	writeFileSync(todo, before);
+	write("tasks/evidence/first.txt", "pnpm check | tail -3 → exit 0");
+	const result = setEvidence(root, config, 1, "tasks/evidence/first.txt");
+	const after = readFileSync(todo, "utf8");
+	assert.equal(result.row, 1);
+	assert.equal(parseActive(after).rows[0].evidence, "pnpm check | tail -3 → exit 0");
+	assert.match(after, /\| 1 \| .* \| pnpm check \\| tail -3 → exit 0 \|/);
+	assert.match(after, /메모: 그대로 둔다\n```txt\n\| 1 \| 코드 예시 \| 유지 \|/);
+	assert.equal(status(root, config).filled, 1);
+	assert.ok(!audit(root, config).problems.some((problem) => problem.startsWith("#1 ")));
+});
+
+test("evidence setter는 활성 라운드·실제 행 번호·한 줄 안전 입력을 요구한다", () => {
+	const { root, write } = makeRepo();
+	const config = loadConfig(root);
+	write("tasks/evidence/value.txt", "증거");
+	assert.throws(() => setEvidence(root, config, 1, "tasks/evidence/value.txt"), /활성 라운드/);
+	writeTable(root, config, "A", { write: true, title: "검증" });
+	assert.throws(() => setEvidence(root, config, 99, "tasks/evidence/value.txt"), /행 번호/);
+	write("tasks/evidence/multiline.txt", "첫 줄\n둘째 줄");
+	assert.throws(() => setEvidence(root, config, 1, "tasks/evidence/multiline.txt"), /한 줄/);
+	write("tasks/evidence/cr.txt", "첫 줄\r둘째 줄");
+	assert.throws(() => setEvidence(root, config, 1, "tasks/evidence/cr.txt"), /한 줄/);
+});
+
+test("evidence setter는 regular·작은 파일과 실제 표 헤더 아래 행만 읽고 거부해도 todo를 보존한다", () => {
+	const { root, write } = makeRepo();
+	const config = loadConfig(root);
+	writeTable(root, config, "A", { write: true, title: "입력 경계" });
+	const todo = join(root, config.todoPath);
+	write("tasks/evidence/value.txt", "증거");
+	const withoutHeader = readFileSync(todo, "utf8").replace("| # | 단계 | 증거 |\n", "");
+	writeFileSync(todo, withoutHeader);
+	assert.throws(() => setEvidence(root, config, 1, "tasks/evidence/value.txt"), /대조표/);
+	assert.equal(readFileSync(todo, "utf8"), withoutHeader);
+
+	writeTable(root, config, "A", { write: true, upgrade: true });
+	const crOnly = readFileSync(todo, "utf8")
+		.replace("<!-- dev-cycle:end -->", "~~~txt\n| 1 | 코드 예시 | 유지 |\n~~~\n<!-- dev-cycle:end -->")
+		.replaceAll("\n", "\r");
+	writeFileSync(todo, crOnly);
+	setEvidence(root, config, 1, "tasks/evidence/value.txt");
+	const afterCr = readFileSync(todo, "utf8");
+	assert.match(afterCr, /\| 1 \| .* \| 증거 \|/);
+	assert.match(afterCr, /~~~txt\r\| 1 \| 코드 예시 \| 유지 \|\r~~~/);
+
+	const sparse = join(root, "tasks/evidence/huge.txt");
+	write("tasks/evidence/huge.txt", "");
+	truncateSync(sparse, 64 * 1024 + 1);
+	assert.throws(() => setEvidence(root, config, 1, "tasks/evidence/huge.txt"), /너무 크다/);
+	const fifo = join(root, "tasks/evidence/input.fifo");
+	const made = spawnSync("mkfifo", [fifo], { encoding: "utf8" });
+	assert.equal(made.status, 0, made.stderr);
+	const fifoResult = spawnSync(
+		process.execPath,
+		[CLI, "evidence", "1", "--file", "tasks/evidence/input.fifo"],
+		{ cwd: root, encoding: "utf8", timeout: 250 },
+	);
+	assert.equal(fifoResult.status, 2, fifoResult.stderr);
+	assert.match(fifoResult.stderr, /일반 파일/);
+});
+
+test("evidence CLI는 파일 입력만 받아 증거 셀을 갱신한다", () => {
+	const { root, write } = makeRepo();
+	const config = loadConfig(root);
+	writeTable(root, config, "A", { write: true, title: "CLI" });
+	write("tasks/evidence/cli.txt", "pnpm check → exit 0");
+	const ok = spawnSync(
+		process.execPath,
+		[CLI, "evidence", "1", "--file", "tasks/evidence/cli.txt"],
+		{ cwd: root, encoding: "utf8" },
+	);
+	assert.equal(ok.status, 0, ok.stderr);
+	assert.equal(parseActive(readFileSync(join(root, config.todoPath), "utf8")).rows[0].evidence, "pnpm check → exit 0");
+	assert.equal(
+		spawnSync(process.execPath, [CLI, "evidence", "1"], {
+			cwd: root,
+			encoding: "utf8",
+		}).status,
+		2,
+	);
+});
+
+test("B·D·E·F·H는 구현 전에 설계를 점검하고 F 상속은 중복하지 않는다", () => {
+  for (const key of ["B", "D", "E", "F", "H"]) {
+    const rows = buildRows(wf, key, cls({ pathCase: key }));
+    const designs = rows.filter((r) => r.tag === "design");
+    assert.equal(designs.length, 1, `${key}: 설계 점검 한 번`);
+    const implementation = rows.findIndex((r) => /^(구현 \(|구현 방식|스키마 수정)/.test(r.text));
+    if (implementation >= 0) assert.ok(rows.indexOf(designs[0]) < implementation, `${key}: 구현 전 점검`);
+  }
+  for (const key of ["A", "C"]) {
+    const rows = buildRows(wf, key, cls({ pathCase: "B" }));
+    assert.ok(rows.every((r) => r.tag !== "design"), `${key}: 경미·버그에 설계 단계 강제 안 함`);
+  }
+});
+
+test("A에서 F로 상향해도 설계 결정 증거와 메모를 보존한다", () => {
+  const { root } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "A", { write: true, title: "재사용 검토" });
+  const p = join(root, config.todoPath);
+  const active = parseActive(readFileSync(p, "utf8"));
+  const design = buildRows(wf, "F", cls({ pathCase: "F" })).find((r) => r.tag === "design");
+  assert.ok(design, "F 설계 행");
+  const evidence = "tasks/evidence/reuse.md: 기존 경로와 설정 영향 확인";
+  const rows = [{ ...design, evidence }, ...active.rows];
+  writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows, ["설정 정본은 기존 파일을 유지한다."]));
+  writeTable(root, config, "F", { write: true, upgrade: true });
+  const after = parseActive(readFileSync(p, "utf8"));
+  assert.equal(after.rows.filter((r) => r.text.startsWith("[design]")).length, 1);
+  assert.equal(after.rows.find((r) => r.text.startsWith("[design]")).evidence, evidence);
+  assert.ok(after.extra.some((line) => line.includes("설정 정본")));
+});
+
+test("구판 F 계획 리뷰는 메모로 보존하고 새 독립 리뷰 행만 남긴다", () => {
+  const { root } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "F", { write: true, title: "구판 계획" });
+  const p = join(root, config.todoPath);
+  const active = parseActive(readFileSync(p, "utf8"));
+  const legacy = "[review] 계획 리뷰 (plan-eng-review, UI가 있으면 plan-design-review, ponytail-review로 계획의 과설계 확인) → 결과 요약, ponytail-review 반영·기각 또는 N/A: 사유";
+  const rows = active.rows.map((r) => r.text.includes("prokit-reviewer(plan)") ? { text: legacy, evidence: "plan-eng-review: 기존 검토 기록" } : r);
+  writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows, ["이전 메모 보존"]));
+  writeTable(root, config, "F", { write: true, upgrade: true });
+  const after = parseActive(readFileSync(p, "utf8"));
+  assert.equal(after.rows.filter((r) => r.text.includes("계획 리뷰")).length, 1);
+  assert.equal(after.rows.find((r) => r.text.includes("prokit-reviewer(plan)")).evidence, "");
+  assert.ok(after.extra.some((line) => line.includes("plan-eng-review: 기존 검토 기록")));
+  assert.ok(after.extra.includes("이전 메모 보존"));
+  writeTable(root, config, "F", { write: true, upgrade: true });
+  const again = parseActive(readFileSync(p, "utf8"));
+  assert.deepEqual(again.extra, after.extra);
+});
 
 test("워크플로 파싱: 케이스 블록과 공통, 설명 절은 무시", () => {
   for (const k of ["A", "B", "C", "D", "E", "F", "H", "COMMON"]) assert.ok(wf[k]?.length, `${k} 블록`);
   assert.equal(wf.A.length, 1);
   assert.deepEqual(wf.F.find((r) => r.include).include, ["E", "D", "B"]);
   assert.deepEqual(wf.C.find((r) => r.inherit).inherit, ["verify", "review"]);
-  assert.equal(wf.D[2].tag, "verify");
+  assert.equal(wf.D[3].tag, "verify");
 });
 
 test("F는 E·D·B 행을 한 번씩 펼치고 공통 행으로 끝난다", () => {

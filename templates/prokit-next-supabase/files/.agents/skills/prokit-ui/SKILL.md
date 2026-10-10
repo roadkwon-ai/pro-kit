@@ -12,6 +12,9 @@ description: >-
 
 # UI/UX: impeccable 중심
 
+## 위임
+디자인·접근성 전문 스킬이나 수행자를 쓸 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 실제 접근 가능한 provider의 범위와 side effect를 확인하고, 사이트맵·상호작용·오류 예산 계약은 유지한다.
+
 정본은 `PRODUCT.md`(제품 맥락)와 `DESIGN.md`(시각 시스템)다. 토큰은 `packages/ui/src/styles/globals.css`, 컴포넌트는 `packages/ui/src/components`(shadcn)에 있다.
 
 ## 시작할 때마다
@@ -29,6 +32,10 @@ description: >-
 리디자인이면 1번 전에 지금 화면을 데스크톱과 모바일로 찍고 `critique`한다. 점수와 약점은 브리프의 "버릴 것"에, 제품 사실·문구·기능은 "지킬 것"에 적는다. 옛 모양은 다듬을 출발점이 아니라 반례다(impeccable-map "리디자인").
 
 이번 턴의 결과물은 init 질문, 스타일 후보, 브리프다. 여기서 멈춘다. 사용자 답을 받기 전에는 `PRODUCT.md`를 만들지 않는다. 추정으로 채운 `PRODUCT.md`가 있으면 impeccable이 init을 끝난 것으로 보고 다음 세션에서 인터뷰를 건너뛴다. 사용자에게 물을 수 없는 환경이어도 가정으로 코드를 쓰지 않는다. 질문과 브리프 초안을 남기고 멈추는 것이 올바른 결과다.
+
+## 컴포넌트와 토큰 재사용
+
+브리프의 구현 경계를 정할 때 [재사용과 설정 설계](../prokit-dev-cycle/references/reuse-design.md)를 읽는다. 기존 `packages/ui` 프리미티브·토큰과 앱 컴포넌트의 실제 소비자를 확인하고 재사용·조합·분리 결정을 브리프나 계획에 남긴다. 겉모양이 비슷해도 책임·디자인·변경 이유가 다르면 합치지 않는다. 합성 API가 필요하면 `prokit-web`의 `vercel-composition-patterns` 연결을 따르고, 프리미티브 추가는 아래 shadcn 절차를 유지한다.
 
 ## 단계
 | 단계 | 할 일 | impeccable |

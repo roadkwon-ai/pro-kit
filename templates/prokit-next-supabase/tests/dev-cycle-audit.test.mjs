@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
-  audit, close, confirmProblem, evidenceProblem, loadConfig, parseActive, renderBlock, status, writeTable,
+  audit, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, parseActive, renderBlock, status, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
+import { captureSnapshot } from "../files/scripts/delegation.mjs";
 import { makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
 
 const CLI = join(TEMPLATE_FILES, "scripts/dev-cycle.mjs");
@@ -14,13 +15,135 @@ const run = (root, ...args) => spawnSync(process.execPath, [CLI, ...args], { cwd
 
 const CONFIRMED = "사용자가 결과를 확인했다(2026-09-29)";
 
+test("audit은 구현 전 설계 행을 지우거나 빈 증거로 남기면 거부한다", () => {
+  const { root } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "F", { write: true, title: "설정과 재사용" });
+  fill(root);
+  const p = join(root, config.todoPath);
+  const active = parseActive(readFileSync(p, "utf8"));
+  const design = active.rows.find((r) => r.text.startsWith("[design]"));
+  assert.ok(design, "필수 설계 행");
+  const blank = active.rows.map((r) => r === design ? { ...r, evidence: "" } : r);
+  writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, blank));
+  assert.ok(audit(root, config).problems.some((problem) => problem.includes(design.text) && problem.includes("비어")));
+  const removed = active.rows.filter((r) => r !== design);
+  writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, removed));
+  assert.ok(audit(root, config).problems.some((problem) => problem.includes("필수 행 누락") && problem.includes(design.text)));
+  writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, active.rows));
+  assert.equal(audit(root, config).ok, true);
+});
+
+test("audit은 연결된 위임 증거 패킷의 실패·미해결 상태를 통과로 바꾸지 않는다", () => {
+  const { root } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "A", { write: true, title: "위임 증거" });
+  fill(root);
+  const packet = {
+    taskId: "delegate-1",
+    status: "failed",
+    selectedProviders: [],
+    allowedPaths: ["tasks/**"],
+    constraints: [],
+    environmentRefs: [],
+    changes: [],
+    evidence: { report: "failed", commands: [{ command: "node --test", exitCode: 1 }], coverage: {}, limitations: [], artifacts: [], focus: ["tasks"] },
+    reviewCoverage: [],
+    unresolved: ["test failed"],
+    sideEffects: [],
+    nextAction: "fix",
+    baseline: captureSnapshot(root),
+  };
+  const result = audit(root, config, { delegationPacket: packet });
+  assert.equal(result.ok, false);
+  assert.ok(result.problems.some((problem) => problem.startsWith("위임 완료") || problem.startsWith("위임 증거")));
+});
+
+test("handoff admission·JSON context는 최종 위임 완료 attest로 통과할 수 없다", () => {
+	assert.match(
+		delegationCompletionProblem(
+			{ ok: true, status: "admitted", completionReady: false },
+			{ verifyAuthority: () => true, verifyReceipt: () => true },
+		),
+		/완료 가능한/,
+	);
+	assert.match(
+		delegationCompletionProblem(
+			{ ok: true, status: "complete", completionReady: true },
+			{},
+		),
+		/Main runtime/,
+	);
+	assert.equal(
+		delegationCompletionProblem(
+			{ ok: true, status: "complete", completionReady: true },
+			{ verifyAuthority: () => true, verifyReceipt: () => true },
+		),
+		null,
+	);
+});
+
+test("위임 라운드는 packet 없이 audit·close를 통과하지 않는다", () => {
+	const { root } = makeRepo();
+	const config = loadConfig(root);
+	writeTable(root, config, "A", { write: true, title: "위임", delegation: true });
+	fill(root);
+	assert.match(readFileSync(join(root, config.todoPath), "utf8"), /delegation=required/);
+	assert.equal(audit(root, config).ok, false);
+	assert.equal(close(root, config).ok, false);
+});
+
+test("계획 리뷰는 N/A로 넘길 수 없고 도구 실패는 부분 완료로 남는다", () => {
+  const { root } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "F", { write: true, title: "계획 리뷰" });
+  fill(root);
+  const p = join(root, config.todoPath);
+  const active = parseActive(readFileSync(p, "utf8"));
+  const plan = active.rows.find((r) => r.text.includes("prokit-reviewer(plan)"));
+  assert.ok(plan, "독립 계획 리뷰 행");
+  for (const evidence of ["N/A: gstack 없음", "**N/A**: 구현 전", "N / A: 스킬 없음", "pnpm check-types → exit 0", "PASS: gstack 없음", "해당 없음: 도구 없음", "prokit-reviewer(plan): changes-required, max=high", "prokit-reviewer(plan): changes-required, max=medium", "prokit-reviewer(plan): approve, max=high"]) {
+    const rows = active.rows.map((r) => r === plan ? { ...r, evidence } : r);
+    writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows));
+    assert.ok(audit(root, config).problems.some((problem) => problem.includes("계획 리뷰")), evidence);
+  }
+  const rows = active.rows.map((r) => r === plan ? { ...r, evidence: "blocked: 독립 리뷰 도구 실패" } : r);
+  writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows));
+  assert.equal(audit(root, config).ok, true);
+  assert.equal(close(root, config).ok, false);
+});
+
+test("설계 증거는 일반 검사나 건너뛰기 대신 결정의 필수 항목을 요구한다", () => {
+  const { root } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "D", { write: true, title: "설계 증거" });
+  fill(root);
+  const p = join(root, config.todoPath);
+  const active = parseActive(readFileSync(p, "utf8"));
+  const design = active.rows.find((r) => r.text.startsWith("[design]"));
+  for (const evidence of ["pnpm check-types → exit 0", "N/A: 설정 변경 없음", "기존: packages/ui; 결정: 재사용; 설정: 영향 없음", "기존: ; 결정: 재사용; 설정: 영향 없음; 검증: 두 소비자 확인"]) {
+    const rows = active.rows.map((r) => r === design ? { ...r, evidence } : r);
+    writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows));
+    assert.equal(audit(root, config).ok, false, evidence);
+  }
+  writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, active.rows));
+  assert.equal(audit(root, config).ok, true);
+});
+
 // 빈 칸을 value로, 빈 [confirm] 칸은 confirm으로 채운다
 function fill(root, value = "pnpm check-types → exit 0", confirm = CONFIRMED) {
   const config = loadConfig(root);
   const p = join(root, config.todoPath);
   const md = readFileSync(p, "utf8");
   const a = parseActive(md);
-  const rows = a.rows.map((r) => ({ ...r, evidence: r.evidence || (r.text.startsWith("[confirm]") ? confirm : value) }));
+  const rows = a.rows.map((r) => {
+    let evidence = value;
+    if (value === "pnpm check-types → exit 0") {
+      if (r.text.startsWith("[design]")) evidence = "기존: docs/dev-workflow.md; 결정: 기존 절차 재사용; 설정: 변경 없음; 검증: 소비자 회귀 검사";
+      if (r.text.includes("prokit-reviewer(plan)")) evidence = "prokit-reviewer(plan): approve, max=none, 지적 0";
+    }
+    return { ...r, evidence: r.evidence || (r.text.startsWith("[confirm]") ? confirm : evidence) };
+  });
   writeFileSync(p, md.slice(0, a.start) + renderBlock({ ...a.meta, title: a.title }, rows) + md.slice(a.end));
 }
 
@@ -217,7 +340,7 @@ test("status: 다음 빈 행을 알려 준다", () => {
   const s = status(root, config);
   assert.equal(s.case, "D");
   assert.equal(s.filled, 0);
-  assert.match(s.next, /^zod 입출력 계약/);
+  assert.match(s.next, /^\[design\] 재사용·설정 설계/);
 });
 
 test("status: 진행 중인 라운드가 없을 때만 외부 스킬 업데이트 확인(skills:update --if-due)을 부르고 그 출력을 붙인다", () => {
@@ -261,7 +384,7 @@ test("close: audit 실패면 거부, 통과하면 아카이브로 옮긴다", ()
   fill(root);
   const r = close(root, config, new Date("2026-09-25T00:00:00Z"));
   assert.equal(r.ok, true);
-  assert.ok(r.archivePath.endsWith(join("tasks", "archive", "2026-09.md")));
+  assert.ok(r.archivePath.endsWith(join("tasks", "archive", "2026-09-25-오타.md")));
   const archived = readFileSync(r.archivePath, "utf8");
   assert.match(archived, /dev-cycle:archived closed=2026-09-25 case=A/);
   assert.equal(parseActive(readFileSync(join(root, config.todoPath), "utf8")), null);
@@ -322,5 +445,156 @@ test("close: 사용자 메모의 빈 줄은 건드리지 않는다", () => {
   writeTable(root, config, "A", { title: "오타", write: true });
   fill(root);
   assert.equal(close(root, config).ok, true);
-  assert.equal(readFileSync(todoPath, "utf8"), "# 작업\n\n```\na\n\n\n\nb\n```\n");
+  assert.ok(readFileSync(todoPath, "utf8").includes("```\na\n\n\n\nb\n```\n"));
+});
+
+test("archive: 완료 계획·백로그만 옮기고 활성 블록·미완료·코드 예시는 보존한다", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  const fence = "\x60".repeat(3);
+  const sample = "## 코드 예시\n" + fence + "md\n- [x] 예시 항목\n[예시](archive/old.md)\n" + fence + "\n";
+  write(config.todoPath, "# 작업\n\n## 끝난 계획\n설명 [도메인](../docs/domain/project.md#flow)\n- [x] 구현\n- [x] 검사\n\n## 백로그\n- [x] 해결 [기록](archive/old.md)\n  추가 근거\n- [ ] 남은 항목\n- [ ] 부모\n  - [x] 끝난 하위\n  - [ ] 열린 하위\n\n" + sample);
+  writeTable(root, config, "A", { title: "현재 작업", write: true });
+  const before = readFileSync(join(root, config.todoPath), "utf8");
+  const active = parseActive(before);
+  const result = run(root, "archive", "--title", "완료 항목", "--json");
+  assert.equal(result.status, 0, result.stderr);
+  const out = JSON.parse(result.stdout);
+  assert.equal(out.completed, 4);
+  assert.match(out.archivePath, /\d{4}-\d{2}-\d{2}-완료-항목\.md$/);
+  const after = readFileSync(join(root, config.todoPath), "utf8");
+  const next = parseActive(after);
+  assert.equal(after.slice(next.start, next.end), before.slice(active.start, active.end));
+  assert.match(after, /- \[ \] 남은 항목/);
+  assert.match(after, /- \[ \] 부모[\s\S]*- \[ \] 열린 하위/);
+  assert.ok(after.includes(sample));
+  assert.doesNotMatch(after, /- \[x\] 구현|끝난 하위|추가 근거/);
+  const archived = readFileSync(out.archivePath, "utf8");
+  assert.match(archived, /- \[x\] 구현/);
+  assert.match(archived, /끝난 하위/);
+  assert.match(archived, /\[기록\]\(old\.md\)/);
+  assert.match(archived, /\[도메인\]\(\.\.\/\.\.\/docs\/domain\/project\.md#flow\)/);
+  assert.match(readFileSync(join(root, config.archiveDir, "README.md"), "utf8"), /완료-항목\.md/);
+  const again = JSON.parse(run(root, "archive", "--json").stdout);
+  assert.equal(again.completed, 0);
+  assert.equal(again.archivePath, null);
+});
+
+test("archive: 코드 블록의 체크박스는 완료 항목으로 세지 않는다", () => {
+  const { root, write } = makeRepo();
+  const fence = "\x60".repeat(4);
+  const text = "# 작업\n\n" + fence + "md\n" + "\x60".repeat(3) + "text\n- [x] 코드 예시\n" + "\x60".repeat(3) + "\n" + fence + "\n";
+  write("tasks/todo.md", text);
+  const r = run(root, "archive", "--json");
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(JSON.parse(r.stdout).completed, 0);
+  assert.equal(readFileSync(join(root, "tasks/todo.md"), "utf8"), text);
+});
+
+test("archive: 완료 항목과 같은 절의 독립 코드 예시를 todo에 남긴다", () => {
+  const { root, write } = makeRepo();
+  const fence = "\x60".repeat(3);
+  const code = fence + "md\n- [x] 코드 예시\n" + fence + "\n";
+  write("tasks/todo.md", "# 작업\n\n## 백로그\n- [x] 진짜 완료\n\n" + code);
+  const r = run(root, "archive", "--json");
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(JSON.parse(r.stdout).completed, 1);
+  assert.ok(readFileSync(join(root, "tasks/todo.md"), "utf8").includes(code));
+  assert.doesNotMatch(readFileSync(JSON.parse(r.stdout).archivePath, "utf8"), /코드 예시/);
+});
+
+test("archive: 공백·괄호 목적지와 코드 안 링크를 보존한다", () => {
+  const { root, write } = makeRepo();
+  write("tasks/todo.md", "# 작업\n- [x] [설계](<../docs/design notes (v2).md#part>) [일반](../docs/design(v2).md) " + "\x60[코드](archive/a.md)\x60\n");
+  const r = run(root, "archive", "--json");
+  assert.equal(r.status, 0, r.stderr);
+  const text = readFileSync(JSON.parse(r.stdout).archivePath, "utf8");
+  assert.match(text, /\[설계\]\(<\.\.\/\.\.\/docs\/design notes \(v2\)\.md#part>\)/);
+  assert.match(text, /\[일반\]\(\.\.\/\.\.\/docs\/design\(v2\)\.md\)/);
+  assert.ok(text.includes("\x60[코드](archive/a.md)\x60"));
+});
+
+test("archive: 같은 절의 일반 독립 코드 블록도 보존한다", () => {
+  const { root, write } = makeRepo();
+  const fence = "\x60".repeat(3);
+  const code = fence + "js\nconsole.log(42);\n" + fence + "\n";
+  write("tasks/todo.md", "# 작업\n\n## 완료 계획\n- [x] 완료\n" + code);
+  const r = run(root, "archive", "--json");
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(readFileSync(join(root, "tasks/todo.md"), "utf8").includes(code));
+  assert.doesNotMatch(readFileSync(JSON.parse(r.stdout).archivePath, "utf8"), /console\.log/);
+});
+
+test("archive: 잘못된 색인 경로 실패는 todo·기록을 바꾸지 않아 재시도가 가능하다", () => {
+  const { root, write } = makeRepo();
+  const original = "# 작업\n- [x] 완료\n";
+  write("tasks/todo.md", original);
+  mkdirSync(join(root, "tasks/archive/README.md"), { recursive: true });
+  assert.notEqual(run(root, "archive").status, 0);
+  assert.equal(readFileSync(join(root, "tasks/todo.md"), "utf8"), original);
+  assert.deepEqual(readdirSync(join(root, "tasks/archive")), ["README.md"]);
+});
+
+test("archive: todo 저장 실패 뒤 기존 todo·색인과 기록 수를 복구한다",
+  { skip: process.getuid?.() === 0 }, () => {
+  const { root, write } = makeRepo();
+  const original = "# 작업\n- [x] 완료\n";
+  write("tasks/todo.md", original);
+  write("tasks/archive/README.md", "기존 색인\n");
+  chmodSync(join(root, "tasks"), 0o555);
+  try {
+    assert.notEqual(run(root, "archive").status, 0);
+    assert.equal(readFileSync(join(root, "tasks/todo.md"), "utf8"), original);
+    assert.equal(readFileSync(join(root, "tasks/archive/README.md"), "utf8"), "기존 색인\n");
+    assert.deepEqual(readdirSync(join(root, "tasks/archive")), ["README.md"]);
+  } finally {
+    chmodSync(join(root, "tasks"), 0o755);
+  }
+  const retry = run(root, "archive", "--json");
+  assert.equal(retry.status, 0, retry.stderr);
+  assert.equal(JSON.parse(retry.stdout).completed, 1);
+});
+
+
+test("close: 날짜·제목 충돌은 기존 기록을 덮어쓰지 않는다", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  write("README.md", "changed\n");
+  writeTable(root, config, "A", { title: "../배포 / 확인?", write: true });
+  fill(root);
+  const first = close(root, config, new Date("2026-09-24T15:30:00Z"));
+  assert.match(first.archivePath, /2026-09-25-배포-확인\.md$/);
+  const contents = readFileSync(first.archivePath, "utf8");
+  writeTable(root, config, "A", { title: "../배포 / 확인?", write: true });
+  fill(root);
+  const second = close(root, config, new Date("2026-09-24T15:30:00Z"));
+  assert.match(second.archivePath, /2026-09-25-배포-확인-2\.md$/);
+  assert.equal(readFileSync(first.archivePath, "utf8"), contents);
+});
+
+test("close: 대조표와 완료 체크리스트를 함께 옮기고 기존 월별 기록은 보존한다", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  write("README.md", "changed\n");
+  write("tasks/archive/2026-09.md", "옛 기록\n");
+  write(config.todoPath, "# 작업\n\n## 계획\n- [x] 검사\n- [ ] 다음 작업\n");
+  writeTable(root, config, "A", { title: "기록 정리", write: true });
+  fill(root);
+  const r = close(root, config, new Date("2026-09-25T00:00:00Z"));
+  assert.equal(r.ok, true);
+  const archived = readFileSync(r.archivePath, "utf8");
+  assert.match(archived, /dev-cycle:archived/);
+  assert.match(archived, /- \[x\] 검사/);
+  assert.doesNotMatch(readFileSync(join(root, config.todoPath), "utf8"), /- \[x\] 검사/);
+  assert.match(readFileSync(join(root, config.todoPath), "utf8"), /- \[ \] 다음 작업/);
+  assert.equal(readFileSync(join(root, config.archiveDir, "2026-09.md"), "utf8"), "옛 기록\n");
+});
+
+test("archive: 모르는 옵션과 제목 누락은 파일을 변경하지 않는다", () => {
+  const { root, write } = makeRepo();
+  const text = "# 작업\n- [x] 완료\n";
+  write("tasks/todo.md", text);
+  assert.equal(run(root, "archive", "--typo").status, 2);
+  assert.equal(run(root, "archive", "--title").status, 2);
+  assert.equal(readFileSync(join(root, "tasks/todo.md"), "utf8"), text);
 });

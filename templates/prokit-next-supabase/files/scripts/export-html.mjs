@@ -5,29 +5,25 @@
 // 사용법: node scripts/export-html.mjs [--base /<하위 경로>]
 //   --base  GitHub Pages처럼 하위 경로에 올릴 때(예: --base /my-app). 페이지와 이미지 경로 앞에 붙는다.
 // exit: 0 정상, 1 사용법 오류·빌드 실패, 2 비밀값이 결과물에 들어감(html/을 만들지 않는다)
-import { spawnSync } from "node:child_process";
 import {
 	cpSync,
 	existsSync,
-	mkdtempSync,
 	readdirSync,
 	readFileSync,
 	realpathSync,
 	rmSync,
 	writeFileSync,
 } from "node:fs";
-import { tmpdir } from "node:os";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 // 같은 .env 파서와 키 이름을 쓴다. 둘은 함께 설치된다.
 import { envFiles, KEYS, readEnv } from "./load-keys.mjs";
-
-const run = (cmd, args, opts = {}) =>
-	spawnSync(cmd, args, {
-		encoding: "utf8",
-		maxBuffer: 64 * 1024 * 1024,
-		...opts,
-	});
+import {
+	checkResources,
+	createManagedTemporary,
+	disposeManagedTemporary,
+	runGuarded,
+} from "./resource-guard.mjs";
 
 // 어느 깊이에서든 복사하지 않는 이름. 의존성은 복사본에서 다시 설치한다.
 const SKIP_NAMES = new Set([
@@ -53,12 +49,46 @@ const ENV_FILES = ["", "apps/web/", "packages/db/"].flatMap((dir) =>
 	),
 );
 
-export function copyFilter(root) {
+export function copyFilter(root, { excludedPaths = [] } = {}) {
+	const excluded = excludedPaths.map((path) => path.replaceAll("/", sep));
 	return (src) => {
 		const rel = relative(root, src);
 		if (SKIP_PATHS.has(rel)) return false;
-		return !rel.split(sep).some((p) => SKIP_NAMES.has(p));
+		if (rel.split(sep).some((p) => SKIP_NAMES.has(p) || p === "__pycache__"))
+			return false;
+		if (/\.(?:pyc|pyo)$/i.test(rel)) return false;
+		if (
+			excluded.some((path) => rel === path || rel.startsWith(`${path}${sep}`))
+		)
+			return false;
+		return !existsSync(join(src, "pyvenv.cfg"));
 	};
+}
+
+// resources.roots는 명시한 프로젝트 안 경로만 복사에서 빼는 관찰 등록이다.
+// path 밖의 전역 환경이나 임시 디렉터리에는 내보내기 권한을 주지 않는다.
+export function resourceExcludedPaths(root) {
+	const config = join(root, ".dev-cycle.json");
+	if (!existsSync(config)) return [];
+	try {
+		const roots = JSON.parse(readFileSync(config, "utf8")).resources?.roots;
+		if (!Array.isArray(roots)) return [];
+		return roots
+			.filter(
+				(entry) =>
+					entry &&
+					typeof entry.path === "string" &&
+					["pythonVenv", "nodeModules", "buildCache", "managedTemp"].includes(
+						entry.kind,
+					),
+			)
+			.map((entry) => entry.path)
+			.filter(
+				(path) => !path.startsWith("/") && !path.split(/[\\/]/).includes(".."),
+			);
+	} catch {
+		return [];
+	}
 }
 
 // BTS next.config.ts(`const nextConfig` + `export default withVarlock(nextConfig)`)의 export 앞에 덧쓴다.
@@ -173,7 +203,7 @@ export function parseArgs(argv) {
 	return { base };
 }
 
-export function main(argv, root = process.cwd()) {
+export async function main(argv, root = process.cwd()) {
 	const args = parseArgs(argv);
 	if (args.error) {
 		console.error(`오류: ${args.error}`);
@@ -196,20 +226,40 @@ export function main(argv, root = process.cwd()) {
 		return 1;
 	}
 
-	// 복사본은 node_modules 밖에 둔다. Turbopack은 node_modules 경로의 앱 소스를 처리하지 못한다(Next 16.3 실측).
-	// .env 사본이 들어 있으므로 성공·실패와 상관없이 지운다.
-	const work = mkdtempSync(join(tmpdir(), "export-html-"));
+	let before;
 	try {
-		return build(root, work, base, patched);
+		before = await checkResources(root, { kind: "build", isNewHeavy: true });
+	} catch (error) {
+		console.error(`오류: 내보내기 전 자원 측정 실패: ${error.message}`);
+		return 1;
+	}
+	if (before.status === "block" || before.status === "unknown") {
+		console.error(
+			`오류: 내보내기 전 자원 확인 ${before.status}: ${before.reasons.join(", ")}`,
+		);
+		return 1;
+	}
+	// 복사본은 node_modules 밖에 둔다. 실제 handle만 성공·실패 모두에서 폐기한다.
+	let temporary;
+	try {
+		temporary = await createManagedTemporary(root, { runId: "export-html" });
+		return await build(root, temporary.path, base, patched, temporary);
+	} catch (error) {
+		console.error(`오류: 정적 내보내기 자원 준비 실패: ${error.message}`);
+		return 1;
 	} finally {
-		rmSync(work, { recursive: true, force: true });
+		if (temporary)
+			await disposeManagedTemporary(temporary, { artifactTransferred: true });
 	}
 }
 
-function build(root, work, base, patched) {
-	cpSync(root, work, {
+async function build(root, work, base, patched, temporaryHandle) {
+	const source = realpathSync(root);
+	cpSync(source, work, {
 		recursive: true,
-		filter: copyFilter(root),
+		filter: copyFilter(source, {
+			excludedPaths: [...resourceExcludedPaths(source), relative(source, work)],
+		}),
 		verbatimSymlinks: true,
 	});
 	for (const r of SERVER_ROUTES)
@@ -225,11 +275,18 @@ function build(root, work, base, patched) {
 	};
 	for (const k of KEYS) delete env[k];
 	console.log("복사본에 의존성 설치 중…");
-	const install = run("pnpm", ["install", "--prefer-offline"], {
-		cwd: work,
+	const install = await runGuarded(work, {
+		command: "pnpm",
+		args: ["install", "--prefer-offline"],
 		env,
+		captureOutput: true,
+		captureLimit: 64 * 1024 * 1024,
+		kind: "install",
+		roots: [root, work],
+		isNewHeavy: true,
+		temporaryHandle,
 	});
-	if (install.status !== 0) {
+	if (install.exitCode !== 0) {
 		console.error(
 			`${install.stdout}${install.stderr}`
 				.trim()
@@ -241,9 +298,17 @@ function build(root, work, base, patched) {
 		return 1;
 	}
 	console.log("정적 HTML 빌드 중…");
-	const next = run("pnpm", ["exec", "next", "build"], {
+	const next = await runGuarded(work, {
+		command: "pnpm",
+		args: ["exec", "next", "build"],
 		cwd: join(work, "apps/web"),
 		env,
+		captureOutput: true,
+		captureLimit: 64 * 1024 * 1024,
+		kind: "build",
+		roots: [root, work],
+		isNewHeavy: true,
+		temporaryHandle,
 	});
 	const log = `${next.stdout}${next.stderr}`;
 	// varlock이 빌드 결과에서 비밀값을 찾으면 변수 이름만 알리고 빌드를 멈춘다
@@ -253,7 +318,7 @@ function build(root, work, base, patched) {
 		),
 	];
 	if (varlockLeaks.length) return leaked(varlockLeaks);
-	if (next.status !== 0) {
+	if (next.exitCode !== 0) {
 		console.error(log.trim().split("\n").slice(-40).join("\n"));
 		console.error(
 			"오류: next build 실패. 화면만 프로젝트 규칙(prokit-ui)대로 동적 경로는 generateStaticParams, 서버 전용 API는 쓰지 않았는지 본다",
@@ -267,6 +332,17 @@ function build(root, work, base, patched) {
 	if (!existsSync(join(out, "index.html"))) {
 		console.error(
 			"오류: 정적 결과에 첫 페이지(index.html)가 없다. html/은 만들지 않았다",
+		);
+		return 1;
+	}
+	const after = await checkResources(work, {
+		roots: [root, work],
+		kind: "build",
+		isNewHeavy: true,
+	});
+	if (after.status === "block" || after.status === "unknown") {
+		console.error(
+			`오류: 내보내기 뒤 자원 확인 ${after.status}: ${after.reasons.join(", ")}`,
 		);
 		return 1;
 	}
@@ -298,4 +374,8 @@ const isMain = () => {
 		return false;
 	}
 };
-if (isMain()) process.exitCode = main(process.argv.slice(2));
+if (isMain()) {
+	main(process.argv.slice(2)).then((code) => {
+		process.exitCode = code;
+	});
+}

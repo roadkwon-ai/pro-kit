@@ -17,7 +17,7 @@ Better-T-Stack으로 만든 Next.js 풀스택 프로젝트(oRPC, Drizzle, Better
 | 프로젝트 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개 | `.agents/skills/prokit-*` | dev-cycle 지휘, web, api, db, ui, verify, deploy, 외부 스킬 업데이트(skills-update) |
 | 화면만 프로젝트 | `scripts/export-html.mjs`, `scripts/load-keys.mjs`, `.claude/settings.json`의 SessionStart 훅 | DB 없이 만든 화면을 정적 HTML로 내보내기(`pnpm export:html`), 프로젝트나 작업 폴더 `.env`의 `OPENAI_API_KEY`를 Claude Code 세션 셸 환경에 불러오기, 배포 토큰(`GH_TOKEN`·`VERCEL_TOKEN`)은 배포 명령에만 넣기(`node scripts/load-keys.mjs -- <명령>`) |
 | Vercel 배포와 릴리스 | `scripts/vercel-deploy.mjs`, `scripts/release.mjs`, `.vercelignore` | develop·production 배포 전 검사와 배포, production 배포 전 릴리스(버전 태그, `release/` 노트, GitHub Release), 로컬 `.env` 업로드 차단 |
-| 에이전트 <!-- v:prokit.agents.count -->2<!-- /v -->개 | `.claude/agents/`(정본), `.codex/agents/`·`.agents/agents/`(생성물) | 구현, 읽기 전용 리뷰 |
+| 에이전트 <!-- v:prokit.agents.count -->3<!-- /v -->개 | `.claude/agents/`(정본), `.codex/agents/`·`.agents/agents/`(생성물) | 구현 수행, 전문 읽기 전용 리뷰, 최종 읽기 전용 리뷰 |
 | dev-cycle | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 케이스 판정, 대조표, audit |
 | 문서 골격 | `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md` | 개발 원칙과 공통 규칙(`CLAUDE.md`는 `@AGENTS.md`로 읽음), 용어, 결정, 개관 |
 
@@ -148,7 +148,13 @@ production은 릴리스한 커밋만 배포한다. `pnpm release`가 마지막 `
 | `pnpm dev-cycle case` | 현재 diff의 케이스 판정 |
 | `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기 |
 | `pnpm dev-cycle status`, `audit`, `close` | 진행 확인, 빈 칸 검사, 라운드 닫기 (`blocked`·`미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial`) |
+| `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관 |
+| `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
 | `pnpm dev-cycle secrets` | 라운드 끝 커밋 전에 스테이징한 변경에서 로컬 `.env*`(루트, `apps/web`, `packages/db`. `.env.schema`·`.env.example` 제외)의 비밀값과 흔한 키 형식(개인 키, `sk-`, GitHub 토큰 등)을 찾는다. 값은 출력하지 않는다. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
+| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고. 정상·경고는 exit 0, 예산 초과는 exit 1, 측정 불완전은 exit 2 |
+| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행. 자원 차단·측정 불완전이면 exit 75, 실행했다면 자식 명령의 종료 코드를 유지 |
+| `pnpm dev-cycle resource clean [--apply]` | 기본은 검증한 정리 후보만 보여 줌. `--apply`도 현재 실행이 만든 compiler cache의 소유권·lease·자식 종료가 증명된 경우에만 정리 |
+| `pnpm dev-cycle delegation capture`, `pnpm dev-cycle delegation validate <패킷>` | 위임 전 기준 스냅샷을 남기고 완료 패킷의 실제 변경·증거·허용 범위를 검사 |
 | `pnpm agents:sync`, `pnpm agents:check` | `.claude/agents`에서 `.codex/agents`(Codex)·`.agents/agents`(Antigravity) 생성, 차이 검사 |
 | `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬·플러그인·OMX 설정과 agent-browser CLI를 설치 (`--with-global`이면 나머지 전역 도구도) |
 | `pnpm skills:check` | 설치하지 않고 상태만 확인. 프로젝트 scope 항목이 빠졌으면 exit 1. 선택 묶음은 상태만 보여 준다 |

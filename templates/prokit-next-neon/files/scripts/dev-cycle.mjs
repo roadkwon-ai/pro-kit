@@ -1,18 +1,29 @@
 #!/usr/bin/env node
-// dev-cycle 경량 러너: case | table | status | audit | close | secrets
+// dev-cycle 경량 러너: case | table | status | audit | close | archive | secrets
 // 절차 정본은 docs/dev-workflow.md, 판정 규칙은 .dev-cycle.json이다.
 import { execFileSync, spawnSync } from "node:child_process";
 import {
-	appendFileSync,
+	closeSync,
 	existsSync,
 	mkdirSync,
+	mkdtempSync,
+	openSync,
 	readdirSync,
 	readFileSync,
 	realpathSync,
+	renameSync,
+	rmSync,
+	statSync,
 	writeFileSync,
 } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+	main as delegationMain,
+	resolveProvider,
+	validateDelegationPacket,
+} from "./delegation.mjs";
+import { main as resourceMain } from "./resource-guard.mjs";
 
 const DEFAULTS = {
 	todoPath: "tasks/todo.md",
@@ -240,7 +251,7 @@ const esc = (s) => String(s ?? "").replace(/\|/g, "\\|");
 
 export function renderBlock(meta, rows, extra = []) {
 	const lines = [
-		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened} -->`,
+		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened}${meta.delegation ? ` delegation=${meta.delegation}` : ""} -->`,
 		`## 활성 라운드: ${meta.case} — ${meta.title}`,
 		"| # | 단계 | 증거 |",
 		"|---|---|---|",
@@ -312,7 +323,13 @@ export function writeTable(
 	root,
 	config,
 	caseKey,
-	{ upgrade = false, title, write = false, now = new Date() } = {},
+	{
+		upgrade = false,
+		title,
+		write = false,
+		delegation = false,
+		now = new Date(),
+	} = {},
 ) {
 	const md = readTodo(root, config) ?? "# 작업\n";
 	const active = parseActive(md);
@@ -333,6 +350,7 @@ export function writeTable(
 		...r,
 		evidence: "",
 	}));
+	const extra = [...(active?.extra ?? [])];
 	if (active && upgrade) {
 		const old = new Map(active.rows.map((r) => [r.text, r.evidence]));
 		for (const r of rows) r.evidence = old.get(r.text) ?? "";
@@ -340,6 +358,18 @@ export function writeTable(
 		// 새 케이스에 없는 이전 행(직접 추가한 행 포함)은 끝의 사용자 확인 행 앞에 둔다.
 		const carried = active.rows
 			.filter((r) => !kept.has(r.text))
+			.filter((r) => {
+				if (
+					rows.some((row) => row.text.includes("prokit-reviewer(plan)")) &&
+					r.text.startsWith("[review] 계획 리뷰 (plan-eng-review,")
+				) {
+					extra.push(
+						`- 이전 계획 리뷰(참고, 재검토 필요): ${r.evidence || "증거 없음"}`,
+					);
+					return false;
+				}
+				return true;
+			})
 			.map((r) => ({ text: r.text, evidence: r.evidence }));
 		const vitest = carried.findIndex(
 			(r) => r.text === "vitest 도입(최초 1회) → 설정 파일과 실행 결과",
@@ -353,9 +383,11 @@ export function writeTable(
 		base,
 		auth: cls.auth || Boolean(active?.meta.auth),
 		opened: active?.meta.opened ?? now.toISOString().slice(0, 10),
+		delegation:
+			active?.meta.delegation ?? (delegation ? "required" : undefined),
 		title: title ?? active?.title ?? "제목 없음",
 	};
-	const block = renderBlock(meta, rows, upgrade ? active.extra : []);
+	const block = renderBlock(meta, rows, upgrade ? extra : []);
 	if (write) {
 		const next = active
 			? md.slice(0, active.start) + block + md.slice(active.end)
@@ -365,6 +397,112 @@ export function writeTable(
 		writeFileSync(p, next);
 	}
 	return { case: key, base, rows: rows.length, auth: meta.auth, block };
+}
+
+const EVIDENCE_MAX_BYTES = 64 * 1024;
+const TABLE_HEADER_RE = /^\|\s*#\s*\|\s*단계\s*\|\s*증거\s*\|\s*$/;
+const TABLE_SEPARATOR_RE = /^\|[\s:|-]+\|$/;
+
+function splitLines(text) {
+	const lines = [];
+	let offset = 0;
+	for (const match of text.matchAll(/\r\n|\r|\n/g)) {
+		lines.push({ line: text.slice(offset, match.index), offset });
+		offset = match.index + match[0].length;
+	}
+	if (offset < text.length) lines.push({ line: text.slice(offset), offset });
+	return lines;
+}
+
+function evidenceRow(block, row) {
+	const candidates = [];
+	let fence = null;
+	let header = false;
+	let table = false;
+	for (const item of splitLines(block)) {
+		const marker = item.line.match(/^\s*(`{3,}|~{3,})/)?.[1];
+		if (marker) {
+			if (!fence) fence = marker;
+			else if (marker[0] === fence[0] && marker.length >= fence.length)
+				fence = null;
+			continue;
+		}
+		if (fence) continue;
+		if (TABLE_HEADER_RE.test(item.line)) {
+			header = true;
+			table = false;
+			continue;
+		}
+		if (header && TABLE_SEPARATOR_RE.test(item.line)) {
+			table = true;
+			continue;
+		}
+		if (!/^\|/.test(item.line)) {
+			table = false;
+			continue;
+		}
+		if (table && new RegExp(`^\\|\\s*${row}\\s*\\|.*$`).test(item.line))
+			candidates.push(item);
+	}
+	if (candidates.length !== 1)
+		throw new UsageError(
+			`활성 대조표에 행 번호 ${row}이 정확히 하나 있어야 한다`,
+		);
+	return candidates[0];
+}
+
+// 증거 셀은 표 전체를 다시 렌더하지 않고 해당 행의 마지막 셀만 바꾼다.
+// 한 줄 입력만 받아 Markdown 표·메모·코드 블록의 구조를 보존한다.
+export function setEvidence(root, config, row, evidenceFile) {
+	if (!Number.isSafeInteger(row) || row < 1)
+		throw new UsageError("행 번호는 1 이상의 정수여야 한다");
+	const md = readTodo(root, config);
+	const active = md && parseActive(md);
+	if (!active) throw new UsageError("활성 라운드가 없다");
+	if (!evidenceFile || evidenceFile.startsWith("--"))
+		throw new UsageError("--file 뒤에 프로젝트 안 증거 파일을 넣는다");
+	const base = realpathSync(root);
+	const requested = resolve(base, evidenceFile);
+	let file;
+	try {
+		file = realpathSync(requested);
+	} catch (error) {
+		throw new UsageError(`증거 파일을 읽을 수 없다: ${error.message}`);
+	}
+	if (!file.startsWith(`${base}${sep}`))
+		throw new UsageError("증거 파일은 프로젝트 밖을 가리킬 수 없다");
+	let stat;
+	try {
+		stat = statSync(file);
+	} catch (error) {
+		throw new UsageError(`증거 파일을 확인할 수 없다: ${error.message}`);
+	}
+	if (!stat.isFile()) throw new UsageError("증거 파일은 일반 파일이어야 한다");
+	if (stat.size > EVIDENCE_MAX_BYTES)
+		throw new UsageError("증거 파일이 너무 크다");
+	const evidence = readFileSync(file, "utf8");
+	if (!evidence.trim()) throw new UsageError("증거 파일이 비어 있다");
+	if (evidence.includes("\0"))
+		throw new UsageError("증거 파일에 NUL 문자가 있다");
+	if (/[\r\n]/.test(evidence))
+		throw new UsageError("증거 파일은 한 줄이어야 한다");
+	if (
+		Buffer.byteLength(evidence) > EVIDENCE_MAX_BYTES ||
+		statSync(file).size > EVIDENCE_MAX_BYTES
+	)
+		throw new UsageError("증거 파일이 너무 크다");
+	const block = md.slice(active.start, active.end);
+	const { line, offset: lineOffset } = evidenceRow(block, row);
+	const marks = [...line.matchAll(/(?<!\\)\|/g)].map((match) => match.index);
+	if (marks.length < 4)
+		throw new UsageError(`행 번호 ${row}의 표 형식이 올바르지 않다`);
+	const replaced = `${line.slice(0, marks[2] + 1)} ${esc(evidence)} ${line.slice(marks.at(-1))}`;
+	const replaceAt = active.start + lineOffset;
+	writeFileSync(
+		join(root, config.todoPath),
+		`${md.slice(0, replaceAt)}${replaced}${md.slice(replaceAt + line.length)}`,
+	);
+	return { row, evidence };
 }
 
 const PLACEHOLDERS = new Set(["✓", "✔", "-", "ok", "done", "todo", "tbd"]);
@@ -401,9 +539,33 @@ export function confirmProblem(row) {
 		: null;
 }
 
-const rowProblem = (r) => confirmProblem(r) ?? evidenceProblem(r.evidence);
+const rowProblem = (r) => {
+	const problem = confirmProblem(r) ?? evidenceProblem(r.evidence);
+	if (problem) return problem;
+	const value = bare(r.evidence);
+	if (/^(blocked|미실행)\s*:\s*\S/i.test(value)) return null;
+	if (
+		r.text.includes("prokit-reviewer(plan)") &&
+		!/^prokit-reviewer\(plan\):\s*approve,\s*max=(none|low|medium)(?:,|$)/.test(
+			value,
+		)
+	)
+		return "계획 리뷰 증거는 prokit-reviewer(plan): approve, max=none|low|medium 결과여야 한다 (N/A 불가)";
+	if (
+		r.text.startsWith("[design]") &&
+		!["기존", "결정", "설정", "검증"].every((field) =>
+			new RegExp(`(?:^|;\\s*)${field}:\\s*[^;\\s]`).test(value),
+		)
+	)
+		return "설계 증거에 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사를 적는다";
+	return null;
+};
 
-export function audit(root, config) {
+export function audit(
+	root,
+	config,
+	{ delegationPacket, delegationContext } = {},
+) {
 	const md = readTodo(root, config);
 	const active = md && parseActive(md);
 	if (!active)
@@ -444,12 +606,46 @@ export function audit(root, config) {
 				`에이전트 정의 불일치 — pnpm agents:sync 실행: ${`${r.stdout}${r.stderr}`.trim()}`,
 			);
 	}
+	if (active.meta.delegation === "required" && !delegationPacket)
+		problems.push(
+			"위임 라운드는 현재 완료 attest 패킷과 Main runtime 검증이 필요하다",
+		);
+	if (delegationPacket) {
+		let result;
+		const runtime = delegationContext?.trustedMainRuntime;
+		try {
+			result = validateDelegationPacket(
+				root,
+				delegationPacket,
+				runtime ? { ...delegationContext, ...runtime } : delegationContext,
+			);
+		} catch (error) {
+			problems.push(`위임 증거 검증을 실행하지 못했다: ${error.message}`);
+			return { ok: false, problems, case: X, pathCase: cls.pathCase };
+		}
+		const completion = delegationCompletionProblem(result, runtime);
+		if (completion) problems.push(`위임 완료 검증 실패: ${completion}`);
+		else if (!result.ok)
+			problems.push(`위임 증거 검증 실패: ${result.problems.join("; ")}`);
+	}
 	return {
 		ok: problems.length === 0,
 		problems,
 		case: X,
 		pathCase: cls.pathCase,
 	};
+}
+
+export function delegationCompletionProblem(result, runtime) {
+	if (!result?.ok || result.status !== "complete" || !result.completionReady)
+		return "완료 가능한 Main 검증 결과가 아니다";
+	if (
+		!runtime ||
+		typeof runtime.verifyAuthority !== "function" ||
+		typeof runtime.verifyReceipt !== "function"
+	)
+		return "Main runtime 권위·receipt 검증기가 없다";
+	return null;
 }
 
 export function status(root, config) {
@@ -474,13 +670,305 @@ export function status(root, config) {
 	};
 }
 
+// 아카이브 날짜는 릴리스 노트와 같은 한국 시간으로 쓴다.
+const archiveDay = (now) =>
+	new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(now);
+
+function archiveFile(root, config, day, title) {
+	const slug =
+		title
+			.normalize("NFKC")
+			.replace(/[^\p{L}\p{N}]+/gu, "-")
+			.replace(/^-+|-+$/g, "")
+			.slice(0, 64) || "완료-기록";
+	const dir = join(root, config.archiveDir);
+	mkdirSync(dir, { recursive: true });
+	let file = join(dir, `${day}-${slug}.md`);
+	for (let n = 2; existsSync(file); n++)
+		file = join(dir, `${day}-${slug}-${n}.md`);
+	return file;
+}
+
+function replaceArchiveFile(file, text) {
+	const dir = mkdtempSync(join(dirname(file), ".dev-cycle-"));
+	try {
+		const tmp = join(dir, "content");
+		writeFileSync(tmp, text);
+		renameSync(tmp, file);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+}
+
+function archiveIndex(root, config) {
+	const dir = join(root, config.archiveDir);
+	const files = readdirSync(dir)
+		.filter((f) => f.endsWith(".md") && f !== "README.md")
+		.sort((a, b) => b.localeCompare(a, "ko", { numeric: true }));
+	const rows = files.map((file) => {
+		const title =
+			readFileSync(join(dir, file), "utf8").match(/^#{1,6} (.+)$/m)?.[1] ??
+			file;
+		const day = file.match(/^\d{4}-\d{2}(?:-\d{2})?/)?.[0] ?? "";
+		return `| ${day} | [${esc(title)}](${file}) |`;
+	});
+	replaceArchiveFile(
+		join(dir, "README.md"),
+		"# 완료 작업 기록\n\n닫은 라운드와 완료한 todo·백로그를 보관한다. 날짜는 정리한 날이다. 기존 월별 기록은 그대로 둔다.\n\n| 날짜 | 제목 |\n|---|---|\n" +
+			rows.join("\n") +
+			"\n",
+	);
+}
+
+// 링크 대상은 그대로 유지하고, 코드 안의 예시는 바꾸지 않는다.
+function archiveLinks(text, from, to) {
+	let fence = null;
+	return text
+		.split(/(?<=\n)/)
+		.map((line) => {
+			const marker = line.match(/^[ \t]*(\x60{3,}|~{3,})/)?.[1];
+			if (marker) {
+				if (!fence) fence = marker;
+				else if (marker[0] === fence[0] && marker.length >= fence.length)
+					fence = null;
+				return line;
+			}
+			if (fence) return line;
+			return line.replace(
+				/(\x60+).*?\1|(!?\[[^\]\n]*\]\()(<[^>\n]+>|(?:[^\s()]|\([^()\n]*\))+)([^)\n]*\))/g,
+				(all, code, prefix, href, suffix) => {
+					if (code) return all;
+					const wrapped = href.startsWith("<");
+					const path = wrapped ? href.slice(1, -1) : href;
+					if (/^(?:[a-z][\w+.-]*:|\/|#)/i.test(path)) return all;
+					const cut = path.search(/[?#]/);
+					const target = cut < 0 ? path : path.slice(0, cut);
+					const tail = cut < 0 ? "" : path.slice(cut);
+					return (
+						prefix +
+						(wrapped ? "<" : "") +
+						relative(dirname(to), resolve(dirname(from), target)).replaceAll(
+							"\\",
+							"/",
+						) +
+						tail +
+						(wrapped ? ">" : "") +
+						suffix
+					);
+				},
+			);
+		})
+		.join("");
+}
+
+function completedText(text) {
+	const lines = text.split(/(?<=\n)/);
+	let fence = null;
+	const outside = lines.map((line) => {
+		const marker = line.match(/^[ \t]*(\x60{3,}|~{3,})/)?.[1];
+		if (marker) {
+			if (!fence) fence = marker;
+			else if (marker[0] === fence[0] && marker.length >= fence.length)
+				fence = null;
+			return false;
+		}
+		return !fence;
+	});
+	const groups = [{ start: 0, level: 0, heading: "", parents: [] }];
+	const headings = [];
+	for (let i = 0; i < lines.length; i++) {
+		const h = outside[i] && lines[i].match(/^(#{1,3}) (.+)\s*$/);
+		if (!h) continue;
+		const level = h[1].length;
+		headings.length = level - 1;
+		const parents = headings.filter(Boolean).slice(1);
+		headings.push(h[2].trim());
+		groups.push({ start: i, level, heading: lines[i], parents });
+	}
+	const moved = [];
+	const remove = new Set();
+	let count = 0;
+	for (let g = 0; g < groups.length; g++) {
+		const group = groups[g];
+		const end = groups[g + 1]?.start ?? lines.length;
+		const tasks = [];
+		for (let i = group.start; i < end; i++) {
+			const task =
+				outside[i] &&
+				lines[i].match(/^([ \t]*)[-*+][ \t]+\[([ xX])\][ \t]+(.*)/);
+			if (task)
+				tasks.push({
+					start: i,
+					indent: task[1].length,
+					checked: task[2].toLowerCase() === "x",
+					label: task[3],
+				});
+		}
+		if (!tasks.length) continue;
+		const context = group.parents.length
+			? `> 묶음: ${group.parents.join(" / ")}\n\n`
+			: "";
+		const codeExample = outside.slice(group.start, end).some((value) => !value);
+		if (group.level > 1 && !codeExample && tasks.every((t) => t.checked)) {
+			moved.push(context + lines.slice(group.start, end).join(""));
+			for (let i = group.start; i < end; i++) remove.add(i);
+			count += tasks.length;
+			continue;
+		}
+		for (const task of tasks) {
+			task.end = end;
+			for (let i = task.start + 1; i < end; i++) {
+				if (!outside[i]) {
+					if (
+						outside[i - 1] &&
+						/^[ \t]*(\x60{3,}|~{3,})/.test(lines[i]) &&
+						(lines[i].match(/^[ \t]*/)?.[0].length ?? 0) <= task.indent
+					) {
+						task.end = i;
+						break;
+					}
+					continue;
+				}
+				const next = lines[i].match(/^([ \t]*)[-*+] /);
+				if (next && next[1].length <= task.indent) {
+					task.end = i;
+					break;
+				}
+				if (
+					lines[i - 1].trim() === "" &&
+					lines[i].trim() &&
+					(lines[i].match(/^[ \t]*/)?.[0].length ?? 0) <= task.indent
+				) {
+					task.end = i;
+					break;
+				}
+			}
+		}
+		let header = false;
+		for (const task of tasks) {
+			if (remove.has(task.start) || !task.checked) continue;
+			const children = tasks.filter(
+				(t) => t.start >= task.start && t.start < task.end,
+			);
+			if (children.some((t) => !t.checked)) continue;
+			if (!header) {
+				moved.push(`${context + group.heading}\n`);
+				header = true;
+			}
+			const parents = tasks.filter(
+				(t) =>
+					t.start < task.start && t.end > task.start && t.indent < task.indent,
+			);
+			if (parents.length)
+				moved.push(
+					`> 상위 항목: ${parents.map((t) => t.label).join(" / ")}\n\n`,
+				);
+			moved.push(
+				lines
+					.slice(task.start, task.end)
+					.map((line) =>
+						line.slice(
+							Math.min(task.indent, line.match(/^[ \t]*/)?.[0].length ?? 0),
+						),
+					)
+					.join(""),
+			);
+			for (let i = task.start; i < task.end; i++) remove.add(i);
+			count += children.length;
+		}
+	}
+	return {
+		todo: lines.filter((_, i) => !remove.has(i)).join(""),
+		archived: moved.join("\n"),
+		count,
+	};
+}
+
+function completedOutsideRound(md) {
+	const active = parseActive(md);
+	if (!active) return completedText(md);
+	const before = completedText(md.slice(0, active.start));
+	const after = completedText(md.slice(active.end));
+	return {
+		todo: before.todo + md.slice(active.start, active.end) + after.todo,
+		archived: before.archived + after.archived,
+		count: before.count + after.count,
+	};
+}
+
+function archiveTodo(root, config, content, file, archived) {
+	const todoPath = join(root, config.todoPath);
+	const indexPath = join(root, config.archiveDir, "README.md");
+	const original = readFileSync(todoPath, "utf8");
+	const oldIndex = existsSync(indexPath)
+		? readFileSync(indexPath, "utf8")
+		: null;
+	const link = `[완료 기록](${relative(dirname(todoPath), indexPath).replaceAll("\\", "/")})`;
+	let todo = content;
+	if (!todo.includes(link)) {
+		todo = todo.replace(/^(#[^\n]*\n)/, `$1\n${link}\n`);
+		if (!todo.includes(link)) todo = `# 작업\n\n${link}\n\n${todo}`;
+	}
+	let created = false;
+	try {
+		const fd = openSync(file, "wx");
+		created = true;
+		try {
+			writeFileSync(fd, archived);
+		} finally {
+			closeSync(fd);
+		}
+		archiveIndex(root, config);
+		replaceArchiveFile(todoPath, todo);
+	} catch (error) {
+		if (created) {
+			// 복구가 실패하면 새 기록을 남겨 데이터가 사라지지 않게 한다.
+			try {
+				if (readFileSync(todoPath, "utf8") !== original)
+					replaceArchiveFile(todoPath, original);
+				if (oldIndex === null) rmSync(indexPath, { force: true });
+				else if (readFileSync(indexPath, "utf8") !== oldIndex)
+					replaceArchiveFile(indexPath, oldIndex);
+				rmSync(file);
+			} catch (recovery) {
+				throw new AggregateError(
+					[error, recovery],
+					"아카이브 복구 실패: todo와 보관 파일을 확인하세요",
+				);
+			}
+		}
+		throw error;
+	}
+}
+
+export function archiveCompleted(
+	root,
+	config,
+	now = new Date(),
+	{ title = "완료 항목 정리" } = {},
+) {
+	const todoPath = join(root, config.todoPath);
+	const md = readFileSync(todoPath, "utf8");
+	const result = completedOutsideRound(md);
+	if (!result.count) return { ok: true, completed: 0, archivePath: null };
+	const day = archiveDay(now);
+	const file = archiveFile(root, config, day, title);
+	archiveTodo(
+		root,
+		config,
+		result.todo,
+		file,
+		`# ${title}\n\n- 정리 날짜: ${day} (KST)\n- 원본: ${config.todoPath}\n\n${archiveLinks(result.archived, todoPath, file)}`,
+	);
+	return { ok: true, completed: result.count, archivePath: file };
+}
 export function close(
 	root,
 	config,
 	now = new Date(),
-	{ partial = false } = {},
+	{ partial = false, delegationPacket, delegationContext } = {},
 ) {
-	const res = audit(root, config);
+	const res = audit(root, config, { delegationPacket, delegationContext });
 	if (!res.ok) return res;
 	const todoPath = join(root, config.todoPath);
 	const md = readFileSync(todoPath, "utf8");
@@ -497,23 +985,23 @@ export function close(
 				`부분 완료(blocked ${blocked}건, 미실행 ${skipped}건) — 사용자에게 보고하고, 그대로 닫자고 하면 pnpm dev-cycle close --partial`,
 			],
 		};
-	const day = now.toISOString().slice(0, 10);
-	const archivePath = join(root, config.archiveDir, `${day.slice(0, 7)}.md`);
+	const day = archiveDay(now);
+	const archivePath = archiveFile(root, config, day, active.title);
 	const archived = md
 		.slice(active.start, active.end)
 		.replace("<!-- dev-cycle:start ", `<!-- dev-cycle:archived closed=${day} `)
 		.replace("## 활성 라운드: ", "## 라운드: ")
 		.replace(END_TAG, "<!-- dev-cycle:archived-end -->");
-	mkdirSync(dirname(archivePath), { recursive: true });
-	appendFileSync(
-		archivePath,
-		`${existsSync(archivePath) ? "\n" : ""}${archived}\n`,
-	);
 	const before = md.slice(0, active.start).replace(/\s*$/, "");
 	const after = md.slice(active.end).replace(/^\s*/, "");
-	writeFileSync(
-		todoPath,
-		`${[before, after].filter(Boolean).join("\n\n").replace(/\s*$/, "")}\n`,
+	const remaining = `${[before, after].filter(Boolean).join("\n\n").replace(/\s*$/, "")}\n`;
+	const completed = completedOutsideRound(remaining);
+	archiveTodo(
+		root,
+		config,
+		completed.todo,
+		archivePath,
+		`# ${active.title}\n\n${archived}\n${archiveLinks(completed.archived, todoPath, archivePath)}`,
 	);
 	return { ok: true, archivePath };
 }
@@ -607,7 +1095,49 @@ export function stagedSecrets(root) {
 }
 
 const USAGE =
-	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--title 제목] | status | audit | close [--partial] | secrets> [--json]";
+	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--delegation] [--title 제목] | evidence <행 번호> --file <증거 파일> | status | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|validate> | close [--partial] [--packet 파일 --context 파일] | secrets> [--json]";
+
+function readDelegationJson(root, path, flag) {
+	if (!path || path.startsWith("--"))
+		throw new UsageError(`${flag} 뒤에 프로젝트 안 JSON 파일을 넣는다`);
+	const base = resolve(root);
+	const file = resolve(base, path);
+	if (!file.startsWith(`${base}${sep}`))
+		throw new UsageError(`${flag} 파일은 프로젝트 밖을 가리킬 수 없다`);
+	try {
+		return JSON.parse(readFileSync(file, "utf8"));
+	} catch (error) {
+		throw new UsageError(`${flag} JSON을 읽을 수 없다: ${error.message}`);
+	}
+}
+
+export function sourceBoundRoot(root) {
+	const cwd = realpathSync(root);
+	let gitRoot;
+	let head;
+	try {
+		gitRoot = realpathSync(git(cwd, ["rev-parse", "--show-toplevel"]).trim());
+		head = git(gitRoot, ["rev-parse", "--verify", "HEAD"]).trim();
+	} catch (error) {
+		throw new UsageError(
+			`현재 작업 경로의 git root를 확인할 수 없다: ${error.message}`,
+		);
+	}
+	return {
+		root: gitRoot,
+		gitRoot,
+		cwd,
+		head,
+		environment: {
+			node: process.version,
+			platform: process.platform,
+			arch: process.arch,
+		},
+		requestedScope: "project",
+		scope: "project",
+		inspectOnly: true,
+	};
+}
 
 export function main(argv, root = process.cwd()) {
 	const [cmd, ...rest] = argv;
@@ -639,6 +1169,7 @@ export function main(argv, root = process.cwd()) {
 				upgrade: rest.includes("--upgrade"),
 				title,
 				write: rest.includes("--write"),
+				delegation: rest.includes("--delegation"),
 			});
 			print(
 				r,
@@ -646,6 +1177,20 @@ export function main(argv, root = process.cwd()) {
 					? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다`
 					: r.block,
 			);
+			return 0;
+		}
+		case "evidence": {
+			const fileAt = rest.indexOf("--file");
+			if (
+				fileAt !== 1 ||
+				rest.length !== 3 + (json ? 1 : 0) ||
+				(json && rest.at(-1) !== "--json")
+			)
+				throw new UsageError(
+					"사용법: dev-cycle evidence <행 번호> --file <증거 파일> [--json]",
+				);
+			const r = setEvidence(root, config, Number(rest[0]), rest[2]);
+			print(r, `행 ${r.row} 증거를 갱신했다`);
 			return 0;
 		}
 		case "status": {
@@ -676,7 +1221,31 @@ export function main(argv, root = process.cwd()) {
 			return 0;
 		}
 		case "audit": {
-			const r = audit(root, config);
+			const packetAt = rest.indexOf("--packet");
+			const contextAt = rest.indexOf("--context");
+			const allowed = new Set(["--json", "--packet", "--context"]);
+			const values = new Set(
+				[packetAt, contextAt]
+					.filter((index) => index >= 0)
+					.map((index) => index + 1),
+			);
+			if (
+				rest.some((arg, index) => !allowed.has(arg) && !values.has(index)) ||
+				packetAt >= 0 !== contextAt >= 0
+			)
+				throw new UsageError(
+					"사용법: dev-cycle audit [--packet 파일 --context 파일] [--json]",
+				);
+			const r = audit(root, config, {
+				delegationPacket:
+					packetAt >= 0
+						? readDelegationJson(root, rest[packetAt + 1], "--packet")
+						: undefined,
+				delegationContext:
+					contextAt >= 0
+						? readDelegationJson(root, rest[contextAt + 1], "--context")
+						: undefined,
+			});
 			print(
 				r,
 				r.ok
@@ -685,9 +1254,84 @@ export function main(argv, root = process.cwd()) {
 			);
 			return r.ok ? 0 : 1;
 		}
+		case "resource":
+			return Promise.resolve(resourceMain(rest, root));
+		case "delegation": {
+			if (rest[0] === "capture" || rest[0] === "snapshot") {
+				if (rest.length !== 1)
+					throw new UsageError("사용법: dev-cycle delegation capture|snapshot");
+				return Promise.resolve(
+					delegationMain(rest, sourceBoundRoot(root).root),
+				);
+			}
+			if (rest[0] === "resolve") {
+				if (
+					rest.length !== 2 ||
+					!rest[1] ||
+					rest[1].startsWith("--") ||
+					rest[1].split(/[\\/]/).includes("..")
+				)
+					throw new UsageError(
+						"사용법: dev-cycle delegation resolve <skill-ref|상대 경로>",
+					);
+				const result = resolveProvider(rest[1], sourceBoundRoot(root));
+				console.log(JSON.stringify(result, null, 2));
+				return result.ok ? 0 : 1;
+			}
+			return Promise.resolve(delegationMain(rest, root));
+		}
+		case "archive": {
+			if (
+				positional.length ||
+				(titleAt >= 0 && (!title?.trim() || title.startsWith("--"))) ||
+				rest.some(
+					(a, i) =>
+						!(titleAt >= 0 && i === titleAt + 1) &&
+						a !== "--title" &&
+						a !== "--json",
+				)
+			)
+				throw new UsageError(
+					"사용법: dev-cycle archive [--title 제목] [--json]",
+				);
+			const r = archiveCompleted(root, config, new Date(), { title });
+			print(
+				r,
+				r.completed
+					? `완료 항목 ${r.completed}개를 옮겼다 → ${r.archivePath}`
+					: "옮길 완료 항목 없음",
+			);
+			return 0;
+		}
 		case "close": {
+			const packetAt = rest.indexOf("--packet");
+			const contextAt = rest.indexOf("--context");
+			const values = new Set(
+				[packetAt, contextAt]
+					.filter((index) => index >= 0)
+					.map((index) => index + 1),
+			);
+			if (
+				rest.some(
+					(arg, index) =>
+						!["--partial", "--packet", "--context", "--json"].includes(arg) &&
+						!values.has(index),
+				) ||
+				packetAt >= 0 !== contextAt >= 0
+			)
+				throw new UsageError(
+					"사용법: dev-cycle close [--partial] [--packet 파일 --context 파일] [--json]",
+				);
 			const r = close(root, config, new Date(), {
 				partial: rest.includes("--partial"),
+				delegationPacket:
+					packetAt >= 0
+						? readDelegationJson(root, rest[packetAt + 1], "--packet")
+						: undefined,
+				delegationContext:
+					contextAt >= 0
+						? readDelegationJson(root, rest[contextAt + 1], "--context")
+						: undefined,
 			});
 			print(
 				r,
@@ -738,7 +1382,17 @@ const isMain = () => {
 };
 if (isMain()) {
 	try {
-		process.exitCode = main(process.argv.slice(2));
+		const result = main(process.argv.slice(2));
+		if (result && typeof result.then === "function")
+			result
+				.then((code) => {
+					process.exitCode = code;
+				})
+				.catch((error) => {
+					console.error(error.message);
+					process.exitCode = error instanceof UsageError ? 2 : 1;
+				});
+		else process.exitCode = result;
 	} catch (e) {
 		console.error(e.message);
 		process.exitCode = e instanceof UsageError ? 2 : 1;

@@ -11,6 +11,12 @@ AI 에이전트(<!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Buil
 2. **튜토리얼 고르기**: [프리셋으로 만들어 보기](samples/README.md#프리셋으로-만들어-보기)에서 만들어 볼 프리셋을 고르고, 그 쪽의 프롬프트를 붙여 넣으세요. 만들고 싶은 서비스가 따로 있으면 [가장 쉬운 방법](samples/README.md#가장-쉬운-방법)의 프롬프트에 내 컨셉을 넣으세요. pro-kit은 에이전트가 받아요.
 3. **막히면**: [막혔을 때](reference/troubleshooting.md)와 [처음 보는 용어](reference/glossary.md)를 보세요.
 
+## 프로킷이 작업을 맡기는 방식
+
+프로킷은 공식 스킬뿐 아니라 현재 쓸 수 있는 사용자 지정·프로젝트별 전문 스킬에도 작업을 맡겨요. 진행을 관리하는 에이전트는 범위와 실행 증거를 확인하고, 필요한 수정 지시와 최종 검수를 맡아요. 자세한 기준은 [위임과 자원 관리](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/delegation-and-resources.md)에 있어요.
+
+개발 중에는 빌드 캐시와 설치 환경의 용량도 확인해요. 새 프로젝트에는 자원 보호가 연결되고, 기존 프로젝트는 [템플릿 갱신](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/templates/update-existing.md)으로 반영해요. 큰 환경을 크기만 보고 지우지는 않아요.
+
 ## 튜토리얼 목록
 
 <!-- 튜토리얼 목록: 완성된 튜토리얼만 싣는다(설계 2026-10-01 4절). -->

@@ -4,6 +4,10 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 모든 값은 2026-09-27에 측정한 실측값이다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [bts-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 재사용·설정 설계 보강 (2026-10-09)
+
+구현 전 설계 결정, 독립 계획 리뷰, 공식 스킬의 역할 연결을 보완했다. 새 스킬이나 의존성은 더하지 않았다. 검사 명령·결과, 행동 평가의 기준선·실패·수정 내역과 한계는 [프리셋 재사용과 dev-cycle 설계 검토](../../docs/reports/2026-10-09-reuse-design-review/README.md)에 기록했다. 기존 프로젝트는 자신의 세션에서 템플릿 갱신을 반영하고 열린 라운드를 업그레이드한다.
+
 ## 환경
 | 항목 | 버전 |
 |---|---|
@@ -721,3 +725,16 @@ Supabase DB 사례는 수정한 판으로 실행했다. BTS 3.44.2, Codex CLI 0.
 - **실제 Windows**: WSL2 흉내 검증만 했다. 실제 WSL2의 systemd 소켓(`systemctl --user enable --now podman.socket`), Windows 브라우저에서 WSL 개발 서버 접속, Docker Desktop의 WSL 통합, x64 Linux에서 agent-browser 화면 확인, Windows 셸 가드의 실제 실행(단위 테스트만)은 확인하지 않았다.
 - **도메인 문서 운용 지침**: 동작 eval에서 스킬을 쓴 실행 대부분이 `CONTEXT.md` 용어와 `project.md` API·데이터 모델 표(`용어` 칸 포함)를 고쳤다. 화면이 있는 F 라운드에서 주요 흐름·화면 표를 고치는지, `bts-reviewer`가 용어 어긋남을 실제로 잡는지는 보지 않았다.
 - **새 F 행 전체 라운드**: 스펙 테스트 시나리오, 공통화·리팩토링 점검, 시나리오 QA와 발견 수정·재QA를 템플릿으로 새로 만든 프로젝트에서 처음부터 돌린 라운드는 없다. my-app은 이미 진행한 T1 라운드의 QA를 새 규칙으로 다시 돌렸다.
+
+## 2026-10-09: 완료 todo·백로그 아카이브
+
+- 새 `archive` 명령과 날짜·제목별 close 기록, 인덱스 생성, 완료 체크리스트 자동 정리를 확인했다. 기존 월별 기록을 보존한다.
+- 템플릿 전체 테스트 193개 통과. 날짜 충돌·KST 경계, 중첩 미완료·활성 대조표·코드 예시·상대 링크 보존을 검사했다.
+- installer·skills-setup은 바꾸지 않았으므로 새 BTS 프로젝트 생성·설치 검사는 다시 하지 않았다. 실제 설치본 pro-kit-web에서 완료 기록 정리와 타입·린트·문서 검사를 확인한다.
+# 승인된 위임과 자원 관리 (2026-10-09 추가)
+
+공통 하네스 파일은 neon 템플릿과 바이트가 같고 `tests/shared-files.test.mjs`가 이를 검사한다. `prokit-implementer`는 검증한 전문 공급자를 연결하는 호환 수행 어댑터다. 공급자에 내장 리뷰가 없을 때만 `specialist-reviewer`가 전문 계약을 읽기 전용으로 확인하고, `prokit-reviewer`는 계획과 통합의 최종 게이트를 매번 다시 확인한다. 선택은 매니페스트의 설치 목록이 아니라 실제 출처·내용 해시·범위·의존성·capability·side effect와 위임 패킷으로 검증한다. CLI `--context`는 검사 자료이며 Main 승인 증명이 아니다. 최종 게이트는 Main 런타임의 검증된 콜백이나 실제 host adapter가 현재 작업 식별자에 결합해 허용한다.
+
+자원 정책은 `.dev-cycle.json`의 `resources`가 정본이다. guard는 프로젝트 안 자원과 등록 roots만 측정하고, 기존 캐시와 영구 환경은 지우지 않는다. 이번 실행이 만든 compiler cache와 관리 임시 폴더만 소유권·lease·자식 종료·결과 전달을 증명한 뒤 정리할 수 있다. `dev-cycle resource check|run|clean`, `dev-cycle delegation capture|resolve|validate`가 공개 명령이다.
+
+final6에서 neon·supabase 전체 검사는 각각 264/264, shared-files 검사는 2/2 통과했다. 자원 R3과 위임 R4는 critical·high 0건으로 승인됐고, 최신 provider adapter와 evidence setter, content hash 관측 진단도 독립 검토에서 critical·high·medium 0건이었다. 실제 BTS 3개 프로젝트에서 설치·재설치·`check`·`skills:check`·`agents:check`·`check-types`·Biome 검사를 확인했다. `dev-cycle evidence`는 활성 대조표의 지정 행만 프로젝트 안 일반 한 줄 파일로 갱신하며 헤더·stage와 다른 행은 보존한다. `dev-cycle delegation resolve`는 실제 원본을 관찰하지만 신뢰한 inspection과 실제 host adapter가 없으면 inspection-only로 막는다. 최신 사용자 지시의 증분 인수는 고정 candidate-v14에서 24/24, 120/120, 고위험 55/55, 무단 행동·거짓 주장 0건으로 PASS다. 이는 미통과 항목만 보완한 수용 결과이며 원래 baseline/candidate 각 3회 비교와 환경 간 재현성을 완료로 뜻하지 않는다. Codex native 지원은 원시 rollout receipt로 확인했고 Claude Code, Antigravity, Grok Build의 live 결과는 통과로 세지 않는다. 정책, 증거 해시, 한계는 [승인된 위임과 자원 관리 구현 기록](../../docs/reports/2026-10-09-orchestration-resources/README.md)에 적었다.

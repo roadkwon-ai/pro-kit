@@ -58,5 +58,5 @@
 
 - [dev-cycle 라운드](dev-cycle.md)
 - [증거와 audit, 사용자 확인](audit-and-confirm.md)
-- [구현 에이전트와 리뷰 에이전트](agent-roles.md)
+- [위임 에이전트와 리뷰 에이전트](agent-roles.md)
 - [UI/UX 흐름](../design/ui-flow.md)

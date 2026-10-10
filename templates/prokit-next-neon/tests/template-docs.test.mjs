@@ -154,13 +154,12 @@ test("스킬 업데이트: prokit-dev-cycle 시작이 주기 확인을 부르고
 test("ponytail: 구현·리뷰 라우팅, 기존 규칙 우선, 설치 목록과 README가 맞는다", () => {
   const routing = read(".agents/skills/prokit-dev-cycle/references/process-routing.md");
   const cycle = read(".agents/skills/prokit-dev-cycle/SKILL.md");
-  for (const doc of [routing, cycle]) {
-    assert.match(doc, /ponytail-review/);
-    assert.match(doc, /focus와 범위[는를] (그대로|줄이지 않)/);
-  }
+  for (const doc of [routing, cycle]) assert.match(doc, /ponytail-review/);
+  assert.match(routing, /provider가 낸 전문 review coverage는 재사용/);
+  assert.match(cycle, /실제 coverage와 같은 reuse key/);
   assert.match(cycle, /ponytail 규칙보다 이 스킬, `AGENTS\.md`, 대조표가 우선한다\. vitest 도입 행/);
   assert.match(routing, /ponytail 규칙이 `AGENTS\.md`, `prokit-\*`, 대조표와 부딪히면 뒤의 것이 우선한다\. 대조표 행\(vitest 도입/);
-  assert.match(routing, /`ponytail-review`, gstack `review`[^\n]*추가 관점이다/);
+  assert.match(routing, /provider 내장 review coverage를 재사용하고[^\n]*`ponytail-review`[^\n]*gstack `review`/);
   assert.match(routing, /잘 돌던 기존 코드를 고칠 근거로 쓰지 않는다/);
   assert.match(read("CLAUDE.md"), /Skill 도구로 `ponytail:ponytail-review`/);
   const m = JSON.parse(read("skills.manifest.json"));
@@ -220,6 +219,77 @@ test("스킬 연결: 행이 외부 스킬을 이름으로 부르고, 외부 스�
   assert.match(read(".agents/skills/prokit-web/SKILL.md"), /느림, 깜빡임, 번들 크기, 캐시, 프리패치를 다루면[^\n]*`vercel-react-best-practices`를 읽고/);
   assert.match(read(".claude/agents/prokit-reviewer.md"), /"skills_read":\[/);
   assert.match(read(".claude/agents/prokit-implementer.md"), /^- 읽은 스킬: /m);
+});
+
+test("증거는 setter가 활성 대조표의 한 행에 넣는다", () => {
+  const cycle = read(".agents/skills/prokit-dev-cycle/SKILL.md");
+  const evidence = read(".agents/skills/prokit-verify/references/evidence.md");
+  for (const doc of [cycle, evidence]) assert.match(doc, /pnpm dev-cycle evidence <행 번호> --file <증거 파일>/);
+  assert.match(cycle, /대조표 셀을 수동으로 stage 문자열로 고치지 않는다/);
+  assert.match(evidence, /활성 대조표의 유일한 행/);
+});
+
+test("위임: provider는 매니페스트가 아니라 실제 계약을 검증하고, 전문 리뷰는 보완만 한다", () => {
+  const protocol = read(".agents/skills/prokit-dev-cycle/references/delegation.md");
+  for (const field of ["taskId", "selectedProviders", "environmentFingerprint", "reviewCoverage", "sideEffects", "nextAction"]) {
+    assert.match(protocol, new RegExp(field));
+  }
+  assert.match(protocol, /skills\.manifest\.json.*선택 허용 목록이 아니다/);
+  assert.match(protocol, /pnpm dev-cycle delegation resolve <skill-ref\|relative-path>/);
+  assert.match(protocol, /inspection-only라 새 실행 권한을 주지 않지만.*read-only 전문 텍스트 생산을 금지하지는 않는다/);
+  assert.match(protocol, /dependencies·capabilities·tools·sideEffects 배열을 전문 본문에 근거해 명시/);
+  assert.match(protocol, /기계 metadata가 없다는 이유만으로 결론을 만들지 않되/);
+  assert.match(protocol, /실제 의존성·필요 tool·side effect·permission이 unknown이거나 범위 밖 쓰기면 `blocked`/);
+  assert.match(protocol, /`verifyReceipt`·`verifyAuthority`·fresh `prokit-reviewer` final gate/);
+  assert.match(protocol, /같은 task\/run\/root의 accepted native call/);
+  assert.match(protocol, /canonical location.*content hash.*scope.*의존성.*capability.*side effect/);
+  assert.match(protocol, /현재 선택 후보와 필수 의존 체인만 검증/);
+  assert.match(protocol, /더 낮은 후보와 무관한 전문 본문·profile은 읽거나 hash하지 않는다/);
+  assert.match(protocol, /출처·content hash 사실만 다시 읽지 않고 재사용/);
+  assert.match(protocol, /task 계약·host\/mode·권한·환경이 모두 같을 때만 재사용/);
+  assert.match(protocol, /바뀌거나 unknown이면 항상 재검증하고 Main final gate를 다시 거친다/);
+  assert.match(protocol, /작업 전후 한 번씩만 호출/);
+  assert.match(protocol, /manifest hash, 항목 수, artifact 경로만/);
+  assert.match(protocol, /git이 제외한 설치 환경을 다시 순회하지 않고/);
+  assert.match(protocol, /lock·owner·nonce 파일과 환경·proof payload는 직접 읽거나 출력하지 않고/);
+  assert.match(protocol, /check 또는 clean dry-run summary에서 bool·hash·reason만/);
+  assert.match(protocol, /`git rev-parse --show-toplevel`의 realpath/);
+  assert.match(protocol, /새 임시 프로젝트·복사본·cwd 이동을 만들지 않고/);
+  assert.match(protocol, /runtime·lock·group fingerprint health를 확인해 재사용/);
+  assert.match(protocol, /실제 descriptor/);
+  assert.match(protocol, /provider content metadata를 조립해 확정하지 않는다/);
+  assert.match(protocol, /no rolloutfound.*직접 쓰지 않는다/);
+  assert.match(protocol, /accepted runtime receipt가 같은 `agent_type`을 확인할 때만 주장/);
+  assert.match(protocol, /`userProviders`\/`userRefs`.*`defaultProviders`\/`defaults` 순서/);
+  assert.match(protocol, /`actualProviders`는 content를 포함한 read observation/);
+  assert.match(protocol, /이름 없는 exact `canonicalLocation`만 resolver로 direct 선택/);
+  assert.match(protocol, /content 없이 `ok`, `provider`, `actualHash`, `source`만 요약/);
+  assert.match(protocol, /logical `prokit-implementer` profile/);
+  assert.match(protocol, /receipt가 없으면 확인된 builtin `<type>` \+ logical `prokit-implementer` profile/);
+  assert.match(protocol, /exact type이 필수인 작업은 `blocked`/);
+  assert.match(protocol, /declared read-only는 텍스트 artifact 생성·검토에는 충분/);
+  assert.match(protocol, /현재 write scope가 있을 때만 approved path에 exact byte를 검증·통합/);
+  assert.match(protocol, /Main이 read-only면 artifact을 회수·보고만/);
+  const implementer = read(".claude/agents/prokit-implementer.md");
+  assert.match(implementer, /승인 루트에서만 일한다/);
+  assert.match(implementer, /accepted runtime receipt가 확인할 때만 보고/);
+  assert.match(implementer, /logical profile 또는 unverified 상태를 그대로 보고/);
+  assert.match(read(".claude/agents/prokit-reviewer.md"), /승인 루트, focus, 기준 SHA/);
+  assert.match(protocol, /최대 두 번 재지시/);
+  assert.match(protocol, /미검사를 PASS로 바꾸지 않는다/);
+  assert.match(protocol, /실행 전에는.*완료 패킷을 검증하지 않는다/);
+  assert.match(protocol, /실행 뒤에만.*Main runner receipt/);
+  assert.match(protocol, /Main의 baseline·approvedPaths·runner receipt와 실제 delta/);
+  assert.match(protocol, /task·run·제품·증거·provider·환경/);
+  const reviewer = read(".claude/agents/prokit-reviewer.md");
+  assert.match(reviewer, /evidence_hash/);
+  assert.match(reviewer, /integration_acceptance/);
+  const specialist = read(".claude/agents/specialist-reviewer.md");
+  assert.match(specialist, /내장 리뷰가 없을 때만/);
+  assert.match(specialist, /일반 코드 리뷰를 반복하지/);
+  for (const name of ["prokit-api", "prokit-db", "prokit-deploy", "prokit-ui", "prokit-verify", "prokit-web", "prokit-skills-update"]) {
+    assert.match(read(`.agents/skills/${name}/SKILL.md`), /위임과 전문 스킬 프로토콜/);
+  }
 });
 
 

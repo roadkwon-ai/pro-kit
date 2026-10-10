@@ -12,6 +12,9 @@ description: >-
 
 # Vercel 배포
 
+## 위임
+외부 전문 스킬을 배포 준비 검토에 쓸 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. commit, push, 배포 실행, 토큰·비밀값 출력은 위임 패킷에 넣지 않고 이 스킬의 사용자 확인 경계를 유지한다.
+
 배포는 사용자가 요청하거나, 라운드 끝(`prokit-dev-cycle` 5절)에서 사용자가 "릴리스하고 production 배포"를 골랐을 때만 한다. 대상을 말하지 않으면 develop이다. production은 사용자가 운영이나 production을 명시하거나 라운드 끝에서 고를 때만 배포한다.
 
 Vercel CLI의 일반 사용법(설치, 로그인, 토큰, `vercel env`·`domains`·`logs` 명령)은 아래 "공식 스킬 연결"의 스킬을 따른다. 이 스킬에는 공식 스킬이 다루지 않는 이 스택의 절차만 있다. 둘이 다르면 이 스킬을 따른다.

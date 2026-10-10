@@ -16,21 +16,24 @@ function project() {
 const tomlOk = (file) =>
   spawnSync("python3", ["-c", "import sys,tomllib; tomllib.load(open(sys.argv[1],'rb'))", file]).status === 0;
 
-test("템플릿 에이전트 두 개를 유효한 TOML(Codex)과 md(Antigravity)로 생성한다", () => {
+test("템플릿 에이전트 세 개를 유효한 TOML(Codex)과 md(Antigravity)로 생성한다", () => {
   const root = project();
   const diffs = sync(root);
-  assert.equal(diffs.length, 4);
-  for (const name of ["prokit-implementer", "prokit-reviewer"]) {
+  assert.equal(diffs.length, 6);
+  for (const name of ["prokit-implementer", "prokit-reviewer", "specialist-reviewer"]) {
     const f = join(root, ".codex/agents", `${name}.toml`);
     assert.ok(tomlOk(f), `${name} TOML 파싱`);
   }
   assert.match(readFileSync(join(root, ".codex/agents/prokit-reviewer.toml"), "utf8"), /sandbox_mode = "read-only"/);
+  assert.match(readFileSync(join(root, ".codex/agents/specialist-reviewer.toml"), "utf8"), /sandbox_mode = "read-only"/);
   assert.match(readFileSync(join(root, ".codex/agents/prokit-implementer.toml"), "utf8"), /sandbox_mode = "workspace-write"/);
   // Antigravity(.agents/agents): 쓰기 도구가 없는 에이전트는 문서에 나온 읽기·검색·명령 도구만, 나머지는 도구를 제한하지 않는다
   const reviewer = readFileSync(join(root, ".agents/agents/prokit-reviewer.md"), "utf8");
   assert.equal(parseAgent(reviewer).meta.name, "prokit-reviewer");
   assert.match(reviewer, /^mainAgent: false$/m);
   assert.match(reviewer, /^tools:\n {2}- view_file\n {2}- grep_search\n {2}- run_command$/m);
+  const specialist = readFileSync(join(root, ".agents/agents/specialist-reviewer.md"), "utf8");
+  assert.match(specialist, /^tools:\n {2}- view_file\n {2}- grep_search\n {2}- run_command$/m);
   const implementer = readFileSync(join(root, ".agents/agents/prokit-implementer.md"), "utf8");
   assert.doesNotMatch(implementer, /^tools:/m);
   const src = parseAgent(readFileSync(join(root, ".claude/agents/prokit-implementer.md"), "utf8"));

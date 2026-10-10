@@ -15,11 +15,15 @@
 | `prokit-deploy` | Vercel 배포(develop, production)와 되돌리기 | develop에 올려줘, 운영에 배포해줘, 롤백해줘 | 요청하거나 라운드 끝에서 고를 때만 배포, DB 먼저 적용, 로컬 `.env`는 올리지 않고 배포 값은 Vercel 환경변수에만, 운영은 기본 브랜치에서만 |
 | `prokit-skills-update` | 에이전트가 쓰는 외부 스킬 업데이트 | 스킬 업데이트해줘, 스킬 최신이야? | 작업을 시작할 때 하루 한 번 새 버전 확인, 업데이트는 물어보고 한 라운드로 커밋, 원격에서 없어진 스킬은 지우지 않고 알림 |
 
+프로킷 스킬은 프로젝트 계약과 진행 관리를 맡아요. 일반 기술 지식과 전문 구현·설계·리뷰는 작업에 맞는 외부 스킬에 연결하고, 실제 결과를 확인해 재지시하거나 최종 수용해요. 스킬 선택과 증거 경계는 [위임과 자원 관리](../concepts/delegation-and-resources.md)에 있어요.
+
 ## 스킬끼리 이어지는 방식
 
 - **진입점은 `prokit-dev-cycle`**: 코드를 바꾸는 요청은 모두 여기서 시작해요. 케이스를 정하고 대조표를 열어요([dev-cycle 라운드](../concepts/dev-cycle.md)).
 - **계층 스킬**: 행을 실행할 때 화면 동작은 `prokit-web`, 화면 모양과 사용 경험은 `prokit-ui`, API와 인증은 `prokit-api`, DB는 `prokit-db`, 검사와 증거는 `prokit-verify`를 불러요.
 - **공식 스킬 연결**: 분야별 스킬(web, ui, api, db, verify)과 dev-cycle 대조표의 각 행은 그 단계에서 읽을 공식 스킬(Next.js, React, Better Auth, shadcn, impeccable, Neon 또는 Supabase, Vercel)을 정해 둬요([공식 스킬과 연결](official-skills.md)).
+- **외부 스킬도 연결해요**: 기본 공식 스킬 외에 현재 접근 가능한 사용자 지정·프로젝트별 스킬도 선택할 수 있어요. 문서 작업에는 필요한 문서·글쓰기·한국어 검수 단계를 연결하고, 내장 리뷰와 겹치는 검토는 반복하지 않아요.
+- **개발 자원을 함께 봐요**: `prokit-dev-cycle`은 관리하는 개발·빌드·설치·검증 작업에서 자원 상태를 확인해요. 명령은 [명령 모음](../reference/commands.md#위임과-자원)에 있어요.
 - **배포는 따로**: 배포 요청은 코드를 바꾸지 않으므로 라운드 없이 `prokit-deploy`가 메인 세션에서 맡아요.
 
 ## 자세히

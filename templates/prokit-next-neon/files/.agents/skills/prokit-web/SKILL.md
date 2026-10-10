@@ -20,15 +20,21 @@ description: >-
 | 상황 | 읽을 스킬 |
 |---|---|
 | 컴포넌트와 훅 작성, 리렌더, 번들 크기, 요청 워터폴 | `vercel-react-best-practices` |
-| props가 불어나는 컴포넌트, 합성 설계 | `vercel-composition-patterns` |
+| 재사용할 컴포넌트 API, props가 불어나는 컴포넌트, 합성 설계 | `vercel-composition-patterns` |
 | `use cache`와 Cache Components 도입 또는 점검 | `next-cache-components-adoption`, `next-cache-components-optimizer` |
 | 링크 프리패치 전략: Partial Prefetching 도입, 도입 뒤 링크별 조정 | `next-partial-prefetching-adoption`, `next-partial-prefetching-optimizer` |
 | 바꾼 동작이 실제 앱에서 도는지 확인 | `next-dev-loop` (절차는 `prokit-verify`) |
-| turbo 태스크와 패키지 의존 | `turborepo` |
+| turbo 태스크·패키지 의존·환경 변수 캐시 입력 | `turborepo` |
 
 이 스킬들의 지침이 번들 문서(`apps/web/node_modules/next/dist/docs/`)와 다르면 번들 문서를 따르고, 어긋난 곳을 보고에 적는다. 외부 스킬은 설치한 Next 버전보다 늦게 갱신될 수 있다.
 
 느림, 깜빡임, 번들 크기, 캐시, 프리패치를 다루면 원인 분석이나 개선안을 쓰기 전에 `vercel-react-best-practices`를 읽고, 캐시면 `next-cache-components-*`, 링크 이동이면 `next-partial-prefetching-*`도 읽는다(`.agents/skills/<이름>/SKILL.md`). 원인과 개선안에는 해당 규칙 이름(예: async-parallel, rerender-memo)을 붙이고, 개발 서버의 동작은 `next-dev-loop`의 `/_next/mcp`로 본다.
+
+## 재사용과 설정 결정
+
+구조를 정하기 전에 [재사용과 설정 설계](../prokit-dev-cycle/references/reuse-design.md)를 따른다. 기존 컴포넌트·유틸·환경 변수 검증과 소비자를 먼저 확인하고 계획에 결정 경로를 남긴다. React 합성은 `vercel-composition-patterns`의 해당 규칙을 적용하되 단순 재사용에 Provider를 추가하지 않는다. `turbo.json`이나 환경 변수 캐시 입력을 바꾸면 `turborepo`가 가리키는 설치판 문서를 읽는다.
+
+외부 전문 스킬이나 수행자를 쓸 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. provider의 실제 내용과 scope를 확인하고, RSC 경계·환경 변수·기존 소비자 계약은 넘긴 패킷에도 명시한다.
 
 ## 규칙
 - 화면만 프로젝트(루트 `AGENTS.md` 맨 위 표시)면 아래 데이터 패칭·보호 페이지 규칙 대신 `prokit-ui`의 "화면만 프로젝트" 절을 따른다.

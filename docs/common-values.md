@@ -50,6 +50,17 @@
 | `policy.agentBrowser.da` | agent-browser CLI가 없거나 npm 최신판보다 낮으면 전역에 최신판을 설치한다 | agent-browser CLI 설치 정책 문장(~다체. 에이전트·템플릿 README용). 기본 실행도 이 정책을 따른다 | doc-values.json policy.agentBrowser.da | `doc-values.json`을 고친다 | 11 |
 | `policy.agentBrowser.yo` | agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요 | agent-browser CLI 설치 정책 문장(~요체. handbook용) | doc-values.json policy.agentBrowser.yo | `doc-values.json`을 고친다 | 5 |
 | `policy.agentBrowser.cell` | 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치 | 같은 정책의 표 칸 꼴(주어와 끝맺음 없이 "…설치"). 행 이름이 agent-browser CLI인 칸, "agent-browser CLI는" 뒤, "agent-browser CLI(" 괄호 안에 쓴다 | doc-values.json policy.agentBrowser.cell | `doc-values.json`을 고친다 | 4 |
+| `policy.resource.environmentWarn` | 10GiB | 영구 활성 환경 하나의 정보 경고 한계. 정리·차단하지 않는다 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.cacheWarn` | 20GiB | 캐시 경고 한계 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.cacheBlock` | 40GiB | 캐시 실행 차단 한계 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.totalWarn` | 40GiB | 관리 대상 합계 경고 한계 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.totalBlock` | 80GiB | 새 무거운 작업의 관리 대상 합계 차단 한계 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.freeWarn` | 20GiB | 파일 시스템 여유 공간 경고 한계 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.freeBlock` | 10GiB | 파일 시스템 여유 공간 차단 한계 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.fastTimeout` | 30초 | 빠른 점검 주기 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.fastWorkerTimeout` | 10초 | 빠른 점검이 부르는 별도 bounded worker 측정 예산 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.fullTimeout` | 5분 | 전체 inventory 점검 주기 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.fullWorkerTimeout` | 30초 | 전체 inventory 점검이 부르는 별도 bounded worker 측정 예산 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `meta.presetModel` | Opus 5.5 | 프리셋을 만든 모델 | doc-values.json meta.presetModel | `doc-values.json`을 고친다 | 4 |
 | `gloss.presetPack` | 만들 서비스의 화면 구성, 디자인, 예시 데이터, 그림을 묶어 둔 폴더 | 용어 "프리셋 팩"의 짧은 풀이(본문에서 용어 링크 뒤 괄호에 쓴다). 용어집 tutorials/reference/glossary.md도 이 값을 쓴다 | doc-values.json gloss.presetPack | `doc-values.json`을 고친다 | 1 |
 | `gloss.clonePack` | 만들 서비스의 화면 구성, 기능 규칙, 디자인 노트, 예시 데이터, 그림을 묶어 둔 폴더 | 클론 튜토리얼(Nextflix, Claudle) 팩의 풀이(features.md·design-notes.md가 든다). 화면 프리셋 팩 9개에는 없으니 용어집은 gloss.presetPack을 쓴다 | doc-values.json gloss.clonePack | `doc-values.json`을 고친다 | 19 |
@@ -294,8 +305,8 @@
 | `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 16 |
 | `prokit.skills.count` | 8 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 28 |
 | `prokit.skills.count.ko` | 여덟 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `prokit.agents.count` | 2 | 구현·리뷰 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 8 |
-| `prokit.agents.count.ko` | 두 | 구현·리뷰 에이전트 수의 한글 수 관형사 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `prokit.agents.count` | 3 | 구현 수행·전문 리뷰·최종 리뷰 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 8 |
+| `prokit.agents.count.ko` | 세 | 구현 수행·전문 리뷰·최종 리뷰 에이전트 수의 한글 수 관형사 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.count` | 7 | dev-cycle 케이스 수 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.count.ko` | 일곱 | dev-cycle 케이스 수의 한글 수 관형사 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.list` | A, B, C, D, E, F, H | dev-cycle 케이스 목록 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
@@ -342,7 +353,7 @@
 | `eval.designMd.secondScreen.without` | 97 | 브랜드 이름과 대표 색만 줬을 때 두 번째 화면이 첫 화면 색을 따른 비율(%는 값 밖) | 계산: templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `eval.designMd.palette.offTarget` | 29 | 브랜드 이름과 대표 색만 줬을 때 화면에 쓴 색 가운데 목표 밖 색의 비율(%는 값 밖) | 계산: 100 − templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표의 B 팔레트 일치율(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `handbook.sections.count` | 7 | 문서(handbook) 묶음 수 | handbook/README.md 묶음 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `handbook.pages.count` | 33 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `handbook.pages.count` | 34 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `b:agent-order-line` | (글 묶음) | 새 프로젝트를 만들 때 "에이전트는 이런 순서로 일해요" 도입 문장(옵션 없이 열었을 때 허락을 묻는다고 알린다). clone-create-prompt 묶음이 품는다 | docs/blocks/agent-order-line.md | 묶음 원본을 고친다 | 3 |
 | `b:clone-auth-feature-note` | (글 묶음) | 클론 튜토리얼 5장의 첫 NOTE(5장부터 기능을 하나씩 만든다) | docs/blocks/clone-auth-feature-note.md | 묶음 원본을 고친다 | 2 |
 | `b:clone-auth-open` | (글 묶음) | 클론 튜토리얼 5장의 1단계 첫 문단(4장 대화창을 그대로 써도 된다) | docs/blocks/clone-auth-open.md | 묶음 원본을 고친다 | 2 |
@@ -512,7 +523,7 @@
 | `b:tpl-readme-after-install-steps` | (글 묶음) | 두 템플릿 README "설치한 뒤" 번호 목록의 3~7번(새 세션, impeccable 훅, 용어집, 라운드, 첫 화면). 번호 목록 중간이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/tpl-readme-after-install-steps.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-clone` | (글 묶음) | 두 템플릿 README에서 팀원이 프로젝트를 클론했을 때 하는 일 문단. 인자: tail(뒤에 붙는 말. 앞에 띄어쓰기를 둔다. 없으면 붙이지 않는다) | docs/blocks/tpl-readme-clone.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-commands-plugin` | (글 묶음) | 두 템플릿 README 명령 표의 claude plugin update 행(supabase 템플릿은 앞에 supabase 행 둘이 더 있다). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/tpl-readme-commands-plugin.md | 묶음 원본을 고친다 | 2 |
-| `b:tpl-readme-commands` | (글 묶음) | 두 템플릿 README "설치된 프로젝트에서 자주 쓰는 명령" 표의 앞 열두 행(표 머리는 빼고). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 뒤의 행은 템플릿마다 달라 따로 두고, 같은 마지막 행은 `tpl-readme-commands-plugin`이다 | docs/blocks/tpl-readme-commands.md | 묶음 원본을 고친다 | 2 |
+| `b:tpl-readme-commands` | (글 묶음) | 두 템플릿 README "설치된 프로젝트에서 자주 쓰는 명령" 표의 앞 열여덟 행(표 머리는 빼고). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 뒤의 행은 템플릿마다 달라 따로 두고, 같은 마지막 행은 `tpl-readme-commands-plugin`이다 | docs/blocks/tpl-readme-commands.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-dev` | (글 묶음) | 두 템플릿 README "템플릿 자체 개발" 절의 목록. 인자: me(이 템플릿 이름), other(다른 템플릿 이름), josa(other 뒤 조사. 와 또는 과) | docs/blocks/tpl-readme-dev.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-install-rows` | (글 묶음) | 두 템플릿 README "설치되는 것" 표에서 프로세스 스킬 행부터 문서 골격 행까지(공식 스킬 행만 템플릿마다 다르다). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 인자: db(neon 또는 supabase. 선택 스킬 행의 ops 묶음 스킬 키) | docs/blocks/tpl-readme-install-rows.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-license` | (글 묶음) | 두 템플릿 README 맨 위의 사용 조건 인용(MIT 라이선스). 템플릿 README는 새 프로젝트에 설치되지 않아 표시를 달 수 있다. 상대 링크는 templates/<이름>/README.md 깊이를 따른다 | docs/blocks/tpl-readme-license.md | 묶음 원본을 고친다 | 2 |

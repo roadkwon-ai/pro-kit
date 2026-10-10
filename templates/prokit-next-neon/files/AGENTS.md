@@ -12,10 +12,8 @@
 - Write detailed specs upfront to reduce ambiguity
 
 ### 2. Subagent Strategy
-- Use subagents liberally to keep main context window clean
-- Offload research, exploration, and parallel analysis to subagents
-- For complex problems, throw more compute at it via subagents
-- One tack per subagent for focused execution
+- 한 작업 단위에는 검증한 수행 흐름 하나만 쓴다. 전문 스킬·수행자 선택과 evidence packet은 `prokit-dev-cycle`의 위임 프로토콜을 따른다.
+- 메인은 대조표와 런타임만 관리한다. 외부 수행자는 commit, push, 배포, DB 적용, 토큰·비밀값 출력을 맡지 않는다.
 
 ### 3. Self-Improvement Loop
 - After ANY correction from the user: update `tasks/lessons.md` with the pattern
@@ -43,12 +41,7 @@
 
 ## Task Management
 
-1. **Plan First**: Write plan to `tasks/todo.md` with checkable items
-2. **Verify Plan**: Check in before starting implementation
-3. **Track Progress**: Mark items complete as you go
-4. **Explain Changes**: High-level summary at each step
-5. **Document Results**: Add review section to `tasks/todo.md`
-6. **Capture Lessons**: Update `tasks/lessons.md` after corrections
+`tasks/todo.md`의 계획과 진행은 dev-cycle 라운드 바깥에 적고, 라운드의 증거·검증·사용자 확인은 `prokit-dev-cycle`이 관리한다.
 
 ## Core Principles
 
@@ -69,7 +62,7 @@
 4. 완료는 검증 가능한 동작으로 말한다. 실행하지 않은 검사를 통과라고 하지 않는다.
 
 ## 코드 변경 절차
-코드나 설정을 바꾸는 작업은 `prokit-dev-cycle` 스킬로 시작한다. `pnpm dev-cycle case`로 판정하고, `pnpm dev-cycle table <케이스> --write --title "<요약>"`로 대조표를 열고(케이스는 요청 기준으로 고른다. 아직 diff가 없으면 `case`는 A로 나온다), 행을 실행한 뒤 `pnpm dev-cycle audit`과 `close`로 닫는다. 표 끝의 `[confirm]` 행은 사용자가 결과를 확인해야 채운다(N/A·blocked 같은 건너뛰기 불가). 닫은 뒤의 커밋·push, 릴리스, 배포는 `prokit-dev-cycle`의 "5. 종료"를 따른다. 절차 정본은 `docs/dev-workflow.md`다. `tasks/todo.md`의 계획(Task Management)은 dev-cycle 라운드 블록(`<!-- dev-cycle:start`~`<!-- dev-cycle:end -->`) 바깥에 적고 블록은 지우지 않는다.
+코드나 설정을 바꾸는 작업은 `prokit-dev-cycle` 스킬로 시작한다. `pnpm dev-cycle case`로 판정하고, `pnpm dev-cycle table <케이스> --write --title "<요약>"`로 대조표를 열고(케이스는 요청 기준으로 고른다. 아직 diff가 없으면 `case`는 A로 나온다), 행을 실행한 뒤 `pnpm dev-cycle audit`과 `close`로 닫는다. 표 끝의 `[confirm]` 행은 사용자가 결과를 확인해야 채운다(N/A·blocked 같은 건너뛰기 불가). 닫은 뒤의 커밋·push, 릴리스, 배포는 `prokit-dev-cycle`의 "5. 종료"를 따른다. 절차 정본은 `docs/dev-workflow.md`다. 위임은 `references/delegation.md`의 provider 검증과 packet 계약을 따른다.
 
 ## 계층별 스킬
 | 작업 | 스킬 |
@@ -100,7 +93,8 @@
 
 ## 에이전트
 - `prokit-implementer`: 코디네이터가 지정한 파일만 구현한다.
-- `prokit-reviewer`: 읽기 전용 리뷰. focus는 code, security, db이고 JSON으로 응답한다.
+- `prokit-reviewer`: 읽기 전용 통합 리뷰. focus는 plan, code, security, db이고 실제 계약·evidence hash·통합 수용 여부를 JSON으로 응답한다.
+- `specialist-reviewer`: provider에 내장 리뷰가 없을 때만 전문 산출물을 읽기 전용으로 검토한다. 일반 코드 리뷰를 반복하지 않는다.
 - 리뷰는 구현한 쪽이 아니라 `prokit-reviewer`가 한다.
 - 배포, 릴리스, 운영 DB 적용은 서브에이전트에 맡기지 않는다. 라운드 끝 마무리 선택, 릴리스 발행 동의, 운영 DB 적용 동의처럼 중간에 사용자 확인이 필요하다.
 - 스킬이나 플러그인이 없다고 나오면 `pnpm skills:check`로 확인해 보고한다. 설치(`pnpm skills:setup`, 네트워크와 설정 파일 변경)는 사용자가 요청할 때 한다. 목록 정본은 `skills.manifest.json`이다. 외부 스킬의 새 버전 확인과 업데이트(`pnpm skills:update`)는 `prokit-skills-update`를 따른다. 진행 중인 라운드가 없으면 `pnpm dev-cycle status`가 하루 한 번 확인한다.

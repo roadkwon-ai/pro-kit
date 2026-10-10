@@ -21,11 +21,14 @@
 		},
 		{
 			"case": "H",
-			"match": "^(\\.agents/(skills|agents)/|\\.claude/(agents|skills)/|\\.claude/settings\\.json$|\\.codex/(agents|skills|prompts)/|skills-lock\\.json$|skills\\.manifest\\.json$|scripts/(dev-cycle|sync-agents|skills-setup|vercel-deploy)\\.mjs$|\\.dev-cycle\\.json$|\\.vercelignore$|docs/dev-workflow\\.md$)",
+			"match": "^(\\.agents/(skills|agents)/|\\.claude/(agents|skills)/|\\.claude/settings\\.json$|\\.codex/(agents|skills|prompts)/|skills-lock\\.json$|skills\\.manifest\\.json$|scripts/(dev-cycle|sync-agents|skills-setup|vercel-deploy|resource-guard|delegation|export-html)\\.mjs$|\\.dev-cycle\\.json$|\\.vercelignore$|docs/dev-workflow\\.md$)",
 			"why": "하네스"
 		}
 	],
 	"authPaths": "^(packages/auth/|apps/web/src/app/api/auth/|apps/web/src/lib/auth-client\\.ts$|apps/web/src/(proxy|middleware|services|context|env\\.server)\\.ts$|packages/api/src/(index|context)\\.ts$|packages/db/src/schema/auth\\.ts$|(.*/)?\\.env\\.schema$)",
 	"ui": { "auditMin": 16, "a11yMin": 3 },
-	"commands": {}
+	"commands": {},
+	"resources": {
+		"roots": []
+	}
 }

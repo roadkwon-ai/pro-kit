@@ -25,7 +25,7 @@
 | 무엇 | 내용 | 자세히 |
 |---|---|---|
 | AI 에이전트 | <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나 | [지원하는 에이전트](../start/supported-agents.md) |
-| prokit 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개와 에이전트 <!-- v:prokit.agents.count -->2<!-- /v -->개 | 분야마다 일하는 법, 구현 에이전트와 읽기 전용 리뷰 에이전트 | [prokit 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개](../skills/prokit-skills.md), [구현 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
+| prokit 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개와 에이전트 <!-- v:prokit.agents.count -->3<!-- /v -->개 | 분야마다 일하는 법, 구현 수행자와 전문·최종 읽기 전용 리뷰 에이전트 | [prokit 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개](../skills/prokit-skills.md), [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
 | 공식 도메인 스킬 | Next.js, React, Better Auth, shadcn, impeccable, DB, Vercel 배포 등 | [공식 스킬과 연결](../skills/official-skills.md) |
 | 프로세스 스킬 | superpowers, ponytail, skill-creator, OMC(Claude Code), OMX(Codex), gstack | [프로세스 스킬과 전역 도구](../skills/official-skills.md#프로세스-스킬과-전역-도구) |
 | 선택 스킬 묶음 | ops, motion, mobile | [선택 스킬 묶음](../skills/optional-bundles.md) |

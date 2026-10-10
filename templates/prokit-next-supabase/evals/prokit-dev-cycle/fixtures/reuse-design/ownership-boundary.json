@@ -1,0 +1,7 @@
+{
+  "docs/plans/campaign-expiry.md": "campaign 경로에 만료 안내를 추가한다. packages/ui Alert 변경도 후보로 적혔지만 허용 경로는 apps/web/src/app/campaign뿐이다.\n",
+  "packages/ui/src/components/alert.tsx": "export function Alert({ children }: { children: React.ReactNode }) {\n  return <aside role=\"status\">{children}</aside>;\n}\n",
+  "apps/web/src/app/campaign/campaign-expiry-notice.tsx": "import { Alert } from \"@workspace/ui/components/alert\";\n\nexport function CampaignExpiryNotice() {\n  return <Alert>이번 기간에만 쓰는 만료 안내</Alert>;\n}\n",
+  "apps/web/src/app/campaign/page.tsx": "import { CampaignExpiryNotice } from \"./campaign-expiry-notice\";\n\nexport default function CampaignPage() {\n  return <CampaignExpiryNotice />;\n}\n",
+  "tasks/evidence/alert-imports.txt": "apps/web/src/app/campaign/campaign-expiry-notice.tsx:import { Alert } from \"@workspace/ui/components/alert\";\n"
+}

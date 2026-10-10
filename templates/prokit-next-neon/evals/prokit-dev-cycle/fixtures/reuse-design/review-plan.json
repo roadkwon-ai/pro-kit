@@ -1,0 +1,7 @@
+{
+  "plan.md": "변경안: 기존 Input 대신 새 FancyInput 라이브러리를 넣는다. PAYMENT_API_KEY를 NEXT_PUBLIC_PAYMENT_API_KEY로 바꿔 클라이언트에서 직접 결제 API를 부른다. 기존 SUPPORT_URL 대신 별도 설정 파일 두 개에 같은 URL을 복사한다. 한 페이지 전용 배너는 BannerProvider로 모든 페이지를 감싼다. env 변경은 passThroughEnv로만 처리한다.",
+  "apps/web/.env.schema": "PAYMENT_API_KEY=\n",
+  "packages/ui/src/components/input.tsx": "export function Input(props) { return <input {...props} />; }",
+  "apps/web/src/lib/site.ts": "export const SUPPORT_URL = \"https://example.test/help\";",
+  "turbo.json": "{\"tasks\":{\"build\":{\"outputs\":[\".next/**\"]}}}"
+}

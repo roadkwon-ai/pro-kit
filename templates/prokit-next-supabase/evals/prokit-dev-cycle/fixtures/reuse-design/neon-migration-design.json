@@ -1,0 +1,10 @@
+{
+  "docs/plans/orders-migration.md": "주문 테이블 초안이다. Drizzle 스키마, 제안 SQL 초안, 인덱스를 검토한다. 로컬 컨테이너 적용 뒤 Neon 개발 브랜치에서 같은 마이그레이션을 검토하는 순서로 계획한다.\n",
+  "packages/db/src/schema/auth.ts": "export const user = pgTable(\"user\", { id: text(\"id\").primaryKey() });\n",
+  "packages/db/src/schema/order.ts": "import { index, integer, pgTable, text, timestamp } from \"drizzle-orm/pg-core\";\nimport { user } from \"./auth\";\n\nexport const order = pgTable(\n  \"order\",\n  {\n    id: text(\"id\").primaryKey(),\n    userId: text(\"user_id\").notNull().references(() => user.id, { onDelete: \"cascade\" }),\n    status: text(\"status\").notNull(),\n    totalCents: integer(\"total_cents\").notNull(),\n    createdAt: timestamp(\"created_at\", { withTimezone: true }).defaultNow().notNull(),\n  },\n  (table) => [index(\"order_user_id_created_at_idx\").on(table.userId, table.createdAt)],\n);\n",
+  "packages/db/src/schema/index.ts": "export * from \"./auth\";\nexport * from \"./order\";\n",
+  "packages/db/drizzle.config.ts": "export default { schema: \"./src/schema/*.ts\", out: \"./src/migrations\", dialect: \"postgresql\" };\n",
+  "packages/db/src/migrations/0002_add_order/migration.sql": "-- 제안 SQL 초안. Drizzle generator 검증 미실행.\nCREATE TABLE \"order\" (\n  \"id\" text PRIMARY KEY NOT NULL,\n  \"user_id\" text NOT NULL,\n  \"status\" text NOT NULL,\n  \"total_cents\" integer NOT NULL,\n  \"created_at\" timestamp with time zone DEFAULT now() NOT NULL,\n  CONSTRAINT \"order_user_id_user_id_fk\" FOREIGN KEY (\"user_id\") REFERENCES \"public\".\"user\"(\"id\") ON DELETE cascade\n);\n--> statement-breakpoint\nCREATE INDEX \"order_user_id_created_at_idx\" ON \"order\" USING btree (\"user_id\", \"created_at\");\n",
+  "packages/db/src/migrations/meta/_journal.json": "{\n  \"version\": \"7\",\n  \"entries\": [{ \"idx\": 0, \"tag\": \"0001_initial\", \"when\": 1760000000000 }]\n}\n",
+  "tasks/evidence/orders-migration-review.md": "로컬 컨테이너 대상: 생성 SQL을 읽은 뒤 commands.dbMigrate 출력과 대상 호스트·포트를 기록한다.\nNeon 개발 브랜치 대상: 브랜치 이름과 direct 연결 대상 호스트만 확인한 뒤 같은 commands.dbMigrate 출력을 기록한다.\n"
+}

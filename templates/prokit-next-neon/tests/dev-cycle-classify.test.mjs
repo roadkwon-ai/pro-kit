@@ -19,8 +19,18 @@ test("경로별 케이스: 첫 일치 규칙 하나만 적용한다", () => {
   for (const f of ["skills.manifest.json", ".claude/settings.json", ".codex/skills/plan/SKILL.md", ".codex/prompts/x.md", ".agents/agents/prokit-reviewer.md", "scripts/skills-setup.mjs"]) {
     assert.equal(classify([f], c).pathCase, "H", f);
   }
+  for (const f of ["scripts/resource-guard.mjs", "scripts/delegation.mjs", "scripts/export-html.mjs"]) {
+    assert.equal(classify([f], c).pathCase, "H", f);
+  }
   assert.equal(classify(["README.md"], c).pathCase, "A");
   assert.equal(classify([], c).pathCase, "A");
+});
+
+test("자원 정책 기본값은 명시 등록 root 없이 표준 프로젝트 경로를 측정한다", () => {
+  const c = cfg();
+  assert.deepEqual(c.resources, {
+    roots: [],
+  });
 });
 
 test("두 계층 이상이면 F, 하네스는 레이어와 함께 표시만 한다", () => {

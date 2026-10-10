@@ -6,6 +6,6 @@
 | 프로젝트 스킬 {{v:prokit.skills.count}}개 | `.agents/skills/prokit-*` | dev-cycle 지휘, web, api, db, ui, verify, deploy, 외부 스킬 업데이트(skills-update) |
 | 화면만 프로젝트 | `scripts/export-html.mjs`, `scripts/load-keys.mjs`, `.claude/settings.json`의 SessionStart 훅 | DB 없이 만든 화면을 정적 HTML로 내보내기(`pnpm export:html`), 프로젝트나 작업 폴더 `.env`의 `OPENAI_API_KEY`를 Claude Code 세션 셸 환경에 불러오기, 배포 토큰(`GH_TOKEN`·`VERCEL_TOKEN`)은 배포 명령에만 넣기(`node scripts/load-keys.mjs -- <명령>`) |
 | Vercel 배포와 릴리스 | `scripts/vercel-deploy.mjs`, `scripts/release.mjs`, `.vercelignore` | develop·production 배포 전 검사와 배포, production 배포 전 릴리스(버전 태그, `release/` 노트, GitHub Release), 로컬 `.env` 업로드 차단 |
-| 에이전트 {{v:prokit.agents.count}}개 | `.claude/agents/`(정본), `.codex/agents/`·`.agents/agents/`(생성물) | 구현, 읽기 전용 리뷰 |
+| 에이전트 {{v:prokit.agents.count}}개 | `.claude/agents/`(정본), `.codex/agents/`·`.agents/agents/`(생성물) | 구현 수행, 전문 읽기 전용 리뷰, 최종 읽기 전용 리뷰 |
 | dev-cycle | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 케이스 판정, 대조표, audit |
 | 문서 골격 | `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md` | 개발 원칙과 공통 규칙(`CLAUDE.md`는 `@AGENTS.md`로 읽음), 용어, 결정, 개관 |

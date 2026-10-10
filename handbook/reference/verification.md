@@ -16,6 +16,7 @@
 | 실제 DB에서 라운드 | 실제 Neon DB에서 케이스 F 라운드(마이그레이션, 2계정 격리 테스트)를 끝까지 진행. supabase는 로컬 Supabase DB와 RLS | [neon](../../templates/prokit-next-neon/VERIFICATION.md#실제-neon-db-e2e-task-14) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#로컬-supabase-db와-rls-podman) |
 | Codex 스모크 | Codex에서 스킬과 에이전트가 로드되는지. 에이전트는 신뢰한 프로젝트에서만 로드돼요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#codex-스모크) |
 | 스킬 연결 점검 | 단계마다 읽어야 할 공식 스킬을 실제로 읽는지(호출률). [결과](../skills/official-skills.md#호출률과-활용도) | [neon](../../templates/prokit-next-neon/VERIFICATION.md#스킬-연결-점검과-보강-2026-09-30-추가) |
+| 외부 위임과 자원 안전성 | 사용자 지정 스킬 선택, 수행·리뷰 분리, 실제 변경과 원시 증거, 자원 분류·차단·정리 경계를 확인했어요. 최종 증분 인수와 미검증 범위는 별도 기록이에요 | [위임·자원 검증 기록](../../docs/reports/2026-10-09-orchestration-resources/README.md#증분-최종-인수-2026-10-10) |
 | DESIGN.md 효과 | `DESIGN.md`가 있을 때와 브랜드 이름과 대표 색만 줬을 때의 디자인 일치율 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#designmd-효과-측정-2026-09-30-추가) |
 
 아직 확인하지 못한 항목은 각 기록의 "미검증 항목" 절에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md#미검증-항목) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#미검증-항목)).
@@ -38,6 +39,12 @@
 supabase 템플릿의 `prokit-db`도 같은 방식으로 쟀어요. `prokit-db`를 뺀 프로젝트에서도 `AGENTS.md`의 보안 규칙(RLS, `db:push` 금지)이 지켜져서 체크 항목 점수는 스킬이 없을 때가 오히려 높았어요(수정 전 기준 있음 73%, 없음 87%). 차이는 점수 밖에서 났어요. 스킬이 없으면 세 번 모두 대조표 없이 진행했고, 에이전트 셸에서 실패하는 루트 turbo 명령부터 썼어요. 한 번은 drizzle 스냅샷을 손으로 고쳤어요.
 
 스킬을 쓴 실행에서도 결함을 찾아 고쳤어요. 스냅샷 불일치, expand 단계의 NOT NULL, 격리 테스트를 미루는 해석이에요. 고친 뒤 다시 실행한 요청은 그 체크 항목을 모두 통과했어요([supabase 검증 기록](../../templates/prokit-next-supabase/VERIFICATION.md#bts-스킬-구성-검수-2026-09-27-추가)).
+
+## 이번 위임·자원 변경의 확인 범위
+
+최종 인수에서는 이미 통과한 실행 증거를 보존하고 실패한 항목만 보완했어요. 독립 검수는 고정한 후보와 입력, 작업 범위, 실제 실행 기록에 한정해 통과를 확인했어요. 기존 스킬 유무 비교의 점수를 새 결과로 바꾸지는 않았어요.
+
+반복 비교와 다른 환경에서의 재현성은 이번 인수에 포함하지 않았어요. 새 위임 경로의 실제 실행은 Codex에서 확인했고, 다른 에이전트의 실행 제한은 [검증 기록](../../docs/reports/2026-10-09-orchestration-resources/README.md#한계)에 남겼어요.
 
 ## 자세히
 

@@ -1,0 +1,10 @@
+{
+  "docs/plans/note-rls.md": "메모 테이블을 추가한다. Drizzle 스키마와 생성 SQL을 따로 검토한다. 로컬 Supabase에 적용하기 전 security advisor 결과를 증거에 남긴다.\n",
+  "packages/db/src/schema/auth.ts": "export const user = pgTable(\"user\", { id: text(\"id\").primaryKey() });\n",
+  "packages/db/src/schema/note.ts": "import { pgTable, text, timestamp } from \"drizzle-orm/pg-core\";\nimport { user } from \"./auth\";\n\nexport const note = pgTable.withRLS(\"note\", {\n  id: text(\"id\").primaryKey(),\n  userId: text(\"user_id\").notNull().references(() => user.id),\n  body: text(\"body\").notNull(),\n  createdAt: timestamp(\"created_at\", { withTimezone: true }).defaultNow().notNull(),\n});\n",
+  "packages/db/src/schema/index.ts": "export * from \"./auth\";\nexport * from \"./note\";\n",
+  "packages/db/src/migrations/0002_add_note/migration.sql": "CREATE TABLE \"note\" (\n  \"id\" text PRIMARY KEY NOT NULL,\n  \"user_id\" text NOT NULL,\n  \"body\" text NOT NULL,\n  \"created_at\" timestamp with time zone DEFAULT now() NOT NULL,\n  CONSTRAINT \"note_user_id_user_id_fk\" FOREIGN KEY (\"user_id\") REFERENCES \"public\".\"user\"(\"id\")\n);\n--> statement-breakpoint\nALTER TABLE \"note\" ENABLE ROW LEVEL SECURITY;\n",
+  "packages/db/src/migrations/meta/_journal.json": "{\n  \"version\": \"7\",\n  \"entries\": [{ \"idx\": 0, \"tag\": \"0001_initial\", \"when\": 1760000000000 }]\n}\n",
+  "packages/db/supabase/config.toml": "project_id = \"notes-local\"\n",
+  "tasks/evidence/supabase-advisors.json": "{\n  \"command\": \"supabase db advisors --local --type security\",\n  \"exitCode\": null,\n  \"output\": null\n}\n"
+}

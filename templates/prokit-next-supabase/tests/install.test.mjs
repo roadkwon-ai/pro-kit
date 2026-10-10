@@ -14,7 +14,7 @@ function fakeBts(prefix = "prokit-") {
     mkdirSync(dirname(join(root, rel)), { recursive: true });
     writeFileSync(join(root, rel), s);
   };
-  w("package.json", '{\n\t"name": "fake",\n\t"scripts": {\n\t\t"check-types": "turbo run check-types",\n\t\t"build": "turbo run build",\n\t\t"check": "biome check --write .",\n\t\t"db:generate": "turbo run db:generate -F @fake/db --",\n\t\t"db:migrate": "turbo run db:migrate -F @fake/db --",\n\t\t"db:push": "x"\n\t}\n}\n');
+  w("package.json", '{\n\t"name": "fake",\n\t"scripts": {\n\t\t"dev": "next dev",\n\t\t"dev:web": "turbo run dev --filter @fake/web",\n\t\t"check-types": "turbo run check-types",\n\t\t"build": "turbo run build",\n\t\t"check": "biome check --write .",\n\t\t"db:generate": "turbo run db:generate -F @fake/db --",\n\t\t"db:migrate": "turbo run db:migrate -F @fake/db --",\n\t\t"db:push": "x"\n\t}\n}\n');
   w("biome.json", "{}\n");
   w("apps/web/package.json", JSON.stringify({ dependencies: { next: "16.0.0" } }));
   w("packages/db/drizzle.config.ts", "export default {};\n");
@@ -64,6 +64,15 @@ test("설치: 파일·스킬 링크·Codex·Antigravity 에이전트·스크립�
   assert.equal(pkg.scripts["vercel:deploy"], "node scripts/vercel-deploy.mjs");
   assert.equal(pkg.scripts.release, "node scripts/release.mjs");
   assert.equal(pkg.scripts["export:html"], "node scripts/export-html.mjs");
+  assert.equal(pkg.scripts["resource:check"], "node scripts/resource-guard.mjs check");
+  assert.equal(pkg.scripts["resource:clean"], "node scripts/resource-guard.mjs clean");
+  assert.equal(pkg.scripts["delegation:capture"], "node scripts/delegation.mjs capture");
+  assert.equal(pkg.scripts["delegation:validate"], "node scripts/delegation.mjs validate");
+  for (const [name, original] of Object.entries({ dev: "next dev", "dev:web": "turbo run dev --filter @fake/web", build: "turbo run build" })) {
+    assert.equal(pkg.scripts[`prokit:original:${name}`], original, name);
+    assert.equal(pkg.scripts[`prokit:resource:${name}`], `node scripts/resource-guard.mjs run --kind ${name.replace(":", "-")} -- pnpm run prokit:original:${name}`, name);
+    assert.equal(pkg.scripts[name], `pnpm run prokit:resource:${name}`, name);
+  }
   const hooks = JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).hooks.SessionStart;
   assert.deepEqual(hooks, [{ hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/load-keys.mjs"' }] }]);
   // vercel deploy는 .gitignore를 따르지 않는다. 로컬 .env가 배포 소스에 올라가지 않게 한다
@@ -89,6 +98,22 @@ test("설치: 파일·스킬 링크·Codex·Antigravity 에이전트·스크립�
   assert.equal(dc.status, 0);
   assert.match(dc.stdout, /활성 라운드 없음/);
   assert.deepEqual(JSON.parse(readFileSync(join(root, "node_modules/.cache/skills-update.json"), "utf8")), { mode: "off" }, "확인을 끄면 원격을 보지 않는다");
+});
+
+test("설치기: 이미 설치된 프로젝트에는 resource 명령만 더하고 사용자가 정한 원본 명령은 바꾸지 않는다", () => {
+  const root = fakeBts();
+  assert.equal(install(root).status, 0);
+  const p = join(root, "package.json");
+  const pkg = JSON.parse(readFileSync(p, "utf8"));
+  pkg.scripts.dev = "my-custom-dev";
+  delete pkg.scripts["resource:check"];
+  writeFileSync(p, `${JSON.stringify(pkg, null, "\t")}\n`);
+  const r = install(root);
+  assert.equal(r.status, 0, r.stderr + r.stdout);
+  const after = JSON.parse(readFileSync(p, "utf8"));
+  assert.equal(after.scripts.dev, "my-custom-dev");
+  assert.equal(after.scripts["resource:check"], "node scripts/resource-guard.mjs check");
+  assert.match(r.stdout, /기존 설치본: resource 래퍼 전환은 H 라운드에서/);
 });
 
 test("두 번째 실행은 아무것도 바꾸지 않는다 (멱등)", () => {

@@ -12,10 +12,14 @@
 | `pnpm dev-cycle case` | 현재 diff의 케이스 판정 |
 | `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기. `--upgrade`는 더 무거운 케이스로 올리기 |
 | `pnpm dev-cycle audit` | 빈 칸, 건너뛸 수 없는 칸, 케이스 상향 검사 |
-| `pnpm dev-cycle close` | 대조표를 `tasks/archive/`로 옮겨 라운드 닫기. `blocked`나 `미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial` |
+| `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관. 미완료 항목과 코드 예시는 남기고, 끝난 하위 항목은 부모 문맥과 함께 기록 |
+| `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일의 내용으로 바꿔요. 표의 헤더·stage와 다른 행, 메모, 코드 블록은 그대로 둬요 |
+| `pnpm dev-cycle close` | audit과 실제 사용자 확인 뒤 대조표와 완료한 일반 할 일·백로그를 KST 날짜의 파일로 보관해 라운드 닫기. `blocked`나 `미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial` |
 | `pnpm dev-cycle secrets` | 커밋 전에 스테이징한 변경에서 비밀값 찾기. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
 
 `--json`을 붙이면 결과를 JSON으로 출력해요. 라운드가 무엇이고 어떻게 도는지는 [dev-cycle](../concepts/dev-cycle.md)에 있어요.
+
+증거 파일은 프로젝트 안의 일반 파일이고 비어 있지 않은 한 줄이어야 해요. FIFO, 심볼릭 링크, 헤더가 섞인 입력과 프로젝트 밖 경로는 받지 않아요. `tasks/evidence/`에는 실행 전후 산출물, 환경·자원 helper의 실제 결과를 각각 한 번만 남겨요. private guard token이나 owner receipt의 내용은 파일·명령 출력·증거 칸에 직접 넣지 않아요.
 
 ### 스킬과 에이전트
 
@@ -29,6 +33,19 @@
 | `pnpm agents:sync` | `.claude/agents`에서 `.codex/agents`(Codex)와 `.agents/agents`(Antigravity) 만들기 |
 | `pnpm agents:check` | 정본과 생성물이 맞는지 검사 |
 | `claude plugin update <플러그인> --scope project` | Claude 플러그인 업데이트(`skills:update`는 플러그인을 올리지 않아요) |
+
+### 위임과 자원
+
+| 명령 | 하는 일 |
+|---|---|
+| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고해요. 정상·경고는 exit 0, 예산 초과는 exit 1, 측정 불완전은 exit 2예요 |
+| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행해요. 자원 차단·측정 불완전이면 exit 75이고, 실행했다면 자식 명령의 종료 코드를 그대로 돌려줘요 |
+| `pnpm dev-cycle resource clean [--apply]` | 기본은 검증한 정리 후보만 보여 줘요. `--apply`도 현재 실행이 만든 compiler cache의 소유권·lease·자식 종료가 증명된 경우에만 정리해요 |
+| `pnpm dev-cycle delegation capture` | 위임 전 작업 트리의 기준 스냅샷을 JSON으로 남겨요 |
+| `pnpm dev-cycle delegation resolve <스킬 참조 또는 상대 경로>` | 실제 스킬 원본의 위치·내용 해시를 관찰해요. 신뢰한 inspection과 실제 host adapter가 계약을 현재 실행에 묶지 못하면 inspection-only로 보고하고 exit 1로 막아요 |
+| `pnpm dev-cycle delegation validate <패킷>` | 완료 패킷의 실제 변경, 증거, 허용 경로, 부작용, 환경 지문을 검사해요 |
+
+새 프로젝트에서는 `dev`, `dev:web`, `build`가 자원 보호 래퍼를 거쳐 실행돼요. 원래 명령은 내부 `prokit:original:<이름>`으로 보관해요. 이미 설치된 프로젝트는 설치기가 원래 명령을 바꾸지 않으므로, 케이스 H 라운드에서 원본과 증거를 확인한 뒤에만 전환해요. 자원 경계와 정리 조건은 [위임과 자원 관리](../concepts/delegation-and-resources.md)에 있어요.
 
 ### 화면, 배포, 릴리스
 

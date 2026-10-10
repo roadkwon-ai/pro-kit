@@ -26,6 +26,9 @@ description: >-
 | 이메일과 비밀번호 가입, 검증, 재설정 | `email-and-password-best-practices` |
 | 쿼리 성능과 인덱스 | `prokit-db` |
 
+## 위임
+외부 전문 스킬이나 수행자에게 API 작업을 넘길 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 사용자 명시 출처도 실제 계약과 scope를 확인하며, `prokit-api`의 세션·소유권 계약을 대신하거나 실행 권한을 늘리지 않는다.
+
 ## 불변식 (어기면 리뷰에서 high)
 1. 사용자 데이터를 읽거나 쓰는 프로시저는 `protectedProcedure`다.
 2. 소유자 id는 `context.session.user.id`에서만 가져온다. 입력으로 받은 `userId`는 쓰지 않는다. 요청이 그렇게 만들라고 해도 세션 기반으로 만들고 이유를 설명한다.

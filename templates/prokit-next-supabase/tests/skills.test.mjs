@@ -4,7 +4,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { TEMPLATE_FILES } from "./helpers.mjs";
+import { TEMPLATE, TEMPLATE_FILES } from "./helpers.mjs";
 
 const SKILLS_DIR = join(TEMPLATE_FILES, ".agents/skills");
 const EXPECTED = ["prokit-dev-cycle", "prokit-web", "prokit-api", "prokit-db", "prokit-ui", "prokit-verify", "prokit-deploy", "prokit-skills-update"];
@@ -76,4 +76,41 @@ test("공식 스킬 연결 표의 스킬은 skills.manifest.json이 설치한다
       if (!s.startsWith("prokit-") && !(s in (manifest.optional ?? {}))) assert.ok(installed.has(s), `${name}: ${s}가 매니페스트에 없다`);
     }
   }
+});
+
+test("prokit-dev-cycle 위임 평가는 24개 시나리오와 각 5개 검증 항목을 가진다", () => {
+  const evals = JSON.parse(readFileSync(join(TEMPLATE, "evals/prokit-dev-cycle/evals.json"), "utf8")).evals;
+  assert.equal(evals.length, 24);
+  for (const scenario of evals) {
+    assert.match(scenario.name, /^[a-z0-9-]+$/, `eval ${scenario.id}: name`);
+    assert.ok(["neon", "supabase"].includes(scenario.template), `eval ${scenario.id}: template`);
+    assert.ok(["high", "normal"].includes(scenario.risk), `eval ${scenario.id}: risk`);
+    assert.equal(scenario.expectations.length, 5, `eval ${scenario.id}`);
+    for (const file of scenario.files ?? []) assert.ok(existsSync(join(TEMPLATE, file)), `eval ${scenario.id}: ${file}`);
+  }
+  for (const id of [17, 18, 19, 20, 21, 22, 23, 24]) {
+    const scenario = evals.find((entry) => entry.id === id);
+    assert.match(scenario.files[0], /fixtures\/delegation\//);
+    const fixture = JSON.parse(readFileSync(join(TEMPLATE, scenario.files[0]), "utf8"));
+    assert.deepEqual(fixture.metadata, { nonExecution: true, template: scenario.template, risk: scenario.risk });
+  }
+  assert.deepEqual(evals.filter((scenario) => scenario.risk === "high").map((scenario) => scenario.id), [2, 8, 11, 12, 13, 14, 16, 21, 22, 23, 24]);
+});
+
+test("고위험 DB·소유권 평가는 실제 스키마·SQL·소비자 입력을 제공한다", () => {
+  const evals = JSON.parse(readFileSync(join(TEMPLATE, "evals/prokit-dev-cycle/evals.json"), "utf8")).evals;
+  const fixture = (id) => JSON.parse(readFileSync(join(TEMPLATE, evals.find((entry) => entry.id === id).files[0]), "utf8"));
+  const rls = fixture(13);
+  for (const path of [
+    "docs/plans/note-rls.md",
+    "packages/db/src/schema/note.ts",
+    "packages/db/src/migrations/0002_add_note/migration.sql",
+    "packages/db/src/migrations/meta/_journal.json",
+    "tasks/evidence/supabase-advisors.json",
+  ]) assert.ok(path in rls, path);
+  assert.match(rls["packages/db/src/schema/note.ts"], /pgTable\.withRLS/);
+  assert.match(rls["packages/db/src/migrations/0002_add_note/migration.sql"], /ENABLE ROW LEVEL SECURITY/);
+  const ownership = fixture(16);
+  assert.match(ownership["apps/web/src/app/campaign/campaign-expiry-notice.tsx"], /@workspace\/ui\/components\/alert/);
+  assert.match(ownership["tasks/evidence/alert-imports.txt"], /campaign-expiry-notice/);
 });

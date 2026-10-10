@@ -22,7 +22,7 @@
 새 프로젝트를 처음 열면 도구가 이 폴더를 믿을지 물어요. 동의해야 프로젝트 설정이 켜져요.
 
 - Claude Code: 프로젝트 플러그인(superpowers, skill-creator, OMC, ponytail)
-- Codex: `.codex/agents`의 구현·리뷰 에이전트. 스킬은 신뢰하지 않아도 보여요
+- Codex: `.codex/agents`의 구현 수행·전문 리뷰·최종 리뷰 에이전트. 스킬은 신뢰하지 않아도 보여요
 - Grok Build: 규칙과 스킬. 신뢰하지 않은 폴더에서는 에이전트만 보여요. `grok --trust`로 열면 묻지 않고 신뢰해요
 
 ### 쓰지 않는 것과 대신하는 것
@@ -38,11 +38,13 @@ Grok Build는 Claude 호환이 기본으로 켜져 있어 사용자 전역의 Cl
 - Antigravity는 새로 설치한 프로젝트에서 첫 화면 제목을 바꾸는 라운드(케이스 B)를 사용자 확인 직전까지 진행했어요. `prokit-implementer`와 `prokit-reviewer`를 서브에이전트로 불렀고, `pnpm dev-cycle audit`에는 사용자 확인 행만 남았어요.
 - Grok Build는 규칙, 스킬, 에이전트를 읽고 대조표를 여는 데까지 확인했어요. 리뷰와 audit은 무료 사용량 한도에 걸려 확인하지 못했어요.
 
+새 외부 위임·자원 관리 경로는 위의 기존 확인과 별도로 검증했어요. Codex는 실제 네이티브 수행자의 실행 기록을 확인했고, 다른 도구의 새 경로는 로그인·명령 권한·실행 기록 문제로 완료를 확인하지 못했어요. 지원 파일이 있다는 사실을 실제 실행 통과로 세지 않아요([최종 증분 인수와 한계](../../docs/reports/2026-10-09-orchestration-resources/README.md#한계)).
+
 기록은 템플릿의 `VERIFICATION.md`에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md#antigravitygrok-build-2026-10-08-추가) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#antigravitygrok-build-2026-10-08-추가)).
 
 ## 관련 문서
 
 - [준비물](requirements.md)
-- [구현 에이전트와 리뷰 에이전트](../concepts/agent-roles.md)
+- [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md)
 - [Claude Code와 Codex](../../tutorials/reference/claude-code-and-codex.md)
 - [자주 묻는 질문](../reference/faq.md)

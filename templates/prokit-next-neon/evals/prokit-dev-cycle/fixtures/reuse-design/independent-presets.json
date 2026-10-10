@@ -1,0 +1,8 @@
+{
+  "presets/cafe/DESIGN.md": "라운드 카드, 사진 메뉴, 모달 주문 흐름",
+  "presets/book/DESIGN.md": "직선 타이포 카드, 텍스트 독서 기록, 상세 페이지 흐름",
+  "web/src/data/samples.json": "[{\"slug\":\"book\",\"title\":\"서점\",\"pages\":[\"/\",\"/books\"]}]",
+  "web/src/app/work/[slug]/page.tsx": "// samples 데이터로 렌더링하는 기존 공통 상세 페이지",
+  "tools/shoot.mjs": "const SITES = [\"book\"]; // 촬영 대상",
+  "tools/export.sh": "# slug를 인수로 받아 공통 export"
+}
