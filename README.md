@@ -15,3 +15,4 @@
 | 올곧 | [열기](https://roadkwon-ai.github.io/pro-kit/olgot/) |
 | Nextflix | [열기](https://roadkwon-ai.github.io/pro-kit/nextflix/) |
 | Claudle | [열기](https://roadkwon-ai.github.io/pro-kit/claudle/) |
+| 슬라이드랩 | [열기](https://roadkwon-ai.github.io/pro-kit/slidelab/) |

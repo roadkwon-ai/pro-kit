@@ -1,0 +1,59 @@
+{
+	"generated": true,
+	"assets": [
+		{
+			"id": "hero-slides",
+			"consumer": "hero",
+			"generated": true,
+			"generator": "built-in image_gen (상위 코디네이터 제공)",
+			"prompt": "Use case: stylized-concept. Asset type: premium website hero artwork for SLIDELAB, a fictional Korean AI and presentation workshop, dark lime visual direction. Create one polished 3D editorial still life of three large presentation slide panels sculpted from satin dark forest-green and translucent smoked glass with one vivid chartreuse-lime panel. Clean abstract information shapes, restrained line charts and a few circular markers embossed into the slide surfaces; absolutely no letters, text, words, numbers or logos. Panels overlap diagonally with realistic thickness and delicate reflections; tactile, sophisticated art direction, no neon glow or generic AI circuitry. Deep near-black green seamless studio background (#101b12), lime (#c7f83e), warm ivory details. Landscape 4:3 composition, all important panels centered with generous safe crop margins for desktop and mobile. Soft directional studio lighting, precise contact shadows, refined material detail. No people, no stock watermarks, no devices, no interface screenshot. This is a finished illustrative bitmap asset, not an HTML/SVG placeholder.",
+			"promptSource": "prompts.json",
+			"sourcePath": "hero-slides.png",
+			"path": "images/hero-slides.webp",
+			"publicPath": "/images/slidelab/hero-slides.webp",
+			"original": {
+				"path": "images/hero-slides.png",
+				"sha256": "7086960184fddfc7d1935958bb2fddcc505ed25f9f8fd638383f1f4498cbb010",
+				"bytes": 1813588,
+				"width": 1448,
+				"height": 1086
+			},
+			"webp": {
+				"sha256": "109caffc0588b2b53f3f3f52281c374cfd7b29bd4b5206f366812911ddba8a8c",
+				"bytes": 70356,
+				"width": 1448,
+				"height": 1086,
+				"quality": 88,
+				"effort": 6
+			},
+			"disclosure": "AI 생성 예시 · 실제 강의 사진이나 실적 자료가 아닙니다."
+		},
+		{
+			"id": "workshop-desk",
+			"consumer": "gallery",
+			"generated": true,
+			"generator": "built-in image_gen (상위 코디네이터 제공)",
+			"prompt": "Use case: photorealistic-natural. Asset type: premium educational workshop concept photo for fictional SLIDELAB website. A carefully art-directed overhead editorial photograph of a presentation design workshop desk, no people or visible hands. Warm charcoal tabletop, one silver laptop with an original abstract presentation slide on screen (only lime rectangles, ivory circles and a simple black line, absolutely no letters, logos or text), several large ivory index cards arranged as a storyboard, a few chartreuse lime sticky notes, black mechanical pencil and one small cup. Materials feel tactile and real, precise credible laptop proportions, soft afternoon side light and cinematic restrained shadows. Deep forest-green and charcoal palette with vivid lime accents and neutral ivory. Landscape 4:3, desk composition centered with generous crop-safe margin so a square mobile crop remains legible; polished yet believable creative collaboration space, no office stock-photo cliches, no glossy AI aesthetic. No people, no faces, no brands, no watermark, no readable writing. This is an illustrative AI-generated workshop scene, not evidence of a real event.",
+			"promptSource": "prompts.json",
+			"sourcePath": "workshop-desk.png",
+			"path": "images/workshop-desk.webp",
+			"publicPath": "/images/slidelab/workshop-desk.webp",
+			"original": {
+				"path": "images/workshop-desk.png",
+				"sha256": "6ada20d1a21d5b5ed94257101e8c1f628100d71121ab23507a4592613429fb2d",
+				"bytes": 2240375,
+				"width": 1448,
+				"height": 1086
+			},
+			"webp": {
+				"sha256": "69b5294b74dc6ea56c21711896747dfc11d62c7c55f84098cf803890bb310862",
+				"bytes": 154730,
+				"width": 1448,
+				"height": 1086,
+				"quality": 88,
+				"effort": 6
+			},
+			"disclosure": "AI 생성 예시 · 실제 강의 사진이나 실적 자료가 아닙니다."
+		}
+	]
+}

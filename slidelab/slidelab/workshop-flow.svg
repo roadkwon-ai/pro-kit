@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" fill="none"><title>발표 구성 워크숍의 흐름</title>
+  <rect width="960" height="720" fill="#D2F45A"/>
+  <path d="M0 534C145 435 251 474 381 393C503 318 634 340 960 122V720H0V534Z" fill="#152119"/>
+  <rect x="76" y="86" width="450" height="278" rx="10" fill="#F7F9F0"/>
+  <rect x="107" y="118" width="213" height="13" fill="#152119"/>
+  <rect x="107" y="155" width="310" height="8" fill="#AEB8A8"/>
+  <rect x="107" y="181" width="258" height="8" fill="#AEB8A8"/>
+  <path d="M107 296H189V236H264V266H341V205H417" stroke="#B6E933" stroke-width="16"/>
+  <rect x="580" y="171" width="275" height="343" rx="10" fill="#1F3024" transform="rotate(8 580 171)"/>
+  <path d="M627 258H789" stroke="#D2F45A" stroke-width="13"/>
+  <path d="M627 295H747" stroke="#F7F9F0" stroke-opacity=".7" stroke-width="8"/>
+  <path d="M627 329H772" stroke="#F7F9F0" stroke-opacity=".7" stroke-width="8"/>
+  <circle cx="730" cy="426" r="58" fill="#D2F45A"/>
+  <path d="M91 551C170 516 256 541 301 607" stroke="#D2F45A" stroke-width="3" stroke-dasharray="10 10"/>
+  <text x="77" y="650" fill="#F7F9F0" font-family="Arial, sans-serif" font-size="20" font-weight="700">REARRANGE · REHEARSE · REPEAT</text>
+</svg>
