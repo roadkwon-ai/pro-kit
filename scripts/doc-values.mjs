@@ -16,6 +16,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { CASES } from "./doc-values.cases.mjs";
+import { summarizeObservations } from "./preset-observations.mjs";
 
 const ROOT = join(import.meta.dirname, "..");
 const LIST = "docs/common-values.md";
@@ -204,6 +205,15 @@ export function loadValues(root = ROOT) {
   const P = "doc-values.json presets.<이름>";
   const presets = Object.entries(d.presets);
   for (const [n, p] of presets) {
+    if (p.observed) {
+      const observation = summarizeObservations(p.observed);
+      add(`preset.${n}.observed.time`, observation.wallMs < 60000 ? "1분 미만" : minText(Math.floor(observation.wallMs / 60000)), `계산: ${P}.observed.intervals의 비중복 구간`, "관측된 제작 세션 일부(분 미만 버림). 전체 제작·팩 재현 시간 아님");
+      add(`preset.${n}.observed.count`, observation.count, `${P}.observed.intervals`, "관측 근거 구간 수");
+      for (const f of ["scope", "note", "report"]) {
+        if (typeof p.observed[f] !== "string" || !p.observed[f]) throw new Error(`preset.${n}.observed.${f}: 설명 누락`);
+        add(`preset.${n}.observed.${f}`, p.observed[f], `${P}.observed.${f}`, "제작 관측의 범위·한계와 설명 링크");
+      }
+    }
     add(`preset.${n}.title`, p.title, `${P}.title`, "프리셋 이름");
     add(`preset.${n}.kind`, p.kind, `${P}.kind`, "분류(landing 랜딩페이지, app 앱 화면, clone 클론 튜토리얼)");
     const kindLabel = { landing: "랜딩페이지", app: "앱 화면", clone: "클론 튜토리얼" }[p.kind];
@@ -293,31 +303,34 @@ export function loadValues(root = ROOT) {
       span(`preset.${n}.${run}.time`, p[run].time, p[run].time, `${P}.${run}.time`, runs[run]);
     }
   }
-  const screen = presets.filter(([, p]) => p.kind !== "clone");
-  add("presets.count", presets.length, "doc-values.json presets 수", "프리셋 수(클론 튜토리얼 포함)");
-  add("presets.screen.count", screen.length, "doc-values.json presets 중 landing·app", "화면 프리셋 수");
+  const published = presets.filter(([, p]) => p.published !== false);
+  const screen = published.filter(([, p]) => p.kind !== "clone");
+  add("presets.count", published.length, "doc-values.json 공개 presets 수", "공개 프리셋 수(클론 튜토리얼 포함)");
+  add("presets.screen.count", screen.length, "doc-values.json 공개 presets 중 landing·app", "공개 화면 프리셋 수");
   for (const [kind, label] of [["landing", "랜딩페이지"], ["app", "앱 화면"], ["clone", "클론 튜토리얼"]])
-    add(`presets.${kind}.count`, presets.filter(([, p]) => p.kind === kind).length, `doc-values.json presets 중 ${kind}`, `${label} 프리셋 수`);
+    add(`presets.${kind}.count`, published.filter(([, p]) => p.kind === kind).length, `doc-values.json 공개 presets 중 ${kind}`, `공개 ${label} 프리셋 수`);
   // 페이지 종류를 따로 세는 프리셋(pageTypes가 있는 올곧)은 크기가 달라 뺀다
   const pages = screen.filter(([, p]) => !p.pageTypes).map(([, p]) => Number(p.pages));
   add("presets.screen.pages.range", `${Math.min(...pages)}\\~${Math.max(...pages)}`, "계산: doc-values.json 화면 프리셋 pages의 최소~최대(pageTypes가 있는 프리셋 제외)", "화면 프리셋 한 개의 페이지 수 범위");
   // 만든 사람이 실제로 쓴 값(리디자인과 넓히기)의 범위. 리디자인 없이 처음부터 만든 올곧(pageTypes가 있는 프리셋)은 뺀다
-  const redesigned = screen.filter(([, p]) => !p.pageTypes).map(([n]) => n);
+  const redesigned = screen.filter(([, p]) => !p.pageTypes && p.measurements !== "unmeasured").map(([n]) => n);
   for (const [f, num] of [["time", minutes], ["tokens", tokens], ["usd", Number]]) {
     const s = redesigned.map((n) => need(`preset.${n}.actual.total.${f}`)).sort((a, b) => num(a) - num(b));
     add(`presets.actual.${f}.range`, `${s[0]}\\~${s.at(-1)}`, "계산: preset.<이름>.actual.total의 최소~최대(올곧 제외)", "화면 프리셋을 만든 사람이 리디자인과 넓히기에 실제로 쓴 값의 범위(시간·토큰·달러)");
   }
   add("presets.screen.pages", screen.reduce((s, [, p]) => s + Number(p.pages), 0), "doc-values.json 화면 프리셋 pages 합", "화면 프리셋 페이지 수 합");
   // 여럿을 한 줄로 알리는 범위(가장 작은 것의 값부터 가장 큰 것의 값까지). 클론 튜토리얼(clones.full)도 같은 꼴이라 클론이 늘어도 글 길이는 그대로다
-  const clones = presets.filter(([, p]) => p.kind === "clone" && p.full);
+  const clones = published.filter(([, p]) => p.kind === "clone" && p.full);
   for (const [g, list, run, who] of [["presets", screen, "pack", "화면 프리셋"], ["presets", screen, "scratch", "화면 프리셋"], ["clones", clones, "full", "클론 튜토리얼"]]) {
+    const measured = list.filter(([, p]) => p.measurements !== "unmeasured");
+    if (!measured.length) continue;
     for (const [f, num] of [["time", minutes], ["tokens", tokens], ["cached", tokens]]) {
-      const s = [...list].sort((a, b) => num(a[1][run][f]) - num(b[1][run][f]));
+      const s = [...measured].sort((a, b) => num(a[1][run][f]) - num(b[1][run][f]));
       const [lo, hi] = [s[0], s.at(-1)];
       add(`${g}.${run}.${f}.range`, lo[1][run][f] === hi[1][run][f] ? lo[1][run][f] : `${lo[1][run][f]}\\~${hi[1][run][f]}`, `계산: doc-values.json presets(최소 ${lo[0]}, 최대 ${hi[0]})`, `${who}을 ${runs[run]} ${fields[f]} 범위`);
       if (f === "time") span(`${g}.${run}.time`, lo[1][run].time, hi[1][run].time, `doc-values.json presets(최소 ${lo[0]}, 최대 ${hi[0]})`, `${who} 하나를 ${runs[run]}. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지`);
     }
-    const ns = list.map(([, p]) => limitN(p[run].tokens));
+    const ns = measured.map(([, p]) => limitN(p[run].tokens));
     const [a, b] = [Math.min(...ns), Math.max(...ns)];
     const range = a === b ? (a ? `약 ${a}번` : `${W} 한도 안`) : a ? `약 ${a}\\~${b}번` : `${W} 한도 안\\~약 ${b}번`;
     add(`${g}.${run}.limit.range`, range, `계산: doc-values.json ${who} 한도 번 수의 최소~최대`, `${who}을 ${runs[run]} Pro 5시간 한도 범위`);
@@ -328,10 +341,10 @@ export function loadValues(root = ROOT) {
   const byCat = Object.entries(d.catalogs).map(([id, c]) => [c.name, firsts.filter(([, p]) => p.design.recs[0].src === id).length]).filter(([, k]) => k).sort((a, b) => b[1] - a[1]);
   add("presets.design.first.summary", byCat.map(([name, k]) => `${name} ${k}개`).join(", "), "계산: doc-values.json 화면 프리셋 design.recs 1위의 카탈로그", "1위로 고른 스타일의 카탈로그별 수");
   add("presets.design.critique.list", screen.filter(([, p]) => p.design?.critique).sort((a, b) => b[1].design.critique - a[1].design.critique).map(([, p]) => `${p.title} ${p.design.critique}`).join(", "), "계산: doc-values.json 화면 프리셋 design.critique 내림차순", "디자인 리뷰 점수가 높은 순서(이름 점수)");
-  add("packs.count", Object.keys(json("tutorials/packs.json")).length, "tutorials/packs.json 항목 수", "프리셋 팩 수");
+  add("packs.count", Object.values(json("tutorials/packs.json")).filter((p) => p.published !== false).length, "tutorials/packs.json 공개 항목 수", "공개 프리셋 팩 수");
   // 팩마다 받는 곳(릴리스 쪽). 팩 저장소가 둘(일반, 프리미엄)이라 이름으로 저장소를 고르지 않고 packs.json의 zip 주소에서 만든다
-  for (const [name, p] of Object.entries(json("tutorials/packs.json"))) add(`pack.${name}.release`, p.url.replace(/\/releases\/download\/([^/]+)\/[^/]+$/, "/releases/tag/$1"), "tutorials/packs.json url → releases/tag", `${name} 프리셋 팩 릴리스 쪽 주소`);
-  for (const [name, p] of Object.entries(json("tutorials/packs.json"))) {
+  for (const [name, p] of Object.entries(json("tutorials/packs.json")).filter(([, p]) => p.published !== false)) add(`pack.${name}.release`, p.url.replace(/\/releases\/download\/([^/]+)\/[^/]+$/, "/releases/tag/$1"), "tutorials/packs.json 공개 url → releases/tag", `${name} 프리셋 팩 릴리스 쪽 주소`);
+  for (const [name, p] of Object.entries(json("tutorials/packs.json")).filter(([, p]) => p.published !== false)) {
     add(`pack.${name}.zip`, p.url, "tutorials/packs.json url", `${name} 프리셋 팩 zip 내려받기 주소`);
     add(`pack.${name}.size`, `${(p.bytes / 1048576).toFixed(1)}MB`, "tutorials/packs.json bytes(MB, 소수 한 자리)", `${name} 프리셋 팩 zip 크기`);
   }

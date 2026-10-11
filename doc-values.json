@@ -788,6 +788,54 @@
 				}
 			},
 			"pages": "13"
+		},
+		"slidelab": {
+			"published": true,
+			"title": "슬라이드랩",
+			"kind": "landing",
+			"field": "AI와 PPT 교육",
+			"summary": "과정과 교육 시간을 고르는 AI·PPT 교육 랜딩",
+			"difficulty": "문의 서비스 연결 설계 필요",
+			"pages": "1",
+			"design": {
+				"color": "다크 라임",
+				"hex": "#c8ff00",
+				"images": "13",
+				"clicks": "40"
+			},
+			"measurements": "unmeasured",
+			"observed": {
+				"coverage": "partial",
+				"scope": "최초 제작·수정 세션 일부",
+				"note": "대기·검사·증거 정리를 포함한 세션 관측값이에요. 초기 설치와 레퍼런스 재제작·게시 준비는 포함하지 않았어요.",
+				"report": "/tutorials/samples/slidelab/#시간과-비용",
+				"intervals": [
+					{
+						"source": "pro-kit-samples/checks/slidelab-20261010/project-session-run.json",
+						"sha256": "76ed740ef2e0d10f7b1c842d94ac6791fddf93dea81741931c0416cb340b1c81",
+						"startedAt": "2026-10-10T03:36:34.802576+00:00",
+						"endedAt": "2026-10-10T05:09:04.314620+00:00",
+						"wallMs": 5549518.50525,
+						"exitCode": 1
+					},
+					{
+						"source": "pro-kit-samples/checks/slidelab-20261010/project-session-resume-run.json",
+						"sha256": "a9ca1968457ba1b5199b70f6400da6bf1c7925873f8927b0395ee139731e76f7",
+						"startedAt": "2026-10-10T05:10:09.402723+00:00",
+						"endedAt": "2026-10-10T05:20:16.060250+00:00",
+						"wallMs": 606658.232542,
+						"exitCode": 1
+					},
+					{
+						"source": "pro-kit-samples/checks/slidelab-20261010/project-session-defect-fix-run.json",
+						"sha256": "fa758629df289dde36d9c8263cd9a27f63eaab1f37366c64a28e248383f9f335",
+						"startedAt": "2026-10-10T05:20:19.550568+00:00",
+						"endedAt": "2026-10-10T05:37:10.786753+00:00",
+						"wallMs": 1011237.266709,
+						"exitCode": 0
+					}
+				]
+			}
 		}
 	},
 	"gloss": {

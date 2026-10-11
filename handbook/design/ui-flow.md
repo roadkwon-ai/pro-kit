@@ -87,7 +87,7 @@ flowchart LR
 
 ### 프리셋
 
-이 흐름으로 만든 화면 프리셋 <!-- v:presets.screen.count -->9<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->4<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개, 모두 <!-- v:presets.screen.pages -->337<!-- /v -->페이지)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 볼 수 있어요. 추천 순위, comp, 사이트맵은 에이전트가 낸 그대로이고, 고르기와 수정 요청은 사용자가 직접 했어요.
+이 흐름으로 만든 화면 프리셋 <!-- v:presets.screen.count -->10<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->5<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개, 모두 <!-- v:presets.screen.pages -->338<!-- /v -->페이지)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 볼 수 있어요. 스타일 추천을 거친 프리셋은 추천 순위, comp, 사이트맵을 에이전트가 제안했고, 고르기와 수정 요청은 사용자가 직접 했어요.
 
 - **앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개**(<!-- v:preset.goru.title -->고루<!-- /v -->, <!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->, <!-- v:preset.uptrail.title -->Uptrail<!-- /v -->, <!-- v:preset.studyday.title -->하루공부<!-- /v -->, <!-- v:preset.olgot.title -->올곧<!-- /v -->): 분야가 다른 서비스를 사이트맵의 모든 페이지까지 만들었어요. 올곧을 뺀 넷은 템플릿을 설치한 프로젝트에서 `prokit-ui`의 흐름을 그대로 따랐어요.
   1. 이전 시안을 critique(디자인 리뷰)했어요.
@@ -96,7 +96,9 @@ flowchart LR
   4. 서체, 이미지, 모션을 넣어 모든 페이지를 구현했어요. 모달, 툴팁, 햄버거 메뉴, 사이드바, 페이지 전환도 넣었어요.
   5. critique와 polish(마무리 손질)를 거친 뒤 모든 링크와 버튼을 눌러 확인했어요.
 - **올곧**: 카탈로그 추천 대신 입시학원 사이트 한 곳을 실측한 `DESIGN.md`로 시작했어요. 첫 화면 comp 3장은 ChatGPT로 로그인한 Codex로 그렸고, 공개 페이지와 로그인 뒤 화면까지 <!-- v:preset.olgot.pages -->203<!-- /v -->개(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종)를 만들었어요.
-- **랜딩페이지 <!-- v:presets.landing.count -->4<!-- /v -->개**(<!-- v:preset.ullim.title -->울림<!-- /v -->, <!-- v:preset.jecheol.title -->제철상자<!-- /v -->, <!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->, <!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->): 랜딩페이지처럼 시각 연출이 큰 사이트예요. 첫 화면에서 시작해 요금, 상세, 로그인, 마이페이지, 고객센터, 약관까지 사이트맵의 모든 페이지를 같은 흐름으로 만들었어요. <!-- v:preset.ullim.title -->울림<!-- /v -->, <!-- v:preset.jecheol.title -->제철상자<!-- /v -->, <!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->는 스타일 후보마다 첫 화면 comp를 한 장씩 그렸고, 그 comp를 보고 스타일과 구도를 한 번에 골랐어요. 서비스 이름과 첫 화면 문구는 비슷한 서비스를 조사해 후보를 받은 뒤 사용자가 골랐어요.
+- **여러 페이지로 넓힌 랜딩페이지 네 개**(<!-- v:preset.ullim.title -->울림<!-- /v -->, <!-- v:preset.jecheol.title -->제철상자<!-- /v -->, <!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->, <!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->): 랜딩페이지처럼 시각 연출이 큰 사이트예요. 첫 화면에서 시작해 요금, 상세, 로그인, 마이페이지, 고객센터, 약관까지 사이트맵의 모든 페이지를 같은 흐름으로 만들었어요. <!-- v:preset.ullim.title -->울림<!-- /v -->, <!-- v:preset.jecheol.title -->제철상자<!-- /v -->, <!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->는 스타일 후보마다 첫 화면 comp를 한 장씩 그렸고, 그 comp를 보고 스타일과 구도를 한 번에 골랐어요. 서비스 이름과 첫 화면 문구는 비슷한 서비스를 조사해 후보를 받은 뒤 사용자가 골랐어요.
+
+- **슬라이드랩**: AI·PPT 교육을 소개하는 한 페이지 랜딩페이지예요. 참고 사이트의 구조·서체·색상·스크롤 효과를 관측하고 가상 예시와 생성 이미지로 만들었어요. 과정과 교육 시간을 고르면 같은 페이지의 예시 문의에 반영돼요. 제작 범위와 관측 기록은 [슬라이드랩](../../tutorials/samples/slidelab.md)에서 확인하세요.
 
 측정한 결과(페이지 수, critique 점수, 비용)는 [검증 결과](../reference/verification.md#화면-프리셋)에 있어요.
 
