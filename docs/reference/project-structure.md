@@ -19,16 +19,16 @@ my-app/
 │   └── config/                 공유 tsconfig                                          (BTS)
 ├── bts.jsonc, turbo.json, biome.json, pnpm-workspace.yaml                             (BTS)
 ├── AGENTS.md, CLAUDE.md, GLOSSARY.md                                                   (템플릿)
-├── .agents/skills/             prokit-* 8개, 공식 도메인 스킬, superpowers·skill-creator·ponytail(Codex·Antigravity·Grok Build)
+├── .agents/skills/             prokit-* 8개, 공식 도메인 스킬, superpowers·skill-creator·ponytail 6종(Codex·Antigravity·Grok Build)
 ├── .agents/agents/             에이전트 생성물(Antigravity)
 ├── .claude/                    agents/(정본), skills/(링크), settings.json(플러그인, 키 훅)
 ├── .codex/                     agents/(생성물), skills·prompts(OMX)
-├── scripts/                    dev-cycle.mjs, sync-agents.mjs, skills-setup.mjs, vercel-deploy.mjs, release.mjs,
-│                               export-html.mjs, load-keys.mjs
+├── scripts/                    dev-cycle.mjs, sync-agents.mjs, skills-setup.mjs, delegation.mjs, resource-guard.mjs,
+│                               vercel-deploy.mjs, release.mjs, export-html.mjs, load-keys.mjs
 ├── release/                    production 배포마다 릴리스 노트 (pnpm release)
 ├── skills.manifest.json, skills-lock.json, .dev-cycle.json, .vercelignore
 ├── docs/                       dev-workflow.md, adr/, domain/project.md
-└── tasks/                      todo.md(진행 중 대조표), 닫은 라운드는 archive/
+└── tasks/                      todo.md(남은 할 일·진행 중 대조표), archive/(날짜별 완료 기록·README 색인)
 ```
 
 ## 자세히
@@ -43,9 +43,10 @@ my-app/
 | `docs/adr/` | 설계 결정 기록 | |
 | `docs/dev-workflow.md` | 케이스별 대조표 행의 정본 | [케이스 A\~F·H와 대조표](https://prokit-web.vercel.app/docs/concepts/cases/) |
 | `.dev-cycle.json` | 케이스 판정 경로, 인증 경로, 검사 명령, 화면 점수 기준 | [케이스 A\~F·H와 대조표](https://prokit-web.vercel.app/docs/concepts/cases/) |
-| `tasks/todo.md`, `tasks/archive/`, `tasks/evidence/` | 진행 중 대조표와 백로그, 닫은 라운드, 스크린샷 같은 증거 | [증거와 audit, 사용자 확인](https://prokit-web.vercel.app/docs/concepts/audit-and-confirm/) |
+| `tasks/todo.md`, `tasks/archive/`, `tasks/evidence/` | 남은 일반 할 일·백로그와 진행 중 대조표, 날짜별 완료 기록과 색인, 스크린샷 같은 증거 | [증거와 audit, 사용자 확인](https://prokit-web.vercel.app/docs/concepts/audit-and-confirm/) |
 | `skills.manifest.json`, `skills-lock.json` | 설치할 스킬 목록과 설치한 판 | [설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/) |
-| `.claude/agents/`, `.codex/agents/`, `.agents/agents/` | 구현·리뷰 에이전트 정본과 생성물(Codex용, Antigravity용) | [구현 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/) |
+| `.claude/agents/`, `.codex/agents/`, `.agents/agents/` | 구현 수행자, 전문 리뷰어, 최종 리뷰어의 정본과 생성물(Codex용, Antigravity용) | [위임 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/) |
+| `scripts/delegation.mjs`, `scripts/resource-guard.mjs`, `.prokit/` | 위임 패킷의 실제 변경 검증과 자원 보호. `.prokit/` 실행 상태는 Git과 Biome에서 제외해요 | [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/) |
 | `.vercelignore` | 배포에서 비밀값 파일을 빼요 | [비밀값 지키기](https://prokit-web.vercel.app/docs/deploy/secrets/) |
 | `release/` | 릴리스 노트 | [버전과 릴리스](https://prokit-web.vercel.app/docs/deploy/release/) |
 
@@ -55,11 +56,14 @@ my-app/
 |---|---|
 | `PRODUCT.md` | 제품 맥락(impeccable `init` 인터뷰 결과) |
 | `DESIGN.md` | 디자인 값(토큰)과 이유 |
+| `docs/preset-design.json` | 디자인 설정을 붙인 제작 프롬프트의 선택 기록. 서체 파일·굵기·라이선스, 모드별 토큰과 초기 언어·모드를 `DESIGN.md`와 맞춰요 |
 | `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 사이트맵과 화면 설계(브리프) |
 | `apps/web/src/fonts/`, `apps/web/public/images/` | 자체 호스팅 서체와 이미지 |
 | `html/` | `pnpm export:html` 결과(git이 무시해요) |
 
 화면만 프로젝트는 루트 `AGENTS.md` 맨 위에 "화면만 프로젝트" 한 줄이 있고, 작업 폴더에서 시작했다면 `docs/first-request.md`에 첫 요청이 있어요([화면만 프로젝트와 HTML 내보내기](https://prokit-web.vercel.app/docs/design/screen-only/)).
+
+Codex 네이티브 Ponytail 플러그인은 `--with-global`에서만 사용자 환경에 설치해요. 이 프로젝트의 `.codex/` 생성물과 플러그인 설치·훅 허용 상태는 따로 확인해요([설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)).
 
 ## 관련 문서
 

@@ -59,5 +59,5 @@ https://prokit-web.vercel.app/docs/concepts/cases/
 
 - [dev-cycle 라운드](https://prokit-web.vercel.app/docs/concepts/dev-cycle/)
 - [증거와 audit, 사용자 확인](https://prokit-web.vercel.app/docs/concepts/audit-and-confirm/)
-- [구현 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/)
+- [위임 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/)
 - [UI/UX 흐름](https://prokit-web.vercel.app/docs/design/ui-flow/)

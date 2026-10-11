@@ -1,7 +1,7 @@
 # 검증 결과
 https://prokit-web.vercel.app/docs/reference/verification/
 
-> 한눈에: 프로킷의 두 템플릿은 실제 프로젝트에 설치해 확인했어요. 작은 기능 검사부터 실제 DB에서 처음부터 끝까지 해 본 작업, 스킬이 결과를 바꾸는지 잰 비교까지 기록이 남아 있어요. 화면 프리셋 9개는 모든 페이지의 링크와 버튼을 눌러 확인했어요.
+> 한눈에: 프로킷의 두 템플릿은 실제 프로젝트에 설치해 확인했어요. 작은 기능 검사부터 실제 DB에서 처음부터 끝까지 해 본 작업, 스킬이 결과를 바꾸는지 잰 비교까지 기록이 남아 있어요. 화면 프리셋 10개는 모든 페이지의 링크와 버튼을 눌러 확인했어요.
 
 ## 무엇으로 검증했나요
 
@@ -17,9 +17,17 @@ https://prokit-web.vercel.app/docs/reference/verification/
 | 실제 DB에서 라운드 | 실제 Neon DB에서 케이스 F 라운드(마이그레이션, 2계정 격리 테스트)를 끝까지 진행. supabase는 로컬 Supabase DB와 RLS | [neon](https://github.com/roadkwon-ai/pro-kit/blob/main/templates/prokit-next-neon/VERIFICATION.md#실제-neon-db-e2e-task-14) · [supabase](https://github.com/roadkwon-ai/pro-kit/blob/main/templates/prokit-next-supabase/VERIFICATION.md#로컬-supabase-db와-rls-podman) |
 | Codex 스모크 | Codex에서 스킬과 에이전트가 로드되는지. 에이전트는 신뢰한 프로젝트에서만 로드돼요 | [neon](https://github.com/roadkwon-ai/pro-kit/blob/main/templates/prokit-next-neon/VERIFICATION.md#codex-스모크) |
 | 스킬 연결 점검 | 단계마다 읽어야 할 공식 스킬을 실제로 읽는지(호출률). [결과](https://prokit-web.vercel.app/docs/skills/official-skills/#호출률과-활용도) | [neon](https://github.com/roadkwon-ai/pro-kit/blob/main/templates/prokit-next-neon/VERIFICATION.md#스킬-연결-점검과-보강-2026-09-30-추가) |
+| 외부 위임과 자원 안전성 | 사용자 지정 스킬 선택, 수행·리뷰 분리, 실제 변경과 원시 증거, 자원 분류·차단·정리 경계를 확인했어요. 최종 증분 인수와 미검증 범위는 별도 기록이에요 | [위임·자원 검증 기록](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-09-orchestration-resources/README.md#증분-최종-인수-2026-10-10) |
+| 병렬 실행과 검사 재사용 | 독립 작업 배정, 상태 격리, 실패·누락·flaky 보존을 검사하고 같은 범위의 직렬·병렬 실행을 비교했어요 | [실제 배치 시간과 검증 범위](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-10-parallel-verification/README.md#실제-비교) |
+| 스킬·에이전트 실행 준비 | 작업 범위, 검사 담당자, 리뷰 문맥과 평가의 일치를 확인해요. 읽기 전용 비교는 실제 개발 시간 측정과 구분해요 | [추가 개선 기록](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-10-skill-agent-efficiency/README.md) |
+| Ponytail 통합 | 프로젝트 스킬과 선택 플러그인의 설치 회귀, 격리한 실제 BTS 설치와 모드 처리를 확인했어요. 직접 훅 스크립트를 실행한 결과와 호스트의 자동 훅 실행은 구분해요 | [통합 결과와 미검증 범위](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-10-ponytail-5-integration/README.md) |
+| 프리셋 디자인 설정 | 제작 프롬프트의 선택 기록, 서체·팔레트 적용, 모드·언어와 입력 유지, 정적 내보내기를 로컬에서 확인했어요 | [후속 구현과 검사](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-10-preset-design-controls/README.md#2026-10-11-후속-구현과-제작-프롬프트-검사) |
+| 기존 프로젝트 이행 | 지정한 프로젝트의 H 라운드에서 차이·검사·리뷰를 확인했어요. 다른 프로젝트에 일괄 적용한 결과는 아니에요 | [H 이행 기록](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-10-h-migration/README.md) |
 | DESIGN.md 효과 | `DESIGN.md`가 있을 때와 브랜드 이름과 대표 색만 줬을 때의 디자인 일치율 | [neon](https://github.com/roadkwon-ai/pro-kit/blob/main/templates/prokit-next-neon/VERIFICATION.md#designmd-효과-측정-2026-09-30-추가) |
 
 아직 확인하지 못한 항목은 각 기록의 "미검증 항목" 절에 있어요([neon](https://github.com/roadkwon-ai/pro-kit/blob/main/templates/prokit-next-neon/VERIFICATION.md#미검증-항목) · [supabase](https://github.com/roadkwon-ai/pro-kit/blob/main/templates/prokit-next-supabase/VERIFICATION.md#미검증-항목)).
+
+최근 기록의 로컬 구현·검증은 공개 사이트 배포나 프리셋 팩 재발행과 구분해요. 기존 스킬 유무 비교와 제작 시간 수치를 새 기능의 효과로 바꾸지 않으며, Ponytail의 `gain`도 원본 벤치마크예요. 현재 지원 범위와 남은 검사는 위 표의 각 기록에서 확인하세요.
 
 ## 스킬이 있을 때와 없을 때
 
@@ -40,25 +48,35 @@ supabase 템플릿의 `prokit-db`도 같은 방식으로 쟀어요. `prokit-db`�
 
 스킬을 쓴 실행에서도 결함을 찾아 고쳤어요. 스냅샷 불일치, expand 단계의 NOT NULL, 격리 테스트를 미루는 해석이에요. 고친 뒤 다시 실행한 요청은 그 체크 항목을 모두 통과했어요([supabase 검증 기록](https://github.com/roadkwon-ai/pro-kit/blob/main/templates/prokit-next-supabase/VERIFICATION.md#bts-스킬-구성-검수-2026-09-27-추가)).
 
+## 이번 위임·자원 변경의 확인 범위
+
+최종 인수에서는 이미 통과한 실행 증거를 보존하고 실패한 항목만 보완했어요. 독립 검수는 고정한 후보와 입력, 작업 범위, 실제 실행 기록에 한정해 통과를 확인했어요. 기존 스킬 유무 비교의 점수를 새 결과로 바꾸지는 않았어요.
+
+반복 비교와 다른 환경에서의 재현성은 이번 인수에 포함하지 않았어요. 새 위임 경로의 실제 실행은 Codex에서 확인했고, 다른 에이전트의 실행 제한은 [검증 기록](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-09-orchestration-resources/README.md#한계)에 남겼어요.
+
 ## 자세히
 
 ### 화면 프리셋
 
-화면 프리셋 9개(랜딩페이지 4개, 앱 화면 5개)를 쟀어요. 클론 코딩 프리셋 2개는 이 측정 밖이에요.
+화면 프리셋 10개(랜딩페이지 5개, 앱 화면 5개)를 쟀어요. 클론 코딩 프리셋 2개는 이 측정 밖이에요.
 
 | 항목 | 결과 |
 |---|---|
-| 페이지 | 프리셋당 7\~22개, 올곧은 203개(48종), 모두 337개. 링크와 버튼은 모두 실제 페이지나 동작으로 이어지고, 404나 "준비 중" 페이지는 없어요 |
+| 페이지 | 프리셋당 1\~22개, 올곧은 203개(48종), 모두 338개. 링크와 버튼은 모두 실제 페이지나 동작으로 이어지고, 404나 "준비 중" 페이지는 없어요 |
 | 확인 | GitHub Pages와 같은 하위 경로로 정적 HTML을 띄우고 모든 페이지의 링크와 버튼을 눌렀어요. 404 0, 콘솔 오류 0, 반응 없는 버튼 0 |
 | critique (40점 만점) | 제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 핏슬롯 28, Uptrail 28. P0·P1은 모두 고쳤어요 |
 | 추천 | 1위는 Refero Styles 6개, awesome-design-md 2개예요. 이전 판과 같은 계열(토스, Sequel 등)은 에이전트가 먼저 후보에서 뺐어요. 올곧은 추천 없이 입시학원 사이트 한 곳을 실측해 만든 `DESIGN.md`를 썼어요 |
 | comp | gpt-image-2.5-flare로 그렸어요. 첫 화면은 방향 comp 3장 중에서 골랐고, 나머지 페이지는 고른 comp를 참고로 페이지마다 한 장씩 그렸어요. 올곧은 첫 화면 comp 3장만 ChatGPT로 로그인한 Codex(`gpt-image` 스킬)로 그렸어요 |
-| 시각 자산 | 서체는 프리셋 9개 모두 파일로 받아 프로젝트에 직접 넣었어요(자체 호스팅: Pretendard, Wanted Sans, SUIT, JetBrains Mono, Black Han Sans, Hahmlet, Paperlogy). 사진과 일러스트는 AI로 만들었고, 아이콘은 lucide예요. 사람이 나오는 사진은 원본 크기로 팔다리와 손을 확인해 이상한 사진을 다시 만들었어요. 모션은 모두 reduced-motion(움직임 줄이기) 설정에서 꺼져요 |
+| 시각 자산 | 서체는 프리셋 10개 모두 파일로 받아 프로젝트에 직접 넣었어요(자체 호스팅: Pretendard, Wanted Sans, SUIT, JetBrains Mono, Black Han Sans, Hahmlet, Paperlogy). 사진과 일러스트는 AI로 만들었고, 아이콘은 lucide예요. 사람이 나오는 사진은 원본 크기로 팔다리와 손을 확인해 이상한 사진을 다시 만들었어요. 모션은 모두 reduced-motion(움직임 줄이기) 설정에서 꺼져요 |
 | 비용 (추천부터 모든 페이지 확인까지) | 에이전트 비용은 프리셋당 $68~$181, 모두 약 $1,090예요(중간에 작업공간을 기록으로 되살린 세션 포함). OpenAI 이미지 비용은 따로 청구돼요 |
 
-클론 코딩까지 프리셋 11개는 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지를 열어 볼 수 있어요.
+클론 코딩까지 프리셋 12개는 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지를 열어 볼 수 있어요.
 
 ### 측정 보고서
+
+- [실제 CLI 기술 인수와 생성 이미지 보완](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-10-cli-acceptance-images/README.md): 연결·차단 검사와 실제 Codex 리뷰, 이미지 생성·선택적 재검수를 기록했어요.
+
+- [슬라이드랩 제작과 실행 효율 실측](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-10-slidelab-verification/README.md): 새 화면 프리셋의 검사 결과, QA 병렬 비교와 설치기 제외 설정 보완을 기록했어요.
 
 - [스킬 연결 점검 보고서](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-09-30-skill-wiring-check.html)
 - [Codex 검수 보고서](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-09-30-codex-skill-wiring-check.html)

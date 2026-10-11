@@ -39,7 +39,8 @@ flowchart LR
 flowchart LR
   R["할 일에 마감일 붙이고<br/>지난 건 표시해줘"] --> DC["prokit-dev-cycle<br/>케이스 F · 대조표"]
   DC --> SP["스펙 · 테스트 시나리오<br/>용어 기록 GLOSSARY.md"]
-  SP --> DB["prokit-db<br/>due_at 마이그레이션<br/>로컬 적용"]
+  SP --> PLAN["구현 계획 · 재사용과 설정 점검<br/>prokit-reviewer(plan)"]
+  PLAN --> DB["prokit-db<br/>due_at 마이그레이션<br/>로컬 적용"]
   DB --> API["prokit-api<br/>프로시저 · 격리 테스트"]
   API --> UI["prokit-ui · prokit-web<br/>브리프 → 구현<br/>스크린샷 · 점수"]
   UI --> RF["공통화 · 리팩토링<br/>ponytail-review"]
@@ -54,7 +55,13 @@ flowchart LR
 
 ### 명령
 
-`status`, `case`, `table`, `audit`, `close`, `secrets` 명령과 옵션(`--upgrade`, `--partial`, `--json` 등)은 [명령 모음의 dev-cycle](https://prokit-web.vercel.app/docs/reference/commands/#dev-cycle)에 있어요.
+`status`, `case`, `table`, `audit`, `archive`, `close`, `secrets` 명령과 옵션(`--upgrade`, `--partial`, `--json` 등)은 [명령 모음의 dev-cycle](https://prokit-web.vercel.app/docs/reference/commands/#dev-cycle)에 있어요.
+
+### 작업 기록 보관
+
+`pnpm dev-cycle archive [--title "제목"]`은 라운드를 닫지 않아도 쓸 수 있어요. 활성 대조표와 미완료 항목은 건드리지 않고, 대조표 밖에서 끝낸 일반 할 일·백로그만 KST 날짜의 제목 파일로 옮겨요. 끝난 하위 항목은 부모 문맥과 함께 남기며, 코드 예시는 옮기지 않아요.
+
+`close`는 audit과 사용자 확인을 모두 통과한 뒤 대조표와 완료한 일반 할 일·백로그를 같은 방식으로 보관해요. 파일 이름이 같으면 `-2`, `-3`을 붙여 기존 파일을 보존하고, 기존 월별 기록도 그대로 둬요. `tasks/archive/README.md`에서 기록을 찾아보고 `tasks/todo.md`에는 남은 항목과 그 색인 링크 하나만 남겨요.
 
 ### 라운드를 여는 때
 
@@ -66,6 +73,7 @@ flowchart LR
 
 - 첫 증거를 적기 전에 `prokit-verify`를 불러 그 스킬이 정한 검사 고르기와 증거 형식을 따라요.
 - 문서는 그 계층을 구현하는 행에서 함께 고쳐요. 새 용어는 `GLOSSARY.md`에, 새 화면·프로시저·테이블은 `docs/domain/project.md`에 넣어요. 그래야 뒤의 리뷰 행이 문서까지 봐요.
+- B·D·E·F·H는 구현 전에 `[design]` 행에서 기존 경로·소비자, 공통화·분리 결정과 환경 변수·설정 영향을 확인해요. F는 계층별 점검을 합쳐 한 번만 적고 독립 계획 리뷰를 받아요. A·C는 관련 변경에 같은 판단 기준을 쓰되 새 설계 단계를 강제하지 않아요.
 - 서버나 DB 테스트가 필요한데 테스트 러너가 없으면 첫 행 앞에 `vitest 도입(최초 1회)` 행을 더하고 그것부터 해요.
 - 작업 중 다른 계층을 건드리면 audit이 케이스를 올리라고 알려 줘요. `pnpm dev-cycle table <새 케이스> --write --upgrade`로 올려도 이미 채운 증거와 메모는 남아요.
 
@@ -75,7 +83,7 @@ flowchart LR
 2. 사용자 확인을 받아요.
 3. audit이 통과해야 해요. `blocked`나 `미실행` 칸이 있으면 "부분 완료"로 보고하고, 사용자가 그대로 닫자고 할 때만 `close --partial`로 닫아요.
 4. 배포할 수 있는지 봐요. `pnpm vercel:deploy production --check`는 항상 실행해요. 기본 브랜치, GitHub `origin`, `gh auth status`, 배포 검사(커밋하지 않은 변경과 릴리스 말고)가 모두 갖춰지면 한 번 물어요. 선택지는 "릴리스하고 production 배포 (기본)"와 "커밋·push만 (배포 PASS)"예요. 하나라도 빠지면 묻지 않고 커밋·push까지만 해요.
-5. 이 라운드에서 미룬 지적을 `tasks/todo.md`의 백로그로 옮기고 `pnpm dev-cycle close`로 닫아요.
+5. 이 라운드에서 미룬 지적을 `tasks/todo.md`의 백로그로 옮겨요. 재발 원인이 확인됐으면 `tasks/lessons.md`, 해당 규칙·평가 입력이나 백로그에 반영했는지도 확인하고 `pnpm dev-cycle close`로 닫아요. 이때 대조표와 완료한 일반 할 일·백로그도 함께 보관해요.
 6. 커밋 전에 `pnpm dev-cycle secrets`를 실행하고, 이 라운드에서 바꾼 파일과 `tasks/`만 커밋해요. 제목은 Conventional Commits 접두어(`feat:`, `fix:`, `docs:` …)로 써요. 릴리스 노트의 절이 여기서 정해지고, `!`는 깨지는 변경으로 버전을 올려요. 이어서 push해요.
 7. 릴리스와 production 배포를 골랐다면 `prokit-deploy`의 배포 순서를 따라요([Vercel 배포와 되돌리기](https://prokit-web.vercel.app/docs/deploy/vercel/)).
 
@@ -87,6 +95,7 @@ Vercel 프로젝트의 Git 연결이 push마다 배포를 만드는 경우(`Git 
 
 - [케이스 A\~F·H와 대조표](https://prokit-web.vercel.app/docs/concepts/cases/)
 - [증거와 audit, 사용자 확인](https://prokit-web.vercel.app/docs/concepts/audit-and-confirm/)
-- [구현 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/)
+- [위임 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/)
+- [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)
 - [하네스 엔지니어링](https://prokit-web.vercel.app/docs/concepts/harness/)
 - [명령 모음](https://prokit-web.vercel.app/docs/reference/commands/)

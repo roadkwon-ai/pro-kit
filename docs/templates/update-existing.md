@@ -30,9 +30,9 @@ pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 
 4. `AGENTS.md`·`CLAUDE.md`의 `bts-template` 마커와 문서의 `bts-*` 참조를 고쳐요.
 5. `pnpm agents:sync`로 `.codex/agents`와 `.agents/agents`를 다시 만들어요.
 
-### 공식 스킬은 따로 업데이트해요
+### 공식 스킬과 Codex 선택 플러그인은 따로 업데이트해요
 
-템플릿 갱신 반영은 템플릿이 설치한 파일과 설정을 옮기는 일이에요. 공식 스킬의 새 버전은 그 프로젝트에서 `pnpm skills:update`로 받아요([설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)).
+템플릿 갱신 반영은 템플릿이 설치한 파일과 설정을 옮기는 일이에요. 공식 스킬의 새 버전은 그 프로젝트에서 `pnpm skills:update`로 받아요([설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)). Ponytail 6개 프로젝트 스킬을 더하는 갱신이면 H 라운드에서 매니페스트와 설치본 차이를 검토한 뒤 `pnpm skills:setup`으로 빠진 스킬을 받아요. Codex 네이티브 Ponytail은 전역 선택 항목이라 이행으로 자동 설치·갱신하지 않아요. 사용자가 요청했을 때만 원본 훅·코드를 검토하고 `pnpm skills:setup --with-global`과 `/hooks` 신뢰를 따로 진행해요.
 
 ## 관련 문서
 

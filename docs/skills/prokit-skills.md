@@ -7,21 +7,27 @@ https://prokit-web.vercel.app/docs/skills/prokit-skills/
 
 | 스킬 | 맡는 일 | 이런 요청에 쓰여요 | 지키게 하는 것 |
 |---|---|---|---|
-| `prokit-dev-cycle` | 작업 진행. 요청을 케이스로 나누고 대조표를 열어요 | 만들어줘, 고쳐줘, 바꿔줘, 완료 처리 | 모든 단계에 증거를 남기고 `audit`을 통과해야 완료 |
+| `prokit-dev-cycle` | 작업과 검사 배정·감독·통합. 요청을 케이스로 나누고 대조표를 열어요 | 만들어줘, 고쳐줘, 바꿔줘, 완료 처리 | 공식 전문 스킬을 연결하고 모든 단계의 증거·최종 검수·`audit` 통과를 확인 |
 | `prokit-web` | 화면 동작(라우팅, 데이터 불러오기, 캐시) | 페이지 추가, 로그인한 사람만, 느려요 | 로그인 확인은 서버에서, 로딩·빈·오류 상태 구분, 서버 비밀값은 브라우저로 보내지 않기 |
 | `prokit-ui` | 화면 모양과 사용 경험(impeccable) | 디자인해줘, 예쁘게, 접근성 점검 | 첫 화면 전에 디자인 스타일 후보 1~3개 추천, `DESIGN.md` 스펙 검사(lint), 코드 전에 브리프 확인, 디자인 토큰만 사용, 점수 기준(audit 16/20) |
 | `prokit-api` | 서버 API, 로그인, 권한 | API 추가, 남의 데이터가 보여요 | 로그인 필수, 자기 데이터만 접근, 입력 검증, 2계정 격리 테스트 |
 | `prokit-db` | 테이블과 마이그레이션 | 컬럼 추가, 테이블 만들기, 쿼리가 느려요 | 마이그레이션 파일로만 변경, 로컬 → 병합 전(기본 브랜치에 합치기 전) → 운영 순서, 데이터를 잃을 수 있는 변경은 두 단계. Supabase는 모든 테이블에 RLS(행 단위 접근 제한) |
-| `prokit-verify` | 검사 선택과 증거 기록 | 검증해줘, 테스트 돌려, 끝났어? | 실행하지 않은 검사는 통과로 적지 않기 |
+| `prokit-verify` | 영향 검사 선택, 담당자·재사용 조건 확인과 증거 기록 | 검증해줘, 테스트 돌려, 끝났어? | 실행하지 않은 검사는 통과로 적지 않고, 전문 증거 재사용과 새 최종 검수를 구분 |
 | `prokit-deploy` | Vercel 배포(develop, production)와 되돌리기 | develop에 올려줘, 운영에 배포해줘, 롤백해줘 | 요청하거나 라운드 끝에서 고를 때만 배포, DB 먼저 적용, 로컬 `.env`는 올리지 않고 배포 값은 Vercel 환경변수에만, 운영은 기본 브랜치에서만 |
 | `prokit-skills-update` | 에이전트가 쓰는 외부 스킬 업데이트 | 스킬 업데이트해줘, 스킬 최신이야? | 작업을 시작할 때 하루 한 번 새 버전 확인, 업데이트는 물어보고 한 라운드로 커밋, 원격에서 없어진 스킬은 지우지 않고 알림 |
+
+프로킷 스킬은 프로젝트 계약과 진행 관리를 맡아요. 일반 기술 지식과 전문 구현·설계·리뷰는 작업에 맞는 외부 스킬에 연결하고, 실제 결과를 확인해 재지시하거나 최종 수용해요. 스킬 선택과 증거 경계는 [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)에 있어요.
 
 ## 스킬끼리 이어지는 방식
 
 - **진입점은 `prokit-dev-cycle`**: 코드를 바꾸는 요청은 모두 여기서 시작해요. 케이스를 정하고 대조표를 열어요([dev-cycle 라운드](https://prokit-web.vercel.app/docs/concepts/dev-cycle/)).
 - **계층 스킬**: 행을 실행할 때 화면 동작은 `prokit-web`, 화면 모양과 사용 경험은 `prokit-ui`, API와 인증은 `prokit-api`, DB는 `prokit-db`, 검사와 증거는 `prokit-verify`를 불러요.
 - **공식 스킬 연결**: 분야별 스킬(web, ui, api, db, verify)과 dev-cycle 대조표의 각 행은 그 단계에서 읽을 공식 스킬(Next.js, React, Better Auth, shadcn, impeccable, Neon 또는 Supabase, Vercel)을 정해 둬요([공식 스킬과 연결](https://prokit-web.vercel.app/docs/skills/official-skills/)).
+- **외부 스킬도 연결해요**: 기본 공식 스킬 외에 현재 접근 가능한 사용자 지정·프로젝트별 스킬도 선택할 수 있어요. 문서 작업에는 필요한 문서·글쓰기·한국어 검수 단계를 연결하고, 내장 리뷰와 겹치는 검토는 반복하지 않아요.
+- **개발 자원을 함께 봐요**: `prokit-dev-cycle`은 관리하는 개발·빌드·설치·검증 작업에서 자원 상태를 확인해요. 명령은 [명령 모음](https://prokit-web.vercel.app/docs/reference/commands/#위임과-자원)에 있어요.
 - **배포는 따로**: 배포 요청은 코드를 바꾸지 않으므로 라운드 없이 `prokit-deploy`가 메인 세션에서 맡아요.
+
+프리셋 제작과 선택 디자인의 실제 적용 검사는 `prokit-ui`가 [프리셋 설정 기준](https://prokit-web.vercel.app/docs/design/ui-flow/#프리셋)으로 연결해요. `prokit-skills-update`는 프로젝트 스킬 갱신과 네이티브 플러그인·훅 상태를 [설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)대로 따로 확인해요.
 
 ## 자세히
 

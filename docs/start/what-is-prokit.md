@@ -18,7 +18,8 @@ pro-kit 저장소는 새 프로젝트를 만들어 주는 생성기예요. 안�
 템플릿은 [Better-T-Stack](https://prokit-web.vercel.app/docs/templates/what-it-adds/)으로 만든 Next.js 풀스택 앱 위에 설치돼요. 설치하면 앱 뼈대에 다음이 더해져요.
 
 - 프로젝트 전용 스킬 8개
-- 구현 에이전트와 리뷰 에이전트
+- 외부 전문 스킬을 연결하는 수행 에이전트와 독립 리뷰 에이전트
+- 빌드 캐시, 설치 패키지, Python 실행환경, 관리 임시 폴더를 감시하는 자원 보호 도구
 - 작업마다 확인 결과를 남기는 dev-cycle
 - 스타일 추천부터 `DESIGN.md`까지 이어지는 UI/UX 흐름
 - 내 컴퓨터의 Vercel CLI로 develop과 운영에 배포하는 스크립트와 절차
@@ -31,6 +32,8 @@ projects/
 └── my-app/             새 프로젝트. 개발은 여기서 한다
 ```
 
+프로킷은 작업에 맞는 공식 스킬뿐 아니라 사용자가 지정한 스킬과 프로젝트별 스킬에도 맡겨요. 코디네이터는 작업 범위와 진행을 관리하고, 결과의 증거를 확인해 수정 지시와 최종 검수를 해요. 스킬 선택과 설치·배포 권한은 따로 다뤄요([위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)).
+
 ## 누구나 전문 개발자처럼
 
 전문 개발자와 초보자는 코드를 쓰는 속도보다 일하는 순서와 확인하는 습관이 달라요. AI 에이전트에게 그냥 맡기면 이 단계를 자주 건너뛰어요. 프로킷은 그 습관을 스킬, 에이전트, 자동 검사로 프로젝트에 넣어 두었어요. 사용자가 절차를 몰라도 에이전트가 같은 절차를 따라요.
@@ -40,7 +43,7 @@ projects/
 | 만들기 전에 요구사항과 화면을 정리해요 | 스펙과 화면 설계(브리프)를 먼저 보여 주고 확인을 받은 뒤 구현해요 |
 | 디자인 시스템을 정하고 지켜요 | 첫 화면을 만들기 전에 어울리는 디자인 스타일 1~3위를 추천받아 `DESIGN.md` 파일 하나에 정해 둬요. 새 세션도 이 파일을 따라요 |
 | 직접 돌려 보고 나서 끝났다고 해요 | 타입 검사, 테스트, 화면 스크린샷을 실제로 실행한 증거(명령과 결과)가 모여야 `audit`을 통과해요. 브라우저 콘솔과 서버 로그의 오류는 0개여야 해요 |
-| 다른 사람에게 코드 리뷰를 받아요 | 구현에 참여하지 않은 읽기 전용 리뷰 에이전트(`prokit-reviewer`)가 코드, 보안, DB를 따로 살펴봐요. 필요 이상으로 복잡한 설계는 `ponytail-review`가 걸러 내요 |
+| 다른 사람에게 코드 리뷰를 받아요 | 구현에 참여하지 않은 읽기 전용 리뷰 에이전트(`prokit-reviewer`)가 코드, 보안, DB를 따로 살펴봐요. `ponytail-review`는 정확성·안전성·테스트부터 확인하고 불필요한 복잡도도 점검해요 |
 | 보안과 데이터를 지켜요 | 서버에서 로그인과 데이터 주인을 확인하고, 계정 두 개로 남의 데이터에 접근할 수 없는지 테스트해요. DB는 마이그레이션 파일로만 바꿔요 |
 | 배포는 확인하며 해요 | 배포 전 검사를 통과해야만 배포해요. 비밀값이 새지 않게 막고, 되돌리는 명령을 알려 줘요 |
 | 프로젝트 맥락을 기억해요 | 용어집(`GLOSSARY.md`)과 프로젝트 소개(`docs/domain/project.md`)를 작업마다 읽고 고쳐요. 새 세션에서 프로젝트를 다시 설명하지 않아도 돼요 |
@@ -60,7 +63,9 @@ projects/
 | 새 세션마다 프로젝트를 다시 설명해야 해요 | 시작할 때 `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`를 읽어요. 라운드마다 두 문서에 바꿀 내용이 있는지 확인해 고쳐요 |
 | 막힌 단계를 조용히 건너뛰어요 | 실행하지 못한 검사는 `blocked: 사유`로 남기고 "부분 완료"로 보고해요. 그런 라운드는 사용자가 동의해야 끝나요 |
 | 콘솔 오류를 "브라우저 확장 탓"이라며 넘겨요 | 오류 예산이 0이에요. 확장 프로그램 탓처럼 보여도 깨끗한 브라우저에서 원인을 가려내고, 사용자 브라우저에도 보이면 고쳐요 |
-| 쓰지 않을 기능과 복잡한 구조까지 만들어요 | 스펙에 "만들지 않는 것" 절을 두고, 계획과 리뷰마다 `ponytail-review`로 필요 이상으로 복잡한 설계를 덜어 내요 |
+| 쓰지 않을 기능과 복잡한 구조까지 만들어요 | 스펙에 "만들지 않는 것" 절을 두고, 기획·계획에는 `ponytail`의 재사용 순서와 독립 리뷰를 적용하고, 구현 diff에는 `ponytail-review`로 불필요한 복잡도를 확인해요 |
+| 비슷한 기능마다 같은 코드와 설정을 새로 만들어요 | 기획 때 기존 코드, 공통 설정과 환경 변수의 원본을 먼저 찾아요. 실제로 함께 쓸 부분만 재사용하고, 흐름이 다른 독립 앱은 억지로 합치지 않아요 |
+| 캐시와 설치 환경이 커져 디스크를 채워요 | 관리 명령이 용량과 여유 공간을 확인하고 예산을 넘으면 새 무거운 작업을 막아요. 큰 설치 환경을 크기만 보고 지우지는 않아요 |
 | 미룬 리뷰 지적이 닫힌 기록 속에 묻혀요 | 라운드를 닫기 전에 미룬 지적을 `tasks/todo.md`의 백로그(할 일 목록)로 옮겨요 |
 | 배포하면서 로컬 `.env`의 비밀값까지 올리거나 `.env.production`에 운영 키를 적어 둬요 | `.vercelignore`가 로컬 `.env`를 빼고, 배포 값은 Vercel 환경변수에만 둬요. 배포 스크립트의 검사를 통과해야 배포해요. 커밋 전에는 `pnpm dev-cycle secrets`가 커밋할 변경에서 비밀값을 찾아요 |
 
@@ -68,7 +73,7 @@ projects/
 
 - **지원하는 에이전트**: Claude Code, Codex, Antigravity, Grok Build예요. 도구마다 읽는 파일과 여는 명령은 [지원하는 에이전트](https://prokit-web.vercel.app/docs/start/supported-agents/), Claude Code와 Codex의 조작 차이는 [Claude Code와 Codex](https://prokit-web.vercel.app/tutorials/reference/claude-code-and-codex/)에 있어요.
 - **스킬이 결과를 바꾸나요**: 같은 요청을 스킬이 있을 때와 없을 때로 나눠 비교했어요. 규칙을 지킨 비율이 작업 진행(`prokit-dev-cycle`)은 27%에서 93%로, 화면 설계(`prokit-ui`)는 12%에서 100%로 올랐어요. 골라 둔 `DESIGN.md`가 있으면 목표 디자인과 팔레트가 맞는 비율이 71%에서 99%로 올랐어요. 측정 방법은 [검증 결과](https://prokit-web.vercel.app/docs/reference/verification/)에 있어요.
-- **만든 것**: 프로킷으로 만든 프리셋 11개(랜딩페이지 4개, 앱 화면 5개, 클론 코딩 2개)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 볼 수 있어요.
+- **만든 것**: 프로킷으로 만든 프리셋 12개(랜딩페이지 5개, 앱 화면 5개, 클론 코딩 2개)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 볼 수 있어요.
 - **라이선스**: [MIT](https://github.com/roadkwon-ai/pro-kit/blob/main/LICENSE)예요. 상업 이용·유료 고객 개발·수정·재판매를 허용하며 저작권 표시와 허가문을 보존해야 해요. 사이트의 홍보용 제작 표시는 선택 사항이고, [외부 구성 요소](https://github.com/roadkwon-ai/pro-kit/blob/main/THIRD_PARTY_NOTICES.md)에는 원래 조건을 적용해요.
 
 ## 관련 문서
@@ -78,4 +83,5 @@ projects/
 - [빠른 시작: 화면만 만들기](https://prokit-web.vercel.app/docs/start/quickstart-screens/)
 - [빠른 시작: 서비스 만들기](https://prokit-web.vercel.app/docs/start/quickstart-service/)
 - [하네스 엔지니어링](https://prokit-web.vercel.app/docs/concepts/harness/)
+- [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)
 - [튜토리얼](https://prokit-web.vercel.app/tutorials/)

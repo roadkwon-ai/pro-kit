@@ -17,6 +17,12 @@ https://prokit-web.vercel.app/tutorials/reference/troubleshooting/
 | 지금 어디까지 했는지 모르겠어요 | `지금까지 한 일과 남은 일을 정리해줘` |
 | 튜토리얼 스크린샷과 내 화면이 달라요 | 정상이에요. 같은 프롬프트라도 결과가 매번 조금씩 달라요 |
 
+## 자원 예산이나 외부 스킬 때문에 멈추면
+
+캐시나 설치 환경이 커져 작업이 막혔으면 `현재 자원 사용량과 막힌 이유를 확인하고, 안전하게 정리할 수 있는 후보를 알려줘`라고 보내세요. 쓰는 환경이나 전역 저장소를 무작정 지우지 않아요. 감시 범위와 정리 조건은 [자원 관리 안내](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/delegation-and-resources.md#관리-범위-안-자원만-다루기)에 있어요.
+
+외부 스킬을 실행하지 못했으면 `선택한 스킬과 사용할 수 없는 이유를 확인하고, 검증된 대안이 있는지 알려줘`라고 보내세요. 막힌 검사를 완료로 처리하지 않아요. 선택 순서와 권한은 [위임 안내](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/delegation-and-resources.md#위임할-때-남기는-근거)를 따라요.
+
 ## 그래도 안 풀리면
 
 - 에이전트를 닫고(`/exit`, Codex는 `/quit`) 프로젝트 폴더에서 다시 연 뒤 `하던 작업 이어서 해줘`라고 보내 보세요.

@@ -8,3 +8,4 @@ https://prokit-web.vercel.app/docs/design/
 | [UI/UX 흐름](https://prokit-web.vercel.app/docs/design/ui-flow/) | 스타일 추천 1~3위, 브리프 확인, 화면 만들기까지의 흐름 |
 | [DESIGN.md](https://prokit-web.vercel.app/docs/design/design-md/) | 디자인 규칙을 한 파일에 적고 검사하는 방법 |
 | [화면만 프로젝트와 HTML 내보내기](https://prokit-web.vercel.app/docs/design/screen-only/) | DB 없이 화면만 만들고 HTML로 내보내는 방법 |
+| [프리셋 등록과 검수](https://prokit-web.vercel.app/docs/design/preset-publication/) | 공통 게시 구조와 전문 스킬로 프리셋을 반영하고 제작 기록을 표시하는 방법 |

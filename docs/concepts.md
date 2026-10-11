@@ -9,4 +9,5 @@ https://prokit-web.vercel.app/docs/concepts/
 | [dev-cycle 라운드](https://prokit-web.vercel.app/docs/concepts/dev-cycle/) | 코드를 바꾸는 작업 하나가 거치는 순서와 대조표 |
 | [케이스 A\~F·H와 대조표](https://prokit-web.vercel.app/docs/concepts/cases/) | 작업 종류에 따라 정해지는 검사와 리뷰 행 |
 | [증거와 audit, 사용자 확인](https://prokit-web.vercel.app/docs/concepts/audit-and-confirm/) | 증거를 남기는 규칙, 자동 감사, 사용자가 직접 확인하는 행 |
-| [구현 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/) | 구현과 리뷰를 다른 에이전트가 나눠 맡는 방식 |
+| [위임 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/) | 코디네이터, 수행자, 전문 리뷰, 최종 리뷰의 경계 |
+| [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/) | 공급자 선택 증거와 로컬 자원을 보수적으로 다루는 방법 |

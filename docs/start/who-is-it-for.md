@@ -32,7 +32,7 @@ https://prokit-web.vercel.app/docs/start/who-is-it-for/
 | 작업 진행 | 진행 규칙을 지킨 비율 27% | 할 일 목록(대조표)의 칸마다 실행 증거를 남겨요. 93% | [검증 결과](https://prokit-web.vercel.app/docs/reference/verification/#스킬이-있을-때와-없을-때) |
 | 데이터와 보안 | API 규칙 56%, DB 규칙 38%. 데이터 주인 확인과 DB 변경 순서를 직접 챙겨요 | 스킬이 데이터 주인 확인과 DB 변경 순서를 챙겨요. API 규칙 100%, DB 규칙 100% | [검증 결과](https://prokit-web.vercel.app/docs/reference/verification/#스킬이-있을-때와-없을-때) · [하는 일](https://prokit-web.vercel.app/docs/start/what-is-prokit/#누구나-전문-개발자처럼) |
 | 검사와 리뷰 | 검사 규칙 71%. 리뷰는 직접 하거나 만든 에이전트가 스스로 해요 | 실행 결과가 모여야 끝나고 리뷰는 다른 에이전트가 해요. 100% | [검증 결과](https://prokit-web.vercel.app/docs/reference/verification/#스킬이-있을-때와-없을-때) · [하는 일](https://prokit-web.vercel.app/docs/start/what-is-prokit/#누구나-전문-개발자처럼) |
-| 모든 페이지 확인 | 페이지마다 링크와 버튼을 직접 눌러 봐요 | 자동으로 모두 눌러 봐요. 화면 프리셋 9개, 337쪽에서 없는 페이지·브라우저 오류·반응 없는 버튼이 0이었어요 | [검증 결과](https://prokit-web.vercel.app/docs/reference/verification/#화면-프리셋) |
+| 모든 페이지 확인 | 페이지마다 링크와 버튼을 직접 눌러 봐요 | 자동으로 모두 눌러 봐요. 화면 프리셋 10개, 338쪽에서 없는 페이지·브라우저 오류·반응 없는 버튼이 0이었어요 | [검증 결과](https://prokit-web.vercel.app/docs/reference/verification/#화면-프리셋) |
 | 배포 | 비밀값이 섞이지 않게 막고, 되돌리는 법까지 직접 챙겨요 | 검사, 비밀값 막기, 되돌리기를 배포 절차가 챙겨요 | [하는 일](https://prokit-web.vercel.app/docs/start/what-is-prokit/#누구나-전문-개발자처럼) |
 | 다음에 이어 하기 | 세션이 바뀌면 맥락과 진행 상황을 다시 알려 줘요 | "하던 작업 이어서 해줘"로 멈춘 곳부터 해요 | [시간을 줄이는 법](https://prokit-web.vercel.app/tutorials/reference/process-and-time/#시간을-줄이는-법) · [하는 일](https://prokit-web.vercel.app/docs/start/what-is-prokit/#그냥-ai에게-맡길-때와-다른-점) |
 

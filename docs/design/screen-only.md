@@ -29,7 +29,10 @@ https://prokit-web.vercel.app/docs/design/screen-only/
 - **인증 파일은 그대로 둬요**: `auth-client.ts`, `packages/auth/` 같은 인증 경로 파일은 고치지 않아요. 실제 서비스로 바꿀 때 그대로 써요.
 - **HTML로 내보낼 수 있게 지어요**: 동적 경로는 `generateStaticParams`로 값을 모두 내고, 쿼리 값은 클라이언트 컴포넌트에서 읽어요. `headers`, `cookies`, `redirect`, route handler, server action은 쓰지 않아요. 이미지는 `apps/web/public/` 아래에 두고 `next/image`로 불러요.
 - **제작 표시는 선택 사항이에요**: 출처를 알리고 싶으면 사이트 푸터에 `<ProkitCredit />`를 넣어요. 프로킷 심볼과 홈페이지·GitHub 링크를 제공하며 템플릿이 `apps/web/src/components/prokit-credit.tsx`를 설치해 둬요. 표시 여부·문구·배치를 조정할 수 있어요. MIT의 저작권·허가문 보존 조건은 이 홍보 표시와 별개예요.
-- **마감 전 확인은 두 번**: 개발 서버와 `pnpm export:html` 결과 양쪽에서 모든 링크와 버튼을 눌러 봐요. 개발 서버에서는 `/dashboard`와 `/api`가 살아 있어 남은 BTS 부품이 드러나지 않기 때문이에요.
+- **모드와 언어도 화면 기능이에요**: 프리셋처럼 만들 때는 시스템·라이트·다크와 한국어·영어 전환을 넣어요. 문구는 같은 키의 두 사전에 두고, 전환 뒤 현재 페이지·입력 상태가 남아야 해요. 실전 서비스의 요구가 다르면 그 요구를 따라요.
+- **마감 전 확인은 두 번**: 개발 서버와 `pnpm export:html` 결과 양쪽에서 모든 링크·버튼과 모드·언어 전환을 확인해요. 개발 서버에서는 `/dashboard`와 `/api`가 살아 있어 남은 BTS 부품이 드러나지 않기 때문이에요.
+
+프로킷 제작 창에서 선택한 서체·색상은 새 프로젝트의 디자인 토큰으로 고정해요. 프로젝트 안에 프리셋 제작용 선택 팔레트, 설정 견본, 프로킷 미리보기 수신기를 넣지는 않아요. 선택값 기록과 실제 서체·색상 검사는 [DESIGN.md](https://prokit-web.vercel.app/docs/design/design-md/#선택한-디자인을-기록하고-확인하기)를 따라요.
 
 ## HTML로 내보내기
 

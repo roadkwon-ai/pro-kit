@@ -11,13 +11,13 @@ https://prokit-web.vercel.app/docs/concepts/harness/
 |---|---|---|
 | 규칙 문서 | `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/domain/project.md` | 에이전트가 시작할 때 읽는 개발 원칙과 공통 규칙, 용어집, 프로젝트 소개. `CLAUDE.md`는 `@AGENTS.md`로 같은 지침을 읽어요 |
 | 스킬 | `.agents/skills/prokit-*` 8개와 공식 스킬 | 분야마다 일하는 법을 알려 줘요. 대조표의 행마다 그 단계에서 읽을 공식 스킬이 정해져 있어요 |
-| 역할 나누기 | `.claude/agents/prokit-implementer.md`, `prokit-reviewer.md` | 구현과 리뷰를 다른 에이전트가 맡아요. `prokit-reviewer(...)` 리뷰 행은 리뷰 에이전트만 채울 수 있어요 |
+| 역할 나누기 | `.claude/agents/prokit-implementer.md`, `specialist-reviewer.md`, `prokit-reviewer.md` | 코디네이터가 수행자와 읽기 전용 리뷰를 나눠 맡겨요. `prokit-reviewer(...)` 통합 리뷰 행은 최종 리뷰어만 채울 수 있어요 |
 | 대조표와 audit | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 작업을 케이스로 나누고 케이스별 대조표를 연 뒤 빈칸이 없는지 검사해요 |
 | 자동 검사 | `.dev-cycle.json`의 `commands`, `pnpm skills:check`, `pnpm agents:check`, `pnpm dev-cycle secrets`, `pnpm vercel:deploy … --check` | 타입, 린트, 빌드, 테스트, 스킬과 에이전트 상태, 비밀값, 배포 준비를 명령으로 확인해요. 실행한 결과가 곧 증거예요 |
 
 ## 요청이 흘러가는 길
 
-코드를 바꾸는 작업은 `prokit-dev-cycle`에서 시작해요. 요청이 어떤 케이스인지 정하고 대조표를 연 다음, 행마다 분야별 스킬과 프로세스 스킬을 불러 써요. 구현은 `prokit-implementer`에, 리뷰는 `prokit-reviewer`에 맡겨요.
+코드를 바꾸는 작업은 `prokit-dev-cycle`에서 시작해요. 요청이 어떤 케이스인지 정하고 대조표를 연 다음, 행마다 분야별 스킬과 프로세스 스킬을 불러 써요. 코디네이터는 실제 출처와 범위를 확인한 전문 공급자를 `prokit-implementer`에 연결하고, 공급자 자체의 내장 리뷰가 없을 때만 `specialist-reviewer`에 보완 검토를 맡겨요. 최종 통합 리뷰는 `prokit-reviewer`가 매번 해요.
 
 배포 요청은 코드를 바꾸지 않으므로 라운드를 열지 않고 `prokit-deploy`가 맡아요. 배포와 운영 DB 적용은 중간에 사용자 동의가 필요해서 서브에이전트(보조 에이전트)에 맡기지 않고 메인 세션에서 해요. 선택 묶음에 해당하는 분야인데 스킬이 없으면 에이전트가 설치를 제안해요.
 
@@ -33,23 +33,27 @@ flowchart TD
   LAYER -.->|그 분야일 때| OPT["선택 스킬 묶음<br/>ops · motion · mobile<br/>없으면 설치 제안"]
   DEP -.->|비용·성능 점검| OPT
   DC --> PROC["프로세스 스킬<br/>superpowers · ponytail · gstack<br/>대안: OMC(Claude) · OMX(Codex)"]
-  DC --> IMP["prokit-implementer<br/>구현 위임"]
-  DC --> REV["prokit-reviewer<br/>읽기 전용 리뷰<br/>code · security · db"]
+  DC --> IMP["prokit-implementer<br/>검증한 전문 공급자 수행"]
+  IMP -.->|내장 리뷰 없음| SREV["specialist-reviewer<br/>전문 계약 읽기 전용 검토"]
+  IMP --> REV["prokit-reviewer<br/>최종 통합 리뷰<br/>plan · code · security · db"]
+  SREV --> REV
   DC -->|모든 행의 증거를 채운 뒤| AUD["pnpm dev-cycle audit"]
   AUD --> CLOSE["pnpm dev-cycle close"]
 ```
 
 ## 자세히
 
-- **프로세스 스킬 고르기**: 설계, 계획, 구현, 디버깅, 리뷰, QA, 검증에 쓸 프로세스 스킬은 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`에 표로 정리돼 있어요. 단계마다 1순위 스킬, Claude와 Codex의 대안, 스킬이 없을 때의 절차가 적혀 있어요. 전역 스킬이 없어도 대체 절차로 라운드를 끝까지 마쳐요.
-- **과설계 막기**: 설계, 계획, 구현, 리뷰에 ponytail을 써요. 스펙에 "만들지 않는 것" 절을 두고, 리뷰가 있는 곳마다 `ponytail-review`로 필요 이상으로 복잡한 설계를 덜어 내요. ponytail 규칙보다 `prokit-dev-cycle`, `AGENTS.md`, 대조표가 우선해요.
+- **프로세스 스킬 고르기**: 설계, 계획, 구현, 디버깅, 리뷰, QA, 검증에 쓸 프로세스 스킬은 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`에 표로 정리돼 있어요. 단계마다 1순위 스킬, Claude와 Codex의 대안, 스킬이 없을 때의 절차가 적혀 있어요. 필요한 전문 스킬이 없으면 검증한 대안을 찾고, 대안도 없으면 막힌 이유를 남겨요.
+- **과설계 막기**: 설계, 계획, 구현, 리뷰에 ponytail을 써요. 스펙에 "만들지 않는 것" 절을 두고, 계획은 `prokit-reviewer(plan)`이 재사용·설정 결정까지 검토해요. 구현 diff에는 `ponytail-review`를 적용해 품질과 불필요한 복잡도를 함께 봐요. ponytail 규칙보다 `prokit-dev-cycle`, `AGENTS.md`, 대조표가 우선해요.
 - **하네스를 고치는 일**: 스킬, 에이전트, dev-cycle 자체를 바꾸는 작업도 라운드로 해요. 케이스 H예요([케이스 A\~F·H와 대조표](https://prokit-web.vercel.app/docs/concepts/cases/)). 대조표 행의 정본인 `docs/dev-workflow.md`는 프로젝트에 맞게 고쳐도 되고, 고치는 일 자체가 케이스 H 변경이에요.
-- **새 세션도 같은 규칙으로**: 규칙 문서와 대조표가 파일로 남아 있어서 새 세션은 `pnpm dev-cycle status`로 진행 중인 라운드를 이어받아요.
+- **새 세션도 같은 규칙으로**: 규칙 문서와 대조표가 파일로 남아 있어서 새 세션은 `pnpm dev-cycle status`로 진행 중인 라운드를 이어받아요. 닫은 라운드와 완료한 일반 할 일은 `tasks/archive/README.md`에서 찾고, `tasks/todo.md`에는 남은 항목만 남아요.
+- **공급자와 자원 경계**: 매니페스트는 설치할 항목의 정본이에요. 실제 공급자 선택은 출처·내용 해시·범위·의존성·부작용을 확인하고 정해요. 현재 작업에 연결된 프로젝트·워크트리·관리 임시 폴더만 보수적으로 재고, 전역 정리나 영구 환경 삭제는 하지 않아요. [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)에서 이유와 증거를 확인해요.
 
 ## 관련 문서
 
 - [dev-cycle 라운드](https://prokit-web.vercel.app/docs/concepts/dev-cycle/)
-- [구현 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/)
+- [위임 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/)
+- [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)
 - [prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
 - [공식 스킬과 연결](https://prokit-web.vercel.app/docs/skills/official-skills/)
 - [템플릿이 더하는 것](https://prokit-web.vercel.app/docs/templates/what-it-adds/)

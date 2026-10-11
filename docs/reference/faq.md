@@ -3,6 +3,16 @@ https://prokit-web.vercel.app/docs/reference/faq/
 
 > 한눈에: 프로킷을 처음 쓸 때 자주 묻는 질문과 답을 모았어요. 답마다 더 자세한 쪽으로 이어져요. 막혔을 때 붙여 넣을 프롬프트는 튜토리얼의 [막혔을 때](https://prokit-web.vercel.app/tutorials/reference/troubleshooting/)에 있어요.
 
+## 외부 스킬과 개발 자원
+
+### 설치 목록 밖의 스킬도 쓸 수 있나요?
+
+네. 현재 접근 가능한 사용자 지정 스킬이나 프로젝트별 스킬도 작업에 맞으면 연결할 수 있어요. 출처와 내용, 의존성, 도구와 부작용을 먼저 확인하고 승인된 작업 범위 안에서만 써요. 새 설치나 전역 설정 변경, 배포 권한까지 생기는 것은 아니에요([위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)).
+
+### 큰 캐시와 설치 환경은 자동으로 지우나요?
+
+용량이 크다는 이유만으로 지우지 않아요. 자원 보호 도구는 관리 대상의 크기와 여유 공간을 보고 경고하거나 새 무거운 작업을 막아요. 영구 환경과 사용 중인 환경을 보호하고, 정리할 수 있는 소유 캐시·임시 폴더만 안전 조건을 확인해 다뤄요([자원 정책과 정리 조건](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/#관리-범위-안-자원만-다루기)).
+
 ## 시작하기 전에
 
 ### 코드를 몰라도 쓸 수 있나요?
@@ -11,7 +21,7 @@ https://prokit-web.vercel.app/docs/reference/faq/
 
 ### Claude Code와 Codex 중 무엇을 써야 하나요?
 
-둘 다 돼요. 프로킷이 두 에이전트에 같은 규칙과 스킬을 설치하니 같은 프롬프트를 쓰면 돼요. Codex는 프로젝트를 신뢰(trusted)해야 구현·리뷰 에이전트를 불러와요. 조작 차이는 [Claude Code와 Codex](https://prokit-web.vercel.app/tutorials/reference/claude-code-and-codex/)에 있어요.
+둘 다 돼요. 프로킷이 두 에이전트에 같은 규칙과 스킬을 설치하니 같은 프롬프트를 쓰면 돼요. Codex는 프로젝트를 신뢰(trusted)해야 구현 수행·전문 리뷰·최종 리뷰 에이전트를 불러와요. 조작 차이는 [Claude Code와 Codex](https://prokit-web.vercel.app/tutorials/reference/claude-code-and-codex/)에 있어요.
 
 ### Antigravity나 Grok Build로도 쓸 수 있나요?
 
@@ -64,6 +74,14 @@ WSL2의 Ubuntu 안에서만 돼요. PowerShell이나 Git Bash에서는 설치가
 ### 이미 만든 프로젝트에 템플릿의 새 내용을 넣을 수 있나요?
 
 네. pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"라고 하면 차이를 먼저 보여 주고, 실제 반영은 그 프로젝트의 세션에서 라운드로 해요([기존 프로젝트에 갱신 반영](https://prokit-web.vercel.app/docs/templates/update-existing/)).
+
+### 미리보기에서 고른 디자인을 실제 서비스에도 바꿔 가며 쓰나요?
+
+실제 서비스에는 제작 프롬프트로 고른 서체·색상을 고정해요. 서체·팔레트 선택 도구와 미리보기 연결은 프로킷의 프리셋 제작용이에요. 선택값 기록과 실제 적용 확인은 [프리셋 디자인 설정](https://prokit-web.vercel.app/docs/design/ui-flow/#프리셋)을 따르고, 서비스의 모드·언어 전환은 그 프로젝트의 요구로 정해요.
+
+### Ponytail 플러그인을 설치했는데 훅도 켜진 건가요?
+
+설치와 훅 허용은 별도예요. Codex에서는 신뢰한 프로젝트의 `/hooks`에서 확인하고 새 세션을 열어요. 플러그인이 없으면 프로젝트 스킬을 읽어 같은 검토를 할 수 있으며, 직접 끈 모드는 대안 경로로 다시 켜지 않아요([Ponytail 사용하기](https://prokit-web.vercel.app/docs/skills/official-skills/#ponytail-사용하기)).
 
 ## 관련 문서
 

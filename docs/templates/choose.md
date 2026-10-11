@@ -32,6 +32,8 @@ flowchart LR
 | 공식 도메인 스킬 | 28개 (neon 4개, Vercel 배포 3개 포함) | 25개 (`supabase`, `supabase-postgres-best-practices`, Vercel 배포 3개 포함) |
 | 선택 스킬 (`--optional`) | `ops` 4개(`vercel-optimize`, Neon 함수·파일 저장·LLM 게이트웨이), `motion`, `mobile` | `ops` 1개(`vercel-optimize`), `motion`, `mobile` |
 
+프로세스 스킬과 에이전트 구성은 두 템플릿이 같아요. Ponytail 프로젝트 스킬 6종도 함께 받으며, Codex 네이티브 플러그인은 `--with-global`에서만 선택 설치해요([설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)).
+
 ## 무엇으로 고르나요
 
 - **PR(변경 제안)마다 DB 브랜치(테스트용 복사본)를 만들어 확인하고 싶으면** → neon

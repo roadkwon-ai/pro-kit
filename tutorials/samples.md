@@ -10,7 +10,7 @@ https://prokit-web.vercel.app/tutorials/samples/
 
 ## 프리셋으로 만들어 보기
 
-[프로킷 사이트](https://prokit-web.vercel.app/)의 화면 프리셋 9개(랜딩페이지 4개, 앱 화면 5개)도 이 튜토리얼과 같은 흐름으로 만들었어요. **만들어 보고 싶은 프리셋을 고르고, 프리셋 쪽의 프롬프트 셋 중 하나를 보내세요.**
+[프로킷 사이트](https://prokit-web.vercel.app/)의 화면 프리셋 10개(랜딩페이지 5개, 앱 화면 5개)도 이 튜토리얼과 같은 흐름으로 만들었어요. **만들어 보고 싶은 프리셋을 고르고, 프리셋 쪽의 프롬프트 셋 중 하나를 보내세요.**
 
 - **프리셋 팩으로 만들어 보기**: 팩에 든 화면 구성, 디자인, 그림으로 프리셋과 같은 서비스를 만들어 봐요. AI가 만들기 때문에 100% 똑같지는 않을 수 있어요. 이름만 바꿀 수도 있어요.
 - **프리셋 팩으로 나만의 서비스 만들기**: 프리셋 팩을 바탕으로 이름, 색, 페이지, 주제를 바꿔요.
@@ -18,6 +18,7 @@ https://prokit-web.vercel.app/tutorials/samples/
 
 | 프리셋 | 분류 | 컨셉 | 페이지 | 실제 서비스로 바꾸기 |
 |---|---|---|---|---|
+| [슬라이드랩](https://prokit-web.vercel.app/tutorials/samples/slidelab/) | 랜딩페이지 | 과정과 교육 시간을 고르는 AI·PPT 교육 랜딩 | 1 | 문의 서비스 연결 설계 필요 |
 | [고루](https://prokit-web.vercel.app/tutorials/samples/goru/) | 앱 화면 | 같이 사는 사람들의 생활비 정산 | 7 | 쉬움 |
 | [울림](https://prokit-web.vercel.app/tutorials/samples/ullim/) | 랜딩페이지 | 대본을 한국어 내레이션으로 만드는 AI 스튜디오 | 11 | 어려움 |
 | [하루공부](https://prokit-web.vercel.app/tutorials/samples/studyday/) | 앱 화면 | 시험 날짜까지 하루 공부 나누기와 공부 기록 | 14 | 가장 쉬움 |
@@ -32,9 +33,11 @@ https://prokit-web.vercel.app/tutorials/samples/
 
 만들고 싶은 서비스가 따로 있으면 [가장 쉬운 방법](https://prokit-web.vercel.app/tutorials/samples/#가장-쉬운-방법)의 프롬프트에 내 컨셉을 넣어 보내세요.
 
-프리셋 쪽마다 프롬프트 세 가지를 모았어요. 팩으로 만들어 보기, 팩을 바탕으로 이름·색·페이지·주제를 바꿔 나만의 서비스 만들기, 팩 없이 그 컨셉으로 처음부터 만들기예요. 실제로 거친 과정과 실제 서비스로 만들 때 필요한 것도 함께 있어요. 9개 모두 기획 문서를 미리 쓰고 결과를 보며 여러 번 다시 요청해서 만들었어요. 프리셋 쪽의 디자인 리뷰 점수는 화면이 쓰기 편한지 10가지 기준으로 매긴 40점 만점 점수예요([처음 보는 용어](https://prokit-web.vercel.app/tutorials/reference/glossary/)).
+공개 프리셋 쪽마다 프롬프트 세 가지를 모았어요. 팩으로 만들어 보기, 팩을 바탕으로 이름·색·페이지·주제를 바꿔 나만의 서비스 만들기, 팩 없이 그 컨셉으로 처음부터 만들기예요. 실제로 거친 과정과 실제 서비스로 만들 때 필요한 것도 함께 있어요. 10개 모두 기획 문서를 미리 쓰고 결과를 보며 여러 번 다시 요청해서 만들었어요. 평가 기록이 있는 프리셋 쪽의 디자인 리뷰 점수는 화면이 쓰기 편한지 10가지 기준으로 매긴 40점 만점 점수예요([처음 보는 용어](https://prokit-web.vercel.app/tutorials/reference/glossary/)).
 
-**프리셋 팩**은 프리셋마다 zip 파일 하나예요. 프리셋 쪽마다 있는 "프리셋 팩 받기" 상자에서 바로 받을 수 있고, 모아 보려면 [팩 릴리스](https://github.com/roadkwon-ai/pro-kit-packs/releases)와 [프리미엄 팩 릴리스](https://github.com/roadkwon-ai/pro-kit-premium-packs/releases)를 보세요. 프롬프트에 `packs/<이름> 프리셋 팩`이 있으면 에이전트가 pro-kit의 `AGENTS.md`대로 `node scripts/pack.mjs <이름>`으로 그 팩만 받아요. 받은 zip이 목록(`tutorials/packs.json`)에 적힌 sha256과 같은지 확인한 뒤 `pro-kit/packs/<이름>/`에 풀어요. zip을 미리 받아 두었다면 프롬프트 끝에 `프리셋 팩 zip은 [받은 zip 경로]에 받아 뒀어.` 한 줄을 더하세요. 에이전트가 `node scripts/pack.mjs <이름> --zip <경로>`로 같은 sha256 확인을 거쳐 풀고, 옛 판이면 새로 받아요. 팩은 팩에 함께 든 이용 조건을 따라요. pro-kit 자체의 조건은 [LICENSE](https://github.com/roadkwon-ai/pro-kit/blob/main/LICENSE), 팩과 외부 원본의 조건은 [제3자 안내의 프리셋 팩 절](https://github.com/roadkwon-ai/pro-kit/blob/main/THIRD_PARTY_NOTICES.md#사용자-작성-코드와-프리셋-팩)에 있어요.
+프롬프트는 새 프로젝트에 시스템·라이트·다크와 한국어·영어 전환을 요구해요. 이는 팩의 기존 스크린샷을 다시 쓰거나 공개 프리셋의 기능을 자동으로 갱신하는 작업이 아니에요. 새 프로젝트에서 두 언어 사전, 전환 뒤 상태 유지, HTML 결과를 확인해야 해요. 공개 프리셋의 지원 표시는 실제 전환·전체 페이지 검증·배포가 끝난 뒤에만 바뀌어요.
+
+**프리셋 팩**은 공개 프리셋마다 zip 파일 하나예요. 공개 프리셋 쪽마다 있는 "프리셋 팩 받기" 상자에서 바로 받을 수 있고, 모아 보려면 [팩 릴리스](https://github.com/roadkwon-ai/pro-kit-packs/releases)와 [프리미엄 팩 릴리스](https://github.com/roadkwon-ai/pro-kit-premium-packs/releases)를 보세요. 프롬프트에 `packs/<이름> 프리셋 팩`이 있으면 에이전트가 pro-kit의 `AGENTS.md`대로 `node scripts/pack.mjs <이름>`으로 그 팩만 받아요. 받은 zip이 목록(`tutorials/packs.json`)에 적힌 sha256과 같은지 확인한 뒤 `pro-kit/packs/<이름>/`에 풀어요. zip을 미리 받아 두었다면 프롬프트 끝에 `프리셋 팩 zip은 [받은 zip 경로]에 받아 뒀어.` 한 줄을 더하세요. 에이전트가 `node scripts/pack.mjs <이름> --zip <경로>`로 같은 sha256 확인을 거쳐 풀고, 옛 판이면 새로 받아요. 팩은 팩에 함께 든 이용 조건을 따라요. pro-kit 자체의 조건은 [LICENSE](https://github.com/roadkwon-ai/pro-kit/blob/main/LICENSE), 팩과 외부 원본의 조건은 [제3자 안내의 프리셋 팩 절](https://github.com/roadkwon-ai/pro-kit/blob/main/THIRD_PARTY_NOTICES.md#사용자-작성-코드와-프리셋-팩)에 있어요.
 
 ## 가장 쉬운 방법
 
@@ -75,6 +78,7 @@ https://github.com/roadkwon-ai/pro-kit 을 이 폴더에 받고, 그 안의 AGEN
 DB는 쓰지 않아. 없는 준비물은 설치해줘.
 [같이 사는 사람들이 함께 쓴 생활비를 적고, 월말에 누가 누구에게 얼마를 보내면 되는지 알려 주는 서비스]를 만들고 싶어.
 필요한 화면을 모두 예시 데이터로 만들어줘. 로그인이나 저장 같은 기능은 빼고 화면만 만들어.
+시스템·라이트·다크 모드 전환과 한국어·영어 전환을 모든 페이지의 기본 기능으로 넣어줘. 화면 문구는 같은 키를 가진 두 언어의 번역 사전에서 관리하고, 전환해도 현재 페이지와 입력을 유지해줘. 개발 화면과 HTML로 내보낸 결과에서 모든 페이지의 전환과 상태 유지를 실제로 확인해줘.
 디자인 스타일은 서비스에 어울리는 걸로 추천해주고, 다 만들면 HTML 파일로 내보내줘.
 ```
 
@@ -125,6 +129,7 @@ Claude Code는 고를 것이 있으면 선택지 창을 띄워요. 방향키로 
 - 프로젝트 폴더에 `html` 폴더가 생겨요.
 - 에이전트가 알려 준 주소를 브라우저로 열면 내 서비스의 첫 화면이 보여요.
 - 메뉴와 버튼을 누르면 다른 페이지나 창이 열려요.
+- 시스템·라이트·다크와 한국어·영어를 바꿔도 현재 페이지와 입력한 내용이 남고, HTML 결과에서도 같아요.
 
 <details>
 <summary>막히면</summary>
@@ -217,6 +222,6 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (프리셋 팩으로는 5시간 한도
 
 - 2026-10-02에 썼어요. 올곧은 2026-10-08에 더했어요. 2026-10 기준 pro-kit에 맞췄어요.
 - 프리셋은 Claude Code(Opus 5.5)로 만들었어요. 튜토리얼은 Claude Code와 Codex로 확인했어요([에이전트별 차이](https://prokit-web.vercel.app/tutorials/reference/claude-code-and-codex/)). 고루는 첫 화면 리디자인에 56분 걸렸어요.
-- 프리셋 9개를 만든 실제 요청 기록과 pro-kit의 절차(프로젝트 생성 절차, 화면을 만드는 `prokit-ui` 스킬)에 맞춰 썼어요. 튜토리얼의 프롬프트를 처음부터 끝까지 다시 실행해 확인하지는 않았어요.
+- 프리셋 10개를 만든 실제 요청 기록과 pro-kit의 절차(프로젝트 생성 절차, 화면을 만드는 `prokit-ui` 스킬)에 맞춰 썼어요. 튜토리얼의 프롬프트를 처음부터 끝까지 다시 실행해 확인하지는 않았어요.
 - 같은 프롬프트라도 결과는 매번 달라요. 튜토리얼 그림과 내 화면이 달라도 정상이에요.
 - 프리셋의 인물과 사진은 AI로 만든 가상 이미지이고, 데이터는 모두 예시예요.
