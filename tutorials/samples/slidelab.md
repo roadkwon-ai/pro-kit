@@ -36,7 +36,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 > [!IMPORTANT]
 > **프롬프트만 보내면 에이전트가 이 프리셋 팩을 자동으로 받아 설치해요. 따로 받지 않아도 돼요.**
 >
-> 직접 받으려면 [slidelab-pack.zip](https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-slidelab/slidelab-pack.zip)(34.9MB, [릴리스](https://github.com/roadkwon-ai/pro-kit-packs/releases/tag/pack-slidelab))을 받고, 프롬프트 끝에 `프리셋 팩 zip은 [~/Downloads/slidelab-pack.zip]에 받아 뒀어.` 한 줄을 더하세요. 에이전트가 그 zip이 최신 판인지 확인하고, 옛 판이면 새로 받아요.
+> 직접 받으려면 [slidelab-pack.zip](https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-slidelab/slidelab-pack.zip)(33.6MB, [릴리스](https://github.com/roadkwon-ai/pro-kit-packs/releases/tag/pack-slidelab))을 받고, 프롬프트 끝에 `프리셋 팩 zip은 [~/Downloads/slidelab-pack.zip]에 받아 뒀어.` 한 줄을 더하세요. 에이전트가 그 zip이 최신 판인지 확인하고, 옛 판이면 새로 받아요.
 
 에이전트를 아직 열지 않았으면 [1. 작업 폴더에서 에이전트 열기](https://prokit-web.vercel.app/tutorials/samples/#1-작업-폴더에서-에이전트-열기)부터 하세요. 프롬프트를 보낸 다음에는 [3. 알려 준 한 줄로 이어 가기](https://prokit-web.vercel.app/tutorials/samples/#3-알려-준-한-줄로-이어-가기)와 [4. 답하며 요청을 자세히 채우기](https://prokit-web.vercel.app/tutorials/samples/#4-답하며-요청을-자세히-채우기)를 따라가면 돼요.
 
@@ -107,7 +107,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 
 이전 제작 중 일부 구간의 기록은 보존하지만 전체 제작량으로 합치지 않았어요. [기록의 범위](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-11-preset-skills/README.md)와 팩 재현 예상을 구분해요.
 
-디자인 평가는 닐슨의 열 가지 기준으로 27점이며, [기준별 점수와 감점 이유](https://prokit.highvalue.kr/process/?preset=slidelab#step-5)를 함께 확인해요.
+디자인 평가는 닐슨의 열 가지 기준으로 28점이며, [기준별 점수와 감점 이유](https://prokit.highvalue.kr/process/?preset=slidelab#step-5)를 함께 확인해요.
 
 <details>
 <summary>단계별 예상</summary>
