@@ -169,33 +169,33 @@
 | `preset.<이름>.design.hex` | 10개(`--list`) | 대표 색 값 | doc-values.json presets.<이름>.design.hex | `doc-values.json`을 고친다 | 0 |
 | `preset.<이름>.design.images` | 11개(`--list`) | AI로 그린 그림 수(장) | doc-values.json presets.<이름>.design.images | `doc-values.json`을 고친다 | 22 |
 | `preset.<이름>.design.clicks` | 11개(`--list`) | 링크·버튼 눌러 본 횟수 | doc-values.json presets.<이름>.design.clicks | `doc-values.json`을 고친다 | 11 |
-| `preset.<이름>.design.critique` | 9개(`--list`) | 디자인 리뷰(critique) 최종 점수(40점 만점) | doc-values.json presets.<이름>.design.critique | `doc-values.json`을 고친다 | 9 |
+| `preset.<이름>.design.critique` | 11개(`--list`) | 디자인 리뷰(critique) 최종 점수(40점 만점) | doc-values.json presets.<이름>.design.critique | `doc-values.json`을 고친다 | 11 |
 | `preset.<이름>.design.hexCode` | 10개(`--list`) | 대표 색 값의 코드 꼴(백틱 포함) | doc-values.json presets.<이름>.design.hex | `doc-values.json`을 고친다 | 12 |
 | `preset.<이름>.stages.rest.pack.time` | 11개(`--list`) | 단계별 표: 나머지 페이지(프리셋 팩으로) | 계산: doc-values.json cost.stage.page.pack × doc-values.json presets.<이름>.pages − 1 | `doc-values.json`을 고친다 | 9 |
 | `preset.<이름>.stages.rest.scratch.time` | 11개(`--list`) | 단계별 표: 나머지 페이지(처음부터) | 계산: doc-values.json cost.stage.page.scratch × doc-values.json presets.<이름>.pages − 1 | `doc-values.json`을 고친다 | 9 |
 | `preset.<이름>.stages.images.time` | 11개(`--list`) | 단계별 표: 그림(처음부터). 장수 × 장당 시간을 분으로 올림 | 계산: doc-values.json presets.<이름>.design.images × cost.image.time | `doc-values.json`을 고친다 | 9 |
-| `preset.<이름>.stages.check.time` | 9개(`--list`) | 단계별 표: 검사와 디자인 리뷰(두 열 같음). 쪽 수에 따라 늘지만 단위값으로 나눠 떨어지지 않아 프리셋마다 적는다 | doc-values.json presets.<이름>.stages.check | `doc-values.json`을 고친다 | 18 |
+| `preset.<이름>.stages.check.time` | 11개(`--list`) | 단계별 표: 검사와 디자인 리뷰(두 열 같음). 쪽 수에 따라 늘지만 단위값으로 나눠 떨어지지 않아 프리셋마다 적는다 | doc-values.json presets.<이름>.stages.check | `doc-values.json`을 고친다 | 18 |
 | `preset.<이름>.actual.<행>.<값>` | 89개(`--list`) | 만든 사람이 실제로 쓴 값. <행>은 total(합계)·redesign(첫 화면 리디자인)·build(Nextflix 2\~4장)·plan(2\~3장)·fix·expand·screens·review·polish. tokens·cached는 usd × cost.tokensPerUsd·cachedPerUsd로 계산한 값 | doc-values.json presets.<이름>.actual.total | `doc-values.json`을 고친다 | 99 |
-| `preset.<이름>.pack.time` | 9개(`--list`) | 프리셋 팩으로 만들 때 최소 시간 | doc-values.json presets.<이름>.pack.time | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.pack.tokens` | 9개(`--list`) | 프리셋 팩으로 만들 때 최소 토큰 | doc-values.json presets.<이름>.pack.tokens | `doc-values.json`을 고친다 | 18 |
-| `preset.<이름>.pack.cached` | 9개(`--list`) | 프리셋 팩으로 만들 때 캐시 포함 토큰 | doc-values.json presets.<이름>.pack.cached | `doc-values.json`을 고친다 | 18 |
-| `preset.<이름>.pack.usd` | 9개(`--list`) | 프리셋 팩으로 만들 때 API 요금 환산(달러) | doc-values.json presets.<이름>.pack.usd | `doc-values.json`을 고친다 | 9 |
-| `preset.<이름>.pack.limit` | 9개(`--list`) | 프리셋 팩으로 만들 때 Pro 5시간 한도에 걸리는 번 수 | 계산: doc-values.json presets.<이름>.pack.tokens ÷ limits.pro5h.tokens | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.pack.limitText` | 9개(`--list`) | 프리셋 팩으로 만들 때 "가능 (…)" 괄호 안 글 | 계산: doc-values.json presets.<이름>.pack.tokens ÷ limits.pro5h.tokens | `doc-values.json`을 고친다 | 9 |
-| `preset.<이름>.pack.time.max` | 9개(`--list`) | 프리셋 팩으로 만들 때 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.pack.time.revise` | 9개(`--list`) | 프리셋 팩으로 만들 때 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.pack.time.cell` | 9개(`--list`) | 프리셋 팩으로 만들 때 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange | `doc-values.json`을 고친다 | 19 |
-| `preset.<이름>.pack.time.text` | 9개(`--list`) | 프리셋 팩으로 만들 때 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange | `doc-values.json`을 고친다 | 13 |
-| `preset.<이름>.scratch.time` | 9개(`--list`) | 처음부터 만들 때 최소 시간 | doc-values.json presets.<이름>.scratch.time | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.scratch.tokens` | 9개(`--list`) | 처음부터 만들 때 최소 토큰 | doc-values.json presets.<이름>.scratch.tokens | `doc-values.json`을 고친다 | 18 |
-| `preset.<이름>.scratch.cached` | 9개(`--list`) | 처음부터 만들 때 캐시 포함 토큰 | doc-values.json presets.<이름>.scratch.cached | `doc-values.json`을 고친다 | 9 |
-| `preset.<이름>.scratch.usd` | 9개(`--list`) | 처음부터 만들 때 API 요금 환산(달러) | doc-values.json presets.<이름>.scratch.usd | `doc-values.json`을 고친다 | 9 |
-| `preset.<이름>.scratch.limit` | 9개(`--list`) | 처음부터 만들 때 Pro 5시간 한도에 걸리는 번 수 | 계산: doc-values.json presets.<이름>.scratch.tokens ÷ limits.pro5h.tokens | `doc-values.json`을 고친다 | 1 |
-| `preset.<이름>.scratch.limitText` | 9개(`--list`) | 처음부터 만들 때 "가능 (…)" 괄호 안 글 | 계산: doc-values.json presets.<이름>.scratch.tokens ÷ limits.pro5h.tokens | `doc-values.json`을 고친다 | 1 |
-| `preset.<이름>.scratch.time.max` | 9개(`--list`) | 처음부터 만들 때 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.scratch.time × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.scratch.time.revise` | 9개(`--list`) | 처음부터 만들 때 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.scratch.time × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.scratch.time.cell` | 9개(`--list`) | 처음부터 만들 때 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets.<이름>.scratch.time × cost.timeRange | `doc-values.json`을 고친다 | 18 |
-| `preset.<이름>.scratch.time.text` | 9개(`--list`) | 처음부터 만들 때 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets.<이름>.scratch.time × cost.timeRange | `doc-values.json`을 고친다 | 10 |
+| `preset.<이름>.pack.time` | 11개(`--list`) | 프리셋 팩으로 만들 때 최소 시간 | doc-values.json presets.<이름>.pack.time | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.pack.tokens` | 11개(`--list`) | 프리셋 팩으로 만들 때 최소 토큰 | doc-values.json presets.<이름>.pack.tokens | `doc-values.json`을 고친다 | 22 |
+| `preset.<이름>.pack.cached` | 11개(`--list`) | 프리셋 팩으로 만들 때 캐시 포함 토큰 | doc-values.json presets.<이름>.pack.cached | `doc-values.json`을 고친다 | 22 |
+| `preset.<이름>.pack.usd` | 11개(`--list`) | 프리셋 팩으로 만들 때 API 요금 환산(달러) | doc-values.json presets.<이름>.pack.usd | `doc-values.json`을 고친다 | 11 |
+| `preset.<이름>.pack.limit` | 11개(`--list`) | 프리셋 팩으로 만들 때 Pro 5시간 한도에 걸리는 번 수 | 계산: doc-values.json presets.<이름>.pack.tokens ÷ limits.pro5h.tokens | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.pack.limitText` | 11개(`--list`) | 프리셋 팩으로 만들 때 "가능 (…)" 괄호 안 글 | 계산: doc-values.json presets.<이름>.pack.tokens ÷ limits.pro5h.tokens | `doc-values.json`을 고친다 | 9 |
+| `preset.<이름>.pack.time.max` | 11개(`--list`) | 프리셋 팩으로 만들 때 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.pack.time.revise` | 11개(`--list`) | 프리셋 팩으로 만들 때 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.pack.time.cell` | 11개(`--list`) | 프리셋 팩으로 만들 때 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange | `doc-values.json`을 고친다 | 21 |
+| `preset.<이름>.pack.time.text` | 11개(`--list`) | 프리셋 팩으로 만들 때 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange | `doc-values.json`을 고친다 | 15 |
+| `preset.<이름>.scratch.time` | 11개(`--list`) | 처음부터 만들 때 최소 시간 | doc-values.json presets.<이름>.scratch.time | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.scratch.tokens` | 11개(`--list`) | 처음부터 만들 때 최소 토큰 | doc-values.json presets.<이름>.scratch.tokens | `doc-values.json`을 고친다 | 22 |
+| `preset.<이름>.scratch.cached` | 11개(`--list`) | 처음부터 만들 때 캐시 포함 토큰 | doc-values.json presets.<이름>.scratch.cached | `doc-values.json`을 고친다 | 11 |
+| `preset.<이름>.scratch.usd` | 11개(`--list`) | 처음부터 만들 때 API 요금 환산(달러) | doc-values.json presets.<이름>.scratch.usd | `doc-values.json`을 고친다 | 11 |
+| `preset.<이름>.scratch.limit` | 11개(`--list`) | 처음부터 만들 때 Pro 5시간 한도에 걸리는 번 수 | 계산: doc-values.json presets.<이름>.scratch.tokens ÷ limits.pro5h.tokens | `doc-values.json`을 고친다 | 1 |
+| `preset.<이름>.scratch.limitText` | 11개(`--list`) | 처음부터 만들 때 "가능 (…)" 괄호 안 글 | 계산: doc-values.json presets.<이름>.scratch.tokens ÷ limits.pro5h.tokens | `doc-values.json`을 고친다 | 1 |
+| `preset.<이름>.scratch.time.max` | 11개(`--list`) | 처음부터 만들 때 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.scratch.time × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.scratch.time.revise` | 11개(`--list`) | 처음부터 만들 때 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.scratch.time × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.scratch.time.cell` | 11개(`--list`) | 처음부터 만들 때 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets.<이름>.scratch.time × cost.timeRange | `doc-values.json`을 고친다 | 20 |
+| `preset.<이름>.scratch.time.text` | 11개(`--list`) | 처음부터 만들 때 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets.<이름>.scratch.time × cost.timeRange | `doc-values.json`을 고친다 | 12 |
 | `preset.<이름>.design.comp` | 6개(`--list`) | 고른 시안 글자 | doc-values.json presets.<이름>.design.comp | `doc-values.json`을 고친다 | 6 |
 | `preset.<이름>.design.compName` | 6개(`--list`) | 고른 시안 이름 | doc-values.json presets.<이름>.design.compName | `doc-values.json`을 고친다 | 6 |
 | `preset.<이름>.pageTypes` | 48 | 같은 틀을 하나로 센 페이지 종류 수 | doc-values.json presets.<이름>.pageTypes | `doc-values.json`을 고친다 | 8 |
@@ -224,11 +224,74 @@
 | `preset.<이름>.full.time.cell` | 2개(`--list`) | 끝까지(1~12장) 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets.<이름>.full.time × cost.timeRange | `doc-values.json`을 고친다 | 5 |
 | `preset.<이름>.full.time.text` | 2개(`--list`) | 끝까지(1~12장) 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets.<이름>.full.time × cost.timeRange | `doc-values.json`을 고친다 | 4 |
 | `preset.<이름>.dailyLimit` | 200 | 실제 AI 답의 하루 한도(서비스 전체, 번). 근거는 프리셋 팩 features.md "5.2 하루 한도"(팩 저장소의 claudle 팩, 원본 ../pro-kit-samples/packs/claudle)라 팩을 바꾸면 함께 바꾼다 | doc-values.json presets.<이름>.dailyLimit | `doc-values.json`을 고친다 | 5 |
-| `preset.<이름>.observed.time` | 2개(`--list`) | 관측된 제작 세션 일부(분 미만 버림). 전체 제작·팩 재현 시간 아님 | 계산: doc-values.json presets.<이름>.observed.intervals의 비중복 구간 | `doc-values.json`을 고친다 | 3 |
-| `preset.<이름>.observed.count` | 2개(`--list`) | 관측 근거 구간 수 | doc-values.json presets.<이름>.observed.intervals | `doc-values.json`을 고친다 | 3 |
+| `preset.<이름>.measurement.state` | 2개(`--list`) | 공개 인수의 제작 예상/측정 상태 | doc-values.json presets.<이름>.measurements | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.measurement.source` | 2개(`--list`) | 제작 예상의 출처·정책과 범위 | doc-values.json presets.<이름>.measurementEvidence.source | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.measurement.sha256` | 2개(`--list`) | 제작 예상의 출처·정책과 범위 | doc-values.json presets.<이름>.measurementEvidence.sha256 | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.measurement.method` | 2개(`--list`) | 제작 예상의 출처·정책과 범위 | doc-values.json presets.<이름>.measurementEvidence.method | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.measurement.scope` | 2개(`--list`) | 제작 예상의 출처·정책과 범위 | doc-values.json presets.<이름>.measurementEvidence.scope | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.estimateStages.pack.setup.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.setup.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.setup.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.setup.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.setup.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.setup.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.plan.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.plan.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.plan.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.plan.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.plan.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.plan.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.design.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.design.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.design.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.design.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.design.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.design.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.mockup.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.mockup.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.mockup.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.mockup.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.mockup.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.mockup.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.images.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.images.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.images.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.images.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.images.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.images.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.first.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.first.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.first.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.first.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.first.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.first.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.rest.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.rest.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.rest.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.rest.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.rest.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.rest.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.check.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.check.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.check.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.check.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.check.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.check.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.export.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.export.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.export.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.export.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.pack.export.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.pack.export.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.setup.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.setup.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.setup.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.setup.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.setup.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.setup.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.plan.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.plan.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.plan.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.plan.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.plan.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.plan.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.design.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.design.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.design.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.design.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.design.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.design.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.mockup.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.mockup.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.mockup.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.mockup.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.mockup.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.mockup.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.images.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.images.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.images.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.images.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.images.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.images.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.first.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.first.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.first.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.first.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.first.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.first.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.rest.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.rest.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.rest.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.rest.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.rest.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.rest.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.check.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.check.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.check.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.check.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.check.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.check.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.export.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.export.time | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.export.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.export.tokens | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.estimateStages.scratch.export.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.export.usd | `doc-values.json`을 고친다 | 2 |
+| `preset.<이름>.observed.time` | 2개(`--list`) | 관측된 제작 세션 일부(분 미만 버림). 전체 제작·팩 재현 시간 아님 | 계산: doc-values.json presets.<이름>.observed.intervals의 비중복 구간 | `doc-values.json`을 고친다 | 1 |
+| `preset.<이름>.observed.count` | 2개(`--list`) | 관측 근거 구간 수 | doc-values.json presets.<이름>.observed.intervals | `doc-values.json`을 고친다 | 1 |
 | `preset.<이름>.observed.scope` | 2개(`--list`) | 제작 관측의 범위·한계와 설명 링크 | doc-values.json presets.<이름>.observed.scope | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.observed.note` | 2개(`--list`) | 제작 관측의 범위·한계와 설명 링크 | doc-values.json presets.<이름>.observed.note | `doc-values.json`을 고친다 | 3 |
+| `preset.<이름>.observed.note` | 2개(`--list`) | 제작 관측의 범위·한계와 설명 링크 | doc-values.json presets.<이름>.observed.note | `doc-values.json`을 고친다 | 1 |
 | `preset.<이름>.observed.report` | 2개(`--list`) | 제작 관측의 범위·한계와 설명 링크 | doc-values.json presets.<이름>.observed.report | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.recordedProduction.time` | 10시간 56분 | 제작·보완과 관련 스킬 개선의 root 활성 기록. 사용자 대기/자식 사용량 제외 | doc-values.json presets.<이름>.recordedProduction.wallMs | `doc-values.json`을 고친다 | 1 |
+| `preset.<이름>.recordedProduction.tokens` | 380만 | 실제 root 입력(캐시 제외)+출력 토큰; USD 역산 아님 | doc-values.json presets.<이름>.recordedProduction.tokens | `doc-values.json`을 고친다 | 1 |
+| `preset.<이름>.recordedProduction.cached` | 2.1억 | 실제 root 캐시 포함 입력+출력 토큰 | doc-values.json presets.<이름>.recordedProduction.cached | `doc-values.json`을 고친다 | 1 |
+| `preset.<이름>.recordedProduction.scope` | 프리셋 제작·보완과 관련 스킬 개선을 포함한 root 활성 턴 | 복원 기록의 범위 | doc-values.json presets.<이름>.recordedProduction.scope | `doc-values.json`을 고친다 | 0 |
 | `presets.count` | 13 | 공개 프리셋 수(클론 튜토리얼 포함) | doc-values.json 공개 presets 수 | `doc-values.json`을 고친다 | 7 |
 | `presets.screen.count` | 11 | 공개 화면 프리셋 수 | doc-values.json 공개 presets 중 landing·app | `doc-values.json`을 고친다 | 12 |
 | `presets.landing.count` | 6 | 공개 랜딩페이지 프리셋 수 | doc-values.json 공개 presets 중 landing | `doc-values.json`을 고친다 | 6 |
@@ -239,22 +302,22 @@
 | `presets.actual.tokens.range` | 360만\~940만 | 화면 프리셋을 만든 사람이 리디자인과 넓히기에 실제로 쓴 값의 범위(시간·토큰·달러) | 계산: preset.<이름>.actual.total의 최소~최대(올곧 제외) | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `presets.actual.usd.range` | 65\~170 | 화면 프리셋을 만든 사람이 리디자인과 넓히기에 실제로 쓴 값의 범위(시간·토큰·달러) | 계산: preset.<이름>.actual.total의 최소~최대(올곧 제외) | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `presets.screen.pages` | 344 | 화면 프리셋 페이지 수 합 | doc-values.json 화면 프리셋 pages 합 | `doc-values.json`을 고친다 | 3 |
-| `presets.pack.time.range` | 1시간\~3시간 55분 | 화면 프리셋을 프리셋 팩으로 만들 때 최소 시간 범위 | 계산: doc-values.json presets(최소 goru, 최대 olgot) | `doc-values.json`을 고친다 | 0 |
-| `presets.pack.time.max` | 7시간 50분 | 화면 프리셋 하나를 프리셋 팩으로 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 goru, 최대 olgot) × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
-| `presets.pack.time.revise` | 11시간 45분 | 화면 프리셋 하나를 프리셋 팩으로 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 goru, 최대 olgot) × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
-| `presets.pack.time.cell` | 약 1시간\~7시간 50분 (여러 번 고치면 약 11시간 45분까지) | 화면 프리셋 하나를 프리셋 팩으로 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets(최소 goru, 최대 olgot) × cost.timeRange | `doc-values.json`을 고친다 | 1 |
-| `presets.pack.time.text` | 한 번에 완성하면 약 1시간\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지) | 화면 프리셋 하나를 프리셋 팩으로 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets(최소 goru, 최대 olgot) × cost.timeRange | `doc-values.json`을 고친다 | 2 |
-| `presets.pack.tokens.range` | 125만\~550만 | 화면 프리셋을 프리셋 팩으로 만들 때 최소 토큰 범위 | 계산: doc-values.json presets(최소 goru, 최대 olgot) | `doc-values.json`을 고친다 | 1 |
-| `presets.pack.cached.range` | 6,900만\~2.8억 | 화면 프리셋을 프리셋 팩으로 만들 때 캐시 포함 토큰 범위 | 계산: doc-values.json presets(최소 goru, 최대 olgot) | `doc-values.json`을 고친다 | 1 |
+| `presets.pack.time.range` | 36분\~3시간 55분 | 화면 프리셋을 프리셋 팩으로 만들 때 최소 시간 범위 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) | `doc-values.json`을 고친다 | 0 |
+| `presets.pack.time.max` | 7시간 50분 | 화면 프리셋 하나를 프리셋 팩으로 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
+| `presets.pack.time.revise` | 11시간 45분 | 화면 프리셋 하나를 프리셋 팩으로 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
+| `presets.pack.time.cell` | 약 36분\~7시간 50분 (여러 번 고치면 약 11시간 45분까지) | 화면 프리셋 하나를 프리셋 팩으로 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) × cost.timeRange | `doc-values.json`을 고친다 | 1 |
+| `presets.pack.time.text` | 한 번에 완성하면 약 36분\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지) | 화면 프리셋 하나를 프리셋 팩으로 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) × cost.timeRange | `doc-values.json`을 고친다 | 2 |
+| `presets.pack.tokens.range` | 73.4만\~550만 | 화면 프리셋을 프리셋 팩으로 만들 때 최소 토큰 범위 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) | `doc-values.json`을 고친다 | 1 |
+| `presets.pack.cached.range` | 3671.3만\~2.8억 | 화면 프리셋을 프리셋 팩으로 만들 때 캐시 포함 토큰 범위 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) | `doc-values.json`을 고친다 | 1 |
 | `presets.pack.limit.range` | 5시간 한도 안\~약 3번 | 화면 프리셋을 프리셋 팩으로 만들 때 Pro 5시간 한도 범위 | 계산: doc-values.json 화면 프리셋 한도 번 수의 최소~최대 | `doc-values.json`을 고친다 | 1 |
-| `presets.scratch.time.range` | 1시간 30분\~5시간 45분 | 화면 프리셋을 처음부터 만들 때 최소 시간 범위 | 계산: doc-values.json presets(최소 goru, 최대 olgot) | `doc-values.json`을 고친다 | 0 |
-| `presets.scratch.time.max` | 11시간 30분 | 화면 프리셋 하나를 처음부터 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 goru, 최대 olgot) × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
-| `presets.scratch.time.revise` | 17시간 15분 | 화면 프리셋 하나를 처음부터 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 goru, 최대 olgot) × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
-| `presets.scratch.time.cell` | 약 1시간 30분\~11시간 30분 (여러 번 고치면 약 17시간 15분까지) | 화면 프리셋 하나를 처음부터 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets(최소 goru, 최대 olgot) × cost.timeRange | `doc-values.json`을 고친다 | 1 |
-| `presets.scratch.time.text` | 한 번에 완성하면 약 1시간 30분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지) | 화면 프리셋 하나를 처음부터 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets(최소 goru, 최대 olgot) × cost.timeRange | `doc-values.json`을 고친다 | 2 |
-| `presets.scratch.tokens.range` | 190만\~800만 | 화면 프리셋을 처음부터 만들 때 최소 토큰 범위 | 계산: doc-values.json presets(최소 goru, 최대 olgot) | `doc-values.json`을 고친다 | 1 |
-| `presets.scratch.cached.range` | 9,600만\~4.0억 | 화면 프리셋을 처음부터 만들 때 캐시 포함 토큰 범위 | 계산: doc-values.json presets(최소 goru, 최대 olgot) | `doc-values.json`을 고친다 | 1 |
-| `presets.scratch.limit.range` | 약 1\~4번 | 화면 프리셋을 처음부터 만들 때 Pro 5시간 한도 범위 | 계산: doc-values.json 화면 프리셋 한도 번 수의 최소~최대 | `doc-values.json`을 고친다 | 1 |
+| `presets.scratch.time.range` | 1시간 5분\~5시간 45분 | 화면 프리셋을 처음부터 만들 때 최소 시간 범위 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) | `doc-values.json`을 고친다 | 0 |
+| `presets.scratch.time.max` | 11시간 30분 | 화면 프리셋 하나를 처음부터 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
+| `presets.scratch.time.revise` | 17시간 15분 | 화면 프리셋 하나를 처음부터 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
+| `presets.scratch.time.cell` | 약 1시간 5분\~11시간 30분 (여러 번 고치면 약 17시간 15분까지) | 화면 프리셋 하나를 처음부터 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) × cost.timeRange | `doc-values.json`을 고친다 | 1 |
+| `presets.scratch.time.text` | 한 번에 완성하면 약 1시간 5분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지) | 화면 프리셋 하나를 처음부터 만들 때. 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) × cost.timeRange | `doc-values.json`을 고친다 | 2 |
+| `presets.scratch.tokens.range` | 154.7만\~800만 | 화면 프리셋을 처음부터 만들 때 최소 토큰 범위 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) | `doc-values.json`을 고친다 | 1 |
+| `presets.scratch.cached.range` | 6650.7만\~4.0억 | 화면 프리셋을 처음부터 만들 때 캐시 포함 토큰 범위 | 계산: doc-values.json presets(최소 slidelab, 최대 olgot) | `doc-values.json`을 고친다 | 1 |
+| `presets.scratch.limit.range` | 5시간 한도 안\~약 4번 | 화면 프리셋을 처음부터 만들 때 Pro 5시간 한도 범위 | 계산: doc-values.json 화면 프리셋 한도 번 수의 최소~최대 | `doc-values.json`을 고친다 | 1 |
 | `clones.full.time.range` | 5시간\~5시간 15분 | 클론 튜토리얼을 끝까지(1~12장) 최소 시간 범위 | 계산: doc-values.json presets(최소 claudle, 최대 nextflix) | `doc-values.json`을 고친다 | 0 |
 | `clones.full.time.max` | 10시간 30분 | 클론 튜토리얼 하나를 끝까지(1~12장). 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 claudle, 최대 nextflix) × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
 | `clones.full.time.revise` | 15시간 45분 | 클론 튜토리얼 하나를 끝까지(1~12장). 가장 작은 것의 최솟값부터 가장 큰 것 × 배수까지 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets(최소 claudle, 최대 nextflix) × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
@@ -264,7 +327,7 @@
 | `clones.full.cached.range` | 3억\~3.9억 | 클론 튜토리얼을 끝까지(1~12장) 캐시 포함 토큰 범위 | 계산: doc-values.json presets(최소 claudle, 최대 nextflix) | `doc-values.json`을 고친다 | 1 |
 | `clones.full.limit.range` | 약 3\~4번 | 클론 튜토리얼을 끝까지(1~12장) Pro 5시간 한도 범위 | 계산: doc-values.json 클론 튜토리얼 한도 번 수의 최소~최대 | `doc-values.json`을 고친다 | 0 |
 | `presets.design.first.summary` | Refero Styles 6개, awesome-design-md 2개 | 1위로 고른 스타일의 카탈로그별 수 | 계산: doc-values.json 화면 프리셋 design.recs 1위의 카탈로그 | `doc-values.json`을 고친다 | 1 |
-| `presets.design.critique.list` | 제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 핏슬롯 28, Uptrail 28 | 디자인 리뷰 점수가 높은 순서(이름 점수) | 계산: doc-values.json 화면 프리셋 design.critique 내림차순 | `doc-values.json`을 고친다 | 1 |
+| `presets.design.critique.list` | 제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 스피커 포트폴리오 29, 핏슬롯 28, Uptrail 28, 슬라이드랩 27 | 디자인 리뷰 점수가 높은 순서(이름 점수) | 계산: doc-values.json 화면 프리셋 design.critique 내림차순 | `doc-values.json`을 고친다 | 1 |
 | `packs.count` | 13 | 공개 프리셋 팩 수 | tutorials/packs.json 공개 항목 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `pack.nextflix.release` | https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/tag/pack-nextflix | nextflix 프리셋 팩 릴리스 쪽 주소 | tutorials/packs.json 공개 url → releases/tag | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `pack.claudle.release` | https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/tag/pack-claudle | claudle 프리셋 팩 릴리스 쪽 주소 | tutorials/packs.json 공개 url → releases/tag | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
@@ -498,6 +561,8 @@
 | `b:preset-actual-line` | (글 묶음) | 프리셋 쪽 "만든 사람이 실제로 쓴 값"의 문단(프리셋을 만들 때 든 시간과 토큰). 값은 doc-values.json presets.<이름>.actual.total(토큰과 캐시 포함은 달러에서 계산). tutorials/samples/ 쪽에서 올곧(olgot)을 뺀 프리셋이 쓴다. 인자: name(프리셋 이름) | docs/blocks/preset-actual-line.md | 묶음 원본을 고친다 | 8 |
 | `b:preset-cost-detail` | (글 묶음) | 프리셋 쪽 "단계별 예상" 표 아래의 두 문단(나만의 서비스로 바꿀 때 더 드는 값, 어림의 근거) | docs/blocks/preset-cost-detail.md | 묶음 원본을 고친다 | 9 |
 | `b:preset-default-features` | (글 묶음) | 신규 프리셋과 팩 기반 화면 제작 프롬프트의 모드·언어 기본 기능. 다른 묶음 안에서 함께 쓴다 | docs/blocks/preset-default-features.md | 묶음 원본을 고친다 | 35 |
+| `b:preset-estimate-method` | (글 묶음) | 정책 기반 재현 예상의 범위. 실측 및 실제 청구와 구분한다. | docs/blocks/preset-estimate-method.md | 묶음 원본을 고친다 | 2 |
+| `b:preset-estimate-stages` | (글 묶음) | 신규 공개 프리셋의 정책 계산기 단계별 예상 표. name은 slug다. | docs/blocks/preset-estimate-stages.md | 묶음 원본을 고친다 | 2 |
 | `b:preset-next-steps` | (글 묶음) | 프리셋 쪽 프롬프트 아래의 다음 할 일 안내(tutorials/samples/README.md의 1·3·4단계로 보낸다) | docs/blocks/preset-next-steps.md | 묶음 원본을 고친다 | 21 |
 | `b:preset-pack-get` | (글 묶음) | 프리셋 팩을 쓰는 프롬프트의 팩 받기 줄(다음 줄이 "그 팩…"으로 할 일을 잇는다). preset-pack, preset-remix가 품고, 클론 튜토리얼 README 첫 프롬프트는 표시 없이 같은 글로 둔다(CASES). AGENTS.md의 팩 받기 규칙은 이 줄의 packs/<이름>으로 팩을 알아본다. 인자: name(팩 이름) | docs/blocks/preset-pack-get.md | 묶음 원본을 고친다 | 23 |
 | `b:preset-pack-source` | (글 묶음) | 프리셋 팩 받는 곳 상자(첫 줄: 프롬프트만 보내면 에이전트가 자동으로 받아 설치한다. 둘째 문단: 직접 받기 zip 링크와 크기, 직접 받았으면 경로 한 줄). 문단 하나로 따로 둔다(preset-pack은 프롬프트 뒤, clone-readme-paste는 프롬프트 앞). 받는 곳 안내는 이 묶음 하나뿐이라, 홈페이지가 다른 곳(예: 자체 저장소)으로 알리려면 이 상자의 링크와 문장을 바꿔 그린다. 인자: name(팩 이름) | docs/blocks/preset-pack-source.md | 묶음 원본을 고친다 | 13 |

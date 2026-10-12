@@ -77,25 +77,49 @@ test("프리셋과 팩 이름·게시 상태가 같고 분류는 landing·app·c
   }
 });
 
-test("미측정 프리셋은 사실 메타만 제공하고 시간·비용·점수를 만들지 않는다", () => {
-  const d = JSON.parse(read("doc-values.json")).presets.slidelab;
-  assert.equal(d.measurements, "unmeasured");
-  assert.equal(d.pack, undefined);
-  assert.equal(d.scratch, undefined);
-  assert.equal(d.actual, undefined);
-  const values = loadValues();
+function unmeasuredFixture(t) {
+  const dir = mkdtempSync(join(tmpdir(), "doc-values-unmeasured-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  for (const name of ["site-links.json", "templates", "handbook", "tutorials"]) symlinkSync(join(ROOT, name), join(dir, name));
+  const doc = JSON.parse(read("doc-values.json"));
+  const preset = doc.presets.slidelab;
+  preset.measurements = "unmeasured";
+  for (const field of ["pack", "scratch", "actual", "measurementEvidence", "recordedProduction"]) delete preset[field];
+  delete preset.design.critique;
+  writeFileSync(join(dir, "doc-values.json"), JSON.stringify(doc));
+  return dir;
+}
+
+test("미측정 프리셋은 사실 메타만 제공하고 시간·비용·점수를 만들지 않는다", (t) => {
+  const values = loadValues(unmeasuredFixture(t));
   assert.equal(values.get("preset.slidelab.pages")?.value, "1");
   for (const key of ["pack.time", "pack.tokens", "scratch.time", "actual.total.time", "design.critique"])
     assert.equal(values.get(`preset.slidelab.${key}`), undefined, key);
 });
 
-test("일부 제작 관측은 공개·점수·재현 시간과 독립된 값으로 제공한다", () => {
-  const values = loadValues();
+test("일부 제작 관측은 공개·점수·재현 시간과 독립된 값으로 제공한다", (t) => {
+  const values = loadValues(unmeasuredFixture(t));
   assert.equal(values.get("preset.slidelab.observed.time").value, "1시간 59분");
   assert.equal(values.get("preset.slidelab.observed.count").value, "3");
   assert.match(values.get("preset.slidelab.observed.note").value, /포함하지/);
   assert.equal(values.get("preset.slidelab.pack.time"), undefined);
   assert.equal(values.get("preset.slidelab.design.critique"), undefined);
+});
+
+test("예상 프리셋은 재현 예상·평가를 제공하되 실측 합계와 섞지 않고 복원한 제작 기록을 구분한다", () => {
+  const presets = JSON.parse(read("doc-values.json")).presets;
+  const values = loadValues();
+  for (const name of ["slidelab", "speaker-portfolio"]) {
+    assert.equal(presets[name].measurements, "estimated", name);
+    assert.equal(presets[name].actual, undefined, name);
+    for (const field of ["pack.time", "pack.tokens", "scratch.time", "scratch.tokens", "design.critique"])
+      assert.ok(values.has(`preset.${name}.${field}`), `${name}.${field}`);
+    assert.equal(values.get(`preset.${name}.actual.total.time`), undefined, name);
+  }
+  assert.equal(values.get("presets.actual.time.range").value, "2시간 15분\\~4시간 25분");
+  assert.equal(values.get("preset.speaker-portfolio.recordedProduction.time").value, "10시간 56분");
+  assert.equal(values.get("preset.speaker-portfolio.recordedProduction.tokens").value, "380만");
+  assert.equal(values.get("preset.speaker-portfolio.recordedProduction.cached").value, "2.1억");
 });
 
 test("짧은 제작 관측도 빈 시간으로 숨기지 않는다", (t) => {
@@ -245,12 +269,19 @@ function stageCell(cell) {
   return { min: mins(parts[0]), tokens: num(t[1]) * (t[2] === "억" ? 1e4 : 1), usd: /미만/.test(parts[2]) ? 0 : num(parts[2].match(/\d+/)[0]) };
 }
 
+function forecastTable(name) {
+  const text = read(`tutorials/samples/${name}.md`);
+  const table = text.match(/^\| 단계 \| 프리셋 팩으로 \|[^\n]*\n(?:\|[^\n]*\n)+/m)?.[0];
+  assert.ok(table, `${name}: 단계별 예상 표가 있어야 한다`);
+  return table;
+}
+
 test("단계별 예상 표: 합계 행이 단계 합과 5% 안에서 같다(시간·토큰, 달러는 1달러 단위 반올림 2달러 여유), 프리셋 팩으로 만드는 칸은 처음부터 칸보다 크지 않다", () => {
   const d = JSON.parse(read("doc-values.json")).presets;
   const bad = [];
   for (const [name, p] of Object.entries(d)) {
     if (p.kind === "clone" || p.measurements === "unmeasured") continue;
-    const rows = plain(read(`tutorials/samples/${name}.md`))
+    const rows = plain(forecastTable(name))
       .split("\n")
       .filter((l) => /^\| (준비|기획|디자인|화면 구성|그림|첫 화면|나머지|검사와|HTML)/.test(l))
       .map((l) => l.split("|").map((c) => c.trim()).filter(Boolean));
@@ -279,7 +310,7 @@ test("단계별 예상 표: 칸의 달러는 규칙대로 반올림한 값이다
   const bad = [];
   for (const [name, p] of Object.entries(JSON.parse(read("doc-values.json")).presets)) {
     if (p.kind === "clone" || p.measurements === "unmeasured") continue;
-    read(`tutorials/samples/${name}.md`)
+    forecastTable(name)
       .split("\n")
       .filter((l) => /^\| (준비|기획|디자인|화면 구성|그림|첫 화면|나머지|검사와|HTML|\(선택\))/.test(plain(l)))
       .forEach((l) =>
@@ -353,8 +384,8 @@ test("계산값 2: 비용 단위, 한글 수사, 케이스 범위, 화면 점수
     "gloss.presetPack": "만들 서비스의 화면 구성, 디자인, 예시 데이터, 그림을 묶어 둔 폴더", "gloss.clonePack": "만들 서비스의 화면 구성, 기능 규칙, 디자인 노트, 예시 데이터, 그림을 묶어 둔 폴더", "gloss.round": "기능 하나를 만들거나 요청한 것을 고치고 확인까지 마치는 작업 묶음",
     "gloss.migration": "DB의 표를 만들거나 바꾸는 기록", "gloss.spec": "기능의 범위와 동작을 적은 문서",
     "preset.claudle.dailyLimit": "200", "port.supabasePooler": "6543", "limit.pro5h.plans": "Claude Pro · ChatGPT Plus(Codex)",
-    "policy.agentBrowser.cell": "없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치", "preset.goru.pack.tokens": "125만", "presets.pack.tokens.range": "125만\\~550만",
-    "presets.design.critique.list": "제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 핏슬롯 28, Uptrail 28",
+    "policy.agentBrowser.cell": "없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치", "preset.goru.pack.tokens": "125만", "presets.pack.tokens.range": "73.4만\\~550만",
+    "presets.design.critique.list": "제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 스피커 포트폴리오 29, 핏슬롯 28, Uptrail 28, 슬라이드랩 27",
     "eval.requests": "13", "eval.checks": "52", "eval.dev-cycle.with": "93", "eval.dev-cycle.without": "27", "eval.ui.with": "100", "eval.ui.without": "12", "eval.verify.without": "71",
     "eval.designMd.palette.with": "99", "eval.designMd.palette.without": "71", "eval.designMd.services": "4",
     "eval.designMd.fontSize.with": "100", "eval.designMd.fontSize.without": "77", "eval.designMd.secondScreen.with": "95", "eval.designMd.secondScreen.without": "97", "eval.designMd.palette.offTarget": "29",
@@ -551,7 +582,7 @@ test("시간 범위: 배수(cost.timeRange)가 기존 배수 글과 맞고, 정�
     "preset.goru.scratch.time.text": "한 번에 완성하면 약 1시간 30분\\~3시간(여러 번 고쳐 달라고 하면 약 4시간 30분까지)",
     "preset.claudle.full.time.text": "한 번에 완성하면 약 5시간\\~10시간(여러 번 고쳐 달라고 하면 약 15시간까지)",
     "preset.nextflix.screens.time.cell": "약 2시간 25분\\~4시간 50분 (여러 번 고치면 약 7시간 15분까지)",
-    "presets.pack.time.text": "한 번에 완성하면 약 1시간\\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지)",
+    "presets.pack.time.text": "한 번에 완성하면 약 36분\\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지)",
     "presets.scratch.time.revise": "17시간 15분",
   };
   assert.deepEqual(Object.fromEntries(Object.keys(want).map((k) => [k, values.get(k)?.value])), want);
@@ -834,7 +865,7 @@ test("--json: 모든 값(손으로 정한 값과 계산값)을 마크다운 이�
 test("계산값 4: 단계별 표의 단위 시간, 쪽 수·그림 수에 비례하는 행, 한도 시간, 만든 사람이 실제로 쓴 값", () => {
   const values = loadValues();
   const want = {
-    "limit.window": "5시간", "preset.ullim.pack.limitText": "5시간 한도 안", "preset.olgot.scratch.limitText": "5시간 한도에 약 4번 걸려요", "presets.scratch.limit.range": "약 1\\~4번",
+    "limit.window": "5시간", "preset.ullim.pack.limitText": "5시간 한도 안", "preset.olgot.scratch.limitText": "5시간 한도에 약 4번 걸려요", "presets.scratch.limit.range": "5시간 한도 안\\~약 4번",
     "cost.stage.setup.time": "5분", "cost.stage.plan.pack.time": "5분", "cost.stage.plan.scratch.time": "10분", "cost.stage.page.pack.time": "4분", "cost.stage.clone.check.time": "20분", "cost.image.time": "30초",
     "preset.goru.stages.rest.pack.time": "24분", "preset.pacecrew.stages.rest.pack.time": "1시간 24분", "preset.olgot.stages.rest.scratch.time": "3시간 55분",
     "preset.goru.stages.images.time": "3분", "preset.uptrail.stages.images.time": "1분", "preset.olgot.stages.images.time": "41분", "preset.olgot.stages.check.time": "19분",
@@ -935,8 +966,9 @@ test("쓰는 곳이 없는 고칠 때 예시 키(cost.revise.example.*)는 두�
   assert.deepEqual(list.filter(([k, , , n]) => k?.startsWith("cost.revise.example.") && n === "0").map(([k]) => k), []);
 });
 
-test("실측 값이 빠지면 TypeError 대신 빠진 키 이름을 담은 오류로 멈춘다", () => {
+test("실측 값이 빠지면 TypeError 대신 빠진 키 이름을 담은 오류로 멈춘다", (t) => {
   const dir = mkdtempSync(join(tmpdir(), "doc-values-missing-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
   writeFileSync(join(dir, "site-links.json"), read("site-links.json"));
   const d = JSON.parse(read("doc-values.json"));
   delete d.presets.nextflix.actual.fix;

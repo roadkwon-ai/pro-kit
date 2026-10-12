@@ -801,9 +801,10 @@
         "color": "다크 라임",
         "hex": "#c8ff00",
         "images": "13",
-        "clicks": "40"
+        "clicks": "40",
+        "critique": "27"
       },
-      "measurements": "unmeasured",
+      "measurements": "estimated",
       "observed": {
         "coverage": "partial",
         "scope": "최초 제작·수정 세션 일부",
@@ -835,6 +836,123 @@
             "exitCode": 0
           }
         ]
+      },
+      "pack": {
+        "time": "36분",
+        "tokens": "73.4만",
+        "cached": "3671.3만",
+        "usd": "13.35"
+      },
+      "scratch": {
+        "time": "1시간 5분",
+        "tokens": "154.7만",
+        "cached": "6650.7만",
+        "usd": "28.12"
+      },
+      "stages": {
+        "check": "8분"
+      },
+      "measurementEvidence": {
+        "source": "docs/reports/2026-10-13-preset-measurements.json",
+        "sha256": "752af9185d4d59b59e1184c74a8dcbbe771dddc54f71cdc4e900e85c297e7dd3",
+        "method": "policy-stage-and-unit-v1",
+        "scope": "완성팩 재사용 및 처음부터 화면 제작의 정책 기반 예상. 실제 청구액·실측 토큰이 아님."
+      },
+      "estimateStages": {
+        "pack": {
+          "setup": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "plan": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "design": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "mockup": {
+            "time": "해당 없음",
+            "tokens": "0만",
+            "usd": "1달러 미만"
+          },
+          "images": {
+            "time": "1분",
+            "tokens": "2만",
+            "usd": "1달러 미만"
+          },
+          "first": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "rest": {
+            "time": "해당 없음",
+            "tokens": "0만",
+            "usd": "1달러 미만"
+          },
+          "check": {
+            "time": "8분",
+            "tokens": "16.3만",
+            "usd": "3달러"
+          },
+          "export": {
+            "time": "2분",
+            "tokens": "4.1만",
+            "usd": "1달러 미만"
+          }
+        },
+        "scratch": {
+          "setup": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "plan": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "design": {
+            "time": "8분",
+            "tokens": "16.3만",
+            "usd": "3달러"
+          },
+          "mockup": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "images": {
+            "time": "7분",
+            "tokens": "36.4만",
+            "usd": "7달러"
+          },
+          "first": {
+            "time": "15분",
+            "tokens": "30.6만",
+            "usd": "6달러"
+          },
+          "rest": {
+            "time": "해당 없음",
+            "tokens": "0만",
+            "usd": "1달러 미만"
+          },
+          "check": {
+            "time": "8분",
+            "tokens": "16.3만",
+            "usd": "3달러"
+          },
+          "export": {
+            "time": "2분",
+            "tokens": "4.1만",
+            "usd": "1달러 미만"
+          }
+        }
       }
     },
     "speaker-portfolio": {
@@ -849,9 +967,10 @@
         "color": "화이트·잉크·코랄",
         "hex": "#ff4b35",
         "images": "18",
-        "clicks": "121"
+        "clicks": "121",
+        "critique": "29"
       },
-      "measurements": "unmeasured",
+      "measurements": "estimated",
       "observed": {
         "coverage": "partial",
         "scope": "설치·타입 검사·빌드·내보내기 명령 일부",
@@ -891,6 +1010,131 @@
             "exitCode": 0
           }
         ]
+      },
+      "pack": {
+        "time": "1시간",
+        "tokens": "122.4만",
+        "cached": "6118.8만",
+        "usd": "22.25"
+      },
+      "scratch": {
+        "time": "1시간 36분",
+        "tokens": "226.4만",
+        "cached": "9820.6만",
+        "usd": "41.16"
+      },
+      "stages": {
+        "check": "12분"
+      },
+      "measurementEvidence": {
+        "source": "docs/reports/2026-10-13-preset-measurements.json",
+        "sha256": "752af9185d4d59b59e1184c74a8dcbbe771dddc54f71cdc4e900e85c297e7dd3",
+        "method": "policy-stage-and-unit-v1",
+        "scope": "완성팩 재사용 및 처음부터 화면 제작의 정책 기반 예상. 실제 청구액·실측 토큰이 아님."
+      },
+      "recordedProduction": {
+        "wallMs": 39389871,
+        "tokens": 3827365,
+        "cached": 205960613,
+        "scope": "프리셋 제작·보완과 관련 스킬 개선을 포함한 root 활성 턴",
+        "source": "docs/reports/2026-10-13-preset-measurements.json",
+        "sha256": "752af9185d4d59b59e1184c74a8dcbbe771dddc54f71cdc4e900e85c297e7dd3"
+      },
+      "estimateStages": {
+        "pack": {
+          "setup": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "plan": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "design": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "mockup": {
+            "time": "해당 없음",
+            "tokens": "0만",
+            "usd": "1달러 미만"
+          },
+          "images": {
+            "time": "1분",
+            "tokens": "2만",
+            "usd": "1달러 미만"
+          },
+          "first": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "rest": {
+            "time": "20분",
+            "tokens": "40.8만",
+            "usd": "7달러"
+          },
+          "check": {
+            "time": "12분",
+            "tokens": "24.5만",
+            "usd": "4달러"
+          },
+          "export": {
+            "time": "2분",
+            "tokens": "4.1만",
+            "usd": "1달러 미만"
+          }
+        },
+        "scratch": {
+          "setup": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "plan": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "design": {
+            "time": "8분",
+            "tokens": "16.3만",
+            "usd": "3달러"
+          },
+          "mockup": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "images": {
+            "time": "9분",
+            "tokens": "49만",
+            "usd": "9달러"
+          },
+          "first": {
+            "time": "15분",
+            "tokens": "30.6만",
+            "usd": "6달러"
+          },
+          "rest": {
+            "time": "25분",
+            "tokens": "51만",
+            "usd": "9달러"
+          },
+          "check": {
+            "time": "12분",
+            "tokens": "24.5만",
+            "usd": "4달러"
+          },
+          "export": {
+            "time": "2분",
+            "tokens": "4.1만",
+            "usd": "1달러 미만"
+          }
+        }
       }
     }
   },

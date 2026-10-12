@@ -209,7 +209,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 
 ## 시간과 비용
 
-프리셋 팩으로 만들 때 프리셋 하나에 **<!-- v:presets.pack.time.text -->한 번에 완성하면 약 1시간\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지)<!-- /v -->** 걸리고, 토큰은 최소 **약 <!-- v:presets.pack.tokens.range -->125만\~550만<!-- /v -->**(캐시 포함 약 <!-- v:presets.pack.cached.range -->6,900만\~2.8억<!-- /v -->)이 들어요. 이 튜토리얼로 화면을 처음부터 만들 때는 <!-- v:presets.scratch.time.text -->한 번에 완성하면 약 1시간 30분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지)<!-- /v --> 걸리고, 토큰은 최소 약 <!-- v:presets.scratch.tokens.range -->190만\~800만<!-- /v -->(캐시 포함 약 <!-- v:presets.scratch.cached.range -->9,600만\~4.0억<!-- /v -->)이 들어요. 프리셋마다 값은 각 쪽의 "시간과 비용"에 있어요.
+프리셋 팩으로 만들 때 프리셋 하나에 **<!-- v:presets.pack.time.text -->한 번에 완성하면 약 36분\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지)<!-- /v -->** 걸리고, 토큰은 최소 **약 <!-- v:presets.pack.tokens.range -->73.4만\~550만<!-- /v -->**(캐시 포함 약 <!-- v:presets.pack.cached.range -->3671.3만\~2.8억<!-- /v -->)이 들어요. 이 튜토리얼로 화면을 처음부터 만들 때는 <!-- v:presets.scratch.time.text -->한 번에 완성하면 약 1시간 5분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지)<!-- /v --> 걸리고, 토큰은 최소 약 <!-- v:presets.scratch.tokens.range -->154.7만\~800만<!-- /v -->(캐시 포함 약 <!-- v:presets.scratch.cached.range -->6650.7만\~4.0억<!-- /v -->)이 들어요. 프리셋마다 값은 각 쪽의 "시간과 비용"에 있어요.
 
 <!-- b:revise-time-detail -->
 <details>
@@ -228,7 +228,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 </details>
 <!-- /b -->
 
-<!-- v:limit.pro5h.plans -->Claude Pro · ChatGPT Plus(Codex)<!-- /v -->: 가능 (프리셋 팩으로는 <!-- v:presets.pack.limit.range -->5시간 한도 안\~약 3번<!-- /v -->, 처음부터는 <!-- v:presets.scratch.limit.range -->약 1\~4번<!-- /v --> 걸려요. 올곧을 처음부터 만들면 2\~3일에 나눠 만들어요) · [<!-- v:limit.window -->5시간<!-- /v --> 한도란?](../reference/costs-and-keys.md#5시간-한도에-걸리면)
+<!-- v:limit.pro5h.plans -->Claude Pro · ChatGPT Plus(Codex)<!-- /v -->: 가능 (프리셋 팩으로는 <!-- v:presets.pack.limit.range -->5시간 한도 안\~약 3번<!-- /v -->, 처음부터는 <!-- v:presets.scratch.limit.range -->5시간 한도 안\~약 4번<!-- /v --> 걸려요. 올곧을 처음부터 만들면 2\~3일에 나눠 만들어요) · [<!-- v:limit.window -->5시간<!-- /v --> 한도란?](../reference/costs-and-keys.md#5시간-한도에-걸리면)
 
 <!-- b:cost-note -->
 시간의 앞 숫자와 토큰은 순조롭게 한 번에 끝날 때의 최솟값이에요. 토큰도 시간처럼 쓰는 AI와 고쳐 달라는 횟수에 따라 2~3배까지 늘 수 있어요. [읽는 법](../reference/costs-and-keys.md#시간과-비용-읽는-법) · [실제로 걸린 시간 자세히](../reference/process-and-time.md)

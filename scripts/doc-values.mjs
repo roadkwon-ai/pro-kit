@@ -246,6 +246,22 @@ export function loadValues(root = ROOT) {
   const P = "doc-values.json presets.<이름>";
   const presets = Object.entries(d.presets);
   for (const [n, p] of presets) {
+    if (p.measurements) add(`preset.${n}.measurement.state`, p.measurements, `${P}.measurements`, "공개 인수의 제작 예상/측정 상태");
+    for (const [field, value] of Object.entries(p.measurementEvidence ?? {}))
+      add(`preset.${n}.measurement.${field}`, value, `${P}.measurementEvidence.${field}`, "제작 예상의 출처·정책과 범위");
+    for (const [mode, stages] of Object.entries(p.estimateStages ?? {}))
+      for (const [stage, values] of Object.entries(stages))
+        for (const [field, value] of Object.entries(values))
+          add(`preset.${n}.estimateStages.${mode}.${stage}.${field}`, value, `${P}.estimateStages.${mode}.${stage}.${field}`, "정책 계산기의 단계별 재현 예상. 실측/청구값 아님");
+    if (p.recordedProduction) {
+      const r = p.recordedProduction;
+      if (![r.wallMs, r.tokens, r.cached].every((v) => Number.isSafeInteger(v) && v > 0) || r.cached < r.tokens || !r.scope)
+        throw new Error(`preset.${n}.recordedProduction: 복원 기록이 불완전합니다`);
+      add(`preset.${n}.recordedProduction.time`, minText(Math.floor(r.wallMs / 60000)), `${P}.recordedProduction.wallMs`, "제작·보완과 관련 스킬 개선의 root 활성 기록. 사용자 대기/자식 사용량 제외");
+      add(`preset.${n}.recordedProduction.tokens`, fmtMan(r.tokens / 10000), `${P}.recordedProduction.tokens`, "실제 root 입력(캐시 제외)+출력 토큰; USD 역산 아님");
+      add(`preset.${n}.recordedProduction.cached`, fmtMan(r.cached / 10000), `${P}.recordedProduction.cached`, "실제 root 캐시 포함 입력+출력 토큰");
+      add(`preset.${n}.recordedProduction.scope`, r.scope, `${P}.recordedProduction.scope`, "복원 기록의 범위");
+    }
     if (p.observed) {
       const observation = summarizeObservations(p.observed);
       add(`preset.${n}.observed.time`, observation.wallMs < 60000 ? "1분 미만" : minText(Math.floor(observation.wallMs / 60000)), `계산: ${P}.observed.intervals의 비중복 구간`, "관측된 제작 세션 일부(분 미만 버림). 전체 제작·팩 재현 시간 아님");
@@ -354,7 +370,7 @@ export function loadValues(root = ROOT) {
   const pages = screen.filter(([, p]) => !p.pageTypes).map(([, p]) => Number(p.pages));
   add("presets.screen.pages.range", `${Math.min(...pages)}\\~${Math.max(...pages)}`, "계산: doc-values.json 화면 프리셋 pages의 최소~최대(pageTypes가 있는 프리셋 제외)", "화면 프리셋 한 개의 페이지 수 범위");
   // 만든 사람이 실제로 쓴 값(리디자인과 넓히기)의 범위. 리디자인 없이 처음부터 만든 올곧(pageTypes가 있는 프리셋)은 뺀다
-  const redesigned = screen.filter(([, p]) => !p.pageTypes && p.measurements !== "unmeasured").map(([n]) => n);
+  const redesigned = screen.filter(([, p]) => !p.pageTypes && !["unmeasured", "estimated"].includes(p.measurements)).map(([n]) => n);
   for (const [f, num] of [["time", minutes], ["tokens", tokens], ["usd", Number]]) {
     const s = redesigned.map((n) => need(`preset.${n}.actual.total.${f}`)).sort((a, b) => num(a) - num(b));
     add(`presets.actual.${f}.range`, `${s[0]}\\~${s.at(-1)}`, "계산: preset.<이름>.actual.total의 최소~최대(올곧 제외)", "화면 프리셋을 만든 사람이 리디자인과 넓히기에 실제로 쓴 값의 범위(시간·토큰·달러)");

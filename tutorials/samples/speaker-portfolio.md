@@ -144,9 +144,39 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 
 ## 시간과 비용
 
-일부 명령의 관측 시간은 <!-- v:preset.speaker-portfolio.observed.time -->1분 미만<!-- /v -->이고 기록은 <!-- v:preset.speaker-portfolio.observed.count -->4<!-- /v -->개예요. <!-- v:preset.speaker-portfolio.observed.note -->초기 단일 페이지 버전의 일부 명령 기록이에요. 최종 재제작의 전체 시간·비용이 아니며 설계·이미지 생성·화면 구현·브라우저 검사·사용자 대기는 포함하지 않았어요.<!-- /v -->
+프리셋 팩으로 다시 만들 때는 <!-- v:preset.speaker-portfolio.pack.time.text -->한 번에 완성하면 약 1시간\~2시간(여러 번 고쳐 달라고 하면 약 3시간까지)<!-- /v -->이고, 토큰은 최소 약 <!-- v:preset.speaker-portfolio.pack.tokens -->122.4만<!-- /v -->(캐시 포함 약 <!-- v:preset.speaker-portfolio.pack.cached -->6118.8만<!-- /v -->)으로 예상해요. 처음부터 화면을 만들 때는 <!-- v:preset.speaker-portfolio.scratch.time.text -->한 번에 완성하면 약 1시간 36분\~3시간 10분(여러 번 고쳐 달라고 하면 약 4시간 50분까지)<!-- /v -->과 최소 약 <!-- v:preset.speaker-portfolio.scratch.tokens -->226.4만<!-- /v --> 토큰으로 예상해요.
 
-전체 제작 시간·토큰·비용과 팩 재현 시간은 아직 측정하지 않았어요. 남아 있는 관측 구간은 초기 단일 페이지 버전의 일부 명령 기록이며 최종 재제작 전체를 뜻하지 않아요. 초기 클릭 검사 횟수도 새 범위의 검증 횟수로 합치지 않아요. 완료한 검사 기록과 전체 제작량은 다르므로 예상 수치나 다른 프리셋의 기록으로 채우지 않아요. 과금 방식은 [비용과 키 안내](../reference/costs-and-keys.md)에서 확인해요.
+<!-- b:preset-estimate-method -->
+시간은 공통 단계별 계획의 합이고, 토큰은 같은 정책의 기준 단위에서 환산한 예상값이에요. 검사 예상은 이 프리셋의 화면 범위를 기준으로 정했어요. [예상 계산 근거](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-13-preset-measurements.json)를 확인해요.
+
+실제 제작 기록이나 현재 제공자의 청구 요금을 뜻하지 않으며, API·DB·실결제 개발은 포함하지 않았어요. 고쳐 달라는 횟수와 사용하는 모델에 따라 늘어날 수 있어요. [시간과 비용 읽는 법](../reference/costs-and-keys.md#시간과-비용-읽는-법)을 참고해요.
+<!-- /b -->
+
+기존 제작·보완 이력의 활성 작업 합계는 <!-- v:preset.speaker-portfolio.recordedProduction.time -->10시간 56분<!-- /v -->이고 루트 토큰은 캐시 제외 약 <!-- v:preset.speaker-portfolio.recordedProduction.tokens -->380만<!-- /v -->(캐시 포함 약 <!-- v:preset.speaker-portfolio.recordedProduction.cached -->2.1억<!-- /v -->)이에요. 관련 스킬 개선도 포함하며 사용자 대기와 별도 자식 에이전트·이미지 생성 사용량은 제외한 기록이에요. 순수 제품만의 전체 비용으로 읽으면 안 돼요.
+
+설치·빌드 등 짧은 명령 네 개의 합을 제작 시간으로 표시했던 값을 이 기록과 분리했어요.
+
+디자인 평가는 닐슨의 열 가지 기준으로 <!-- v:preset.speaker-portfolio.design.critique -->29<!-- /v -->점이며, [기준별 점수와 감점 이유](https://prokit.highvalue.kr/process/?preset=speaker-portfolio#step-5)를 함께 확인해요.
+
+<!-- b:preset-estimate-stages name=speaker-portfolio -->
+<details>
+<summary>단계별 예상</summary>
+
+| 단계 | 프리셋 팩으로 | 처음부터(내 컨셉으로) |
+|---|---|---|
+| 준비: pro-kit 받기, 프로젝트 만들기 | 5분 · 10.2만 · 2달러 | 5분 · 10.2만 · 2달러 |
+| 기획: 서비스 질문, 이름, 사이트맵 | 5분 · 10.2만 · 2달러 | 10분 · 20.4만 · 4달러 |
+| 디자인: DESIGN.md | 5분 · 10.2만 · 2달러 | 8분 · 16.3만 · 3달러 |
+| 화면 구성 | 해당 없음 · 0만 · 1달러 미만 | 10분 · 20.4만 · 4달러 |
+| 그림 | 1분 · 2만 · 1달러 미만 | 9분 · 49만 · 9달러 |
+| 첫 화면 | 10분 · 20.4만 · 4달러 | 15분 · 30.6만 · 6달러 |
+| 나머지 페이지 | 20분 · 40.8만 · 7달러 | 25분 · 51만 · 9달러 |
+| 검사와 디자인 리뷰 | 12분 · 24.5만 · 4달러 | 12분 · 24.5만 · 4달러 |
+| HTML 내보내기 | 2분 · 4.1만 · 1달러 미만 | 2분 · 4.1만 · 1달러 미만 |
+| 합계(배포 빼고) | 약 1시간\~2시간 (여러 번 고치면 약 3시간까지) · 약 122.4만(캐시 포함 약 6118.8만) · 약 22.25달러 | 약 1시간 36분\~3시간 10분 (여러 번 고치면 약 4시간 50분까지) · 약 226.4만(캐시 포함 약 9820.6만) · 약 41.16달러 |
+
+</details>
+<!-- /b -->
 
 ## 결제 체험과 정책 화면
 

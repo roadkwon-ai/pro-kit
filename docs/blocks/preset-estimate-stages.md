@@ -1,0 +1,18 @@
+<!-- 신규 공개 프리셋의 정책 계산기 단계별 예상 표. name은 slug다. -->
+<details>
+<summary>단계별 예상</summary>
+
+| 단계 | 프리셋 팩으로 | 처음부터(내 컨셉으로) |
+|---|---|---|
+| 준비: pro-kit 받기, 프로젝트 만들기 | {{v:preset.{{name}}.estimateStages.pack.setup.time}} · {{v:preset.{{name}}.estimateStages.pack.setup.tokens}} · {{v:preset.{{name}}.estimateStages.pack.setup.usd}} | {{v:preset.{{name}}.estimateStages.scratch.setup.time}} · {{v:preset.{{name}}.estimateStages.scratch.setup.tokens}} · {{v:preset.{{name}}.estimateStages.scratch.setup.usd}} |
+| 기획: 서비스 질문, 이름, 사이트맵 | {{v:preset.{{name}}.estimateStages.pack.plan.time}} · {{v:preset.{{name}}.estimateStages.pack.plan.tokens}} · {{v:preset.{{name}}.estimateStages.pack.plan.usd}} | {{v:preset.{{name}}.estimateStages.scratch.plan.time}} · {{v:preset.{{name}}.estimateStages.scratch.plan.tokens}} · {{v:preset.{{name}}.estimateStages.scratch.plan.usd}} |
+| 디자인: DESIGN.md | {{v:preset.{{name}}.estimateStages.pack.design.time}} · {{v:preset.{{name}}.estimateStages.pack.design.tokens}} · {{v:preset.{{name}}.estimateStages.pack.design.usd}} | {{v:preset.{{name}}.estimateStages.scratch.design.time}} · {{v:preset.{{name}}.estimateStages.scratch.design.tokens}} · {{v:preset.{{name}}.estimateStages.scratch.design.usd}} |
+| 화면 구성 | {{v:preset.{{name}}.estimateStages.pack.mockup.time}} · {{v:preset.{{name}}.estimateStages.pack.mockup.tokens}} · {{v:preset.{{name}}.estimateStages.pack.mockup.usd}} | {{v:preset.{{name}}.estimateStages.scratch.mockup.time}} · {{v:preset.{{name}}.estimateStages.scratch.mockup.tokens}} · {{v:preset.{{name}}.estimateStages.scratch.mockup.usd}} |
+| 그림 | {{v:preset.{{name}}.estimateStages.pack.images.time}} · {{v:preset.{{name}}.estimateStages.pack.images.tokens}} · {{v:preset.{{name}}.estimateStages.pack.images.usd}} | {{v:preset.{{name}}.estimateStages.scratch.images.time}} · {{v:preset.{{name}}.estimateStages.scratch.images.tokens}} · {{v:preset.{{name}}.estimateStages.scratch.images.usd}} |
+| 첫 화면 | {{v:preset.{{name}}.estimateStages.pack.first.time}} · {{v:preset.{{name}}.estimateStages.pack.first.tokens}} · {{v:preset.{{name}}.estimateStages.pack.first.usd}} | {{v:preset.{{name}}.estimateStages.scratch.first.time}} · {{v:preset.{{name}}.estimateStages.scratch.first.tokens}} · {{v:preset.{{name}}.estimateStages.scratch.first.usd}} |
+| 나머지 페이지 | {{v:preset.{{name}}.estimateStages.pack.rest.time}} · {{v:preset.{{name}}.estimateStages.pack.rest.tokens}} · {{v:preset.{{name}}.estimateStages.pack.rest.usd}} | {{v:preset.{{name}}.estimateStages.scratch.rest.time}} · {{v:preset.{{name}}.estimateStages.scratch.rest.tokens}} · {{v:preset.{{name}}.estimateStages.scratch.rest.usd}} |
+| 검사와 디자인 리뷰 | {{v:preset.{{name}}.estimateStages.pack.check.time}} · {{v:preset.{{name}}.estimateStages.pack.check.tokens}} · {{v:preset.{{name}}.estimateStages.pack.check.usd}} | {{v:preset.{{name}}.estimateStages.scratch.check.time}} · {{v:preset.{{name}}.estimateStages.scratch.check.tokens}} · {{v:preset.{{name}}.estimateStages.scratch.check.usd}} |
+| HTML 내보내기 | {{v:preset.{{name}}.estimateStages.pack.export.time}} · {{v:preset.{{name}}.estimateStages.pack.export.tokens}} · {{v:preset.{{name}}.estimateStages.pack.export.usd}} | {{v:preset.{{name}}.estimateStages.scratch.export.time}} · {{v:preset.{{name}}.estimateStages.scratch.export.tokens}} · {{v:preset.{{name}}.estimateStages.scratch.export.usd}} |
+| 합계(배포 빼고) | {{v:preset.{{name}}.pack.time.cell}} · 약 {{v:preset.{{name}}.pack.tokens}}(캐시 포함 약 {{v:preset.{{name}}.pack.cached}}) · 약 {{v:preset.{{name}}.pack.usd}}달러 | {{v:preset.{{name}}.scratch.time.cell}} · 약 {{v:preset.{{name}}.scratch.tokens}}(캐시 포함 약 {{v:preset.{{name}}.scratch.cached}}) · 약 {{v:preset.{{name}}.scratch.usd}}달러 |
+
+</details>

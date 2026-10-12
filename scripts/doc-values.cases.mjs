@@ -540,5 +540,9 @@ export const CASES = [
       [f, "preset-real-service", p.order ? { tail: " 앞의 것부터 차례로 하면 쉬워요." } : {}],
     ];
   }),
+  ...["slidelab", "speaker-portfolio"].flatMap((name) => [
+    [`tutorials/samples/${name}.md`, "preset-estimate-method", {}],
+    [`tutorials/samples/${name}.md`, "preset-estimate-stages", { name }],
+  ]),
   ...TPL.flatMap((t, i) => TPL_README.map(([b, ...args]) => [`templates/${t}/README.md`, `tpl-readme-${b}`, args[i]])),
 ];

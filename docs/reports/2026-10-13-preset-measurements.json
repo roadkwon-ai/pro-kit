@@ -1,0 +1,560 @@
+{
+	"schemaVersion": 1,
+	"method": "policy-stage-and-unit-v1",
+	"policyDate": "2026-10-05",
+	"modelBasis": "Opus 5.5",
+	"scope": "완성팩 재사용 및 처음부터 화면 제작의 정책 기반 예상. 실제 청구액·실측 토큰이 아님.",
+	"limitations": [
+		"선택한 8분/12분 검사 예상은 한 페이지 및 여섯 페이지 범위에 대한 계획값",
+		"이미지 생성 토큰·캐시는 기존 공통 정책의 환산이며 실제 제공자 요금 아님",
+		"상용 API·DB·결제 연동 범위 제외"
+	],
+	"presets": {
+		"speaker-portfolio": {
+			"stages": {
+				"check": "12분"
+			},
+			"estimateStages": {
+				"pack": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"design": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"mockup": {
+						"time": "해당 없음",
+						"tokens": "0만",
+						"usd": "1달러 미만"
+					},
+					"images": {
+						"time": "1분",
+						"tokens": "2만",
+						"usd": "1달러 미만"
+					},
+					"first": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"rest": {
+						"time": "20분",
+						"tokens": "40.8만",
+						"usd": "7달러"
+					},
+					"check": {
+						"time": "12분",
+						"tokens": "24.5만",
+						"usd": "4달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				},
+				"scratch": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"design": {
+						"time": "8분",
+						"tokens": "16.3만",
+						"usd": "3달러"
+					},
+					"mockup": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"images": {
+						"time": "9분",
+						"tokens": "49만",
+						"usd": "9달러"
+					},
+					"first": {
+						"time": "15분",
+						"tokens": "30.6만",
+						"usd": "6달러"
+					},
+					"rest": {
+						"time": "25분",
+						"tokens": "51만",
+						"usd": "9달러"
+					},
+					"check": {
+						"time": "12분",
+						"tokens": "24.5만",
+						"usd": "4달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				}
+			},
+			"basis": {
+				"method": "policy-stage-and-unit-v1",
+				"policyDate": "2026-10-05",
+				"pages": 6,
+				"images": 18,
+				"checkMinutes": 12,
+				"unitMinutes": 12,
+				"unitUsd": 4.45,
+				"pack": {
+					"stages": {
+						"setup": 5,
+						"plan": 5,
+						"design": 5,
+						"mockup": 0,
+						"images": 1,
+						"first": 10,
+						"rest": 20,
+						"check": 12,
+						"export": 2
+					},
+					"totalMinutes": 60,
+					"modelUsd": 22.25,
+					"generatedTokens": 0
+				},
+				"scratch": {
+					"stages": {
+						"setup": 5,
+						"plan": 10,
+						"design": 8,
+						"mockup": 10,
+						"images": 9,
+						"first": 15,
+						"rest": 25,
+						"check": 12,
+						"export": 2
+					},
+					"totalMinutes": 96,
+					"modelUsd": 35.6,
+					"generatedTokens": 306000
+				}
+			},
+			"pack": {
+				"time": "1시간",
+				"tokens": "122.4만",
+				"cached": "6118.8만",
+				"usd": "22.25"
+			},
+			"scratch": {
+				"time": "1시간 36분",
+				"tokens": "226.4만",
+				"cached": "9820.6만",
+				"usd": "41.16"
+			}
+		},
+		"slidelab": {
+			"stages": {
+				"check": "8분"
+			},
+			"estimateStages": {
+				"pack": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"design": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"mockup": {
+						"time": "해당 없음",
+						"tokens": "0만",
+						"usd": "1달러 미만"
+					},
+					"images": {
+						"time": "1분",
+						"tokens": "2만",
+						"usd": "1달러 미만"
+					},
+					"first": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"rest": {
+						"time": "해당 없음",
+						"tokens": "0만",
+						"usd": "1달러 미만"
+					},
+					"check": {
+						"time": "8분",
+						"tokens": "16.3만",
+						"usd": "3달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				},
+				"scratch": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"design": {
+						"time": "8분",
+						"tokens": "16.3만",
+						"usd": "3달러"
+					},
+					"mockup": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"images": {
+						"time": "7분",
+						"tokens": "36.4만",
+						"usd": "7달러"
+					},
+					"first": {
+						"time": "15분",
+						"tokens": "30.6만",
+						"usd": "6달러"
+					},
+					"rest": {
+						"time": "해당 없음",
+						"tokens": "0만",
+						"usd": "1달러 미만"
+					},
+					"check": {
+						"time": "8분",
+						"tokens": "16.3만",
+						"usd": "3달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				}
+			},
+			"basis": {
+				"method": "policy-stage-and-unit-v1",
+				"policyDate": "2026-10-05",
+				"pages": 1,
+				"images": 13,
+				"checkMinutes": 8,
+				"unitMinutes": 12,
+				"unitUsd": 4.45,
+				"pack": {
+					"stages": {
+						"setup": 5,
+						"plan": 5,
+						"design": 5,
+						"mockup": 0,
+						"images": 1,
+						"first": 10,
+						"rest": 0,
+						"check": 8,
+						"export": 2
+					},
+					"totalMinutes": 36,
+					"modelUsd": 13.350000000000001,
+					"generatedTokens": 0
+				},
+				"scratch": {
+					"stages": {
+						"setup": 5,
+						"plan": 10,
+						"design": 8,
+						"mockup": 10,
+						"images": 7,
+						"first": 15,
+						"rest": 0,
+						"check": 8,
+						"export": 2
+					},
+					"totalMinutes": 65,
+					"modelUsd": 24.104166666666668,
+					"generatedTokens": 221000
+				}
+			},
+			"pack": {
+				"time": "36분",
+				"tokens": "73.4만",
+				"cached": "3671.3만",
+				"usd": "13.35"
+			},
+			"scratch": {
+				"time": "1시간 5분",
+				"tokens": "154.7만",
+				"cached": "6650.7만",
+				"usd": "28.12"
+			}
+		}
+	},
+	"recordedProduction": {
+		"schemaVersion": 1,
+		"source": "codex-session/speaker-portfolio/2026-10-12",
+		"scope": "프리셋 제작·보완과 관련 스킬 개선을 포함한 root 활성 턴",
+		"exclusions": [
+			"사용자 대기/턴 사이 공백",
+			"자식 에이전트별 사용량",
+			"이미지 생성 사용량",
+			"실제 청구 비용"
+		],
+		"intervals": [
+			{
+				"ordinal": 2,
+				"startedAt": "2026-10-12T00:29:35.219Z",
+				"startEventSha256": "e5a62e5d41ec617ad37ec731d50c50156575d1f5188c72676a9ac80e861fb98e",
+				"tokenBefore": {
+					"input_tokens": 170197,
+					"cached_input_tokens": 112000,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 403,
+					"reasoning_output_tokens": 0,
+					"total_tokens": 170600
+				},
+				"tokenBeforeEventSha256": "8d9f5af4bb49e6de74d0fd2ffc87c19b21c057b0e1a32289c1f60a37205b490f",
+				"endedAt": "2026-10-12T00:34:04.781Z",
+				"endEventSha256": "545d48d9befb3f8fda5cd78dbaf2ad5f48cfdd5f7c1be9a921593d6d036cc83f",
+				"tokenLast": {
+					"input_tokens": 2230363,
+					"cached_input_tokens": 2006784,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 9007,
+					"reasoning_output_tokens": 978,
+					"total_tokens": 2239370
+				},
+				"tokenLastEventSha256": "4f9f71ef333bdea373dd67c144d7c0304e69baca11a5e56b15b6a9001dd251fb",
+				"wallMs": 269562,
+				"usage": {
+					"input_tokens": 2060166,
+					"cached_input_tokens": 1894784,
+					"output_tokens": 8604
+				}
+			},
+			{
+				"ordinal": 3,
+				"startedAt": "2026-10-12T00:34:38.300Z",
+				"startEventSha256": "ca4cdfc42355d7bbbbbaf24809a9185eef6b0003fd6ef94bfd944fdff33bab70",
+				"tokenBefore": {
+					"input_tokens": 2230363,
+					"cached_input_tokens": 2006784,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 9007,
+					"reasoning_output_tokens": 978,
+					"total_tokens": 2239370
+				},
+				"tokenBeforeEventSha256": "4f9f71ef333bdea373dd67c144d7c0304e69baca11a5e56b15b6a9001dd251fb",
+				"endedAt": "2026-10-12T01:48:55.711Z",
+				"endEventSha256": "121931a9c292571b4b02eea7727a678317ad200a3b343fa9384d8c3e7207fd63",
+				"tokenLast": {
+					"input_tokens": 67054043,
+					"cached_input_tokens": 66427008,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 119637,
+					"reasoning_output_tokens": 54304,
+					"total_tokens": 67173680
+				},
+				"tokenLastEventSha256": "9eb0c7c349e29640c9a827305669f028db7c11d41f9aa7ff3eb18640c3dc9df0",
+				"wallMs": 4457411,
+				"usage": {
+					"input_tokens": 64823680,
+					"cached_input_tokens": 64420224,
+					"output_tokens": 110630
+				}
+			},
+			{
+				"ordinal": 5,
+				"startedAt": "2026-10-12T02:34:05.278Z",
+				"startEventSha256": "adfc301200a06b18cf7e40a6d4ebba63b6146c5e2e258bb2015f8c62a660a967",
+				"tokenBefore": {
+					"input_tokens": 67054043,
+					"cached_input_tokens": 66427008,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 119637,
+					"reasoning_output_tokens": 54304,
+					"total_tokens": 67173680
+				},
+				"tokenBeforeEventSha256": "d86d057493ce055e830ae40ee922b203afb90e77ac73bdbed94ef2183da6c22f",
+				"endedAt": "2026-10-12T02:54:45.063Z",
+				"endEventSha256": "34726be8c0794b618165c5b4afc78342c05f205b075b7192c4283f7778832f24",
+				"tokenLast": {
+					"input_tokens": 69774813,
+					"cached_input_tokens": 68990720,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 140097,
+					"reasoning_output_tokens": 63554,
+					"total_tokens": 69914910
+				},
+				"tokenLastEventSha256": "346fd009d489ad56df5609fe2f171e7f4879c4b278d27c3fc60c8e5f4ed5919d",
+				"wallMs": 1239785,
+				"usage": {
+					"input_tokens": 2720770,
+					"cached_input_tokens": 2563712,
+					"output_tokens": 20460
+				}
+			},
+			{
+				"ordinal": 6,
+				"startedAt": "2026-10-12T03:01:00.279Z",
+				"startEventSha256": "8b81b0c685a37b2add3bc5b565155a2ae3ade8a0ac3cb9ff49275a6c398117ee",
+				"tokenBefore": {
+					"input_tokens": 69774813,
+					"cached_input_tokens": 68990720,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 140097,
+					"reasoning_output_tokens": 63554,
+					"total_tokens": 69914910
+				},
+				"tokenBeforeEventSha256": "346fd009d489ad56df5609fe2f171e7f4879c4b278d27c3fc60c8e5f4ed5919d",
+				"endedAt": "2026-10-12T03:09:15.554Z",
+				"endEventSha256": "6c1409cbcc250c2b50dbedb2db2115cb82d84e1720f2dc4cd24812fd2b8151fb",
+				"tokenLast": {
+					"input_tokens": 71043293,
+					"cached_input_tokens": 70221824,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 149430,
+					"reasoning_output_tokens": 67655,
+					"total_tokens": 71192723
+				},
+				"tokenLastEventSha256": "29aebdabd3b75c326cc3e8fd9f0cfe11a01b957bfb99211e253f5aec91a38f0a",
+				"wallMs": 495275,
+				"usage": {
+					"input_tokens": 1268480,
+					"cached_input_tokens": 1231104,
+					"output_tokens": 9333
+				}
+			},
+			{
+				"ordinal": 7,
+				"startedAt": "2026-10-12T03:29:27.055Z",
+				"startEventSha256": "890190be705c34c97457205de2840ec248880663dee424e777f3de8eda954d18",
+				"tokenBefore": {
+					"input_tokens": 71043293,
+					"cached_input_tokens": 70221824,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 149430,
+					"reasoning_output_tokens": 67655,
+					"total_tokens": 71192723
+				},
+				"tokenBeforeEventSha256": "29aebdabd3b75c326cc3e8fd9f0cfe11a01b957bfb99211e253f5aec91a38f0a",
+				"endedAt": "2026-10-12T06:51:06.299Z",
+				"endEventSha256": "b7a906842282491e7adece41859a602f4a3aadee9d693f1383a83f0467a6aa4f",
+				"tokenLast": {
+					"input_tokens": 120597720,
+					"cached_input_tokens": 119152896,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 318906,
+					"reasoning_output_tokens": 164655,
+					"total_tokens": 120916626
+				},
+				"tokenLastEventSha256": "e3956fbbd7079a8b1b0ea94dcaaef2481a5981e41dd8d4c8869439093a4e60e1",
+				"wallMs": 12099244,
+				"usage": {
+					"input_tokens": 49554427,
+					"cached_input_tokens": 48931072,
+					"output_tokens": 169476
+				}
+			},
+			{
+				"ordinal": 8,
+				"startedAt": "2026-10-12T07:11:24.043Z",
+				"startEventSha256": "6f3ad9258e02f02adc20624c88a21b232fe47e4842ebcb34cede0f2773b51cdc",
+				"tokenBefore": {
+					"input_tokens": 120597720,
+					"cached_input_tokens": 119152896,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 318906,
+					"reasoning_output_tokens": 164655,
+					"total_tokens": 120916626
+				},
+				"tokenBeforeEventSha256": "e3956fbbd7079a8b1b0ea94dcaaef2481a5981e41dd8d4c8869439093a4e60e1",
+				"endedAt": "2026-10-12T11:48:55.075Z",
+				"endEventSha256": "06bc6a9097cc6dede2061384f02e8b722a3a8e33dfe16329e29c6e21be02aa57",
+				"tokenLast": {
+					"input_tokens": 183320405,
+					"cached_input_tokens": 180336640,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 536313,
+					"reasoning_output_tokens": 314417,
+					"total_tokens": 183856718
+				},
+				"tokenLastEventSha256": "e9bf0b3c6e890a70570f3f8e116684348e748f59dc3391e9f7ad8d2960eb5d4f",
+				"wallMs": 16651032,
+				"usage": {
+					"input_tokens": 62722685,
+					"cached_input_tokens": 61183744,
+					"output_tokens": 217407
+				}
+			},
+			{
+				"ordinal": 9,
+				"startedAt": "2026-10-12T12:10:53.672Z",
+				"startEventSha256": "841bb1e59c934bda5e2efe8ae12199fb692883f7ca10a6689ee237aff0e174aa",
+				"tokenBefore": {
+					"input_tokens": 183320405,
+					"cached_input_tokens": 180336640,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 536313,
+					"reasoning_output_tokens": 314417,
+					"total_tokens": 183856718
+				},
+				"tokenBeforeEventSha256": "e9bf0b3c6e890a70570f3f8e116684348e748f59dc3391e9f7ad8d2960eb5d4f",
+				"endedAt": "2026-10-12T13:20:31.234Z",
+				"endEventSha256": "4bdb38ca7b5950cef50d9401eecb011551200ce851f561a0405c52becabd075e",
+				"tokenLast": {
+					"input_tokens": 205536369,
+					"cached_input_tokens": 202245248,
+					"cache_write_input_tokens": 0,
+					"output_tokens": 594844,
+					"reasoning_output_tokens": 342358,
+					"total_tokens": 206131213
+				},
+				"tokenLastEventSha256": "1492f2c2e68625ef0a8fed084b7793705fe8b67f3d8db201cd02ac5258e1ff49",
+				"wallMs": 4177562,
+				"usage": {
+					"input_tokens": 22215964,
+					"cached_input_tokens": 21908608,
+					"output_tokens": 58531
+				}
+			}
+		],
+		"wallMs": 39389871,
+		"usage": {
+			"input_tokens": 205366172,
+			"cached_input_tokens": 202133248,
+			"output_tokens": 594441
+		},
+		"nonCachedTokens": 3827365,
+		"cachedTotalTokens": 205960613
+	}
+}
