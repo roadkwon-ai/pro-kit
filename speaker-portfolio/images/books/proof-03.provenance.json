@@ -1,0 +1,29 @@
+{
+  "id": "proof-03",
+  "title": "일하는 마음",
+  "author": "서윤 지음",
+  "generator": "native image_gen",
+  "model": "unknown",
+  "operation": "edit",
+  "prompt": "Edit this existing fictional book front cover, replacing text only and preserving all original illustration/artwork, palette, paper texture, lighting, layout and flat portrait 2:3 aspect ratio. Exact new main Korean title: \"일하는 마음\". Exact small author line: \"서윤 지음\". Erase previous title and substitute the new title in beautiful Korean typography matching the original style with the same prominence, balanced line wrapping and generous safe margins. These two strings must be the only text. No actual author name, no logo, no watermark. Preserve the nuanced rich professionally finished artwork without simplifying it.",
+  "source": "existing AI-generated fictional book cover; title corrected to Korean content canonical value",
+  "sourceImage": "proof-03.webp",
+  "inputSha256": "8948560b041af891e0740449d812688e343c5e5c71d8b9efc80c10f8b97614ae",
+  "generatedPngSha256": "145e822288708ff5e65dd13c82649a319ca0eb829b01b98fef4f9cfe3f9bd111",
+  "generatedPngBytes": 2915341,
+  "image": "proof-03.webp",
+  "sha256": "4770340a4e6b0e8125ee47085f22757edc1ced1d90b10dc61237aaf6148dcde0",
+  "bytes": 385938,
+  "width": 1024,
+  "height": 1536,
+  "generated": true,
+  "fictional": true,
+  "review": {
+    "visualInspected": true,
+    "koreanTitleMatches": true,
+    "authorMatches": true,
+    "oldTitleRemoved": true,
+    "unclipped": true,
+    "artworkPreserved": true
+  }
+}

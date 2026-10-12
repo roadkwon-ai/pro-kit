@@ -1,0 +1,29 @@
+{
+  "id": "book-02",
+  "title": "작은 질문",
+  "author": "서윤 지음",
+  "generator": "native image_gen",
+  "model": "unknown",
+  "operation": "edit",
+  "prompt": "Edit this existing fictional book cover while preserving creamy ivory and cobalt blue/lime palette, lower-half photographic collage of laptop, cat, potted plant and desk, visual texture and flat 2:3 portrait. Replace ALL existing title text and giant AI letters with exact title \"작은 질문\", large strong blue Korean typography in upper half. Author exactly \"서윤 지음\". Remove ALL other text from cover including old slogans, handwriting, laptop, book spines, sticky notes, paper. Only readable text in whole image should be \"작은 질문\" and \"서윤 지음\". Preserve elegant commercially finished composition and rich artwork; no brands or actual author name.",
+  "source": "existing AI-generated fictional book cover; title corrected to Korean content canonical value",
+  "sourceImage": "book-02.webp",
+  "inputSha256": "e0b35421538428b63a0cf7496beb12e481703aee23b54c29558c98745639cfa8",
+  "generatedPngSha256": "61b2354c0edfa7e9c43a6b17f0e41ed17e7efd329947d6f603132e3c8793b07e",
+  "generatedPngBytes": 1648137,
+  "image": "book-02.webp",
+  "sha256": "9adbaad1fa4050ddc63d7b9e1096a061522cae93672f7f48ab21cdb51a4a55c2",
+  "bytes": 119584,
+  "width": 1024,
+  "height": 1536,
+  "generated": true,
+  "fictional": true,
+  "review": {
+    "visualInspected": true,
+    "koreanTitleMatches": true,
+    "authorMatches": true,
+    "oldTitleRemoved": true,
+    "unclipped": true,
+    "artworkPreserved": true
+  }
+}

@@ -36,7 +36,7 @@ claude                                                   # 신뢰 질문에 동�
 | 배포 준비 (처음 한 번) | Vercel 배포 준비해줘 |
 | 배포 | 운영에 배포해줘 · develop에 배포해줘 |
 
-스킬 이름을 몰라도 돼요. 요청에 맞는 스킬을 에이전트가 스스로 불러요([prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)).
+스킬 이름을 몰라도 돼요. 요청에 맞는 스킬을 에이전트가 스스로 불러요([prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)).
 
 ## 자세히
 

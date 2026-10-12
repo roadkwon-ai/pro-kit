@@ -1,0 +1,29 @@
+{
+  "id": "book-03",
+  "title": "장면의 목록",
+  "author": "서윤 지음",
+  "generator": "native image_gen",
+  "model": "unknown",
+  "operation": "edit",
+  "prompt": "Edit this existing fictional book cover. Preserve its original palette, illustration/photo artwork, texture, layout balance and flat 2:3 portrait shape. Replace current main Korean title and any giant AI letters with this EXACT new Korean title: \"장면의 목록\". Use beautiful Korean typography matching the original style, large and legible, not clipped. Author must read exactly \"서윤 지음\". Remove ALL other existing textual slogans/captions/English/title words: the only readable words anywhere must be \"장면의 목록\" and \"서윤 지음\". Keep the rich finished book cover artwork, no logo/publisher/watermark, no real person's name.",
+  "source": "existing AI-generated fictional book cover; title corrected to Korean content canonical value",
+  "sourceImage": "book-03.webp",
+  "inputSha256": "935ccfaeecb79cdac129301b60d8a1785a2b6579ba8227b559ffde2a8a8f223d",
+  "generatedPngSha256": "e079e69c2cf9a57330b41192e7de9e537ecf8a08cf1776d3283fdc5cb36e5b13",
+  "generatedPngBytes": 1533771,
+  "image": "book-03.webp",
+  "sha256": "88169cbe6faba0f9a7b95b951a7d7c2384939685a6798f498a29cc86a682b437",
+  "bytes": 95794,
+  "width": 1024,
+  "height": 1536,
+  "generated": true,
+  "fictional": true,
+  "review": {
+    "visualInspected": true,
+    "koreanTitleMatches": true,
+    "authorMatches": true,
+    "oldTitleRemoved": true,
+    "unclipped": true,
+    "artworkPreserved": true
+  }
+}

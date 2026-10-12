@@ -1,8 +1,8 @@
-import { defaultDesignOptions, designFonts, designPalettes, } from "./preset-design.js?v=b8c205c1ceaee5d0";
-import { loadDesignFonts } from "./preset-font-loader.js?v=b8c205c1ceaee5d0";
-import { bindPresetPreview, PRESET_PREVIEW_VERSION, } from "./preset-preview.js?v=b8c205c1ceaee5d0";
-import { createPresetPreviewCss, getPresetPreviewProfile, } from "./preset-preview-profiles.js?v=b8c205c1ceaee5d0";
-import { PAGES_URL, SITE_URLS } from "./site.js?v=b8c205c1ceaee5d0";
+import { defaultDesignOptions, designFonts, designPalettes, } from "./preset-design.js?v=acdfa9ef56daaf3f";
+import { loadDesignFonts } from "./preset-font-loader.js?v=acdfa9ef56daaf3f";
+import { bindPresetPreview, PRESET_PREVIEW_VERSION, } from "./preset-preview.js?v=acdfa9ef56daaf3f";
+import { createPresetPreviewCss, getPresetPreviewProfile, } from "./preset-preview-profiles.js?v=acdfa9ef56daaf3f";
+import { PAGES_URL, SITE_URLS } from "./site.js?v=acdfa9ef56daaf3f";
 export const previewAllowedParentOrigins = [
     ...Object.values(SITE_URLS).map((url) => new URL(url).origin),
     new URL(PAGES_URL).origin,

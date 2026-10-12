@@ -1,4 +1,4 @@
-# 프리셋 등록과 검수
+# 프리셋 제작·등록과 검수
 https://prokit-web.vercel.app/docs/design/preset-publication/
 
 > 한눈에: 만든 프리셋을 프로킷 웹에 반영할 때 공통 카드와 설정을 재사용해요. 등록 검사와 전문 스킬이 빠진 자료를 확인하고, 로컬 준비와 운영 게시를 구분해요.
@@ -7,13 +7,21 @@ https://prokit-web.vercel.app/docs/design/preset-publication/
 
 카드·상세 화면·프리뷰 설정은 `pro-kit-web`의 공통 부품을 사용해요. 서체·팔레트마다 새 메뉴를 만들거나 프리셋마다 게시 스크립트를 복제하지 않아요. 제품 내부의 부품을 다른 프리셋과 묶을지는 [UI/UX 흐름](https://prokit-web.vercel.app/docs/design/ui-flow/)과 해당 프로젝트의 재사용 설계를 따라 판단해요.
 
-프리셋을 만들 때의 모드·언어·생성 이미지·화면 검수는 [화면만 프로젝트](https://prokit-web.vercel.app/docs/design/screen-only/)를 따라요. 완성한 프로젝트의 설정 지원을 확인한 뒤 카탈로그에 표시해요.
+원본 조사와 COPY 제작은 `pro-kit-preset-skills`의 `prokit-preset-create`에서 시작해요. `prokit-preset-research`가 실제 브라우저에서 구성·자산·모션을 조사하고, 독립 검수자가 목록 밖 누락도 확인해요. 구현 뒤에는 `prokit-preset-verify`가 원본 충실도를 기능·접근성 검사와 따로 판정해요.
+
+완성팩으로 사용자 앱을 만들 때는 pro-kit의 `prokit-pack-use`를 따라요. 팩을 받아 무결성을 확인하고 복원 계획을 검사한 뒤 실제로 복원해요. 개인화와 API·DB 연결 뒤에도 완성 프리셋의 화면과 모션을 기준으로 비교하며 원본 사이트를 다시 조사하지 않아요.
 
 ## 전문 스킬로 반영해요
 
-프로킷을 관리하는 프로젝트에 `prokit-preset-publish`를 설치해요. 이 스킬은 프로젝트·팩·카탈로그·문서의 반영 범위를 정하고 기존 수행자에게 맡겨요. 문서는 `prokit-docs`와 `prokit-writing`, 제품 수정은 그 프로젝트의 스킬이 맡아요.
+프로킷을 관리하는 프로젝트에 `prokit-preset-publish`를 설치해요. 이 스킬은 프로젝트·팩·카탈로그·문서의 반영 범위를 정하고 기존 수행자에게 맡겨요. 제품의 기술 구현은 해당 프로젝트 스킬을 사용하고, COPY 기준과 최종 충실도 판정은 제작 스킬이 맡아요. 팩 안내·맞춤화·출처·교재는 pro-kit-docs-skills의 `prokit-docs`와 `prokit-writing`이 검증 자료를 받아 작성해요.
 
-시스템이 바뀌었거나 스킬의 기준선과 현재 코드의 해시가 다르면 `prokit-preset-maintain`을 사용해요. 바뀐 계약을 쓰는 곳만 검사하고 스킬 참조를 갱신해요. 스킬 정본은 별도 로컬 저장소 `pro-kit-preset-skills`이며 일반 사용자 프로젝트의 템플릿에는 설치하지 않아요.
+시스템이 바뀌었거나 스킬의 기준선과 현재 코드의 해시가 다르면 `prokit-preset-maintain`을 사용해요. 바뀐 계약을 쓰는 곳만 검사하고 스킬 참조를 갱신해요. 제작·검수·게시 스킬의 정본은 별도 로컬 저장소 `pro-kit-preset-skills`예요. 관리 환경과 지정된 제작 작업공간에만 설치하며, 일반 사용자 템플릿에는 넣지 않아요.
+
+## 팩과 문서를 인계해요
+
+제품 검수 뒤 실행 소스·자산의 fingerprint, 실제 지원 기능, 수정 가능 범위, 검증 명령과 미확인 항목을 문서 담당에게 넘겨요. 문서의 기술 사실을 확인한 뒤 팩을 묶고, 별도 환경에서 안내대로 복원해요. 최종 ZIP 해시는 팩 밖 인덱스에 기록해요.
+
+팩을 받은 것과 앱에 적용한 것은 달라요. `apply-pack.mjs --check`는 복원 계획과 충돌을 확인하고, 실제 적용 뒤 설치·빌드·화면 검사를 수행해요. 기존 팩에 비교 자료가 없으면 그 부분은 미확인으로 남겨요.
 
 ## 기록된 범위만 표시해요
 
@@ -32,5 +40,6 @@ https://prokit-web.vercel.app/docs/design/preset-publication/
 ## 관련 문서
 
 - [위임과 개발 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)
+- [에이전트 역할](https://prokit-web.vercel.app/docs/concepts/agent-roles/)
 - [스킬 설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)
 - [슬라이드랩 제작과 관측 기록](https://prokit-web.vercel.app/tutorials/samples/slidelab/)

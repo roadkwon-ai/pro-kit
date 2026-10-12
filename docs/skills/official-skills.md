@@ -124,7 +124,7 @@ pie showData title 측정 때 neon 공식 도메인 스킬 26개가 연결된 �
 
 ## 관련 문서
 
-- [prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
+- [prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
 - [선택 스킬 묶음](https://prokit-web.vercel.app/docs/skills/optional-bundles/)
 - [설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)
 - [템플릿 고르기](https://prokit-web.vercel.app/docs/templates/choose/)

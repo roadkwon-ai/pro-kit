@@ -1,0 +1,30 @@
+{
+  "id": "class-portrait",
+  "provider": "native image_gen.imagegen",
+  "model": "unknown (not exposed)",
+  "prompt": "Use case: identity-preserve. Asset: photorealistic course website hero cutout, vertical 3:4. Input image is identity anchor for fictional Korean adult woman Seoyoon. Preserve exactly her face, warm smile, short dark bob haircut and proportions. Change clothing to plain black fine-knit long sleeve top. Seated upright, waist and upper thighs visible, holding an open cream notebook on lap and a pen naturally in right hand, looking toward camera. Soft flattering natural studio light, detailed skin and fabric, professional editorial photography. Entire hair and shoulders inside frame, no chair back blocking silhouette. Genuine transparent alpha background, no floor/background, no text/logos/watermarks. Do not copy a real public figure.",
+  "fictional": true,
+  "source": "exec-f8dc5a8a-3516-45a9-87fe-ec641fa1929e.png",
+  "sourceSha256": "853a811d01877573aee7071c5bf8cba26fab7f6c816622e0fb023bc58a1ea227",
+  "output": "class-portrait.png",
+  "outputSha256": "853a811d01877573aee7071c5bf8cba26fab7f6c816622e0fb023bc58a1ea227",
+  "width": 1086,
+  "height": 1448,
+  "format": "PNG",
+  "generationCount": 1,
+  "reusedGeneration": false,
+  "sourceIdentityImage": "portrait.webp",
+  "sourceIdentitySha256": "3451790c5646da6d6d16526fe0bb7dcfa193178350099d3cf489fcd490f4d9a7",
+  "visualReview": {
+    "viewed": true,
+    "subjectAndComposition": "pass",
+    "titleSpelling": "not-applicable",
+    "crop": "full asset fits intended ratio; browser integration crop requires parent QA"
+  },
+  "referenceRoleSource": "https://class.yjkim.kr/",
+  "rightsNote": "새로 생성한 가상 서윤 인물 또는 가상 책 표지. 원본 저자 사진·실제 표지 파일은 재사용하지 않음.",
+  "alphaExtrema": [
+    0,
+    255
+  ]
+}

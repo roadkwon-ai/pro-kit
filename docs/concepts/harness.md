@@ -10,7 +10,7 @@ https://prokit-web.vercel.app/docs/concepts/harness/
 | 부분 | 파일 | 하는 일 |
 |---|---|---|
 | 규칙 문서 | `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/domain/project.md` | 에이전트가 시작할 때 읽는 개발 원칙과 공통 규칙, 용어집, 프로젝트 소개. `CLAUDE.md`는 `@AGENTS.md`로 같은 지침을 읽어요 |
-| 스킬 | `.agents/skills/prokit-*` 8개와 공식 스킬 | 분야마다 일하는 법을 알려 줘요. 대조표의 행마다 그 단계에서 읽을 공식 스킬이 정해져 있어요 |
+| 스킬 | `.agents/skills/prokit-*` 9개와 공식 스킬 | 분야마다 일하는 법을 알려 줘요. 대조표의 행마다 그 단계에서 읽을 공식 스킬이 정해져 있어요 |
 | 역할 나누기 | `.claude/agents/prokit-implementer.md`, `specialist-reviewer.md`, `prokit-reviewer.md` | 코디네이터가 수행자와 읽기 전용 리뷰를 나눠 맡겨요. `prokit-reviewer(...)` 통합 리뷰 행은 최종 리뷰어만 채울 수 있어요 |
 | 대조표와 audit | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 작업을 케이스로 나누고 케이스별 대조표를 연 뒤 빈칸이 없는지 검사해요 |
 | 자동 검사 | `.dev-cycle.json`의 `commands`, `pnpm skills:check`, `pnpm agents:check`, `pnpm dev-cycle secrets`, `pnpm vercel:deploy … --check` | 타입, 린트, 빌드, 테스트, 스킬과 에이전트 상태, 비밀값, 배포 준비를 명령으로 확인해요. 실행한 결과가 곧 증거예요 |
@@ -54,6 +54,6 @@ flowchart TD
 - [dev-cycle 라운드](https://prokit-web.vercel.app/docs/concepts/dev-cycle/)
 - [위임 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/)
 - [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)
-- [prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
+- [prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
 - [공식 스킬과 연결](https://prokit-web.vercel.app/docs/skills/official-skills/)
 - [템플릿이 더하는 것](https://prokit-web.vercel.app/docs/templates/what-it-adds/)

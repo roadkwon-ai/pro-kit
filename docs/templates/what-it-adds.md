@@ -16,7 +16,7 @@ flowchart LR
   subgraph TPL["템플릿이 설치"]
     direction TB
     T1["규칙 문서<br/>AGENTS.md · CLAUDE.md · GLOSSARY.md"]
-    T2["프로젝트 스킬 prokit-* 8개<br/>에이전트 3개"]
+    T2["프로젝트 스킬 prokit-* 9개<br/>에이전트 3개"]
     T3["dev-cycle<br/>케이스 판정 · 대조표 · audit"]
     T4["내부 스킬 자동 설치<br/>skills.manifest.json<br/>선택 묶음은 --optional"]
     T5["Vercel 배포와 릴리스<br/>pnpm vercel:deploy · pnpm release"]
@@ -27,7 +27,7 @@ flowchart LR
 
 | 구성 | 내용 |
 |---|---|
-| 프로젝트 스킬 8개 | `prokit-dev-cycle`(작업 진행), `prokit-web`(라우팅·RSC·캐시), `prokit-ui`(화면·UX), `prokit-api`(oRPC·인증·데이터 주인 확인), `prokit-db`(스키마·마이그레이션), `prokit-verify`(검사·증거), `prokit-deploy`(Vercel 배포·릴리스), `prokit-skills-update`(외부 스킬 업데이트) |
+| 프로젝트 스킬 9개 | `prokit-dev-cycle`(작업 진행), `prokit-web`(라우팅·RSC·캐시), `prokit-ui`(화면·UX), `prokit-api`(oRPC·인증·데이터 주인 확인), `prokit-db`(스키마·마이그레이션), `prokit-verify`(검사·증거), `prokit-deploy`(Vercel 배포·릴리스), `prokit-skills-update`(외부 스킬 업데이트) |
 | 에이전트 3개 | `prokit-implementer`(범위를 받은 수행), `specialist-reviewer`(부족한 전문 계약만 읽기 전용 검토), `prokit-reviewer`(증거·통합 수용을 보는 최종 읽기 전용 게이트). Prokit은 외부 전문 수행자에게 일을 맡기고 범위·증거·재지시를 관리해요. `.claude/agents`가 원본이고, `.codex/agents`(Codex)와 `.agents/agents`(Antigravity)는 이 원본에서 자동으로 만들어요 |
 | dev-cycle | 작업을 케이스(A\~F·H)로 나눠요. 케이스별 대조표의 모든 행에 증거를 채워야 라운드가 끝나요(`pnpm dev-cycle …`) |
 | 문서 골격 | `AGENTS.md`(맨 앞에 개발 원칙: 계획, 서브에이전트, 교훈 기록, 완료 전 확인. 이어서 공통 규칙), `CLAUDE.md`(`@AGENTS.md`로 같은 지침을 읽어요), `GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md`, `docs/dev-workflow.md` |
@@ -69,5 +69,5 @@ DB 옵션만 템플릿마다 달라요(neon은 `--db-setup docker`, supabase는 
 - [템플릿 고르기](https://prokit-web.vercel.app/docs/templates/choose/)
 - [앱 구조](https://prokit-web.vercel.app/docs/templates/app-structure/)
 - [설치기와 옵션](https://prokit-web.vercel.app/docs/templates/installer/)
-- [prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
+- [prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
 - [하네스 엔지니어링](https://prokit-web.vercel.app/docs/concepts/harness/)

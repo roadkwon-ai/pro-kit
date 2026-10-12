@@ -1,0 +1,12 @@
+{
+	"generated": true,
+	"generator": "image_gen.imagegen",
+	"model": "Not exposed by built-in image_gen tool",
+	"prompt": "Use case: photorealistic-natural\nAsset type: square speaker-portfolio hero portrait, 1024x1024 pixels.\nPrimary request: An editorial real photograph of one fictional Korean female creative educator in her early 30s, short dark bob, relaxed charcoal blazer and white shirt, holding a coral red notebook against her torso, with a warm confident natural smile.\nScene/backdrop: warm light-gray seamless studio backdrop.\nComposition/framing: square image, waist up, centered subject with both hands visible and anatomically natural, comfortable space above her head, suitable for a small square hero using object-position center 20%.\nLighting/mood: soft daylight, warm and approachable.\nConstraints: fictional person with no real person likeness. No text, logos, brands, or watermark. One photo only, no collage, no additional variants.",
+	"path": "images/portrait.webp",
+	"sha256": "3451790c5646da6d6d16526fe0bb7dcfa193178350099d3cf489fcd490f4d9a7",
+	"bytes": 63408,
+	"width": 1024,
+	"height": 1024,
+	"notice": "AI로 생성한 가상 인물의 예시 사진이에요."
+}

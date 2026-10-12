@@ -1,0 +1,29 @@
+{
+  "id": "proof-04",
+  "title": "기록의 지도",
+  "author": "서윤 지음",
+  "generator": "native image_gen",
+  "model": "unknown",
+  "operation": "edit",
+  "prompt": "Edit this existing fictional book front cover, replacing text only and preserving all original illustration/artwork, palette, paper texture, lighting, layout and flat portrait 2:3 aspect ratio. Exact new main Korean title: \"기록의 지도\". Exact small author line: \"서윤 지음\". Erase previous title and substitute the new title in beautiful Korean typography matching the original style with the same prominence, balanced line wrapping and generous safe margins. These two strings must be the only text. No actual author name, no logo, no watermark. Preserve the nuanced rich professionally finished artwork without simplifying it.",
+  "source": "existing AI-generated fictional book cover; title corrected to Korean content canonical value",
+  "sourceImage": "proof-04.webp",
+  "inputSha256": "1709fed7669a55820e7cb89444754fbd1abd32f61cbb0f37912843a5271e36a4",
+  "generatedPngSha256": "2144e041f1aba4c2f62972d4700020481167e51212d7f9dad480c982b43b7f83",
+  "generatedPngBytes": 2245908,
+  "image": "proof-04.webp",
+  "sha256": "14fe5f784e9b2f2ddcf31080252888cf53e1f24d4489877b085079ba45216af6",
+  "bytes": 249582,
+  "width": 1024,
+  "height": 1536,
+  "generated": true,
+  "fictional": true,
+  "review": {
+    "visualInspected": true,
+    "koreanTitleMatches": true,
+    "authorMatches": true,
+    "oldTitleRemoved": true,
+    "unclipped": true,
+    "artworkPreserved": true
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "proof-01",
+  "title": "오늘의 작은 시작",
+  "author": "서윤 지음",
+  "generator": "native image_gen",
+  "model": "unknown",
+  "operation": "edit",
+  "prompt": "Edit this existing fictional book front cover, replacing text only and preserving all original illustration/artwork, palette, paper texture, lighting, layout and flat portrait 2:3 aspect ratio. Exact new main Korean title: \"오늘의 작은 시작\". Exact small author line: \"서윤 지음\". Erase previous title and substitute the new title in beautiful Korean typography matching the original style with the same prominence, balanced line wrapping and generous safe margins. These two strings must be the only text. No actual author name, no logo, no watermark. Preserve the nuanced rich professionally finished artwork without simplifying it.",
+  "source": "existing AI-generated fictional book cover; title corrected to Korean content canonical value",
+  "sourceImage": "proof-01.webp",
+  "inputSha256": "f214207e27abdd3d665476a9a72ec2374fc80d9134a841080f2585e8cd679045",
+  "generatedPngSha256": "4ee9507368ec84cfd3c9dc8865020617e292bb648e92aaaf66cf7fb6aad4a6d6",
+  "generatedPngBytes": 2256281,
+  "image": "proof-01.webp",
+  "sha256": "c669c9c36841190f1a21cb0c468a6b9a7704f149ed2dd7ef2187eed7113991bf",
+  "bytes": 189920,
+  "width": 1024,
+  "height": 1536,
+  "generated": true,
+  "fictional": true,
+  "review": {
+    "visualInspected": true,
+    "koreanTitleMatches": true,
+    "authorMatches": true,
+    "oldTitleRemoved": true,
+    "unclipped": true,
+    "artworkPreserved": true
+  }
+}

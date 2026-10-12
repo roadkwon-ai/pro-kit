@@ -1,0 +1,29 @@
+{
+  "id": "proof-02",
+  "title": "쓰는 사람의 오후",
+  "author": "서윤 지음",
+  "generator": "native image_gen",
+  "model": "unknown",
+  "operation": "edit",
+  "prompt": "Edit this existing fictional book front cover, replacing text only and preserving all original illustration/artwork, palette, paper texture, lighting, layout and flat portrait 2:3 aspect ratio. Exact new main Korean title: \"쓰는 사람의 오후\". Exact small author line: \"서윤 지음\". Erase previous title and substitute the new title in beautiful Korean typography matching the original style with the same prominence, balanced line wrapping and generous safe margins. These two strings must be the only text. No actual author name, no logo, no watermark. Preserve the nuanced rich professionally finished artwork without simplifying it.",
+  "source": "existing AI-generated fictional book cover; title corrected to Korean content canonical value",
+  "sourceImage": "proof-02.webp",
+  "inputSha256": "456bb189e124b44070eb555f5bbfec6534d8383c33fb02eb705e259198d5cd7a",
+  "generatedPngSha256": "14281406505806e6db2a21ba79f348e5eaededa611d50746c7c4066dad9ea909",
+  "generatedPngBytes": 2313988,
+  "image": "proof-02.webp",
+  "sha256": "484bbfb54806e4eb96b5eef4aae8970e7a673d0dfdf691ac270936e2cd50bd28",
+  "bytes": 241786,
+  "width": 1024,
+  "height": 1536,
+  "generated": true,
+  "fictional": true,
+  "review": {
+    "visualInspected": true,
+    "koreanTitleMatches": true,
+    "authorMatches": true,
+    "oldTitleRemoved": true,
+    "unclipped": true,
+    "artworkPreserved": true
+  }
+}

@@ -17,7 +17,7 @@ pro-kit 저장소는 새 프로젝트를 만들어 주는 생성기예요. 안�
 
 템플릿은 [Better-T-Stack](https://prokit-web.vercel.app/docs/templates/what-it-adds/)으로 만든 Next.js 풀스택 앱 위에 설치돼요. 설치하면 앱 뼈대에 다음이 더해져요.
 
-- 프로젝트 전용 스킬 8개
+- 프로젝트 전용 스킬 9개
 - 외부 전문 스킬을 연결하는 수행 에이전트와 독립 리뷰 에이전트
 - 빌드 캐시, 설치 패키지, Python 실행환경, 관리 임시 폴더를 감시하는 자원 보호 도구
 - 작업마다 확인 결과를 남기는 dev-cycle
@@ -73,7 +73,7 @@ projects/
 
 - **지원하는 에이전트**: Claude Code, Codex, Antigravity, Grok Build예요. 도구마다 읽는 파일과 여는 명령은 [지원하는 에이전트](https://prokit-web.vercel.app/docs/start/supported-agents/), Claude Code와 Codex의 조작 차이는 [Claude Code와 Codex](https://prokit-web.vercel.app/tutorials/reference/claude-code-and-codex/)에 있어요.
 - **스킬이 결과를 바꾸나요**: 같은 요청을 스킬이 있을 때와 없을 때로 나눠 비교했어요. 규칙을 지킨 비율이 작업 진행(`prokit-dev-cycle`)은 27%에서 93%로, 화면 설계(`prokit-ui`)는 12%에서 100%로 올랐어요. 골라 둔 `DESIGN.md`가 있으면 목표 디자인과 팔레트가 맞는 비율이 71%에서 99%로 올랐어요. 측정 방법은 [검증 결과](https://prokit-web.vercel.app/docs/reference/verification/)에 있어요.
-- **만든 것**: 프로킷으로 만든 프리셋 12개(랜딩페이지 5개, 앱 화면 5개, 클론 코딩 2개)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 볼 수 있어요.
+- **만든 것**: 프로킷으로 만든 프리셋 13개(랜딩페이지 6개, 앱 화면 5개, 클론 코딩 2개)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 볼 수 있어요.
 - **라이선스**: [MIT](https://github.com/roadkwon-ai/pro-kit/blob/main/LICENSE)예요. 상업 이용·유료 고객 개발·수정·재판매를 허용하며 저작권 표시와 허가문을 보존해야 해요. 사이트의 홍보용 제작 표시는 선택 사항이고, [외부 구성 요소](https://github.com/roadkwon-ai/pro-kit/blob/main/THIRD_PARTY_NOTICES.md)에는 원래 조건을 적용해요.
 
 ## 관련 문서

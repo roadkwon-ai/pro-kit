@@ -1,0 +1,29 @@
+{
+  "id": "book-04",
+  "title": "곁의 대화",
+  "author": "서윤 지음",
+  "generator": "native image_gen",
+  "model": "unknown",
+  "operation": "edit",
+  "prompt": "Edit this existing fictional book cover. Preserve its original palette, illustration/photo artwork, texture, layout balance and flat 2:3 portrait shape. Replace current main Korean title and any giant AI letters with this EXACT new Korean title: \"곁의 대화\". Use beautiful Korean typography matching the original style, large and legible, not clipped. Author must read exactly \"서윤 지음\". Remove ALL other existing textual slogans/captions/English/title words: the only readable words anywhere must be \"곁의 대화\" and \"서윤 지음\". Keep the rich finished book cover artwork, no logo/publisher/watermark, no real person's name.",
+  "source": "existing AI-generated fictional book cover; title corrected to Korean content canonical value",
+  "sourceImage": "book-04.webp",
+  "inputSha256": "342344072fa335e33bc4218a1804297cda8afa8723b6d9fd097c1c019ecaf38a",
+  "generatedPngSha256": "b994cf29224ed8cdd49cf305566161f4fc12b3bbcf192e88f77d7af9a834021e",
+  "generatedPngBytes": 1929826,
+  "image": "book-04.webp",
+  "sha256": "4ae1eaba29d71b0067506c77fb7ea0dd4346081bebdfb9e3fd27426cd39c16e1",
+  "bytes": 164572,
+  "width": 1024,
+  "height": 1536,
+  "generated": true,
+  "fictional": true,
+  "review": {
+    "visualInspected": true,
+    "koreanTitleMatches": true,
+    "authorMatches": true,
+    "oldTitleRemoved": true,
+    "unclipped": true,
+    "artworkPreserved": true
+  }
+}

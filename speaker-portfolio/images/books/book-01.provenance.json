@@ -1,0 +1,29 @@
+{
+  "id": "book-01",
+  "title": "일의 문장",
+  "author": "서윤 지음",
+  "generator": "native image_gen",
+  "model": "unknown",
+  "operation": "edit",
+  "prompt": "Edit this existing fictional book cover. Preserve its vivid orange and black palette, bottom technical illustration, visual density and editorial style, flat portrait 2:3 edge-to-edge composition. Replace ALL current title lettering including the giant AI with the single exact Korean title \"일의 문장\" in large beautifully balanced bold black Korean typography. The title must read exactly 일의 문장 with no extra title words. Author line exactly \"서윤 지음\". Remove ALL other existing text: old title, slogans, side captions, footer English and badge text. Rebalance typography professionally to fit, maintaining the artwork and composition. No real author name, no publisher logo. Result should be a finished premium book cover with ONLY these two text strings, not a blank placeholder.",
+  "source": "existing AI-generated fictional book cover; title corrected to Korean content canonical value",
+  "sourceImage": "book-01.webp",
+  "inputSha256": "4d8524ea82974f416265e141f56fd8eaffde1c545ff5bccfa7d347f8271a5232",
+  "generatedPngSha256": "fc188bbe61ff609a8810daf60396b7c4260d702748d9b38038ad88c2116eb60a",
+  "generatedPngBytes": 1323639,
+  "image": "book-01.webp",
+  "sha256": "2de57530cff8330cc25784cf05f78057cd22e710f8b6a698ce17958be075c8b7",
+  "bytes": 80794,
+  "width": 1024,
+  "height": 1536,
+  "generated": true,
+  "fictional": true,
+  "review": {
+    "visualInspected": true,
+    "koreanTitleMatches": true,
+    "authorMatches": true,
+    "oldTitleRemoved": true,
+    "unclipped": true,
+    "artworkPreserved": true
+  }
+}

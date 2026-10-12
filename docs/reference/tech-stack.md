@@ -26,7 +26,7 @@ https://prokit-web.vercel.app/docs/reference/tech-stack/
 | 무엇 | 내용 | 자세히 |
 |---|---|---|
 | AI 에이전트 | Claude Code, Codex, Antigravity, Grok Build 중 하나 | [지원하는 에이전트](https://prokit-web.vercel.app/docs/start/supported-agents/) |
-| prokit 스킬 8개와 에이전트 3개 | 분야마다 일하는 법, 구현 수행자와 전문·최종 읽기 전용 리뷰 에이전트 | [prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/), [위임 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/) |
+| prokit 스킬 9개와 에이전트 3개 | 분야마다 일하는 법, 구현 수행자와 전문·최종 읽기 전용 리뷰 에이전트 | [prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/), [위임 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/) |
 | 공식 도메인 스킬 | Next.js, React, Better Auth, shadcn, impeccable, DB, Vercel 배포 등 | [공식 스킬과 연결](https://prokit-web.vercel.app/docs/skills/official-skills/) |
 | 프로세스 스킬 | superpowers, ponytail, skill-creator, OMC(Claude Code), OMX(Codex), gstack | [프로세스 스킬과 전역 도구](https://prokit-web.vercel.app/docs/skills/official-skills/#프로세스-스킬과-전역-도구) |
 | 선택 스킬 묶음 | ops, motion, mobile | [선택 스킬 묶음](https://prokit-web.vercel.app/docs/skills/optional-bundles/) |

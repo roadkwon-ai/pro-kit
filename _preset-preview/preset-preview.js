@@ -1,4 +1,4 @@
-import { isDesignOptions } from "./preset-design.js?v=b8c205c1ceaee5d0";
+import { isDesignOptions } from "./preset-design.js?v=acdfa9ef56daaf3f";
 export const PRESET_PREVIEW_VERSION = 1;
 export const previewCapabilities = [
     "font",

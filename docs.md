@@ -8,7 +8,7 @@ https://prokit-web.vercel.app/docs/
 | 핵심 | 설명 |
 |---|---|
 | 하네스 | 에이전트가 정해진 순서와 검사를 지키며 일하게 만드는 규칙, 스킬, 자동 검사의 묶음이에요. [하네스 엔지니어링](https://prokit-web.vercel.app/docs/concepts/harness/) |
-| 전용 스킬 | `prokit-*` 스킬 8개가 프로젝트 계약을 지키며 공식·사용자 지정 전문 스킬에 맡기고 결과를 확인해요. [prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/) |
+| 전용 스킬 | `prokit-*` 스킬 9개가 프로젝트 계약을 지키며 공식·사용자 지정 전문 스킬에 맡기고 결과를 확인해요. [prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/) |
 | 디자인부터 배포까지 | 스타일 추천과 `DESIGN.md`로 디자인을 정하고, HTML 내보내기나 Vercel 배포까지 이어져요. [UI/UX 흐름](https://prokit-web.vercel.app/docs/design/ui-flow/) |
 
 ## 문서 둘러보기

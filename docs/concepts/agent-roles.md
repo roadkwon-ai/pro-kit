@@ -67,4 +67,4 @@ pnpm agents:check   # 정본과 생성물이 맞는지 검사한다
 - [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/)
 - [dev-cycle 라운드](https://prokit-web.vercel.app/docs/concepts/dev-cycle/)
 - [케이스 A\~F·H와 대조표](https://prokit-web.vercel.app/docs/concepts/cases/)
-- [prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
+- [prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)

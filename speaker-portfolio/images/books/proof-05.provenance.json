@@ -1,0 +1,29 @@
+{
+  "id": "proof-05",
+  "title": "새로운 계절",
+  "author": "서윤 지음",
+  "generator": "native image_gen",
+  "model": "unknown",
+  "operation": "edit",
+  "prompt": "Edit this existing fictional book front cover, replacing text only and preserving original coastal photography, warm beige palette, texture, lighting, layout and flat portrait 2:3 aspect ratio. Exact new main Korean title: \"새로운 계절\". Exact small author line: \"서윤 지음\". Erase previous title and substitute the new title in beautiful brown Korean serif typography matching original style, large prominence, balanced line wrapping and generous safe margins. These two strings must be the only text. No actual author name, no logo, no watermark. Preserve nuanced rich professionally finished artwork without simplifying it.",
+  "source": "existing AI-generated fictional book cover; title corrected to Korean content canonical value",
+  "sourceImage": "proof-05.webp",
+  "inputSha256": "f4948df7a7c4544ae3645dbacb755443aee96c7012df10f35417d736b1fa4865",
+  "generatedPngSha256": "23496670834e10a832a8d0f23f2087e4ba799e9946d8c075f602ca89212132d4",
+  "generatedPngBytes": 2156964,
+  "image": "proof-05.webp",
+  "sha256": "08dd6e4066d447a7d1a222659d92a9c71090259c8d582370788fa14c9a812aad",
+  "bytes": 218800,
+  "width": 1024,
+  "height": 1536,
+  "generated": true,
+  "fictional": true,
+  "review": {
+    "visualInspected": true,
+    "koreanTitleMatches": true,
+    "authorMatches": true,
+    "oldTitleRemoved": true,
+    "unclipped": true,
+    "artworkPreserved": true
+  }
+}

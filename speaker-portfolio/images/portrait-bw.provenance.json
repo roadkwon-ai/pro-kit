@@ -1,0 +1,26 @@
+{
+  "id": "portrait-bw",
+  "provider": "native image_gen.imagegen",
+  "model": "unknown (not exposed)",
+  "prompt": "Use case identity-preserve. Input image identity anchor fictional Korean adult Seoyoon, preserve same facial features and short black bob. Photorealistic editorial black-and-white portrait landscape 3:2. She stands full length, black simple long-sleeve blouse and long trousers, in black studio, near center-right, body turned 35 degrees left, face softly toward lens. Quiet confident posture with arms gently folded. Black backdrop and floor disappear into shadow, subtle side key light on face and fabric, dark low-key monochrome with true rich blacks. Left third dark negative space for website copy. Full body and feet entirely inside frame. Professional publishing portrait, natural pores. No text/logo/watermark.",
+  "fictional": true,
+  "source": "exec-b6848352-4386-451e-a422-d14461716b25.png",
+  "sourceSha256": "fc2accb5b76a7c1b3829bb43324eefd6f6d61f3e9ee15698298a98f26be5ae64",
+  "output": "portrait-bw.webp",
+  "outputSha256": "085ecd37c8408681996c91e74729acd727246701ecd946a0a68a7ee125ded590",
+  "width": 1536,
+  "height": 1024,
+  "format": "WEBP",
+  "generationCount": 1,
+  "reusedGeneration": false,
+  "sourceIdentityImage": "portrait.webp",
+  "sourceIdentitySha256": "3451790c5646da6d6d16526fe0bb7dcfa193178350099d3cf489fcd490f4d9a7",
+  "visualReview": {
+    "viewed": true,
+    "subjectAndComposition": "pass",
+    "titleSpelling": "not-applicable",
+    "crop": "full asset fits intended ratio; browser integration crop requires parent QA"
+  },
+  "referenceRoleSource": "https://class.yjkim.kr/",
+  "rightsNote": "새로 생성한 가상 서윤 인물 또는 가상 책 표지. 원본 저자 사진·실제 표지 파일은 재사용하지 않음."
+}

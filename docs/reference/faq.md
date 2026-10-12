@@ -51,7 +51,7 @@ WSL2의 Ubuntu 안에서만 돼요. PowerShell이나 Git Bash에서는 설치가
 
 ### 스킬을 직접 불러야 하나요?
 
-아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)).
+아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)).
 
 ### 프리셋과 같은 프롬프트로 만들면 똑같이 나오나요?
 

@@ -44,6 +44,6 @@ flowchart LR
 ## 관련 문서
 
 - [템플릿이 더하는 것](https://prokit-web.vercel.app/docs/templates/what-it-adds/)
-- [prokit 스킬 8개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
+- [prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)
 - [설치된 프로젝트의 폴더 구조](https://prokit-web.vercel.app/docs/reference/project-structure/)
 - [케이스 A\~F·H와 대조표](https://prokit-web.vercel.app/docs/concepts/cases/)
