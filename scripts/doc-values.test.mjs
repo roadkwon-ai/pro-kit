@@ -385,7 +385,7 @@ test("계산값 2: 비용 단위, 한글 수사, 케이스 범위, 화면 점수
     "gloss.migration": "DB의 표를 만들거나 바꾸는 기록", "gloss.spec": "기능의 범위와 동작을 적은 문서",
     "preset.claudle.dailyLimit": "200", "port.supabasePooler": "6543", "limit.pro5h.plans": "Claude Pro · ChatGPT Plus(Codex)",
     "policy.agentBrowser.cell": "없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치", "preset.goru.pack.tokens": "125만", "presets.pack.tokens.range": "73.4만\\~550만",
-    "presets.design.critique.list": "제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 스피커 포트폴리오 29, 핏슬롯 28, Uptrail 28, 슬라이드랩 27",
+    "presets.design.critique.list": "제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 스피커 포트폴리오 29, 핏슬롯 28, Uptrail 28, 슬라이드랩 28",
     "eval.requests": "13", "eval.checks": "52", "eval.dev-cycle.with": "93", "eval.dev-cycle.without": "27", "eval.ui.with": "100", "eval.ui.without": "12", "eval.verify.without": "71",
     "eval.designMd.palette.with": "99", "eval.designMd.palette.without": "71", "eval.designMd.services": "4",
     "eval.designMd.fontSize.with": "100", "eval.designMd.fontSize.without": "77", "eval.designMd.secondScreen.with": "95", "eval.designMd.secondScreen.without": "97", "eval.designMd.palette.offTarget": "29",

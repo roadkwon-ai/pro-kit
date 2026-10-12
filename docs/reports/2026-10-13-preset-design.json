@@ -112,9 +112,9 @@
     },
     {
       "slug": "slidelab",
-      "score": 27,
+      "score": 28,
       "max": 40,
-      "band": "보통",
+      "band": "좋음",
       "heuristics": [
         {
           "no": 1,
@@ -138,7 +138,7 @@
           "no": 4,
           "name": "어느 화면에서나 같은 방식으로 움직이나요",
           "score": 3,
-          "why": "어두운 바탕·라임 강조·각진 테두리·번호 매김이 한 체계를 이룬다. 현재 공개 390폭 화면에서도 메뉴가 기호 없는 빈 테두리로 보여 누르는 의미가 약하다. Main의 실제 클릭에서는 메뉴 대화상자와 모바일 앵커가 정상적으로 열렸다."
+          "why": "빈 메뉴라는 시각적 불일치가 해결됐다. 이번은 메뉴의 좁은 상태 검증이므로 전체 제품의 완전한 일관성으로 확대하지 않고 3점을 유지한다."
         },
         {
           "no": 5,
@@ -149,8 +149,8 @@
         {
           "no": 6,
           "name": "외우지 않아도 눈에 보이나요",
-          "score": 2,
-          "why": "선택 과정·시간을 문의 폼에서 다시 보여 주어 기억 부담을 줄인다. 현재 공개 모바일 화면의 메뉴는 빈 상자로 보여 10개 섹션을 찾는 입구를 인식하기 어렵다. 버튼 클릭으로 메뉴와 앵커가 열리는 기능은 확인됐으며, 현재 가로 넘침은 재현되지 않았다."
+          "score": 3,
+          "why": "ghost 변형으로 메뉴 아이콘의 테마 전경색을 복원했다. 16개 조건과 390px 두 테마 실제 픽셀을 독립 대조했으며, 그 밖의 상태는 원 평가 범위를 유지한다."
         },
         {
           "no": 7,
@@ -177,26 +177,15 @@
           "why": "과정 설명과 선택 시간 구성이 있고 문의 경로도 분명하다. 교육 의뢰자가 준비해야 할 자료나 과정 선택 기준을 빠르게 확인하는 FAQ·맥락 설명은 제한적이다."
         }
       ],
-      "sourceFingerprint": "e05bfa39d61005e52c7b82a1fe9ea1ebbaeb1ecb9cc7c55616a0f74183cb34a8",
-      "fingerprintMethod": "SHA256 UTF8 JSON sorted by path; object keys sorted; compact separators",
-      "sourceFiles": 37,
+      "sourceFingerprint": "5c4a28edbebf80f2863b9f4e8fad895a1db929d9012ca83da4936ffc6815ff48",
+      "fingerprintMethod": "SHA256(path + NUL + sha256 + newline), sorted source runtime paths",
+      "sourceFiles": 38,
       "strengths": [
         "라임 강조와 각진 구성의 시각 규칙이 이어진다.",
         "교육 시간 선택이 문의 요약에 연결된다.",
         "모션 정지와 미리보기 닫기 경로를 소스에서 확인했다."
       ],
       "issues": [
-        {
-          "priority": "P1",
-          "what": "모바일 메뉴 버튼의 기호가 보이지 않음",
-          "impact": "10개 섹션의 탐색 입구를 인식하기 어렵다.",
-          "evidence": [
-            "home-m.webp",
-            "home-t.webp",
-            "tasks/evidence/preset-publish-measurements-20261013/slidelab-live-mobile.png"
-          ],
-          "status": "현재 공개 390폭 캡처에서 빈 사각형을 직접 확인. Main 실제 클릭으로 메뉴 대화상자·모바일 앵커가 열림을 확인했으므로 기능 고장이 아닌 발견성 문제다. 저장 캡처의 오른쪽 잘림 인상과 달리 현재 scrollWidth > innerWidth는 false로 가로 넘침 불재현."
-        },
         {
           "priority": "P2",
           "what": "완료 후 다시 입력하기에서 앞선 폼 내용 소실",
@@ -224,7 +213,8 @@
           ]
         }
       ],
-      "scope": "한국어 기본 캡처와 현재 소스. live 화면의 모바일 메뉴 빈 기호 확인/overflow 불재현. 기능 판정과 구분한다."
+      "scope": "기존 평가 보존, 메뉴 아이콘 수정의 관련 기준만 새 실제 픽셀/현재 소스와 대조했다.",
+      "previousSourceFingerprint": "e05bfa39d61005e52c7b82a1fe9ea1ebbaeb1ecb9cc7c55616a0f74183cb34a8"
     }
   ]
 }

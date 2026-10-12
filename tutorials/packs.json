@@ -68,8 +68,8 @@
   "slidelab": {
     "release": "pack-slidelab",
     "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-slidelab/slidelab-pack.zip",
-    "sha256": "fc166be0b9f83b5b33d7d386ec1081d0b3dfd1e14302aa7feb42b65dca1314fb",
-    "bytes": 36562317,
+    "sha256": "8cc7eecc5698ec92d53c5e6d633be6046a296a72b5b6506264bf792e0e97f555",
+    "bytes": 35192787,
     "published": true
   },
   "speaker-portfolio": {
