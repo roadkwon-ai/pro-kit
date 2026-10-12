@@ -231,7 +231,7 @@
 | `preset.<이름>.observed.report` | 2개(`--list`) | 제작 관측의 범위·한계와 설명 링크 | doc-values.json presets.<이름>.observed.report | `doc-values.json`을 고친다 | 0 |
 | `presets.count` | 13 | 공개 프리셋 수(클론 튜토리얼 포함) | doc-values.json 공개 presets 수 | `doc-values.json`을 고친다 | 7 |
 | `presets.screen.count` | 11 | 공개 화면 프리셋 수 | doc-values.json 공개 presets 중 landing·app | `doc-values.json`을 고친다 | 12 |
-| `presets.landing.count` | 6 | 공개 랜딩페이지 프리셋 수 | doc-values.json 공개 presets 중 landing | `doc-values.json`을 고친다 | 7 |
+| `presets.landing.count` | 6 | 공개 랜딩페이지 프리셋 수 | doc-values.json 공개 presets 중 landing | `doc-values.json`을 고친다 | 6 |
 | `presets.app.count` | 5 | 공개 앱 화면 프리셋 수 | doc-values.json 공개 presets 중 app | `doc-values.json`을 고친다 | 7 |
 | `presets.clone.count` | 2 | 공개 클론 튜토리얼 프리셋 수 | doc-values.json 공개 presets 중 clone | `doc-values.json`을 고친다 | 5 |
 | `presets.screen.pages.range` | 1\~22 | 화면 프리셋 한 개의 페이지 수 범위 | 계산: doc-values.json 화면 프리셋 pages의 최소~최대(pageTypes가 있는 프리셋 제외) | `doc-values.json`을 고친다 | 1 |
@@ -265,7 +265,7 @@
 | `clones.full.limit.range` | 약 3\~4번 | 클론 튜토리얼을 끝까지(1~12장) Pro 5시간 한도 범위 | 계산: doc-values.json 클론 튜토리얼 한도 번 수의 최소~최대 | `doc-values.json`을 고친다 | 0 |
 | `presets.design.first.summary` | Refero Styles 6개, awesome-design-md 2개 | 1위로 고른 스타일의 카탈로그별 수 | 계산: doc-values.json 화면 프리셋 design.recs 1위의 카탈로그 | `doc-values.json`을 고친다 | 1 |
 | `presets.design.critique.list` | 제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 핏슬롯 28, Uptrail 28 | 디자인 리뷰 점수가 높은 순서(이름 점수) | 계산: doc-values.json 화면 프리셋 design.critique 내림차순 | `doc-values.json`을 고친다 | 1 |
-| `packs.count` | 13 | 공개 프리셋 팩 수 | tutorials/packs.json 공개 항목 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `packs.count` | 13 | 공개 프리셋 팩 수 | tutorials/packs.json 공개 항목 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `pack.nextflix.release` | https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/tag/pack-nextflix | nextflix 프리셋 팩 릴리스 쪽 주소 | tutorials/packs.json 공개 url → releases/tag | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `pack.claudle.release` | https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/tag/pack-claudle | claudle 프리셋 팩 릴리스 쪽 주소 | tutorials/packs.json 공개 url → releases/tag | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `pack.goru.release` | https://github.com/roadkwon-ai/pro-kit-packs/releases/tag/pack-goru | goru 프리셋 팩 릴리스 쪽 주소 | tutorials/packs.json 공개 url → releases/tag | 정본 파일이 바뀌면 따라 바뀐다 | 3 |

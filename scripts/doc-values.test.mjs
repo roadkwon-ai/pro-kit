@@ -362,7 +362,7 @@ test("계산값 2: 비용 단위, 한글 수사, 케이스 범위, 화면 점수
   assert.deepEqual(Object.fromEntries(Object.keys(want).map((k) => [k, values.get(k)?.value])), want);
 });
 
-test("tutorials/samples/README.md 표: 모든 화면 프리셋이 있고 페이지가 적은 순이다", () => {
+test("tutorials/samples/README.md 표: 공개 화면 프리셋이 모두 있고 페이지가 적은 순이다", () => {
   const presets = JSON.parse(read("doc-values.json")).presets;
   const rows = [...read("tutorials/samples/README.md").matchAll(/^\| \[.*?\]\(([\w-]+)\.md\) \|.*?<!-- v:preset\.([\w-]+)\.pages -->/gm)].map((m) => [m[1], m[2]]);
   assert.deepEqual(rows.map(([a, b]) => a === b), rows.map(() => true), "링크 파일과 pages 키의 프리셋이 같다");

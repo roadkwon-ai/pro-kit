@@ -57,7 +57,7 @@ supabase 템플릿의 `prokit-db`도 같은 방식으로 쟀어요. `prokit-db`�
 
 ### 화면 프리셋
 
-화면 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->6<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개)를 쟀어요. 클론 코딩 프리셋 <!-- v:presets.clone.count -->2<!-- /v -->개는 이 측정 밖이에요.
+화면 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->6<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개)의 화면을 확인했어요. 슬라이드랩과 스피커 포트폴리오의 전체 제작 시간·비용·critique 점수는 미측정이며, 아래 추천·comp·비용 기록은 두 프리셋을 제외한 기존 프리셋의 기록이에요. 자세한 범위는 [슬라이드랩 제작 기록](../../tutorials/samples/slidelab.md#시간과-비용)과 [스피커 포트폴리오 제작 기록](../../tutorials/samples/speaker-portfolio.md#시간과-비용)을 확인하세요. 클론 코딩 프리셋 <!-- v:presets.clone.count -->2<!-- /v -->개는 이 측정 밖이에요.
 
 | 항목 | 결과 |
 |---|---|
@@ -66,7 +66,7 @@ supabase 템플릿의 `prokit-db`도 같은 방식으로 쟀어요. `prokit-db`�
 | critique (40점 만점) | <!-- v:presets.design.critique.list -->제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 핏슬롯 28, Uptrail 28<!-- /v -->. P0·P1은 모두 고쳤어요 |
 | 추천 | 1위는 <!-- v:presets.design.first.summary -->Refero Styles 6개, awesome-design-md 2개<!-- /v -->예요. 이전 판과 같은 계열(토스, Sequel 등)은 에이전트가 먼저 후보에서 뺐어요. 올곧은 추천 없이 입시학원 사이트 한 곳을 실측해 만든 `DESIGN.md`를 썼어요 |
 | comp | gpt-image-2.5-flare로 그렸어요. 첫 화면은 방향 comp 3장 중에서 골랐고, 나머지 페이지는 고른 comp를 참고로 페이지마다 한 장씩 그렸어요. 올곧은 첫 화면 comp 3장만 ChatGPT로 로그인한 Codex(`gpt-image` 스킬)로 그렸어요 |
-| 시각 자산 | 서체는 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개 모두 파일로 받아 프로젝트에 직접 넣었어요(자체 호스팅: Pretendard, Wanted Sans, SUIT, JetBrains Mono, Black Han Sans, Hahmlet, Paperlogy). 사진과 일러스트는 AI로 만들었고, 아이콘은 lucide예요. 사람이 나오는 사진은 원본 크기로 팔다리와 손을 확인해 이상한 사진을 다시 만들었어요. 모션은 모두 reduced-motion(움직임 줄이기) 설정에서 꺼져요 |
+| 시각 자산 | 서체는 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개 모두 파일로 받아 프로젝트에 직접 넣었어요(자체 호스팅: Pretendard, Wanted Sans, SUIT, JetBrains Mono, Black Han Sans, Hahmlet, Paperlogy, Outfit, Noto Sans KR). 사진과 일러스트는 AI로 만들었고, 아이콘은 lucide예요. 사람이 나오는 사진은 원본 크기로 팔다리와 손을 확인해 이상한 사진을 다시 만들었어요. 모션은 모두 reduced-motion(움직임 줄이기) 설정에서 꺼져요 |
 | 비용 (추천부터 모든 페이지 확인까지) | 에이전트 비용은 프리셋당 $68~$181, 모두 약 $1,090예요(중간에 작업공간을 기록으로 되살린 세션 포함). OpenAI 이미지 비용은 따로 청구돼요 |
 
 클론 코딩까지 프리셋 <!-- v:presets.count -->13<!-- /v -->개는 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지를 열어 볼 수 있어요.

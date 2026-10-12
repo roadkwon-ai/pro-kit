@@ -56,7 +56,7 @@
 
 ## 산출물과 한계
 
-프로젝트는 `/Users/freelife/youtube/pro-kit-samples/ws/slidelab`, 정적 HTML은 같은 폴더의 `html/`, 현재 증거는 `tasks/evidence/reference-fidelity/`에 있다. 원본 관측·생성 PNG·프롬프트·이전 실패는 `/Users/freelife/youtube/pro-kit-samples/checks/slidelab-reference-20261010/`에 보존했다. 프리셋 팩은 `pro-kit-samples/packs/slidelab`에 있으며 zip은 해당 checks 폴더의 `slidelab-pack.zip`이다. 로컬 팩의 CRC와 파일별 내용 일치를 확인했다.
+프로젝트는 `pro-kit-samples/ws/slidelab`, 정적 HTML은 같은 폴더의 `html/`, 현재 증거는 `tasks/evidence/reference-fidelity/`에 있다. 원본 관측·생성 PNG·프롬프트·이전 실패는 `pro-kit-samples/checks/slidelab-reference-20261010/`에 보존했다. 프리셋 팩은 `pro-kit-samples/packs/slidelab`에 있으며 zip은 해당 checks 폴더의 `slidelab-pack.zip`이다. 로컬 팩의 CRC와 파일별 내용 일치를 확인했다.
 
 최종 관리 CLI 기술 인수 결과는 별도로 아래에 기록한다. 사용자 확인 행은 채우지 않았으며 audit/close·커밋·push·릴리스·카탈로그 등록·배포를 하지 않았다. 실제 서비스의 문의·결제·DB·AI 응답, 실기기·스크린리더·다른 CLI 호스트·완전한 픽셀 동일성은 검증 범위가 아니다.
 

@@ -39,5 +39,6 @@
 ## 관련 문서
 
 - [위임과 개발 자원 관리](../concepts/delegation-and-resources.md)
+- [에이전트 역할](../concepts/agent-roles.md)
 - [스킬 설치와 업데이트 구조](../skills/install-and-update.md)
 - [슬라이드랩 제작과 관측 기록](../../tutorials/samples/slidelab.md)
