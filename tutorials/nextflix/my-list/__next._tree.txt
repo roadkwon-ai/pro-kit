@@ -1,5 +1,5 @@
 :HL["/pro-kit/_next/static/chunks/0whz7eiipyv9o.css","style"]
-:HL["/pro-kit/_next/static/chunks/3vee_tvv8iild.css","style"]
+:HL["/pro-kit/_next/static/chunks/3k6y1yj4x2mm3.css","style"]
 :HL["/pro-kit/_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/pro-kit/_next/static/media/Pretendard_Regular_subset-s.p.2hmto21_1mc3m.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/pro-kit/_next/static/media/WantedSans_Bold-s.p.086nyq18c5wey.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
@@ -7,4 +7,4 @@
 3:[["children",{"s":{"n":"slug","t":"d","k":"my-list","s":[]},"h":65632,"c":"$Q4"}]]
 2:[["children",{"s":{"n":"course","t":"d","k":"nextflix","s":["reference","start"]},"h":196704,"c":"$Q3"}]]
 1:[["children",{"s":"tutorials","h":131136,"c":"$Q2"}]]
-0:{"b":"DJ5MBh_Y06vnzjO3-DuIa","t":{"t":{"s":"","h":131088,"c":"$Q1"}}}
+0:{"b":"LwQgq-zjkybqkIbbuSlg8","t":{"t":{"s":"","h":131088,"c":"$Q1"}}}

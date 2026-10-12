@@ -188,7 +188,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 
 ## 시간과 비용
 
-프리셋 팩으로 만들 때 프리셋 하나에 **한 번에 완성하면 약 1시간\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지)** 걸리고, 토큰은 최소 **약 125만\~550만**(캐시 포함 약 6,900만\~2.8억)이 들어요. 이 튜토리얼로 화면을 처음부터 만들 때는 한 번에 완성하면 약 1시간 30분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지) 걸리고, 토큰은 최소 약 190만\~800만(캐시 포함 약 9,600만\~4.0억)이 들어요. 프리셋마다 값은 각 쪽의 "시간과 비용"에 있어요.
+프리셋 팩으로 만들 때 프리셋 하나에 **한 번에 완성하면 약 36분\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지)** 걸리고, 토큰은 최소 **약 73.4만\~550만**(캐시 포함 약 3671.3만\~2.8억)이 들어요. 이 튜토리얼로 화면을 처음부터 만들 때는 한 번에 완성하면 약 1시간 5분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지) 걸리고, 토큰은 최소 약 154.7만\~800만(캐시 포함 약 6650.7만\~4.0억)이 들어요. 프리셋마다 값은 각 쪽의 "시간과 비용"에 있어요.
 
 <details>
 <summary>자세히 보기: 고쳐 달라고 하면 왜 늘어날까요</summary>
@@ -205,7 +205,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 
 </details>
 
-Claude Pro · ChatGPT Plus(Codex): 가능 (프리셋 팩으로는 5시간 한도 안\~약 3번, 처음부터는 약 1\~4번 걸려요. 올곧을 처음부터 만들면 2\~3일에 나눠 만들어요) · [5시간 한도란?](https://prokit-web.vercel.app/tutorials/reference/costs-and-keys/#5시간-한도에-걸리면)
+Claude Pro · ChatGPT Plus(Codex): 가능 (프리셋 팩으로는 5시간 한도 안\~약 3번, 처음부터는 5시간 한도 안\~약 4번 걸려요. 올곧을 처음부터 만들면 2\~3일에 나눠 만들어요) · [5시간 한도란?](https://prokit-web.vercel.app/tutorials/reference/costs-and-keys/#5시간-한도에-걸리면)
 
 시간의 앞 숫자와 토큰은 순조롭게 한 번에 끝날 때의 최솟값이에요. 토큰도 시간처럼 쓰는 AI와 고쳐 달라는 횟수에 따라 2~3배까지 늘 수 있어요. [읽는 법](https://prokit-web.vercel.app/tutorials/reference/costs-and-keys/#시간과-비용-읽는-법) · [실제로 걸린 시간 자세히](https://prokit-web.vercel.app/tutorials/reference/process-and-time/)
 
