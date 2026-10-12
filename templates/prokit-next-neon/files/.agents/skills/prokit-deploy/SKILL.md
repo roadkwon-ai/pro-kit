@@ -39,7 +39,7 @@ Vercel CLI의 일반 사용법(설치, 로그인, 토큰, `vercel env`·`domains
 - gstack `ship`, `land-and-deploy`, `setup-deploy`는 커밋, push, PR 병합을 하거나 `CLAUDE.md`를 고치므로 배포에 쓰지 않는다.
 
 ## 준비 (프로젝트마다 한 번, 사용자가 요청할 때)
-1. **CLI와 로그인**: `vercel --version`, `vercel whoami`. 없거나 실패하면 `deploy-to-vercel`의 설치·로그인 안내를 사용자에게 전한다. 전역 설치와 `vercel login`은 사용자가 한다. 토큰만 쓰는 환경(CI, Codex 샌드박스)은 `vercel-cli-with-tokens`를 따른다. 이때는 `VERCEL_ORG_ID`와 `VERCEL_PROJECT_ID`를 함께 두면 스크립트가 연결된 것으로 본다.
+1. **CLI와 로그인**: `vercel --version`, `vercel whoami`. 없거나 실패하면 `deploy-to-vercel`의 설치·로그인 안내를 사용자에게 전한다. 인증 실패 때는 재로그인을 묻기 전에 현재 프로젝트와 사용자 명시로 신뢰한 dotenv/envrc의 키 존재·로딩 우선순위·세션과의 차이만 `scripts/load-keys.mjs`와 `vercel-cli-with-tokens` 설정 경로로 확인한다. 무관한 홈 탐색·전체 환경 덤프·값 출력은 하지 않고, 적용 뒤에도 권한 확인 전 성공으로 가정하거나 스킬 선택 권한과 실제 인증 권한을 섞지 않는다. 전역 설치와 `vercel login`은 사용자가 한다. 토큰만 쓰는 환경(CI, Codex 샌드박스)은 `vercel-cli-with-tokens`를 따른다. 이때는 `VERCEL_ORG_ID`와 `VERCEL_PROJECT_ID`를 함께 두면 스크립트가 연결된 것으로 본다.
 2. **팀과 프로젝트 이름**: 팀이 둘 이상이면(`vercel teams list --format json`) 사용자에게 고르게 한다. Vercel 계정에 새 프로젝트가 생기므로 프로젝트 이름도 확인받는다.
 3. **연결**: 저장소 루트에서 실행한다.
    ```bash

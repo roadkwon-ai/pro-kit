@@ -33,6 +33,7 @@ export async function getPack(name, { index = join(ROOT, "tutorials", "packs.jso
   const packs = JSON.parse(readFileSync(index, "utf8"));
   const pack = packs[name];
   if (!pack) throw new Error(`없는 팩: ${name}. 받을 수 있는 팩: ${Object.keys(packs).join(", ")}`);
+  if (pack.published === false && !zip) throw new Error(`아직 공개하지 않은 팩: ${name}. 로컬 zip은 --zip <경로>로 확인할 수 있어요`);
   const dest = join(dir, name);
   const mark = join(dest, MARK);
   if (existsSync(mark) && JSON.parse(readFileSync(mark, "utf8")).sha256 === pack.sha256) return { dest, fresh: false };
@@ -66,10 +67,10 @@ export async function getPack(name, { index = join(ROOT, "tutorials", "packs.jso
   return { dest, fresh: true };
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const name = process.argv[2];
   if (!name) {
-    console.log(Object.keys(JSON.parse(readFileSync(join(ROOT, "tutorials", "packs.json"), "utf8"))).join("\n"));
+    console.log(Object.entries(JSON.parse(readFileSync(join(ROOT, "tutorials", "packs.json"), "utf8"))).filter(([, p]) => p.published !== false).map(([name]) => name).join("\n"));
   } else {
     try {
       const at = process.argv.indexOf("--zip");

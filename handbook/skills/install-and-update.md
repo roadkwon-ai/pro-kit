@@ -9,17 +9,18 @@ flowchart TD
   M["skills.manifest.json"] --> S["scripts/skills-setup.mjs<br/>install.sh와 pnpm skills:setup이 실행"]
   S --> P1["공식 도메인 스킬<br/>.agents/skills + .claude/skills 링크"]
   S --> P2["Claude 플러그인<br/>.claude/settings.json<br/>superpowers · skill-creator · OMC · ponytail"]
-  S --> P3["Codex 스킬<br/>.agents/skills<br/>superpowers · skill-creator · ponytail"]
+  S --> P3["Codex 프로젝트 스킬<br/>.agents/skills<br/>superpowers · skill-creator · Ponytail"]
   S -.->|"omx CLI가 있을 때만"| P4["OMX 프로젝트 설정<br/>.codex/skills · agents · prompts"]
   S -.->|"--optional 묶음일 때만"| OPT["선택 스킬 묶음<br/>ops · motion · mobile<br/>.agents/skills + .claude/skills 링크"]
   S -->|"없거나 최신판보다 낮으면"| AB["agent-browser CLI<br/>(전역)"]
   S -.->|"--with-global일 때만"| G["나머지 전역 도구<br/>OMX CLI · gstack · Vercel CLI<br/>Neon CLI 또는 Supabase CLI"]
+  S -.->|"--with-global + 지원 CLI"| CP["Codex 네이티브 Ponytail<br/>공식 marketplace · plugin<br/>선택 항목"]
   CHK["pnpm skills:check<br/>설치 없이 상태만 확인<br/>선택 묶음은 설치 여부만"] -.->|"같은 스크립트를 --check로 실행"| S
   UPD["pnpm skills:update<br/>GitHub 원본과 비교해 바뀐 스킬만 다시 설치<br/>prokit-dev-cycle 시작에서 하루 한 번 확인"] -.->|"같은 스크립트를 --update로 실행"| S
 ```
 
 - **최신판을 받아요**: 공식 스킬은 템플릿에 복사해 두지 않고, 설치할 때 원본 저장소의 최신 커밋을 받아요(skills CLI도 `skills@latest`). Claude 플러그인은 마켓플레이스를 최신으로 받은 뒤 설치해요.
-- **프로젝트에만 설치해요**: 스킬과 플러그인은 그 프로젝트 범위(project scope)에 들어가요. 플러그인 마켓플레이스 등록과 ponytail 모드 파일(`~/.claude/.ponytail-active`)은 사용자 범위에 남아요.
+- **프로젝트 설치와 Codex 선택 설치는 달라요**: 프로젝트 스킬과 Claude 플러그인은 프로젝트 범위(project scope)에 들어가요. Codex 네이티브 Ponytail은 `--with-global`일 때만 사용자 설정에 공식 marketplace와 플러그인을 등록하는 선택 항목이에요. 기본 설치와 `pnpm skills:check`는 그 설정을 바꾸지 않아요.
 - **전역 도구는 둘로 나뉘어요**: <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지 전역 도구는 `--with-global`을 줄 때만 설치해요.
 
 ## 설치 목록과 실제 선택은 달라요
@@ -57,13 +58,27 @@ claude plugin marketplace update <마켓플레이스>
 claude plugin update <플러그인> --scope project   # 세션을 다시 열어야 적용된다
 ```
 
-### ponytail 훅
+### Ponytail 훅과 Codex 네이티브 플러그인
 
-ponytail(Claude 플러그인)은 훅 3개(SessionStart, SubagentStart, UserPromptSubmit)로 세션과 서브에이전트에 과설계를 막는 규칙을 넣어요. 프로젝트 범위로 설치해도 모드 파일(`~/.claude/.ponytail-active`)은 전역이라 한 세션에서 "stop ponytail"로 끄면 다른 프로젝트 세션에서도 꺼져요. 이 프로젝트에서만 끄려면 `.claude/settings.local.json`의 `enabledPlugins`에 `"ponytail@ponytail": false`를 둬요. Codex에는 훅 없이 스킬(`ponytail`, `ponytail-review`)만 설치해요.
+ponytail(Claude 플러그인)은 훅 3개(SessionStart, SubagentStart, UserPromptSubmit)로 세션과 서브에이전트에 과설계를 막는 규칙을 넣어요. 상태는 `CLAUDE_CONFIG_DIR` 또는 `~/.claude` 아래에 두며, `CLAUDE_PROJECT_DIR`이 있으면 프로젝트 hash별 모드와 공유 플래그를 써요.
+
+없으면 shared 상태를 써요. 같은 저장소의 세션은 모드를 함께 쓰므로 `stop ponytail`도 함께 적용돼요. 전역 helper 파일을 쓸 수 있지만 statusline 설정은 사용자가 원할 때만 바꿔요.
+
+이 프로젝트에서만 끄려면 `.claude/settings.local.json`의 `enabledPlugins`에 `"ponytail@ponytail": false`를 둬요.
+
+시작 훅의 대략적 코드 지도는 재사용 후보를 찾는 참고 자료예요. 지도에 나온 항목은 실제 코드·호출자·테스트·설정·내보내기를 읽고 확인해요.
+
+Codex는 프로젝트에 `ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-help`, `ponytail-gain` <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬을 받아요. 지원하는 CLI에서 `--with-global`을 주면 공식 원본 marketplace와 네이티브 플러그인을 추가할 수 있어요. 설치된 플러그인의 출처와 비활성화 선택은 보존하며, 설치기가 다시 설치하거나 자동으로 올리지 않아요.
+
+플러그인 설치와 훅 신뢰는 별개예요. Codex에서 `/hooks`로 현재 플러그인을 신뢰하고 새 세션을 연 뒤에만 자동 훅 실행을 기대할 수 있어요. 신뢰 기록을 대신 쓰거나 우회하지 않아요.
+
+Codex 네이티브 플러그인을 쓸 수 있으면 `$ponytail:ponytail-review`처럼 이름공간으로 불러요. 없으면 프로젝트의 같은 스킬을 읽어요. 둘을 같은 검토에 함께 쓰지 않고, 사용자가 ponytail을 끈 상태면 대체 경로로 다시 켜지 않아요.
+
+review는 한 번의 검토일 뿐 세션을 영구 review 모드로 바꾸지 않아요. audit·debt·help·gain은 요청할 때만 읽고 파일을 고치지 않아요.
 
 ### 상태 확인
 
-`pnpm skills:check`는 설치하지 않고 상태만 봐요. 프로젝트 범위 항목이 빠졌으면 exit 1이에요. 선택 묶음은 상태만 보여 주고, `omx`가 없는 기기는 OMX를 누락으로 세지 않아요.
+`pnpm skills:check`는 설치하지 않고 상태만 봐요. 프로젝트 범위 항목이 빠졌으면 exit 1이에요. 선택 묶음과 Codex 네이티브 Ponytail은 상태만 보여 주며, 없어도 누락으로 세지 않아요. `omx`가 없는 기기도 OMX를 누락으로 세지 않아요.
 
 ## 관련 문서
 

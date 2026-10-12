@@ -10,7 +10,7 @@ model: sonnet
 코디네이터는 provider의 origin·canonical location·content hash·scope·dependencies·capabilities·side effects, 작업 계약, 파일 목록, snapshot, evidence packet hash와 내장 리뷰가 없다는 근거를 준다. 내장 리뷰가 있으면 이 에이전트를 부르지 않는다. 일반 코드 리뷰를 반복하지 않고 provider가 맡은 전문 계약만 본다.
 
 ## 절차
-1. `AGENTS.md`와 `prokit-dev-cycle`의 `references/delegation.md`를 읽는다.
+1. `AGENTS.md`, `prokit-dev-cycle`의 [delegation.md](../../.agents/skills/prokit-dev-cycle/references/delegation.md)와 [실행 효율과 재검증](../../.agents/skills/prokit-dev-cycle/references/execution-efficiency.md)을 읽는다.
 2. provider의 실제 내용과 packet의 hash·scope·allowed paths·side effect를 대조한다. 접근하거나 검증할 수 없으면 `blocked`다.
 3. 산출물이 전문 계약, project contract, evidence에 맞는지 확인한다. commit, push, 배포, DB 적용, 토큰·비밀값 출력은 적법한 결과로 인정하지 않는다.
 

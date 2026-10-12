@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "contractFingerprint": "f7536d2863c6317d5971811b09b0d1ff1f966fc9060dac475e605f3bce0f68b1",
+  "contractFiles": [
+    {
+      "path": "pro-kit-samples/tools/publish-root.sh",
+      "sha256": "457d234a7aee9fd60b0bba0087d476b70ce7882ea27fea89bf8ed89902b100ec"
+    },
+    {
+      "path": "pro-kit-samples/tools/publish.sh",
+      "sha256": "117eed347938529244e5c61c417472867c1f7347a4ee6fc9ac59d519f1db06e1"
+    },
+    {
+      "path": "pro-kit-web/apps/web/package.json",
+      "sha256": "78dfccc3af930ad87c820a385f3ee474a8a8e8b5bc47de04e1836610a00d7073"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/app/work/[slug]/page.tsx",
+      "sha256": "c7f6c630e7036c3983299d43defaa7ef8ad3dfd7d91f2aa09ebde09951683f7f"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/components/home/home-card.tsx",
+      "sha256": "dfb6cfb02edf6ab978a287697ff89f9523130f413ac8f35320d0fa828128f92e"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/components/home/sample-list.tsx",
+      "sha256": "33ebbad8fa6cf1efe77b471c146f9cd7aa214bacb3891fe6a0dafec730ed562b"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/components/home/sample-showcase.tsx",
+      "sha256": "1f43bdcb60003067e999012d538bfa8ba73427d32fcf4a69a7c3730f0c1d19c1"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/components/preset-design-controls.tsx",
+      "sha256": "0b09cb954e44ed489b3d3a145633cccc0936f0f2f7beed15482c3eb8467fa4b3"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/doc-values.ts",
+      "sha256": "0e3921cdf2b2d736955fb6e1671167f06a3b0d4e2e71f8069e56169689328e0b"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/handbook.check.mjs",
+      "sha256": "f497e016b0961d31399ebd5d81108939b96a9fc8227ff4b3166c5797b06380a6"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/home-cards.ts",
+      "sha256": "ef91d36fbdf7d40d337b2c4e73c21ea497841ff5cf3b45862ed44a26f68045b7"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/preset-design.ts",
+      "sha256": "e73fca71fb118749cbdcb770d436aa334977a442a8d41206b6dd58a80b9ba8f2"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/preset-font-loader.ts",
+      "sha256": "9e9f4086ed189eefbd297178d520923b0e2f4baf595ddd8e808db8b56f4afc4e"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/preset-font-selection.ts",
+      "sha256": "fe34ce63ec9f125c82554a4058429fff2cdddd9ab4325caccc02140c027cc6d6"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/preset-list.ts",
+      "sha256": "b2e625d9152408b8532a53763f6bd20d8e36446c82a9b1ef4459c38439306cee"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/preset-preview-profiles.ts",
+      "sha256": "5f50e8d94c936f130b7d9fc91ecaf25eaff8477873e8996c577df881e25d8b3e"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/preset-preview-runtime.ts",
+      "sha256": "0d5f3ec5844e05c24d846ad676c87395e4be34fc3324ed801af14440e2d1e973"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/preset-preview.ts",
+      "sha256": "5f0fca9132dbafafb6f9a8b522785215141ac16aded30b753ad0a20212f83a26"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/samples.ts",
+      "sha256": "c5579eaba2939a4875add114d91d1a3a35c7d29963b235e7687fc21f9aaf5b2f"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/tutorials.check.mjs",
+      "sha256": "33efda19459659b2918debea104505c02cd8af7a31c082a6f00a51c4f0de974a"
+    },
+    {
+      "path": "pro-kit-web/apps/web/src/lib/tutorials.ts",
+      "sha256": "6b95f8d5ab1c2cecffad4a6d4dec9986af3be0acba5ebc420b811093645e0821"
+    },
+    {
+      "path": "pro-kit-web/package.json",
+      "sha256": "ad256656d72488133b01c1f348d4bb4d245e8fa4d166a774b548880eba81f7e1"
+    },
+    {
+      "path": "pro-kit-web/scripts/preset-catalog.mjs",
+      "sha256": "9d70fb2a98c5112335c45a41b3e7b0247a593674286b1806fa38d0976dc592ca"
+    },
+    {
+      "path": "pro-kit-web/scripts/preset-contract.mjs",
+      "sha256": "70a558d03a63d55eab950e510056e8f834589239e88223d47b875e3f071d843e"
+    },
+    {
+      "path": "pro-kit-web/scripts/preset-preview.mjs",
+      "sha256": "cac284196fc6947922ced2aa8ab8aa93c4e15225a28329e1a855512cc4295aaa"
+    },
+    {
+      "path": "pro-kit-web/scripts/sync-handbook.mjs",
+      "sha256": "57cd8defe4c8186ddc4c5622501ec238dd9d2ce4b1f914d8d5a8b81d57f7a869"
+    },
+    {
+      "path": "pro-kit-web/scripts/sync-tutorials.mjs",
+      "sha256": "8e1db044b6a4a23e3cfc19190e3072dfa6d52d1fc70b1a71939d2bab074e0bfc"
+    },
+    {
+      "path": "pro-kit/AGENTS.md",
+      "sha256": "ac874c14e232b39a55f10453784dedc1c750409cd55698d10ae1c39d9170aefd"
+    },
+    {
+      "path": "pro-kit/scripts/doc-values.mjs",
+      "sha256": "ab7b5ca3b00224e2eeda6a98bf9b6bdbebdb67057c8359145023f1fec7153d78"
+    },
+    {
+      "path": "pro-kit/scripts/pack.mjs",
+      "sha256": "4e91cb7c64a332c8501ce3eb6145c16c491d515c134254be53aeb6b39fab5961"
+    },
+    {
+      "path": "pro-kit/scripts/preset-observations.mjs",
+      "sha256": "89fcda6ba5344cbc6f05d3f8555f619f760d92bc2525462eac7d2407737fe878"
+    },
+    {
+      "path": "pro-kit/templates/prokit-next-neon/files/.agents/skills/prokit-ui/references/preset-settings.md",
+      "sha256": "233476aa4625cb9ad6660ad80b85a6e7b4392c56f80643288472ec53eb4800c4"
+    },
+    {
+      "path": "pro-kit/templates/prokit-next-neon/files/scripts/export-html.mjs",
+      "sha256": "b43315bfd188580f2e9574a4d51e397b747e5aaa85f30fd2e36fc9d3a78b370c"
+    },
+    {
+      "path": "pro-kit/templates/prokit-next-neon/files/scripts/resource-guard.mjs",
+      "sha256": "967fb1370c93401c1a7d595008deb1b67c00cee3b49a0201bd92fc9060ad5000"
+    },
+    {
+      "path": "pro-kit/templates/prokit-next-supabase/files/.agents/skills/prokit-ui/references/preset-settings.md",
+      "sha256": "233476aa4625cb9ad6660ad80b85a6e7b4392c56f80643288472ec53eb4800c4"
+    }
+  ],
+  "basis": "Independent native preset_rules_final_review approved the 8 changed local contract consumers on 2026-10-12. Fresh contract/profile tests17/17, diagnostics and local static/ZIP registration passed; paired consumer guidance48/48 reused by matching hashes. Existing v0.1.4 package versions were not attributed to this preset. Public-assets guard intentionally rejects unpublished preparation assets: management production build is not claimed passing. This baseline grants no product acceptance or publication authority."
+}

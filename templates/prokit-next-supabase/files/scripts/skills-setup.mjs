@@ -89,6 +89,126 @@ export function mergeClaudeSettings(root, claude, { write = true } = {}) {
 	return { added, settings: cur };
 }
 
+const codexSourceMatches = (source, expected) => {
+	if (source?.sourceType !== "git" || typeof source.source !== "string")
+		return false;
+	const clean = (value) =>
+		value
+			.toLowerCase()
+			.replace(/^git\+/, "")
+			.replace(/^git@github\.com:/, "")
+			.replace(/^ssh:\/\/git@github\.com\//, "")
+			.replace(/^https:\/\/(?:www\.)?github\.com\//, "")
+			.replace(/\.git\/?$/, "")
+			.replace(/\/$/, "");
+	return clean(source.source) === clean(expected);
+};
+
+const codexUnsupported = (r) =>
+	/(?:unknown|unrecognized) (?:command|subcommand|option)|not supported/i.test(
+		`${r.stderr ?? ""}${r.stdout ?? ""}`,
+	);
+
+function codexPluginStatus(root, codex, withGlobal, failures) {
+	if (!onPath("codex"))
+		return "Codex 플러그인(global): codex 없음 → Codex를 설치한 뒤 pnpm skills:setup --with-global";
+	const json = (args) => {
+		const r = run("codex", args, { cwd: root });
+		if (r.status !== 0)
+			return { error: firstLine(r), unsupported: codexUnsupported(r) };
+		try {
+			return { value: JSON.parse(r.stdout) };
+		} catch (e) {
+			return { error: `JSON: ${e.message}` };
+		}
+	};
+	const markets = json(["plugin", "marketplace", "list", "--json"]);
+	if (markets.error) {
+		const state = markets.unsupported
+			? "지원하지 않음"
+			: `조회 실패: ${markets.error}`;
+		if (withGlobal && !markets.unsupported)
+			failures.push(`Codex 플러그인 ${state}`);
+		return `Codex 플러그인(global): ${state}`;
+	}
+	if (!markets.value || !Array.isArray(markets.value.marketplaces)) {
+		const state = "조회 실패: JSON marketplaces 배열 없음";
+		if (withGlobal) failures.push(`Codex 플러그인 ${state}`);
+		return `Codex 플러그인(global): ${state}`;
+	}
+	const plugins = json(["plugin", "list", "--json"]);
+	if (plugins.error) {
+		const state = plugins.unsupported
+			? "지원하지 않음"
+			: `조회 실패: ${plugins.error}`;
+		if (withGlobal && !plugins.unsupported)
+			failures.push(`Codex 플러그인 ${state}`);
+		return `Codex 플러그인(global): ${state}`;
+	}
+	if (!plugins.value || !Array.isArray(plugins.value.installed)) {
+		const state = "조회 실패: JSON installed 배열 없음";
+		if (withGlobal) failures.push(`Codex 플러그인 ${state}`);
+		return `Codex 플러그인(global): ${state}`;
+	}
+	const marketplace = markets.value.marketplaces.find(
+		(m) => m?.name === codex.marketplace.name,
+	);
+	if (
+		marketplace &&
+		!codexSourceMatches(marketplace.marketplaceSource, codex.marketplace.source)
+	) {
+		const state = `source mismatch: ${codex.marketplace.name}`;
+		if (withGlobal) failures.push(`Codex 플러그인 ${state}`);
+		return `Codex 플러그인(global): ${state}`;
+	}
+	const plugin = plugins.value.installed.find(
+		(p) => codex.plugins.includes(p?.pluginId) && p.installed,
+	);
+	if (plugin) {
+		if (
+			!codexSourceMatches(plugin.marketplaceSource, codex.marketplace.source)
+		) {
+			const state = `${plugin.pluginId} 출처 확인 안 됨`;
+			if (withGlobal) failures.push(`Codex 플러그인 ${state}`);
+			return `Codex 플러그인(global): ${state}`;
+		}
+		return `Codex 플러그인(global): ${plugin.pluginId} ${plugin.enabled === false ? "비활성(사용자 선택 보존)" : "설치됨"}`;
+	}
+	if (!withGlobal)
+		return `Codex 플러그인(global): ${codex.plugins.join(", ")} 설치 안 함 → pnpm skills:setup --with-global`;
+	const command = (args, label) => {
+		const r = run("codex", args, { cwd: root });
+		if (r.status === 0) return true;
+		if (codexUnsupported(r)) return "unsupported";
+		failures.push(`Codex 플러그인 ${label}: ${firstLine(r)}`);
+		return false;
+	};
+	if (marketplace) {
+		const updated = command(
+			["plugin", "marketplace", "upgrade", codex.marketplace.name, "--json"],
+			`marketplace ${codex.marketplace.name} 갱신`,
+		);
+		if (updated === "unsupported")
+			return "Codex 플러그인(global): marketplace upgrade 지원하지 않음 → Codex를 갱신한 뒤 다시 실행한다";
+		if (!updated) return "Codex 플러그인(global): 설치 실패";
+	} else {
+		const added = command(
+			["plugin", "marketplace", "add", codex.marketplace.source, "--json"],
+			`marketplace ${codex.marketplace.source}`,
+		);
+		if (added === "unsupported")
+			return "Codex 플러그인(global): marketplace add 지원하지 않음 → Codex를 갱신한 뒤 다시 실행한다";
+		if (!added) return "Codex 플러그인(global): 설치 실패";
+	}
+	for (const name of codex.plugins) {
+		const installed = command(["plugin", "add", name, "--json"], name);
+		if (installed === "unsupported")
+			return "Codex 플러그인(global): plugin add 지원하지 않음 → Codex를 갱신한 뒤 다시 실행한다";
+		if (!installed) return "Codex 플러그인(global): 설치 실패";
+	}
+	return `Codex 플러그인(global): ${codex.plugins.join(", ")} 설치 완료 → /hooks 신뢰를 확인하고 새 세션에서 사용한다`;
+}
+
 // mode: "check"는 설치하지 않는다. "auto"는 auto: true인 도구만, "all"(--with-global)은 install이 있는 도구를 모두 설치한다.
 function installGlobal(manifest, mode, failures, warnings) {
 	const lines = [];
@@ -243,6 +363,10 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		(check ? missing : failures).push(msg);
 		out.push(`Claude 플러그인(project): ${msg}`);
 	}
+	if (manifest.codex)
+		out.push(
+			codexPluginStatus(root, manifest.codex, withGlobal && !check, failures),
+		);
 
 	if (manifest.omx) {
 		const done = () => existsSync(join(root, OMX_MARK));

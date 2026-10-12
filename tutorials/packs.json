@@ -64,5 +64,19 @@
     "url": "https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/download/pack-olgot/olgot-pack.zip",
     "sha256": "2b2a58eca9200cc211d0a4f27d9f99d072f0b25129541b953337536540ef3913",
     "bytes": 31309963
+  },
+  "slidelab": {
+    "release": "pack-slidelab",
+    "url": "https://github.com/roadkwon-ai/pro-kit-packs/releases/download/pack-slidelab/slidelab-pack.zip",
+    "sha256": "fc166be0b9f83b5b33d7d386ec1081d0b3dfd1e14302aa7feb42b65dca1314fb",
+    "bytes": 36562317,
+    "published": true
+  },
+  "speaker-portfolio": {
+    "release": "pack-speaker-portfolio",
+    "url": "https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/download/pack-speaker-portfolio/speaker-portfolio-pack.zip",
+    "sha256": "384fffbdce82abba894aefeef5f0ea548398709da65954896ac2e2aa436eb8d7",
+    "bytes": 11731864,
+    "published": true
   }
 }

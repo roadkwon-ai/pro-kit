@@ -19,7 +19,7 @@ my-app/
 │   └── config/                 공유 tsconfig                                          (BTS)
 ├── bts.jsonc, turbo.json, biome.json, pnpm-workspace.yaml                             (BTS)
 ├── AGENTS.md, CLAUDE.md, GLOSSARY.md                                                   (템플릿)
-├── .agents/skills/             prokit-* 8개, 공식 도메인 스킬, superpowers·skill-creator·ponytail(Codex·Antigravity·Grok Build)
+├── .agents/skills/             prokit-* 9개, 공식 도메인 스킬, superpowers·skill-creator·ponytail 6종(Codex·Antigravity·Grok Build)
 ├── .agents/agents/             에이전트 생성물(Antigravity)
 ├── .claude/                    agents/(정본), skills/(링크), settings.json(플러그인, 키 훅)
 ├── .codex/                     agents/(생성물), skills·prompts(OMX)
@@ -47,7 +47,7 @@ my-app/
 | `tasks/todo.md`, `tasks/archive/`, `tasks/evidence/` | 남은 일반 할 일·백로그와 진행 중 대조표, 날짜별 완료 기록과 색인, 스크린샷 같은 증거 | [증거와 audit, 사용자 확인](../concepts/audit-and-confirm.md) |
 | `skills.manifest.json`, `skills-lock.json` | 설치할 스킬 목록과 설치한 판 | [설치와 업데이트 구조](../skills/install-and-update.md) |
 | `.claude/agents/`, `.codex/agents/`, `.agents/agents/` | 구현 수행자, 전문 리뷰어, 최종 리뷰어의 정본과 생성물(Codex용, Antigravity용) | [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
-| `scripts/delegation.mjs`, `scripts/resource-guard.mjs`, `.prokit/` | 위임 패킷의 실제 변경 검증, 관리 범위의 자원 측정·실행 보호·관리 임시 폴더 | [위임과 자원 관리](../concepts/delegation-and-resources.md) |
+| `scripts/delegation.mjs`, `scripts/resource-guard.mjs`, `.prokit/` | 위임 패킷의 실제 변경 검증과 자원 보호. `.prokit/` 실행 상태는 Git과 Biome에서 제외해요 | [위임과 자원 관리](../concepts/delegation-and-resources.md) |
 | `.vercelignore` | 배포에서 비밀값 파일을 빼요 | [비밀값 지키기](../deploy/secrets.md) |
 | `release/` | 릴리스 노트 | [버전과 릴리스](../deploy/release.md) |
 
@@ -57,11 +57,16 @@ my-app/
 |---|---|
 | `PRODUCT.md` | 제품 맥락(impeccable `init` 인터뷰 결과) |
 | `DESIGN.md` | 디자인 값(토큰)과 이유 |
+| `docs/preset-design.json` | 프리셋에서 받은 디자인 설정이나 요청한 변경의 선택 기록. 서체 파일·굵기·라이선스, 모드별 토큰과 초기 언어·모드를 `DESIGN.md`와 맞춰요 |
 | `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 사이트맵과 화면 설계(브리프) |
 | `apps/web/src/fonts/`, `apps/web/public/images/` | 자체 호스팅 서체와 이미지 |
 | `html/` | `pnpm export:html` 결과(git이 무시해요) |
 
 화면만 프로젝트는 루트 `AGENTS.md` 맨 위에 "화면만 프로젝트" 한 줄이 있고, 작업 폴더에서 시작했다면 `docs/first-request.md`에 첫 요청이 있어요([화면만 프로젝트와 HTML 내보내기](../design/screen-only.md)).
+
+Codex 네이티브 Ponytail 플러그인은 `--with-global`에서만 사용자 환경에 설치해요. 이 프로젝트의 `.codex/` 생성물과 플러그인 설치·훅 허용 상태는 따로 확인해요([설치와 업데이트 구조](../skills/install-and-update.md)).
+
+완성팩을 적용하는 작업은 `.agents/skills/prokit-pack-use/`가 맡아요. `preset-manifest.json`이 있으면 지원 환경·수정 범위·비교 자료를 읽고, 소스 무결성 목록과 실제 파일을 대조해요. 공식 프리셋의 원본 조사·COPY 역할은 일반 사용자 템플릿에 포함하지 않아요([담당 구분](../design/preset-publication.md)).
 
 ## 관련 문서
 

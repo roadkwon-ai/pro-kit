@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -65,10 +65,72 @@ test("저장소 전체: node scripts/doc-values.mjs --check가 통과한다", ()
   assert.equal(r.status, 0, r.stdout + r.stderr);
 });
 
-test("doc-values.json 프리셋 이름 = tutorials/packs.json 팩 이름, 분류는 landing·app·clone", () => {
+test("프리셋과 팩 이름·게시 상태가 같고 분류는 landing·app·clone이다", () => {
   const presets = JSON.parse(read("doc-values.json")).presets;
-  assert.deepEqual(Object.keys(presets).sort(), Object.keys(JSON.parse(read("tutorials/packs.json"))).sort());
-  for (const [n, p] of Object.entries(presets)) assert.match(p.kind, /^(landing|app|clone)$/, n);
+  const packs = JSON.parse(read("tutorials/packs.json"));
+  assert.deepEqual(Object.keys(presets).sort(), Object.keys(packs).sort());
+  assert.deepEqual(Object.entries(presets).filter(([, p]) => p.published !== false).map(([n]) => n).sort(), Object.entries(packs).filter(([, p]) => p.published !== false).map(([n]) => n).sort());
+  for (const [n, p] of Object.entries(presets)) {
+    assert.match(p.kind, /^(landing|app|clone)$/, n);
+    if (p.published !== undefined) assert.equal(typeof p.published, "boolean", n);
+    if (packs[n].published !== undefined) assert.equal(typeof packs[n].published, "boolean", n);
+  }
+});
+
+test("미측정 프리셋은 사실 메타만 제공하고 시간·비용·점수를 만들지 않는다", () => {
+  const d = JSON.parse(read("doc-values.json")).presets.slidelab;
+  assert.equal(d.measurements, "unmeasured");
+  assert.equal(d.pack, undefined);
+  assert.equal(d.scratch, undefined);
+  assert.equal(d.actual, undefined);
+  const values = loadValues();
+  assert.equal(values.get("preset.slidelab.pages")?.value, "1");
+  for (const key of ["pack.time", "pack.tokens", "scratch.time", "actual.total.time", "design.critique"])
+    assert.equal(values.get(`preset.slidelab.${key}`), undefined, key);
+});
+
+test("일부 제작 관측은 공개·점수·재현 시간과 독립된 값으로 제공한다", () => {
+  const values = loadValues();
+  assert.equal(values.get("preset.slidelab.observed.time").value, "1시간 59분");
+  assert.equal(values.get("preset.slidelab.observed.count").value, "3");
+  assert.match(values.get("preset.slidelab.observed.note").value, /포함하지/);
+  assert.equal(values.get("preset.slidelab.pack.time"), undefined);
+  assert.equal(values.get("preset.slidelab.design.critique"), undefined);
+});
+
+test("짧은 제작 관측도 빈 시간으로 숨기지 않는다", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "doc-values-observed-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  for (const name of ["site-links.json", "templates", "handbook", "tutorials"]) symlinkSync(join(ROOT, name), join(dir, name));
+  const doc = JSON.parse(read("doc-values.json"));
+  doc.presets.slidelab.observed.intervals = [{ source: "checks/short.json", sha256: "a".repeat(64),
+    startedAt: "2026-10-11T00:00:00Z", endedAt: "2026-10-11T00:00:30Z", wallMs: 30000, exitCode: 0 }];
+  writeFileSync(join(dir, "doc-values.json"), JSON.stringify(doc));
+  assert.equal(loadValues(dir).get("preset.slidelab.observed.time").value, "1분 미만");
+});
+
+test("로컬 준비본은 개별 안내 값을 제공하되 공개·측정 집계와 릴리스 링크를 바꾸지 않는다", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "doc-values-draft-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  for (const name of ["site-links.json", "templates", "handbook", "tutorials"]) symlinkSync(join(ROOT, name), join(dir, name));
+  const doc = JSON.parse(read("doc-values.json"));
+  doc.presets.documentationDraft = { title: "로컬 준비본", kind: "landing", pages: "1", published: false };
+  writeFileSync(join(dir, "doc-values.json"), JSON.stringify(doc));
+  const baseline = loadValues(), values = loadValues(dir);
+  assert.equal(values.get("preset.documentationDraft.pages").value, "1");
+  for (const [key, value] of baseline) {
+    if (key.startsWith("presets.") || key.startsWith("clones.") || key === "packs.count") assert.equal(values.get(key).value, value.value, key);
+  }
+  for (const [name, p] of Object.entries(doc.presets)) if (p.published === false) {
+    for (const field of ["release", "zip", "size"]) assert.ok(!values.has(`pack.${name}.${field}`), `${name}: 미게시 다운로드 정보를 만들지 않는다`);
+  }
+  doc.presets.documentationDraft = { ...doc.presets.documentationDraft, published: true, measurements: "unmeasured" };
+  writeFileSync(join(dir, "doc-values.json"), JSON.stringify(doc));
+  const publishedUnmeasured = loadValues(dir);
+  assert.equal(Number(publishedUnmeasured.get("presets.count").value), Number(baseline.get("presets.count").value) + 1);
+  assert.equal(publishedUnmeasured.get("preset.documentationDraft.pack.time"), undefined);
+  for (const key of ["presets.actual.time.range", "presets.pack.time.range", "presets.scratch.time.range"])
+    assert.equal(publishedUnmeasured.get(key).value, baseline.get(key).value, key);
 });
 
 // 묶음 원본에 인자를 넣어 펼친 글(끝 줄바꿈 포함). 채울 수 없으면 던진다.
@@ -122,7 +184,7 @@ test("계산값: 이미지 도구 에이전트, 묻지 않고 진행하는 옵�
     "agent.codex.start": "codex",
     "agent.agy.start": "agy",
     "agent.grok.start": "grok --trust",
-    "presets.screen.pages.range": "7\\~22",
+    "presets.screen.pages.range": "1\\~22",
     "port.web": "3001",
     "port.neonDb": "5432",
     "port.supabaseDb": "54322",
@@ -187,7 +249,7 @@ test("단계별 예상 표: 합계 행이 단계 합과 5% 안에서 같다(시�
   const d = JSON.parse(read("doc-values.json")).presets;
   const bad = [];
   for (const [name, p] of Object.entries(d)) {
-    if (p.kind === "clone") continue;
+    if (p.kind === "clone" || p.measurements === "unmeasured") continue;
     const rows = plain(read(`tutorials/samples/${name}.md`))
       .split("\n")
       .filter((l) => /^\| (준비|기획|디자인|화면 구성|그림|첫 화면|나머지|검사와|HTML)/.test(l))
@@ -216,7 +278,7 @@ test("단계별 예상 표: 칸의 달러는 규칙대로 반올림한 값이다
   const usdByTokens = new Map();
   const bad = [];
   for (const [name, p] of Object.entries(JSON.parse(read("doc-values.json")).presets)) {
-    if (p.kind === "clone") continue;
+    if (p.kind === "clone" || p.measurements === "unmeasured") continue;
     read(`tutorials/samples/${name}.md`)
       .split("\n")
       .filter((l) => /^\| (준비|기획|디자인|화면 구성|그림|첫 화면|나머지|검사와|HTML|\(선택\))/.test(plain(l)))
@@ -273,7 +335,7 @@ test("계산값 2: 비용 단위, 한글 수사, 케이스 범위, 화면 점수
   const want = {
     "cost.tokensPerUsd": "5.5만", "cost.cachedPerUsd": "275만", "cost.multiplier": "2~3", "cost.multiplierModel": "1~2", "cost.multiplierRefine": "1.1~3",
     "cost.feature.time": "15분", "cost.feature.usd": "7", "cost.date": "2026-10-05", "cost.image.tokens": "1.7만",
-    "templates.count.ko": "두", "prokit.skills.count.ko": "여덟", "prokit.agents.count.ko": "세", "agents.count.ko": "네", "devCycle.cases.count.ko": "일곱", "optional.count": "3", "optional.count.ko": "세",
+    "templates.count.ko": "두", "prokit.skills.count.ko": "아홉", "prokit.agents.count.ko": "세", "agents.count.ko": "네", "devCycle.cases.count.ko": "일곱", "optional.count": "3", "optional.count.ko": "세",
     "devCycle.cases.range": "A\\~F·H", "devCycle.ui.auditMin": "16", "devCycle.ui.a11yMin": "3",
     "optional.names": "ops, motion, mobile", "optional.namesCode": "`ops`, `motion`, `mobile`",
     "optional.ops.skillsCode.neon": "`vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway`", "optional.ops.skillsCode.supabase": "`vercel-optimize`",
@@ -281,7 +343,7 @@ test("계산값 2: 비용 단위, 한글 수사, 케이스 범위, 화면 점수
     "agent.claude.install": "curl -fsSL https://claude.ai/install.sh | bash", "agent.codex.install": "curl -fsSL https://chatgpt.com/codex/install.sh | sh",
     "agent.codex.installCell": "`curl -fsSL https://chatgpt.com/codex/install.sh \\| sh`",
     "cli.neon.installCode": "`npm install -g neon`", "cli.vercel.installCode": "`npm install -g vercel`",
-    "policy.agentBrowser.da": "agent-browser CLI가 없거나 npm 최신판보다 낮으면 전역에 최신판을 설치한다", "policy.agentBrowser.yo": "agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요", "node.eol": "2026-04-30", "vercel.node": "24.x", "vercel.node20Stop": "2026-10-01", "meta.presetModel": "Opus 5.5", "packs.count": "11",
+    "policy.agentBrowser.da": "agent-browser CLI가 없거나 npm 최신판보다 낮으면 전역에 최신판을 설치한다", "policy.agentBrowser.yo": "agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요", "node.eol": "2026-04-30", "vercel.node": "24.x", "vercel.node20Stop": "2026-10-01", "meta.presetModel": "Opus 5.5", "packs.count": "13",
     "preset.goru.pages.rest": "6", "preset.olgot.pageTypes.rest": "47",
     "preset.goru.field": "공동 생활비 정산", "preset.goru.summary": "같이 사는 사람들의 생활비 정산", "preset.goru.difficulty": "쉬움", "preset.goru.kindLabel": "앱 화면", "preset.ullim.kindLabel": "랜딩페이지",
     "preset.goru.design.rec1": "Monzo", "preset.goru.design.rec2": "당근 SEED", "preset.goru.design.rec3": "Monarch", "preset.goru.design.src1": "Refero Styles", "preset.goru.design.src2": "getdesign.kr",
@@ -300,9 +362,9 @@ test("계산값 2: 비용 단위, 한글 수사, 케이스 범위, 화면 점수
   assert.deepEqual(Object.fromEntries(Object.keys(want).map((k) => [k, values.get(k)?.value])), want);
 });
 
-test("tutorials/samples/README.md 표: 화면 프리셋 9개가 모두 있고 페이지가 적은 순이다", () => {
+test("tutorials/samples/README.md 표: 모든 화면 프리셋이 있고 페이지가 적은 순이다", () => {
   const presets = JSON.parse(read("doc-values.json")).presets;
-  const rows = [...read("tutorials/samples/README.md").matchAll(/^\| \[.*?\]\((\w+)\.md\) \|.*?<!-- v:preset\.(\w+)\.pages -->/gm)].map((m) => [m[1], m[2]]);
+  const rows = [...read("tutorials/samples/README.md").matchAll(/^\| \[.*?\]\(([\w-]+)\.md\) \|.*?<!-- v:preset\.([\w-]+)\.pages -->/gm)].map((m) => [m[1], m[2]]);
   assert.deepEqual(rows.map(([a, b]) => a === b), rows.map(() => true), "링크 파일과 pages 키의 프리셋이 같다");
   const names = rows.map(([a]) => a);
   assert.deepEqual([...names].sort(), Object.entries(presets).filter(([, p]) => p.kind !== "clone").map(([n]) => n).sort());
@@ -405,13 +467,15 @@ test("handbook/skills/official-skills.md 표의 스킬과 출처 열이 manifest
   assert.deepEqual(bad, []);
 });
 
-test("CONTRIBUTING.md의 릴리스·팩 올리기 명령은 정본 AGENTS.md에 같은 글자로 있고, 문장 복사 대신 링크로 줄였다", () => {
+test("CONTRIBUTING.md의 릴리스 명령은 정본과 같고 팩 제작·게시 절차는 전문 스킬에 인계한다", () => {
   const contributing = read("CONTRIBUTING.md");
   const agents = read("AGENTS.md");
   const cmds = [...contributing.matchAll(/`((?:node scripts\/(?:release|pack)\.mjs|gh release)[^`]*)`/g)].map((m) => m[1]);
-  assert.ok(cmds.length >= 5, `명령 ${cmds.length}개`);
+  assert.ok(cmds.length >= 2, `명령 ${cmds.length}개`);
+  assert.ok(!cmds.some((c) => c.startsWith("gh release")), "팩 게시 명령을 소비자 문서에 복제하지 않는다");
+  assert.ok(contributing.includes("prokit-preset-publish"), "팩 게시 담당 스킬을 명시한다");
   for (const c of cmds) assert.ok(agents.includes(c), `AGENTS.md에 없는 명령: ${c}`);
-  // 규칙 문장은 AGENTS.md에만 둔다: 템플릿 수정 흐름·릴리스·팩 올리기가 원문 링크를 가진다
+  // 소비자 규칙은 AGENTS.md를, 제작·게시 규칙은 전문 스킬을 가리킨다.
   for (const anchor of ["#템플릿-수정-규칙", "#버전과-릴리스"]) assert.ok(contributing.includes(`](AGENTS.md${anchor})`), anchor);
   for (const t of ["neon", "supabase"]) {
     const readme = read(`templates/prokit-next-${t}/README.md`);

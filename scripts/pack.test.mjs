@@ -12,13 +12,30 @@ const ROOT = join(import.meta.dirname, "..");
 const PACKS = JSON.parse(readFileSync(join(ROOT, "tutorials", "packs.json"), "utf8"));
 const LINKS = JSON.parse(readFileSync(join(ROOT, "site-links.json"), "utf8"));
 
+test("미발행 팩은 네트워크로 받지 않고 로컬 zip 검증을 허용한다", async (t) => {
+  const tmp = mkdtempSync(join(tmpdir(), "pack-unpublished-test-"));
+  t.after(() => rmSync(tmp, { recursive: true, force: true }));
+  mkdirSync(join(tmp, "src"));
+  writeFileSync(join(tmp, "src", "README.md"), "로컬 준비본");
+  const zip = join(tmp, "draft.zip");
+  execFileSync("zip", ["-q", zip, "README.md"], { cwd: join(tmp, "src") });
+  const bytes = readFileSync(zip);
+  const index = join(tmp, "packs.json");
+  writeFileSync(index, JSON.stringify({ draft: { published: false, release: "pack-draft", url: "http://127.0.0.1:1/should-not-fetch", sha256: createHash("sha256").update(bytes).digest("hex"), bytes: bytes.length } }));
+  await assert.rejects(getPack("draft", { index, dir: join(tmp, "out") }), /아직 공개하지 않은 팩/);
+  const result = await getPack("draft", { index, dir: join(tmp, "out"), zip });
+  assert.equal(result.fresh, true);
+  assert.equal(readFileSync(join(result.dest, "README.md"), "utf8"), "로컬 준비본");
+});
+
 test("packs.json: 팩마다 이름이 고정된 릴리스 pack-<이름>의 <이름>-pack.zip 주소(site-links.json packs, 프리미엄 팩은 premiumPacks)와 sha256, 크기가 있다", () => {
   assert.ok(Object.keys(PACKS).length > 0);
   for (const [name, p] of Object.entries(PACKS)) {
-    assert.match(name, /^[a-z][a-z0-9]*$/, name);
+    assert.match(name, /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/, name);
     assert.equal(p.release, `pack-${name}`, name);
     const repos = [LINKS.packs, LINKS.premiumPacks].map((r) => `${r}/releases/download/${p.release}/${name}-pack.zip`);
-    assert.ok(repos.includes(p.url), `${name}: ${p.url}`);
+    if (p.published === false) assert.equal(p.url, "", `${name}: 미게시 원격 주소`);
+    else assert.ok(repos.includes(p.url), `${name}: ${p.url}`);
     assert.match(p.sha256, /^[0-9a-f]{64}$/, name);
     assert.ok(Number.isInteger(p.bytes) && p.bytes > 0, name);
   }

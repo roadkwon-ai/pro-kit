@@ -106,7 +106,14 @@
 		{
 			"agents": ["codex"],
 			"source": "DietrichGebert/ponytail",
-			"skills": ["ponytail", "ponytail-review"]
+			"skills": [
+				"ponytail",
+				"ponytail-review",
+				"ponytail-audit",
+				"ponytail-debt",
+				"ponytail-help",
+				"ponytail-gain"
+			]
 		}
 	],
 	"optional": {
@@ -205,5 +212,12 @@
 			"install": "command -v brew >/dev/null || { echo 'Homebrew가 없다. 설치 없이 쓰려면 pnpm dlx supabase@latest <명령>'; exit 1; }; brew install supabase/tap/supabase",
 			"hint": "brew install supabase/tap/supabase 또는 pnpm dlx supabase@latest <명령>"
 		}
-	]
+	],
+	"codex": {
+		"marketplace": {
+			"name": "ponytail",
+			"source": "DietrichGebert/ponytail"
+		},
+		"plugins": ["ponytail@ponytail"]
+	}
 }

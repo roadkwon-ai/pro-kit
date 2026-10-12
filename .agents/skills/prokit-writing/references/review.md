@@ -14,10 +14,11 @@
 
 ## 스킬 찾기
 
-각 스킬의 `SKILL.md`를 읽고 그 절차를 따른다. 설치 위치는 에이전트마다 다르다. 프로젝트의 `.claude/skills/`나 `.agents/skills/`, 사용자 전역의 `~/.agents/skills/`, `~/.claude/skills/`, `~/.gemini/antigravity-cli/skills/` 등을 찾아본다. 세 스킬 중 하나라도 없으면 아래 명령을 알려 주고 멈춘다. Antigravity CLI는 `~/.agents/skills/`를 읽지 않으므로 둘째 줄로 링크를 건다.
+각 스킬의 `SKILL.md`를 읽고 그 절차를 따른다. 설치 위치는 에이전트마다 다르다. 프로젝트의 `.claude/skills/`나 `.agents/skills/`, 사용자 전역의 `~/.agents/skills/`, `~/.claude/skills/`, `~/.gemini/antigravity-cli/skills/` 등을 찾아본다. 세 스킬 중 하나라도 없으면 아래 명령을 알려 주고 멈춘다. Antigravity CLI 1.3.1의 과거 검사에서는 전역 `~/.agents/skills/`가 발견되지 않았다. 현재 실행 환경에서도 누락될 때만 전역 보조 스킬의 실제 설치 경로를 확인하고 링크를 만든다. 기존 파일이나 링크는 덮어쓰지 않는다. 프로젝트 스킬 설치와 전역 보조 스킬 설치를 구분한다.
 
 ```bash
 npx skills add DaleSeo/korean-skills -g -a claude-code -a codex -y
+mkdir -p ~/.gemini/antigravity-cli/skills
 for s in humanizer style-guide grammar-checker; do ln -s ~/.agents/skills/$s ~/.gemini/antigravity-cli/skills/$s; done
 ```
 

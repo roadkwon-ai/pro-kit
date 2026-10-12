@@ -22,7 +22,7 @@
 새 프로젝트를 처음 열면 도구가 이 폴더를 믿을지 물어요. 동의해야 프로젝트 설정이 켜져요.
 
 - Claude Code: 프로젝트 플러그인(superpowers, skill-creator, OMC, ponytail)
-- Codex: `.codex/agents`의 구현 수행·전문 리뷰·최종 리뷰 에이전트. 스킬은 신뢰하지 않아도 보여요
+- Codex: `.codex/agents`의 구현 수행·전문 리뷰·최종 리뷰 에이전트와 프로젝트 스킬을 써요. `--with-global`로 Ponytail 네이티브 플러그인을 설치한 경우에는 `/hooks`에서 별도로 신뢰하고 새 세션을 열어야 훅이 자동으로 돌아요. 설치만으로 신뢰를 대신하지 않으며, 플러그인이 없어도 프로젝트의 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬은 보여요
 - Grok Build: 규칙과 스킬. 신뢰하지 않은 폴더에서는 에이전트만 보여요. `grok --trust`로 열면 묻지 않고 신뢰해요
 
 ### 쓰지 않는 것과 대신하는 것

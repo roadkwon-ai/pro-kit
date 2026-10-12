@@ -12,6 +12,8 @@
 - `[confirm]` 행(사용자 확인)은 증거 칸을 N/A·PASS·blocked·미실행·대기 같은 건너뛰기 표시로 채울 수 없다. audit이 거부하고 `close --partial`로도 닫히지 않는다. 라운드를 닫은 뒤의 커밋·push, 릴리스, 배포는 `prokit-dev-cycle`의 "5. 종료"를 따른다.
 - 위임은 `prokit-dev-cycle`의 `references/delegation.md`를 따른다. provider의 실제 내용·hash·scope·의존성·capability·side effect와 snapshot·evidence packet을 확인한 뒤 한 작업 단위에 한 수행 흐름만 둔다. 고위험 미검사는 parked 또는 degraded로 남기며 PASS로 적지 않는다.
 
+검사의 배정·재사용·재시도는 `prokit-dev-cycle/references/execution-efficiency.md`를 따른다. 구현자는 배정된 회귀 검사를 하고 전역 타입·린트·빌드는 통합 담당자가 실행한다. 이후 수정에서는 실패한 검사와 입력·공통 소비자가 바뀐 검사만 다시 확인하며, 전문 리뷰 증거를 재사용해도 `prokit-reviewer`의 현재 결과 최종 검수는 생략하지 않는다.
+
 `pnpm dev-cycle archive [--title "제목"]`은 활성 라운드와 미완료 항목을 보존한 채 대조표 밖의 완료한 `[x]` 일반 할 일·백로그만 보관한다. 끝난 하위 항목에는 부모 문맥을 붙인다. `close`는 audit과 실제 사용자 확인 뒤에 대조표와 완료한 일반 할 일·백로그를 함께 KST 날짜의 `YYYY-MM-DD-제목.md`에 보관한다. 같은 이름은 `-2`부터 이어 붙이고, `tasks/archive/README.md` 색인과 `tasks/todo.md`의 색인 링크를 갱신한다. 기존 월별 기록은 보존한다.
 
 ## 케이스
@@ -64,10 +66,10 @@
 - 구현 방식 (subagent-driven-development + test-driven-development, ponytail 모드) → 사용한 스킬, provider 검증, snapshot·evidence packet hash, reviewCoverage와 위임 내역
 - @include E D B
 - [verify] next-dev-loop 통합 런타임 확인 → 확인한 경로와 결과
-- 공통화·리팩토링·최적화 점검 (이번 라운드가 바꾼 파일과 같은 디렉터리·계획에서 확인한 공통 모듈의 소비자에 ponytail-review, 한쪽이 이번 diff이고 같은 책임으로 함께 바뀌는 반복 코드·UI만 적절한 위치로 추출하고 나머지는 백로그로, 필요 없는 추상화는 걷어 냄, 빌드 출력의 라우트 크기와 새 의존성·글꼴·이미지 확인) → 반영 내역, 재확인(타입·린트·테스트·화면) 결과, 미룬 항목과 기록 위치
+- 공통화·리팩토링·최적화 점검 (이번 라운드가 바꾼 파일과 같은 디렉터리·계획에서 확인한 공통 모듈의 소비자에 ponytail-review, 한쪽이 이번 diff이고 같은 책임으로 함께 바뀌는 반복 코드·UI만 적절한 위치로 추출하고 나머지는 백로그로, 필요 없는 추상화는 걷어 냄, 빌드 출력의 라우트 크기와 새 의존성·글꼴·이미지 확인) → 반영 내역, 영향 재확인(타입·린트·테스트·화면) 결과, 미룬 항목과 기록 위치
 - [review] prokit-reviewer(code) 전체 diff 최종 리뷰 → verdict, max_severity, 반영·기각 내역
 - [verify] 사용자 흐름 QA (스펙의 테스트 시나리오 전부를 ego-browser(없으면 agent-browser)로, 오류 예산은 깨끗한 프로필(agent-browser)로도, 보고만) → 시나리오별 통과·실패, 오류 예산 수
-- QA 발견 수정과 재QA (문제와 개선점을 고친 뒤 타입·린트·빌드·테스트를 다시 돌리고, 수정 diff에 prokit-reviewer(code)와 ponytail-review를 받고, 실패한 시나리오와 오류 예산을 다시 확인. 발견이 없으면 N/A: 사유) → 수정 내역, 재검사·재리뷰·재QA 결과
+- QA 발견 수정과 재QA (문제와 개선점을 고친 뒤 실패한 검사와 입력·공통 소비자가 바뀐 타입·린트·빌드·테스트를 다시 돌리고, 수정 diff에 fresh prokit-reviewer(code)와 ponytail-review를 받되 같은 Ponytail 검토를 중복 호출하지 않으며, 실패한 시나리오와 오류 예산을 다시 확인. 발견이 없으면 N/A: 사유) → 수정 내역, 영향 재검사·재리뷰·재QA 결과
 
 ### H. 하네스
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사

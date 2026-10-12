@@ -48,6 +48,8 @@ flowchart LR
 
 Vercel 계정, 원격 DB, GitHub 저장소가 필요해요. "Vercel 배포 준비해줘"라고 하면 에이전트가 순서를 안내해요. 사용자가 직접 할 일은 Vercel CLI 설치와 `vercel login`, `gh auth login`, GitHub 원격 저장소 만들기예요. 연결 명령과 환경변수(`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`)를 값이 출력되지 않게 넣는 법은 템플릿 README의 "Vercel 배포"([neon](../../templates/prokit-next-neon/README.md#vercel-배포) · [supabase](../../templates/prokit-next-supabase/README.md#vercel-배포))에 있어요.
 
+인증이 실패하면 재로그인을 요청하기 전에 현재 프로젝트와 사용자가 신뢰한 키 설정의 로딩 경로·우선순위를 확인해요. `prokit-deploy`가 `scripts/load-keys.mjs`와 공식 `vercel-cli-with-tokens` 스킬을 연결하며, 키의 존재와 세션 차이만 확인하고 값은 출력하지 않아요. 설정을 적용한 뒤에도 실제 권한 확인이 통과해야 배포를 진행해요.
+
 - Vercel은 프로젝트의 첫 배포를 production으로 만들어서 production부터 배포해요. 스크립트는 production 배포가 없으면 develop을 막아요.
 - `vercel link`가 GitHub 저장소를 연결하면 기본 브랜치 push가 곧 production 배포가 돼서 릴리스 검사를 거치지 않아요. 그래서 새 프로젝트를 만들며 연결됐을 때는 연결을 끊어요(`vercel git disconnect --yes`). push마다 자동 배포하는 방식은 사용자가 요청할 때만 쓰고, 결정은 `docs/adr/`에 남겨요.
 

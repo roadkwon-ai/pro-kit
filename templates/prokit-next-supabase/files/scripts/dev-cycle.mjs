@@ -2,9 +2,11 @@
 // dev-cycle 경량 러너: case | table | status | audit | close | archive | secrets
 // 절차 정본은 docs/dev-workflow.md, 판정 규칙은 .dev-cycle.json이다.
 import { execFileSync, spawnSync } from "node:child_process";
+import { createHash, randomUUID } from "node:crypto";
 import {
 	closeSync,
 	existsSync,
+	lstatSync,
 	mkdirSync,
 	mkdtempSync,
 	openSync,
@@ -16,14 +18,18 @@ import {
 	statSync,
 	writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { isDeepStrictEqual } from "node:util";
 import {
+	captureSnapshot,
 	main as delegationMain,
+	observeProvider,
 	resolveProvider,
 	validateDelegationPacket,
 } from "./delegation.mjs";
-import { main as resourceMain } from "./resource-guard.mjs";
+import { main as resourceMain, runGuarded } from "./resource-guard.mjs";
 
 const DEFAULTS = {
 	todoPath: "tasks/todo.md",
@@ -1100,7 +1106,7 @@ export function stagedSecrets(root) {
 }
 
 const USAGE =
-	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--delegation] [--title 제목] | evidence <행 번호> --file <증거 파일> | status | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|validate> | close [--partial] [--packet 파일 --context 파일] | secrets> [--json]";
+	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--delegation] [--title 제목] | evidence <행 번호> --file <증거 파일> | status | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|validate|accept> | close [--partial] [--packet 파일 --context 파일] | secrets> [--json]";
 
 function readDelegationJson(root, path, flag) {
 	if (!path || path.startsWith("--"))
@@ -1141,6 +1147,759 @@ export function sourceBoundRoot(root) {
 		requestedScope: "project",
 		scope: "project",
 		inspectOnly: true,
+	};
+}
+
+const digest = (value) =>
+	createHash("sha256")
+		.update(typeof value === "string" ? value : JSON.stringify(value))
+		.digest("hex");
+
+const sameJson = (left, right) => isDeepStrictEqual(left, right);
+
+function acceptUsage() {
+	return "사용법: dev-cycle delegation accept --base <commit> --scope <경로/**> --focus <경로> --contract <계약> --provider <프로젝트 안 prokit-reviewer source> [--provider <프로젝트 안 source>] [--artifact <프로젝트 안 file>] --check <JSON argv 배열> [--check <JSON argv 배열>]";
+}
+
+function acceptArgv(value, flag) {
+	let argv;
+	try {
+		argv = JSON.parse(value);
+	} catch {
+		throw new UsageError(`${flag}는 JSON argv 배열이어야 한다`);
+	}
+	if (
+		!Array.isArray(argv) ||
+		argv.length === 0 ||
+		argv.some((arg) => typeof arg !== "string" || !arg || arg.includes("\0"))
+	) {
+		throw new UsageError(
+			`${flag}는 비어 있지 않은 문자열 argv 배열이어야 한다`,
+		);
+	}
+	return argv;
+}
+
+function acceptOptions(args) {
+	const out = {
+		scopes: [],
+		focus: [],
+		contracts: [],
+		providers: [],
+		artifacts: [],
+		checks: [],
+	};
+	for (let index = 0; index < args.length; index += 1) {
+		const flag = args[index];
+		const value = args[index + 1];
+		if (
+			![
+				"--base",
+				"--scope",
+				"--focus",
+				"--contract",
+				"--provider",
+				"--artifact",
+				"--check",
+			].includes(flag) ||
+			value == null ||
+			value.startsWith("--")
+		) {
+			throw new UsageError(acceptUsage());
+		}
+		index += 1;
+		if (flag === "--base") {
+			if (out.base) throw new UsageError("--base는 한 번만 지정한다");
+			out.base = value;
+		} else if (flag === "--scope") out.scopes.push(value);
+		else if (flag === "--focus") out.focus.push(value);
+		else if (flag === "--contract") out.contracts.push(value);
+		else if (flag === "--provider") out.providers.push(value);
+		else if (flag === "--artifact") out.artifacts.push(value);
+		else if (flag === "--check") out.checks.push(acceptArgv(value, flag));
+	}
+	if (
+		!out.base ||
+		!SHA_RE.test(out.base) ||
+		!out.scopes.length ||
+		!out.focus.length ||
+		!out.contracts.length ||
+		!out.checks.length
+	) {
+		throw new UsageError(acceptUsage());
+	}
+	for (const value of [...out.scopes, ...out.focus, ...out.artifacts]) {
+		if (
+			!value ||
+			value.includes("\0") ||
+			value.startsWith("/") ||
+			value.split(/[\\/]/).includes("..")
+		) {
+			throw new UsageError("scope·focus는 프로젝트 안 경로여야 한다");
+		}
+	}
+	if (out.contracts.some((value) => !value.trim() || value.includes("\0")))
+		throw new UsageError("contract는 비어 있지 않은 문자열이어야 한다");
+	if (
+		!out.providers.some((value) =>
+			/(?:^|[\\/])prokit-reviewer\.md$/.test(value),
+		)
+	)
+		throw new UsageError("--provider에 현재 prokit-reviewer source를 넣는다");
+	return out;
+}
+
+function observeAcceptArtifacts(root, paths) {
+	const project = resolve(root);
+	const artifacts = paths.map((path) => {
+		const full = resolve(project, path);
+		if (!full.startsWith(`${project}${sep}`))
+			throw new UsageError("artifact는 프로젝트 안 파일이어야 한다");
+		try {
+			const stat = lstatSync(full);
+			if (!stat.isFile() || stat.isSymbolicLink())
+				throw new Error("not regular file");
+			return {
+				path,
+				hash: createHash("sha256").update(readFileSync(full)).digest("hex"),
+			};
+		} catch {
+			throw new UsageError(`artifact를 읽을 수 없다: ${path}`);
+		}
+	});
+	if (
+		new Set(artifacts.map((artifact) => artifact.path)).size !==
+		artifacts.length
+	)
+		throw new UsageError("같은 artifact를 두 번 지정할 수 없다");
+	return artifacts;
+}
+
+function observeAcceptProviders(root, refs) {
+	const providers = refs.map((ref) => {
+		const observed = observeProvider(ref, {
+			root,
+			accessibleRoots: [root],
+			requestedScope: "project",
+		});
+		if (!observed.ok)
+			throw new UsageError(`provider source를 관측할 수 없다: ${ref}`);
+		return {
+			ref,
+			name: observed.observation.name,
+			origin: observed.observation.origin,
+			canonicalLocation: observed.observation.canonicalLocation,
+			contentHash: observed.observation.contentHash,
+		};
+	});
+	if (
+		new Set(providers.map((provider) => provider.canonicalLocation)).size !==
+		providers.length
+	)
+		throw new UsageError("같은 provider source를 두 번 지정할 수 없다");
+	return providers;
+}
+
+const providerSource = ({ ref, ...provider }) => provider;
+
+function validationProviders(sources) {
+	return sources.map((source, index) => ({
+		name: `local-source-${index + 1}`,
+		origin: source.origin,
+		canonicalLocation: source.canonicalLocation,
+		contentHash: source.contentHash,
+		scope: "project",
+		type: "source",
+		mode: "read-only",
+		host: "local",
+		capabilities: [],
+		tools: [],
+		sideEffects: [],
+		dependencies: [],
+	}));
+}
+
+function acceptedScope(path, scopes) {
+	return scopes.some((scope) => {
+		if (scope === "**") return true;
+		if (scope.endsWith("/**")) return path.startsWith(scope.slice(0, -2));
+		return path === scope;
+	});
+}
+
+async function guardedAcceptCommand(root, argv, kind) {
+	let spawned = false;
+	const result = await runGuarded(root, {
+		command: argv[0],
+		args: argv.slice(1),
+		kind,
+		captureOutput: true,
+		onChildSpawn: () => {
+			spawned = true;
+		},
+	});
+	return {
+		argv,
+		command: argv.join(" "),
+		exitCode: result.exitCode,
+		executed: spawned,
+		stdout: result.stdout,
+		stderr: result.stderr,
+		resource: {
+			before: result.before?.status ?? "unknown",
+			after: result.after?.status ?? "unknown",
+			events: result.events ?? [],
+			groupWasActive: result.groupWasActive === true,
+		},
+	};
+}
+
+function codexRuntime() {
+	try {
+		const executable = realpathSync(
+			execFileSync("which", ["codex"], { encoding: "utf8" }).trim(),
+		);
+		return {
+			executable,
+			hash: createHash("sha256").update(readFileSync(executable)).digest("hex"),
+		};
+	} catch {
+		throw new UsageError("Codex CLI 실행 파일을 관측할 수 없다");
+	}
+}
+
+function reviewerSchema() {
+	const properties = {
+		verdict: {
+			type: "string",
+			enum: ["approve", "changes-required", "blocked"],
+		},
+		focus: { type: "string", enum: ["plan", "code", "security", "db"] },
+		skills_read: { type: "array", items: { type: "string" } },
+		actual_contract: { type: "array", items: { type: "string" } },
+		evidence_hash: { type: "string" },
+		integration_acceptance: {
+			type: "string",
+			enum: ["accept", "changes-required", "blocked"],
+		},
+		max_severity: {
+			type: "string",
+			enum: ["none", "low", "medium", "high", "critical"],
+		},
+		findings: {
+			type: "array",
+			items: {
+				type: "object",
+				additionalProperties: false,
+				required: ["severity", "file", "line", "evidence", "fix"],
+				properties: {
+					severity: {
+						type: "string",
+						enum: ["none", "low", "medium", "high", "critical"],
+					},
+					file: { type: "string" },
+					line: { type: "integer", minimum: 1 },
+					evidence: { type: "string" },
+					fix: { type: "string" },
+				},
+			},
+		},
+		limitations: { type: "array", items: { type: "string" } },
+		reused: { type: "boolean" },
+		product_hash: { type: "string" },
+		provider_actual_hashes: { type: "array", items: { type: "string" } },
+		provider_sources: {
+			type: "array",
+			items: {
+				type: "object",
+				additionalProperties: false,
+				required: ["name", "origin", "canonicalLocation", "contentHash"],
+				properties: {
+					name: { type: "string" },
+					origin: { type: "string" },
+					canonicalLocation: { type: "string" },
+					contentHash: { type: "string" },
+				},
+			},
+		},
+		artifacts: {
+			type: "array",
+			items: {
+				type: "object",
+				additionalProperties: false,
+				required: ["path", "hash"],
+				properties: { path: { type: "string" }, hash: { type: "string" } },
+			},
+		},
+		environment_fingerprint: { type: "string" },
+		bound_focus: { type: "array", items: { type: "string" } },
+		contracts: { type: "array", items: { type: "string" } },
+		changed: { type: "array", items: { type: "string" } },
+		reviewer_runtime: {
+			type: "object",
+			required: ["executable", "hash"],
+			additionalProperties: false,
+			properties: {
+				executable: { type: "string" },
+				hash: { type: "string" },
+			},
+		},
+	};
+	return {
+		type: "object",
+		additionalProperties: false,
+		required: Object.keys(properties),
+		properties,
+	};
+}
+
+async function runCodexReviewer(root, expected, sources) {
+	const runtime = expected.reviewer_runtime;
+	const temp = mkdtempSync(join(tmpdir(), "prokit-accept-review-"));
+	let safeToDispose = false;
+	const schema = join(temp, "schema.json");
+	const output = join(temp, "review.json");
+	writeFileSync(schema, JSON.stringify(reviewerSchema()));
+	const reviewerSource = sources.find((source) =>
+		/(?:^|[\\/])prokit-reviewer\.md$/.test(source.ref),
+	);
+	const reviewInput = expected;
+	const prompt = [
+		"현재 프로젝트의 읽기 전용 기술 인수 검토를 수행한다.",
+		`프로필 source: ${reviewerSource.ref}`,
+		"프로필과 changed·focus·contract·artifact를 읽고 수정하지 않는다.",
+		"최종 응답은 output schema에 맞는 JSON 하나여야 한다. binding 값은 그대로 반환하되, 결함·불확실성이 있으면 verdict와 integration_acceptance를 changes-required 또는 blocked로 정직하게 낸다.",
+		JSON.stringify(reviewInput),
+	].join("\n");
+	try {
+		const run = await guardedAcceptCommand(
+			root,
+			[
+				runtime.executable,
+				"exec",
+				"--ephemeral",
+				"--sandbox",
+				"read-only",
+				"--cd",
+				resolve(root),
+				"--output-schema",
+				schema,
+				"--output-last-message",
+				output,
+				prompt,
+			],
+			"verify",
+		);
+		safeToDispose =
+			!run.resource.groupWasActive &&
+			!run.resource.events.includes("child-group-active");
+		return existsSync(output)
+			? { ...run, stdout: readFileSync(output, "utf8") }
+			: { ...run, stdout: "" };
+	} finally {
+		if (safeToDispose) rmSync(temp, { recursive: true, force: true });
+	}
+}
+
+function receiptFor(
+	run,
+	taskId,
+	runId,
+	before,
+	after,
+	environmentFingerprint,
+	artifacts,
+) {
+	return {
+		command: run.command,
+		argv: run.argv,
+		exitCode: run.exitCode,
+		executed: run.executed,
+		taskId,
+		runId,
+		cwd: process.cwd(),
+		environmentFingerprint,
+		before,
+		after,
+		artifacts,
+		effects: [],
+		identityDigest: digest({
+			argv: run.argv,
+			exitCode: run.exitCode,
+			executed: run.executed,
+			resource: run.resource,
+		}),
+	};
+}
+
+function reviewProblem(output, expected) {
+	if (!output || typeof output !== "object" || Array.isArray(output))
+		return "reviewer 결과가 JSON 객체가 아니다";
+	const keys = [
+		"verdict",
+		"focus",
+		"skills_read",
+		"actual_contract",
+		"evidence_hash",
+		"integration_acceptance",
+		"max_severity",
+		"findings",
+		"limitations",
+		"reused",
+		"product_hash",
+		"provider_actual_hashes",
+		"provider_sources",
+		"artifacts",
+		"environment_fingerprint",
+		"bound_focus",
+		"contracts",
+		"changed",
+		"reviewer_runtime",
+	];
+	if (
+		Object.keys(output).length !== keys.length ||
+		keys.some((key) => !(key in output))
+	)
+		return "reviewer 결과 schema가 정확하지 않다";
+	if (
+		output.verdict !== "approve" ||
+		output.integration_acceptance !== "accept"
+	)
+		return "prokit-reviewer가 기술 인수를 approve하지 않았다";
+	if (!Array.isArray(output.findings) || !Array.isArray(output.limitations))
+		return "reviewer findings·limitations 형식이 아니다";
+	if (
+		output.findings.some((finding) =>
+			["high", "critical"].includes(finding?.severity),
+		)
+	)
+		return "reviewer high·critical finding이 남아 있다";
+	if (
+		!["none", "low", "medium"].includes(output.max_severity) ||
+		output.reused !== false
+	)
+		return "reviewer fresh verdict가 아니다";
+	for (const key of [
+		"product_hash",
+		"evidence_hash",
+		"provider_actual_hashes",
+		"provider_sources",
+		"artifacts",
+		"environment_fingerprint",
+		"bound_focus",
+		"contracts",
+		"changed",
+		"reviewer_runtime",
+	]) {
+		if (!sameJson(output[key], expected[key]))
+			return `reviewer ${key} binding이 다르다`;
+	}
+	return null;
+}
+
+export async function acceptDelegation(root, args) {
+	const options = acceptOptions(args);
+	const base = commitOf(root, options.base);
+	if (!base) throw new UsageError("--base가 현재 저장소의 commit이 아니다");
+	const changed = changedFiles(root, base);
+	if (!changed.length)
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["--base 이후 실제 변경이 없다"],
+			userConfirmation: "pending",
+		};
+	const outside = changed.filter(
+		(path) => !acceptedScope(path, options.scopes),
+	);
+	if (outside.length) {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: [`명시 scope 밖 실제 변경: ${outside.join(", ")}`],
+			userConfirmation: "pending",
+		};
+	}
+	const initial = captureSnapshot(root);
+	if (!initial.valid)
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["현재 source snapshot을 확인할 수 없다"],
+			userConfirmation: "pending",
+		};
+	const providers = observeAcceptProviders(root, options.providers);
+	const selectedProviders = validationProviders(providers);
+	const environment = {
+		node: process.version,
+		platform: process.platform,
+		arch: process.arch,
+	};
+	const environmentFingerprint = digest(environment);
+	const taskId = `local-${initial.bindings.head}`;
+	const runId = randomUUID();
+	const checks = [];
+	for (const argv of options.checks) {
+		const run = await guardedAcceptCommand(root, argv, "verify");
+		checks.push(run);
+		if (
+			!run.executed ||
+			run.exitCode !== 0 ||
+			run.resource.before === "unknown" ||
+			run.resource.after === "unknown" ||
+			run.resource.events.includes("child-group-active") ||
+			run.resource.groupWasActive
+		) {
+			return {
+				ok: false,
+				status: "blocked",
+				problems: [`check 실패 또는 guard 차단: ${run.command}`],
+				checks: checks.map(({ stdout, stderr, ...item }) => item),
+				userConfirmation: "pending",
+			};
+		}
+	}
+	const beforeReview = captureSnapshot(root);
+	if (beforeReview.manifestHash !== initial.manifestHash) {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["check가 source를 변경했다"],
+			userConfirmation: "pending",
+		};
+	}
+	if (!sameJson(observeAcceptProviders(root, options.providers), providers)) {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["check가 선택 provider source를 변경했다"],
+			userConfirmation: "pending",
+		};
+	}
+	const artifacts = observeAcceptArtifacts(root, options.artifacts);
+	const checkReceipts = checks.map((run) =>
+		receiptFor(
+			run,
+			taskId,
+			runId,
+			initial.manifestHash,
+			beforeReview.manifestHash,
+			environmentFingerprint,
+			[],
+		),
+	);
+	const evidenceHash = digest(checkReceipts);
+	const expectedReview = {
+		product_hash: beforeReview.manifestHash,
+		evidence_hash: evidenceHash,
+		provider_actual_hashes: providers.map((provider) => provider.contentHash),
+		provider_sources: providers.map(providerSource),
+		artifacts,
+		environment_fingerprint: environmentFingerprint,
+		bound_focus: options.focus,
+		contracts: options.contracts,
+		changed,
+		reviewer_runtime: codexRuntime(),
+	};
+	const reviewRun = await runCodexReviewer(root, expectedReview, providers);
+	if (
+		!reviewRun.executed ||
+		reviewRun.exitCode !== 0 ||
+		reviewRun.resource.before === "unknown" ||
+		reviewRun.resource.after === "unknown" ||
+		reviewRun.resource.events.includes("child-group-active") ||
+		reviewRun.resource.groupWasActive
+	) {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["fresh Codex reviewer 실행 실패 또는 guard 차단"],
+			userConfirmation: "pending",
+		};
+	}
+	let review;
+	try {
+		review = JSON.parse(reviewRun.stdout.trim());
+	} catch {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["reviewer stdout이 JSON이 아니다"],
+			userConfirmation: "pending",
+		};
+	}
+	const reviewFailure = reviewProblem(review, expectedReview);
+	if (reviewFailure)
+		return {
+			ok: false,
+			status: "blocked",
+			problems: [reviewFailure],
+			reviewer: {
+				verdict: review.verdict,
+				maxSeverity: review.max_severity,
+				findings: review.findings,
+				limitations: review.limitations,
+			},
+			userConfirmation: "pending",
+		};
+	const afterReview = captureSnapshot(root);
+	if (afterReview.manifestHash !== beforeReview.manifestHash) {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["reviewer가 product를 변경했다"],
+			userConfirmation: "pending",
+		};
+	}
+	if (!sameJson(observeAcceptProviders(root, options.providers), providers)) {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["reviewer가 선택 provider source를 변경했다"],
+			userConfirmation: "pending",
+		};
+	}
+	if (!sameJson(observeAcceptArtifacts(root, options.artifacts), artifacts)) {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["reviewer가 지정 artifact를 변경했다"],
+			userConfirmation: "pending",
+		};
+	}
+	if (!sameJson(codexRuntime(), review.reviewer_runtime)) {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: ["reviewer 실행 파일 binding이 다르다"],
+			userConfirmation: "pending",
+		};
+	}
+	const reviewerReceipt = receiptFor(
+		reviewRun,
+		taskId,
+		runId,
+		initial.manifestHash,
+		afterReview.manifestHash,
+		environmentFingerprint,
+		[],
+	);
+	const commands = [...checkReceipts, reviewerReceipt];
+	const packet = {
+		taskId,
+		runId,
+		status: "complete",
+		selectedProviders,
+		allowedPaths: options.scopes,
+		constraints: [],
+		environmentRefs: ["node", "platform", "arch"],
+		environmentFingerprint,
+		changes: [],
+		evidence: {
+			report: "local CLI technical acceptance",
+			commands,
+			coverage: { changed: changed.length, checks: checks.length, reviewer: 1 },
+			limitations: [
+				"OS·native host identity와 protected-area authority, 외부 provider의 실행 권한은 이 local CLI가 증명하지 않는다",
+			],
+			artifacts,
+			focus: options.focus,
+			snapshot: initial.manifestHash,
+		},
+		reviewCoverage: [{ reviewer: "prokit-reviewer", reused: false }],
+		unresolved: [],
+		sideEffects: [],
+		nextAction: "user confirmation pending",
+		contracts: options.contracts,
+		mainGate: { reviewer: "prokit-reviewer", reused: false },
+		baseline: initial,
+	};
+	const receiptIndex = new Map(
+		commands.map((command) => [command.identityDigest, command]),
+	);
+	const validation = validateDelegationPacket(root, packet, {
+		baseline: initial,
+		cwd: process.cwd(),
+		environment,
+		environmentFingerprint,
+		runnerReceipts: commands,
+		approvedPaths: options.scopes,
+		allowedSideEffects: [],
+		allowedHosts: ["local"],
+		allowedModes: ["read-only"],
+		allowedTypes: ["source"],
+		availableTools: [],
+		providers: selectedProviders,
+		resolver: (provider) => {
+			const source = providers.find(
+				(item) => item.canonicalLocation === provider.canonicalLocation,
+			);
+			if (!source) return null;
+			const current = observeAcceptProviders(root, [source.ref])[0];
+			return {
+				...provider,
+				content: readFileSync(new URL(current.canonicalLocation), "utf8"),
+			};
+		},
+		verifyReceipt: (bindings, command) => {
+			const actual = receiptIndex.get(command.identityDigest);
+			return actual === command
+				? {
+						ok: true,
+						identityDigest: bindings.identityDigest,
+						key: bindings.key,
+						effects: [],
+					}
+				: { ok: false };
+		},
+		verifyAuthority: (bindings, checkedPacket) => {
+			const current =
+				checkedPacket === packet &&
+				bindings.taskId === taskId &&
+				bindings.runId === runId &&
+				bindings.baseline === initial.manifestHash &&
+				bindings.currentProduct === afterReview.manifestHash &&
+				bindings.reviewer === "prokit-reviewer" &&
+				sameJson(bindings.focus, options.focus) &&
+				sameJson(bindings.contracts, options.contracts) &&
+				review.reused === false &&
+				review.product_hash === afterReview.manifestHash &&
+				sameJson(review.artifacts, artifacts) &&
+				review.integration_acceptance === "accept";
+			return current
+				? { ok: true, key: bindings.key, reused: false }
+				: { ok: false };
+		},
+	});
+	if (!validation.ok || !validation.completionReady) {
+		return {
+			ok: false,
+			status: "blocked",
+			problems: validation.problems,
+			userConfirmation: "pending",
+		};
+	}
+	return {
+		ok: true,
+		status: "complete",
+		technicalAcceptance: "complete",
+		userConfirmation: "pending",
+		base,
+		changed,
+		productHash: validation.productHash,
+		environmentFingerprint,
+		checks: checks.map(({ stdout, stderr, ...item }) => item),
+		reviewer: {
+			reviewer: "prokit-reviewer",
+			verdict: review.verdict,
+			maxSeverity: review.max_severity,
+			reused: false,
+			findings: review.findings,
+			limitations: review.limitations,
+		},
+		providerSources: providers.map(providerSource),
+		artifacts,
+		limitations: packet.evidence.limitations,
 	};
 }
 
@@ -1262,6 +2021,12 @@ export function main(argv, root = process.cwd()) {
 		case "resource":
 			return Promise.resolve(resourceMain(rest, root));
 		case "delegation": {
+			if (rest[0] === "accept") {
+				return acceptDelegation(root, rest.slice(1)).then((result) => {
+					console.log(JSON.stringify(result, null, 2));
+					return result.ok ? 0 : 1;
+				});
+			}
 			if (rest[0] === "capture" || rest[0] === "snapshot") {
 				if (rest.length !== 1)
 					throw new UsageError("사용법: dev-cycle delegation capture|snapshot");

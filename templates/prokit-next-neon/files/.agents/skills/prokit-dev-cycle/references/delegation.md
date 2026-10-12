@@ -35,3 +35,11 @@ exact native 이름은 현재 task/run의 accepted runtime receipt가 같은 `ag
 출처가 없거나 scope·의존성·effect가 맞지 않으면 검증한 대안을 찾는다. 대안도 없으면 `blocked`로 남기고 메인이 전문 작업을 직접 구현했다고 처리하지 않는다. 제공자 응답이 부족하면 필요한 근거를 적어 최대 두 번 재지시한다. 고위험 작업은 근거가 없을 때 parked 또는 degraded로 남기며, 미검사를 PASS로 바꾸지 않는다.
 
 외부 문서, 로컬의 새 스킬, 사용자 추가 스킬도 같은 검증을 거친다. docs 계열은 `prokit-*` 가족의 범위와 정본을 유지하고, 읽는 프로젝트에 복사하지 않는다. 전문 제공자 자체에 리뷰가 없을 때만 `specialist-reviewer`가 그 제공자의 산출물과 실제 계약을 읽기 전용으로 검토한다. `prokit-reviewer`는 전체 코드를 다시 흉내 내지 않고 계약, evidence hash, 통합 수용 여부를 보고한다. 이 보고나 raw context 파일은 Main의 실제 final inspection을 대신할 수 없다.
+
+## 관리된 CLI 기술 인수
+
+로컬 Codex 실행을 직접 관리할 때는 `pnpm dev-cycle delegation accept`를 사용한다. Main이 `--base`, `--scope`, `--focus`, `--contract`, 실제 프로젝트 원본인 `--provider`, 필요한 `--artifact`와 `--check` JSON argv 배열을 명시한다. `--provider`에는 현재 `prokit-reviewer.md`를 포함하며, 명령은 셸 문자열로 실행하지 않는다.
+
+이 실행이 자원 guard 안에서 필요한 검사와 고정된 읽기 전용 Codex 리뷰를 직접 실행하고, 실제 receipt·현재 원본·산출물·환경·소유 범위를 메모리에서 검증한다. 과거 로그나 JSON 승인을 trusted receipt로 올리지 않으며, 임의 리뷰 명령·거절·high 지적·미종료 자식·원본이나 지정 산출물의 검수 중 변경은 차단한다. 산출물은 전체 검사 뒤 관측한 최종 증거이며 각 검사별 생성·변경 이력으로 소급 기록하지 않는다.
+
+`technicalAcceptance: complete`와 `userConfirmation: pending`은 별개다. 기술 인수 결과를 파일에 저장해도 그 파일은 다음 프로세스의 권한 증명이 아니며, 사용자 확인이나 라운드 close를 대신하지 않는다. 이 경로는 현재 로컬 Codex와 프로젝트 안 원본의 기술 검증을 지원한다. 보호된 작업·다른 호스트·외부 provider 실행 권한은 기존의 실제 권한 경계로 확인하고, 지원되지 않는 연결을 완료로 세지 않는다.

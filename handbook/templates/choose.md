@@ -31,6 +31,8 @@ flowchart LR
 | 공식 도메인 스킬 | <!-- v:skills.official.neon -->28<!-- /v -->개 (neon 4개, Vercel 배포 3개 포함) | <!-- v:skills.official.supabase -->25<!-- /v -->개 (`supabase`, `supabase-postgres-best-practices`, Vercel 배포 3개 포함) |
 | 선택 스킬 (`--optional`) | `ops` <!-- v:optional.ops.count.neon -->4<!-- /v -->개(`vercel-optimize`, Neon 함수·파일 저장·LLM 게이트웨이), `motion`, `mobile` | `ops` <!-- v:optional.ops.count.supabase -->1<!-- /v -->개(<!-- v:optional.ops.skillsCode.supabase -->`vercel-optimize`<!-- /v -->), `motion`, `mobile` |
 
+프로세스 스킬과 에이전트 구성은 두 템플릿이 같아요. Ponytail 프로젝트 스킬 <!-- v:skills.codex.ponytail -->6<!-- /v -->종도 함께 받으며, Codex 네이티브 플러그인은 `--with-global`에서만 선택 설치해요([설치와 업데이트 구조](../skills/install-and-update.md)).
+
 ## 무엇으로 고르나요
 
 - **PR(변경 제안)마다 DB 브랜치(테스트용 복사본)를 만들어 확인하고 싶으면** → neon

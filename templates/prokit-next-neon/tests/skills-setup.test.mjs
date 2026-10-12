@@ -32,6 +32,25 @@ echo "claude $*" >> "$STUB_LOG"
 if [ "$*" = "plugin marketplace list --json" ]; then echo "\${STUB_KNOWN:-[]}"; exit 0; fi
 case " $* " in *" $STUB_FAIL "*) exit 1 ;; esac
 `,
+  codex: `#!/bin/sh
+echo "codex $*" >> "$STUB_LOG"
+case "$*" in
+  "plugin marketplace list --json")
+    [ -n "$STUB_CODEX_UNSUPPORTED" ] && { echo "unknown command" >&2; exit 2; }
+    [ -n "$STUB_CODEX_MARKETS" ] && echo "$STUB_CODEX_MARKETS" || echo '{"marketplaces":[]}'
+    ;;
+  "plugin list --json")
+    [ -n "$STUB_CODEX_UNSUPPORTED" ] && { echo "unknown command" >&2; exit 2; }
+    if [ -n "$STUB_CODEX_PLUGINS" ]; then echo "$STUB_CODEX_PLUGINS";
+    elif [ -f "$HOME/codex-ponytail" ]; then echo '{"installed":[{"pluginId":"ponytail@ponytail","installed":true,"enabled":true,"version":"1.0.0","source":{},"marketplaceSource":{"sourceType":"git","source":"https://github.com/DietrichGebert/ponytail.git"}}],"available":[]}'
+    else echo '{"installed":[],"available":[]}'
+    fi
+    ;;
+  "plugin marketplace add DietrichGebert/ponytail --json"|"plugin marketplace upgrade ponytail --json") ;;
+  "plugin add ponytail@ponytail --json") touch "$HOME/codex-ponytail" ;;
+esac
+case " $* " in *" $STUB_FAIL "*) echo "failed" >&2; exit 1 ;; esac
+`,
   omx: `#!/bin/sh
 echo "omx $*" >> "$STUB_LOG"
 mkdir -p .omx && echo '{}' > .omx/setup-scope.json
@@ -51,11 +70,15 @@ const MANIFEST = {
     },
     plugins: ["p1@mk", "p2@mk"],
   },
+  codex: {
+    marketplace: { name: "ponytail", source: "DietrichGebert/ponytail" },
+    plugins: ["ponytail@ponytail"],
+  },
   omx: ["setup", "--scope", "project", "--no-merge-agents"],
   global: [],
 };
 
-function setup({ tools = ["npx", "claude", "omx"], manifest = MANIFEST, settings } = {}) {
+function setup({ tools = ["npx", "claude", "codex", "omx"], manifest = MANIFEST, settings } = {}) {
   const root = mkdtempSync(join(tmpdir(), "skills-setup-"));
   const home = mkdtempSync(join(tmpdir(), "skills-home-"));
   const bin = join(root, ".stub-bin");
@@ -312,6 +335,127 @@ test("플러그인 설치가 실패하면 exit 2이고 실패한 이름을 보�
   assert.match(r.stdout, /p2@mk/);
 });
 
+test("Codex 플러그인: 기본 실행과 --check는 상태만 보여 주고 설정을 바꾸지 않는다", () => {
+	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
+	const { exec, calls } = setup({ tools: ["codex"], manifest });
+	for (const args of [[], ["--check"]]) {
+		const before = calls().length;
+		const r = exec(args);
+		assert.equal(r.status, 0, r.stdout + r.stderr);
+		assert.match(r.stdout, /Codex 플러그인.*설치 안 함/);
+		assert.deepEqual(calls().slice(before), [
+			"codex plugin marketplace list --json",
+			"codex plugin list --json",
+		]);
+	}
+});
+
+test("Codex 플러그인: --check --with-global도 조회만 하며 조회 오류는 선택 기능으로 둔다", () => {
+	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
+	const { home, exec, calls } = setup({ tools: ["codex"], manifest });
+	const r = exec(["--check", "--with-global"]);
+	assert.equal(r.status, 0, r.stdout + r.stderr);
+	assert.deepEqual(calls(), [
+		"codex plugin marketplace list --json",
+		"codex plugin list --json",
+	]);
+	assert.equal(existsSync(join(home, "codex-ponytail")), false);
+	const malformed = exec(["--check", "--with-global"], {
+		STUB_CODEX_MARKETS: "{",
+	});
+	assert.equal(malformed.status, 0, malformed.stdout + malformed.stderr);
+	assert.match(malformed.stdout, /Codex 플러그인.*JSON/);
+});
+
+test("Codex 플러그인: --with-global은 최초에만 올바른 marketplace와 ponytail을 설치한다", () => {
+	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
+	const { exec, calls } = setup({ tools: ["codex"], manifest });
+	const r = exec(["--with-global"]);
+	assert.equal(r.status, 0, r.stdout + r.stderr);
+	assert.deepEqual(calls(), [
+		"codex plugin marketplace list --json",
+		"codex plugin list --json",
+		"codex plugin marketplace add DietrichGebert/ponytail --json",
+		"codex plugin add ponytail@ponytail --json",
+	]);
+	const before = calls().length;
+	assert.equal(exec(["--with-global"]).status, 0);
+	assert.deepEqual(calls().slice(before), [
+		"codex plugin marketplace list --json",
+		"codex plugin list --json",
+	], "이미 설치한 plugin은 다시 설치하거나 marketplace를 갱신하지 않는다");
+});
+
+test("Codex 플러그인: 기존 공식 marketplace에서 처음 설치할 때만 갱신하고, 비활성 선택은 보존한다", () => {
+	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
+	const markets = '{"marketplaces":[{"name":"ponytail","marketplaceSource":{"sourceType":"git","source":"https://github.com/DietrichGebert/ponytail.git"}}]}';
+	const { exec, calls } = setup({ tools: ["codex"], manifest });
+	assert.equal(exec(["--with-global"], { STUB_CODEX_MARKETS: markets }).status, 0);
+	assert.ok(calls().includes("codex plugin marketplace upgrade ponytail --json"));
+	assert.ok(calls().includes("codex plugin add ponytail@ponytail --json"));
+
+	const disabled = '{"installed":[{"pluginId":"ponytail@ponytail","installed":true,"enabled":false,"version":"1.0.0","source":{},"marketplaceSource":{"sourceType":"git","source":"https://github.com/DietrichGebert/ponytail.git"}}],"available":[]}';
+	const before = calls().length;
+	const r = exec(["--with-global"], { STUB_CODEX_MARKETS: markets, STUB_CODEX_PLUGINS: disabled });
+	assert.equal(r.status, 0, r.stdout + r.stderr);
+	assert.match(r.stdout, /비활성/);
+	assert.deepEqual(calls().slice(before), [
+		"codex plugin marketplace list --json",
+		"codex plugin list --json",
+	], "사용자가 끈 plugin을 설치하거나 갱신하지 않는다");
+	for (const plugins of [
+		'{"installed":[{"pluginId":"ponytail@ponytail","installed":true,"enabled":true,"marketplaceSource":{"sourceType":"git","source":"https://example.com/other.git"}}],"available":[]}',
+		'{"installed":[{"pluginId":"ponytail@ponytail","installed":true,"enabled":true}],"available":[]}',
+	]) {
+		const unverified = setup({ tools: ["codex"], manifest });
+		const result = unverified.exec(["--with-global"], {
+			STUB_CODEX_MARKETS: markets,
+			STUB_CODEX_PLUGINS: plugins,
+		});
+		assert.equal(result.status, 2, result.stdout + result.stderr);
+		assert.match(result.stdout, /출처 확인 안 됨/);
+		assert.ok(!unverified.calls().some((line) => line.includes("marketplace upgrade") || line.includes("plugin add")));
+	}
+});
+
+test("Codex 플러그인: 지원하지 않는 CLI는 안내만 하고, JSON·명령 실패와 출처 충돌은 --with-global에서 실패한다", () => {
+	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
+	const absent = setup({ tools: [], manifest });
+	assert.equal(absent.exec(["--with-global"]).status, 0);
+	assert.match(absent.exec(["--with-global"]).stdout, /codex 없음/);
+	const unsupported = setup({ tools: ["codex"], manifest });
+	const noSupport = unsupported.exec(["--with-global"], { STUB_CODEX_UNSUPPORTED: "1" });
+	assert.equal(noSupport.status, 0, noSupport.stdout + noSupport.stderr);
+	assert.match(noSupport.stdout, /지원하지 않음/);
+
+	const malformed = setup({ tools: ["codex"], manifest });
+	const badJson = malformed.exec(["--with-global"], { STUB_CODEX_MARKETS: "{" });
+	assert.equal(badJson.status, 2, badJson.stdout + badJson.stderr);
+	assert.match(badJson.stdout, /Codex 플러그인.*JSON/);
+	const nullJson = setup({ tools: ["codex"], manifest });
+	const nullResult = nullJson.exec(["--with-global"], { STUB_CODEX_MARKETS: "null" });
+	assert.equal(nullResult.status, 2, nullResult.stdout + nullResult.stderr);
+	assert.match(nullResult.stdout, /marketplaces 배열 없음/);
+	const failed = setup({ tools: ["codex"], manifest });
+	const failedInstall = failed.exec(["--with-global"], { STUB_FAIL: "ponytail@ponytail" });
+	assert.equal(failedInstall.status, 2, failedInstall.stdout + failedInstall.stderr);
+	assert.match(failedInstall.stdout, /Codex 플러그인 ponytail@ponytail/);
+
+	const conflict = setup({ tools: ["codex"], manifest });
+	const r = conflict.exec(["--with-global"], {
+		STUB_CODEX_MARKETS: '{"marketplaces":[{"name":"ponytail","marketplaceSource":{"sourceType":"git","source":"https://example.com/other.git"}}]}',
+	});
+	assert.equal(r.status, 2, r.stdout + r.stderr);
+	assert.match(r.stdout, /source mismatch/);
+	assert.ok(!conflict.calls().some((line) => line.includes("marketplace add") || line.includes("plugin add")));
+	const local = setup({ tools: ["codex"], manifest });
+	const localResult = local.exec(["--with-global"], {
+		STUB_CODEX_MARKETS: '{"marketplaces":[{"name":"ponytail","marketplaceSource":{"sourceType":"local","source":"https://github.com/DietrichGebert/ponytail.git"}}]}',
+	});
+	assert.equal(localResult.status, 2, localResult.stdout + localResult.stderr);
+	assert.match(localResult.stdout, /source mismatch/);
+});
+
 test("깨진 .claude/settings.json은 덮어쓰지 않고 실패로 보고한다", () => {
   const { root, exec } = setup();
   mkdirSync(join(root, ".claude"), { recursive: true });
@@ -339,6 +483,7 @@ test("템플릿 매니페스트: 이름 중복 없음, 프로세스 스킬과 �
     "brainstorming", "writing-plans", "subagent-driven-development", "test-driven-development",
     "systematic-debugging", "receiving-code-review", "verification-before-completion",
     "finishing-a-development-branch", "skill-creator", "ponytail", "ponytail-review",
+    "ponytail-audit", "ponytail-debt", "ponytail-help", "ponytail-gain",
   ]) assert.ok(codexOnly.includes(s), s);
   for (const p of ["superpowers@claude-plugins-official", "oh-my-claudecode@omc", "skill-creator@claude-plugins-official", "ponytail@ponytail"]) {
     assert.ok(m.claude.plugins.includes(p), p);
@@ -347,6 +492,10 @@ test("템플릿 매니페스트: 이름 중복 없음, 프로세스 스킬과 �
   assert.deepEqual(m.claude.marketplaces["claude-plugins-official"], { source: "github", repo: "anthropics/claude-plugins-official" });
   assert.deepEqual(m.claude.marketplaces.omc, { source: "git", url: "https://github.com/Yeachan-Heo/oh-my-claudecode.git" });
   assert.deepEqual(m.claude.marketplaces.ponytail, { source: "github", repo: "DietrichGebert/ponytail" });
+  assert.deepEqual(m.codex, {
+    marketplace: { name: "ponytail", source: "DietrichGebert/ponytail" },
+    plugins: ["ponytail@ponytail"],
+  });
   assert.deepEqual(m.omx, ["setup", "--scope", "project", "--no-merge-agents"]);
   for (const g of m.global) assert.ok(g.name && g.check && (g.install || g.hint), JSON.stringify(g));
   // ego lite는 macOS 전용이라 다른 OS와 CI에서는 agent-browser가 유일한 브라우저 도구다. 기본 설치한다.

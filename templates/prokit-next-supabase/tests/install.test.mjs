@@ -90,7 +90,7 @@ test("설치: 파일·스킬 링크·Codex·Antigravity 에이전트·스크립�
   assert.equal(cfg.commands.dbPush, undefined);
   assert.equal(cfg.commands.test, undefined);
   const ignored = readFileSync(join(root, ".gitignore"), "utf8").split("\n");
-  for (const l of ["tasks/evidence/", ".omc/", ".omx/", ".env.*", "!.env.schema", "**/.impeccable/review/", "/html/"]) assert.ok(ignored.includes(l), `.gitignore에 ${l} 없음`);
+  for (const l of ["tasks/evidence/", ".omc/", ".omx/", ".prokit/", ".env.*", "!.env.schema", "**/.impeccable/review/", "/html/"]) assert.ok(ignored.includes(l), `.gitignore에 ${l} 없음`);
   // status는 외부 스킬 업데이트를 확인한다. 테스트가 GitHub에 가지 않게 확인을 끈다.
   mkdirSync(join(root, "node_modules/.cache"), { recursive: true });
   writeFileSync(join(root, "node_modules/.cache/skills-update.json"), '{"mode":"off"}');
@@ -191,7 +191,8 @@ test("도메인 스킬(Claude·Codex 공용): 템플릿 문서가 모두 언급�
 
 test("biome.json: 벤더 스킬, 도구 상태 파일, 생성물을 빼고 shadcn 두 파일에만 a11y 3개를 끈다 (한 번만)", () => {
   const ignores = [
-    "!.agents/skills", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.impeccable", "!.claude", "!.codex",
+    "!.agents/skills", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!.claude", "!.codex",
+    "!tasks/evidence",
     "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
     "!html",
   ];
@@ -284,8 +285,8 @@ test(".gitignore: 없는 줄만 더하고, 슬래시 표기가 달라도 같은 
   const p = join(root, ".gitignore");
   writeFileSync(p, "node_modules\n.omc\n/tasks/evidence/\n.env.*\n!.env.schema\n!.env.example\nhtml");
   writeFileSync(p, `${readFileSync(p, "utf8")}\n${IMPECCABLE_IGNORES.join("\n")}`);
-  assert.deepEqual(ensureGitignore(root), [".omx/"]);
-  assert.ok(readFileSync(p, "utf8").endsWith("\n\n# OMC·OMX 런타임 상태\n.omx/\n"));
+  assert.deepEqual(ensureGitignore(root), [".omx/", ".prokit/"]);
+  assert.ok(readFileSync(p, "utf8").endsWith("\n\n# OMC·OMX·pro-kit 런타임 상태\n.omx/\n.prokit/\n"));
   assert.deepEqual(ensureGitignore(root), []);
 });
 
@@ -306,6 +307,38 @@ test(".gitignore: 환경별 .env를 무시하고 .env.schema는 남긴다. 패�
   const ignored = (f) => spawnSync("git", ["check-ignore", "-q", f], { cwd: root }).status === 0;
   for (const f of [".env.production", ".env.development", "packages/db/.env.staging"]) assert.ok(ignored(f), `${f}가 무시되지 않음`);
   for (const f of [".env.schema", "packages/db/.env.schema", ".env.example"]) assert.ok(!ignored(f), `${f}가 무시됨`);
+});
+
+test("런타임 메타데이터: git은 추적하지 않고 Biome은 검사하지 않으며 기존 설정과 미리 보기를 보존한다", () => {
+  const gitRoot = mkdtempSync(join(tmpdir(), "runtime-git-"));
+  const gitignore = join(gitRoot, ".gitignore");
+  const originalGitignore = "node_modules\n";
+  writeFileSync(gitignore, originalGitignore);
+  const gitPreview = ensureGitignore(gitRoot, { dryRun: true });
+  assert.ok(gitPreview.includes(".prokit/"));
+  assert.equal(readFileSync(gitignore, "utf8"), originalGitignore);
+  ensureGitignore(gitRoot);
+  assert.deepEqual(ensureGitignore(gitRoot), []);
+  assert.equal(spawnSync("git", ["init", "-q"], { cwd: gitRoot }).status, 0);
+  for (const file of [".prokit/public-sentinel.json", "tasks/evidence/public-sentinel.json"]) {
+    mkdirSync(dirname(join(gitRoot, file)), { recursive: true });
+    writeFileSync(join(gitRoot, file), "public sentinel\n");
+    assert.equal(spawnSync("git", ["check-ignore", "-q", file], { cwd: gitRoot }).status, 0, `${file}가 무시되지 않음`);
+  }
+
+  const biomeRoot = mkdtempSync(join(tmpdir(), "runtime-biome-"));
+  const biome = join(biomeRoot, "biome.json");
+  const originalBiome = '{\n\t"files": {\n\t\t"includes": ["**", "!**/.next"]\n\t},\n\t"linter": { "enabled": false }\n}\n';
+  writeFileSync(biome, originalBiome);
+  const biomePreview = ensureBiomeConfig(biomeRoot, { dryRun: true });
+  for (const excluded of ["!**/.prokit", "!tasks/evidence"]) assert.ok(biomePreview.includes(excluded), `${excluded}가 미리 보기에 없음`);
+  assert.equal(readFileSync(biome, "utf8"), originalBiome);
+  ensureBiomeConfig(biomeRoot);
+  const cfg = JSON.parse(readFileSync(biome, "utf8"));
+  assert.deepEqual(cfg.files.includes.slice(0, 2), ["**", "!**/.next"]);
+  assert.equal(cfg.linter.enabled, false);
+  for (const excluded of ["!**/.prokit", "!tasks/evidence"]) assert.ok(cfg.files.includes.includes(excluded), `${excluded}가 Biome 제외에 없음`);
+  assert.deepEqual(ensureBiomeConfig(biomeRoot), []);
 });
 
 test("설치기: CDPATH가 있어도 실행되고, 루트 package.json이 없으면 복사 전에 멈춘다", () => {

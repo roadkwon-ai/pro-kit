@@ -116,7 +116,14 @@
 		{
 			"agents": ["codex"],
 			"source": "DietrichGebert/ponytail",
-			"skills": ["ponytail", "ponytail-review"]
+			"skills": [
+				"ponytail",
+				"ponytail-review",
+				"ponytail-audit",
+				"ponytail-debt",
+				"ponytail-help",
+				"ponytail-gain"
+			]
 		}
 	],
 	"optional": {
@@ -177,6 +184,13 @@
 			"oh-my-claudecode@omc",
 			"ponytail@ponytail"
 		]
+	},
+	"codex": {
+		"marketplace": {
+			"name": "ponytail",
+			"source": "DietrichGebert/ponytail"
+		},
+		"plugins": ["ponytail@ponytail"]
 	},
 	"omx": ["setup", "--scope", "project", "--no-merge-agents"],
 	"global": [

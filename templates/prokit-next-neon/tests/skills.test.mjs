@@ -7,7 +7,7 @@ import { test } from "node:test";
 import { TEMPLATE, TEMPLATE_FILES } from "./helpers.mjs";
 
 const SKILLS_DIR = join(TEMPLATE_FILES, ".agents/skills");
-const EXPECTED = ["prokit-dev-cycle", "prokit-web", "prokit-api", "prokit-db", "prokit-ui", "prokit-verify", "prokit-deploy", "prokit-skills-update"];
+const EXPECTED = ["prokit-dev-cycle", "prokit-web", "prokit-api", "prokit-db", "prokit-ui", "prokit-verify", "prokit-deploy", "prokit-skills-update", "prokit-pack-use"];
 
 function resolveSkillCreator() {
   if (process.env.SKILL_CREATOR_DIR) {
@@ -78,9 +78,17 @@ test("공식 스킬 연결 표의 스킬은 skills.manifest.json이 설치한다
   }
 });
 
-test("prokit-dev-cycle 위임 평가는 24개 시나리오와 각 5개 검증 항목을 가진다", () => {
+test("팩 활용 스킬은 실제 복원 도구와 비교 기준을 연결한다", () => {
+  const pack = load("prokit-pack-use").body;
+  assert.ok(existsSync(join(TEMPLATE, "../../scripts/apply-pack.mjs")));
+  assert.match(pack, /apply-pack\.mjs/);
+  assert.ok(existsSync(join(SKILLS_DIR, "prokit-verify/references/pack-baseline.md")));
+  assert.match(load("prokit-ui").body, /prokit-pack-use/);
+});
+
+test("prokit-dev-cycle 위임·Ponytail 평가는 38개 시나리오와 각 5개 검증 항목을 가진다", () => {
   const evals = JSON.parse(readFileSync(join(TEMPLATE, "evals/prokit-dev-cycle/evals.json"), "utf8")).evals;
-  assert.equal(evals.length, 24);
+  assert.equal(evals.length, 38);
   for (const scenario of evals) {
     assert.match(scenario.name, /^[a-z0-9-]+$/, `eval ${scenario.id}: name`);
     assert.ok(["neon", "supabase"].includes(scenario.template), `eval ${scenario.id}: template`);
@@ -88,13 +96,14 @@ test("prokit-dev-cycle 위임 평가는 24개 시나리오와 각 5개 검증 �
     assert.equal(scenario.expectations.length, 5, `eval ${scenario.id}`);
     for (const file of scenario.files ?? []) assert.ok(existsSync(join(TEMPLATE, file)), `eval ${scenario.id}: ${file}`);
   }
+  assert.deepEqual(evals.filter((scenario) => scenario.id >= 31 && scenario.id <= 34).map((scenario) => scenario.name), ["target-scope-separation", "harness-contract-review", "parallel-coverage-reuse", "unknown-consumer-flaky"]);
   for (const id of [17, 18, 19, 20, 21, 22, 23, 24]) {
     const scenario = evals.find((entry) => entry.id === id);
     assert.match(scenario.files[0], /fixtures\/delegation\//);
     const fixture = JSON.parse(readFileSync(join(TEMPLATE, scenario.files[0]), "utf8"));
     assert.deepEqual(fixture.metadata, { nonExecution: true, template: scenario.template, risk: scenario.risk });
   }
-  assert.deepEqual(evals.filter((scenario) => scenario.risk === "high").map((scenario) => scenario.id), [2, 8, 11, 12, 13, 14, 16, 21, 22, 23, 24]);
+  assert.deepEqual(evals.filter((scenario) => scenario.risk === "high").map((scenario) => scenario.id), [2, 8, 11, 12, 13, 14, 16, 21, 22, 23, 24, 26, 27, 36, 38]);
 });
 
 test("고위험 DB·소유권 평가는 실제 스키마·SQL·소비자 입력을 제공한다", () => {

@@ -673,14 +673,7 @@ function checkProviderPolicy(provider, context, problems) {
 	}
 }
 
-function receiptBindings(
-	command,
-	packet,
-	context,
-	baseline,
-	snapshot,
-	evidence,
-) {
+function receiptBindings(command, packet, context, baseline, snapshot) {
 	const bindings = {
 		taskId: packet.taskId,
 		runId: packet.runId,
@@ -693,7 +686,7 @@ function receiptBindings(
 			context.environmentFingerprint ?? environmentFingerprint(context),
 		before: baseline.manifestHash,
 		after: snapshot.manifestHash,
-		artifacts: evidence.artifacts,
+		artifacts: command.artifacts ?? [],
 		effects: command.effects,
 		identityDigest: command.identityDigest,
 	};
@@ -716,7 +709,6 @@ function checkTrustedReceipts(
 			context,
 			baseline,
 			snapshot,
-			evidence,
 		);
 		for (const field of [
 			"taskId",

@@ -775,6 +775,8 @@ export async function runGuarded(root, options = {}) {
 			: await readPolicy(root);
 		const temporaryHandle = options.temporaryHandle;
 		const bindTemporaryChild = (child) => {
+			// 호출자는 이 실행에서 실제 child가 시작됐는지만 관측한다.
+			options.onChildSpawn?.(child);
 			if (
 				!temporaryHandle ||
 				managedHandles.get(temporaryHandle?.token) !== temporaryHandle ||

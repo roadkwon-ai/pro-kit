@@ -21,7 +21,7 @@ pro-kit/
 └── packs/                      받은 프리셋 팩 (scripts/pack.mjs. git에 넣지 않음)
 ```
 
-문서 원본 `handbook/`은 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->34<!-- /v -->개입니다. 템플릿 하나의 안쪽은 이렇습니다. 설치된 프로젝트의 구조는 [폴더 구조](handbook/reference/project-structure.md)에 있습니다.
+문서 원본 `handbook/`은 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->35<!-- /v -->개입니다. 템플릿 하나의 안쪽은 이렇습니다. 설치된 프로젝트의 구조는 [폴더 구조](handbook/reference/project-structure.md)에 있습니다.
 
 ```text
 templates/prokit-next-supabase/
@@ -53,7 +53,20 @@ node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, h
 - 계획에는 기존 코드와 소비자, 공통 설정·환경 변수의 정본, 재사용하거나 분리할 이유를 적습니다. 한 번만 쓰는 구조를 미리 공통화하지 않습니다([계획 리뷰](handbook/concepts/agent-roles.md#리뷰가-보는-것)).
 - 스킬과 라우팅, 에이전트와 생성 프로필, 평가 입력, 연결 문서 중 영향받는 곳을 함께 맞춥니다. 두 템플릿의 공유 파일을 일치시키고, 설치기를 바꿨으면 실제 BTS 설치도 확인합니다.
 - 검증은 변경 영향을 기준으로 고릅니다. 이전 통과 증거는 출처·계약·환경·입력이 그대로인 범위에서만 재사용하고, 미통과 항목과 영향받은 검사를 다시 합니다. 이전 기록을 덮어쓰거나 확인하지 못한 환경을 통과로 바꾸지 않습니다.
+- 병렬 배정은 파일·생성 출력·상태의 소유권을 분리하고, 중첩 worker까지 실행 수에 포함합니다. 실패 원시 결과와 실제 경과시간은 보존하며, 재시도 성공을 최초 성공으로 합치지 않습니다([배정과 검증 기준](handbook/concepts/delegation-and-resources.md#독립-작업을-나눠서-확인하기), [이번 검증 기록](docs/reports/2026-10-10-parallel-verification/README.md)).
 - 결과와 한계는 각 템플릿의 `VERIFICATION.md`에 적고, 상세 기록은 `docs/reports/`에서 연결합니다. 현재 결정은 [재사용 설계](docs/reports/2026-10-09-reuse-design-review/README.md), [위임·자원 인수](docs/reports/2026-10-09-orchestration-resources/README.md), [Karpathy 미도입 검토](docs/reports/2026-10-09-karpathy-skill-adoption/README.md)에 있습니다.
+
+### 프리셋 디자인을 바꿀 때
+
+원본 조사·COPY 제작·충실도 검수는 `../pro-kit-preset-skills`의 `prokit-preset-create`, `prokit-preset-research`, `prokit-preset-verify`가 맡습니다. 사용자 프로젝트는 `prokit-pack-use`로 완성팩을 복원하고, 요청한 콘텐츠와 기능을 바꾼 뒤 완성 프리셋과 비교합니다([프리셋 제작·등록과 검수](handbook/design/preset-publication.md)).
+
+팩 설정을 적용할 때는 두 템플릿의 `prokit-ui/references/preset-settings.md`를 따릅니다. 프리셋 제작 규칙은 제작 스킬 정본에서 고치고, 팩 활용 규칙은 두 템플릿과 연결 문서에 함께 반영합니다. 팩 문서와 교재는 검증된 기술 사실을 문서 담당에게 인계합니다.
+
+### 프리셋을 프로킷 웹에 반영할 때
+
+프로킷 관리용 스킬은 별도 로컬 Git 저장소 `../pro-kit-preset-skills`에 둡니다. `prokit-preset-publish`는 공통 게시 도구를 연결하고, `prokit-preset-maintain`은 정본 변경을 감지해 스킬과 검사 범위를 맞춥니다. 제작·검수·게시 스킬은 관리 환경과 지정된 프리셋 제작 작업공간에 설치하며, 일반 사용자 템플릿에는 추가하지 않습니다.
+
+반영 절차와 기록 범위는 [프리셋 등록과 검수](handbook/design/preset-publication.md)에서 확인합니다. `pro-kit-web`의 `pnpm presets:check`는 등록 계약과 정본 해시를 검사하며 제품 QA·발행 권한을 대신하지 않습니다. 운영 게시와 팩 발행을 보류한 작업은 로컬 준비 상태로 남깁니다.
 
 ## 문서
 
@@ -77,9 +90,8 @@ node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, h
 
 ## 프리셋 팩 올리기
 
-튜토리얼 프리셋 팩은 이 저장소에 넣지 않고 팩마다 zip 하나로 별도 저장소 [pro-kit-packs](https://github.com/roadkwon-ai/pro-kit-packs)의 릴리스에 올립니다. 프리미엄 팩은 [pro-kit-premium-packs](https://github.com/roadkwon-ai/pro-kit-premium-packs)에 올리고, 아래 명령의 `--repo`를 그 저장소로 바꿉니다. 규칙과 옛 저장소 정리의 원문은 [AGENTS.md "버전과 릴리스"](AGENTS.md#버전과-릴리스)입니다. 명령만 모으면 이렇습니다.
+팩 제작·조립·발행 절차의 정본은 `../pro-kit-preset-skills`의 `prokit-preset-create`와 `prokit-preset-publish`입니다. 검수한 제품의 문서를 완성하고 최종 ZIP을 복원해 확인한 뒤, 승인된 게시 절차를 따릅니다([프리셋 제작·등록과 검수](handbook/design/preset-publication.md)).
 
-1. 팩 원본(`../pro-kit-samples/packs/<이름>/`)을 `../pro-kit-samples/tools/pack-zip.mjs`로 `<이름>-pack.zip`에 묶습니다.
-2. `gh release create pack-<이름> <zip> --repo roadkwon-ai/pro-kit-packs --target main --title "<이름> 프리셋 팩" --notes "<무엇이 들었나>"`로 올립니다.
-3. 팩을 바꾸면 `gh release delete pack-<이름> --repo roadkwon-ai/pro-kit-packs --cleanup-tag -y`로 옛 릴리스를 지우고 다시 올린 뒤, `tutorials/packs.json`의 `sha256`과 `bytes`를 바꿔 `main`에 반영합니다.
-4. 올린 뒤 `node scripts/pack.mjs <이름>`으로 받아 원본과 같은지 확인합니다. `scripts/pack.mjs`를 고치면 `node --test scripts/pack.test.mjs`를 실행합니다.
+이 저장소는 소비자 인덱스 `tutorials/packs.json`과 받기 도구 `scripts/pack.mjs`를 유지합니다. 미게시 팩은 `published: false`로 구분하고 공개 다운로드 대상으로 안내하지 않습니다. ZIP 해시는 최종 파일을 기준으로 외부 인덱스에 기록하며, 팩 안에 자기 ZIP 해시를 반복해서 넣지 않습니다.
+
+완성팩을 사용자 프로젝트에 적용할 때는 `prokit-pack-use`를 따릅니다. 받기·SHA256 확인 뒤 `scripts/apply-pack.mjs`의 `--check`로 복원 계획과 충돌을 확인하고, 실제 적용 후 설치·빌드·화면을 검사합니다. 다운로드 성공이나 파일 해시 일치만으로 화면 품질이 검증됐다고 판단하지 않습니다.

@@ -33,6 +33,9 @@
 | `pnpm agents:sync` | `.claude/agents`에서 `.codex/agents`(Codex)와 `.agents/agents`(Antigravity) 만들기 |
 | `pnpm agents:check` | 정본과 생성물이 맞는지 검사 |
 | `claude plugin update <플러그인> --scope project` | Claude 플러그인 업데이트(`skills:update`는 플러그인을 올리지 않아요) |
+| `codex plugin marketplace upgrade ponytail` | Ponytail 원본 GitHub marketplace snapshot을 새로고침해요. 이 명령만으로 플러그인 갱신 완료를 판정하지 않아요. 사용자가 원하고 비활성화 상태가 아니면 hooks와 코드를 먼저 검토한 뒤 `codex plugin add ponytail@ponytail`을 실행하고 `codex plugin list --json`으로 설치판을 확인해요. 훅 신뢰와 새 세션은 별도예요 |
+
+`pnpm skills:setup --with-global`에서만 Codex 네이티브 Ponytail 설치를 시도해요. 기본 실행과 `--check`는 Codex 사용자 설정을 바꾸지 않고, 네이티브 플러그인이 없어도 선택 기능의 상태로 알려 줘요. 프로젝트 스킬의 필수 누락과 플러그인·훅 상태를 구분하는 방법은 [설치와 업데이트 구조](../skills/install-and-update.md)에 있어요.
 
 ### 위임과 자원
 
@@ -44,6 +47,7 @@
 | `pnpm dev-cycle delegation capture` | 위임 전 작업 트리의 기준 스냅샷을 JSON으로 남겨요 |
 | `pnpm dev-cycle delegation resolve <스킬 참조 또는 상대 경로>` | 실제 스킬 원본의 위치·내용 해시를 관찰해요. 신뢰한 inspection과 실제 host adapter가 계약을 현재 실행에 묶지 못하면 inspection-only로 보고하고 exit 1로 막아요 |
 | `pnpm dev-cycle delegation validate <패킷>` | 완료 패킷의 실제 변경, 증거, 허용 경로, 부작용, 환경 지문을 검사해요 |
+| `pnpm dev-cycle delegation accept` | 명시한 영향 검사와 새 Codex 읽기 전용 리뷰를 직접 실행해 로컬 기술 인수를 검증해요. 사용자 확인과 라운드 close는 별도예요 |
 
 새 프로젝트에서는 `dev`, `dev:web`, `build`가 자원 보호 래퍼를 거쳐 실행돼요. 원래 명령은 내부 `prokit:original:<이름>`으로 보관해요. 이미 설치된 프로젝트는 설치기가 원래 명령을 바꾸지 않으므로, 케이스 H 라운드에서 원본과 증거를 확인한 뒤에만 전환해요. 자원 경계와 정리 조건은 [위임과 자원 관리](../concepts/delegation-and-resources.md)에 있어요.
 

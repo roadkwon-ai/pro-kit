@@ -238,7 +238,7 @@ export function addScripts(target, { dryRun = false, wrapResources = false } = {
 
 const GITIGNORE = [
   ["# dev-cycle 증거 파일 (스크린샷 등)", "tasks/evidence/"],
-  ["# OMC·OMX 런타임 상태", ".omc/", ".omx/"],
+  ["# OMC·OMX·pro-kit 런타임 상태", ".omc/", ".omx/", ".prokit/"],
   // impeccable README "Keeping .impeccable out of git"의 권장 블록에서 live 모드 줄을 뺀 것이다(live는 impeccable이
   // .git/info/exclude에 직접 쓴다). critique/*.md, config.json, design.json은 공유 산출물이라 무시하지 않는다.
   [
@@ -301,12 +301,13 @@ export function ensureClaudeHook(target, { dryRun = false } = {}) {
 const HOOK_MANUAL = `.claude/settings.json을 읽지 못했다. hooks.SessionStart에 ${KEY_HOOK} 명령을 직접 더하세요`;
 
 // 벤더 스킬은 upstream 원본이다. `pnpm check`(biome check --write .)가 고쳐 쓰면 skills-lock.json의 contentHash와 어긋난다.
-// OMC·OMX·impeccable 상태 파일과 .claude/settings.json, .codex/(OMX 생성물)는 도구가 다시 쓰는 파일이다.
+// OMC·OMX·pro-kit·impeccable 상태 파일과 .claude/settings.json, .codex/(OMX 생성물)는 도구가 다시 쓰는 파일이다.
 // biome.json은 vcs.useIgnoreFile이 꺼져 있어 .gitignore만으로는 빠지지 않는다.
 // 마이그레이션(drizzle-kit), schema/auth.ts(`auth:generate`), src/env.ts(varlock이 설치·실행 때마다 다시 씀)는 생성물이라
 // 포맷해도 다시 생성하면 지적이 돌아온다. html/(pnpm export:html이 만든 정적 사이트)은 빌드 결과물이다.
 const BIOME_IGNORES = [
-  "!.agents/skills", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.impeccable", "!.claude", "!.codex",
+  "!.agents/skills", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!.claude", "!.codex",
+  "!tasks/evidence",
   "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
   "!html",
 ];

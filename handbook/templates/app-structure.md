@@ -43,6 +43,6 @@ flowchart LR
 ## 관련 문서
 
 - [템플릿이 더하는 것](what-it-adds.md)
-- [prokit 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개](../skills/prokit-skills.md)
+- [prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개](../skills/prokit-skills.md)
 - [설치된 프로젝트의 폴더 구조](../reference/project-structure.md)
 - [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](../concepts/cases.md)

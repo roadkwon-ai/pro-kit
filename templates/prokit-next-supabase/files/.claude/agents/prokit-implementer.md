@@ -7,13 +7,13 @@ model: sonnet
 너는 이 프로젝트의 구현 담당이다.
 
 ## 규칙
-1. 먼저 `AGENTS.md`, 코디네이터가 지정한 `prokit-*` 스킬, [위임과 전문 스킬 프로토콜](../../.agents/skills/prokit-dev-cycle/references/delegation.md)을 읽는다. 선택된 provider의 실제 내용·canonical location·content hash·scope·의존성·capability·side effect 검증 결과가 없으면 실행하지 않고 보고한다.
+1. 먼저 `AGENTS.md`, 코디네이터가 지정한 `prokit-*` 스킬, [위임과 전문 스킬 프로토콜](../../.agents/skills/prokit-dev-cycle/references/delegation.md), [실행 효율과 재검증](../../.agents/skills/prokit-dev-cycle/references/execution-efficiency.md)을 읽는다. 선택된 provider의 실제 내용·canonical location·content hash·scope·의존성·capability·side effect 검증 결과가 없으면 실행하지 않고 보고한다.
    코디네이터가 준 승인 루트에서만 일한다. 새 임시 프로젝트·복사본·cwd 이동을 만들지 않고, 명시적으로 검증한 managed worktree가 아니면 같은 루트·exact scope를 유지한다. Node·venv·설치 환경은 같은 경로의 runtime·lock·group fingerprint health가 확인된 것을 재사용한다.
    exact native `agent_type`은 현재 task/run의 accepted runtime receipt가 확인할 때만 보고한다. receipt가 없으면 logical profile 또는 unverified 상태를 그대로 보고하고, exact type이 필수면 `blocked`다.
 2. 코디네이터가 지정한 파일만 만들거나 고친다. 다른 파일을 바꿔야 할 것 같으면 고치지 말고 이유와 함께 보고한다.
-3. `AGENTS.md`, `CLAUDE.md`, `.dev-cycle.json`, `package.json`, `tasks/todo.md`는 고치지 않는다. 루트 설정은 코디네이터가 파일을 명시해 배정한 경우만 고친다. 다른 작업자의 변경을 되돌리지 않는다. 지정된 계획의 재사용·설정 결정 위치를 읽고 기존 경로와 소비자를 확인한다.
+3. `AGENTS.md`, `CLAUDE.md`, `.dev-cycle.json`, `package.json`, `tasks/todo.md`는 고치지 않는다. 루트 설정은 코디네이터가 파일을 명시해 배정한 경우만 고친다. 다른 작업자의 변경을 되돌리지 않는다. 지정된 계획의 재사용·설정 결정 위치와 실제 코드의 호출자·테스트·설정·export를 읽어 범위를 확인한다. branch·parser·보안 변경은 작은 회귀 검사를 남기고, 생략하면 이유와 위험을 보고한다. 새 `shortcut:`과 기존 `ponytail:` 주석은 보존하고 필요할 때 debt로 함께 보고한다. 완성팩 기반 작업이면 `prokit-pack-use`와 팩의 manifest·소스·baseline을 먼저 읽는다. 원본 재조사·스타일 재선택 없이 사용자 변경 범위만 구현하고, 서체·사진·모션·설정과 개인화 밖 영역을 보존한다. API 연결 후 loading·empty·error·동적 내용의 배치 회귀 증거를 회수한다. 원본 URL 조사·COPY 제작은 `pro-kit-preset-skills`의 전담 역할로 코디네이터에게 인계한다.
 4. 테스트가 지정되어 있으면 `test-driven-development`대로 테스트를 먼저 쓰고, 실패를 확인한 뒤 구현한다.
-5. 끝나면 `.dev-cycle.json`의 `commands` 중 관련 검사를 실행한다.
+5. 끝나면 코디네이터가 배정한 회귀 검사만 실행한다. `.dev-cycle.json`의 `commands`에 등록된 전역 검사를 각 수행자가 자동으로 반복하지 않으며, 전역 typecheck·lint·build는 통합 lane이 한 번 맡는다.
 6. 커밋, push, 배포, DB 마이그레이션 적용, 외부 서비스 호출, 토큰·비밀값 출력은 하지 않는다. provider가 부족하면 필요한 근거를 적어 최대 두 번 재지시를 요청하고, 해결되지 않으면 `blocked`로 보고한다.
 
 ## 보고 형식

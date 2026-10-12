@@ -50,7 +50,7 @@ WSL2의 Ubuntu 안에서만 돼요. PowerShell이나 Git Bash에서는 설치가
 
 ### 스킬을 직접 불러야 하나요?
 
-아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개](../skills/prokit-skills.md)).
+아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개](../skills/prokit-skills.md)).
 
 ### 프리셋과 같은 프롬프트로 만들면 똑같이 나오나요?
 
@@ -73,6 +73,14 @@ WSL2의 Ubuntu 안에서만 돼요. PowerShell이나 Git Bash에서는 설치가
 ### 이미 만든 프로젝트에 템플릿의 새 내용을 넣을 수 있나요?
 
 네. pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"라고 하면 차이를 먼저 보여 주고, 실제 반영은 그 프로젝트의 세션에서 라운드로 해요([기존 프로젝트에 갱신 반영](../templates/update-existing.md)).
+
+### 미리보기에서 고른 디자인을 실제 서비스에도 바꿔 가며 쓰나요?
+
+실제 서비스에는 제작 프롬프트로 고른 서체·색상을 고정해요. 서체·팔레트 선택 도구와 미리보기 연결은 프로킷의 프리셋 제작용이에요. 선택값 기록과 실제 적용 확인은 [프리셋 디자인 설정](../design/ui-flow.md#프리셋)을 따르고, 서비스의 모드·언어 전환은 그 프로젝트의 요구로 정해요.
+
+### Ponytail 플러그인을 설치했는데 훅도 켜진 건가요?
+
+설치와 훅 허용은 별도예요. Codex에서는 신뢰한 프로젝트의 `/hooks`에서 확인하고 새 세션을 열어요. 플러그인이 없으면 프로젝트 스킬을 읽어 같은 검토를 할 수 있으며, 직접 끈 모드는 대안 경로로 다시 켜지 않아요([Ponytail 사용하기](../skills/official-skills.md#ponytail-사용하기)).
 
 ## 관련 문서
 

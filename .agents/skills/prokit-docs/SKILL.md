@@ -1,13 +1,11 @@
 ---
 name: prokit-docs
 description: >-
-  pro-kit 저장소의 문서 쪽(handbook, tutorials, 루트 README)을 새로 만들거나 구조를 바꿀 때 사용한다. handbook 쪽과
-  묶음(한눈에 첫 문단, 쪽 표 순서), 튜토리얼 장(이번 장에서 할 일, 프롬프트 블록, 이렇게 되면
-  성공, 막히면, 에이전트가 물어보면, 시간과 비용), 공통 값 표시와 글 묶음, 링크·앵커와 Mermaid 도식, 쪽을
-  옮기거나 지우기, 홈페이지 문서 메뉴(마크다운 복사, AI로 보내기, md 주소, 도식 내려받기)가 새 쪽에도 붙는지
-  확인하기를 다룬다. 쪽 추가해줘, 문서 표에 행 더해줘, 튜토리얼 장 써줘, 묶음 만들어줘, 맨값을 공통 값으로 바꿔줘,
-  이 쪽만 읽어도 통하게 해줘 같은 요청에 쓴다. 문장 다듬기와 검수는 prokit-writing, 사이트 화면 모양은 prokit-ui,
-  사이트 코드는 prokit-web이 맡는다. 프리셋 팩 파일(pro-kit-samples의 packs)을 채우는 일은 대상이 아니다.
+  프로킷의 handbook·tutorials·루트 README와 프리셋 팩 안내·교재를 작성하거나 구조·기술 사실을 검수할 때 사용한다.
+  쪽과 묶음 추가, 튜토리얼 장 작성, 팩 README·CUSTOMIZE·화면·출처 안내, 복원·개인화·실전 개발 안내,
+  검증 자료 인계, 공통 값·링크·도식·홈페이지 문서 메뉴를 다룬다. 문장 검수는 prokit-writing,
+  화면 모양은 prokit-ui, 사이트 코드는 prokit-web이 맡는다. 원본 조사·COPY 제작·촬영·품질 판정은
+  prokit-preset-create와 prokit-preset-verify, 완성팩 적용 개발은 prokit-pack-use가 맡는다.
 ---
 
 # 프로킷 문서 쪽
@@ -15,6 +13,8 @@ description: >-
 pro-kit 저장소의 문서 쪽(`handbook/`, `tutorials/`, 루트 `README.md`·`CONTRIBUTING.md`)을 새로 만들거나 구조를 바꾸는 절차다. 문장 규칙은 `prokit-writing`이 맡는다. 홈페이지(pro-kit-web)는 이 원본을 복사해 그리므로, 원본을 바르게 쓰면 홈페이지도 맞는다.
 
 값과 검사의 정본은 저장소에 있다. 이 스킬은 판단 순서와 명령만 두고, 정본 파일은 경로로 가리킨다. 스킬과 저장소 파일이 다르면 저장소 파일을 따르고 사용자에게 알린다.
+
+팩 문서는 `pro-kit-samples`의 팩 정본에서 작성한다. 프리셋 제작·활용 스킬의 기술 지침은 해당 기술 담당과 `skill-creator`가 결정하고, 이 스킬은 인계 자료와 사용자 안내의 구조·사실을 다룬다. 문서 편집으로 제품의 COPY 결정이나 지원 기능을 바꾸지 않는다. 가상 정보·미설정 URL도 원본 구성의 자리를 보존하며, 코드나 팩 인수 자료로 확인하지 못한 렌더링·클릭·비활성·숨김 동작은 가능성 표현으로도 추정하지 않고 미확인으로 적는다. 개인화 예시는 인계된 가상·예약 예시 값을 유지하고, 기술 설정 안내만으로 법률 준수나 인허가·사업자 고지 요건 충족을 보장하지 않는다.
 
 ## 어떤 쪽인가
 
@@ -25,11 +25,14 @@ pro-kit 저장소의 문서 쪽(`handbook/`, `tutorials/`, 루트 `README.md`·`
 | 두 곳 이상에 쓰는 값과 글, 시간과 비용 | 어디든 | [references/shared-values.md](references/shared-values.md) |
 | 쪽 옮기기와 지우기 | `handbook/`, `tutorials/` | [references/handbook.md](references/handbook.md)의 "쪽 옮기기·지우기", 이어서 [references/page-actions.md](references/page-actions.md) |
 | 새 묶음, 새 과정, 다른 쪽을 가리키는 말 | `handbook/`, `tutorials/` | [references/page-actions.md](references/page-actions.md) |
+| 팩 안내·복원·개인화·실전 개발 안내, 제작·활용 안내 | 팩 정본과 담당 저장소의 문서 | [references/preset-pack.md](references/preset-pack.md) |
 | 루트 `README.md`, `CONTRIBUTING.md` | pro-kit 루트 | 아래 "루트 문서" |
 
 할 일이 표의 여러 줄에 걸리면 해당하는 참조를 모두 읽는다. 표에 없는 문서(설계 기록, 릴리스 노트)는 이 스킬의 대상이 아니다.
 
 ## 공통 절차
+
+아래 쪽 표·값 표시·홈페이지 동기화 절차는 handbook·tutorials에 적용한다. 팩 문서는 `preset-pack.md`의 인계·검사를 따르고, 교재도 함께 고칠 때 해당 문서 절차를 병행한다.
 
 1. **순서 표를 본다.** handbook은 문서 홈과 묶음 `README.md`의 표, 튜토리얼은 과정 첫 쪽의 장 표가 순서의 정본이다. 새 쪽은 표에 행을 더해야 생긴다.
 2. **이웃 쪽 하나를 연다.** 같은 handbook 묶음이나 같은 과정의 쪽을 열어 뼈대, 절 이름, 글 묶음 표시를 따른다. 기억으로 틀을 만들지 않는다.

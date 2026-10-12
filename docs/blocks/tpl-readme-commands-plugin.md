@@ -1,2 +1,3 @@
-<!-- 두 템플릿 README 명령 표의 claude plugin update 행(supabase 템플릿은 앞에 supabase 행 둘이 더 있다). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 -->
-| `claude plugin update <플러그인> --scope project` | Claude 플러그인 업데이트. `pnpm skills:update`는 플러그인을 올리지 않는다. `claude plugin marketplace update <마켓플레이스>`로 목록을 받고 플러그인 저장소의 `hooks/` 변경을 본 뒤 올린다. 세션을 다시 열어야 적용된다(`prokit-skills-update`) |
+<!-- 두 템플릿 README 명령 표의 플러그인 업데이트 행(supabase 템플릿은 앞에 supabase 행 둘이 더 있다). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 -->
+| `claude plugin update <플러그인> --scope project` | Claude 플러그인 업데이트. `pnpm skills:update`는 플러그인을 올리지 않는다. marketplace를 갱신하기 전에 플러그인 저장소의 `hooks/`와 코드를 검토하고, `claude plugin marketplace update <마켓플레이스>` 뒤 올린다. 세션을 다시 열어야 적용된다(`prokit-skills-update`) |
+| `codex plugin marketplace upgrade ponytail` | Ponytail 원본 GitHub marketplace snapshot을 새로고침한다. 이 명령만으로 플러그인 갱신 완료를 판정하지 않는다. 사용자가 원하고 비활성화 상태가 아니면 hooks와 코드를 먼저 검토한 뒤 `codex plugin add ponytail@ponytail`을 실행하고 `codex plugin list --json`으로 설치판을 확인한다. 훅 신뢰와 새 세션은 별도다 |

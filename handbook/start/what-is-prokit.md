@@ -16,7 +16,7 @@ pro-kit 저장소는 새 프로젝트를 만들어 주는 생성기예요. 안�
 
 템플릿은 [Better-T-Stack](../templates/what-it-adds.md)으로 만든 Next.js 풀스택 앱 위에 설치돼요. 설치하면 앱 뼈대에 다음이 더해져요.
 
-- 프로젝트 전용 스킬 <!-- v:prokit.skills.count -->8<!-- /v -->개
+- 프로젝트 전용 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개
 - 외부 전문 스킬을 연결하는 수행 에이전트와 독립 리뷰 에이전트
 - 빌드 캐시, 설치 패키지, Python 실행환경, 관리 임시 폴더를 감시하는 자원 보호 도구
 - 작업마다 확인 결과를 남기는 dev-cycle
@@ -42,7 +42,7 @@ projects/
 | 만들기 전에 요구사항과 화면을 정리해요 | 스펙과 화면 설계(브리프)를 먼저 보여 주고 확인을 받은 뒤 구현해요 |
 | 디자인 시스템을 정하고 지켜요 | 첫 화면을 만들기 전에 어울리는 디자인 스타일 1~3위를 추천받아 `DESIGN.md` 파일 하나에 정해 둬요. 새 세션도 이 파일을 따라요 |
 | 직접 돌려 보고 나서 끝났다고 해요 | 타입 검사, 테스트, 화면 스크린샷을 실제로 실행한 증거(명령과 결과)가 모여야 `audit`을 통과해요. 브라우저 콘솔과 서버 로그의 오류는 0개여야 해요 |
-| 다른 사람에게 코드 리뷰를 받아요 | 구현에 참여하지 않은 읽기 전용 리뷰 에이전트(`prokit-reviewer`)가 코드, 보안, DB를 따로 살펴봐요. 필요 이상으로 복잡한 설계는 `ponytail-review`가 걸러 내요 |
+| 다른 사람에게 코드 리뷰를 받아요 | 구현에 참여하지 않은 읽기 전용 리뷰 에이전트(`prokit-reviewer`)가 코드, 보안, DB를 따로 살펴봐요. `ponytail-review`는 정확성·안전성·테스트부터 확인하고 불필요한 복잡도도 점검해요 |
 | 보안과 데이터를 지켜요 | 서버에서 로그인과 데이터 주인을 확인하고, 계정 두 개로 남의 데이터에 접근할 수 없는지 테스트해요. DB는 마이그레이션 파일로만 바꿔요 |
 | 배포는 확인하며 해요 | 배포 전 검사를 통과해야만 배포해요. 비밀값이 새지 않게 막고, 되돌리는 명령을 알려 줘요 |
 | 프로젝트 맥락을 기억해요 | 용어집(`GLOSSARY.md`)과 프로젝트 소개(`docs/domain/project.md`)를 작업마다 읽고 고쳐요. 새 세션에서 프로젝트를 다시 설명하지 않아도 돼요 |
@@ -72,7 +72,7 @@ projects/
 
 - **지원하는 에이전트**: <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v -->예요. 도구마다 읽는 파일과 여는 명령은 [지원하는 에이전트](supported-agents.md), Claude Code와 Codex의 조작 차이는 [Claude Code와 Codex](../../tutorials/reference/claude-code-and-codex.md)에 있어요.
 - **스킬이 결과를 바꾸나요**: 같은 요청을 스킬이 있을 때와 없을 때로 나눠 비교했어요. 규칙을 지킨 비율이 작업 진행(`prokit-dev-cycle`)은 <!-- v:eval.dev-cycle.without -->27<!-- /v -->%에서 <!-- v:eval.dev-cycle.with -->93<!-- /v -->%로, 화면 설계(`prokit-ui`)는 <!-- v:eval.ui.without -->12<!-- /v -->%에서 <!-- v:eval.ui.with -->100<!-- /v -->%로 올랐어요. 골라 둔 `DESIGN.md`가 있으면 목표 디자인과 팔레트가 맞는 비율이 <!-- v:eval.designMd.palette.without -->71<!-- /v -->%에서 <!-- v:eval.designMd.palette.with -->99<!-- /v -->%로 올랐어요. 측정 방법은 [검증 결과](../reference/verification.md)에 있어요.
-- **만든 것**: 프로킷으로 만든 프리셋 <!-- v:presets.count -->11<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->4<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개, 클론 코딩 <!-- v:presets.clone.count -->2<!-- /v -->개)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 볼 수 있어요.
+- **만든 것**: 프로킷으로 만든 프리셋 <!-- v:presets.count -->13<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->6<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개, 클론 코딩 <!-- v:presets.clone.count -->2<!-- /v -->개)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 볼 수 있어요.
 - **라이선스**: [MIT](../../LICENSE)예요. 상업 이용·유료 고객 개발·수정·재판매를 허용하며 저작권 표시와 허가문을 보존해야 해요. 사이트의 홍보용 제작 표시는 선택 사항이고, [외부 구성 요소](../../THIRD_PARTY_NOTICES.md)에는 원래 조건을 적용해요.
 
 ## 관련 문서

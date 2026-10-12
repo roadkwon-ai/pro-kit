@@ -151,23 +151,33 @@ test("스킬 업데이트: prokit-dev-cycle 시작이 주기 확인을 부르고
   assert.match(read("AGENTS.md"), /`prokit-skills-update`/);
 });
 
-test("ponytail: 구현·리뷰 라우팅, 기존 규칙 우선, 설치 목록과 README가 맞는다", () => {
+test("ponytail: 5.1 기능, 일회성 리뷰, 신뢰 훅과 fallback 라우팅이 맞는다", () => {
   const routing = read(".agents/skills/prokit-dev-cycle/references/process-routing.md");
   const cycle = read(".agents/skills/prokit-dev-cycle/SKILL.md");
-  for (const doc of [routing, cycle]) assert.match(doc, /ponytail-review/);
+  const update = read(".agents/skills/prokit-skills-update/SKILL.md");
+  for (const name of ["ponytail", "ponytail-review", "ponytail-audit", "ponytail-debt", "ponytail-help", "ponytail-gain"]) assert.match(routing, new RegExp(name));
   assert.match(routing, /provider가 낸 전문 review coverage는 재사용/);
   assert.match(cycle, /실제 coverage와 같은 reuse key/);
   assert.match(cycle, /ponytail 규칙보다 이 스킬, `AGENTS\.md`, 대조표가 우선한다\. vitest 도입 행/);
   assert.match(routing, /ponytail 규칙이 `AGENTS\.md`, `prokit-\*`, 대조표와 부딪히면 뒤의 것이 우선한다\. 대조표 행\(vitest 도입/);
   assert.match(routing, /provider 내장 review coverage를 재사용하고[^\n]*`ponytail-review`[^\n]*gstack `review`/);
   assert.match(routing, /잘 돌던 기존 코드를 고칠 근거로 쓰지 않는다/);
-  assert.match(read("CLAUDE.md"), /Skill 도구로 `ponytail:ponytail-review`/);
+  assert.match(routing, /\$ponytail:ponytail-review.*먼저/);
+  assert.match(routing, /같은 diff에 함께 쓰지 않으며.*off.*다시 켜지 않는다/);
+  assert.match(cycle, /trusted 프로젝트에서 `\/hooks` 허용과 새 세션/);
+  assert.match(read("CLAUDE.md"), /Skill 도구 또는 `\/ponytail-review`로 한 번만/);
+  assert.match(read("CLAUDE.md"), /일회성이며 세션을 영구 review 모드로 바꾸지 않는다/);
+  assert.match(update, /marketplace를 갱신하기 전에.*`hooks\/`와 코드를 검토/);
+  assert.match(update, /Codex 네이티브 ponytail 플러그인/);
+  assert.match(update, /다시 설치·자동 업데이트하지 않는다/);
   const m = JSON.parse(read("skills.manifest.json"));
   assert.ok(m.claude.plugins.includes("ponytail@ponytail"));
   const readme = readFileSync(join(TEMPLATE, "README.md"), "utf8");
   assert.match(readme, /^\| 프로세스 스킬 \(Claude\) \|[^\n]*ponytail/m);
   assert.match(readme, /^\| 프로세스 스킬 \(Codex\) \|[^\n]*ponytail/m);
-  assert.match(readme, /\.ponytail-active/);
+  assert.match(readme, /ponytail-audit.*ponytail-debt.*ponytail-help.*ponytail-gain/);
+  assert.match(readme, /PLUGIN_DATA/);
+  assert.match(readme, /`\/hooks`/);
 });
 
 test("검증 보강: 오류 예산 0, QA 시나리오와 발견 수정, 공통화 행, ponytail 리뷰 구간, 확인 때 서버 유지", () => {
@@ -311,7 +321,7 @@ test("Antigravity·Grok Build: Codex처럼 SKILL.md를 읽고, 서브에이전�
   assert.match(routing, /Antigravity.*Grok Build.*SKILL\.md/);
   assert.match(routing, /\.agents\/agents/);
   const cycle = read(".agents/skills/prokit-dev-cycle/SKILL.md");
-  assert.match(cycle, /Codex·Antigravity·Grok Build는 구현 전에 `ponytail`/);
+  assert.match(cycle, /다른 도구의 활성화와 fallback은 `process-routing\.md`의 선택 규칙/);
   const ui = read(".agents/skills/prokit-ui/SKILL.md");
   assert.match(ui, /Antigravity `generate_image`/);
   assert.match(ui, /Grok Build `image_gen`/);

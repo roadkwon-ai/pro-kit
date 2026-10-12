@@ -1,6 +1,6 @@
 <!-- 두 템플릿 README "설치되는 것" 표에서 프로세스 스킬 행부터 문서 골격 행까지(공식 스킬 행만 템플릿마다 다르다). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 인자: db(neon 또는 supabase. 선택 스킬 행의 ops 묶음 스킬 키) -->
-| 프로세스 스킬 (Claude) | `.claude/settings.json`의 project scope 플러그인 | superpowers, skill-creator, OMC(oh-my-claudecode), ponytail(과설계 방지 모드와 리뷰) |
-| 프로세스 스킬 (Codex) | `.agents/skills/`(superpowers {{v:skills.codex.superpowers}}개, skill-creator, ponytail·ponytail-review), `.codex/skills`·`agents`·`prompts`(OMX) | Claude와 같은 단계를 Codex에서 쓴다 |
+| 프로세스 스킬 (Claude) | `.claude/settings.json`의 project scope 플러그인 | superpowers, skill-creator, OMC(oh-my-claudecode), ponytail(과설계 방지 모드, 리뷰, 요청 시 읽기 전용 점검) |
+| 프로세스 스킬 (Codex) | `.agents/skills/`(superpowers {{v:skills.codex.superpowers}}개, skill-creator, ponytail·ponytail-review·ponytail-audit·ponytail-debt·ponytail-help·ponytail-gain), `.codex/skills`·`agents`·`prompts`(OMX) | Claude와 같은 단계를 Codex에서 쓴다. `--with-global`에서는 지원할 때만 Codex 네이티브 플러그인도 설치한다 |
 | 스킬 설치 목록과 스크립트 | `skills.manifest.json`, `scripts/skills-setup.mjs` | 위 스킬 전체를 프로젝트에 설치·확인·업데이트. 팀원도 `pnpm skills:setup`으로 같은 상태를 만든다 |
 | 선택 스킬 (기본 설치 안 함) | `skills.manifest.json`의 `optional` | 필요할 때 `pnpm skills:setup --optional <묶음>`으로 설치한다. `ops`(운영): {{v:optional.ops.skillsCode.{{db}}}}. `motion`(화면 전환): {{v:optional.motion.skillsCode}}. `mobile`(React Native·Expo 앱을 따로 만들 때): {{v:optional.mobile.skillsCode}} |
 | 프로젝트 스킬 {{v:prokit.skills.count}}개 | `.agents/skills/prokit-*` | dev-cycle 지휘, web, api, db, ui, verify, deploy, 외부 스킬 업데이트(skills-update) |

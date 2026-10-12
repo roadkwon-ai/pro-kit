@@ -14,10 +14,14 @@ description: >-
 ## 위임
 검증 또는 전문 리뷰를 위임할 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 실제 artifact hash와 명령 exit를 남기며, provider가 없거나 검증하지 못한 결과를 PASS로 적지 않는다.
 
+병렬 검사, baseline·receipt가 같은 증거의 재사용, 실패 뒤 재시도는 [실행 효율과 재검증](../prokit-dev-cycle/references/execution-efficiency.md)을 따른다.
+
 원칙: **실행하지 않은 검사는 통과가 아니다.** 결과를 얻지 못했으면 `blocked: 사유` 또는 `미실행: 사유`로 적는다. `blocked`는 에이전트가 이번 세션에서 해소할 수 없는 원인(외부 DB·서비스, 권한, 개발 서버를 띄울 수 없는 환경, 도구 미설치·버전 미달, 리뷰어 응답 실패나 서브에이전트를 쓸 수 없는 환경)에 쓴다. 여기서 도구는 사용자 허락 없이 설치할 수 없는 전역 도구와 CLI다. 테스트 러너(vitest 도입 행)와 로컬 테스트 DB처럼 라운드 안에서 준비하게 되어 있는 것이 없다는 이유로는 blocked를 쓰지 않고, 그 준비부터 한다. `미실행`은 사용자가 범위에서 뺀 단계나, 앞 단계가 blocked여서 할 수 없는 뒤 단계에 쓴다. 다른 검사가 통과했다고 해서 실행하지 못한 검사를 통과로 합치지 않는다.
 
 ## 검사 고르기
 명령은 `.dev-cycle.json`의 `commands`에 있다. 없는 키는 실행할 수 없는 검사다.
+
+이 표는 **라운드 전체**의 최소 검사다. 구현 수행자는 배정된 회귀 검사만 하고, 전역 typecheck·lint·build는 통합 lane이 한 번 실행한다. 그래서 `commands`에 등록된 전역 검사를 각 수행자가 자동으로 반복하지 않는다.
 
 | 바뀐 것 | 최소 검사 |
 |---|---|
@@ -39,6 +43,9 @@ description: >-
 - Next MCP 진단(프레임워크의 시각)과 화면 확인(사용자의 시각)은 다른 증거다. 하나로 다른 하나를 대신하지 않는다.
 - **오류 예산은 0이다.** 확인한 화면마다 브라우저 콘솔의 오류와 경고, 개발 오버레이의 Issues, `/_next/mcp`의 `get_errors`, 개발 서버 로그의 오류를 센다. 서버를 새로 띄운 뒤의 첫 로드도 본다. 느린 첫 컴파일 때만 나는 수화 오류가 있기 때문이다. 브라우저 확장이나 자동화 도구 탓으로 보이는 항목도 빼지 않는다. 깨끗한 프로필(agent-browser)에서 재현해 원인을 가르고, 사용자 브라우저(ego-browser)에서 보이면 고친다. 예를 들어 확장이 수화 전에 `<body>`에 넣는 속성은 `<body suppressHydrationWarning>`로 막는다. 고칠 수 없으면 `[confirm]` 보고에 알려진 문제로 적는다. 결함에서 빼는 것은 하나뿐이다. 시나리오가 일부러 보낸 요청(없는 주소, 권한 없는 호출)이 받은 4xx에 브라우저가 남기는 `Failed to load resource` 줄과 그 거절의 서버 로그다. 이것도 경로와 상태를 따로 적는다. F의 QA는 ego-browser와 agent-browser 양쪽에서 센다.
 
+## 완성팩 대비 검증
+팩을 복원하거나 개인화·실전 기능을 연결한 작업은 [references/pack-baseline.md](references/pack-baseline.md)를 읽는다. 비교 대상은 완성 프리셋이며 원본 URL 연구·COPY 판정은 `pro-kit-preset-skills`의 `prokit-preset-verify`가 맡는다. 파일 무결성·기능·접근성·시각 보존을 각각 보고한다.
+
 ## 테스트 러너
 - 테스트 러너가 없으면 첫 D·E 라운드나 서버·DB 코드를 고치는 C 라운드에서 vitest를 도입한다. 대조표에 `vitest 도입(최초 1회)` 행을 추가하고, 루트 `test` 스크립트와 `.dev-cycle.json`의 `commands.test`를 함께 등록한다. 절차는 `.agents/skills/prokit-api/references/ownership-test.md`에 있다.
 - 격리 테스트는 개발·운영 DB가 아닌 전용 테스트 DB(`TEST_DATABASE_URL`: 로컬 컨테이너의 `<이름>_test`, 병합 전 확인은 Neon 테스트 브랜치)에서 돈다. `skipped`로 끝난 테스트는 통과가 아니다. 프로시저를 거치지 않고 SQL로 같은 조건을 흉내 낸 수동 확인도 격리 테스트를 대신하지 못한다. 격리 테스트는 프로시저를 두 계정의 세션으로 호출한다.
@@ -49,7 +56,7 @@ description: >-
 - 테스트: `vitest todo.isolation → 3 passed`.
 - 리뷰: `prokit-reviewer(code): approve, max=low, 지적 2 (반영 1, 기각 1: 재현 안 됨)`.
 - 스킬 사용: `writing-plans → docs/superpowers/plans/…`. 대안을 썼으면 `대안: OMC plan (superpowers 없음)`. 외부 스킬을 읽었으면 적용한 규칙과 함께 적는다(`사용: supabase-postgres-best-practices(schema-data-types)`).
-- 같은 명령을 여러 행이 요구하면(F의 타입·린트 행 등) 한 번 실행하고 뒤 행에는 `6행과 같음: pnpm check-types → exit 0`처럼 적는다. 그사이 코드가 바뀌었으면 다시 실행한다.
+- 같은 명령을 여러 행이 요구하면(F의 타입·린트 행 등) 한 번 실행하고 뒤 행에는 `6행과 같음: pnpm check-types → exit 0`처럼 적는다. 그사이 검사 입력이나 공유 소비자가 바뀌면 다시 실행하고, 관련성을 알 수 없으면 다시 실행한다.
 - `✓`, `ok`, `done`, `완료`만 적거나 공백을 뺀 4자 미만으로 적는 것은 증거가 아니다. 해당 없으면 `N/A: 사유`.
 - 비밀값, 토큰, 연결 문자열, 실사용자 데이터는 증거에 복사하지 않는다.
 
