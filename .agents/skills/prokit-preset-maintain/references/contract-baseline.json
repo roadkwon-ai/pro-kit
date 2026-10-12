@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contractFingerprint": "f7536d2863c6317d5971811b09b0d1ff1f966fc9060dac475e605f3bce0f68b1",
+  "contractFingerprint": "ece2f2aeb022b1da271e7c5395d7937d4bc425b405335031151621a24a70c85c",
   "contractFiles": [
     {
       "path": "pro-kit-samples/tools/publish-root.sh",
@@ -80,7 +80,7 @@
     },
     {
       "path": "pro-kit-web/apps/web/src/lib/tutorials.check.mjs",
-      "sha256": "33efda19459659b2918debea104505c02cd8af7a31c082a6f00a51c4f0de974a"
+      "sha256": "dbb3fae643828bd74ceed7e891626f40b26d067e91040f67f19650fd4e3e028f"
     },
     {
       "path": "pro-kit-web/apps/web/src/lib/tutorials.ts",
@@ -143,5 +143,5 @@
       "sha256": "233476aa4625cb9ad6660ad80b85a6e7b4392c56f80643288472ec53eb4800c4"
     }
   ],
-  "basis": "Independent native preset_rules_final_review approved the 8 changed local contract consumers on 2026-10-12. Fresh contract/profile tests17/17, diagnostics and local static/ZIP registration passed; paired consumer guidance48/48 reused by matching hashes. Existing v0.1.4 package versions were not attributed to this preset. Public-assets guard intentionally rejects unpublished preparation assets: management production build is not claimed passing. This baseline grants no product acceptance or publication authority."
+  "basis": "2026-10-13 독립 release_final_review(code) approve. 공개 팩 원격 다운로드 SHA 확인, 웹 테스트115개·타입5개·빌드4개·교재56쪽·handbook 검사, pro-kit 병합 후 문서·팩71개와 주소 검사 포함68개 통과. 게시 권한은 사용자의 명시 요청이며 기준선 해시는 권한을 부여하지 않는다."
 }
