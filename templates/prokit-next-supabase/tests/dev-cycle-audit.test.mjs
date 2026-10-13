@@ -56,7 +56,32 @@ test("audit은 연결된 위임 증거 패킷의 실패·미해결 상태를 통
   };
   const result = audit(root, config, { delegationPacket: packet });
   assert.equal(result.ok, false);
-  assert.ok(result.problems.some((problem) => problem.startsWith("위임 완료") || problem.startsWith("위임 증거")));
+  // context가 없어도 예외 대신 packet 자체의 문제를 함께 보여 준다.
+  const delegation = result.problems.find((problem) => problem.startsWith("위임 완료 검증 실패"));
+  assert.ok(delegation, result.problems.join("\n"));
+  assert.match(delegation, /완료되지 않은 status: failed/);
+  assert.match(delegation, /실패한 command를 완료 증거로 냈다: node --test \(exit 1\)/);
+});
+
+test("CLI close는 packet을 받지 않고, 위임·자원 스크립트가 없어도 secrets는 돈다", () => {
+  const { root } = makeRepo();
+  const close = run(root, "close", "--packet", "p.json", "--context", "c.json");
+  assert.equal(close.status, 2);
+  assert.match(close.stderr, /사용법: dev-cycle close \[--partial\] \[--json\]/);
+  // dev-cycle.mjs만 있는 프로젝트(갱신 중 일부 파일이 빠진 경우)
+  const alone = join(root, "alone");
+  mkdirSync(alone);
+  writeFileSync(join(alone, "dev-cycle.mjs"), readFileSync(CLI));
+  const solo = (...args) => spawnSync(process.execPath, [join(alone, "dev-cycle.mjs"), ...args], { cwd: root, encoding: "utf8" });
+  const secrets = solo("secrets");
+  assert.equal(secrets.status, 0, secrets.stderr);
+  assert.match(secrets.stdout, /비밀값 검사 통과/);
+  const resource = solo("resource", "check");
+  assert.equal(resource.status, 2);
+  assert.match(resource.stderr, /scripts\/resource-guard\.mjs를 불러올 수 없다/);
+  const capture = solo("delegation", "capture");
+  assert.equal(capture.status, 2);
+  assert.match(capture.stderr, /scripts\/delegation\.mjs를 불러올 수 없다/);
 });
 
 test("handoff admission·JSON context는 최종 위임 완료 attest로 통과할 수 없다", () => {
@@ -83,14 +108,18 @@ test("handoff admission·JSON context는 최종 위임 완료 attest로 통과�
 	);
 });
 
-test("위임 라운드는 packet 없이 audit·close를 통과하지 않는다", () => {
+test("옛 delegation=required 마커 라운드도 packet 없이 audit·close할 수 있고 새 대조표는 마커를 쓰지 않는다", () => {
+	// CLI의 --context JSON으로는 Main runtime 검증기를 넘길 수 없어 이 마커 라운드는 닫히지 않았다.
 	const { root } = makeRepo();
 	const config = loadConfig(root);
-	writeTable(root, config, "A", { write: true, title: "위임", delegation: true });
+	writeTable(root, config, "A", { write: true, title: "위임" });
+	const p = join(root, config.todoPath);
+	assert.doesNotMatch(readFileSync(p, "utf8"), /delegation=/);
 	fill(root);
-	assert.match(readFileSync(join(root, config.todoPath), "utf8"), /delegation=required/);
-	assert.equal(audit(root, config).ok, false);
-	assert.equal(close(root, config).ok, false);
+	writeFileSync(p, readFileSync(p, "utf8").replace(/ -->/, " delegation=required -->"));
+	assert.match(readFileSync(p, "utf8"), /delegation=required/);
+	assert.equal(audit(root, config).ok, true);
+	assert.equal(close(root, config).ok, true);
 });
 
 test("계획 리뷰는 N/A로 넘길 수 없고 도구 실패는 부분 완료로 남는다", () => {

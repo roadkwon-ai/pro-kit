@@ -4,20 +4,20 @@
 
 ## 폴더 한눈에 보기
 
-오른쪽 괄호는 파일을 만든 쪽이에요(BTS 또는 템플릿).
+오른쪽 괄호는 파일을 만든 쪽이에요(Better-T-Stack 또는 템플릿).
 
 <!-- b:project-structure-tree -->
 ```text
 my-app/
-├── apps/web/                   Next.js App Router: 화면, /api/rpc, /api/auth          (BTS)
+├── apps/web/                   Next.js App Router: 화면, /api/rpc, /api/auth          (Better-T-Stack)
 ├── packages/
-│   ├── api/                    oRPC 라우터, protectedProcedure                        (BTS)
-│   ├── auth/                   Better Auth 설정                                       (BTS)
-│   ├── db/                     Drizzle 스키마·마이그레이션                            (BTS)
+│   ├── api/                    oRPC 라우터, protectedProcedure                        (Better-T-Stack)
+│   ├── auth/                   Better Auth 설정                                       (Better-T-Stack)
+│   ├── db/                     Drizzle 스키마·마이그레이션                            (Better-T-Stack)
 │   │                           neon: docker-compose.yml, supabase: supabase/config.toml
-│   ├── ui/                     shadcn 컴포넌트                                        (BTS)
-│   └── config/                 공유 tsconfig                                          (BTS)
-├── bts.jsonc, turbo.json, biome.json, pnpm-workspace.yaml                             (BTS)
+│   ├── ui/                     shadcn 컴포넌트                                        (Better-T-Stack)
+│   └── config/                 공유 tsconfig                                          (Better-T-Stack)
+├── bts.jsonc, turbo.json, biome.json, pnpm-workspace.yaml                             (Better-T-Stack)
 ├── AGENTS.md, CLAUDE.md, GLOSSARY.md                                                   (템플릿)
 ├── .agents/skills/             prokit-* 9개, 공식 도메인 스킬, superpowers·skill-creator·ponytail 6종(Codex·Antigravity·Grok Build)
 ├── .agents/agents/             에이전트 생성물(Antigravity)

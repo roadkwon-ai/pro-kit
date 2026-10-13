@@ -22,7 +22,7 @@
 - [verify] 타입·린트 검사 (commands.typecheck, commands.lint) → 명령과 결과 요약
 
 ### B. UI
-- impeccable context 실행, PRODUCT.md·DESIGN.md 확인 (새 작업이면: PRODUCT.md가 없을 때 impeccable init, DESIGN.md가 없고 BTS 기본 화면뿐일 때 디자인 카탈로그 스타일 1~3위와 직접 정하기 중 사용자 선택. 카탈로그는 use-design-md로 받고, 직접 정하면 마감에서 기록) → 출력 요약, 고른 스타일, DESIGN.md lint 결과
+- impeccable context 실행, PRODUCT.md·DESIGN.md 확인 (새 작업이면: PRODUCT.md가 없을 때 impeccable init, DESIGN.md가 없고 Better-T-Stack 기본 화면뿐일 때 디자인 카탈로그 스타일 1~3위와 직접 정하기 중 사용자 선택. 카탈로그는 use-design-md로 받고, 직접 정하면 마감에서 기록) → 출력 요약, 고른 스타일, DESIGN.md lint 결과
 - impeccable shape 브리프 확정 (좁은 개선이면 N/A: 사유) → 브리프 경로
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
 - 구현 (prokit-ui, prokit-web, 컴포넌트 조합·추가는 shadcn, 컴포넌트·훅 작성은 vercel-react-best-practices) → 변경 파일 요약, 사용한 스킬

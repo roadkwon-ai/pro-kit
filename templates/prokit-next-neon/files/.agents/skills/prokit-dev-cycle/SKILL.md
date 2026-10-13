@@ -1,14 +1,14 @@
 ---
 name: prokit-dev-cycle
 description: >-
-  이 BTS(Better-T-Stack) Next.js + Neon 프로젝트에서 코드, 스키마, 화면, 설정, 스킬을 바꾸는
+  이 Better-T-Stack Next.js + Neon 프로젝트에서 코드, 스키마, 화면, 설정, 스킬을 바꾸는
   모든 작업의 진입점. 기능 추가, 버그 수정, 리팩터, 화면 변경, API나 DB 변경, 스킬이나 에이전트
   수정 요청을 받으면 구현을 시작하기 전에 이 스킬로 케이스를 판정하고 dev-cycle 대조표를 연다.
   만들어줘, 추가해줘, 고쳐줘, 버그, 바꿔줘, 리팩터, 기능 개발, 작업 시작, 다 됐어, 완료 처리
   같은 요청에 사용한다. 코드를 바꾸지 않는 질문 답변이나 코드 읽기에는 쓰지 않는다.
 ---
 
-# BTS 개발 사이클
+# 프로킷 개발 사이클
 
 코드를 바꾸는 작업은 모두 **라운드** 하나로 진행한다. 라운드는 `tasks/todo.md`에 붙는 대조표 하나이고, 모든 행의 증거 칸이 채워지고 `pnpm dev-cycle audit`이 통과해야 끝난다.
 
@@ -64,9 +64,10 @@ pnpm dev-cycle table <케이스> --write --title "<요청 요약>"
 - 리뷰 행(`prokit-reviewer(...)`)은 반드시 `prokit-reviewer` 에이전트에 맡긴다. 프롬프트에 focus(`plan`, `code`, `security`, `db`), 대조표 마커의 base SHA, 검토할 파일 목록, 대조표 경로를 준다. 응답 JSON은 증거 칸에 요약한다. 예: `prokit-reviewer(code): approve, max=low, 지적 2 (반영 1, 기각 1: 재현 안 됨)`. 응답의 `skills_read`에 focus 스킬(`prokit-reviewer` 절차 1)이 빠졌으면 읽고 다시 리뷰하게 한다.
 - 지적은 직접 확인한 뒤에만 고친다. high 이상 지적을 고쳤으면 같은 focus로 다시 리뷰한다. 응답이 없거나 JSON이 깨졌으면 `blocked`로 적는다.
 - `prokit-reviewer(plan)`에는 스펙·계획·브리프와 재사용·설정 결정 위치, 실제 기존 파일 목록을 준다. gstack이 없어도 이 리뷰는 수행하고 N/A로 넘기지 않는다. `changes-required`는 지적을 처리한 뒤 다시 리뷰하고, `blocked`이면 이에 의존하는 구현을 시작하지 않는다. 증거는 `prokit-reviewer(plan): approve, max=none|low|medium, 반영·기각 내역`으로 쓴다.
-- `prokit-reviewer(code)` 행에서는 선택 provider의 내장 전문 review를 실제 coverage와 같은 reuse key로 확인해 재사용한다. 빈 focus만 `ponytail-review`나 `specialist-reviewer`로 보완한다. Main의 project contract final inspection은 매 라운드 수행한다. 새 파일은 `git diff`에 나오지 않으니 내용을 함께 넘긴다. 증거 칸은 `prokit-reviewer(code):` 결과로 시작하고 coverage·보완 결과(예: `ponytail-review: net -12 lines, 반영 2, 기각 1`)를 덧붙인다. ponytail이 없으면 그 사실과 다른 보완 또는 `blocked` 사유를 적는다.
+- `prokit-reviewer(code)` 행에서는 선택 provider의 내장 전문 review를 실제 coverage와 같은 reuse key로 확인해 재사용한다. 빈 focus만 `ponytail-review`나 `specialist-reviewer`로 보완한다. Main의 project contract final inspection은 매 라운드 수행한다. 새 파일은 `git diff`에 나오지 않으니 내용을 함께 넘긴다. 증거 칸은 `prokit-reviewer(code):` 결과로 시작하고 coverage·보완 결과(예: `ponytail-review: 반영 2(Must fix 1), 기각 1, 백로그 1, Lean -12 lines`)를 덧붙인다. 정확성·보안 지적을 간결성 규칙으로 기각하지 않는다(규칙 6의 지적 처리). ponytail이 없으면 그 사실과 다른 보완 또는 `blocked` 사유를 적는다.
 - 설계·계획·구현·리뷰에 ponytail을 쓴다. 구간별 방법(스펙의 "만들지 않는 것" 절, 독립 계획 리뷰, 구현 diff의 `ponytail-review`)은 규칙 6에 있다. 구현은 ponytail 모드로 한다(Claude는 플러그인 훅이 켠다. Codex 네이티브 플러그인은 trusted 프로젝트에서 `/hooks` 허용과 새 세션이 모두 필요하고, 다른 도구의 활성화와 fallback은 `process-routing.md`의 선택 규칙을 따른다). ponytail 규칙보다 이 스킬, `AGENTS.md`, 대조표가 우선한다. vitest 도입 행, 격리 테스트, 구현 전 질문은 줄이지 않는다. 기준은 [references/process-routing.md](references/process-routing.md) 규칙 6.
 - 구현을 위임할 때는 `prokit-implementer`에 정확한 파일 목록, 선택한 전문 스킬의 검증 결과, 재사용·설정 결정 위치, 완료 조건을 준다. 병렬로 위임할 때는 파일이 겹치지 않게 나눈다. `AGENTS.md`, `.dev-cycle.json`, `package.json`, 루트 설정은 메인이 맡는다. 메인이 파일을 명시해 배정한 경우만 수행자가 그 루트 설정을 고칠 수 있다.
+- 위임한 쪽의 보고만 믿지 않는다. 수행자·리뷰어·QA를 부르기 전과 끝난 뒤 `pnpm dev-cycle delegation capture`·`diff`로 작업 트리를 대조하고, 배정 밖 변경이나 커밋이 나오면(exit 1) 그 결과를 통합하지 않고 재지시한다. 명령과 병렬 위임의 대조 방법은 위임 프로토콜의 "관측과 수행 범위"를 따른다.
 - impeccable `critique`처럼 서브에이전트를 스스로 띄우는 스킬은 메인 세션에서 실행한다.
 
 ## 5. 종료

@@ -13,7 +13,7 @@
 | `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기. `--upgrade`는 더 무거운 케이스로 올리기 |
 | `pnpm dev-cycle audit` | 빈 칸, 건너뛸 수 없는 칸, 케이스 상향 검사 |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관. 미완료 항목과 코드 예시는 남기고, 끝난 하위 항목은 부모 문맥과 함께 기록 |
-| `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일의 내용으로 바꿔요. 표의 헤더·stage와 다른 행, 메모, 코드 블록은 그대로 둬요 |
+| `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일의 내용으로 바꿔요(끝 줄바꿈 하나는 허용해요). 표의 헤더·stage와 다른 행, 메모, 코드 블록은 그대로 둬요 |
 | `pnpm dev-cycle close` | audit과 실제 사용자 확인 뒤 대조표와 완료한 일반 할 일·백로그를 KST 날짜의 파일로 보관해 라운드 닫기. `blocked`나 `미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial` |
 | `pnpm dev-cycle secrets` | 커밋 전에 스테이징한 변경에서 비밀값 찾기. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
 
@@ -41,10 +41,11 @@
 
 | 명령 | 하는 일 |
 |---|---|
-| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고해요. 정상·경고는 exit 0, 예산 초과는 exit 1, 측정 불완전은 exit 2예요 |
-| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행해요. 자원 차단·측정 불완전이면 exit 75이고, 실행했다면 자식 명령의 종료 코드를 그대로 돌려줘요 |
-| `pnpm dev-cycle resource clean [--apply]` | 기본은 검증한 정리 후보만 보여 줘요. `--apply`도 현재 실행이 만든 compiler cache의 소유권·lease·자식 종료가 증명된 경우에만 정리해요 |
+| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고해요. 정상·경고는 exit 0, 예산 초과는 exit 1(측정이 불완전해도 여유 공간이 차단 한계 이하면 1), 측정 불완전은 exit 2예요 |
+| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행해요. 실행 중에는 예산 초과일 때만 멈추고, 측정이 늦거나 실패하면 기록만 해요(여유 공간은 측정이 늦어도 따로 확인해요). 자원 차단·측정 불완전·정리 중이면 exit 75이고, 실행했다면 자식 명령의 종료 코드를 그대로 돌려줘요 |
+| `pnpm dev-cycle resource clean [--apply]` | 끝난 guard 실행이 만든 compiler cache(Turbopack) 가운데 소유 기록·같은 디렉터리·실행과 자식 종료가 확인된 것만 후보로 보여 줘요. `--apply`는 실행 중인 guard나 Next dev·build가 없을 때만 지우고, 거부하면 exit 1이에요 |
 | `pnpm dev-cycle delegation capture` | 위임 전 작업 트리의 기준 스냅샷을 JSON으로 남겨요 |
+| `pnpm dev-cycle delegation diff <기준 파일> [--scope <글롭>]` | 기준 스냅샷 뒤의 변경을 보여 주고, 배정한 글롭(`apps/web/src/**`) 밖 변경이나 커밋이 있으면 exit 1로 알려요. git이 무시하는 파일은 대조하지 않아요. 리뷰·QA처럼 파일을 바꾸면 안 되는 단계는 `--scope` 없이 써요. 기준 파일을 읽을 수 없으면 exit 2예요 |
 | `pnpm dev-cycle delegation resolve <스킬 참조 또는 상대 경로>` | 실제 스킬 원본의 위치·내용 해시를 관찰해요. 신뢰한 inspection과 실제 host adapter가 계약을 현재 실행에 묶지 못하면 inspection-only로 보고하고 exit 1로 막아요 |
 | `pnpm dev-cycle delegation validate <패킷>` | 완료 패킷의 실제 변경, 증거, 허용 경로, 부작용, 환경 지문을 검사해요 |
 | `pnpm dev-cycle delegation accept` | 명시한 영향 검사와 새 Codex 읽기 전용 리뷰를 직접 실행해 로컬 기술 인수를 검증해요. 사용자 확인과 라운드 close는 별도예요 |

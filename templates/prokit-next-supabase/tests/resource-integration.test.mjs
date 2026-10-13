@@ -65,6 +65,12 @@ test("resource CLI는 check·run·clean의 종료 계약을 지키고 delegation
 	});
 	assert.equal(clean.status, 0, clean.stderr);
 	assert.match(clean.stdout, /"applied":false/);
+	const typo = spawnSync(process.execPath, [GUARD, "clean", "--aply"], {
+		cwd: root,
+		encoding: "utf8",
+	});
+	assert.equal(typo.status, 2);
+	assert.match(typo.stderr, /만 지원한다/);
 
 	const snapshot = spawnSync(process.execPath, [DELEGATION, "snapshot"], {
 		cwd: root,
@@ -98,6 +104,13 @@ test("dev-cycle resource·delegation 명령은 원본 CLI의 종료 코드와 sn
 		{ cwd: root, encoding: "utf8" },
 	);
 	assert.equal(run.status, 7, run.stderr);
+	// 옵션 오류는 예산 초과(exit 1)와 구분해 exit 2다.
+	const typo = spawnSync(
+		process.execPath,
+		[DEV_CYCLE, "resource", "clean", "--aply"],
+		{ cwd: root, encoding: "utf8" },
+	);
+	assert.equal(typo.status, 2, typo.stderr);
 	const capture = spawnSync(
 		process.execPath,
 		[DEV_CYCLE, "delegation", "capture"],

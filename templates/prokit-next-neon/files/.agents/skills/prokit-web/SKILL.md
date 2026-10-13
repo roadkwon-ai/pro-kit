@@ -1,7 +1,7 @@
 ---
 name: prokit-web
 description: >-
-  이 BTS Next.js 프로젝트의 apps/web 동작과 구조를 만들거나 바꾸거나 검토할 때 사용한다. App Router
+  이 Better-T-Stack Next.js 프로젝트의 apps/web 동작과 구조를 만들거나 바꾸거나 검토할 때 사용한다. App Router
   라우팅, 페이지와 레이아웃, Server Component와 Client Component 경계, oRPC와 TanStack Query 데이터
   패칭, 로그인 보호 페이지, 캐시와 프리패치, 로딩과 오류 상태, 렌더링 성능을 다룬다. 페이지 추가,
   데이터 불러오기, use client, 서버 컴포넌트, 리다이렉트, 캐시, 느려요 같은 요청에 사용한다. 색,

@@ -5,14 +5,14 @@
 ## 화면 규칙
 - 모든 화면을 예시 데이터로 채운다. 예시 데이터와 계산은 `apps/web/src/lib/`(예: `demo.ts`)에 모은다. 로그인이 필요한 화면은 예시 사용자로 로그인한 상태로 보여 주고, 로그인·가입 화면은 제출하면 예시 사용자로 들어가는 예시 화면으로 만든다.
 - 체크, 상태 바꾸기, 추가 같은 동작은 화면 상태나 브라우저 저장소(`localStorage`)로 흉내 내서 버튼이 실제로 반응하게 한다.
-- 서버나 DB를 부르는 BTS 기본 부품을 화면에 쓰지 않는다: 헤더의 사용자 메뉴(`components/user-menu.tsx`)와 `/dashboard` 링크, 로그인·가입 폼의 `authClient`, `orpc` 호출. 첫 화면을 만들 때 BTS 기본 헤더와 로그인 화면을 제품 화면으로 바꾼다. `/dashboard`와 `/api` 파일은 지우지 않아도 된다(내보내기가 뺀다).
+- 서버나 DB를 부르는 Better-T-Stack 기본 부품을 화면에 쓰지 않는다: 헤더의 사용자 메뉴(`components/user-menu.tsx`)와 `/dashboard` 링크, 로그인·가입 폼의 `authClient`, `orpc` 호출. 첫 화면을 만들 때 Better-T-Stack 기본 헤더와 로그인 화면을 제품 화면으로 바꾼다. `/dashboard`와 `/api` 파일은 지우지 않아도 된다(내보내기가 뺀다).
 - `.dev-cycle.json`의 `authPaths` 파일(`auth-client.ts`, `services.ts`, `env.server.ts`, `packages/auth/` 등)은 고치지 않는다. 실제 서비스로 바꿀 때 그대로 쓴다.
 - HTML로 내보낼 수 있게 짓는다.
   - 동적 경로(`[slug]`)는 `generateStaticParams`로 값을 모두 낸다.
   - 쿼리 값(`?tab=`)은 클라이언트 컴포넌트에서 `useSearchParams`로 읽고 `<Suspense>`로 감싼다.
   - `headers`, `cookies`, `redirect`, route handler, server action을 쓰지 않는다.
   - 이미지는 `apps/web/public/` 아래에 두고 `next/image`로 부른다. 하위 경로에 올릴 때 내보내기가 경로 앞에 붙인다. CSS `url()`이나 `<img>`에 `/`로 시작하는 경로를 직접 쓰지 않는다.
-- 마감 전 확인(`prokit-ui` 규칙의 모든 링크와 버튼 누르기)은 개발 서버와 함께 `pnpm export:html` 결과에서도 한다. 개발 서버에서는 `/dashboard`와 `/api`가 살아 있어 남은 BTS 부품이 드러나지 않는다.
+- 마감 전 확인(`prokit-ui` 규칙의 모든 링크와 버튼 누르기)은 개발 서버와 함께 `pnpm export:html` 결과에서도 한다. 개발 서버에서는 `/dashboard`와 `/api`가 살아 있어 남은 Better-T-Stack 부품이 드러나지 않는다.
 
 ## HTML로 내보내기
 "HTML로 내보내줘"는 `pnpm export:html`이다. 프로젝트 파일은 바꾸지 않는다. 임시 복사본에서 `/api`와 `/dashboard`를 빼고 정적 내보내기 설정으로 빌드해 결과를 `html/`(git이 무시한다)에 둔다.

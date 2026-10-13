@@ -1,7 +1,7 @@
 ---
 name: prokit-deploy
 description: >-
-  이 BTS 프로젝트를 Vercel에 배포하거나 배포 환경을 준비·관리할 때 사용한다. 로컬 Vercel CLI로
+  이 Better-T-Stack 프로젝트를 Vercel에 배포하거나 배포 환경을 준비·관리할 때 사용한다. 로컬 Vercel CLI로
   develop(Preview 배포 + 고정 주소)과 production을 배포하고, Vercel 프로젝트 연결(모노레포 apps/web),
   환경별 환경변수(DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL), 배포 전 원격 DB 마이그레이션 순서,
   production 배포 전 릴리스(SemVer 버전 태그, release/ 노트, GitHub Release), 배포 확인, 되돌리기를 다룬다.
@@ -49,7 +49,7 @@ Vercel CLI의 일반 사용법(설치, 로그인, 토큰, `vercel env`·`domains
    vercel git disconnect --yes                          # link 출력에 "Connecting GitHub repository"가 있었을 때만
    vercel project update <이름> --root-directory apps/web --framework nextjs --yes
    ```
-   `vercel link --yes`는 새 프로젝트를 만들 때 git 원격이 있으면 묻지 않고 그 저장소를 연결한다(CLI 60.1, 실측). 출력에 `Connecting GitHub repository`가 나온다. 연결되면 기본 브랜치 push가 곧 production 배포라 릴리스 검사와 "DB 먼저"를 거치지 않으므로, 사용자가 Git 연결을 요청하지 않았으면 바로 끊는다(연결에 실패했으면 "No Git repository connected"로 끝난다). 이미 있는 프로젝트에 연결할 때는 Git을 건드리지 않으니 끊지 않는다(일부러 켠 연결일 수 있다). `vercel link`는 `.gitignore`에 `.env*`를 더해 앞으로 만들 `.env.schema`까지 무시하게 하고, 이 앱이 쓰지 않는 `VERCEL_OIDC_TOKEN`을 루트 `.env.local`에 받는다. `.vercel/`은 기기별 연결 정보라 커밋하지 않는다(BTS `.gitignore`에 있다). 팀원은 1번과 3번의 앞 세 줄만 한다. Vercel 프로젝트의 Node.js 버전(Project Settings → Build and Deployment)은 24.x로 둔다. 20.x면 2026-10-01부터 새 배포가 실패한다.
+   `vercel link --yes`는 새 프로젝트를 만들 때 git 원격이 있으면 묻지 않고 그 저장소를 연결한다(CLI 60.1, 실측). 출력에 `Connecting GitHub repository`가 나온다. 연결되면 기본 브랜치 push가 곧 production 배포라 릴리스 검사와 "DB 먼저"를 거치지 않으므로, 사용자가 Git 연결을 요청하지 않았으면 바로 끊는다(연결에 실패했으면 "No Git repository connected"로 끝난다). 이미 있는 프로젝트에 연결할 때는 Git을 건드리지 않으니 끊지 않는다(일부러 켠 연결일 수 있다). `vercel link`는 `.gitignore`에 `.env*`를 더해 앞으로 만들 `.env.schema`까지 무시하게 하고, 이 앱이 쓰지 않는 `VERCEL_OIDC_TOKEN`을 루트 `.env.local`에 받는다. `.vercel/`은 기기별 연결 정보라 커밋하지 않는다(Better-T-Stack `.gitignore`에 있다). 팀원은 1번과 3번의 앞 세 줄만 한다. Vercel 프로젝트의 Node.js 버전(Project Settings → Build and Deployment)은 24.x로 둔다. 20.x면 2026-10-01부터 새 배포가 실패한다.
 4. **환경변수**: Preview와 Production에 따로 넣는다. 값은 출력과 파일에 남기지 않는다.
    | 변수 | 넣는 법 |
    |---|---|

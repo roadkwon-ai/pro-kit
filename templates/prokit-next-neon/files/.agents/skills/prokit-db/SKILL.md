@@ -1,7 +1,7 @@
 ---
 name: prokit-db
 description: >-
-  이 BTS 프로젝트의 packages/db(Drizzle ORM + Postgres, 개발은 로컬 Podman·Docker 컨테이너, 병합 전 검증과 운영은 Neon)를
+  이 Better-T-Stack 프로젝트의 packages/db(Drizzle ORM + Postgres, 개발은 로컬 Podman·Docker 컨테이너, 병합 전 검증과 운영은 Neon)를
   만들거나 바꾸거나 검토할 때 사용한다. 테이블, 컬럼, 관계 추가, 스키마 변경, 마이그레이션 생성과 적용, 인덱스, 느린 쿼리,
   로컬 DB 컨테이너, Neon 개발 브랜치, DATABASE_URL 연결 문제를 다룬다. 테이블 추가, 컬럼 추가, 마이그레이션, 스키마,
   인덱스, 쿼리가 느려요, 로컬 DB 띄우기, podman compose, Neon 브랜치, db push 같은 요청에 사용한다.

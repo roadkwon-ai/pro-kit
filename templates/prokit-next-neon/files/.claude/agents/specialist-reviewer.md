@@ -1,6 +1,6 @@
 ---
 name: specialist-reviewer
-description: "BTS Next.js 프로젝트에서 선택한 외부 전문 provider에 내장 리뷰가 없을 때만, 그 산출물·실제 계약·evidence packet을 읽기 전용으로 검토하는 에이전트. 일반 코드 리뷰나 prokit-reviewer의 대체가 아니다."
+description: "Better-T-Stack Next.js 프로젝트에서 선택한 외부 전문 provider에 내장 리뷰가 없을 때만, 그 산출물·실제 계약·evidence packet을 읽기 전용으로 검토하는 에이전트. 일반 코드 리뷰나 prokit-reviewer의 대체가 아니다."
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---

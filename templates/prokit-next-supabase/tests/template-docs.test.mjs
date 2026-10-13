@@ -293,6 +293,10 @@ test("위임: provider는 매니페스트가 아니라 실제 계약을 검증�
   assert.match(protocol, /task 계약·host\/mode·권한·환경이 모두 같을 때만 재사용/);
   assert.match(protocol, /바뀌거나 unknown이면 항상 재검증하고 Main final gate를 다시 거친다/);
   assert.match(protocol, /작업 전후 한 번씩만 호출/);
+  assert.match(protocol, /pnpm -s dev-cycle delegation diff <그 파일> --scope <배정 경로>/);
+  assert.match(protocol, /리뷰·QA는 `--scope` 없이/);
+  assert.match(protocol, /exit 1은 배정 밖 변경\(`outside`\)이나 커밋\(`headChanged`\)/);
+  assert.match(protocol, /exit 2는 대조하지 못한 것이므로 `blocked`/);
   assert.match(protocol, /manifest hash, 항목 수, artifact 경로만/);
   assert.match(protocol, /git이 제외한 설치 환경을 다시 순회하지 않고/);
   assert.match(protocol, /lock·owner·nonce 파일과 환경·proof payload는 직접 읽거나 출력하지 않고/);

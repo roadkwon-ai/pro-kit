@@ -1,7 +1,7 @@
 ---
 name: prokit-skills-update
 description: >-
-  이 BTS(Better-T-Stack) 프로젝트가 skills.manifest.json으로 설치한 외부 스킬(Next.js, Vercel,
+  이 Better-T-Stack 프로젝트가 skills.manifest.json으로 설치한 외부 스킬(Next.js, Vercel,
   shadcn, Better Auth, DB, superpowers, impeccable 등)을 GitHub 원본과 비교해 새 버전을 확인하고
   한 번에 업데이트한다. `pnpm dev-cycle status`나 `pnpm skills:update --if-due`가 UPDATE_AVAILABLE,
   UPSTREAM_GONE, CHECK_FAILED를 출력했을 때, 그리고 스킬 업데이트해줘, 스킬 최신인지 확인해줘,
@@ -9,7 +9,7 @@ description: >-
   새 스킬 추가, Claude 플러그인과 전역 도구(gstack 등) 업데이트에는 쓰지 않는다.
 ---
 
-# BTS 스킬 업데이트
+# 프로킷 스킬 업데이트
 
 ## 위임
 외부 스킬의 내용·스크립트 검토를 전문 수행자에게 넘길 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 매니페스트는 설치 정본이지 provider 허용 목록이 아니며, 실제 출처·hash·의존성·side effect를 확인한 결과만 증거로 쓴다.

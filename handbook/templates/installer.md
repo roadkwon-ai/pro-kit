@@ -23,8 +23,8 @@ bash <pro-kit>/templates/prokit-next-neon/install.sh my-app       # supabase면 
 
 에이전트가 따르는 규칙의 원문은 [AGENTS.md의 "템플릿으로 새 프로젝트 만들기"](../../AGENTS.md#템플릿으로-새-프로젝트-만들기)이고, 명령은 템플릿 README "새 프로젝트 시작"의 "설치한 뒤"([neon](../../templates/prokit-next-neon/README.md#새-프로젝트-시작), [supabase](../../templates/prokit-next-supabase/README.md#새-프로젝트-시작))가 정본이에요.
 
-1. **첫 마이그레이션**: 로컬 DB를 띄우고 `db:generate`로 인증 테이블 마이그레이션을 만든 뒤 `db:migrate`로 적용해요. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션(인증 테이블의 RLS 켜기)을 더하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인해요. BTS가 만든 프로젝트 `README.md`의 `db:push` 단계는 따르지 않아요. 화면만 프로젝트는 건너뛰어요.
-2. **포맷 정리와 커밋**: `pnpm check`로 BTS가 만든 코드의 포맷과 정렬을 한 번 정리하고 `pnpm exec biome check .`가 exit 0인지 봐요. 설치 결과, 포맷 정리, 첫 마이그레이션을 기본 브랜치에 커밋해요.
+1. **첫 마이그레이션**: 로컬 DB를 띄우고 `db:generate`로 인증 테이블 마이그레이션을 만든 뒤 `db:migrate`로 적용해요. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션(인증 테이블의 RLS 켜기)을 더하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인해요. Better-T-Stack이 만든 프로젝트 `README.md`의 `db:push` 단계는 따르지 않아요. 화면만 프로젝트는 건너뛰어요.
+2. **포맷 정리와 커밋**: `pnpm check`로 Better-T-Stack이 만든 코드의 포맷과 정렬을 한 번 정리하고 `pnpm exec biome check .`가 exit 0인지 봐요. 설치 결과, 포맷 정리, 첫 마이그레이션을 기본 브랜치에 커밋해요.
 3. **새 세션 열기**: 스킬과 에이전트는 새 세션부터 보여요. 첫 실행 때 묻는 신뢰 질문에 동의해야 프로젝트 설정이 켜져요. Claude Code는 플러그인, Codex는 에이전트와 프로젝트 스킬, Grok Build는 규칙과 스킬이에요(`grok --trust`로 열면 묻지 않고 신뢰해요). `--with-global`로 Codex Ponytail을 선택 설치했다면 `/hooks`에서 별도로 신뢰한 뒤 새 세션을 열어요. Antigravity는 `AGENTS.md`, `.agents/skills`, `.agents/agents`를 그대로 읽어요([지원하는 에이전트](../start/supported-agents.md#신뢰-질문)).
 4. **화면 디자인 검사 켜기**: 개발자마다 한 번, 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`을 실행해요. 켠 뒤 `.claude/settings.local.json`의 훅 명령이 `…/scripts/impeccable" hook`인지 확인해요.
 5. **프로젝트 소개 채우기**: `GLOSSARY.md`와 `docs/domain/project.md`를 채워요.

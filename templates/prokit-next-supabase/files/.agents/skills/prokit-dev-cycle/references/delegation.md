@@ -10,7 +10,7 @@
 
 ## 관측과 수행 범위
 
-Main은 `captureSnapshot(root)`을 작업 전후 한 번씩만 호출하고, 전체 snapshot·packet은 `tasks/evidence/<run>/`의 소유 artifact 파일로 보관한다. 대화 출력에는 manifest hash, 항목 수, artifact 경로만 적는다. git이 제외한 설치 환경을 다시 순회하지 않고 `pnpm dev-cycle resource check` 또는 필요한 `resource run --kind <이름> -- <명령>`으로 따로 측정한다. `.prokit/resource-guard`의 lock·owner·nonce 파일과 환경·proof payload는 직접 읽거나 출력하지 않고, 기존 helper의 check 또는 clean dry-run summary에서 bool·hash·reason만 쓴다.
+Main은 수행자·리뷰어·QA를 부를 때 snapshot을 작업 전후 한 번씩만 호출해 대조한다. 전에는 `pnpm -s dev-cycle delegation capture > tasks/evidence/<run>/<단계>-before.json`(폴더는 먼저 만든다), 뒤에는 `pnpm -s dev-cycle delegation diff <그 파일> --scope <배정 경로>`다. `--scope`는 글롭이다(`apps/web/src/**`처럼 쓰고, 파일은 경로 그대로 쓴다). 디렉터리 이름만 주면 그 안의 파일과 맞지 않는다. capture 직후 그 파일의 `manifestHash`를 기록한다. diff는 내용과 hash가 맞지 않는 기준 파일을 exit 2로 거부하고, 출력의 `baseline`이 기록한 hash와 다르면 기준 파일을 새로 뜬 것이므로 `blocked`다. git이 무시하는 파일(`.env`·`.env.local`, `tasks/evidence/`, `.prokit/`)은 대조하지 않는다. 파일을 바꾸면 안 되는 리뷰·QA는 `--scope` 없이 부른다. 병렬 위임은 모두 시작하기 전에 한 번 남기고, 모두 끝난 뒤 배정 경로를 모두 `--scope`로 넘겨 한 번 대조한다. 그사이 Main은 배정 밖 파일(`tasks/todo.md` 포함)을 고치지 않는다. exit 1은 배정 밖 변경(`outside`)이나 커밋(`headChanged`)이 있다는 뜻이다. 그 결과를 통합하지 말고 수행자에게 이유를 확인해 되돌리게 재지시하거나, 필요한 변경이면 배정을 넓힌 이유를 기록한 뒤 다시 대조한다. exit 2는 대조하지 못한 것이므로 `blocked`다. 전체 snapshot·packet은 `tasks/evidence/<run>/`의 소유 artifact 파일로 보관한다. 대화 출력에는 manifest hash, 항목 수, artifact 경로만 적고, diff 결과는 `outside` 목록만 옮긴다. git이 제외한 설치 환경을 다시 순회하지 않고 `pnpm dev-cycle resource check` 또는 필요한 `resource run --kind <이름> -- <명령>`으로 따로 측정한다. `.prokit/resource-guard`의 lock·owner·nonce 파일과 환경·proof payload는 직접 읽거나 출력하지 않고, 기존 helper의 check 또는 clean dry-run summary에서 bool·hash·reason만 쓴다.
 
 현재 프로젝트 루트는 `git rev-parse --show-toplevel`의 realpath이며, Main이 관리한 root receipt와 현재 source baseline·환경 health를 확인한 같은 루트만 쓴다. 이미 격리된 작업은 새 임시 프로젝트·복사본·cwd 이동을 만들지 않고, 수행자는 같은 루트 또는 명시적으로 검증한 managed worktree에서만 exact scope를 다룬다. Node·venv·설치 환경은 같은 경로에서 runtime·lock·group fingerprint health를 확인해 재사용하고, 복사·이동하거나 자동 offline install을 붙이지 않는다.
 
@@ -26,7 +26,7 @@ exact native 이름은 현재 task/run의 accepted runtime receipt가 같은 `ag
 
 실행 전에는 `resolveProvider` 결과와 `captureSnapshot`을 Main 기준으로 고정하고 `taskId`, `runId`, `approvedPaths`, 허용 side effect와 환경 context를 배정한다. 이 단계에서는 완료 패킷을 검증하지 않는다.
 
-실행 뒤에만 수행자가 `baseline`, `selectedProviders`, 실제 `changes`, `status`, `environmentFingerprint`, `evidence`, `reviewCoverage`, `sideEffects`, `nextAction`을 담은 패킷을 넘긴다. `evidence`에는 실행 명령·exit와 Main runner receipt, artifact hash, coverage·focus·limitations·기준 snapshot이 있어야 한다. `validateDelegationPacket`은 이를 Main의 baseline·approvedPaths·runner receipt와 실제 delta에 대조한다. 이 CLI JSON 검증은 최종 승인이 아니다. 신뢰한 Main 런타임이 receipt와 authority를 현재 task·run·제품·증거·provider·환경에 묶어 final inspection해야 하며, 확인할 수 없으면 `blocked`다.
+실행 뒤에만 수행자가 `baseline`, `selectedProviders`, 실제 `changes`, `status`, `environmentFingerprint`, `evidence`, `reviewCoverage`, `sideEffects`, `nextAction`을 담은 패킷을 넘긴다. `evidence`에는 실행 명령·exit와 Main runner receipt, artifact hash, coverage·focus·limitations·기준 snapshot이 있어야 한다. `commands`에는 완료를 뒷받침하는 검사만 넣고 모두 exit 0이어야 한다. TDD에서 먼저 실패시킨 실행은 `report`에 적는다. `validateDelegationPacket`은 이를 Main의 baseline·approvedPaths·runner receipt와 실제 delta에 대조한다. 이 CLI JSON 검증은 최종 승인이 아니다. 신뢰한 Main 런타임이 receipt와 authority를 현재 task·run·제품·증거·provider·환경에 묶어 final inspection해야 하며, 확인할 수 없으면 `blocked`다.
 
 `prokit-implementer`는 선택된 전문 스킬 수행자를 연결하는 얇은 어댑터다. `AGENTS.md`, `.dev-cycle.json`, `package.json`, 루트 설정은 메인이 맡되, 메인이 파일을 명시해 배정하면 그 루트 설정 파일만 수행자가 고칠 수 있다. commit, push, 배포, 토큰이나 비밀값 출력은 어느 위임 패킷에도 넣지 않는다.
 
@@ -38,7 +38,7 @@ exact native 이름은 현재 task/run의 accepted runtime receipt가 같은 `ag
 
 ## 관리된 CLI 기술 인수
 
-로컬 Codex 실행을 직접 관리할 때는 `pnpm dev-cycle delegation accept`를 사용한다. Main이 `--base`, `--scope`, `--focus`, `--contract`, 실제 프로젝트 원본인 `--provider`, 필요한 `--artifact`와 `--check` JSON argv 배열을 명시한다. `--provider`에는 현재 `prokit-reviewer.md`를 포함하며, 명령은 셸 문자열로 실행하지 않는다.
+로컬 Codex 실행을 직접 관리할 때는 `pnpm dev-cycle delegation accept`를 사용한다. Main이 `--base`, `--scope`, `--focus`, `--contract`, 실제 프로젝트 원본인 `--provider`, 필요한 `--artifact`와 `--check` JSON argv 배열을 명시한다. `--provider`에는 현재 `prokit-reviewer.md`를 포함하며, 명령은 셸 문자열로 실행하지 않는다. 라운드를 연 뒤에는 대조표(`tasks/todo.md`)도 `--base` 이후 변경이므로 `--scope tasks/todo.md`를 함께 준다. 빼면 검사 전에 `명시 scope 밖 실제 변경`으로 막힌다.
 
 이 실행이 자원 guard 안에서 필요한 검사와 고정된 읽기 전용 Codex 리뷰를 직접 실행하고, 실제 receipt·현재 원본·산출물·환경·소유 범위를 메모리에서 검증한다. 과거 로그나 JSON 승인을 trusted receipt로 올리지 않으며, 임의 리뷰 명령·거절·high 지적·미종료 자식·원본이나 지정 산출물의 검수 중 변경은 차단한다. 산출물은 전체 검사 뒤 관측한 최종 증거이며 각 검사별 생성·변경 이력으로 소급 기록하지 않는다.
 

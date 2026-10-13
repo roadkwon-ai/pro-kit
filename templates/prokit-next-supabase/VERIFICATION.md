@@ -4,6 +4,22 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 모든 값은 2026-09-27에 측정한 실측값이다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [bts-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 남은 위험 보완과 설치 실측 (2026-10-14)
+
+공통 스크립트와 문서의 보완 내용과 neon 프로젝트 실측은 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#남은-위험-보완과-설치-실측-2026-10-14)에 있다. 공통 파일이라 이 템플릿도 같은 코드다.
+
+supabase 설치 실측(scratchpad, Better-T-Stack 3.44.3, `--db-setup supabase --manual-db`): `install.sh` exit 0, 프로젝트 스킬 47개, Claude 플러그인 4개 설치. `pnpm check`, `skills:check`, `agents:check`, `check-types`, `biome check .`, `dev-cycle secrets`, `dev-cycle resource check` 모두 exit 0. 설치된 `prokit-verify`에 `supabase db advisors` 행, `prokit-reviewer`에 `service_role`·RLS 항목, `prokit-dev-cycle` 설명에 Supabase가 들어간 것을 확인했다. Supabase CLI 2.120.0에 `supabase db advisors --local --type security`가 있는 것도 확인했다. 로컬 Supabase 스택은 띄우지 않았다(이미지가 없어 수 GB를 받아야 한다). advisors 실행 결과는 아래 기존 기록(인증 테이블에 RLS를 켠 뒤 `No issues found`)을 따른다.
+
+## supabase 보안 검사 연결 보완 (2026-10-13)
+
+공통 파일 수정(ponytail 지적 처리, 위임 전후 대조, 증거 입력)과 그 검증은 [prokit-next-neon의 같은 날짜 절](../prokit-next-neon/VERIFICATION.md#리뷰-지적-처리위임-전후-대조-보완-2026-10-13)에 적었다. 이 템플릿에서만 문제가 된 것은 세 가지다. neon 판을 복사한 문구가 남아 있었다.
+
+- `prokit-dev-cycle` 설명이 "Next.js + Neon 프로젝트"였다. Supabase로 고쳤다.
+- 공통 `prokit-verify`의 스키마 행이 병합 전 대상을 Neon 개발 브랜치로만 적고 `supabase db advisors`를 빠뜨렸다. 이 검사는 `prokit-db`와 E 케이스 행에만 있었다. 스키마 행에 advisors와 `migration-flow.md` 참조를 넣었다.
+- 공통 `prokit-reviewer`의 db·security 관점에 RLS와 `service_role` 키 항목이 없었다. ADR은 RLS 확인을 `prokit-reviewer(db)`에 맡긴다. 두 항목을 넣었다.
+
+확인: 이 템플릿 `node --test` 284/284, `shared-files.test.mjs`로 공통 파일이 neon과 바이트가 같음을 확인했다.
+
 ## 프리셋 기본 모드·언어 규칙 (2026-10-10)
 
 앞으로 제작하는 프리셋에 시스템·라이트·다크와 한국어·영어를 기본으로 요구하는 규칙, 번역 사전·정적 HTML 제품 검증 참조를 추가했다. 검사와 native 계획 행동 평가, 실제 사이트 기능과 기존 공개 프리셋의 차이는 [프리셋 디자인 설정과 제작 기본 기능](../../docs/reports/2026-10-10-preset-design-controls/README.md)에 기록한다. 기존 프리셋을 전환 완료로 선언하지 않는다.

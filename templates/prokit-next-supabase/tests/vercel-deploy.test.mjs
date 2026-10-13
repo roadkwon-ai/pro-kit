@@ -9,7 +9,7 @@ import { TEMPLATE_FILES, makeRepo } from "./helpers.mjs";
 const SCRIPT = join(TEMPLATE_FILES, "scripts/vercel-deploy.mjs");
 const { requiredEnv } = await import(SCRIPT);
 
-// BTS 3.44.1이 만드는 apps/web/.env.schema 그대로
+// Better-T-Stack 3.44.1이 만드는 apps/web/.env.schema 그대로
 const SCHEMA = `# @defaultRequired=true
 # @defaultSensitive=true
 # @currentEnv=$NODE_ENV

@@ -20,7 +20,7 @@ flowchart LR
 
 | | prokit-next-neon | prokit-next-supabase |
 |---|---|---|
-| BTS 생성 옵션 | `--db-setup docker` | `--db-setup supabase --manual-db` |
+| Better-T-Stack 생성 옵션 | `--db-setup docker` | `--db-setup supabase --manual-db` |
 | 로컬 개발 DB | compose Postgres 컨테이너 (<!-- v:port.neonDb.addrCode -->`localhost:5432`<!-- /v -->) | Supabase 로컬 스택 중 DB만 (<!-- v:port.supabaseDb.addrCode -->`127.0.0.1:54322`<!-- /v -->) |
 | 병합 전 확인 | 작업마다 Neon 개발 브랜치를 만들어 `db:migrate` | Supabase 스테이징 프로젝트에 `db:migrate`와 `supabase db advisors` |
 | 운영 | Neon 기본 브랜치 | Supabase (앱은 transaction pooler <!-- v:port.supabasePooler -->6543<!-- /v -->, 마이그레이션은 5432) |

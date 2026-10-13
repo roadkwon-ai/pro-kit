@@ -1,6 +1,6 @@
 ---
 name: prokit-implementer
-description: "BTS Next.js 프로젝트에서 검증된 전문 스킬 수행자를 연결해 코디네이터가 지정한 파일만 구현하고 수정하는 얇은 어댑터. 파일 목록, provider 검증 결과, 완료 조건을 받아 검사와 결과를 보고한다."
+description: "Better-T-Stack Next.js 프로젝트에서 검증된 전문 스킬 수행자를 연결해 코디네이터가 지정한 파일만 구현하고 수정하는 얇은 어댑터. 파일 목록, provider 검증 결과, 완료 조건을 받아 검사와 결과를 보고한다."
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
 model: sonnet
 ---

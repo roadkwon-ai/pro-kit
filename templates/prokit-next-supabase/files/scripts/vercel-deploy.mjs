@@ -38,7 +38,7 @@ const LOCAL_ENV_FILES = [
 
 // apps/web/.env.schema에서 값이 비어 있는 변수는 배포 환경이 채워야 한다(@defaultRequired=true). 스키마가 없으면 null.
 // 바로 위 주석 줄에 @optional(@optional=false는 필수)이나 @required=false가 있는 변수는 뺀다(아직 쓰지 않는 유료 API 키를 모든 환경에 넣게 하지 않는다).
-// ponytail: 파일 머리의 @defaultRequired=false는 보지 않는다(BTS 스키마는 true).
+// ponytail: 파일 머리의 @defaultRequired=false는 보지 않는다(Better-T-Stack 스키마는 true).
 export function requiredEnv(root) {
 	const p = join(root, "apps/web/.env.schema");
 	if (!existsSync(p)) return null;

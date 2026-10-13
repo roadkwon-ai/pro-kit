@@ -4,13 +4,13 @@
 
 ## 로컬 DB
 - 컨테이너 엔진: Podman이면 셸마다 `DOCKER_HOST`를 먼저 설정한다. macOS(`podman machine start` 이후)는 `export DOCKER_HOST="unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')"`, Linux·WSL(`systemctl --user enable --now podman.socket` 이후)은 `export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"`이다. Docker면 필요 없다. Podman 4.x(Ubuntu 24.04)에서는 `supabase stop`이 `failed to list containers`로 실패한다. 그러면 사용자에게 알리고 Podman 5 이상이나 Docker를 안내한다.
-- 처음 한 번: `supabase init`이 없으면 실행한다. `supabase/config.toml`의 `project_id`는 기본값이 디렉터리 이름 `"db"`다. 한 기기에서 BTS 프로젝트를 여럿 띄우면 컨테이너 이름(`supabase_db_<project_id>`)과 포트가 겹치므로 프로젝트 이름으로 바꿔 커밋한다. 다른 Supabase 프로젝트가 이미 54322를 쓰면 `[db] port`도 바꾸고 `apps/web/.env`의 `DATABASE_URL`을 맞춘다.
+- 처음 한 번: `supabase init`이 없으면 실행한다. `supabase/config.toml`의 `project_id`는 기본값이 디렉터리 이름 `"db"`다. 한 기기에서 Better-T-Stack 프로젝트를 여럿 띄우면 컨테이너 이름(`supabase_db_<project_id>`)과 포트가 겹치므로 프로젝트 이름으로 바꿔 커밋한다. 다른 Supabase 프로젝트가 이미 54322를 쓰면 `[db] port`도 바꾸고 `apps/web/.env`의 `DATABASE_URL`을 맞춘다.
 - 시작: 앱은 Postgres만 쓰므로 DB만 띄운다.
   ```bash
   supabase start -x gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
   ```
   Studio가 필요하면 `-x` 목록에서 `studio,postgres-meta`를 뺀다. 상태와 URL은 `supabase status`.
-- 연결: `postgresql://postgres:postgres@127.0.0.1:54322/postgres` (BTS가 `apps/web/.env`에 넣어 둔 값).
+- 연결: `postgresql://postgres:postgres@127.0.0.1:54322/postgres` (Better-T-Stack이 `apps/web/.env`에 넣어 둔 값).
 - 중지: `supabase stop`(데이터 유지). `supabase stop --no-backup`과 `supabase db reset`은 로컬 데이터를 지우므로 사용자가 요청할 때만 쓴다. `db reset`은 비어 있는 `supabase/migrations`만 적용하므로 끝나면 `commands.dbMigrate`를 다시 실행한다.
 - 테스트 DB: 같은 컨테이너에 따로 만든다. `podman exec supabase_db_<project_id> createdb -U postgres <이름>_test`(Docker면 `docker exec`) → URL은 `postgresql://postgres:postgres@127.0.0.1:54322/<이름>_test`
 

@@ -643,15 +643,20 @@ function checkArtifacts(root, artifacts, problems) {
 }
 
 function checkReceipts(commands, receipts, problems) {
-	if (!Array.isArray(receipts)) {
-		problems.push("Main runner receipt가 없다");
-		return;
-	}
+	// receipt가 없어도 실행하지 않았거나 실패한 command는 따로 알린다.
+	if (!Array.isArray(receipts)) problems.push("Main runner receipt가 없다");
 	for (const command of commands ?? []) {
 		if (command.executed === false || !Number.isInteger(command.exitCode)) {
 			problems.push("실행하지 않은 command를 성공으로 보고했다");
 			continue;
 		}
+		if (command.exitCode !== 0) {
+			problems.push(
+				`실패한 command를 완료 증거로 냈다: ${command.command} (exit ${command.exitCode})`,
+			);
+			continue;
+		}
+		if (!Array.isArray(receipts)) continue;
 		const receipt = receipts.find(
 			(item) =>
 				item.command === command.command && item.exitCode === command.exitCode,
@@ -684,7 +689,7 @@ function receiptBindings(command, packet, context, baseline, snapshot) {
 		cwd: context.cwd,
 		environmentFingerprint:
 			context.environmentFingerprint ?? environmentFingerprint(context),
-		before: baseline.manifestHash,
+		before: baseline?.manifestHash,
 		after: snapshot.manifestHash,
 		artifacts: command.artifacts ?? [],
 		effects: command.effects,
@@ -1030,6 +1035,73 @@ export function main(argv = process.argv.slice(2), root = process.cwd()) {
 		console.log(JSON.stringify(captureSnapshot(root), null, 2));
 		return 0;
 	}
+	if (argv[0] === "diff" && safePath(argv[1])) {
+		// scope가 없으면 어떤 변경도 허용하지 않는다(리뷰·QA 전후 대조).
+		const scopes = [];
+		for (let index = 2; index < argv.length; index += 2) {
+			if (argv[index] !== "--scope" || !safePath(argv[index + 1])) {
+				console.error(
+					"usage: delegation.mjs diff <before.json> [--scope <glob>]...",
+				);
+				return 2;
+			}
+			scopes.push(argv[index + 1]);
+		}
+		let beforePath;
+		let before;
+		try {
+			beforePath = realpathSync(resolve(root, argv[1]));
+			before = JSON.parse(readFileSync(beforePath, "utf8"));
+		} catch (error) {
+			console.error(`기준 snapshot을 읽을 수 없다: ${error.message}`);
+			return 2;
+		}
+		const after = captureSnapshot(root);
+		// 내용을 고치고 hash만 남긴 기준 파일은 받지 않는다.
+		const { manifestHash, ...body } = before ?? {};
+		if (
+			!before?.valid ||
+			!Array.isArray(before.entries) ||
+			hash(body) !== manifestHash ||
+			!after.valid ||
+			before.bindings?.root !== after.bindings.root
+		) {
+			console.error(
+				"기준 snapshot이 깨졌거나 내용이 바뀌었거나 다른 Git root의 것이다",
+			);
+			return 2;
+		}
+		// 기준 파일 자체는 `capture > 파일`이 만든 것이라 변경에서 뺀다.
+		const self = relative(after.bindings.root, beforePath);
+		const changed = changedEntries(before, after)
+			.filter(({ path }) => path !== self)
+			.map(({ path, kind, after: entry }) => ({
+				path,
+				// 지운 추적 파일은 ls-files에 남아 missing 항목이 된다.
+				kind: entry?.kind === "missing" ? "deleted" : kind,
+			}));
+		const outside = changed
+			.filter(({ path }) => !scopes.some((scope) => globMatches(path, scope)))
+			.map(({ path }) => path);
+		const headChanged = before.bindings.head !== after.bindings.head;
+		const ok = !outside.length && !headChanged;
+		console.log(
+			JSON.stringify(
+				{
+					ok,
+					// Main이 capture 때 기록한 hash와 대조해 기준 파일 교체를 잡는다.
+					baseline: before.manifestHash,
+					headChanged,
+					scopes,
+					changed,
+					outside,
+				},
+				null,
+				2,
+			),
+		);
+		return ok ? 0 : 1;
+	}
 	if (argv[0] === "resolve" && argv[1] && argv[2] === "--context" && argv[3]) {
 		if (!safePath(argv[3])) return 2;
 		const context = JSON.parse(readFileSync(resolve(root, argv[3]), "utf8"));
@@ -1054,6 +1126,7 @@ export function main(argv = process.argv.slice(2), root = process.cwd()) {
 	}
 	console.error(
 		"usage: delegation.mjs capture|snapshot | " +
+			"diff <before.json> [--scope <glob>]... | " +
 			"resolve <skill-ref> --context <scope-policy.json> | " +
 			"validate <packet.json> --context <main-context.json>",
 	);

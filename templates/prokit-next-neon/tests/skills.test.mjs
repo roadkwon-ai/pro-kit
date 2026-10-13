@@ -50,7 +50,7 @@ for (const name of EXPECTED) {
   test(`${name}: 이름·범위·길이·링크 규칙`, () => {
     const { front, body } = load(name);
     assert.match(front, new RegExp(`^name: ${name}$`, "m"));
-    assert.match(front, /BTS/, "description에 프로젝트 조건(BTS)");
+    assert.match(front, /Better-T-Stack/, "description에 프로젝트 조건(Better-T-Stack)");
     assert.ok(body.trim().split("\n").length <= 150, "본문 150줄 이하");
     assert.doesNotMatch(body, /\bTODO\b|\bTBD\b/);
     // Claude Code는 본문의 느낌표+백틱을 로드할 때 셸 명령으로 실행하고, 실패하면 스킬을 불러오지 못한다(실측).

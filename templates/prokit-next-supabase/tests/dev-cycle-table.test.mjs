@@ -45,6 +45,21 @@ test("evidence setter는 활성 라운드·실제 행 번호·한 줄 안전 입
 	assert.throws(() => setEvidence(root, config, 1, "tasks/evidence/multiline.txt"), /한 줄/);
 	write("tasks/evidence/cr.txt", "첫 줄\r둘째 줄");
 	assert.throws(() => setEvidence(root, config, 1, "tasks/evidence/cr.txt"), /한 줄/);
+	write("tasks/evidence/two-lines-eol.txt", "첫 줄\n둘째 줄\n");
+	assert.throws(() => setEvidence(root, config, 1, "tasks/evidence/two-lines-eol.txt"), /한 줄/);
+	write("tasks/evidence/blank-eol.txt", "\n");
+	assert.throws(() => setEvidence(root, config, 1, "tasks/evidence/blank-eol.txt"), /비어 있다/);
+});
+
+test("evidence setter는 echo·편집기가 붙인 끝 줄바꿈 하나를 한 줄로 받는다", () => {
+	const { root, write } = makeRepo();
+	const config = loadConfig(root);
+	writeTable(root, config, "A", { write: true, title: "끝 줄바꿈" });
+	for (const [name, value] of [["lf.txt", "pnpm check-types → exit 0\n"], ["crlf.txt", "pnpm check-types → exit 0\r\n"]]) {
+		write(`tasks/evidence/${name}`, value);
+		assert.equal(setEvidence(root, config, 1, `tasks/evidence/${name}`).evidence, "pnpm check-types → exit 0");
+		assert.equal(parseActive(readFileSync(join(root, config.todoPath), "utf8")).rows[0].evidence, "pnpm check-types → exit 0");
+	}
 });
 
 test("evidence setter는 regular·작은 파일과 실제 표 헤더 아래 행만 읽고 거부해도 todo를 보존한다", () => {

@@ -36,7 +36,21 @@ const SKIP_NAMES = new Set([
 ]);
 // 이 경로만 복사하지 않는다(내보낸 결과물)
 const SKIP_PATHS = new Set(["html", join("apps", "web", "out")]);
-// 정적 내보내기를 막는 BTS 기본 서버 경로: 인증·RPC 핸들러, 서버 세션을 읽는 대시보드
+// guard가 막은 실행(exit 75)은 명령 실패와 달리 출력이 비어 있으므로 이유를 따로 알린다.
+function guardBlocked(run, label) {
+	if (run.exitCode !== 75) return false;
+	const reasons = [
+		...(run.events ?? []),
+		...(run.before?.reasons ?? []),
+		...(run.after?.reasons ?? []),
+	];
+	console.error(
+		`오류: 자원 guard가 ${label}을 막았다(exit 75): ${reasons.join(", ") || "측정 불완전"}`,
+	);
+	return true;
+}
+
+// 정적 내보내기를 막는 Better-T-Stack 기본 서버 경로: 인증·RPC 핸들러, 서버 세션을 읽는 대시보드
 export const SERVER_ROUTES = [
 	join("apps", "web", "src", "app", "api"),
 	join("apps", "web", "src", "app", "dashboard"),
@@ -91,7 +105,7 @@ export function resourceExcludedPaths(root) {
 	}
 }
 
-// BTS next.config.ts(`const nextConfig` + `export default withVarlock(nextConfig)`)의 export 앞에 덧쓴다.
+// Better-T-Stack next.config.ts(`const nextConfig` + `export default withVarlock(nextConfig)`)의 export 앞에 덧쓴다.
 // ponytail: 설정 변수 이름이 nextConfig일 때만 고친다. 다른 모양이면 멈추고 알린다.
 export function patchNextConfig(text, base = "") {
 	if (!/^const nextConfig\b/m.test(text) || !/^export default /m.test(text))
@@ -116,7 +130,7 @@ export function patchNextConfig(text, base = "") {
 export const imageLoader = (base = "") =>
 	`const base = ${JSON.stringify(base)};\nexport default function loader({ src }) {\n\treturn src.startsWith("/") && !src.startsWith("//") && !src.startsWith(\`\${base}/\`) ? base + src : src;\n}\n`;
 
-// .env.schema에서 공개로 표시하지 않은 변수의 값(BTS 스키마는 @defaultSensitive=true)을 비밀값으로 본다.
+// .env.schema에서 공개로 표시하지 않은 변수의 값(Better-T-Stack 스키마는 @defaultSensitive=true)을 비밀값으로 본다.
 // 표시는 위 주석 줄이나 같은 줄 끝 주석의 @public 또는 @sensitive=false다.
 // ponytail: 8자 미만 값(true, 3000)과 계정 정보 없는 http(s) 주소는 화면 글자와 겹쳐 헛경보가 나므로 뺀다.
 export function secretValues(root) {
@@ -160,7 +174,7 @@ export function findLeaks(dir, secrets) {
 	return [...found].sort();
 }
 
-// 지운 서버 경로를 부르는 BTS 기본 부품이 남은 곳. 빌드는 되지만 내보낸 사이트에서 그 링크와 요청은 404가 된다.
+// 지운 서버 경로를 부르는 Better-T-Stack 기본 부품이 남은 곳. 빌드는 되지만 내보낸 사이트에서 그 링크와 요청은 404가 된다.
 export function staleRefs(dir, base = "") {
 	const pages = [];
 	const clients = new Set();
@@ -169,7 +183,7 @@ export function staleRefs(dir, base = "") {
 		const text = readFileSync(f, "utf8");
 		if (f.endsWith(".html") && text.includes(`href="${base}/dashboard`))
 			pages.push(f);
-		// ponytail: orpc 클라이언트는 BTS providers.tsx가 import만 해도 들어가므로 보지 않는다(부르지 않으면 404가 없다)
+		// ponytail: orpc 클라이언트는 Better-T-Stack providers.tsx가 import만 해도 들어가므로 보지 않는다(부르지 않으면 404가 없다)
 		if (text.includes('"/api/auth"'))
 			clients.add("로그인 클라이언트(authClient)");
 	}
@@ -286,6 +300,7 @@ async function build(root, work, base, patched, temporaryHandle) {
 		isNewHeavy: true,
 		temporaryHandle,
 	});
+	if (guardBlocked(install, "pnpm install")) return 1;
 	if (install.exitCode !== 0) {
 		console.error(
 			`${install.stdout}${install.stderr}`
@@ -318,6 +333,7 @@ async function build(root, work, base, patched, temporaryHandle) {
 		),
 	];
 	if (varlockLeaks.length) return leaked(varlockLeaks);
+	if (guardBlocked(next, "next build")) return 1;
 	if (next.exitCode !== 0) {
 		console.error(log.trim().split("\n").slice(-40).join("\n"));
 		console.error(

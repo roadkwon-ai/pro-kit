@@ -1,7 +1,7 @@
 ---
 name: prokit-verify
 description: >-
-  이 BTS 프로젝트에서 작업이 끝났다고 말하기 전, 또는 dev-cycle 대조표의 증거 칸을 채울 때 사용한다.
+  이 Better-T-Stack 프로젝트에서 작업이 끝났다고 말하기 전, 또는 dev-cycle 대조표의 증거 칸을 채울 때 사용한다.
   어떤 검사를 돌릴지 고르고, 실행하고, 결과를 증거로 기록한다. 타입 검사, 린트, 빌드, 테스트, 2계정
   격리 테스트, next-dev-loop 런타임 확인, ego-browser 스크린샷, 리뷰 결과 기록을 다룬다. 검증해줘,
   확인해줘, 테스트 돌려, 잘 되는지 봐줘, 완료 처리, 증거 채워줘, 빌드 통과했으니 끝 같은 요청에
@@ -28,12 +28,12 @@ description: >-
 | 모든 코드 | `commands.typecheck`, `commands.lint` |
 | 화면과 라우트 | 모든 코드 검사 + `commands.build`, 런타임 확인, desktop과 mobile 스크린샷 |
 | 프로시저와 인증 | 모든 코드 검사 + `commands.test`, **2계정 격리 테스트** |
-| 스키마 | 모든 코드 검사 + 로컬 개발 DB에 `commands.dbMigrate` 적용 출력(병합 전에는 Neon 개발 브랜치에도). 사용자 소유 테이블이면 그 테이블을 쓰는 프로시저의 2계정 격리 테스트도(D 행) |
+| 스키마 | 모든 코드 검사 + 로컬 개발 DB에 `commands.dbMigrate` 적용 출력, 병합 전 대상(Neon 개발 브랜치 또는 Supabase 스테이징)에도 적용한 출력. Supabase는 `supabase db advisors` 보안 검사(`No issues found`)도. 대상과 명령은 `prokit-db`의 `references/migration-flow.md`. 사용자 소유 테이블이면 그 테이블을 쓰는 프로시저의 2계정 격리 테스트도(D 행) |
 | 스킬, 에이전트, dev-cycle | `pnpm agents:check`, `pnpm skills:check`, `pnpm dev-cycle case`, `pnpm dev-cycle status`. 스킬 본문을 바꿨으면 skill-creator eval 재실행 |
 
 여러 행에 해당하면 해당하는 행의 검사를 모두 한다.
 
-`commands.lint`는 파일을 고치지 않는 검사(`pnpm exec biome check .`)다. `pnpm check`는 `--write`로 파일을 고치므로 검증 증거로 쓰지 않는다. 설치 절차에서 BTS가 만든 코드를 한 번 정리하고, 다시 생성되는 파일(마이그레이션, `schema/auth.ts`, varlock의 `src/env.ts`)은 `biome.json`에서 빼므로 전체 lint는 exit 0에서 시작한다. 전체 lint가 실패하면 이번 변경이 만든 지적으로 보고 고친다. 설치 뒤 정리를 하지 않아 기존 지적이 남은 프로젝트라면 이번에 바꾼 파일만 `pnpm exec biome check <파일들>`로 다시 검사해 그 결과를 증거로 적고, 전체 결과는 기준과 비교해 `전체 exit 1: 기존 지적 N건(기준과 같음)`처럼 함께 적는다. 기준 수는 라운드를 열 때 전체 lint를 한 번 돌려 블록 메모에 적어 둔다. 비교하려고 작업 트리를 `git stash`로 되돌리지 않는다. 이번 변경이 만든 지적은 고친다. 바꾼 파일에 원래 있던 지적(BTS가 만든 JSON 포맷 등)은 그대로 두고 기준과 같은 수인지만 적는다. 한꺼번에 고치면 변경과 무관한 diff가 섞인다.
+`commands.lint`는 파일을 고치지 않는 검사(`pnpm exec biome check .`)다. `pnpm check`는 `--write`로 파일을 고치므로 검증 증거로 쓰지 않는다. 설치 절차에서 Better-T-Stack이 만든 코드를 한 번 정리하고, 다시 생성되는 파일(마이그레이션, `schema/auth.ts`, varlock의 `src/env.ts`)은 `biome.json`에서 빼므로 전체 lint는 exit 0에서 시작한다. 전체 lint가 실패하면 이번 변경이 만든 지적으로 보고 고친다. 설치 뒤 정리를 하지 않아 기존 지적이 남은 프로젝트라면 이번에 바꾼 파일만 `pnpm exec biome check <파일들>`로 다시 검사해 그 결과를 증거로 적고, 전체 결과는 기준과 비교해 `전체 exit 1: 기존 지적 N건(기준과 같음)`처럼 함께 적는다. 기준 수는 라운드를 열 때 전체 lint를 한 번 돌려 블록 메모에 적어 둔다. 비교하려고 작업 트리를 `git stash`로 되돌리지 않는다. 이번 변경이 만든 지적은 고친다. 바꾼 파일에 원래 있던 지적(Better-T-Stack이 만든 JSON 포맷 등)은 그대로 두고 기준과 같은 수인지만 적는다. 한꺼번에 고치면 변경과 무관한 diff가 섞인다.
 
 ## 런타임과 브라우저
 - `pnpm dev`(web은 포트 3001)를 띄우고, `next-dev-loop` 스킬의 `/_next/mcp` 절차로 Next 진단을 본다. ego-browser를 쓸 때는 next-dev-loop의 agent-browser 요구 사항, preflight 1단계(agent-browser 열기), 종료 절차를 건너뛰고 `/_next/mcp` 확인과 도구만 쓴다. `get_errors`·`get_page_metadata`에 필요한 브라우저 세션은 ego-browser로 연 페이지가 채운다. 이 경우 agent-browser가 없는 것은 blocked 사유가 아니다. Next.js 16.3 이상(Turbopack)이 필요하다. 못 맞추면 `blocked: next-dev-loop 요구 미달(Next 16.2)`처럼 적는다. 업그레이드는 사용자가 요청할 때만 한다.
@@ -48,7 +48,7 @@ description: >-
 
 ## 테스트 러너
 - 테스트 러너가 없으면 첫 D·E 라운드나 서버·DB 코드를 고치는 C 라운드에서 vitest를 도입한다. 대조표에 `vitest 도입(최초 1회)` 행을 추가하고, 루트 `test` 스크립트와 `.dev-cycle.json`의 `commands.test`를 함께 등록한다. 절차는 `.agents/skills/prokit-api/references/ownership-test.md`에 있다.
-- 격리 테스트는 개발·운영 DB가 아닌 전용 테스트 DB(`TEST_DATABASE_URL`: 로컬 컨테이너의 `<이름>_test`, 병합 전 확인은 Neon 테스트 브랜치)에서 돈다. `skipped`로 끝난 테스트는 통과가 아니다. 프로시저를 거치지 않고 SQL로 같은 조건을 흉내 낸 수동 확인도 격리 테스트를 대신하지 못한다. 격리 테스트는 프로시저를 두 계정의 세션으로 호출한다.
+- 격리 테스트는 개발·운영 DB가 아닌 전용 테스트 DB(`TEST_DATABASE_URL`: 로컬 DB의 `<이름>_test`. 만드는 법은 `prokit-api`의 `references/ownership-test.md`)에서 돈다. `skipped`로 끝난 테스트는 통과가 아니다. 프로시저를 거치지 않고 SQL로 같은 조건을 흉내 낸 수동 확인도 격리 테스트를 대신하지 못한다. 격리 테스트는 프로시저를 두 계정의 세션으로 호출한다.
 
 ## 증거 적는 법
 형식은 [references/evidence.md](references/evidence.md). 요약하면 다음과 같다.

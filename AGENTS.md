@@ -19,8 +19,8 @@
 6. **로컬 DB 시작** (README "로컬 DB 시작"):
    - neon: `lsof -nP -iTCP:5432 -sTCP:LISTEN`로 포트를 먼저 확인한다. 사용 중이면 README의 `DB_PORT` 방식으로 바꾼다. 이어서 `packages/db`에서 `podman compose up -d`(Docker면 `db:start`).
    - supabase: Podman이면 `DOCKER_HOST`를 먼저 설정한다(macOS와 Linux·WSL의 값이 다르다. 템플릿 README 준비물). `packages/db`에서 `supabase init`을 실행하고, `supabase/config.toml`의 `project_id = "db"`를 프로젝트 이름으로 바꾼 뒤 README의 `supabase start -x …`로 DB만 띄운다.
-7. **첫 마이그레이션** (README "설치한 뒤" 1번): `db:generate`로 인증 테이블 마이그레이션을 만들고 `db:migrate`로 적용한다. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션(`prokit-db` 스킬의 RLS 규칙)을 추가하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인한다. BTS가 만든 README의 `db:push` 단계는 따르지 않는다.
-8. **확인**: 새 프로젝트에서 `pnpm check`를 한 번 실행해 BTS가 만든 코드의 포맷과 정렬(import, Tailwind 클래스)을 정리한다. 이어서 `pnpm skills:check`, `pnpm agents:check`, `pnpm check-types`, `pnpm exec biome check .`가 exit 0인지 본다.
+7. **첫 마이그레이션** (README "설치한 뒤" 1번): `db:generate`로 인증 테이블 마이그레이션을 만들고 `db:migrate`로 적용한다. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션(`prokit-db` 스킬의 RLS 규칙)을 추가하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인한다. Better-T-Stack이 만든 README의 `db:push` 단계는 따르지 않는다.
+8. **확인**: 새 프로젝트에서 `pnpm check`를 한 번 실행해 Better-T-Stack이 만든 코드의 포맷과 정렬(import, Tailwind 클래스)을 정리한다. 이어서 `pnpm skills:check`, `pnpm agents:check`, `pnpm check-types`, `pnpm exec biome check .`가 exit 0인지 본다.
 9. **커밋**: 새 프로젝트의 기본 브랜치에 설치 결과, 8번의 포맷 정리, 첫 마이그레이션을 커밋한다(supabase는 `packages/db/supabase/`도). 예: `chore: dev-cycle 하네스와 프로젝트 규칙 초기 설정`. 커밋하지 않으면 설치 파일과 첫 마이그레이션(케이스 E)이 첫 dev-cycle 라운드의 diff에 섞인다. 그러면 audit이 실제 작업보다 무거운 케이스(예: F)로 상향을 요구한다. 원격 저장소 생성과 push는 요청할 때만 한다.
 10. **보고**: 다음을 보고한다.
     - 프로젝트 경로, 템플릿, 로컬 DB 주소와 중지 명령, 8번 결과
@@ -74,10 +74,10 @@
 - 설치할 스킬과 플러그인 목록의 정본은 `templates/<템플릿>/files/skills.manifest.json`이다.
 - 검증 결과와 한계는 그 템플릿의 `VERIFICATION.md`에 적는다. 측정 보고서(HTML 등)는 `docs/reports/<날짜>-<이름>`으로 두고 `VERIFICATION.md`에서 링크한다. 측정 스크립트, 로그, 확인용 프로젝트는 저장소에 넣지 않는다.
 - 공식 프리셋 제작·정적 출력·카탈로그·Pages 반영은 pro-kit-preset-skills의 제작·게시 절차를 따른다. 프리셋 작업공간은 저장소 밖 영구 폴더에 두고 다른 작업공간·공개 상태·기존 배포를 보존한다. 사이트 주소 정본은 `site-links.json`이고 주소 변경 도구·저작권 조건은 기존 구현을 따른다. 팩 사용자는 검증된 프리셋의 모든 페이지와 동작을 유지하고 원래 서비스를 재조사하지 않는다.
-- `files/` 아래 `.mjs`·`.json`은 BTS `biome.json` 형식(탭 들여쓰기, 한 줄 80자)으로 둔다. 설치기가 복사한 뒤 Biome로 포맷하므로, 형식이 다르면 설치한 프로젝트와 늘 달라져 `--diff`가 포맷 차이로 가득 찬다. 고친 파일은 BTS 프로젝트에서 `pnpm exec biome check --write <파일>`로 맞춘 뒤 가져온다.
-- `install.mjs`나 `scripts/skills-setup.mjs`를 바꾸면 테스트와 별도로 실제 BTS 프로젝트에 설치해 확인한다. 이 확인용 프로젝트는 scratchpad나 임시 디렉터리에 만든다.
+- `files/` 아래 `.mjs`·`.json`은 Better-T-Stack `biome.json` 형식(탭 들여쓰기, 한 줄 80자)으로 둔다. 설치기가 복사한 뒤 Biome로 포맷하므로, 형식이 다르면 설치한 프로젝트와 늘 달라져 `--diff`가 포맷 차이로 가득 찬다. 고친 파일은 Better-T-Stack 프로젝트에서 `pnpm exec biome check --write <파일>`로 맞춘 뒤 가져온다.
+- `install.mjs`나 `scripts/skills-setup.mjs`를 바꾸면 테스트와 별도로 실제 Better-T-Stack 프로젝트에 설치해 확인한다. 이 확인용 프로젝트는 scratchpad나 임시 디렉터리에 만든다.
 - 확인용 설치도 그 경로에 project scope Claude 플러그인을 등록한다. 확인이 끝나면 그 디렉터리에서 `claude plugin uninstall <플러그인> --scope project`로 지운다. 띄운 DB 컨테이너도 정리한다.
-- 새 프로젝트는 설치하는 시점의 최신판을 받는다. BTS는 `@latest`, skills CLI는 `skills@latest`로 실행하고, 공식 스킬은 원본 저장소의 최신 커밋에서 받는다. Claude 플러그인은 마켓플레이스를 갱신한 뒤 설치하고, agent-browser CLI는 npm 최신판을 쓴다. 템플릿에 이 버전들을 고정하거나 공식 스킬 파일을 복사해 두지 않는다(`files/.agents/skills`에는 `prokit-*`만 둔다). 새 판 때문에 생성이나 설치가 깨지면 템플릿을 고치고, 확인한 판을 `VERIFICATION.md`에 적는다.
+- 새 프로젝트는 설치하는 시점의 최신판을 받는다. Better-T-Stack은 `@latest`, skills CLI는 `skills@latest`로 실행하고, 공식 스킬은 원본 저장소의 최신 커밋에서 받는다. Claude 플러그인은 마켓플레이스를 갱신한 뒤 설치하고, agent-browser CLI는 npm 최신판을 쓴다. 템플릿에 이 버전들을 고정하거나 공식 스킬 파일을 복사해 두지 않는다(`files/.agents/skills`에는 `prokit-*`만 둔다). 새 판 때문에 생성이나 설치가 깨지면 템플릿을 고치고, 확인한 판을 `VERIFICATION.md`에 적는다.
 - 템플릿의 명령, 포트, 스킬 수, 설치 구성을 바꾸면 `handbook/`의 비교표(`templates/choose.md`), 도식, 폴더 구조(`reference/project-structure.md`)와 이 파일의 절차도 맞춘다. 공식 스킬을 더하거나 빼거나 그 스킬을 읽는 곳(dev-cycle 행, `prokit-*` 연결 표, 에이전트)을 바꾸면 `handbook/skills/official-skills.md`의 표도 맞춘다. 호출률과 활용도 수치는 다시 잰 경우에만 바꾸고, 잰 날짜와 판을 함께 적는다.
 - 루트 `README.md`에는 요약과 링크만 둔다. 상세는 `handbook/`, `tutorials/`, 템플릿 README에 쓰고 README에서 링크한다.
 - 셸 작업 디렉터리를 템플릿 안에 두지 않는다. OMC 훅이 그 자리에 `.omc/`를 만들어 템플릿 파일에 섞인다. 명령은 저장소 루트에서 절대 경로나 상대 경로로 실행한다.

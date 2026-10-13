@@ -1,7 +1,7 @@
-# BTS Next.js + Neon 개발 템플릿
+# 프로킷 Next.js + Neon 개발 템플릿
 
 <!-- b:tpl-readme-license -->
-> **사용 조건**: 프로킷 자체 코드·스킬·문서는 [MIT License](../../LICENSE)로 제공한다. 상업적 이용, 유료 고객 개발, 수정·재판매와 비공개 제품 개발을 허용하며, 재배포할 때 저작권 표시와 허가문을 함께 유지해야 한다. 원본 출처에서 별도로 설치되는 외부 스킬에는 [원래 조건](../../THIRD_PARTY_NOTICES.md)이 적용된다. 설치기는 생성 프로젝트에 `licenses/PROKIT-LICENSE.txt`와 적용 경로 안내를 전달하며, BTS 자체 LICENSE는 덮어쓰지 않는다.
+> **사용 조건**: 프로킷 자체 코드·스킬·문서는 [MIT License](../../LICENSE)로 제공한다. 상업적 이용, 유료 고객 개발, 수정·재판매와 비공개 제품 개발을 허용하며, 재배포할 때 저작권 표시와 허가문을 함께 유지해야 한다. 원본 출처에서 별도로 설치되는 외부 스킬에는 [원래 조건](../../THIRD_PARTY_NOTICES.md)이 적용된다. 설치기는 생성 프로젝트에 `licenses/PROKIT-LICENSE.txt`와 적용 경로 안내를 전달하며, Better-T-Stack 자체 LICENSE는 덮어쓰지 않는다.
 <!-- /b -->
 
 Better-T-Stack으로 만든 Next.js 풀스택 프로젝트(oRPC, Drizzle, Better Auth, Postgres: 개발은 로컬 컨테이너, 운영은 Neon)에 AI 에이전트 개발 환경을 한 번에 설치한다. 설계 근거는 [스펙](../../docs/superpowers/specs/2026-09-25-bts-next-neon-template-design.md), 검증 결과와 한계는 [VERIFICATION.md](VERIFICATION.md)에 있다.
@@ -71,8 +71,8 @@ Neon 연결(병합 전 검증과 운영): 프로젝트 루트에서 `neon link -
 <!-- /b -->
 
 설치한 뒤:
-1. 로컬 DB를 띄우고 `pnpm --filter @my-app/db db:generate`로 첫 마이그레이션(인증 테이블)을 만든 뒤 `pnpm --filter @my-app/db db:migrate`로 적용한다. BTS가 만든 프로젝트 `README.md`의 `pnpm run db:push` 단계는 따르지 않는다. 스키마 변경은 마이그레이션으로만 한다(`AGENTS.md` 보안 불변식).
-2. `pnpm check`로 BTS가 만든 코드의 포맷과 정렬(import, Tailwind 클래스)을 한 번 정리하고 `pnpm exec biome check .`가 exit 0인지 확인한다. 다시 생성되는 파일(마이그레이션, `schema/auth.ts`, varlock의 `src/env.ts`)과 `pnpm export:html`이 만든 `html/`은 설치기가 `biome.json` 검사 대상에서 뺐다. shadcn의 `label.tsx`·`input-group.tsx`는 upstream 코드라 두 파일에서만 a11y 규칙 3개를 껐다. 설치된 turbo가 2.11.5 이상이면 설치기가 `turbo.json`에 `"agentGuidance": false`를 넣는다. turbo가 AI 에이전트를 감지하면 루트 `AGENTS.md`에 규칙 블록을 쓰고 커밋해 두라고 지시하기 때문이다. 2.11.4 이하는 이 키를 거부하므로 넣지 않는다(나중에 turbo를 올리면 `prokit-skills-update`의 turbo 절). 이어서 설치 결과, 포맷 정리, 첫 마이그레이션을 기본 브랜치(`main` 또는 `master`)에 커밋한다. 커밋하지 않고 첫 라운드를 열면 설치한 파일 전체가 라운드 diff에 섞여 `audit`이 케이스 F 상향을 요구한다. 기능 브랜치에 커밋해도 마찬가지다. 라운드 기준이 기본 브랜치와의 merge-base이기 때문이다.
+1. 로컬 DB를 띄우고 `pnpm --filter @my-app/db db:generate`로 첫 마이그레이션(인증 테이블)을 만든 뒤 `pnpm --filter @my-app/db db:migrate`로 적용한다. Better-T-Stack이 만든 프로젝트 `README.md`의 `pnpm run db:push` 단계는 따르지 않는다. 스키마 변경은 마이그레이션으로만 한다(`AGENTS.md` 보안 불변식).
+2. `pnpm check`로 Better-T-Stack이 만든 코드의 포맷과 정렬(import, Tailwind 클래스)을 한 번 정리하고 `pnpm exec biome check .`가 exit 0인지 확인한다. 다시 생성되는 파일(마이그레이션, `schema/auth.ts`, varlock의 `src/env.ts`)과 `pnpm export:html`이 만든 `html/`은 설치기가 `biome.json` 검사 대상에서 뺐다. shadcn의 `label.tsx`·`input-group.tsx`는 upstream 코드라 두 파일에서만 a11y 규칙 3개를 껐다. 설치된 turbo가 2.11.5 이상이면 설치기가 `turbo.json`에 `"agentGuidance": false`를 넣는다. turbo가 AI 에이전트를 감지하면 루트 `AGENTS.md`에 규칙 블록을 쓰고 커밋해 두라고 지시하기 때문이다. 2.11.4 이하는 이 키를 거부하므로 넣지 않는다(나중에 turbo를 올리면 `prokit-skills-update`의 turbo 절). 이어서 설치 결과, 포맷 정리, 첫 마이그레이션을 기본 브랜치(`main` 또는 `master`)에 커밋한다. 커밋하지 않고 첫 라운드를 열면 설치한 파일 전체가 라운드 diff에 섞여 `audit`이 케이스 F 상향을 요구한다. 기능 브랜치에 커밋해도 마찬가지다. 라운드 기준이 기본 브랜치와의 merge-base이기 때문이다.
 3. 새 에이전트 세션을 연다. 스킬과 에이전트는 새 세션부터 보인다. Claude Code는 프로젝트를 신뢰해야 `.claude/settings.json`의 project 플러그인(superpowers, skill-creator, OMC, ponytail)을 켠다. Codex는 프로젝트를 신뢰(trusted)해야 `.codex/agents`와 네이티브 플러그인을 불러온다. 네이티브 플러그인을 설치했다면 trusted가 된 뒤 `/hooks`에서 훅을 허용하고 새 세션을 연다. 신뢰만으로 훅이 켜지는 것은 아니다. 스킬은 신뢰하지 않아도 보인다. Antigravity는 `AGENTS.md`, `.agents/skills`, `.agents/agents`(`pnpm agents:sync`가 `.claude/agents`에서 만든다)를 그대로 읽는다. Grok Build는 `AGENTS.md`·`CLAUDE.md`, `.agents/skills`, `.claude/agents`를 읽지만 폴더를 신뢰해야 규칙과 스킬을 불러온다(첫 실행 질문에 동의하거나 `grok --trust`). 두 도구는 Codex처럼 스킬의 `SKILL.md`를 읽어 적용한다. Antigravity는 Claude 플러그인 훅·OMC·OMX·gstack·impeccable 편집 훅을 쓰지 않는다. Grok Build는 Claude 호환이 기본으로 켜져 있어 사용자 전역의 Claude 플러그인·훅, `~/.claude/CLAUDE.md`, `~/.claude/skills`도 불러오고, 신뢰한 폴더에서는 프로젝트 `.claude/settings.json`·`settings.local.json`의 훅도 읽는다(그 훅이 실제로 도는지는 확인하지 않았다).
 4. 개발자마다 한 번 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`을 실행한다. 스킬 호출(`$impeccable hooks on`, Claude Code의 `impeccable` 스킬 인자)로 켜지 않는다. 개인(전역) impeccable 스킬이 있으면 Claude Code가 그쪽을 불러와 이 프로젝트에 없는 `scripts/hook.mjs`를 훅 명령으로 적고, Stop 훅이 매번 `MODULE_NOT_FOUND`로 실패한다. 켠 뒤 `.claude/settings.local.json`의 훅 명령이 `…/scripts/impeccable" hook`인지 확인한다.
 5. `GLOSSARY.md`와 `docs/domain/project.md`를 채운다.
@@ -150,12 +150,12 @@ production은 릴리스한 커밋만 배포한다. `pnpm release`가 마지막 `
 | `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기 |
 | `pnpm dev-cycle status`, `audit`, `close` | 진행 확인, 빈 칸 검사, 라운드 닫기 (`blocked`·`미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial`) |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관 |
-| `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
+| `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일(끝 줄바꿈 하나는 허용)로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
 | `pnpm dev-cycle secrets` | 라운드 끝 커밋 전에 스테이징한 변경에서 로컬 `.env*`(루트, `apps/web`, `packages/db`. `.env.schema`·`.env.example` 제외)의 비밀값과 흔한 키 형식(개인 키, `sk-`, GitHub 토큰 등)을 찾는다. 값은 출력하지 않는다. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
-| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고. 정상·경고는 exit 0, 예산 초과는 exit 1, 측정 불완전은 exit 2 |
-| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행. 자원 차단·측정 불완전이면 exit 75, 실행했다면 자식 명령의 종료 코드를 유지 |
-| `pnpm dev-cycle resource clean [--apply]` | 기본은 검증한 정리 후보만 보여 줌. `--apply`도 현재 실행이 만든 compiler cache의 소유권·lease·자식 종료가 증명된 경우에만 정리 |
-| `pnpm dev-cycle delegation capture`, `pnpm dev-cycle delegation validate <패킷>` | 위임 전 기준 스냅샷을 남기고 완료 패킷의 실제 변경·증거·허용 범위를 검사 |
+| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고. 정상·경고는 exit 0, 예산 초과는 exit 1(측정이 불완전해도 여유 공간이 차단 한계 이하면 1), 측정 불완전은 exit 2 |
+| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행. 실행 중에는 예산 초과일 때만 멈추고 측정 지연·실패는 기록만 함(여유 공간은 측정이 늦어도 따로 확인). 자원 차단·측정 불완전·정리 중이면 exit 75, 실행했다면 자식 명령의 종료 코드를 유지 |
+| `pnpm dev-cycle resource clean [--apply]` | 끝난 guard 실행이 만든 compiler cache(Turbopack) 가운데 소유 기록·같은 디렉터리·실행과 자식 종료가 확인된 것만 후보로 보여 줌. `--apply`는 실행 중인 guard나 Next dev·build가 없을 때만 지우고, 거부하면 exit 1 |
+| `pnpm dev-cycle delegation capture`, `pnpm dev-cycle delegation diff <기준 파일> [--scope <글롭>]`, `pnpm dev-cycle delegation validate <패킷>` | 위임 전 기준 스냅샷을 남기고, 끝난 뒤 배정 밖 변경·커밋을 대조(있으면 exit 1)하고, 완료 패킷의 실제 변경·증거·허용 범위를 검사 |
 | `pnpm dev-cycle delegation accept` | 명시한 변경 영향 검사와 Codex 읽기 전용 리뷰를 직접 실행해 현재 로컬 기술 인수를 검증. 사용자 확인·close는 별도 |
 | `pnpm agents:sync`, `pnpm agents:check` | `.claude/agents`에서 `.codex/agents`(Codex)·`.agents/agents`(Antigravity) 생성, 차이 검사 |
 | `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬·플러그인·OMX 설정과 agent-browser CLI를 설치 (`--with-global`이면 나머지 전역 도구도) |

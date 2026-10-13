@@ -3,12 +3,12 @@
 | `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기 |
 | `pnpm dev-cycle status`, `audit`, `close` | 진행 확인, 빈 칸 검사, 라운드 닫기 (`blocked`·`미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial`) |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관 |
-| `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
+| `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일(끝 줄바꿈 하나는 허용)로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
 | `pnpm dev-cycle secrets` | 라운드 끝 커밋 전에 스테이징한 변경에서 로컬 `.env*`(루트, `apps/web`, `packages/db`. `.env.schema`·`.env.example` 제외)의 비밀값과 흔한 키 형식(개인 키, `sk-`, GitHub 토큰 등)을 찾는다. 값은 출력하지 않는다. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
-| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고. 정상·경고는 exit 0, 예산 초과는 exit 1, 측정 불완전은 exit 2 |
-| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행. 자원 차단·측정 불완전이면 exit 75, 실행했다면 자식 명령의 종료 코드를 유지 |
-| `pnpm dev-cycle resource clean [--apply]` | 기본은 검증한 정리 후보만 보여 줌. `--apply`도 현재 실행이 만든 compiler cache의 소유권·lease·자식 종료가 증명된 경우에만 정리 |
-| `pnpm dev-cycle delegation capture`, `pnpm dev-cycle delegation validate <패킷>` | 위임 전 기준 스냅샷을 남기고 완료 패킷의 실제 변경·증거·허용 범위를 검사 |
+| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고. 정상·경고는 exit 0, 예산 초과는 exit 1(측정이 불완전해도 여유 공간이 차단 한계 이하면 1), 측정 불완전은 exit 2 |
+| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행. 실행 중에는 예산 초과일 때만 멈추고 측정 지연·실패는 기록만 함(여유 공간은 측정이 늦어도 따로 확인). 자원 차단·측정 불완전·정리 중이면 exit 75, 실행했다면 자식 명령의 종료 코드를 유지 |
+| `pnpm dev-cycle resource clean [--apply]` | 끝난 guard 실행이 만든 compiler cache(Turbopack) 가운데 소유 기록·같은 디렉터리·실행과 자식 종료가 확인된 것만 후보로 보여 줌. `--apply`는 실행 중인 guard나 Next dev·build가 없을 때만 지우고, 거부하면 exit 1 |
+| `pnpm dev-cycle delegation capture`, `pnpm dev-cycle delegation diff <기준 파일> [--scope <글롭>]`, `pnpm dev-cycle delegation validate <패킷>` | 위임 전 기준 스냅샷을 남기고, 끝난 뒤 배정 밖 변경·커밋을 대조(있으면 exit 1)하고, 완료 패킷의 실제 변경·증거·허용 범위를 검사 |
 | `pnpm dev-cycle delegation accept` | 명시한 변경 영향 검사와 Codex 읽기 전용 리뷰를 직접 실행해 현재 로컬 기술 인수를 검증. 사용자 확인·close는 별도 |
 | `pnpm agents:sync`, `pnpm agents:check` | `.claude/agents`에서 `.codex/agents`(Codex)·`.agents/agents`(Antigravity) 생성, 차이 검사 |
 | `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬·플러그인·OMX 설정과 agent-browser CLI를 설치 (`--with-global`이면 나머지 전역 도구도) |

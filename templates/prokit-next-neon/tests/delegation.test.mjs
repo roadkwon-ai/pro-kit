@@ -5,6 +5,7 @@ import {
 	mkdirSync,
 	mkdtempSync,
 	realpathSync,
+	rmSync,
 	symlinkSync,
 	writeFileSync,
 } from "node:fs";
@@ -375,6 +376,97 @@ test("실패·blocked·unresolved와 재사용된 prokit gate를 PASS로 바꾸�
 	);
 	assert.equal(result.ok, false);
 	assert.ok(result.problems.some((problem) => problem.includes("prokit")));
+});
+
+test("실패한 검사(exit 1)는 같은 receipt가 있어도 완료 증거가 아니다", () => {
+	const { root } = repo();
+	const baseline = captureSnapshot(root);
+	const run = (exitCode) => {
+		const task = packet(baseline);
+		task.evidence.commands[0].exitCode = exitCode;
+		return validateDelegationPacket(
+			root,
+			task,
+			context({
+				baseline,
+				runnerReceipts: [{ command: "node --test", exitCode }],
+			}),
+		);
+	};
+	assert.equal(run(0).completionReady, true);
+	const failed = run(1);
+	assert.equal(failed.ok, false);
+	assert.equal(failed.completionReady, false);
+	assert.ok(failed.problems.some((problem) => problem.includes("exit 1")));
+});
+
+test("diff CLI는 기준 snapshot 뒤 배정 밖 변경·커밋을 exit 1로, 읽을 수 없는 입력을 exit 2로 알린다", () => {
+	const { root, git, write } = repo();
+	const log = console.log;
+	const error = console.error;
+	let output = "";
+	console.log = (value) => {
+		output = value;
+	};
+	console.error = () => {};
+	const diff = (...args) => {
+		const code = main(["diff", ...args], root);
+		return { code, result: code === 2 ? null : JSON.parse(output) };
+	};
+	try {
+		assert.equal(main(["capture"], root), 0);
+		// gitignore 밖의 기준 파일도 자기 자신은 변경으로 세지 않는다.
+		const captured = output;
+		write("before.json", captured);
+		write("src/original.txt", "changed\n");
+		write("src/new.txt");
+		let r = diff("before.json", "--scope", "src/**");
+		assert.equal(r.code, 0);
+		assert.equal(r.result.baseline, JSON.parse(captured).manifestHash);
+		assert.deepEqual(r.result.changed, [
+			{ path: "src/new.txt", kind: "added" },
+			{ path: "src/original.txt", kind: "modified" },
+		]);
+		write("README.md", "outside\n");
+		r = diff("before.json", "--scope", "src/**");
+		assert.equal(r.code, 1);
+		assert.deepEqual(r.result.outside, ["README.md"]);
+		// scope 없이 부르면 리뷰·QA처럼 어떤 변경도 허용하지 않는다.
+		r = diff("before.json");
+		assert.equal(r.code, 1);
+		assert.equal(r.result.outside.length, 3);
+		rmSync(join(root, "src/original.txt"));
+		r = diff("before.json", "--scope", "src/**");
+		assert.ok(
+			r.result.changed.some(
+				({ path, kind }) => path === "src/original.txt" && kind === "deleted",
+			),
+		);
+		git("add", "README.md");
+		git("commit", "-qm", "수행자 커밋");
+		r = diff("before.json", "--scope", "**");
+		assert.equal(r.code, 1);
+		assert.equal(r.result.headChanged, true);
+		assert.equal(diff("missing.json").code, 2);
+		// 수행자가 entries만 고치고 manifestHash를 남겨도 기준 파일로 받지 않는다.
+		const forged = JSON.parse(captured);
+		forged.entries = forged.entries.filter(
+			({ path }) => path !== "src/original.txt",
+		);
+		for (const broken of [
+			"null",
+			'{"valid":true,"entries":{}}',
+			JSON.stringify(forged),
+		]) {
+			write("broken.json", broken);
+			assert.equal(diff("broken.json").code, 2, broken);
+		}
+		assert.equal(diff("before.json", "--scope", "../x").code, 2);
+		assert.equal(diff("before.json", "--scope").code, 2);
+	} finally {
+		console.log = log;
+		console.error = error;
+	}
 });
 
 test("review reuse key는 제품·증거·기준·focus·contract·provider·reviewer·환경을 모두 묶고 self 결과는 제외한다", () => {

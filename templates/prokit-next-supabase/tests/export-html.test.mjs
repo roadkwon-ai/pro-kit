@@ -9,7 +9,7 @@ const { copyFilter, findLeaks, imageLoader, main, parseArgs, patchNextConfig, re
   join(TEMPLATE_FILES, "scripts/export-html.mjs")
 );
 
-// BTS 3.44.2가 만드는 apps/web/next.config.ts 그대로
+// Better-T-Stack 3.44.2가 만드는 apps/web/next.config.ts 그대로
 const BTS_CONFIG = `import { varlockNextConfigPlugin } from "@varlock/nextjs-integration/plugin";
 
 const withVarlock = varlockNextConfigPlugin();

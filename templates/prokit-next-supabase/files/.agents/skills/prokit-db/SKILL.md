@@ -1,7 +1,7 @@
 ---
 name: prokit-db
 description: >-
-  이 BTS 프로젝트의 packages/db(Drizzle ORM + Supabase Postgres, 개발은 로컬 Supabase 스택, 병합 전 검증은
+  이 Better-T-Stack 프로젝트의 packages/db(Drizzle ORM + Supabase Postgres, 개발은 로컬 Supabase 스택, 병합 전 검증은
   원격 스테이징, 운영은 Supabase)를 만들거나 바꾸거나 검토할 때 사용한다. 테이블, 컬럼, 관계 추가, 스키마 변경,
   마이그레이션 생성과 적용, RLS 켜기, 인덱스, 느린 쿼리, supabase start·stop, Supabase advisors, 스테이징
   적용, DATABASE_URL 연결 문제를 다룬다. 테이블 추가, 컬럼 추가, 마이그레이션, 스키마, 인덱스, 쿼리가 느려요,

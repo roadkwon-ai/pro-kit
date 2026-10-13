@@ -1,7 +1,7 @@
 ---
 name: prokit-api
 description: >-
-  이 BTS 프로젝트의 서버 경계를 만들거나 바꾸거나 검토할 때 사용한다. packages/api의 oRPC 프로시저,
+  이 Better-T-Stack 프로젝트의 서버 경계를 만들거나 바꾸거나 검토할 때 사용한다. packages/api의 oRPC 프로시저,
   라우터, context와 packages/auth의 Better Auth 설정, 세션, 로그인과 회원가입, 권한, 내 데이터만
   보이게 하는 소유권 검사, zod 입력 검증을 다룬다. API 추가, 엔드포인트, 프로시저, 라우터, 로그인,
   권한, 다른 사람 데이터가 보여요, userId 같은 요청에 사용한다. 테이블, 컬럼, 마이그레이션 자체는
@@ -71,7 +71,7 @@ export const todoRouter = {
 `@<프로젝트>`는 루트 `package.json`의 `name`으로 만든 워크스페이스 이름이다 (예: `@my-app/db`). 새 라우터는 `appRouter`에 `todo: todoRouter`로 등록한다.
 
 - `packages/api`에 `drizzle-orm` 의존성이 없으면 먼저 `pnpm --filter @<프로젝트>/api add drizzle-orm@catalog:`로 추가한다. 버전은 루트 `pnpm-workspace.yaml`의 catalog를 따른다.
-- BTS의 `--examples todo` 예제는 `publicProcedure`로 소유권 검사 없이 만들어진다. 그 패턴을 따라 하지 않는다.
+- Better-T-Stack의 `--examples todo` 예제는 `publicProcedure`로 소유권 검사 없이 만들어진다. 그 패턴을 따라 하지 않는다.
 - 프로시저를 더하거나 이름·보호·입력을 바꾸면 `docs/domain/project.md`의 API 표(`용어` 칸 포함)를 같은 작업에서 고친다.
 
 ## 격리 테스트

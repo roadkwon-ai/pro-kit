@@ -22,14 +22,6 @@ import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { isDeepStrictEqual } from "node:util";
-import {
-	captureSnapshot,
-	main as delegationMain,
-	observeProvider,
-	resolveProvider,
-	validateDelegationPacket,
-} from "./delegation.mjs";
-import { main as resourceMain, runGuarded } from "./resource-guard.mjs";
 
 const DEFAULTS = {
 	todoPath: "tasks/todo.md",
@@ -45,6 +37,38 @@ export const CASES = ["A", "B", "C", "D", "E", "F", "H"];
 const LAYERS = ["E", "D", "B"];
 
 export class UsageError extends Error {}
+
+// secrets·table 같은 명령은 위임·자원 스크립트가 빠지거나 깨져도 돌아야 한다.
+// 불러오지 못하면 그 스크립트의 함수를 부르는 명령만 exit 2로 실패한다.
+async function helperScript(name, exports) {
+	try {
+		return await import(`./${name}`);
+	} catch (error) {
+		const fail = () => {
+			throw new UsageError(
+				`scripts/${name}를 불러올 수 없다: ${error.message.split("\n")[0]}`,
+			);
+		};
+		return Object.fromEntries(exports.map((key) => [key, fail]));
+	}
+}
+const {
+	captureSnapshot,
+	main: delegationMain,
+	observeProvider,
+	resolveProvider,
+	validateDelegationPacket,
+} = await helperScript("delegation.mjs", [
+	"captureSnapshot",
+	"main",
+	"observeProvider",
+	"resolveProvider",
+	"validateDelegationPacket",
+]);
+const { main: resourceMain, runGuarded } = await helperScript(
+	"resource-guard.mjs",
+	["main", "runGuarded"],
+);
 
 export function loadConfig(root) {
 	const p = join(root, ".dev-cycle.json");
@@ -88,7 +112,7 @@ const commitOf = (root, ref) => {
 export function resolveBase(root, config) {
 	if (!commitOf(root, "HEAD")) return null;
 	const branch = git(root, ["branch", "--show-current"]).trim();
-	// 설정 브랜치가 없을 때(BTS는 master로 초기화한다) 기능 브랜치의 커밋이 diff에서 빠지지 않도록 후보를 차례로 본다.
+	// 설정 브랜치가 없을 때(Better-T-Stack은 master로 초기화한다) 기능 브랜치의 커밋이 diff에서 빠지지 않도록 후보를 차례로 본다.
 	const candidates = [
 		...new Set([
 			config.defaultBranch,
@@ -257,7 +281,7 @@ const esc = (s) => String(s ?? "").replace(/\|/g, "\\|");
 
 export function renderBlock(meta, rows, extra = []) {
 	const lines = [
-		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened}${meta.delegation ? ` delegation=${meta.delegation}` : ""} -->`,
+		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened} -->`,
 		`## 활성 라운드: ${meta.case} — ${meta.title}`,
 		"| # | 단계 | 증거 |",
 		"|---|---|---|",
@@ -329,13 +353,7 @@ export function writeTable(
 	root,
 	config,
 	caseKey,
-	{
-		upgrade = false,
-		title,
-		write = false,
-		delegation = false,
-		now = new Date(),
-	} = {},
+	{ upgrade = false, title, write = false, now = new Date() } = {},
 ) {
 	const md = readTodo(root, config) ?? "# 작업\n";
 	const active = parseActive(md);
@@ -389,8 +407,6 @@ export function writeTable(
 		base,
 		auth: cls.auth || Boolean(active?.meta.auth),
 		opened: active?.meta.opened ?? now.toISOString().slice(0, 10),
-		delegation:
-			active?.meta.delegation ?? (delegation ? "required" : undefined),
 		title: title ?? active?.title ?? "제목 없음",
 	};
 	const block = renderBlock(meta, rows, upgrade ? extra : []);
@@ -486,7 +502,8 @@ export function setEvidence(root, config, row, evidenceFile) {
 	if (!stat.isFile()) throw new UsageError("증거 파일은 일반 파일이어야 한다");
 	if (stat.size > EVIDENCE_MAX_BYTES)
 		throw new UsageError("증거 파일이 너무 크다");
-	const evidence = readFileSync(file, "utf8");
+	// echo와 편집기가 붙이는 끝 줄바꿈 하나는 한 줄로 본다.
+	const evidence = readFileSync(file, "utf8").replace(/\r?\n$/, "");
 	if (!evidence.trim()) throw new UsageError("증거 파일이 비어 있다");
 	if (evidence.includes("\0"))
 		throw new UsageError("증거 파일에 NUL 문자가 있다");
@@ -612,10 +629,6 @@ export function audit(
 				`에이전트 정의 불일치 — pnpm agents:sync 실행: ${`${r.stdout}${r.stderr}`.trim()}`,
 			);
 	}
-	if (active.meta.delegation === "required" && !delegationPacket)
-		problems.push(
-			"위임 라운드는 현재 완료 attest 패킷과 Main runtime 검증이 필요하다",
-		);
 	if (delegationPacket) {
 		let result;
 		const runtime = delegationContext?.trustedMainRuntime;
@@ -630,9 +643,11 @@ export function audit(
 			return { ok: false, problems, case: X, pathCase: cls.pathCase };
 		}
 		const completion = delegationCompletionProblem(result, runtime);
-		if (completion) problems.push(`위임 완료 검증 실패: ${completion}`);
-		else if (!result.ok)
-			problems.push(`위임 증거 검증 실패: ${result.problems.join("; ")}`);
+		// 완료 판정이 막혀도 packet 자체의 문제를 함께 보여 줘야 고칠 수 있다.
+		if (completion)
+			problems.push(
+				`위임 완료 검증 실패: ${[completion, ...(result.problems ?? [])].join("; ")}`,
+			);
 	}
 	return {
 		ok: problems.length === 0,
@@ -1106,7 +1121,7 @@ export function stagedSecrets(root) {
 }
 
 const USAGE =
-	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--delegation] [--title 제목] | evidence <행 번호> --file <증거 파일> | status | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|validate|accept> | close [--partial] [--packet 파일 --context 파일] | secrets> [--json]";
+	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--title 제목] | evidence <행 번호> --file <증거 파일> | status | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|diff|resolve|validate|accept> | close [--partial] | secrets> [--json]";
 
 function readDelegationJson(root, path, flag) {
 	if (!path || path.startsWith("--"))
@@ -1933,7 +1948,6 @@ export function main(argv, root = process.cwd()) {
 				upgrade: rest.includes("--upgrade"),
 				title,
 				write: rest.includes("--write"),
-				delegation: rest.includes("--delegation"),
 			});
 			print(
 				r,
@@ -2019,7 +2033,12 @@ export function main(argv, root = process.cwd()) {
 			return r.ok ? 0 : 1;
 		}
 		case "resource":
-			return Promise.resolve(resourceMain(rest, root));
+			// resource-guard CLI처럼 실행 오류는 exit 2다(exit 1은 예산 초과).
+			return Promise.resolve()
+				.then(() => resourceMain(rest, root))
+				.catch((error) => {
+					throw new UsageError(error.message);
+				});
 		case "delegation": {
 			if (rest[0] === "accept") {
 				return acceptDelegation(root, rest.slice(1)).then((result) => {
@@ -2074,34 +2093,11 @@ export function main(argv, root = process.cwd()) {
 			return 0;
 		}
 		case "close": {
-			const packetAt = rest.indexOf("--packet");
-			const contextAt = rest.indexOf("--context");
-			const values = new Set(
-				[packetAt, contextAt]
-					.filter((index) => index >= 0)
-					.map((index) => index + 1),
-			);
-			if (
-				rest.some(
-					(arg, index) =>
-						!["--partial", "--packet", "--context", "--json"].includes(arg) &&
-						!values.has(index),
-				) ||
-				packetAt >= 0 !== contextAt >= 0
-			)
-				throw new UsageError(
-					"사용법: dev-cycle close [--partial] [--packet 파일 --context 파일] [--json]",
-				);
+			// packet 완료 판정은 Main runtime 검증기가 있어야 하므로 CLI close는 packet을 받지 않는다.
+			if (rest.some((arg) => !["--partial", "--json"].includes(arg)))
+				throw new UsageError("사용법: dev-cycle close [--partial] [--json]");
 			const r = close(root, config, new Date(), {
 				partial: rest.includes("--partial"),
-				delegationPacket:
-					packetAt >= 0
-						? readDelegationJson(root, rest[packetAt + 1], "--packet")
-						: undefined,
-				delegationContext:
-					contextAt >= 0
-						? readDelegationJson(root, rest[contextAt + 1], "--context")
-						: undefined,
 			});
 			print(
 				r,

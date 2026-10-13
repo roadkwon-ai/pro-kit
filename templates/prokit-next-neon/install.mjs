@@ -27,7 +27,7 @@ export function preflight(target, platform = process.platform, node = process.ve
   if (platform === "win32") return { errors: ["Windows에서는 WSL2(Ubuntu) 안에서 실행한다 (템플릿 README의 준비물 절)"], warnings };
   if (!existsSync(target) || !lstatSync(target).isDirectory()) return { errors: [`대상 디렉터리가 없다: ${target}`], warnings };
   if (run("git", ["rev-parse", "--git-dir"], { cwd: target }).status !== 0) {
-    errors.push("git 저장소가 아니다 (BTS 생성 때 --git을 쓰거나 git init을 먼저 한다)");
+    errors.push("git 저장소가 아니다 (Better-T-Stack 생성 때 --git을 쓰거나 git init을 먼저 한다)");
   }
   try {
     const pkg = JSON.parse(readFileSync(join(target, "package.json"), "utf8"));
@@ -39,7 +39,7 @@ export function preflight(target, platform = process.platform, node = process.ve
   try {
     const web = existsSync(webPkg) ? JSON.parse(readFileSync(webPkg, "utf8")) : {};
     if (!web?.dependencies?.next && !web?.devDependencies?.next) {
-      errors.push("apps/web/package.json에 next 의존성이 없다 (BTS --frontend next 프로젝트가 아니다)");
+      errors.push("apps/web/package.json에 next 의존성이 없다 (Better-T-Stack --frontend next 프로젝트가 아니다)");
     }
   } catch (e) {
     errors.push(`apps/web/package.json을 읽을 수 없다: ${e.message}`);
@@ -163,7 +163,7 @@ export function configureDevCycle(target) {
   else if (scripts.lint) found.lint = "pnpm lint";
   if (scripts.build) found.build = "pnpm build";
   if (scripts.test) found.test = "pnpm test";
-  // BTS의 루트 db:* 스크립트는 turbo interactive 태스크라 TTY 없는 에이전트 셸에서 실패한다.
+  // Better-T-Stack의 루트 db:* 스크립트는 turbo interactive 태스크라 TTY 없는 에이전트 셸에서 실패한다.
   // `turbo run <s> -F <pkg>` 형태면 그 패키지 스크립트를 pnpm으로 직접 부른다.
   const dbCmd = (s) => {
     const pkg = scripts[s].match(/^turbo run \S+ (?:-F|--filter)[ =](\S+)/)?.[1];
@@ -181,7 +181,7 @@ export function configureDevCycle(target) {
 
 const RESOURCE_ORIGINALS = ["dev", "dev:web", "build"];
 
-// 첫 설치에서만 BTS 명령을 이름 있는 별칭으로 보존한 뒤 guard를 앞에 둔다.
+// 첫 설치에서만 Better-T-Stack 명령을 이름 있는 별칭으로 보존한 뒤 guard를 앞에 둔다.
 // 이미 설치된 프로젝트는 원본 명령을 바꾸지 않고 H 라운드에서 명시적으로 전환한다.
 export function isFreshBtsInstall(target) {
   const agents = join(target, "AGENTS.md");
@@ -250,7 +250,7 @@ const GITIGNORE = [
     "**/.impeccable/review/",
     "**/.impeccable/questions/",
   ],
-  // BTS는 apps/web만 .env*를 무시한다. 루트와 packages/*의 .env.production 같은 파일도 막는다
+  // Better-T-Stack은 apps/web만 .env*를 무시한다. 루트와 packages/*의 .env.production 같은 파일도 막는다
   ["# 환경별 .env (비밀값). 배포 환경변수는 Vercel에 둔다", ".env.*", "!.env.schema", "!.env.example"],
   ["# pnpm export:html 결과(정적 HTML)", "/html/"],
 ];
@@ -311,7 +311,7 @@ const BIOME_IGNORES = [
   "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
   "!html",
 ];
-// shadcn의 label.tsx·input-group.tsx는 upstream 코드라 BTS 생성 직후부터 a11y 오류 4건이 난다(범용 Label 래퍼,
+// shadcn의 label.tsx·input-group.tsx는 upstream 코드라 Better-T-Stack 생성 직후부터 a11y 오류 4건이 난다(범용 Label 래퍼,
 // role="group", 애드온 클릭 포커스). 고쳐 써도 `shadcn add --overwrite`가 되돌리므로 이 두 파일에서만 세 규칙을 끈다.
 const SHADCN_A11Y = ["packages/ui/src/components/label.tsx", "packages/ui/src/components/input-group.tsx"];
 const BIOME_OVERRIDE = {
@@ -338,7 +338,7 @@ export function ensureBiomeConfig(target, { dryRun = false } = {}) {
 
 // turbo 2.11.5부터 AI 에이전트가 turbo를 실행하면 루트 AGENTS.md에 규칙 블록을 쓰고 "커밋해 두라"고 지시한다(agentGuidance).
 // 커밋 규칙과 부딪히므로 끈다. 2.11.4 이하는 이 키를 모르는 키로 거부하므로, 설치된 turbo의 schema.json에 키가 있을 때만 넣는다.
-// ponytail: BTS turbo.json처럼 "$schema" 줄이 있을 때만 그 뒤에 한 줄을 끼운다(키 순서와 포맷 유지).
+// ponytail: Better-T-Stack turbo.json처럼 "$schema" 줄이 있을 때만 그 뒤에 한 줄을 끼운다(키 순서와 포맷 유지).
 // 반환: 넣었으면 "added", 넣어야 하는데 자리를 못 찾았으면(주석이 든 turbo.json, "$schema" 없음) "manual", 할 일이 없으면 null.
 export function ensureTurboAgentGuidance(target, { dryRun = false } = {}) {
   const p = join(target, "turbo.json");
@@ -469,7 +469,7 @@ export function main(argv) {
       ? `스킬·플러그인: 건너뜀 (${skipSkills}) → 나중에 pnpm skills:setup`
       : `스킬·플러그인: ${skills.status === 0 ? "위 skills-setup 결과 참고" : `실패 (exit ${skills.status}) → 위 출력을 보고 pnpm skills:setup으로 다시 실행`}`,
     "다음 할 일:",
-    "  1. 첫 마이그레이션(README 설치한 뒤 1번)까지 마치고, pnpm check로 BTS가 만든 코드의 포맷을 한 번 정리해 pnpm exec biome check .가 exit 0인지 본 뒤 기본 브랜치에 커밋한다 (커밋 전에 연 dev-cycle 라운드는 설치 파일이 diff에 섞여 audit이 F 상향을 요구한다)",
+    "  1. 첫 마이그레이션(README 설치한 뒤 1번)까지 마치고, pnpm check로 Better-T-Stack이 만든 코드의 포맷을 한 번 정리해 pnpm exec biome check .가 exit 0인지 본 뒤 기본 브랜치에 커밋한다 (커밋 전에 연 dev-cycle 라운드는 설치 파일이 diff에 섞여 audit이 F 상향을 요구한다)",
     "  2. 새 에이전트 세션을 열어 스킬과 에이전트를 불러온다 (Claude는 프로젝트를 신뢰해야 project 플러그인을 켜고, Codex는 신뢰해야 .codex/agents를 읽는다. Antigravity는 .agents/agents와 .agents/skills를 읽는다. Grok Build는 폴더를 신뢰해야 AGENTS.md와 프로젝트 스킬을 읽는다: 처음 열 때 신뢰하거나 grok --trust)",
     "  3. 개발자마다 한 번 프로젝트 루트에서 .agents/skills/impeccable/scripts/impeccable hooks on (스킬 호출로 켜지 않는다. Codex는 /hooks에서 신뢰 확인. Antigravity에서는 돌지 않고 Grok Build에서 도는지는 확인하지 않았다)",
     "  4. GLOSSARY.md와 docs/domain/project.md에 서비스 이름과 요약을 채운다",

@@ -4,6 +4,68 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 남은 위험 보완과 설치 실측 (2026-10-14)
+
+2026-10-13 절에서 남겨 둔 항목과 위험을 고치고, 새 Better-T-Stack 프로젝트에 설치해 실제로 돌렸다.
+
+- `resource clean`: 실행이 끝나면 guard가 만든 compiler cache의 소유 기록(`.prokit/resource-guard/compiler-*.json`)에 경로, dev/ino, 실행·자식 종료를 남긴다. CLI `clean`은 표준 경로(`apps/web/.next/cache/turbopack`, `apps/web/.next/dev/cache/turbopack`)이고 그때 만든 디렉터리이며 실행과 자식이 끝난 기록만 후보로 본다. `--apply`는 살아 있는 guard lock이나 실행 중인 Next(Next 16이 실행 중에만 두는 `.next/lock`·`.next/dev/lock`)가 있으면 exit 1로 거부한다. lock 안에서는 후보를 `.prokit/resource-guard/trash-*`로 옮기기만 하고 지우기는 lock 밖에서 한다. 그래서 지우다 끊겨도 lock이 남지 않고 다음 `clean`이 마저 지운다. 남은 기록은 모두 지운다. 잘못된 옵션은 exit 2다.
+- lock 회수와 창 닫기: guard가 SIGKILL로 죽거나 터미널을 닫으면(SIGHUP) lock이 남아, 다음 `pnpm dev`가 "이미 실행 중이거나 상태가 불명확하다"로 늘 exit 2였다(실측에서 찾음). 이제 SIGHUP을 받으면 자식 그룹을 끄고 lock을 푼다. lock은 내용을 다 쓴 임시 파일을 hard link로 올려 빈 lock이 보이는 순간이 없다. 죽은 lock은 `.recover` mutex를 잡은 동안 다시 확인하고 지운다. lock에는 부팅 시각과 자식 그룹을 적어, 재부팅 전 lock은 죽은 것으로, guard가 죽어도 자식 그룹이 살아 있으면 산 것으로 본다. 다른 사용자의 프로세스(EPERM)는 살아 있는 것으로 본다.
+- 정리와 실행의 경쟁: guard는 `clean.lock`을 잡은 살아 있는 정리가 있으면 실행을 시작하지 않고 exit 75로 끝난다(`resource-clean-running`). 실행 중 정리가 CLI 정리와 겹치면 실행을 실패시키지 않고 `resource-clean-skipped`만 남긴다. 사용자가 신호로 끄거나 시간 초과로 끈 명령은, 예산 초과로 끄는 중에 신호가 와도, 끝난 뒤 다시 실행하지 않는다. `--kind clean`은 받지 않는다. `export:html`은 guard가 막은 실행(exit 75)의 이유를 출력한다.
+- 측정 지연 중 statfs는 비동기로 시간 제한을 두어, 응답 없는 파일 시스템에서도 실행 감시와 신호 처리가 멈추지 않는다. `resources.roots`의 문자열 항목도 처리한다.
+- 측정 지연 중 여유 공간: 측정이 unknown이어도 statfs로 여유 공간을 읽어, 차단 한계 이하이면 block으로 본다. 실행 중에도 확인된 예산 초과로 멈춘다.
+- 보조 스크립트: `dev-cycle.mjs`는 `delegation.mjs`·`resource-guard.mjs`를 불러오지 못해도 돈다. 그 스크립트를 쓰는 명령만 exit 2로 실패하고 `secrets`·`table` 등은 그대로 동작한다.
+- `audit --packet`: 완료 판정이 막힐 때 packet 자체의 문제(실패한 명령 등)를 함께 보여 준다. context에 baseline이 없으면 문제 목록 대신 `TypeError`가 나던 것과, receipt 목록이 없으면 실패한 명령 검사를 건너뛰던 것을 고쳤다. CLI `close`는 packet을 받지 않는다(통과할 수 없는 경로였다).
+- `dev-cycle resource`: 옵션 오류나 이미 실행 중인 guard 같은 실행 오류가 exit 1(예산 초과)로 나갔다. `resource-guard.mjs`를 직접 부를 때처럼 exit 2로 맞췄다(실측에서 찾음).
+- 위임 인수(`delegation accept`): 라운드 중에는 대조표 `tasks/todo.md`가 늘 `--base` 이후 변경이라 검사 전에 막혔다. `--scope tasks/todo.md`를 함께 주도록 문서에 적었다(실측에서 찾음).
+- 이름: 템플릿 README 제목과 스킬 제목에 남은 옛 이름(BTS)을 프로킷으로 고쳤다. 생성기를 뜻하는 약자는 사용자가 읽는 문서·스킬·에이전트·설치 메시지에서 Better-T-Stack으로 풀어 썼다. 과거 검증 기록, 설계 문서, eval 입력은 당시 기록이라 그대로 뒀다.
+
+설치 실측(scratchpad, Better-T-Stack 3.44.3, Next.js 16.4.0, Node 24.21.0, pnpm 12.10.1, Podman 6.0.2):
+- 설치: `install.sh` exit 0, 프로젝트 스킬 50개, `dev`·`dev:web`·`build` guard 래퍼. 로컬 DB는 5432·5433이 사용 중이라 README의 `DB_PORT=5434` 방식으로 띄웠고 첫 마이그레이션 적용, `pnpm check`, `skills:check`, `agents:check`, `check-types`, `biome check .` 모두 exit 0.
+- 측정 시간: 파일 38,945개에서 빠른 측정 0.55~1.28초(pnpm 시작 포함), 전체 측정 약 0.5초.
+- `secrets`: `delegation.mjs`를 빼면 옛 판은 exit 1(`ERR_MODULE_NOT_FOUND`), 새 판은 exit 0. `resource-guard.mjs`에 문법 오류를 넣어도 `secrets`는 exit 0이고 `resource check`만 exit 2.
+- 위임 전후 대조: 배정 안 변경만 exit 0, 배정 밖 `README.md` 수정은 exit 1(`outside`), scope 없이 대조하면 변경 전체가 `outside`로 exit 1, 수행자 커밋은 `headChanged`로 exit 1, 항목을 지운 기준 파일과 없는 파일은 exit 2.
+- 라운드: LF·CRLF로 끝나는 증거 파일을 `evidence`가 받아들였고, `audit`·`close` exit 0. 옛 `delegation=required` 마커가 남은 라운드도 `close` exit 0. exit 1 검사를 담은 packet은 `audit --packet`이 "실패한 command를 완료 증거로 냈다"로 거부했다. `close --packet`은 exit 2. `delegation accept`에 실패하는 검사를 주면 Codex 리뷰 전에 `blocked`.
+- guard로 감싼 `pnpm dev`: 빠른 측정을 2초 간격·1ms 제한으로 바꿔 매번 unknown이 되게 한 채 30초 동안 요청 10번이 모두 200이었다. guard에 SIGINT를 보내자 자식 프로세스가 모두 끝나고 exit 75, 소유 기록은 실행·자식 종료로 바뀌었다. 실행 중 `clean --apply`는 후보 0개로 아무것도 지우지 않았다.
+- `resource clean`: 끈 뒤 dev 캐시 70MB, guard로 감싼 `pnpm build` 뒤 build 캐시 109MB를 후보로 잡아 `--apply`로 정리했다. 같은 상태에서 옛 판 `clean --apply`는 "검증된 compiler cache 소유권이 없다"로 0개였다. 정리한 뒤 `pnpm build` exit 0.
+- 컨테이너 저장소: Podman VM 디스크(논리 93GB, 할당 4.5GB)가 프로젝트와 같은 APFS Data 볼륨에 있어 여유 공간 검사에 반영된다. 컨테이너 이미지·볼륨 크기 자체는 재지 않는다.
+- lock 회수: 고치기 전에는 guard에 SIGHUP을 보내면 lock이 남고 `next dev`가 고아로 계속 돌았으며, 다음 `pnpm dev`가 exit 2였다. 고친 뒤 SIGHUP은 exit 75, 자식 종료, lock 해제였다. SIGKILL로 lock을 남겨도 다음 `pnpm dev`가 lock을 회수해 200으로 응답했다.
+- guard 밖 Next: `apps/web`에서 `next dev`를 직접 띄운 동안 `clean --apply`는 "실행 중인 Next dev·build가 있다"로 exit 1, 끈 뒤에는 build 캐시를 정리했다. 강제 종료로 소유 기록이 끊긴 dev 캐시(117MB)는 후보가 아니어서 남았다.
+- 상류 동작: Next 16.4 dev는 시작할 때 Better-T-Stack이 만든 `apps/web/AGENTS.md`의 관리 블록 제목(`#`)을 `##`로 다시 쓴다. 이 변경은 dev-cycle 케이스를 올리지 않았다.
+- 리뷰 반영 뒤 다시 잰 것: guard를 SIGKILL로 죽이고 고아가 된 `next dev`가 살아 있는 동안 같은 kind 실행은 exit 2(회수하지 않음), 고아를 끈 뒤에는 exit 0. guard 밖 `next build`가 도는 동안 `clean --apply`는 exit 1, 아무도 열지 않은 채 남은 `.next/lock`은 막지 않고 build 캐시를 정리했다(exit 0).
+
+리뷰: 첫 독립 리뷰(`oh-my-claudecode:code-reviewer`)는 MEDIUM 4·LOW 9건이었다. guard 밖 Next 실행, 끊긴 정리가 남긴 lock, dev-cycle 경로의 exit 코드, 정리와 실행의 경쟁, EPERM, 중복 기록, 시간 제한 없는 statfs, 재시도 범위, 문서 종료 코드, 쌓이는 기록, `--packet` 문서를 반영했다. 두 번째 리뷰는 직전 lock 회수(rename 후 되돌리기)가 동시 회수에서 상호 배제를 깨는 것을 재현했다(HIGH). 위 hard link 생성과 `.recover` 회수로 바꾸고, 6개 프로세스 × 15라운드 동시 회수 테스트를 더했다. 이 테스트는 직전 방식에서 네 번 중 세 번 실패하고 지금 방식에서 다섯 번 모두 통과했다. 같은 리뷰의 MEDIUM 3건(끄는 중 신호, 남은 build lock, 자식 그룹)과 LOW(정리 중 실행 실패, 다른 kind의 죽은 lock, 거부 때 휴지통, 재부팅 뒤 pid, `--kind clean`, 75 안내, nohup 문서)도 반영했다. 세 번째 리뷰는 guard 8개를 계속 SIGKILL하며 6,800번 넘게 돌린 부하 시험에서 겹친 실행 0번으로 상호 배제를 확인했다(COMMENT). 그 리뷰가 낸 시계 보정 오판(Linux·WSL은 `boot_id`로 비교), 회수 도중 죽어 남은 `.recover`(주인을 적고 `clean --apply`가 지움, 막힐 때 안내), lock 폴더 임시 파일 때문에 측정이 unknown이 되던 것(측정 중 사라진 파일은 건너뜀), hard link가 없는 파일 시스템의 빈 lock, lock을 만들 수 없을 때의 실제 원인 표시도 고쳤다. 마지막 검증(`oh-my-claudecode:verifier`)은 6개 항목 모두 PASS였고, 그때 나온 부팅 표시 종류가 섞인 경우(판단하지 않고 pid 확인에 맡김), `.recover` 임시 파일 찌꺼기, 회수 뒤 생성 오류 표시도 고쳤다.
+
+확인: 두 템플릿 `node --test` 291/291, `scripts/*.test.mjs` 105/105, `node scripts/doc-values.mjs --check` 통과, 공통 스크립트 두 템플릿 바이트 같음, Biome 형식 같음. 실측 뒤 로컬 DB 컨테이너·볼륨을 지우고 두 프로젝트의 project scope Claude 플러그인 8건을 해제했다.
+
+남은 한계:
+- 컨테이너 이미지·볼륨 크기는 재지 않는다. 같은 파일 시스템의 여유 공간으로만 반영된다.
+- 실행 뒤 측정이 unknown이면 성공한 명령도 exit 75다(사용자 결정, 실행 중에만 경고). 이번 실측에서 전체 측정은 약 0.5초였다.
+- guard가 자식을 띄운 뒤 그룹을 lock에 적기 전(1ms 안)에 죽으면 남은 자식을 회수 때 보지 못한다(코드에 shortcut으로 적음).
+- `clean.lock`과 그 `.recover`가 함께 죽은 채 남는 경우는 `clean`도 막혀 손으로 지워야 한다.
+- pid 네임스페이스가 다른 컨테이너 사이에서는 lock 생사를 알 수 없다.
+- 강제 종료로 소유 기록이 끊긴 캐시는 `clean`이 지우지 않는다.
+- skill-creator 행동 eval은 다시 돌리지 않았다. Supabase 로컬 스택은 띄우지 않았다.
+
+## 리뷰 지적 처리·위임 전후 대조 보완 (2026-10-13)
+
+pro-kit 규칙을 옮겨 간 다른 템플릿에서 보고한 결함을 임시 저장소에서 다시 재현하고 고쳤다.
+
+- ponytail 지적 처리: 설치판 `ponytail-review` 5.2.0은 정확성·보안을 Must fix로 분류한다. 그런데 `process-routing.md` 규칙 6에는 4.x 때의 "나열된 항목은 동작이 같음을 확인한 것만 반영" 문장이 남아 있어 보안 지적을 기각하는 근거가 됐다. 지적 처리를 정확성·보안, 테스트 누락, 기존 문제, 속도, 간결성으로 나눠 다시 썼다.
+- 위임 결과 검증: 검사가 exit 1로 끝난 패킷이 `complete`, `completionReady: true`로 통과했다. `checkReceipts`가 exit 0이 아닌 명령을 거부한다.
+- 위임 전후 대조: 절차는 작업 전후 snapshot을 요구했지만 둘을 비교하는 명령이 없었다. 그래서 Claude Code 흐름에서는 수행자의 배정 밖 변경을 확인할 수 없었다. `dev-cycle delegation diff`를 더했다(배정 밖 변경·커밋은 exit 1, 대조 불가는 exit 2).
+- 위임 라운드 옵션: `table --delegation`으로 연 라운드는 CLI로 닫을 수 없었다. 완료 판정이 메모리 안의 검증 함수를 요구하는데 `--context`는 JSON만 받는다. 이 옵션과 audit의 패킷 필수 검사를 뺐다. 옛 `delegation=required` 마커가 남은 라운드도 닫을 수 있다(사용자 결정).
+- 실행 중 측정 unknown: `resource run`으로 감싼 명령(새 설치의 `dev`·`dev:web`·`build`)은 실행 중 측정이 늦거나 실패하면 꺼졌다. 이제 실행 중에는 확인된 예산 초과만 끄고 unknown은 이벤트로 남긴다. 시작 전과 끝난 뒤 검사는 그대로 unknown을 막는다(사용자 결정). 설치된 프로젝트(파일 약 6.9만 개)에서 측정은 제한 시간보다 훨씬 짧게 끝났다.
+- 증거 입력: `echo`로 만든 파일처럼 끝에 줄바꿈이 있는 파일을 거부했다. 끝 줄바꿈 하나를 허용한다.
+- 공통 파일의 DB 문구: `prokit-verify`에 Neon 전용 문구가 있었고, `prokit-reviewer`에 RLS·`service_role` 항목이 없었다. DB에 중립적인 문구와 템플릿별 참조로 바꿨다.
+
+확인: 두 템플릿 `node --test` 284/284, `scripts/*.test.mjs` 105/105, `node scripts/doc-values.mjs --check` 통과. 독립 리뷰(`oh-my-claudecode:code-reviewer`)의 지적 7건(깨진 기준 파일의 exit 코드, 기준 파일 교체 확인, `--scope` 글롭 표기 등)을 반영했다. 두 번째 리뷰가 찾은 hash 미검증(내용만 고친 기준 파일이 통과)도 고쳐, diff가 기준 파일의 hash를 다시 계산한다. 세 묶음을 동시에 돌렸을 때 `resource-integration.test.mjs`의 reviewer child 테스트가 guard 차단으로 한 번 실패했다. 따로 세 번 돌리면 통과했다.
+
+재현했지만 이번에 고치지 않은 것(2026-10-14에 고침, 위 절):
+- `resource clean`은 CLI에서 소유권 정보를 받지 못해 늘 0개를 정리하고, `--apply`도 exit 0이다. 지우지 않는 쪽으로 실패한다.
+- `dev-cycle.mjs`가 `delegation.mjs`·`resource-guard.mjs`를 파일 머리에서 불러오므로 둘 중 하나가 없으면 `secrets`도 exit 1로 멈춘다. 비밀값을 찾았을 때와 같은 코드다.
+
+한계: 새 Better-T-Stack 프로젝트에 설치해 dev-cycle 라운드를 돌리거나 skill-creator 행동 eval을 다시 돌리지 않았다(설치 실측은 2026-10-14, 위 절).
+
 ## 프리셋 기본 모드·언어 규칙 (2026-10-10)
 
 앞으로 제작하는 프리셋에 시스템·라이트·다크와 한국어·영어를 기본으로 요구하는 규칙, 번역 사전·정적 HTML 제품 검증 참조를 추가했다. 검사와 native 계획 행동 평가, 실제 사이트 기능과 기존 공개 프리셋의 차이는 [프리셋 디자인 설정과 제작 기본 기능](../../docs/reports/2026-10-10-preset-design-controls/README.md)에 기록한다. 기존 프리셋을 전환 완료로 선언하지 않는다.

@@ -7,7 +7,7 @@ impeccable은 화면마다 모드를 고른다. 앱 화면(대시보드, 목록,
 | 단계 | 명령 | 산출물 | 주의 |
 |---|---|---|---|
 | 기획 | `init` (별칭 `teach`) | `PRODUCT.md` (Platform, Stack, Users, Purpose, Positioning, Brand Commitments, Principles, Accessibility) | 프로젝트당 1회. 이미 있으면 다시 만들지 않는다 |
-| 시각 방향 | 카탈로그: `use-design-md` → new-work. 직접: new-work → 마감에서 `document` | `DESIGN.md` (토큰 frontmatter + 섹션) | 카탈로그에서 고르면 받은 파일이 시각 세계다. impeccable은 이미 있는 `DESIGN.md`를 정해진 세계로 보고 세계를 다시 고르지 않는다(new-work 2·3절). 아래 "디자인 카탈로그에서 고르기"를 따른다. 직접 정하는 새 세계는 만든 뒤 마감에서 기록한다(new-work 5절). BTS는 기본 화면이 있으므로 seed 모드를 쓰지 않는다. 기존 화면을 넓히는 작업이면 `DESIGN.md`가 없어도 막지 않는다. 기존 `DESIGN.md`를 조용히 덮어쓰지 않는다 |
+| 시각 방향 | 카탈로그: `use-design-md` → new-work. 직접: new-work → 마감에서 `document` | `DESIGN.md` (토큰 frontmatter + 섹션) | 카탈로그에서 고르면 받은 파일이 시각 세계다. impeccable은 이미 있는 `DESIGN.md`를 정해진 세계로 보고 세계를 다시 고르지 않는다(new-work 2·3절). 아래 "디자인 카탈로그에서 고르기"를 따른다. 직접 정하는 새 세계는 만든 뒤 마감에서 기록한다(new-work 5절). Better-T-Stack은 기본 화면이 있으므로 seed 모드를 쓰지 않는다. 기존 화면을 넓히는 작업이면 `DESIGN.md`가 없어도 막지 않는다. 기존 `DESIGN.md`를 조용히 덮어쓰지 않는다 |
 | 설계 | `shape <기능>` | 사이트맵 `docs/briefs/site-map.md`와 확정된 브리프 `docs/briefs/<화면>.md` (코드 없음) | 사용자 확인 또는 한 번의 수정 뒤 멈춘다. 아래 "사이트맵과 상호작용"을 따른다 |
 | 시각 자산 | 서체 받기, comp-led면 `generate-image`로 comp와 plate | `apps/web/src/fonts/`, `apps/web/public/images/<화면>/`, `.impeccable/mocks/` | 아래 "시각 자산"을 따른다 |
 | 개발 | new-work, 필요 시 `layout`, `typeset`, `colorize`, `clarify`, `harden`, `onboard`, `adapt`, `animate`, 밋밋하면 `bolder` | 코드 | 편집 직전에 `reference/craft-floor.md`를 로드한다 |
@@ -21,7 +21,7 @@ impeccable은 화면마다 모드를 고른다. 앱 화면(대시보드, 목록,
 Claude Code에서는 `.agents/skills/impeccable/SKILL.md`를 Read로 읽고 그 절차대로 명령을 실행한다(예: `critique apps/web/src/app/todos`). Skill 도구로 부르면 개인 전역 impeccable이 먼저 뜰 수 있다(`CLAUDE.md`). Codex에서는 `$impeccable critique apps/web/src/app/todos`처럼 부른다. Antigravity와 Grok Build도 같은 `SKILL.md`를 읽고 그 절차대로 실행한다.
 
 ## 디자인 카탈로그에서 고르기
-`DESIGN.md`가 없고 화면이 아직 BTS 기본 화면뿐인 첫 새 작업, 또는 시각 세계를 바꾸는 리디자인에서 쓴다. 좁은 개선이나 이미 만든 화면을 넓히는 작업에서는 쓰지 않는다. 그때는 있는 `DESIGN.md`나 만든 화면을 따른다(impeccable: "Missing DESIGN.md alone does not make a project greenfield"). 카탈로그는 셋이다.
+`DESIGN.md`가 없고 화면이 아직 Better-T-Stack 기본 화면뿐인 첫 새 작업, 또는 시각 세계를 바꾸는 리디자인에서 쓴다. 좁은 개선이나 이미 만든 화면을 넓히는 작업에서는 쓰지 않는다. 그때는 있는 `DESIGN.md`나 만든 화면을 따른다(impeccable: "Missing DESIGN.md alone does not make a project greenfield"). 카탈로그는 셋이다.
 
 | 카탈로그 | 범위 | 후보 목록 | 원문 | 미리 보기 |
 |---|---|---|---|---|
