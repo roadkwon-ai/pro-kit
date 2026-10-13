@@ -12,13 +12,15 @@ import {
 	openSync,
 	readdirSync,
 	readFileSync,
+	readlinkSync,
 	realpathSync,
 	renameSync,
 	rmSync,
 	statfsSync,
+	utimesSync,
 	writeFileSync,
 } from "node:fs";
-import { statfs } from "node:fs/promises";
+import { lstat, readdir, statfs } from "node:fs/promises";
 import { arch, homedir, platform, release, tmpdir, uptime } from "node:os";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -106,7 +108,7 @@ export async function readPolicy(root) {
 	}
 }
 
-function classify(path, root, inherited) {
+function classify(path, root, inherited, entries) {
 	const parts = relative(root, path).split("\\").join("/").split("/");
 	const nextIndex = parts.lastIndexOf(".next");
 	if (nextIndex >= 0 && parts.slice(nextIndex + 1).includes("cache"))
@@ -115,7 +117,7 @@ function classify(path, root, inherited) {
 	if (parts.at(-1) === "node_modules") return "nodeModules";
 	if (parts.at(-2) === ".turbo" && parts.at(-1) === "cache")
 		return "buildCache";
-	if (existsSync(join(path, "pyvenv.cfg"))) return "pythonVenv";
+	if (entries.some((entry) => entry.name === "pyvenv.cfg")) return "pythonVenv";
 	if (parts.at(-2) === ".prokit" && parts.at(-1) === "resource-tmp")
 		return "managedTemp";
 	return inherited;
@@ -162,7 +164,11 @@ function rootDescriptor(input) {
 	return { path: input.path, kind: input.kind, lifetime };
 }
 
-function measureLocal({ roots, mode }) {
+// 컨테이너의 공유 폴더(virtiofs)처럼 호출마다 왕복이 긴 파일 시스템도 제한 시간 안에 재도록
+// 디렉터리 여러 개를 동시에 읽는다. 디렉터리와 링크는 readdir 형식으로 가려 파일만 lstat한다.
+const MEASURE_CONCURRENCY = 16;
+
+async function measureLocal({ roots, mode }) {
 	const result = emptyMeasurement(roots, mode);
 	const seenFiles = new Set();
 	const filesystems = new Set();
@@ -175,6 +181,7 @@ function measureLocal({ roots, mode }) {
 				leftWorkspace - rightWorkspace || right.path.length - left.path.length
 			);
 		});
+	// root는 차례로 잰다. 좁은 root를 먼저 재야 겹친 파일이 그 종류로 한 번만 세진다.
 	for (const descriptor of inputs) {
 		let root;
 		try {
@@ -198,49 +205,69 @@ function measureLocal({ roots, mode }) {
 		} catch {
 			result.unknown = true;
 		}
-		const visit = (
-			path,
-			inherited = descriptor.kind === "workspace"
-				? "residual"
-				: descriptor.kind,
-		) => {
+		const pending = [
+			[root, descriptor.kind === "workspace" ? "residual" : descriptor.kind],
+		];
+		const visit = async ([path, inherited]) => {
 			let entries;
 			try {
-				entries = readdirSync(path, { withFileTypes: true });
+				entries = await readdir(path, { withFileTypes: true });
 			} catch (error) {
 				// 측정 중에 사라진 디렉터리는 공간을 쓰지 않는다.
 				if (error.code !== "ENOENT") result.unknown = true;
 				return;
 			}
-			const current = classify(path, root, inherited);
-			for (const entry of entries) {
-				const child = join(path, entry.name);
-				let stat;
-				try {
-					stat = lstatSync(child);
-				} catch (error) {
-					if (error.code !== "ENOENT") result.unknown = true;
-					continue;
-				}
-				if (stat.isSymbolicLink()) {
-					result.categories.residual.symlinks += 1;
-					continue;
-				}
-				if (stat.isDirectory()) {
-					visit(child, current);
-					continue;
-				}
-				if (!stat.isFile()) continue;
-				const identity = `${stat.dev}:${stat.ino}`;
-				if (seenFiles.has(identity)) continue;
-				seenFiles.add(identity);
-				const bucket = result.categories[current];
-				bucket.logicalBytes += stat.size;
-				bucket.allocatedBytes += allocatedBytes(stat);
-				bucket.files += 1;
-			}
+			const current = classify(path, root, inherited, entries);
+			// 아주 큰 디렉터리도 한 번에 너무 많은 lstat을 걸지 않게 나눠 읽는다.
+			for (let start = 0; start < entries.length; start += 256)
+				await Promise.all(
+					entries.slice(start, start + 256).map(async (entry) => {
+						const child = join(path, entry.name);
+						if (entry.isSymbolicLink()) {
+							result.categories.residual.symlinks += 1;
+							return;
+						}
+						if (entry.isDirectory()) {
+							pending.push([child, current]);
+							return;
+						}
+						if (!entry.isFile()) return;
+						let stat;
+						try {
+							stat = await lstat(child);
+						} catch (error) {
+							if (error.code !== "ENOENT") result.unknown = true;
+							return;
+						}
+						if (!stat.isFile()) return;
+						const identity = `${stat.dev}:${stat.ino}`;
+						if (seenFiles.has(identity)) return;
+						seenFiles.add(identity);
+						const bucket = result.categories[current];
+						bucket.logicalBytes += stat.size;
+						bucket.allocatedBytes += allocatedBytes(stat);
+						bucket.files += 1;
+					}),
+				);
 		};
-		visit(root);
+		await new Promise((done) => {
+			let active = 0;
+			const pump = () => {
+				while (active < MEASURE_CONCURRENCY && pending.length > 0) {
+					active += 1;
+					visit(pending.pop())
+						.catch(() => {
+							result.unknown = true;
+						})
+						.finally(() => {
+							active -= 1;
+							pump();
+						});
+				}
+				if (active === 0) done();
+			};
+			pump();
+		});
 	}
 	return result;
 }
@@ -255,7 +282,7 @@ export async function measureResources({
 	if (scanRoots.length === 0) throw new Error("측정할 프로젝트 루트가 없다");
 	const policy = mergedPolicy();
 	const limit = timeoutMs ?? policy[mode]?.workerTimeoutMs;
-	if (!isMainThread) return measureLocal({ roots: scanRoots, mode });
+	if (!isMainThread) return await measureLocal({ roots: scanRoots, mode });
 	return await new Promise((resolveMeasurement) => {
 		const worker = new Worker(new URL(import.meta.url), {
 			// 엔트리 전용(--test, --input-type)과 런처 내부 플래그는 전달하지 않는다.
@@ -445,25 +472,181 @@ function processIsAlive(pid) {
 	}
 }
 
-// 재부팅 전에 남은 lock은 pid가 다시 쓰였어도 죽은 것으로 본다. Linux·WSL은 시계 보정에
-// 흔들리지 않는 boot_id를, 그 밖(macOS)은 부팅 시각(초, kern.boottime과 같다)을 쓴다.
+// 재부팅 전에 남은 lock은 pid가 다시 쓰였어도 죽은 것으로 본다. 시계를 바꿔도 그대로인 부팅
+// 표시를 쓴다: Linux·WSL은 boot_id, macOS는 kern.bootsessionuuid, 그 밖은 부팅 시각(초)이다.
+let currentBoot;
 function bootMark() {
+	if (currentBoot !== undefined) return currentBoot;
 	try {
-		return readFileSync("/proc/sys/kernel/random/boot_id", "utf8").trim();
+		currentBoot = readFileSync(
+			"/proc/sys/kernel/random/boot_id",
+			"utf8",
+		).trim();
 	} catch {
-		return Math.round(Date.now() / 1000 - uptime());
+		const session =
+			process.platform === "darwin"
+				? spawnSync("/usr/sbin/sysctl", ["-n", "kern.bootsessionuuid"], {
+						encoding: "utf8",
+						timeout: 5_000,
+					}).stdout?.trim()
+				: "";
+		currentBoot = session || Math.round(Date.now() / 1000 - uptime());
 	}
+	return currentBoot;
+}
+
+// lock 주인이 사는 환경. Linux(컨테이너 포함)는 pid 네임스페이스도 적는다. 컨테이너를 다시
+// 띄우면 끝난 네임스페이스의 번호가 다시 쓰이므로 그 네임스페이스 init(pid 1)의 시작 시각을 붙인다.
+let currentMark;
+function ownerMark() {
+	if (currentMark) return currentMark;
+	currentMark = { os: process.platform, boot: bootMark() };
+	try {
+		currentMark.ns = readlinkSync("/proc/self/ns/pid");
+		const init = readFileSync("/proc/1/stat", "utf8");
+		currentMark.ns += `@${init.slice(init.lastIndexOf(")") + 2).split(" ")[19]}`;
+	} catch {
+		// 네임스페이스를 읽지 못하면 있는 만큼만 적는다.
+	}
+	return currentMark;
+}
+
+// 다른 OS(macOS 호스트와 Linux 컨테이너)나 다른 pid 네임스페이스의 pid로는 생사를 알 수 없다.
+function foreignOwner(owner) {
+	const here = ownerMark();
+	if (owner.os !== undefined && owner.os !== here.os) return true;
+	// 재부팅(boot_id가 바뀜)했으면 그 전 네임스페이스의 프로세스도 모두 끝났다.
+	return owner.ns !== undefined && owner.ns !== here.ns && sameBoot(owner.boot);
 }
 
 function sameBoot(mark) {
 	if (mark === undefined) return true;
+	// 부팅 시각(초)만 적은 옛 형식은 부팅 시각으로 비교한다.
+	if (typeof mark === "number")
+		return Math.abs(mark - Math.round(Date.now() / 1000 - uptime())) <= 60;
+	// 이쪽이 부팅 ID를 읽지 못했으면 비교하지 않고 pid 확인에 맡긴다.
 	const now = bootMark();
-	// 종류가 다르면(boot_id를 한쪽만 읽음) 판단하지 않고 pid 확인에 맡긴다.
-	if (typeof mark !== typeof now) return true;
-	return typeof mark === "number" ? Math.abs(mark - now) <= 60 : mark === now;
+	return typeof now !== "string" || mark === now;
 }
 
-function lockOwnerAlive(owner) {
+// 다른 환경에서는 pid로 생사를 알 수 없어, lock 주인은 살아 있는 동안 따로 띄운 sh가 lock을
+// LEASE_MS마다 건드린다(lease). guard, 자식 그룹, 그 종류가 띄운 Next 중 하나라도 살아 있으면
+// 이어 간다. 그래서 guard만 멈추거나(Ctrl+Z) 강제 종료돼도 남은 자식이 lease를 지킨다. lock이
+// 다른 실행의 것으로 바뀌면(token) 멈춘다. pid가 없는 build lock은 연 프로세스(lsof -t)로 보고,
+// lsof가 없거나 -t를 모르면(BusyBox) 끝난 것으로 본다.
+const LEASE_MS = 2_000;
+const MAX_LEASE_MS = 10_000;
+const LEASE_SCRIPT = `alive() {
+	grep -q "\\"token\\":\\"$4\\"" "$2" 2>/dev/null || return 1
+	kill -0 "$1" 2>/dev/null && return 0
+	g=$(sed -n 's/.*"childPgid":\\([0-9][0-9]*\\).*/\\1/p' "$2" 2>/dev/null)
+	[ -n "$g" ] && kill -0 -"$g" 2>/dev/null && return 0
+	[ -n "$3" ] && [ -e "$3" ] || return 1
+	n=$(sed -n 's/.*"pid": *\\([0-9][0-9]*\\).*/\\1/p' "$3" 2>/dev/null)
+	if [ -n "$n" ]; then kill -0 "$n" 2>/dev/null; return; fi
+	o=$(lsof -t "$3" 2>/dev/null)
+	[ -n "$o" ] && [ -z "$(printf '%s' "$o" | tr -d '0-9\\n')" ]
+}
+while alive "$@"; do touch -c "$2"; sleep ${LEASE_MS / 1000}; done`;
+const leases = new Map();
+// 회수자가 잡고 있는 .recover. 다른 환경을 기다리는 동안 이것도 lease를 잇는다.
+const heldRecovers = new Set();
+const SLEEP = new Int32Array(new SharedArrayBuffer(4));
+
+function startLease(lock) {
+	if (process.platform === "win32") return;
+	const next = NEXT_LOCKS[lock.kind]
+		? join(lock.root, NEXT_LOCKS[lock.kind])
+		: "";
+	try {
+		const lease = spawn(
+			"/bin/sh",
+			[
+				"-c",
+				LEASE_SCRIPT,
+				"prokit-lease",
+				String(process.pid),
+				lock.path,
+				next,
+				lock.token,
+			],
+			{ detached: true, stdio: "ignore" },
+		);
+		lease.on("error", () => withdrawLease(lock));
+		lease.on("exit", () => withdrawLease(lock));
+		lease.unref();
+		leases.set(lock.token, lease);
+	} catch {
+		withdrawLease(lock);
+	}
+}
+
+// lease가 없거나 실행 중에 끝났으면 lock에서 lease를 지운다. 다른 환경은 그 lock을 확인할 수
+// 없는 것(산 것)으로 본다. 끝나는 lease를 그대로 두면 다른 환경이 살아 있는 lock을 회수한다.
+function withdrawLease(lock) {
+	if (activeLocks.get(`${lock.root}:${lock.kind}`) !== lock) return;
+	lock.lease = undefined;
+	try {
+		const { lease, ...saved } = JSON.parse(readFileSync(lock.path, "utf8"));
+		if (saved.token !== lock.token || lease === undefined) return;
+		const temp = `${lock.path}.new-${randomUUID()}`;
+		writeFileSync(temp, JSON.stringify(saved), { mode: 0o600 });
+		renameSync(temp, lock.path);
+	} catch {
+		// 이미 풀린 lock은 고칠 것이 없다.
+	}
+}
+
+function stopLease(lock) {
+	const lease = leases.get(lock.token);
+	leases.delete(lock.token);
+	if (!lease?.pid || lease.exitCode !== null || lease.signalCode !== null)
+		return;
+	try {
+		process.kill(-lease.pid, "SIGTERM");
+	} catch {
+		// 그사이 끝난 lease는 멈출 것이 없다.
+	}
+}
+
+function leaseMark(path) {
+	try {
+		const stat = lstatSync(path);
+		return `${stat.ino}:${stat.mtimeMs}`;
+	} catch {
+		return null;
+	}
+}
+
+// 다른 환경의 lock이 lease 간격의 세 배 동안 그대로면 그쪽 guard·자식·Next가 모두 끝난 것이다.
+// 시계를 비교하지 않고 이쪽에서 바뀌는지만 보므로 두 환경의 시계가 달라도 된다.
+function leaseExpired(path, owner) {
+	if (!Number.isInteger(owner.lease) || owner.lease <= 0) return false;
+	const before = leaseMark(path);
+	if (before === null) return true;
+	const total = Math.min(owner.lease, MAX_LEASE_MS) * 3;
+	process.stderr.write(
+		`다른 환경(컨테이너·다른 OS)의 lock이 이어지는지 ${Math.ceil(total / 1000)}초 동안 본다: ${path}\n`,
+	);
+	for (let waited = 0; waited < total; ) {
+		const step = Math.min(LEASE_MS, total - waited);
+		Atomics.wait(SLEEP, 0, 0, step);
+		waited += step;
+		const now = new Date();
+		for (const held of heldRecovers)
+			try {
+				utimesSync(held, now, now);
+			} catch {
+				// 그사이 사라진 .recover는 이을 것이 없다.
+			}
+	}
+	const after = leaseMark(path);
+	return after === null || after === before;
+}
+
+function lockOwnerAlive(owner, path) {
+	// 다른 환경의 주인은 lease로만 판단한다. lease가 없으면 확인할 수 없어 산 것으로 둔다.
+	if (foreignOwner(owner)) return !(path && leaseExpired(path, owner));
 	if (!sameBoot(owner.boot)) return false;
 	if (processIsAlive(owner.pid)) return true;
 	// guard가 강제 종료돼도 detached로 띄운 자식 그룹은 남아 있을 수 있다.
@@ -497,27 +680,39 @@ function createLock(path, owner) {
 
 // 죽은 guard(창 닫기·강제 종료)가 남긴 lock은 .recover mutex를 잡은 동안 다시 확인하고 지운다.
 // lock을 지우는 쪽은 회수자(mutex로 하나)와 살아 있는 주인뿐이라, 확인한 lock이 그대로 지워진다.
-// mutex에도 주인을 적어, 회수자가 그 안에서 죽으면 clean --apply가 지운다.
-// shortcut: guard가 자식을 띄운 뒤 그룹을 적기 전(1ms 안)에 죽으면 남은 자식을 못 본다.
-function removeStaleLock(path) {
+// 회수자가 그 안에서 죽어 남은 mutex는 한 단계 위 mutex(.recover.recover)로 같은 방식으로 회수한다.
+function removeStaleLock(path, depth = 0) {
 	const recover = `${path}.recover`;
+	// 회수자는 다른 환경을 기다리는 동안 .recover를 건드린다(leaseExpired). 다른 환경은 같은
+	// lease 기준으로 회수 도중 죽은 회수자를 알아본다.
+	const owner = {
+		pid: process.pid,
+		token: randomUUID(),
+		...ownerMark(),
+		...(process.platform === "win32" ? {} : { lease: LEASE_MS }),
+	};
 	try {
-		createLock(recover, {
-			pid: process.pid,
-			token: randomUUID(),
-			boot: bootMark(),
-		});
-	} catch {
-		return false;
+		createLock(recover, owner);
+	} catch (error) {
+		if (error.code !== "EEXIST" || depth >= 2) return false;
+		if (!removeStaleLock(recover, depth + 1)) return false;
+		try {
+			createLock(recover, owner);
+		} catch {
+			return false;
+		}
 	}
+	heldRecovers.add(recover);
 	try {
-		if (lockOwnerAlive(JSON.parse(readFileSync(path, "utf8")))) return false;
+		if (lockOwnerAlive(JSON.parse(readFileSync(path, "utf8")), path))
+			return false;
 		rmSync(path);
 		return true;
 	} catch (error) {
 		// 주인이 그사이 lock을 풀었다. 다시 만드는 쪽도 link라 배타적이다.
 		return error.code === "ENOENT";
 	} finally {
+		heldRecovers.delete(recover);
 		rmSync(recover, { force: true });
 	}
 }
@@ -534,13 +729,29 @@ function recordChildGroup(lock, pid) {
 	renameSync(temp, path);
 }
 
+// 끝난 주인의 lock은 이 자리에서 회수한다. 다른 환경의 남은 lock을 실행마다 기다리지 않는다.
 function liveLock(root, kind) {
+	const path = lockPath(root, kind);
 	try {
-		const owner = JSON.parse(readFileSync(lockPath(root, kind), "utf8"));
-		return owner.pid !== process.pid && lockOwnerAlive(owner);
+		if (JSON.parse(readFileSync(path, "utf8")).pid === process.pid)
+			return false;
 	} catch {
 		return false;
 	}
+	return !removeStaleLock(path) && existsSync(path);
+}
+
+function foreignHint(path) {
+	try {
+		const owner = JSON.parse(readFileSync(path, "utf8"));
+		if (foreignOwner(owner))
+			return Number.isInteger(owner.lease)
+				? ". 다른 환경(컨테이너·다른 OS)의 guard가 실행 중이다. 그쪽 실행이 끝난 뒤 다시 실행한다"
+				: `. 다른 환경(컨테이너·다른 OS)의 guard가 만든 lock이라 생사를 확인할 수 없다. 그쪽 실행이 끝났으면 ${path}을 지운다`;
+	} catch {
+		// 그사이 풀린 lock은 안내할 것이 없다.
+	}
+	return "";
 }
 
 function verifiedParentLock(safe, kind, parent) {
@@ -590,7 +801,8 @@ function acquireLock(root, kind, runId, parent) {
 		runId,
 		pid: process.pid,
 		token: randomUUID(),
-		boot: bootMark(),
+		...ownerMark(),
+		...(process.platform === "win32" ? {} : { lease: LEASE_MS }),
 	};
 	try {
 		createLock(path, owner);
@@ -600,7 +812,11 @@ function acquireLock(root, kind, runId, parent) {
 				`${kind} guard lock을 만들 수 없다: ${error.code ?? error.message}`,
 			);
 		let created = false;
-		if (removeStaleLock(path)) {
+		// turbo는 작업마다 process group을 따로 만들어, guard와 turbo가 함께 강제 종료되면
+		// Next가 자식 그룹 밖에 남는다. Next를 띄우는 종류는 그 Next가 끝난 뒤에만 회수한다.
+		const nextLeft =
+			NEXT_LOCKS[kind] && nextRunning(safe.path, [NEXT_LOCKS[kind]]);
+		if (!nextLeft && removeStaleLock(path)) {
 			try {
 				createLock(path, owner);
 				created = true;
@@ -615,14 +831,17 @@ function acquireLock(root, kind, runId, parent) {
 		if (!created)
 			throw new Error(
 				`${kind} guard가 이미 실행 중이거나 상태가 불명확하다${
-					existsSync(`${path}.recover`)
-						? ". 실행 중인 guard가 없으면 pnpm dev-cycle resource clean --apply로 남은 회수 기록을 지운다"
-						: ""
+					nextLeft
+						? `. Next가 아직 실행 중이다(${NEXT_LOCKS[kind]}). 그 Next를 끈 뒤 다시 실행한다`
+						: existsSync(`${path}.recover`)
+							? ". 실행 중인 guard가 없으면 pnpm dev-cycle resource clean --apply로 남은 회수 기록을 지운다"
+							: foreignHint(path)
 				}`,
 			);
 	}
 	const lock = { ...owner, path, references: 1 };
 	activeLocks.set(key, lock);
+	startLease(lock);
 	return lock;
 }
 
@@ -640,6 +859,7 @@ function releaseLock(lock) {
 	} catch {
 		// 이미 없어진 lock은 풀 것이 없다.
 	} finally {
+		stopLease(current);
 		activeLocks.delete(key);
 	}
 }
@@ -699,9 +919,18 @@ async function finishOwnedGroup(child, graceMs) {
 	return childGroupEnded(child);
 }
 
+// dev:web은 lock 이름에 ':'를 쓸 수 없어 dev-web으로 실행한다(install.mjs).
 const STANDARD_COMPILER_CACHES = {
 	build: ["apps/web/.next/cache/turbopack"],
 	dev: ["apps/web/.next/dev/cache/turbopack"],
+	"dev-web": ["apps/web/.next/dev/cache/turbopack"],
+};
+
+// 종류마다 그 실행이 띄우는 Next가 실행 중에 두는 lock(Next 16).
+const NEXT_LOCKS = {
+	build: "apps/web/.next/lock",
+	dev: "apps/web/.next/dev/lock",
+	"dev-web": "apps/web/.next/dev/lock",
 };
 
 function safeChildPath(root, relativePath) {
@@ -779,13 +1008,31 @@ function prepareCompilerCaches(root, kind, runId, options, events) {
 			ino: stat.ino,
 			leaseEnded: false,
 			childrenEnded: false,
+			// 강제 종료로 끝을 적지 못해도 clean이 guard와 자식 그룹의 생사로 판단한다.
+			pid: process.pid,
+			...ownerMark(),
 		};
 		mkdirSync(dirname(context.markerPath), { recursive: true });
-		writeFileSync(context.markerPath, JSON.stringify(context.marker));
+		writeMarker(context.markerPath, context.marker);
 		ownedCleanContexts.set(context.token, context);
 		contexts.push(context);
 	}
 	return contexts;
+}
+
+// 쓰다 끊겨 깨진 기록이 남지 않게 임시 파일을 다 쓴 뒤 바꾼다.
+function writeMarker(path, marker) {
+	const temp = `${path}.new-${randomUUID()}`;
+	writeFileSync(temp, JSON.stringify(marker));
+	renameSync(temp, path);
+}
+
+function recordCacheGroup(contexts, pid) {
+	if (!pid || process.platform === "win32") return;
+	for (const context of contexts) {
+		context.marker = { ...context.marker, childPgid: pid };
+		writeMarker(context.markerPath, context.marker);
+	}
 }
 
 function finishCompilerCaches(contexts, groupEnded) {
@@ -794,28 +1041,56 @@ function finishCompilerCaches(contexts, groupEnded) {
 		context.leaseEnded = true;
 		// 실행이 끝난 뒤의 CLI clean은 이 기록으로만 실행·자식 종료를 확인한다.
 		if (existsSync(context.markerPath))
-			writeFileSync(
-				context.markerPath,
-				JSON.stringify({
-					...context.marker,
-					leaseEnded: true,
-					childrenEnded: groupEnded,
-				}),
-			);
+			writeMarker(context.markerPath, {
+				...context.marker,
+				leaseEnded: true,
+				childrenEnded: groupEnded,
+			});
 	}
 }
 
 async function runChild(root, options, events, policy) {
 	return await new Promise((resolveRun, rejectRun) => {
-		const child = spawn(options.command, options.args, {
-			cwd: options.cwd ?? root,
-			env: { ...process.env, ...options.env },
-			stdio: options.captureOutput
-				? ["ignore", "pipe", "pipe"]
-				: (options.stdio ?? "inherit"),
-			detached: process.platform !== "win32",
-		});
-		options.onChildSpawn?.(child);
+		// 자식 그룹을 lock에 적은 뒤에만 명령을 시작한다. guard가 그 전에 죽으면 fd 3이
+		// 닫혀 명령은 시작하지 않고 끝나므로 회수자가 모르는 자식이 남지 않는다.
+		const gated = process.platform !== "win32";
+		const stdio = options.captureOutput
+			? ["ignore", "pipe", "pipe"]
+			: (options.stdio ?? "inherit");
+		const child = gated
+			? spawn(
+					"/bin/sh",
+					[
+						"-c",
+						'read -r _ <&3 || exit 1; exec 3<&-; exec "$@"',
+						"prokit-guard",
+						options.command,
+						...options.args,
+					],
+					{
+						cwd: options.cwd ?? root,
+						env: { ...process.env, ...options.env },
+						stdio: [
+							...(typeof stdio === "string" ? [stdio, stdio, stdio] : stdio),
+							"pipe",
+						],
+						detached: true,
+					},
+				)
+			: spawn(options.command, options.args, {
+					cwd: options.cwd ?? root,
+					env: { ...process.env, ...options.env },
+					stdio,
+				});
+		child.stdio[3]?.on("error", () => {});
+		try {
+			options.onChildSpawn?.(child);
+		} catch (error) {
+			// 그룹을 적지 못한 명령은 시작하지 않는다(fd 3이 닫혀 sh가 끝난다).
+			child.stdio[3]?.destroy();
+			throw error;
+		}
+		child.stdio[3]?.end("\n");
 		let stdout = Buffer.alloc(0);
 		let stderr = Buffer.alloc(0);
 		let interrupted = false;
@@ -937,6 +1212,38 @@ async function checkedResources(root, options) {
 	}
 }
 
+// 실행 뒤 전체 측정이 제한 시간 안에 끝나지 않으면 실행 전 전체 측정에 이 실행이 만든
+// compiler cache를 다시 재어 더하고, 여유 공간은 statfs로 다시 읽어 같은 기준으로 판정한다.
+// 이 실행이 다른 곳(이미 있던 캐시 포함)에 쓴 양은 빠지지만 여유 공간에는 드러나고, 다음
+// 실행 전 검사가 전체를 다시 잰다. 이것마저 못 재면 null(unknown 그대로)이다.
+async function estimatedAfter(root, before, targets, options, policy) {
+	if (!before?.measurement || before.measurement.unknown) return null;
+	// 명령이 지운 캐시(예: rm -rf .next)는 0이다.
+	const activeTargets = targets.filter((target) => existsSync(target.path));
+	let owned = null;
+	if (activeTargets.length > 0) {
+		owned = await measureResources({
+			roots: [root],
+			activeTargets,
+			mode: "fast",
+			timeoutMs: policy.fast.workerTimeoutMs,
+		});
+		if (owned.unknown) return null;
+	}
+	const roots = before.measurement.filesystems.map((fs) => fs.root);
+	const free = await minFreeBytes(roots, policy.fast.workerTimeoutMs);
+	if (roots.length === 0 || !Number.isFinite(free)) return null;
+	const measurement = structuredClone(before.measurement);
+	const cache = measurement.categories.buildCache;
+	const added = owned?.categories.buildCache ?? category();
+	cache.logicalBytes += added.logicalBytes;
+	cache.allocatedBytes += added.allocatedBytes;
+	cache.files += added.files;
+	measurement.filesystems = [{ root: roots[0], freeBytes: free }];
+	measurement.estimated = true;
+	return await checkedResources(root, { ...options, measurement });
+}
+
 export async function runGuarded(root, options = {}) {
 	const { command, args = [], kind = "run" } = options;
 	if (!command) throw new Error("실행할 command가 없다");
@@ -968,11 +1275,8 @@ export async function runGuarded(root, options = {}) {
 			: await readPolicy(root);
 		const temporaryHandle = options.temporaryHandle;
 		const bindTemporaryChild = (child) => {
-			try {
-				recordChildGroup(lock, child.pid);
-			} catch {
-				// 기록하지 못하면 회수자가 guard pid만 본다.
-			}
+			recordChildGroup(lock, child.pid);
+			recordCacheGroup(caches, child.pid);
 			// 호출자는 이 실행에서 실제 child가 시작됐는지만 관측한다.
 			options.onChildSpawn?.(child);
 			if (
@@ -1000,6 +1304,20 @@ export async function runGuarded(root, options = {}) {
 		};
 		let caches = prepareCompilerCaches(root, kind, runId, options, events);
 		const before = await checkedResources(root, inventoryOptions);
+		const afterRun = async (activeTargets) => {
+			const full = await checkedResources(root, inventoryOptions);
+			if (full.status !== "unknown") return full;
+			const estimate = await estimatedAfter(
+				root,
+				before,
+				activeTargets,
+				inventoryOptions,
+				policy,
+			);
+			if (!estimate || estimate.status === "unknown") return full;
+			events.push("after-inventory-estimated");
+			return estimate;
+		};
 		if (before.status === "block" || before.status === "unknown") {
 			finishCompilerCaches(caches, true);
 			for (const context of caches) await cleanOwned(context);
@@ -1027,7 +1345,7 @@ export async function runGuarded(root, options = {}) {
 		let result = await runChild(root, runningOptions, events, policy);
 		finishCompilerCaches(caches, result.groupEnded);
 		if (!result.groupEnded) events.push("child-group-active");
-		let after = await checkedResources(root, inventoryOptions);
+		let after = await afterRun(runningOptions.activeTargets);
 		if (after.status === "unknown") {
 			result.exitCode = 75;
 			return { ...result, events, before, after, runId };
@@ -1057,7 +1375,7 @@ export async function runGuarded(root, options = {}) {
 				result = await runChild(root, runningOptions, events, policy);
 				finishCompilerCaches(caches, result.groupEnded);
 				if (!result.groupEnded) events.push("child-group-active");
-				after = await checkedResources(root, inventoryOptions);
+				after = await afterRun(runningOptions.activeTargets);
 				if (
 					after.status === "unknown" ||
 					result.resourceExceeded ||
@@ -1109,14 +1427,17 @@ function ownedCompilerCache(root, context) {
 }
 
 // 끝난 guard 실행이 남긴 compiler cache는 디스크의 소유 기록으로 찾는다. 표준 경로이고
-// 그때 만든 디렉터리(dev/ino)이며 실행과 자식이 끝났다고 기록된 것만 후보다.
+// 그때 만든 디렉터리(dev/ino)이며 실행과 자식이 끝났다고 기록됐거나, 강제 종료로 기록이
+// 끊겼어도 guard와 자식 그룹이 모두 끝난 것만 후보다.
 function recordedCompilerCaches(safe) {
 	const dir = join(safe.path, ".prokit", "resource-guard");
 	const standard = new Set(Object.values(STANDARD_COMPILER_CACHES).flat());
 	const markers = [];
 	const candidates = new Set();
+	// 주인이 살아 있거나 확인할 수 없는(다른 환경) 기록은 지우지 않고 다음 clean이 다시 본다.
+	const keep = [];
 	if (!existsSync(dir))
-		return { markers, candidates: [], trash: [], leftovers: [] };
+		return { markers, candidates: [], keep, trash: [], leftovers: [] };
 	const names = readdirSync(dir);
 	for (const name of names) {
 		if (!/^compiler-.+\.json$/.test(name)) continue;
@@ -1126,14 +1447,29 @@ function recordedCompilerCaches(safe) {
 			const owner = JSON.parse(readFileSync(markerPath, "utf8"));
 			if (
 				owner.origin !== "resource-guard-compiler-cache" ||
-				owner.root !== safe.path ||
-				owner.rootDev !== safe.stat.dev ||
-				owner.rootIno !== safe.stat.ino ||
-				!standard.has(owner.path) ||
-				owner.leaseEnded !== true ||
-				owner.childrenEnded !== true
+				!standard.has(owner.path)
 			)
 				continue;
+			if (
+				owner.root !== safe.path ||
+				owner.rootDev !== safe.stat.dev ||
+				owner.rootIno !== safe.stat.ino
+			) {
+				// 다른 환경(마운트 경로·장치가 다르다)의 기록은 여기서 같은 디렉터리인지 확인할 수
+				// 없어 그 환경의 clean이 정리하게 남긴다.
+				if (foreignOwner(owner)) keep.push(markerPath);
+				continue;
+			}
+			const ended = owner.leaseEnded === true && owner.childrenEnded === true;
+			if (
+				!ended &&
+				Number.isInteger(owner.pid) &&
+				markerOwnerAlive(owner, dir)
+			) {
+				keep.push(markerPath);
+				continue;
+			}
+			if (!ended && !Number.isInteger(owner.pid)) continue;
 			const path = safeChildPath(safe.path, owner.path);
 			const stat = path && existsSync(path) ? lstatSync(path) : null;
 			if (
@@ -1152,18 +1488,34 @@ function recordedCompilerCaches(safe) {
 		.map((name) => join(dir, name));
 	const leftovers = names.filter(
 		(name) =>
-			name.includes(".lock.") &&
-			(name.endsWith(".recover") || name.includes(".new-")),
+			name.includes(".new-") ||
+			(name.includes(".lock.") && name.endsWith(".recover")),
 	);
-	return { markers, candidates: [...candidates], trash, leftovers };
+	return { markers, candidates: [...candidates], keep, trash, leftovers };
+}
+
+// 다른 환경의 기록은 lease를 잇는 lock으로만 판단한다. 같은 실행의 lock이 남아 있는 동안은
+// 산 것으로 두고, clean은 lease가 끊긴 lock을 먼저 회수하므로 그 뒤에는 정리 후보가 된다.
+function markerOwnerAlive(owner, dir) {
+	if (!foreignOwner(owner)) return lockOwnerAlive(owner);
+	return readdirSync(dir).some((name) => {
+		if (!name.endsWith(".lock")) return false;
+		try {
+			return (
+				JSON.parse(readFileSync(join(dir, name), "utf8")).runId === owner.runId
+			);
+		} catch {
+			return true;
+		}
+	});
 }
 
 // guard 밖에서 실행 중인 Next(dev·build)도 이 캐시를 쓴다. Next 16은 실행 중에
 // .next/lock(build)과 .next/dev/lock(dev, pid 포함)을 두고 끝나면 지운다.
 // 비정상 종료한 Next는 lock 파일을 남긴다. dev lock은 pid로, pid가 없는 build lock은
 // 파일을 연 프로세스(lsof)로 확인한다. lsof를 쓸 수 없으면 실행 중으로 본다.
-function nextRunning(root) {
-	for (const file of ["apps/web/.next/lock", "apps/web/.next/dev/lock"]) {
+function nextRunning(root, files = Object.values(NEXT_LOCKS)) {
+	for (const file of new Set(files)) {
 		const path = join(root, file);
 		if (!existsSync(path)) continue;
 		let pid;
@@ -1201,27 +1553,39 @@ async function cleanRecordedCaches(root, apply) {
 	});
 	const dir = join(safe.path, ".prokit", "resource-guard");
 	const moveToTrash = () => {
-		// 회수 도중 죽은 guard가 남긴 .recover와 오래된 lock 임시 파일은 아무도 바꾸지 않는다.
+		// 회수 도중 죽은 guard가 남긴 .recover는 guard와 같은 회수 절차로 지우고, 오래된 lock
+		// 임시 파일은 아무도 바꾸지 않으니 바로 지운다.
 		for (const name of recordedCompilerCaches(safe).leftovers) {
 			const file = join(dir, name);
 			try {
-				if (name.endsWith(".recover")) {
-					if (!lockOwnerAlive(JSON.parse(readFileSync(file, "utf8"))))
-						rmSync(file);
-				} else if (Date.now() - lstatSync(file).mtimeMs > 60_000) rmSync(file);
+				if (name.endsWith(".recover")) removeStaleLock(file);
+				else if (Date.now() - lstatSync(file).mtimeMs > 60_000) rmSync(file);
 			} catch {
 				// 읽을 수 없거나 그사이 사라진 파일은 그대로 둔다.
 			}
 		}
 		for (const name of readdirSync(dir)) {
 			if (!name.endsWith(".lock") || name === "clean.lock") continue;
+			const file = join(dir, name);
 			let owner;
 			try {
-				owner = JSON.parse(readFileSync(join(dir, name), "utf8"));
+				owner = JSON.parse(readFileSync(file, "utf8"));
 			} catch {
 				return refuse("guard 소유권을 읽을 수 없다");
 			}
-			if (lockOwnerAlive(owner)) return refuse("실행 중인 guard가 있다");
+			if (!foreignOwner(owner)) {
+				if (lockOwnerAlive(owner)) return refuse("실행 중인 guard가 있다");
+				continue;
+			}
+			// lease가 끊긴 다른 환경의 lock은 회수해 두어 그 실행의 기록을 정리 후보로 만든다.
+			if (removeStaleLock(file) || !existsSync(file)) continue;
+			return refuse(
+				existsSync(`${file}.recover`)
+					? `${name}을 회수하는 중이거나 회수 기록(${name}.recover)이 남아 있다. 잠시 뒤 다시 실행한다`
+					: Number.isInteger(owner.lease)
+						? `다른 환경(컨테이너·다른 OS)의 guard가 실행 중이다(${name})`
+						: `다른 환경(컨테이너·다른 OS)의 guard가 만든 ${name}이 있다. 그쪽 실행이 끝났으면 지운 뒤 다시 실행한다`,
+			);
 		}
 		if (nextRunning(safe.path))
 			return refuse("실행 중인 Next dev·build가 있다. 끈 뒤 다시 실행한다");
@@ -1235,7 +1599,8 @@ async function cleanRecordedCaches(root, apply) {
 			}
 		}
 		// 살아 있는 guard가 없으니 남은 기록(실행이 끊긴 것, 옛 형식)은 더 쓸 데가 없다.
-		for (const marker of found.markers) rmSync(marker, { force: true });
+		for (const marker of found.markers)
+			if (!found.keep.includes(marker)) rmSync(marker, { force: true });
 		return { applied: true, candidates: found.candidates };
 	};
 	// lock 안에서는 옮기기만 한다. 지우다 끊겨도 lock이 남지 않고 다음 clean이 마저 지운다.
@@ -1290,7 +1655,7 @@ export async function cleanResources(root, options = {}) {
 			}
 			if (name !== `${options.guardLock?.kind}.lock`) {
 				// CLI clean과 같은 기준: 죽은 guard가 남긴 다른 종류의 lock은 막지 않는다.
-				if (lockOwnerAlive(owner))
+				if (lockOwnerAlive(owner, join(locks, name)))
 					return {
 						applied: false,
 						candidates,
@@ -1453,11 +1818,51 @@ export async function disposeManagedTemporary(handle, options = {}) {
 	}
 }
 
+const DECIMAL_UNITS = { "": 1, k: 1e3, K: 1e3, M: 1e6, G: 1e9, T: 1e12 };
+
+// 컨테이너 이미지·볼륨은 엔진이 관리하므로 지우지 않고 엔진이 보고한 크기만 보여 준다.
+// podman은 바이트(RawSize)를, docker는 십진 단위 글("1.2GB")을 준다.
+function containerStorage() {
+	const bytes = (raw, text) => {
+		if (Number.isFinite(raw)) return raw;
+		const [, value, unit] = /^([\d.]+)\s*([kKMGT]?)B/.exec(text ?? "") ?? [];
+		return value === undefined
+			? null
+			: Math.round(Number(value) * DECIMAL_UNITS[unit]);
+	};
+	for (const engine of ["podman", "docker"]) {
+		const df = spawnSync(engine, ["system", "df", "--format", "json"], {
+			encoding: "utf8",
+			timeout: 10_000,
+		});
+		// 응답하지 않는 엔진은 기다리지 않는다(docker가 podman 별칭이면 또 멈춘다).
+		if (df.error?.code === "ETIMEDOUT") return null;
+		if (df.error || df.status !== 0) continue;
+		try {
+			const text = df.stdout.trim();
+			const rows = text.startsWith("[")
+				? JSON.parse(text)
+				: text.split("\n").map((line) => JSON.parse(line));
+			return {
+				engine,
+				types: rows.map((row) => ({
+					type: row.Type,
+					bytes: bytes(row.RawSize, row.Size),
+					reclaimableBytes: bytes(row.RawReclaimable, row.Reclaimable),
+				})),
+			};
+		} catch {
+			// 형식을 모르는 엔진 출력은 다음 엔진으로 넘어간다.
+		}
+	}
+	return null;
+}
+
 export async function main(argv = process.argv.slice(2), root = process.cwd()) {
 	const [command = "check", ...args] = argv;
 	if (command === "check") {
 		const result = await checkResources(root);
-		console.log(JSON.stringify(result));
+		console.log(JSON.stringify({ ...result, containers: containerStorage() }));
 		return result.status === "ok" || result.status === "warn"
 			? 0
 			: result.status === "block"
@@ -1498,7 +1903,7 @@ export async function main(argv = process.argv.slice(2), root = process.cwd()) {
 }
 
 if (!isMainThread && workerData?.resourceGuardMeasure) {
-	parentPort.postMessage(measureLocal(workerData));
+	measureLocal(workerData).then((result) => parentPort.postMessage(result));
 } else if (
 	isMainThread &&
 	process.argv[1] &&

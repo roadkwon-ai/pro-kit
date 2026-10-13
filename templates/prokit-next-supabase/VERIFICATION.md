@@ -2,7 +2,27 @@
 
 > 기록 속 vX.Y.Z와 커밋 해시는 공개 전 비공개 이력(2026-10-08 공개 때 이력을 새로 시작)의 것이다.
 
-템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 모든 값은 2026-09-27에 측정한 실측값이다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [bts-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
+템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 모든 값은 2026-09-27에 측정한 실측값이다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
+
+## 남은 한계 재검토: lease·실행 뒤 추정·부팅 ID·측정 속도 (2026-10-14)
+
+공통 스크립트(`resource-guard.mjs`)만 바뀌었다. 보완 내용, 컨테이너와 호스트 사이 실측, 리뷰, 남은 한계는 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#남은-한계-재검토-lease실행-뒤-추정부팅-id측정-속도-2026-10-14)에 있다. 이 템플릿의 테스트도 같은 판으로 다시 돌렸다.
+
+## 남은 한계 보완과 Supabase 로컬 스택 실측 (2026-10-14)
+
+공통 스크립트의 보완 내용, 실측 결과, 행동 eval, 리뷰는 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#남은-한계-보완과-supabase-로컬-스택-실측-2026-10-14)에 있다. 실측은 이 템플릿으로 만든 프로젝트에서 Supabase 로컬 스택을 띄워 했다.
+
+이 템플릿에서 확인한 것:
+- 로컬 스택:
+  - README의 `supabase init`, `project_id` 변경, `supabase start -x …`(DB만)가 67초에 끝났다.
+  - `-x`로 DB만 띄워도 Supabase CLI 2.120.0은 gotrue·realtime·storage-api 이미지까지 받는다. postgres를 합쳐 약 2.7GB다.
+  - `resource check`의 `containers`에 이 크기가 나타났다.
+- RLS 함정:
+  - drizzle-kit이 만든 `enable_rls_auth` 파일은 끝 줄바꿈 없는 주석 한 줄이다. 네 줄을 `>>`로 덧붙이면 첫 `ALTER TABLE "user"`가 주석에 붙어 실행되지 않는다.
+  - advisors가 `rls_disabled_in_public`(`public.user`)로 잡았다. `prokit-db`에 주석 다음 줄부터 쓰라고 적었다.
+  - 고친 뒤 `supabase db reset --local`, `db:migrate`를 거쳐 advisors `No issues found`.
+- 앱: guard로 감싼 `pnpm dev:web`에서 회원 가입과 로그인이 200이었다. 앱은 테이블 소유자로 접속하므로 RLS가 켜져 있어도 저장된다.
+- 정리: `supabase stop --no-backup`으로 컨테이너와 볼륨을 지우고, 받은 이미지를 지워 이미지 목록과 볼륨 수를 시작 전과 같게 했다. project scope Claude 플러그인 4건을 해제했다.
 
 ## 남은 위험 보완과 설치 실측 (2026-10-14)
 

@@ -41,9 +41,9 @@
 
 | 명령 | 하는 일 |
 |---|---|
-| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고해요. 정상·경고는 exit 0, 예산 초과는 exit 1(측정이 불완전해도 여유 공간이 차단 한계 이하면 1), 측정 불완전은 exit 2예요 |
-| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행해요. 실행 중에는 예산 초과일 때만 멈추고, 측정이 늦거나 실패하면 기록만 해요(여유 공간은 측정이 늦어도 따로 확인해요). 자원 차단·측정 불완전·정리 중이면 exit 75이고, 실행했다면 자식 명령의 종료 코드를 그대로 돌려줘요 |
-| `pnpm dev-cycle resource clean [--apply]` | 끝난 guard 실행이 만든 compiler cache(Turbopack) 가운데 소유 기록·같은 디렉터리·실행과 자식 종료가 확인된 것만 후보로 보여 줘요. `--apply`는 실행 중인 guard나 Next dev·build가 없을 때만 지우고, 거부하면 exit 1이에요 |
+| `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고해요. 컨테이너 엔진(Podman·Docker)이 보고한 이미지·컨테이너·볼륨 크기도 `containers`로 보여 줘요(예산에 넣지 않고 지우지 않아요). 정상·경고는 exit 0, 예산 초과는 exit 1(측정이 불완전해도 여유 공간이 차단 한계 이하면 1), 측정 불완전은 exit 2예요 |
+| `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행해요. 실행 중에는 예산 초과일 때만 멈추고, 측정이 늦거나 실패하면 기록만 해요(여유 공간은 측정이 늦어도 따로 확인해요). 실행 뒤 전체 측정이 끝나지 않으면 실행 전 측정에 이번 캐시와 여유 공간을 다시 재서 판정해요. 자원 차단·측정 불완전·정리 중이면 exit 75이고, 실행했다면 자식 명령의 종료 코드를 그대로 돌려줘요(명령을 찾지 못하면 127이에요) |
+| `pnpm dev-cycle resource clean [--apply]` | 끝난 guard 실행이 만든 compiler cache(Turbopack) 가운데 소유 기록·같은 디렉터리·실행과 자식 종료가 확인된 것만 후보로 보여 줘요(강제 종료로 종료를 적지 못한 기록은 guard와 자식 그룹이 모두 끝났는지로 확인해요). `--apply`는 실행 중인 guard나 Next dev·build가 없을 때만 지우고(다른 환경 guard는 lease로 판단해요), 거부하면 exit 1이에요 |
 | `pnpm dev-cycle delegation capture` | 위임 전 작업 트리의 기준 스냅샷을 JSON으로 남겨요 |
 | `pnpm dev-cycle delegation diff <기준 파일> [--scope <글롭>]` | 기준 스냅샷 뒤의 변경을 보여 주고, 배정한 글롭(`apps/web/src/**`) 밖 변경이나 커밋이 있으면 exit 1로 알려요. git이 무시하는 파일은 대조하지 않아요. 리뷰·QA처럼 파일을 바꾸면 안 되는 단계는 `--scope` 없이 써요. 기준 파일을 읽을 수 없으면 exit 2예요 |
 | `pnpm dev-cycle delegation resolve <스킬 참조 또는 상대 경로>` | 실제 스킬 원본의 위치·내용 해시를 관찰해요. 신뢰한 inspection과 실제 host adapter가 계약을 현재 실행에 묶지 못하면 inspection-only로 보고하고 exit 1로 막아요 |

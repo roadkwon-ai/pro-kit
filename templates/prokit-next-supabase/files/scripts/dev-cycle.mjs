@@ -406,7 +406,7 @@ export function writeTable(
 		case: key,
 		base,
 		auth: cls.auth || Boolean(active?.meta.auth),
-		opened: active?.meta.opened ?? now.toISOString().slice(0, 10),
+		opened: active?.meta.opened ?? archiveDay(now),
 		title: title ?? active?.title ?? "제목 없음",
 	};
 	const block = renderBlock(meta, rows, upgrade ? extra : []);
@@ -691,7 +691,7 @@ export function status(root, config) {
 	};
 }
 
-// 아카이브 날짜는 릴리스 노트와 같은 한국 시간으로 쓴다.
+// 라운드를 연 날과 아카이브 날짜는 릴리스 노트와 같은 한국 시간으로 쓴다.
 const archiveDay = (now) =>
 	new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(now);
 

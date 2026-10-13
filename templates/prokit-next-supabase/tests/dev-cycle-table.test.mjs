@@ -34,6 +34,14 @@ test("evidence setter는 지정 행의 증거 셀만 바꾸고 단계·메모·�
 	assert.ok(!audit(root, config).problems.some((problem) => problem.startsWith("#1 ")));
 });
 
+test("라운드를 연 날은 한국 시간으로 적는다", () => {
+	const { root } = makeRepo();
+	const config = loadConfig(root);
+	// UTC로는 10월 13일, 한국 시간으로는 10월 14일 새벽이다.
+	writeTable(root, config, "A", { write: true, title: "날짜", now: new Date("2026-10-13T17:30:00Z") });
+	assert.match(readFileSync(join(root, config.todoPath), "utf8"), /opened=2026-10-14 -->/);
+});
+
 test("evidence setter는 활성 라운드·실제 행 번호·한 줄 안전 입력을 요구한다", () => {
 	const { root, write } = makeRepo();
 	const config = loadConfig(root);

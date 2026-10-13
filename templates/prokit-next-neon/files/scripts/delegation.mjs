@@ -1035,7 +1035,11 @@ export function main(argv = process.argv.slice(2), root = process.cwd()) {
 		console.log(JSON.stringify(captureSnapshot(root), null, 2));
 		return 0;
 	}
-	if (argv[0] === "diff" && safePath(argv[1])) {
+	// 에이전트는 절대 경로를 자주 준다. 프로젝트 안이면 상대 경로로 받는다.
+	const beforeArg = argv[1]?.startsWith("/")
+		? relative(root, argv[1])
+		: argv[1];
+	if (argv[0] === "diff" && safePath(beforeArg)) {
 		// scope가 없으면 어떤 변경도 허용하지 않는다(리뷰·QA 전후 대조).
 		const scopes = [];
 		for (let index = 2; index < argv.length; index += 2) {
@@ -1050,7 +1054,7 @@ export function main(argv = process.argv.slice(2), root = process.cwd()) {
 		let beforePath;
 		let before;
 		try {
-			beforePath = realpathSync(resolve(root, argv[1]));
+			beforePath = realpathSync(resolve(root, beforeArg));
 			before = JSON.parse(readFileSync(beforePath, "utf8"));
 		} catch (error) {
 			console.error(`기준 snapshot을 읽을 수 없다: ${error.message}`);

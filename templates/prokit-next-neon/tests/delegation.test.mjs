@@ -461,6 +461,10 @@ test("diff CLI는 기준 snapshot 뒤 배정 밖 변경·커밋을 exit 1로, �
 			write("broken.json", broken);
 			assert.equal(diff("broken.json").code, 2, broken);
 		}
+		// 프로젝트 안 기준 파일은 절대 경로로 줘도 받고, 밖이면 거부한다.
+		assert.equal(diff(join(root, "before.json"), "--scope", "**").code, 1);
+		assert.equal(diff(join(root, "..", "before.json")).code, 2);
+		assert.equal(diff("/etc/hosts").code, 2);
 		assert.equal(diff("before.json", "--scope", "../x").code, 2);
 		assert.equal(diff("before.json", "--scope").code, 2);
 	} finally {

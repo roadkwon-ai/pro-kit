@@ -62,7 +62,7 @@
 | `policy.resource.fastTimeout` | 30초 | 빠른 점검 주기 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `policy.resource.fastWorkerTimeout` | 10초 | 빠른 점검이 부르는 별도 bounded worker 측정 예산 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `policy.resource.fullTimeout` | 5분 | 전체 inventory 점검 주기 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `policy.resource.fullWorkerTimeout` | 30초 | 전체 inventory 점검이 부르는 별도 bounded worker 측정 예산 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `policy.resource.fullWorkerTimeout` | 30초 | 전체 inventory 점검이 부르는 별도 bounded worker 측정 예산 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 3 |
 | `meta.presetModel` | Opus 5.5 | 프리셋을 만든 모델 | doc-values.json meta.presetModel | `doc-values.json`을 고친다 | 4 |
 | `gloss.presetPack` | 만들 서비스의 화면 구성, 디자인, 예시 데이터, 그림을 묶어 둔 폴더 | 용어 "프리셋 팩"의 짧은 풀이(본문에서 용어 링크 뒤 괄호에 쓴다). 용어집 tutorials/reference/glossary.md도 이 값을 쓴다 | doc-values.json gloss.presetPack | `doc-values.json`을 고친다 | 1 |
 | `gloss.clonePack` | 만들 서비스의 화면 구성, 기능 규칙, 디자인 노트, 예시 데이터, 그림을 묶어 둔 폴더 | 클론 튜토리얼(Nextflix, Claudle) 팩의 풀이(features.md·design-notes.md가 든다). 화면 프리셋 팩 9개에는 없으니 용어집은 gloss.presetPack을 쓴다 | doc-values.json gloss.clonePack | `doc-values.json`을 고친다 | 19 |

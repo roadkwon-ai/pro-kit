@@ -46,7 +46,7 @@ description: >-
   ```bash
   pnpm --filter @<프로젝트>/db exec drizzle-kit generate --custom --name=enable_rls_auth
   ```
-  생성된 빈 SQL 파일에 다음을 쓴다.
+  생성된 SQL 파일에는 끝 줄바꿈이 없는 주석 한 줄만 있다. 그 다음 줄부터 다음을 쓴다(`>>`로 바로 덧붙이면 첫 문장이 주석 줄에 붙어 실행되지 않고, advisors가 `user` 테이블의 RLS 꺼짐으로 알린다).
   ```sql
   ALTER TABLE "user" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
   ALTER TABLE "session" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
