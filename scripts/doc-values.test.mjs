@@ -485,6 +485,15 @@ test("THIRD_PARTY_NOTICES.md의 외부 source 목록이 두 템플릿 manifest�
   assert.deepEqual(listed.map(([a]) => a), manifestSources().sources);
 });
 
+test("저장소 루트에는 관리용 문서 스킬(prokit-docs·prokit-writing)만 추적한다", () => {
+  const allowed = ["prokit-docs", "prokit-writing"];
+  const tracked = spawnSync("git", ["ls-files", ".agents", ".claude/skills", ".claude/agents", ".codex"], { cwd: ROOT, encoding: "utf8" }).stdout;
+  const names = [...new Set(tracked.split("\n").filter(Boolean).map((f) => f.split("/").slice(0, 3).join("/")))];
+  const extra = names.filter((n) => !allowed.some((s) => n === `.agents/skills/${s}` || n === `.claude/skills/${s}`));
+  assert.deepEqual(extra, [], "외부 스킬·제작 스킬·역할은 검증이 끝나면 지운다(AGENTS.md 템플릿 수정 규칙)");
+  assert.deepEqual(Object.keys(JSON.parse(read("skills-lock.json")).skills).sort(), allowed);
+});
+
 test("handbook/skills/official-skills.md 표의 스킬과 출처 열이 manifest의 source와 같다", () => {
   const { map } = manifestSources();
   const rows = [...read("handbook/skills/official-skills.md").matchAll(/^\| ([^|]+) \| ((?:`[\w-]+`(?:, )?)+) \| ([\w./-]+(?:, [\w./-]+)*) \| /gm)];

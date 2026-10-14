@@ -61,21 +61,6 @@
 
 Claude marketplace 플러그인·OMX/gstack·CLI 등 별도 도구와 실행 패키지의 조건도 각각 구분한다. 실제 설치 대상은 manifest의 `claude`·`global` 및 선택 그룹에 있으며, 이 문서는 전체 설치본·전이 의존성에 대한 완전한 권리 감사를 주장하지 않는다.
 
-## 이 저장소에 실제로 포함된 Neon 자료
-
-설치 목록과 별도로 저장소 루트에는 아래 Neon 원문 사본 32파일이 포함되어 있다. 이 부분에는 프로킷 MIT가 아닌 Apache 2.0 조건을 유지한다.
-
-- 경로: `.agents/skills/neon-postgres/**`, `.claude/skills/neon/**`, `.claude/skills/neon-*/**`.
-- 원본: [neondatabase/agent-skills](https://github.com/neondatabase/agent-skills).
-- 원본의 Apache 2.0 전문: [licenses/neon-agent-skills/LICENSE](licenses/neon-agent-skills/LICENSE). 원래 전문을 수정하지 않고 보존한다.
-- 30파일은 원본 `9e4a5705922fddb540c396111a7979e0dca79cc2`의 해당 경로와 바이트가 일치한다.
-- `.claude/skills/neon/SKILL.md`는 원본 `b4016a34956ed782ce23f3c003ac9bf2a75b8d35`와 바이트가 일치한다.
-- `.claude/skills/neon-functions/SKILL.md`는 원본 `b870d743a35dbe943d6d6f73711930aa58db727c`와 바이트가 일치한다.
-- 위 세 원본 판의 LICENSE는 동일한 Apache 2.0 전문이다. 해당 재귀 파일 트리에서 별도 NOTICE 파일을 발견하지 못했다. 차이가 있던 두 파일은 위 원본 판과의 일치로 확인했으며 프로킷 자체 수정으로 표시하지 않는다.
-- 원본 파일의 출처·기존 고지를 유지한다. 이후 원문을 수정하여 배포하면 해당 파일에 변경 사실을 명확히 표시하고 관련 고지를 보존한다.
-
-이 자료의 원래 저작권·기여자 권리는 원저작권자에게 있다. LICENSE 전문의 예시 저작권 칸을 프로킷 권리자로 채우거나 외부 원본의 권리를 프로킷 소유로 표시하지 않는다.
-
 ## 사용자 작성 코드와 프리셋 팩
 
 프로킷을 개발 보조로 사용했다는 이유만으로 사용자 독자 작성 코드나 Better-T-Stack 생성 코드 전체의 저작권이 프로킷에 이전되거나 MIT로 바뀌지 않는다. 템플릿이 복사한 경로는 생성 프로젝트의 `licenses/PROKIT-SCOPE.md`로 구분한다. 그 경로 안의 제3자 원본은 원래 조건이 우선한다.

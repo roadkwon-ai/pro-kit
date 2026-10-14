@@ -77,6 +77,7 @@
 - `files/` 아래 `.mjs`·`.json`은 Better-T-Stack `biome.json` 형식(탭 들여쓰기, 한 줄 80자)으로 둔다. 설치기가 복사한 뒤 Biome로 포맷하므로, 형식이 다르면 설치한 프로젝트와 늘 달라져 `--diff`가 포맷 차이로 가득 찬다. 고친 파일은 Better-T-Stack 프로젝트에서 `pnpm exec biome check --write <파일>`로 맞춘 뒤 가져온다.
 - `install.mjs`나 `scripts/skills-setup.mjs`를 바꾸면 테스트와 별도로 실제 Better-T-Stack 프로젝트에 설치해 확인한다. 이 확인용 프로젝트는 scratchpad나 임시 디렉터리에 만든다.
 - 확인용 설치도 그 경로에 project scope Claude 플러그인을 등록한다. 확인이 끝나면 그 디렉터리에서 `claude plugin uninstall <플러그인> --scope project`로 지운다. 띄운 DB 컨테이너도 정리한다.
+- 이 저장소 루트의 `.agents/skills`·`.claude/skills`와 `skills-lock.json`에는 관리용 문서 스킬 `prokit-docs`·`prokit-writing`만 둔다. 공식·외부 스킬은 템플릿으로 만든 프로젝트에, 프리셋 제작 스킬과 역할은 담당 저장소에 설치한다. 이 저장소에서 테스트·검증에 필요하면 잠시 설치하고, 끝나면 스킬 폴더와 `skills-lock.json` 항목을 지워 원래 상태로 돌린다.
 - 새 프로젝트는 설치하는 시점의 최신판을 받는다. Better-T-Stack은 `@latest`, skills CLI는 `skills@latest`로 실행하고, 공식 스킬은 원본 저장소의 최신 커밋에서 받는다. Claude 플러그인은 마켓플레이스를 갱신한 뒤 설치하고, agent-browser CLI는 npm 최신판을 쓴다. 템플릿에 이 버전들을 고정하거나 공식 스킬 파일을 복사해 두지 않는다(`files/.agents/skills`에는 `prokit-*`만 둔다). 새 판 때문에 생성이나 설치가 깨지면 템플릿을 고치고, 확인한 판을 `VERIFICATION.md`에 적는다.
 - 템플릿의 명령, 포트, 스킬 수, 설치 구성을 바꾸면 `handbook/`의 비교표(`templates/choose.md`), 도식, 폴더 구조(`reference/project-structure.md`)와 이 파일의 절차도 맞춘다. 공식 스킬을 더하거나 빼거나 그 스킬을 읽는 곳(dev-cycle 행, `prokit-*` 연결 표, 에이전트)을 바꾸면 `handbook/skills/official-skills.md`의 표도 맞춘다. 호출률과 활용도 수치는 다시 잰 경우에만 바꾸고, 잰 날짜와 판을 함께 적는다.
 - 루트 `README.md`에는 요약과 링크만 둔다. 상세는 `handbook/`, `tutorials/`, 템플릿 README에 쓰고 README에서 링크한다.

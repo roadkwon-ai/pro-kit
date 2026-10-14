@@ -64,7 +64,7 @@ node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, h
 
 ## 문서
 
-- 문서 쪽을 쓰거나 구조를 바꿀 때는 `prokit-docs`, 문장을 쓰고 다듬을 때는 `prokit-writing` 스킬을 씁니다. 두 스킬의 원본은 `roadkwon-ai/pro-kit-docs-skills` 저장소이고, 이 저장소에는 `.agents/skills`에 설치한 사본을 커밋합니다. 스킬을 갱신할 때는 저장소 루트에서 `npx -y skills@latest add roadkwon-ai/pro-kit-docs-skills -a claude-code -a codex -y`를 다시 실행하고 바뀐 파일을 커밋합니다. 이 원본은 pro-kit 관리용이며, 템플릿으로 만든 프로젝트에는 문서 스킬을 임의로 복사하지 않습니다.
+- 문서 쪽을 쓰거나 구조를 바꿀 때는 `prokit-docs`, 문장을 쓰고 다듬을 때는 `prokit-writing` 스킬을 씁니다. 두 스킬의 원본은 `roadkwon-ai/pro-kit-docs-skills` 저장소이고, 이 저장소에는 `.agents/skills`에 설치한 사본을 커밋합니다. 스킬을 갱신할 때는 저장소 루트에서 `npx -y skills@latest add roadkwon-ai/pro-kit-docs-skills -a claude-code -a codex -y`를 다시 실행하고 바뀐 파일을 커밋합니다. 이 원본은 pro-kit 관리용이며, 템플릿으로 만든 프로젝트에는 문서 스킬을 임의로 복사하지 않습니다. 저장소 루트에는 이 두 스킬만 둡니다. 공식·외부 스킬은 템플릿으로 만든 프로젝트에 설치하고, 이 저장소에서 검증에 필요하면 잠시 설치했다가 끝나면 스킬 폴더와 `skills-lock.json` 항목을 지웁니다.
 - 루트 `README.md`에는 요약과 링크만 둡니다. 상세는 `handbook/`, `tutorials/`, 템플릿 README에 쓰고 README에서 링크합니다.
 - `handbook/`의 순서는 문서 홈과 묶음마다 `README.md`의 쪽 표가 정합니다. 쪽은 `# 제목`, 빈 줄, `> 한눈에: …`로 시작합니다.
 - 홈페이지는 문서 쪽마다 마크다운 복사, AI로 보내기, `<쪽>.md` 주소, 도식 내려받기를 붙입니다. 새 문서 묶음을 더하면 홈페이지에도 붙는지 확인합니다([AGENTS.md](AGENTS.md#템플릿-수정-규칙)).
