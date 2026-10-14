@@ -62,8 +62,8 @@
 6. 실제 반영은 기본적으로 그 프로젝트에서 연 세션이 dev-cycle 케이스 H 라운드로 한다. 그 세션에서 진행하도록 안내한다. 라운드에서는 `install.sh <프로젝트> --skip-skills`로 없는 파일과 설정 항목을 더하고(템플릿 파일은 덮어쓰지 않고 설정 파일에는 항목만 더한다), 템플릿과 다른 파일은 직접 옮긴다.
 
 ## 템플릿 수정 규칙
-- 원본 레퍼런스 조사·분석·COPY·공식 프리셋 제작은 별도 pro-kit-preset-skills의 `prokit-preset-create`, `prokit-preset-research`, `prokit-preset-verify`가 전담한다. 등록·게시와 계약 관리는 `prokit-preset-publish`, `prokit-preset-maintain`을 따른다. 이 저장소와 사용자 템플릿은 완성팩을 `prokit-pack-use`로 활용해 화면·실전 개발을 수행하고 완성 프리셋 대비 품질을 검수한다. 이 저장소와 일반 사용자 템플릿에는 제작·게시 스킬과 역할을 설치하지 않는다. 담당 구분은 [완성팩 활용과 담당 구분](handbook/design/preset-publication.md)에 있다.
-- 공식 프리셋의 기본 테마·언어·설정 UI와 제작 합격 기준은 pro-kit-preset-skills가 정한다. 팩 활용에서는 검증된 팩의 서체·토큰·자산·모션·설정을 재사용한다. 사용자 선택값이 있으면 변경 범위를 기록하고 비변경 영역을 재검사한다. 실전 서비스에는 제작용 선택 팔레트·설정 견본·프로킷 미리보기 수신기를 넣지 않는다. 소비자 설정 구현과 품질 확인은 템플릿 `prokit-ui/references/preset-settings.md`를 따른다.
+- 공식 프리셋의 원본 조사·COPY·제작·합격 기준과 등록·게시·카탈로그·Pages 반영은 비공개 `pro-kit-preset-skills`와 pro-kit-web이 맡는다. 이 저장소와 일반 사용자 템플릿에는 제작·게시 스킬과 역할, 제작 기록을 두지 않는다. 이 저장소와 사용자 템플릿은 완성팩을 `prokit-pack-use`로 활용해 화면·실전 개발을 수행하고 완성 프리셋 대비 품질을 검수한다. 담당 구분은 [완성팩 활용과 담당 구분](handbook/design/preset-publication.md)에 있다.
+- 팩 활용에서는 검증된 팩의 서체·토큰·자산·모션·설정을 재사용한다. 사용자 선택값이 있으면 변경 범위를 기록하고 비변경 영역을 재검사한다. 실전 서비스에는 제작용 선택 팔레트·설정 견본·프로킷 미리보기 수신기를 넣지 않는다. 소비자 설정 구현과 품질 확인은 템플릿 `prokit-ui/references/preset-settings.md`를 따른다.
 - 팩 활용 작업은 스타일을 다시 선택하거나 원본 사이트를 다시 조사하지 않는다. 팩의 실행 소스·기준 화면·모션 상태·호환성·맞춤화 항목을 먼저 확인한다. 기술 구현 전 재사용·설정 판단은 `prokit-dev-cycle/references/reuse-design.md`와 `prokit-reviewer(plan)`으로 검토한다.
 - 완료한 프로젝트 계획·백로그는 `pnpm dev-cycle archive`로 `tasks/archive/YYYY-MM-DD-제목.md`에 옮긴다. `close`도 완료 항목을 함께 보관한다. 진행 중 대조표·미완료 항목은 유지하고, 기록 목록은 `tasks/archive/README.md`에서 본다. 날짜는 KST이며 기존 월별 기록은 보존한다.
 - 위임은 설치 목록만으로 허용하지 않는다. 사용자 명시 출처, 프로젝트 정본, 실제 접근 가능한 제공자를 내용·출처·지문·범위·의존성·부작용으로 확인하고, 실제 변경·명령 종료 코드·산출물 해시를 패킷에 남긴다. `--context` JSON은 검사 자료이지 Main 승인 증명이 아니다. 최종 게이트는 Main 런타임의 검증된 콜백이나 실제 host adapter가 현재 task·run·제품·증거·공급자·환경·리뷰어 식별자에 묶어야 한다. 내장 전문 리뷰는 그 범위만 재사용하고 최종 `prokit-reviewer` 게이트는 매번 수행한다. 근거가 없으면 `unknown` 또는 `blocked`로 남기며 PASS로 바꾸지 않는다. 이 경계를 위해 별도 인증 서버나 등록 서비스를 더하지 않는다.
@@ -73,7 +73,7 @@
 - 공유 파일은 <!-- v:templates.count.ko -->두<!-- /v --> 템플릿에서 바이트가 같아야 한다(`install.mjs`, `install.sh`, `files/scripts/*.mjs`, 공통 스킬 문서, 공통 테스트). 한쪽을 고치면 다른 쪽에 복사한다. `tests/shared-files.test.mjs`가 이를 검사한다.
 - 설치할 스킬과 플러그인 목록의 정본은 `templates/<템플릿>/files/skills.manifest.json`이다.
 - 검증 결과와 한계는 그 템플릿의 `VERIFICATION.md`에 적는다. 측정 보고서(HTML 등)는 `docs/reports/<날짜>-<이름>`으로 두고 `VERIFICATION.md`에서 링크한다. 측정 스크립트, 로그, 확인용 프로젝트는 저장소에 넣지 않는다.
-- 공식 프리셋 제작·정적 출력·카탈로그·Pages 반영은 pro-kit-preset-skills의 제작·게시 절차와 pro-kit-web의 조율을 따른다. 사이트 주소 정본은 `site-links.json`이고 주소 변경 도구·저작권 조건은 기존 구현을 따른다. 팩 사용자는 검증된 프리셋의 모든 페이지와 동작을 유지하고 원래 서비스를 재조사하지 않는다.
+- 사이트 주소 정본은 `site-links.json`이고 주소 변경 도구·저작권 조건은 기존 구현을 따른다. 팩 사용자는 검증된 프리셋의 모든 페이지와 동작을 유지하고 원래 서비스를 재조사하지 않는다.
 - `files/` 아래 `.mjs`·`.json`은 Better-T-Stack `biome.json` 형식(탭 들여쓰기, 한 줄 80자)으로 둔다. 설치기가 복사한 뒤 Biome로 포맷하므로, 형식이 다르면 설치한 프로젝트와 늘 달라져 `--diff`가 포맷 차이로 가득 찬다. 고친 파일은 Better-T-Stack 프로젝트에서 `pnpm exec biome check --write <파일>`로 맞춘 뒤 가져온다.
 - `install.mjs`나 `scripts/skills-setup.mjs`를 바꾸면 테스트와 별도로 실제 Better-T-Stack 프로젝트에 설치해 확인한다. 이 확인용 프로젝트는 scratchpad나 임시 디렉터리에 만든다.
 - 확인용 설치도 그 경로에 project scope Claude 플러그인을 등록한다. 확인이 끝나면 그 디렉터리에서 `claude plugin uninstall <플러그인> --scope project`로 지운다. 띄운 DB 컨테이너도 정리한다.
@@ -93,4 +93,4 @@
 - 커밋 제목은 Conventional Commits 접두어(`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`)로 쓴다. 이 접두어가 노트의 절을 정하고, `!`나 `BREAKING CHANGE:`는 버전도 올린다(위 버전 규칙). 본문의 `- ` 항목은 노트에 그대로 옮겨지므로 변경 요약을 bullet로 적는다.
 - 사용자가 `main` push를 요청하면 `git push` 대신 이 절차로 push한다. `release/` 노트, `chore(release)` 커밋, `v*` 태그는 이 절차로만 만든다.
 - `scripts/release.mjs`를 고치면 `node --test scripts/release.test.mjs`를 실행하고 `CONTRIBUTING.md`의 "릴리스" 절을 맞춘다.
-- 팩 제작·재발행·공개 저장소 구분·등록·원격 인수 절차는 pro-kit-preset-skills의 `prokit-preset-create`와 `prokit-preset-publish`가 소유한다. 이 저장소에는 소비자 인덱스 `tutorials/packs.json`과 받기 도구 `scripts/pack.mjs`를 유지한다. 완성팩은 SHA256으로 확인하고 `scripts/apply-pack.mjs --pack <팩 폴더> --project <프로젝트> --check`로 실제 복원 계획과 충돌을 확인한다. 문서와 교재는 pro-kit-docs-skills가 검증된 명령·지원 기능으로 작성한다. 기존 팩은 임의 재발행하지 않는다.
+- 팩 제작·재발행·등록·발행은 `pro-kit-preset-skills`가 맡는다. 이 저장소에는 소비자 인덱스 `tutorials/packs.json`과 받기 도구 `scripts/pack.mjs`를 유지한다. 완성팩은 SHA256으로 확인하고 `scripts/apply-pack.mjs --pack <팩 폴더> --project <프로젝트> --check`로 실제 복원 계획과 충돌을 확인한다. 문서와 교재는 pro-kit-docs-skills가 검증된 명령·지원 기능으로 작성한다. 기존 팩은 임의 재발행하지 않는다.

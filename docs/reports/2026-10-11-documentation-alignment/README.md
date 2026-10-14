@@ -10,7 +10,7 @@
 | 일회성 review와 요청 시 audit·debt·help·gain | `prokit-dev-cycle/references/process-routing.md`, `CLAUDE.md`, Ponytail 통합 기록 | 네임스페이스 호출과 프로젝트 스킬 대안, 명시적 off 존중, 장부·백로그 쓰기와 원본 벤치마크의 경계 |
 | 공식 전문 스킬 위임과 Prokit 감독 | `prokit-dev-cycle`, `execution-efficiency.md`, 구현자·전문 리뷰어·최종 리뷰어 | 역할 배정, 검사 소유권, 충돌 없는 병렬 실행, 전문 증거 재사용과 매번 새 최종 검수, unknown·blocked 보존 |
 | 로컬 기술 인수와 사용자 확인 | `dev-cycle.mjs`의 `delegation accept`, `delegation.md`, [인수 기록](../2026-10-10-cli-acceptance-images/README.md) | 기술 완료와 사용자 확인 대기 구분, 대조표 증거와 H 이행 안내 |
-| 디자인 선택 기록과 실제 적용 확인 | `prokit-ui/references/preset-settings.md`, [후속 구현 기록](../2026-10-10-preset-design-controls/README.md#2026-10-11-후속-구현과-제작-프롬프트-검사) | UI 흐름·DESIGN.md·화면만 프로젝트·폴더 구조, 제작 프롬프트와 튜토리얼 공통 글 |
+| 디자인 선택 기록과 실제 적용 확인 | `prokit-ui/references/preset-settings.md`, 후속 구현 기록(비공개 `pro-kit-preset-skills`의 `docs/reports/2026-10-10-preset-design-controls/README.md`) | UI 흐름·DESIGN.md·화면만 프로젝트·폴더 구조, 제작 프롬프트와 튜토리얼 공통 글 |
 | 프리셋 제작과 실제 서비스의 경계 | 같은 프리셋 설정 정본 | 제작 도구의 서체·팔레트 선택과 미리보기 수신기, 실제 서비스에 선택 디자인 고정, 프로젝트 요구에 따른 모드·언어 |
 | 미리보기와 제작 창 조작 | 로컬 pro-kit-web 정본과 프리셋 디자인 검증 기록 | 제작 요청 편집·선택 적용·복사와 AI로 보내기, 미리보기 상태 유지와 크기 조절, 공개본·팩과 로컬 검증 구분 |
 | 인증 실패와 재발 원인 확인 | 현재 `prokit-deploy`와 `prokit-dev-cycle`의 마무리 규칙 | 신뢰한 키 설정의 존재·로딩 확인과 실제 권한 검증, 확정한 재발 원인의 규칙·평가·백로그 반영 |
