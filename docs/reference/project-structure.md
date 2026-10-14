@@ -5,19 +5,19 @@ https://prokit-web.vercel.app/docs/reference/project-structure/
 
 ## 폴더 한눈에 보기
 
-오른쪽 괄호는 파일을 만든 쪽이에요(BTS 또는 템플릿).
+오른쪽 괄호는 파일을 만든 쪽이에요(Better-T-Stack 또는 템플릿).
 
 ```text
 my-app/
-├── apps/web/                   Next.js App Router: 화면, /api/rpc, /api/auth          (BTS)
+├── apps/web/                   Next.js App Router: 화면, /api/rpc, /api/auth          (Better-T-Stack)
 ├── packages/
-│   ├── api/                    oRPC 라우터, protectedProcedure                        (BTS)
-│   ├── auth/                   Better Auth 설정                                       (BTS)
-│   ├── db/                     Drizzle 스키마·마이그레이션                            (BTS)
+│   ├── api/                    oRPC 라우터, protectedProcedure                        (Better-T-Stack)
+│   ├── auth/                   Better Auth 설정                                       (Better-T-Stack)
+│   ├── db/                     Drizzle 스키마·마이그레이션                            (Better-T-Stack)
 │   │                           neon: docker-compose.yml, supabase: supabase/config.toml
-│   ├── ui/                     shadcn 컴포넌트                                        (BTS)
-│   └── config/                 공유 tsconfig                                          (BTS)
-├── bts.jsonc, turbo.json, biome.json, pnpm-workspace.yaml                             (BTS)
+│   ├── ui/                     shadcn 컴포넌트                                        (Better-T-Stack)
+│   └── config/                 공유 tsconfig                                          (Better-T-Stack)
+├── bts.jsonc, turbo.json, biome.json, pnpm-workspace.yaml                             (Better-T-Stack)
 ├── AGENTS.md, CLAUDE.md, GLOSSARY.md                                                   (템플릿)
 ├── .agents/skills/             prokit-* 9개, 공식 도메인 스킬, superpowers·skill-creator·ponytail 6종(Codex·Antigravity·Grok Build)
 ├── .agents/agents/             에이전트 생성물(Antigravity)
@@ -65,7 +65,7 @@ my-app/
 
 Codex 네이티브 Ponytail 플러그인은 `--with-global`에서만 사용자 환경에 설치해요. 이 프로젝트의 `.codex/` 생성물과 플러그인 설치·훅 허용 상태는 따로 확인해요([설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)).
 
-완성팩을 적용하는 작업은 `.agents/skills/prokit-pack-use/`가 맡아요. `preset-manifest.json`이 있으면 지원 환경·수정 범위·비교 자료를 읽고, 소스 무결성 목록과 실제 파일을 대조해요. 공식 프리셋의 원본 조사·COPY 역할은 일반 사용자 템플릿에 포함하지 않아요([담당 구분](https://prokit-web.vercel.app/docs/design/preset-publication/)).
+완성팩을 적용하는 작업은 `.agents/skills/prokit-pack-use/`가 맡아요. `preset-manifest.json`이 있으면 지원 환경·수정 범위·비교 자료를 읽고, 소스 무결성 목록과 실제 파일을 대조해요. 공식 프리셋의 원본 조사·COPY 역할은 일반 사용자 템플릿에 포함하지 않아요([담당 구분](https://prokit-web.vercel.app/docs/design/preset-publication/#담당-구분)).
 
 ## 관련 문서
 

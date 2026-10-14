@@ -21,7 +21,7 @@ flowchart LR
 
 | | prokit-next-neon | prokit-next-supabase |
 |---|---|---|
-| BTS 생성 옵션 | `--db-setup docker` | `--db-setup supabase --manual-db` |
+| Better-T-Stack 생성 옵션 | `--db-setup docker` | `--db-setup supabase --manual-db` |
 | 로컬 개발 DB | compose Postgres 컨테이너 (`localhost:5432`) | Supabase 로컬 스택 중 DB만 (`127.0.0.1:54322`) |
 | 병합 전 확인 | 작업마다 Neon 개발 브랜치를 만들어 `db:migrate` | Supabase 스테이징 프로젝트에 `db:migrate`와 `supabase db advisors` |
 | 운영 | Neon 기본 브랜치 | Supabase (앱은 transaction pooler 6543, 마이그레이션은 5432) |

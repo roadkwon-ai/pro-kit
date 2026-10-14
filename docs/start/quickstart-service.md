@@ -65,7 +65,7 @@ flowchart TD
 | 설치 | `bash <pro-kit>/templates/<템플릿>/install.sh <프로젝트 경로>`로 설치해요. `--with-global`은 전역 도구 설치를 요청할 때만 붙여요 |
 | 로컬 DB (neon) | 5432 포트가 쓰이는지 먼저 보고, 쓰이면 `DB_PORT`로 바꿔요. `packages/db`에서 `podman compose up -d`(Docker면 `db:start`)로 띄워요 |
 | 로컬 DB (supabase) | Podman이면 `DOCKER_HOST`를 먼저 설정해요. `packages/db`에서 `supabase init`을 실행하고 `project_id`를 프로젝트 이름으로 바꾼 뒤 `supabase start -x …`로 DB만 띄워요 |
-| 첫 마이그레이션 | `db:generate`로 인증 테이블 마이그레이션을 만들고 `db:migrate`로 적용해요. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션을 더하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인해요. BTS가 만든 README의 `db:push` 단계는 따르지 않아요 |
+| 첫 마이그레이션 | `db:generate`로 인증 테이블 마이그레이션을 만들고 `db:migrate`로 적용해요. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션을 더하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인해요. Better-T-Stack이 만든 README의 `db:push` 단계는 따르지 않아요 |
 | 확인 | `pnpm check`로 포맷과 정렬을 한 번 정리한 뒤 `pnpm skills:check`, `pnpm agents:check`, `pnpm check-types`, `pnpm exec biome check .`가 모두 exit 0인지 봐요 |
 | 커밋 | 설치 결과, 포맷 정리, 첫 마이그레이션을 기본 브랜치에 커밋해요 |
 

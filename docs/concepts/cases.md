@@ -42,7 +42,7 @@ https://prokit-web.vercel.app/docs/concepts/cases/
 ### 케이스별 행
 
 - **A. 경미**: 타입·린트 검사.
-- **B. UI**: impeccable context와 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 impeccable init, `DESIGN.md`가 없고 BTS 기본 화면뿐이면 스타일 1~3위와 직접 정하기 중 사용자 선택) → impeccable shape 브리프 확정 → 구현 → 타입·린트·빌드 → 런타임 확인과 desktop·mobile 스크린샷(오류 예산) → impeccable critique → impeccable audit과 web-design-guidelines 검사 → 수정과 polish → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
+- **B. UI**: impeccable context와 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 impeccable init, `DESIGN.md`가 없고 Better-T-Stack 기본 화면뿐이면 스타일 1~3위와 직접 정하기 중 사용자 선택) → impeccable shape 브리프 확정 → 구현 → 타입·린트·빌드 → 런타임 확인과 desktop·mobile 스크린샷(오류 예산) → impeccable critique → impeccable audit과 web-design-guidelines 검사 → 수정과 polish → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
 - **C. 버그**: 재현 테스트 작성과 실패 확인 → 수정 → 재현 테스트 통과 → 판정된 케이스의 검사·리뷰 행.
 - **D. 서버·API**: zod 입출력 계약 → 구현(격리 테스트부터) → 2계정 격리 테스트 → 타입·린트·테스트 → `prokit-reviewer(code)`.
 - **E. DB**: 스키마 수정과 생성 SQL 검토 → 타입·린트 → 로컬 개발 DB에 적용 → 병합 전 원격 DB에 적용(neon은 Neon 개발 브랜치) → 파괴적 변경 판단(없음 또는 2단계 계획) → `prokit-reviewer(db)`. supabase는 새 테이블의 RLS 확인, 로컬 `supabase db advisors` 보안 검사, 병합 전 Supabase 스테이징 적용과 advisors가 더 붙어요.

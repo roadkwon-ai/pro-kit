@@ -66,7 +66,7 @@ https://prokit-web.vercel.app/docs/skills/official-skills/
 - 기본 연결은 프로젝트의 `.agents/skills/<이름>/SKILL.md`를 직접 읽어요. 사용자가 다른 출처를 지정했으면 그 실제 경로를 먼저 확인해요. 같은 이름이라도 경로·출처·내용 해시로 구분해요([선택 순서와 증거](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/#위임할-때-남기는-근거)).
 - 이 표는 기본 설치와 연결을 설명해요. 접근 가능한 다른 전문 스킬도 작업에 맞으면 선택하고, 한 번 사용한 것만으로 매니페스트에 더하지 않아요. 행동 지침의 기본은 Ponytail을 유지해요.
 
-일반 화면과 사용자 흐름은 `ego-browser`로 확인하고, 사용할 수 없으면 `agent-browser`를 써요. 프리셋 제작 작업공간의 기존 Playwright 도구는 여러 페이지와 너비를 같은 조건으로 검사하는 별도 배치 도구예요. 템플릿에 추가로 설치되는 스킬이 아니며, 일반 브라우저 확인을 대신하거나 새 프로젝트에 임의로 복사하지 않아요. 병렬 실행과 증거 재사용은 [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/#독립-작업을-나눠서-확인하기)를 따라요.
+일반 화면과 사용자 흐름은 `ego-browser`로 확인하고, 사용할 수 없으면 `agent-browser`를 써요. 병렬 실행과 증거 재사용은 [위임과 자원 관리](https://prokit-web.vercel.app/docs/concepts/delegation-and-resources/#독립-작업을-나눠서-확인하기)를 따라요.
 
 ## 자세히
 

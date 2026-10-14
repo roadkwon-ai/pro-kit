@@ -45,7 +45,7 @@ flowchart LR
 
 템플릿은 그중 한 조합을 고정해서 써요.
 
-| 계층 | 선택 | BTS 옵션 |
+| 계층 | 선택 | Better-T-Stack 옵션 |
 |---|---|---|
 | 프런트엔드 | Next.js App Router | `--frontend next` |
 | 백엔드 | 별도 서버 없이 Next.js 라우트 핸들러가 API를 받아요 | `--backend self --runtime none` |
