@@ -66,7 +66,7 @@ my-app/
 
 Codex 네이티브 Ponytail 플러그인은 `--with-global`에서만 사용자 환경에 설치해요. 이 프로젝트의 `.codex/` 생성물과 플러그인 설치·훅 허용 상태는 따로 확인해요([설치와 업데이트 구조](../skills/install-and-update.md)).
 
-완성팩을 적용하는 작업은 `.agents/skills/prokit-pack-use/`가 맡아요. `preset-manifest.json`이 있으면 지원 환경·수정 범위·비교 자료를 읽고, 소스 무결성 목록과 실제 파일을 대조해요. 공식 프리셋의 원본 조사·COPY 역할은 일반 사용자 템플릿에 포함하지 않아요([담당 구분](../design/preset-publication.md)).
+완성팩을 적용하는 작업은 `.agents/skills/prokit-pack-use/`가 맡아요. `preset-manifest.json`이 있으면 지원 환경·수정 범위·비교 자료를 읽고, 소스 무결성 목록과 실제 파일을 대조해요. 공식 프리셋의 원본 조사·COPY 역할은 일반 사용자 템플릿에 포함하지 않아요([담당 구분](../design/preset-publication.md#담당-구분)).
 
 ## 관련 문서
 

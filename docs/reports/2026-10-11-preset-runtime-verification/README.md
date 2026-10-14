@@ -43,4 +43,4 @@
 
 임시 완화는 프로세스 종료로 끝났다. 원본 정책 해시가 그대로이며 기본 기준으로 재측정하면 기존 캐시는 여전히 block이다. 캐시가 정리됐거나 앞으로 비대해지지 않는다고 주장하지 않는다. 원본의 개발 서버는 유지했다.
 
-Vercel·Pages 배포, 공개 팩 발행, push와 사용자 confirm은 실행하지 않았다. 실기기·Safari·전체 사이트 상호작용은 재검증하지 않았다. 기존 스킬 분리와 게시 보류 검수 범위는 [앞선 보고서](../2026-10-11-preset-skills/README.md)에 있다.
+Vercel·Pages 배포, 공개 팩 발행, push와 사용자 confirm은 실행하지 않았다. 실기기·Safari·전체 사이트 상호작용은 재검증하지 않았다. 기존 스킬 분리와 게시 보류 검수 범위는 앞선 보고서(비공개 `pro-kit-preset-skills`의 `docs/reports/2026-10-11-preset-skills/README.md`)에 있다.

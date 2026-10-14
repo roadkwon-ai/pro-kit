@@ -54,31 +54,6 @@
       "sourceType": "local",
       "computedHash": "e26e3664a977e6a85a8a0f3cbb657fec37b611e77cbb863f8dc04ab1fb40df5d"
     },
-    "prokit-preset-create": {
-      "source": "../pro-kit-preset-skills",
-      "sourceType": "local",
-      "computedHash": "e941c71ecccf541ad618c8fbfb3478847dd68e392c8b7a0b4c2392c91861b493"
-    },
-    "prokit-preset-maintain": {
-      "source": "../pro-kit-preset-skills",
-      "sourceType": "local",
-      "computedHash": "932b894e58ae44d8ede6cdd69e76b78fe046ac9c19b6bd08189bbad196f22d7f"
-    },
-    "prokit-preset-publish": {
-      "source": "../pro-kit-preset-skills",
-      "sourceType": "local",
-      "computedHash": "15bfe687960608fa34e3969eb90e09469e83c1992d93dddf303f0b08536ae4f6"
-    },
-    "prokit-preset-research": {
-      "source": "../pro-kit-preset-skills",
-      "sourceType": "local",
-      "computedHash": "afda07848fe5cd924e967e9456e4894fa092e8bfe5dd701c70377176ffae524d"
-    },
-    "prokit-preset-verify": {
-      "source": "../pro-kit-preset-skills",
-      "sourceType": "local",
-      "computedHash": "21d2e75d53a5bea3b3df0fb283665b85c0aeffdefac8bb3be02cd4dd6ebb2aa8"
-    },
     "prokit-writing": {
       "source": "../pro-kit-docs-skills",
       "sourceType": "local",

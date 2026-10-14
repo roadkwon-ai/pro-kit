@@ -58,15 +58,9 @@ node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, h
 
 ### 프리셋 디자인을 바꿀 때
 
-원본 조사·COPY 제작·충실도 검수는 `../pro-kit-preset-skills`의 `prokit-preset-create`, `prokit-preset-research`, `prokit-preset-verify`가 맡습니다. 사용자 프로젝트는 `prokit-pack-use`로 완성팩을 복원하고, 요청한 콘텐츠와 기능을 바꾼 뒤 완성 프리셋과 비교합니다([프리셋 제작·등록과 검수](handbook/design/preset-publication.md)).
+공식 프리셋의 원본 조사, COPY 제작, 충실도 검수, 프로킷 웹 게시는 비공개 저장소 `roadkwon-ai/pro-kit-preset-skills`의 스킬이 맡고, 조율은 `pro-kit-web`에서 합니다. 이 저장소에는 그 스킬과 역할을 설치하지 않습니다. 사용자 프로젝트는 `prokit-pack-use`로 완성팩을 복원하고, 요청한 콘텐츠와 기능을 바꾼 뒤 완성 프리셋과 비교합니다([완성팩 활용과 담당 구분](handbook/design/preset-publication.md)).
 
-팩 설정을 적용할 때는 두 템플릿의 `prokit-ui/references/preset-settings.md`를 따릅니다. 프리셋 제작 규칙은 제작 스킬 정본에서 고치고, 팩 활용 규칙은 두 템플릿과 연결 문서에 함께 반영합니다. 팩 문서와 교재는 검증된 기술 사실을 문서 담당에게 인계합니다.
-
-### 프리셋을 프로킷 웹에 반영할 때
-
-프로킷 관리용 스킬은 별도 로컬 Git 저장소 `../pro-kit-preset-skills`에 둡니다. `prokit-preset-publish`는 공통 게시 도구를 연결하고, `prokit-preset-maintain`은 정본 변경을 감지해 스킬과 검사 범위를 맞춥니다. 제작·검수·게시 스킬은 관리 환경과 지정된 프리셋 제작 작업공간에 설치하며, 일반 사용자 템플릿에는 추가하지 않습니다.
-
-반영 절차와 기록 범위는 [프리셋 등록과 검수](handbook/design/preset-publication.md)에서 확인합니다. `pro-kit-web`의 `pnpm presets:check`는 등록 계약과 정본 해시를 검사하며 제품 QA·발행 권한을 대신하지 않습니다. 운영 게시와 팩 발행을 보류한 작업은 로컬 준비 상태로 남깁니다.
+팩 설정을 적용할 때는 두 템플릿의 `prokit-ui/references/preset-settings.md`를 따릅니다. 팩 활용 규칙은 두 템플릿과 연결 문서에 함께 반영하고, 프리셋 제작 규칙은 제작 스킬 정본에서 고칩니다. 팩 문서와 교재는 검증된 기술 사실을 문서 담당에게 인계합니다.
 
 ## 문서
 
@@ -88,10 +82,8 @@ node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, h
 
 로그인한 `gh`, `origin` 원격, korean-skills가 필요합니다. `main`이 아니거나 커밋하지 않은 변경이 있거나 노트를 쓴 뒤 커밋이 늘면 `--publish`가 멈춥니다. 이때는 노트를 지우고 1단계부터 다시 합니다. push가 실패하면 릴리스 커밋과 태그를 되돌리고 검수한 노트는 남기므로 `git pull` 뒤 다시 `--publish`합니다. `scripts/release.mjs`를 고치면 `node --test scripts/release.test.mjs`를 실행하고 이 절을 맞춥니다. 설치된 프로젝트의 릴리스는 [버전과 릴리스](handbook/deploy/release.md)입니다.
 
-## 프리셋 팩 올리기
+## 프리셋 팩 인덱스
 
-팩 제작·조립·발행 절차의 정본은 `../pro-kit-preset-skills`의 `prokit-preset-create`와 `prokit-preset-publish`입니다. 검수한 제품의 문서를 완성하고 최종 ZIP을 복원해 확인한 뒤, 승인된 게시 절차를 따릅니다([프리셋 제작·등록과 검수](handbook/design/preset-publication.md)).
-
-이 저장소는 소비자 인덱스 `tutorials/packs.json`과 받기 도구 `scripts/pack.mjs`를 유지합니다. 미게시 팩은 `published: false`로 구분하고 공개 다운로드 대상으로 안내하지 않습니다. ZIP 해시는 최종 파일을 기준으로 외부 인덱스에 기록하며, 팩 안에 자기 ZIP 해시를 반복해서 넣지 않습니다.
+팩 제작·조립·발행은 `pro-kit-preset-skills`의 `prokit-preset-create`와 `prokit-preset-publish`가 맡습니다. 이 저장소는 소비자 인덱스 `tutorials/packs.json`과 받기 도구 `scripts/pack.mjs`만 유지합니다. 미게시 팩은 `published: false`로 구분하고 공개 다운로드 대상으로 안내하지 않습니다. ZIP 해시는 최종 파일을 기준으로 외부 인덱스에 기록하며, 팩 안에 자기 ZIP 해시를 반복해서 넣지 않습니다.
 
 완성팩을 사용자 프로젝트에 적용할 때는 `prokit-pack-use`를 따릅니다. 받기·SHA256 확인 뒤 `scripts/apply-pack.mjs`의 `--check`로 복원 계획과 충돌을 확인하고, 실제 적용 후 설치·빌드·화면을 검사합니다. 다운로드 성공이나 파일 해시 일치만으로 화면 품질이 검증됐다고 판단하지 않습니다.

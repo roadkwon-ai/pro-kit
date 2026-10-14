@@ -283,10 +283,10 @@
 | `preset.<이름>.estimateStages.scratch.export.time` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.export.time | `doc-values.json`을 고친다 | 2 |
 | `preset.<이름>.estimateStages.scratch.export.tokens` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.export.tokens | `doc-values.json`을 고친다 | 2 |
 | `preset.<이름>.estimateStages.scratch.export.usd` | 2개(`--list`) | 정책 계산기의 단계별 재현 예상. 실측/청구값 아님 | doc-values.json presets.<이름>.estimateStages.scratch.export.usd | `doc-values.json`을 고친다 | 2 |
-| `preset.<이름>.observed.time` | 2개(`--list`) | 관측된 제작 세션 일부(분 미만 버림). 전체 제작·팩 재현 시간 아님 | 계산: doc-values.json presets.<이름>.observed.intervals의 비중복 구간 | `doc-values.json`을 고친다 | 1 |
-| `preset.<이름>.observed.count` | 2개(`--list`) | 관측 근거 구간 수 | doc-values.json presets.<이름>.observed.intervals | `doc-values.json`을 고친다 | 1 |
+| `preset.<이름>.observed.time` | 2개(`--list`) | 관측된 제작 세션 일부(분 미만 버림). 전체 제작·팩 재현 시간 아님 | 계산: doc-values.json presets.<이름>.observed.intervals의 비중복 구간 | `doc-values.json`을 고친다 | 0 |
+| `preset.<이름>.observed.count` | 2개(`--list`) | 관측 근거 구간 수 | doc-values.json presets.<이름>.observed.intervals | `doc-values.json`을 고친다 | 0 |
 | `preset.<이름>.observed.scope` | 2개(`--list`) | 제작 관측의 범위·한계와 설명 링크 | doc-values.json presets.<이름>.observed.scope | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.observed.note` | 2개(`--list`) | 제작 관측의 범위·한계와 설명 링크 | doc-values.json presets.<이름>.observed.note | `doc-values.json`을 고친다 | 1 |
+| `preset.<이름>.observed.note` | 2개(`--list`) | 제작 관측의 범위·한계와 설명 링크 | doc-values.json presets.<이름>.observed.note | `doc-values.json`을 고친다 | 0 |
 | `preset.<이름>.observed.report` | 2개(`--list`) | 제작 관측의 범위·한계와 설명 링크 | doc-values.json presets.<이름>.observed.report | `doc-values.json`을 고친다 | 0 |
 | `preset.<이름>.recordedProduction.time` | 10시간 56분 | 제작·보완과 관련 스킬 개선의 root 활성 기록. 사용자 대기/자식 사용량 제외 | doc-values.json presets.<이름>.recordedProduction.wallMs | `doc-values.json`을 고친다 | 1 |
 | `preset.<이름>.recordedProduction.tokens` | 380만 | 실제 root 입력(캐시 제외)+출력 토큰; USD 역산 아님 | doc-values.json presets.<이름>.recordedProduction.tokens | `doc-values.json`을 고친다 | 1 |
@@ -378,7 +378,7 @@
 | `process.olgot.total` | 8시간 20분 | 올곧 라운드 합(벽시계, 5분 단위). preset.olgot.actual.total.time과 같아야 한다 | 계산: doc-values.json process.olgot(wait 빼고) + cost.revise의 올곧 예시 셋 | `doc-values.json`을 고친다 | 1 |
 | `process.olgot.work` | 7시간 35분 | 올곧 라운드 합에서 백그라운드 기다림을 뺀 일한 시간(5분 단위) | 계산: process.olgot.total − doc-values.json process.olgot.wait | `doc-values.json`을 고친다 | 1 |
 | `templates.count` | 2 | 템플릿 수 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
-| `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 16 |
+| `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 15 |
 | `prokit.skills.count` | 9 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 28 |
 | `prokit.skills.count.ko` | 아홉 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `prokit.agents.count` | 3 | 구현 수행·전문 리뷰·최종 리뷰 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 8 |

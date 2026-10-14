@@ -1,4 +1,0 @@
-interface:
-  display_name: "프로킷 프리셋 반영"
-  short_description: "공통 도구와 증거로 프로킷 웹 프리셋 반영을 관리해요"
-  default_prompt: "$prokit-preset-publish로 완성된 프리셋을 배포 없이 프로킷 웹에 반영하고 검수해줘."

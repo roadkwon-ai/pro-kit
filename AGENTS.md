@@ -62,7 +62,7 @@
 6. 실제 반영은 기본적으로 그 프로젝트에서 연 세션이 dev-cycle 케이스 H 라운드로 한다. 그 세션에서 진행하도록 안내한다. 라운드에서는 `install.sh <프로젝트> --skip-skills`로 없는 파일과 설정 항목을 더하고(템플릿 파일은 덮어쓰지 않고 설정 파일에는 항목만 더한다), 템플릿과 다른 파일은 직접 옮긴다.
 
 ## 템플릿 수정 규칙
-- 원본 레퍼런스 조사·분석·COPY·공식 프리셋 제작은 별도 pro-kit-preset-skills의 `prokit-preset-create`, `prokit-preset-research`, `prokit-preset-verify`가 전담한다. 등록·게시와 계약 관리는 `prokit-preset-publish`, `prokit-preset-maintain`을 따른다. 이 저장소와 사용자 템플릿은 완성팩을 `prokit-pack-use`로 활용해 화면·실전 개발을 수행하고 완성 프리셋 대비 품질을 검수한다. 일반 사용자 템플릿에는 제작·게시 스킬을 설치하지 않는다. [프리셋 등록과 검수](handbook/design/preset-publication.md)를 따른다.
+- 원본 레퍼런스 조사·분석·COPY·공식 프리셋 제작은 별도 pro-kit-preset-skills의 `prokit-preset-create`, `prokit-preset-research`, `prokit-preset-verify`가 전담한다. 등록·게시와 계약 관리는 `prokit-preset-publish`, `prokit-preset-maintain`을 따른다. 이 저장소와 사용자 템플릿은 완성팩을 `prokit-pack-use`로 활용해 화면·실전 개발을 수행하고 완성 프리셋 대비 품질을 검수한다. 이 저장소와 일반 사용자 템플릿에는 제작·게시 스킬과 역할을 설치하지 않는다. 담당 구분은 [완성팩 활용과 담당 구분](handbook/design/preset-publication.md)에 있다.
 - 공식 프리셋의 기본 테마·언어·설정 UI와 제작 합격 기준은 pro-kit-preset-skills가 정한다. 팩 활용에서는 검증된 팩의 서체·토큰·자산·모션·설정을 재사용한다. 사용자 선택값이 있으면 변경 범위를 기록하고 비변경 영역을 재검사한다. 실전 서비스에는 제작용 선택 팔레트·설정 견본·프로킷 미리보기 수신기를 넣지 않는다. 소비자 설정 구현과 품질 확인은 템플릿 `prokit-ui/references/preset-settings.md`를 따른다.
 - 팩 활용 작업은 스타일을 다시 선택하거나 원본 사이트를 다시 조사하지 않는다. 팩의 실행 소스·기준 화면·모션 상태·호환성·맞춤화 항목을 먼저 확인한다. 기술 구현 전 재사용·설정 판단은 `prokit-dev-cycle/references/reuse-design.md`와 `prokit-reviewer(plan)`으로 검토한다.
 - 완료한 프로젝트 계획·백로그는 `pnpm dev-cycle archive`로 `tasks/archive/YYYY-MM-DD-제목.md`에 옮긴다. `close`도 완료 항목을 함께 보관한다. 진행 중 대조표·미완료 항목은 유지하고, 기록 목록은 `tasks/archive/README.md`에서 본다. 날짜는 KST이며 기존 월별 기록은 보존한다.
@@ -73,7 +73,7 @@
 - 공유 파일은 <!-- v:templates.count.ko -->두<!-- /v --> 템플릿에서 바이트가 같아야 한다(`install.mjs`, `install.sh`, `files/scripts/*.mjs`, 공통 스킬 문서, 공통 테스트). 한쪽을 고치면 다른 쪽에 복사한다. `tests/shared-files.test.mjs`가 이를 검사한다.
 - 설치할 스킬과 플러그인 목록의 정본은 `templates/<템플릿>/files/skills.manifest.json`이다.
 - 검증 결과와 한계는 그 템플릿의 `VERIFICATION.md`에 적는다. 측정 보고서(HTML 등)는 `docs/reports/<날짜>-<이름>`으로 두고 `VERIFICATION.md`에서 링크한다. 측정 스크립트, 로그, 확인용 프로젝트는 저장소에 넣지 않는다.
-- 공식 프리셋 제작·정적 출력·카탈로그·Pages 반영은 pro-kit-preset-skills의 제작·게시 절차를 따른다. 프리셋 작업공간은 저장소 밖 영구 폴더에 두고 다른 작업공간·공개 상태·기존 배포를 보존한다. 사이트 주소 정본은 `site-links.json`이고 주소 변경 도구·저작권 조건은 기존 구현을 따른다. 팩 사용자는 검증된 프리셋의 모든 페이지와 동작을 유지하고 원래 서비스를 재조사하지 않는다.
+- 공식 프리셋 제작·정적 출력·카탈로그·Pages 반영은 pro-kit-preset-skills의 제작·게시 절차와 pro-kit-web의 조율을 따른다. 사이트 주소 정본은 `site-links.json`이고 주소 변경 도구·저작권 조건은 기존 구현을 따른다. 팩 사용자는 검증된 프리셋의 모든 페이지와 동작을 유지하고 원래 서비스를 재조사하지 않는다.
 - `files/` 아래 `.mjs`·`.json`은 Better-T-Stack `biome.json` 형식(탭 들여쓰기, 한 줄 80자)으로 둔다. 설치기가 복사한 뒤 Biome로 포맷하므로, 형식이 다르면 설치한 프로젝트와 늘 달라져 `--diff`가 포맷 차이로 가득 찬다. 고친 파일은 Better-T-Stack 프로젝트에서 `pnpm exec biome check --write <파일>`로 맞춘 뒤 가져온다.
 - `install.mjs`나 `scripts/skills-setup.mjs`를 바꾸면 테스트와 별도로 실제 Better-T-Stack 프로젝트에 설치해 확인한다. 이 확인용 프로젝트는 scratchpad나 임시 디렉터리에 만든다.
 - 확인용 설치도 그 경로에 project scope Claude 플러그인을 등록한다. 확인이 끝나면 그 디렉터리에서 `claude plugin uninstall <플러그인> --scope project`로 지운다. 띄운 DB 컨테이너도 정리한다.

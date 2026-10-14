@@ -1,4 +1,0 @@
-interface:
-  display_name: "프로킷 프리셋 절차 갱신"
-  short_description: "공통 게시 구조의 변경을 확인하고 관리 스킬을 갱신해요"
-  default_prompt: "$prokit-preset-maintain으로 게시 시스템 변경과 스킬 기준선을 대조하고 필요한 범위만 보완해줘."
