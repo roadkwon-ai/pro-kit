@@ -58,10 +58,10 @@ test("이미지 로더: 하위 경로를 한 번만 붙이고 외부 주소는 �
   assert.equal((await load(""))({ src: "/images/a.webp" }), "/images/a.webp");
 });
 
-test("복사: 의존성·빌드 캐시·git과 실제 Python 환경·등록한 resource 경로만 뺀다", () => {
+test("복사: 의존성·빌드 캐시·git·런타임 상태와 실제 Python 환경·등록한 resource 경로만 뺀다", () => {
   const root = "/p";
   const keep = copyFilter(root, { excludedPaths: [".prokit/resource-cache", "tools/.venv"] });
-  for (const rel of ["node_modules", "apps/web/node_modules/x", ".git", "apps/web/.next", ".turbo", "html", "apps/web/out"])
+  for (const rel of ["node_modules", "apps/web/node_modules/x", ".git", "apps/web/.next", ".turbo", "html", "apps/web/out", ".prokit/resource-guard/clean.lock", "apps/web/.prokit"])
     assert.equal(keep(join(root, rel)), false, rel);
   for (const rel of [".prokit/resource-cache", ".prokit/resource-cache/a", "tools/.venv", "tools/.venv/lib/site.py", "apps/web/src/__pycache__", "apps/web/src/main.pyc"])
     assert.equal(keep(join(root, rel)), false, rel);
@@ -186,6 +186,48 @@ cpSync(resolve("../../fixture-output"), "out", { recursive: true });
 		assert.equal(existsSync(join(root, ".prokit")), false, "내보내기가 프로젝트 소스를 건드리지 않는다");
 		assert.equal(existsSync(join(root, "html/.nojekyll")), want === 0);
       if (want === 0) assert.equal(readFileSync(join(root, "html/login/index.html"), "utf8"), "<p>로그인</p>");
+    } finally {
+      process.env.PATH = priorPath;
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+}
+
+for (const [where, want] of [["원본에 있으면 복사하지 않아 막히지 않는다", 0], ["복사본에 생기면 guard가 next build를 막고(exit 75) 이유를 알린다", 1]]) {
+  test(`내보내기: 살아 있는 정리 lock이 ${where}`, async (t) => {
+    // 자기 pid는 guard가 자기 lock으로 보므로 살아 있는 부모 pid를 쓴다
+    const lock = JSON.stringify({ pid: process.ppid, token: "cleaning" });
+    const inSource = want === 0;
+    const root = tree({
+      "apps/web/next.config.ts": BTS_CONFIG,
+      "html/index.html": "기존 결과",
+      "fixture-output/index.html": "<p>새 화면</p>",
+      ...(inSource ? { ".prokit/resource-guard/clean.lock": lock } : {}),
+      "bin/pnpm": `#!/usr/bin/env node
+const fs = require("node:fs");
+const args = process.argv.slice(2).join(" ");
+if (args === "install --prefer-offline") {
+  if (${!inSource}) {
+    fs.mkdirSync(".prokit/resource-guard", { recursive: true });
+    fs.writeFileSync(".prokit/resource-guard/clean.lock", ${JSON.stringify(lock)});
+  }
+  process.exit(0);
+}
+if (args !== "exec next build") process.exit(1);
+fs.cpSync(require("node:path").resolve("../../fixture-output"), "out", { recursive: true });
+`,
+    });
+    chmodSync(join(root, "bin/pnpm"), 0o755);
+    const errors = t.mock.method(console, "error", () => {});
+    const priorPath = process.env.PATH;
+    try {
+      process.env.PATH = `${join(root, "bin")}:${priorPath}`;
+      assert.equal(await main([], root), want);
+      const said = errors.mock.calls.map((c) => c.arguments.join(" ")).join("\n");
+      if (inSource) assert.doesNotMatch(said, /exit 75/);
+      else assert.match(said, /자원 guard가 next build 실행을 막았다\(exit 75\): resource-clean-running/);
+      assert.equal(readFileSync(join(root, "html/index.html"), "utf8"), inSource ? "<p>새 화면</p>" : "기존 결과");
+      assert.equal(existsSync(join(root, ".prokit/resource-guard/clean.lock")), inSource, "원본 lock은 그대로 둔다");
     } finally {
       process.env.PATH = priorPath;
       rmSync(root, { recursive: true, force: true });

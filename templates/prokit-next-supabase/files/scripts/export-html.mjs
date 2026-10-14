@@ -26,6 +26,7 @@ import {
 } from "./resource-guard.mjs";
 
 // 어느 깊이에서든 복사하지 않는 이름. 의존성은 복사본에서 다시 설치한다.
+// .prokit은 원본 실행의 guard lock·기록이라 복사본 guard가 남의 정리 lock을 보고 멈추지 않게 뺀다.
 const SKIP_NAMES = new Set([
 	"node_modules",
 	".next",
@@ -33,6 +34,7 @@ const SKIP_NAMES = new Set([
 	".git",
 	".omc",
 	".omx",
+	".prokit",
 ]);
 // 이 경로만 복사하지 않는다(내보낸 결과물)
 const SKIP_PATHS = new Set(["html", join("apps", "web", "out")]);
@@ -45,7 +47,7 @@ function guardBlocked(run, label) {
 		...(run.after?.reasons ?? []),
 	];
 	console.error(
-		`오류: 자원 guard가 ${label}을 막았다(exit 75): ${reasons.join(", ") || "측정 불완전"}`,
+		`오류: 자원 guard가 ${label} 실행을 막았다(exit 75): ${reasons.join(", ") || "측정 불완전"}`,
 	);
 	return true;
 }
