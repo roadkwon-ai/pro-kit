@@ -2,8 +2,8 @@
 name: prokit-init
 description: >-
   pro-kit 템플릿으로 새 프로젝트를 만들 때 PRD를 먼저 받고, 그 PRD로 두뇌(진행을 주도하는 스킬 묶음. mattpocock 포함),
-  과설계 방지 스킬(ponytail, caveman, andrej-karpathy-skills), mattpocock 추가 스킬, 응답 방식(i-have-adhd)을
-  추천해 사용자가 고르게 한다. PRD는 인자(`/prokit-init <PRD 파일 경로나 내용>`)나 대화로 받고, 끝내 없으면 init하지 않고 끝낸다. 고른 값으로 루트 AGENTS.md의 "템플릿으로 새 프로젝트 만들기"
+  과설계 방지 스킬(ponytail, caveman, andrej-karpathy-skills), mattpocock 추가 스킬, 응답 방식(i-have-adhd),
+  화면 디자인 보조(taste-skill)를 추천해 사용자가 고르게 한다. PRD는 인자(`/prokit-init <PRD 파일 경로나 내용>`)나 대화로 받고, 끝내 없으면 init하지 않고 끝낸다. 고른 값으로 루트 AGENTS.md의 "템플릿으로 새 프로젝트 만들기"
   절차를 실행한다. "템플릿으로 프로젝트 만들어줘", "새 프로젝트 시작", "프로킷 초기 셋팅", "init", "pro-kit 받고 AGENTS.md대로",
   "이 PRD로 프로젝트 만들어줘", "두뇌 스킬 골라서 프로젝트 만들어줘"처럼 새 프로젝트를 요청하면 쓴다. 이미 만든 프로젝트의
   기능 개발과 스킬 변경에는 쓰지 않는다.
@@ -35,6 +35,7 @@ prokit은 PRD를 바탕으로 두뇌와 스킬을 추천하고, PRD에 맞춰 �
 | 과설계 방지 스킬 | `ponytail` 추천 | 2절 |
 | mattpocock 추가 스킬 | PRD에 맞는 것 추천 | 2절 |
 | 응답 방식(i-have-adhd) | `i-have-adhd` 추천 | 2절 |
+| 화면 디자인 보조(taste-skill) | SKIP 추천. 공개 페이지가 주 화면이면 `taste-skill` 추천 | 2절 |
 | 전역 도구(`--with-global`) | 안 함 | 사용자가 요청할 때만 |
 | 선택 묶음(ops, motion, mobile) | 안 함 | 사용자가 요청할 때만. 보고에 설치법을 적는다 |
 
@@ -44,27 +45,29 @@ prokit은 PRD를 바탕으로 두뇌와 스킬을 추천하고, PRD에 맞춰 �
 2. 맡긴 항목("알아서 골라줘", "matt 스킬도 골라줘")은 묻지 않고 추천대로 설치한다. 과설계 방지 스킬은 ponytail이다.
 3. 나머지 항목은 PRD로 만든 추천을 보여 주고 4절대로 묻는다. 화면만 요청도 같다.
 
-추천은 제안이다. 고르는 것은 사용자다. 질문에 답할 수 없는 실행(비대화 실행)이면 묻지 못한 두뇌·과설계 방지 스킬은 `none`, 추가 스킬·응답 방식은 설치하지 않고 보고에 추천과 설치 명령을 적는다.
+추천은 제안이다. 고르는 것은 사용자다. 질문에 답할 수 없는 실행(비대화 실행)이면 묻지 못한 두뇌·과설계 방지 스킬은 `none`, 추가 스킬·응답 방식·화면 디자인 보조는 설치하지 않고 보고에 추천과 설치 명령을 적는다.
 
 ## 3. 추천 만들기
 `brains/README.md`의 "추천 기준"을 PRD에 그대로 적용한다.
 - 두뇌는 "하네스가 맡지 않는 가장 큰 부족함 하나"로 고른다. 신호가 약하거나 두 줄 이상이 비슷하게 맞으면 `none`이다. 지금 세션의 도구가 지원하지 않는 두뇌(예: Codex에서 pstack)는 추천하지 않는다.
 - 추가 스킬은 신호가 맞는 것을 모두 추천하되, 두뇌와 겹치는 것은 추천에서 뺀다. 두뇌가 `mattpocock`이면 빼지 않는다.
 - 응답 방식은 i-have-adhd를 추천한다. 사용자가 길고 자세한 설명을 원한다고 했으면 SKIP을 추천한다.
+- 화면 디자인 보조는 SKIP을 추천한다. PRD의 주 화면이 공개 페이지(랜딩, 소개, 포트폴리오, 행사, 매장)이거나 시각 완성도를 따로 요구하면 taste-skill을 추천한다.
 - 맡긴 항목은 묻지 않지만, 고른 값과 근거 한 줄을 대화로 알리고 진행한다. 사용자가 무엇이 왜 설치되는지 알고 바꿀 수 있어야 해서다.
-- 물을 항목이 있으면 묻기 전에 대화로 추천을 짧게 보여 준다(정했거나 맡긴 항목은 뺀다): 두뇌 일곱 개(`none`, superpowers, agent-skills, pstack, gstack, oh-my, mattpocock)를 한 줄씩 나열하고 추천에 `(추천)`과 근거로 삼은 PRD 문장이나 신호 한두 개를 붙인다. 이어서 과설계 방지 스킬, 추가 스킬(스킬마다 근거 한 줄), 응답 방식, 설치하지 않는 스킬과 이유를 적는다.
+- 물을 항목이 있으면 묻기 전에 대화로 추천을 짧게 보여 준다(정했거나 맡긴 항목은 뺀다): 두뇌 일곱 개(`none`, superpowers, agent-skills(addyosmani), pstack, gstack, oh-my, mattpocock)를 한 줄씩 나열하고 추천에 `(추천)`과 근거로 삼은 PRD 문장이나 신호 한두 개를 붙인다. 이어서 과설계 방지 스킬, 추가 스킬(스킬마다 근거 한 줄), 응답 방식, 화면 디자인 보조, 설치하지 않는 스킬과 이유를 적는다.
 
 ## 4. 묻는 법
-Claude Code는 AskUserQuestion으로 묻는다. 한 번에 질문 4개, 질문마다 선택지 4개까지다. 선택지마다 `brains/README.md`의 "선택지 설명(한 줄)"을 `description`에 넣고, 추천한 선택지는 이름 끝에 ` (추천)`을 붙여 맨 앞에 둔다.
+Claude Code는 AskUserQuestion으로 묻는다. 한 번에 질문 4개, 질문마다 선택지 4개까지다. 선택지마다 `brains/README.md`의 "선택지 설명(한 줄)"을 `description`에 넣고, 추천한 선택지는 이름 끝에 ` (추천)`을 붙여 맨 앞에 둔다. 두뇌 agent-skills의 선택지 이름은 `agent-skills (addyosmani)`다. Vercel·Neon·Supabase의 agent-skills와 구분하기 위해서다.
 
 1. 프로젝트 기본(필요할 때만): 템플릿·이름·위치를 한 번에 묻는다.
-2. 스킬 구성: 아래 세 질문을 한 번에 묻는다(정했거나 맡긴 항목은 뺀다). 질문 본문 첫 줄에 추천 근거를 한 줄로 적는다.
+2. 스킬 구성: 아래 네 질문을 한 번에 묻는다(정했거나 맡긴 항목은 뺀다). 질문 본문 첫 줄에 추천 근거를 한 줄로 적는다.
 
    | 머리글 | 선택지(순서대로) |
    |---|---|
    | 두뇌 | `<추천> (추천)`, PRD에 다음으로 맞는 두뇌 하나, `없음(기본 AI)`, `다른 두뇌 보기`. 추천이 `none`이면 `없음(기본 AI) (추천)`, 다음으로 맞는 두뇌 둘, `다른 두뇌 보기` |
    | 과설계 방지 | `ponytail (추천)`, `caveman`, `andrej-karpathy-skills`, `SKIP(기본 AI)` |
    | 응답 방식 | `i-have-adhd (추천)`, `SKIP`. SKIP을 추천할 때는 `SKIP (추천)`, `i-have-adhd` |
+   | 화면 디자인 | `SKIP (추천)`, `taste-skill`. taste-skill을 추천할 때는 `taste-skill (추천)`, `SKIP` |
 
 3. `다른 두뇌 보기`를 고르면 첫 질문에 없던 두뇌 네 개를 한 질문으로 묻는다. 첫 질문의 세 개와 합쳐 일곱 개가 모두 나온다. pstack과 mattpocock을 빼지 않는다.
 4. mattpocock 추가 스킬: 최종 두뇌가 정해지면 늘 묻는다(정했거나 맡긴 경우는 뺀다). 필수 3개(`domain-modeling`, `grilling`, `grill-with-docs`)를 뺀 추가 스킬 14개를 네 묶음의 여러 선택 질문으로 한 번에 묻는다. 추천은 최종 두뇌 기준으로 다시 만든다. 추천한 스킬은 ` (추천)`을 붙여 묶음 안 맨 앞에 두고 `description`에 근거 신호를 더한다. 두뇌와 겹치는 스킬도 목록에 남기고 `description`에 "<두뇌>와 겹침"을 적는다. 질문 본문에 "필수 3개는 늘 설치돼요. 추가하지 않으려면 아무것도 고르지 않거나 Other에 '없음'이라고 적어요"를 적는다. 열네 개가 질문 네 개를 거의 채워 "추가 안 함" 선택지를 넣을 자리가 없어서다. 두뇌가 `mattpocock`이면 "고른 스킬이 단계별 기법이 돼요"를 더한다.
@@ -82,16 +85,17 @@ Claude Code는 AskUserQuestion으로 묻는다. 한 번에 질문 4개, 질문�
 ## 5. 실행
 1. 설치 전에 이 기기 전역의 두뇌·과설계 방지 스킬을 확인해 보고 목록을 만든다. `~/.claude/settings.json`의 `enabledPlugins`에서 켜진 두뇌·과설계 방지 플러그인(superpowers, agent-skills, pstack, oh-my-claudecode, ponytail)과 frontend-design 플러그인, `~/.claude/skills/gstack`, `~/.claude/CLAUDE.md`의 `<!-- OMC:START -->` 블록을 본다. 지우거나 고치지 않는다. 고르지 않은 것은 설치기가 새 프로젝트의 `.claude/settings.local.json`으로 끈다.
 2. `AGENTS.md` 3번 준비물에 고른 두뇌의 준비물을 더해 확인한다. gstack은 Bun이 필요하다. oh-my는 Codex를 쓰면 OMX CLI(`omx`)가 필요하고, OMX `team`은 tmux가 필요하다(tmux가 없으면 멈추지 않고 보고에 적는다). gstack과 OMX CLI는 그 두뇌를 고르면 설치기가 전역에 설치한다(`--brain`을 명시하므로). 그 밖의 전역 설치는 사용자가 요청할 때만 한다.
-3. `AGENTS.md` 1~10을 그대로 하되, 5번 설치 명령에 고른 값을 붙인다: `bash <pro-kit>/templates/<템플릿>/install.sh <경로> --brain <값> --simplicity <값>`. `none`도 명시한다. 선택지 이름이 아니라 설치 값을 쓴다: `andrej-karpathy-skills`는 `karpathy`, `SKIP(기본 AI)`·`없음(기본 AI)`은 `none`이고, 응답 방식 `SKIP`은 `--optional i-have-adhd`를 빼는 것이다. 추가 스킬은 `--matt <스킬>[,<스킬>]`, i-have-adhd는 `--optional i-have-adhd`를 더한다. mattpocock 두뇌는 `--brain mattpocock`과 고른 `--matt`를 함께 준다. exit 0이 아니면 `AGENTS.md` 5번대로 출력을 보고하고 멈춘다.
+3. `AGENTS.md` 1~10을 그대로 하되, 5번 설치 명령에 고른 값을 붙인다: `bash <pro-kit>/templates/<템플릿>/install.sh <경로> --brain <값> --simplicity <값>`. `none`도 명시한다. 선택지 이름이 아니라 설치 값을 쓴다: `agent-skills (addyosmani)`는 `agent-skills`, `andrej-karpathy-skills`는 `karpathy`, `SKIP(기본 AI)`·`없음(기본 AI)`은 `none`이고, 응답 방식 `SKIP`은 `--optional i-have-adhd`를, 화면 디자인 `SKIP`은 `--optional taste`를 빼는 것이다. 추가 스킬은 `--matt <스킬>[,<스킬>]`, i-have-adhd는 `--optional i-have-adhd`, taste-skill은 `--optional taste`를 더한다(둘 다면 `--optional i-have-adhd,taste`). mattpocock 두뇌는 `--brain mattpocock`과 고른 `--matt`를 함께 준다. exit 0이 아니면 `AGENTS.md` 5번대로 출력을 보고하고 멈춘다.
 4. PRD를 새 프로젝트에 남겨 9번 커밋에 넣는다. 추천의 근거이고, 나중에 두뇌를 바꿀 때도 읽는다. 작업 폴더 흐름에서 첫 요청을 `docs/first-request.md`에 적었고 PRD가 그 요청 안에 있으면 그 파일로 충분하다(문장은 바꾸지 않는다). 그 밖에는 `docs/prd.md`에 둔다: 파일이면 내용을 옮기고 원래 경로를 첫 줄에 적고, 요청 속 설명이면 그 문장을 그대로, 프리셋 팩이면 팩 이름과 경로를 적는다.
-5. 8번 확인에서 `pnpm skills:check`가 exit 0이고 `두뇌:`·`과설계 방지:`·`mattpocock 추가:` 줄이 고른 값인지 본다. i-have-adhd를 골랐으면 `선택 스킬:` 줄에 `i-have-adhd 있음`이 보여야 한다.
+5. 8번 확인에서 `pnpm skills:check`가 exit 0이고 `두뇌:`·`과설계 방지:`·`mattpocock 추가:` 줄이 고른 값인지 본다. i-have-adhd나 taste-skill을 골랐으면 `선택 스킬:` 줄에 `i-have-adhd 있음`, `taste 있음`이 보여야 한다.
 
 ## 6. 보고
 `AGENTS.md` 10번 보고에 더한다.
 - 추천에 쓴 PRD(파일 경로나 "요청의 서비스 설명", 팩 이름)
 - 고른 두뇌, 과설계 방지 스킬, 추가 스킬, 응답 방식과 실제 설치 상태(`pnpm skills:check`의 해당 줄)
-- 추천과 다르게 고른 것, 건너뛴 추천과 나중에 설치하는 명령(새 프로젝트 세션의 H 라운드에서 `pnpm skills:setup --brain <이름>`, `--simplicity <이름>`, `--matt <스킬>`, `--optional i-have-adhd`)
+- 추천과 다르게 고른 것, 건너뛴 추천과 나중에 설치하는 명령(새 프로젝트 세션의 H 라운드에서 `pnpm skills:setup --brain <이름>`, `--simplicity <이름>`, `--matt <스킬>`, `--optional i-have-adhd`, `--optional taste`)
 - 끈 전역 플러그인과 남은 전역 경고(설치기 출력의 `전역:`·`전역 경고:` 줄)
 - caveman이나 i-have-adhd를 골랐으면 켜는 명령(`/caveman`, `/i-have-adhd`. Codex는 `$`)과 대화 응답에만 쓴다는 점. 끄는 말은 스킬별로 적는다("stop caveman", "stop adhd mode", "stop ponytail"). "normal mode"는 셋을 함께 끈다
+- taste-skill을 골랐으면 화면 작업에서 "taste로"라고 하거나 스타일 질문에서 "taste-skill로 방향 뽑기"를 고른 화면에만 쓴다는 점, impeccable 흐름(브리프, critique, audit)은 그대로라는 점, 검사에 Chrome·Edge·Chromium이 필요하다는 점
 - karpathy를 골랐으면 diff 검토 스킬이 없어 `prokit-reviewer` focus가 그 역할을 맡는다는 점
 - gstack을 골랐으면 전역 설치가 Stop 훅을 등록하고 다른 프로젝트에서도 보인다는 점

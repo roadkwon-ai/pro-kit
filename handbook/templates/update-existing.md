@@ -33,6 +33,8 @@ pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 
 
 템플릿 갱신 반영은 템플릿이 설치한 파일과 설정을 옮기는 일이에요. 공식 스킬의 새 버전은 그 프로젝트에서 `pnpm skills:update`로 받아요([설치와 업데이트 구조](../skills/install-and-update.md)). 두뇌와 과설계 방지 스킬을 고르게 된 판(2026-10-20)으로 옮기면, 기록이 없는 프로젝트는 둘 다 없음으로 읽혀 `pnpm skills:check`가 옛 기본 설치본(superpowers, OMC, OMX, ponytail)을 충돌로 알려요. 열린 라운드를 닫고 H 라운드에서 템플릿의 `scripts/skills-setup.mjs`와 `skills.manifest.json`을 먼저 옮긴 뒤(설치기는 이 두 파일을 덮어쓰지 않고, 옛 판은 `--brain`을 모른 채 그냥 끝나요) `pnpm skills:setup --brain <이름|none> --simplicity <이름|none>`으로 골라요. 지금과 가장 가깝게는 `--brain superpowers --simplicity ponytail`, 가볍게는 `--brain none --simplicity ponytail`이에요([두뇌와 선택 스킬](../skills/brains.md)). ponytail을 고르면 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->개 프로젝트 스킬도 같은 명령이 받아요. Codex 네이티브 Ponytail은 전역 선택 항목이라 이행으로 자동 설치·갱신하지 않아요. 사용자가 요청했을 때만 원본 훅·코드를 검토하고 `pnpm skills:setup --with-global`과 `/hooks` 신뢰를 따로 진행해요.
 
+화면 디자인 보조 선택 묶음 `taste`(2026-10-20)를 쓰려면 H 라운드에서 템플릿의 `skills.manifest.json`과 `prokit-ui`(`SKILL.md`, `references/taste.md`)를 옮긴 뒤 `pnpm skills:setup --optional taste`로 설치해요. `install.sh --skip-skills`가 `.gitignore`에 `/.taste-skill/`을 더해요([화면 디자인 보조](../skills/brains.md#화면-디자인-보조)).
+
 ## 관련 문서
 
 - [설치기와 옵션](installer.md)

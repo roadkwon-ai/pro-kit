@@ -27,7 +27,7 @@
 > **사용 전에**: 프로킷 자체 코드·스킬·문서는 [MIT License](LICENSE)로 제공합니다. 상업적 이용, 유료 고객 개발, 수정·재판매와 비공개 제품 개발을 허용하며, 재배포할 때 저작권 표시와 허가문을 함께 유지해야 합니다. 외부 스킬에는 [원래 조건](THIRD_PARTY_NOTICES.md)이 적용됩니다.
 
 <p align="center">
-  <strong>템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개 &middot; 구현·리뷰 에이전트 <!-- v:prokit.agents.count -->3<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->7<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
+  <strong>PRD로 스킬 추천 &middot; 템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개 &middot; 구현·리뷰 에이전트 <!-- v:prokit.agents.count -->3<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->7<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
 </p>
 
 <p align="center">
@@ -47,7 +47,7 @@
 ---
 
 ## 프로킷이란
-AI 코딩 에이전트가 일할 개발 환경을 새 프로젝트에 설치하는 생성기입니다. 에이전트가 요구사항 정리, 직접 실행해 확인, 독립 리뷰, 비밀값 관리 같은 전문 개발자의 순서를 지키며 일하게 하고, 사용자는 "할 일에 마감일 붙여줘"처럼 평소 말로 요청하고 확인 질문에 답하면 됩니다. <!-- v:templates.count.ko -->두<!-- /v --> 템플릿 모두 실제로 설치해 확인했고, 결과는 [검증 결과](handbook/reference/verification.md)에 있습니다.
+AI 코딩 에이전트가 일할 개발 환경을 새 프로젝트에 설치하는 생성기입니다. 만들 서비스를 적은 PRD를 먼저 받아, 그 PRD에 맞는 스킬 구성을 추천하고 개발 환경을 만듭니다. 에이전트가 요구사항 정리, 직접 실행해 확인, 독립 리뷰, 비밀값 관리 같은 전문 개발자의 순서를 지키며 일하게 하고, 사용자는 "할 일에 마감일 붙여줘"처럼 평소 말로 요청하고 확인 질문에 답하면 됩니다. <!-- v:templates.count.ko -->두<!-- /v --> 템플릿 모두 실제로 설치해 확인했고, 결과는 [검증 결과](handbook/reference/verification.md)에 있습니다.
 
 전문 작업은 공식 스킬과 사용자 지정 스킬에 맡기고, 프로킷은 범위·증거·재검토·최종 수용을 관리합니다. 개발 중에는 캐시와 설치 환경의 용량도 감시합니다([위임과 자원 관리](handbook/concepts/delegation-and-resources.md)).
 
@@ -87,6 +87,8 @@ flowchart LR
 전체 비교는 [그냥 AI에게 맡길 때와 다른 점](handbook/start/what-is-prokit.md#그냥-ai에게-맡길-때와-다른-점)에 있습니다.
 
 ## 빠른 시작
+> **PRD부터 정합니다.** 프로킷은 PRD(만들 서비스를 적은 기획 문서)를 바탕으로 프로젝트에 맞는 스킬 구성을 추천하고 개발 환경을 만듭니다. 그래서 PRD가 없으면 프로젝트를 만들지 않습니다. 누가 쓰는지와 무엇을 할 수 있는지 몇 줄이면 되고, 적을 것과 주는 법은 [PRD 먼저 정하기](handbook/start/prd.md)에 있습니다.
+
 준비물은 Node <!-- v:node.min -->22.20<!-- /v --> 이상(<!-- v:node.recommended -->24<!-- /v --> 권장), pnpm, git입니다. 서비스를 만들려면 컨테이너 엔진(Podman 또는 Docker)이 더 필요하고, supabase는 Supabase CLI <!-- v:supabaseCli.min -->2.117<!-- /v --> 이상도 필요합니다([준비물](handbook/start/requirements.md)). Windows는 WSL2의 Ubuntu에서 엽니다. 이 폴더에서 에이전트를 열고 요청합니다. 에이전트마다 여는 명령은 [지원하는 에이전트](handbook/start/supported-agents.md)에 있습니다.
 
 ```bash
@@ -99,10 +101,10 @@ claude
 
 > https://github.com/roadkwon-ai/pro-kit 을 이 폴더에 받고, 그 안의 AGENTS.md대로 화면만 만들 프로젝트를 pro-kit 옆에 living 폴더로 만들어줘. DB는 쓰지 않아. 없는 준비물은 설치해줘. 같이 사는 사람들이 함께 쓴 생활비를 적고, 월말에 누가 누구에게 얼마를 보내면 되는지 알려 주는 서비스를 만들고 싶어. 필요한 화면을 모두 예시 데이터로 만들어줘. 로그인이나 저장 같은 기능은 빼고 화면만 만들어. 시스템·라이트·다크 모드 전환과 한국어·영어 전환을 모든 페이지의 기본 기능으로 넣어줘. 화면 문구는 같은 키를 가진 두 언어의 번역 사전에서 관리하고, 전환해도 현재 페이지와 입력을 유지해줘. 개발 화면과 HTML로 내보낸 결과에서 모든 페이지의 전환과 상태 유지를 실제로 확인해줘. 디자인 스타일은 서비스에 어울리는 걸로 추천해주고, 다 만들면 HTML 파일로 내보내줘.
 
-끝에 "GitHub Pages에 배포해줘"나 "Vercel에 배포해줘"를 붙이면 인터넷에 올립니다. 나중에 "실제 서비스로 바꿀 거야"라고 하면 로컬 DB와 로그인·저장이 되는 개발로 이어집니다. 자세히: [빠른 시작: 화면만 만들기](handbook/start/quickstart-screens.md), 단계별 안내는 [튜토리얼](tutorials/README.md).
+프롬프트에서 서비스를 설명한 문장이 PRD입니다. 끝에 "GitHub Pages에 배포해줘"나 "Vercel에 배포해줘"를 붙이면 인터넷에 올립니다. 나중에 "실제 서비스로 바꿀 거야"라고 하면 로컬 DB와 로그인·저장이 되는 개발로 이어집니다. 자세히: [빠른 시작: 화면만 만들기](handbook/start/quickstart-screens.md), 단계별 안내는 [튜토리얼](tutorials/README.md).
 
 ### 서비스 만들기 (로그인과 DB)
-DB 종류, 프로젝트 이름(영어 소문자와 하이픈), PRD(파일 경로나 누가 쓰고 무엇을 하는 서비스인지)를 넣어 요청합니다. DB 종류를 빼면 에이전트가 차이를 설명하고 묻습니다. PRD는 꼭 있어야 합니다. 에이전트가 PRD로 두뇌와 스킬을 추천해 고르게 하고 개발 환경을 맞추기 때문입니다. 요청에 없으면 먼저 PRD를 받고, 그래도 없으면 프로젝트를 만들지 않고 끝납니다. Claude Code에서는 `/prokit-init <PRD 파일 경로나 내용>`으로 바로 불러도 됩니다.
+PRD(파일 경로나 누가 쓰고 무엇을 하는 서비스인지), DB 종류, 프로젝트 이름(영어 소문자와 하이픈)을 넣어 요청합니다. DB 종류를 빼면 에이전트가 차이를 설명하고 묻습니다. PRD가 요청에 없으면 에이전트가 먼저 받고, 그래도 없으면 프로젝트를 만들지 않고 끝납니다. Claude Code에서는 `/prokit-init <PRD 파일 경로나 내용>`으로 바로 불러도 됩니다.
 
 > supabase 템플릿으로 my-app 프로젝트 만들어줘. PRD는 [~/Documents/my-app-prd.md]에 있어.
 
@@ -174,7 +176,7 @@ git clone https://github.com/roadkwon-ai/pro-kit
 ## 문서 지도
 | 어디 | 무엇이 있나요 |
 |---|---|
-| [문서(handbook)](handbook/README.md) | 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->36<!-- /v -->개. [시작하기](handbook/start/README.md), [핵심 개념](handbook/concepts/README.md), [템플릿](handbook/templates/README.md), [스킬과 에이전트](handbook/skills/README.md), [디자인](handbook/design/README.md), [배포와 릴리스](handbook/deploy/README.md), [레퍼런스](handbook/reference/README.md) |
+| [문서(handbook)](handbook/README.md) | 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->37<!-- /v -->개. [시작하기](handbook/start/README.md), [핵심 개념](handbook/concepts/README.md), [템플릿](handbook/templates/README.md), [스킬과 에이전트](handbook/skills/README.md), [디자인](handbook/design/README.md), [배포와 릴리스](handbook/deploy/README.md), [레퍼런스](handbook/reference/README.md) |
 | [튜토리얼](tutorials/README.md) | 코드를 몰라도 프롬프트를 붙여 넣으며 화면을 만드는 단계별 안내. [시작하기](tutorials/start/README.md), [컨셉으로 화면 만들기](tutorials/samples/README.md), [Nextflix](tutorials/01-nextflix/README.md), [Claudle](tutorials/02-claudle/README.md), 비용과 키·배포·용어·문제 해결·Windows 가이드. [프로킷 사이트](https://prokit-web.vercel.app/tutorials/)에서도 읽을 수 있습니다 |
 | 템플릿 README와 검증 기록 | 명령과 옵션의 정본은 템플릿 README([neon](templates/prokit-next-neon/README.md) · [supabase](templates/prokit-next-supabase/README.md)), 검증 결과와 한계는 VERIFICATION.md([neon](templates/prokit-next-neon/VERIFICATION.md) · [supabase](templates/prokit-next-supabase/VERIFICATION.md)) |
 | [AGENTS.md](AGENTS.md) | 에이전트가 새 프로젝트를 만들 때 따르는 절차와 이 저장소의 규칙 |

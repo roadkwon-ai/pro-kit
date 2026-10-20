@@ -500,4 +500,5 @@ caveman에서 설치하지 않는 스킬과 이유:
   - 서체 조합 44개에 한글 서체가 없고, 금지 규칙(1px 테두리, 그림자, 보라색 등)이 shadcn 기본 컴포넌트·카탈로그 `DESIGN.md`와 부딪힌다. 전역 파일 `~/.taste-skill/history.json`도 쓴다.
   - 2.1.0~2.1.3이 10-18~19에 나와 아직 판이 흔들린다.
   - 사용자 결정: 두뇌·과설계 방지 구현을 먼저 끝낸다. 그 뒤 선택 묶음 `--optional taste`로 Persuade 화면만 보조하는 설계를 따로 한다(스타일 후보 하나, `inspect.mjs` 검사 행, 이미지 길에서 배치도 전 아카이브 사진). 대체 항목은 판이 안정되고, 빠지는 역할과 한글 서체를 `prokit-ui`가 맡는 설계가 선 뒤 다시 본다.
+  - 후속(같은 날): 사용자 결정으로 선택 묶음 `taste`를 넣었다. `prokit-init`이 네 번째 질문으로 묻고, `prokit-ui`는 고른 화면에만 쓴다(`references/taste.md`).
 - Anthropic `frontend-design`(anthropics/skills, Apache-2.0, 71줄 지침) 검토, 2026-10-20. 템플릿에 넣지 않는다. impeccable이 이 스킬에서 출발해 `init`, 명령 24개, 검사 규칙 61개를 더했고, B 케이스 행을 채울 산출물이 없다. 전역 플러그인으로 켜져 있으면 UI 작업에서 impeccable과 함께 불려 `prokit-ui` 순서(사이트맵 → shape 브리프)와 엇갈리므로, 사용자 결정에 따라 매니페스트 `claude.conflicts`에 두고 D6로 그 프로젝트에서만 끈다(이번 구현 범위).

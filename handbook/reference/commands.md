@@ -26,7 +26,7 @@
 | 명령 | 하는 일 |
 |---|---|
 | `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬, 플러그인, OMX 설정과 agent-browser CLI 설치. `--with-global`이면 나머지 전역 도구도 |
-| `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`<!-- /v -->) 설치. 여러 개는 쉼표로(`ops,motion`) |
+| `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`<!-- /v -->) 설치. 여러 개는 쉼표로(`ops,motion`) |
 | `pnpm skills:check` | 설치하지 않고 상태만 확인. 프로젝트 범위 항목이 빠졌으면 exit 1 |
 | `pnpm skills:update --check` | 설치한 외부 스킬을 GitHub 원본과 비교해 새 버전만 알려 주기 |
 | `pnpm skills:update [<이름>...]` | 바뀐 스킬과 빠진 스킬만(또는 지정한 스킬만) 다시 설치 |

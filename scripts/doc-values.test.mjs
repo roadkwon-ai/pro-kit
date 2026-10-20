@@ -366,9 +366,9 @@ test("계산값 2: 비용 단위, 한글 수사, 케이스 범위, 화면 점수
   const want = {
     "cost.tokensPerUsd": "5.5만", "cost.cachedPerUsd": "275만", "cost.multiplier": "2~3", "cost.multiplierModel": "1~2", "cost.multiplierRefine": "1.1~3",
     "cost.feature.time": "15분", "cost.feature.usd": "7", "cost.date": "2026-10-05", "cost.image.tokens": "1.7만",
-    "templates.count.ko": "두", "prokit.skills.count.ko": "아홉", "prokit.agents.count.ko": "세", "agents.count.ko": "네", "devCycle.cases.count.ko": "일곱", "optional.count": "4", "optional.count.ko": "네",
+    "templates.count.ko": "두", "prokit.skills.count.ko": "아홉", "prokit.agents.count.ko": "세", "agents.count.ko": "네", "devCycle.cases.count.ko": "일곱", "optional.count": "5", "optional.count.ko": "다섯",
     "devCycle.cases.range": "A\\~F·H", "devCycle.ui.auditMin": "16", "devCycle.ui.a11yMin": "3",
-    "optional.names": "ops, motion, mobile, i-have-adhd", "optional.namesCode": "`ops`, `motion`, `mobile`, `i-have-adhd`",
+    "optional.names": "ops, motion, mobile, i-have-adhd, taste", "optional.namesCode": "`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`",
     "optional.ops.skillsCode.neon": "`vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway`", "optional.ops.skillsCode.supabase": "`vercel-optimize`",
     "optional.ops.skillsCode.shared": "`vercel-optimize`", "optional.ops.skillsCode.neonOnly": "`neon-functions`, `neon-object-storage`, `neon-ai-gateway`", "optional.ops.count.neon": "4", "optional.ops.count.supabase": "1", "optional.motion.skillsCode": "`vercel-react-view-transitions`", "optional.mobile.skillsCode": "`vercel-react-native-skills`",
     "agent.claude.install": "curl -fsSL https://claude.ai/install.sh | bash", "agent.codex.install": "curl -fsSL https://chatgpt.com/codex/install.sh | sh",

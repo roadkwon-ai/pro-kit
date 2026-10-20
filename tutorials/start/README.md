@@ -11,6 +11,7 @@
 |---|---|
 | 컴퓨터 | macOS, 또는 WSL2를 켠 Windows. Windows라면 [Windows 준비](../reference/windows.md)를 먼저 하고 오세요 |
 | 에이전트 요금제 | 쓰려는 에이전트의 유료 요금제. Claude Code는 Claude, Codex는 ChatGPT 요금제예요. 요금제 이름은 [에이전트별 차이](../reference/claude-code-and-codex.md)에 있어요 |
+| 만들 서비스 설명(PRD) | 누가 쓰고 무엇을 할 수 있는 서비스인지 한두 문장이에요. 프로킷은 이 설명으로 스킬 구성을 추천하고 개발 환경을 만들어서, 끝내 없으면 프로젝트를 만들지 않아요. 프리셋 쪽의 프롬프트에는 PRD(프리셋 팩이나 컨셉 설명)가 이미 들어 있어요. [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md) |
 | (선택) 이미지 그리기 준비 | Claude Code로 화면 시안과 사진을 AI로 그릴 때만 필요해요. ChatGPT 유료 요금제(Codex CLI로 그려요)나 유료 OpenAI API 키 중 하나이고, 튜토리얼의 첫 프롬프트를 보내기 전에 해요. <!-- v:agents.imageTools -->Codex, Antigravity, Grok Build<!-- /v -->는 준비 없이 그려요. 없어도 튜토리얼을 끝까지 할 수 있어요. [이미지 그리기](../reference/costs-and-keys.md#이미지-그리기) |
 
 ## 2. 터미널 열기

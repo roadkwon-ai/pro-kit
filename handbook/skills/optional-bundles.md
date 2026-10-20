@@ -2,7 +2,7 @@
 
 > 한눈에: 기본으로는 모든 프로젝트가 쓰는 스킬만 설치해요. 일부 프로젝트만 쓰는 공식 스킬은 묶음으로 나눠 두고, 필요할 때 명령 한 줄로 더해요. 묶음이 없는데 그 분야를 요청하면 에이전트가 설치를 먼저 제안해요.
 
-## 묶음 <!-- v:optional.count.ko -->네<!-- /v --> 가지
+## 묶음 <!-- v:optional.count.ko -->다섯<!-- /v --> 가지
 
 | 묶음 | 이럴 때 | 스킬 | 관련 prokit 스킬 |
 |---|---|---|---|
@@ -11,6 +11,7 @@
 | `motion` | 화면 전환이나 공유 요소 애니메이션(React `<ViewTransition>`)을 만들 때 | <!-- v:optional.motion.skillsCode -->`vercel-react-view-transitions`<!-- /v --> | `prokit-ui` |
 | `mobile` | React Native·Expo 모바일 앱을 따로 만들 때. 템플릿은 웹 앱만 만들어요 | <!-- v:optional.mobile.skillsCode -->`vercel-react-native-skills`<!-- /v --> | `prokit-dev-cycle` |
 | `i-have-adhd` | 다음 행동부터, 번호 단계로 짧게 답받고 싶을 때. `/i-have-adhd`로 켤 때만 대화 답에 적용해요([두뇌와 선택 스킬](brains.md)) | `i-have-adhd` | `prokit-dev-cycle` |
+| `taste` | 랜딩·소개처럼 보여 주는 화면을 갤러리 사이트에서 뽑은 방향, 공개 아카이브 사진, 실제 브라우저 검사로 만들고 싶을 때. 사용자가 고른 화면에만 쓰고, 검사에는 Chrome이 필요해요([두뇌와 선택 스킬](brains.md#화면-디자인-보조)) | <!-- v:optional.taste.skillsCode -->`design-taste-frontend`<!-- /v --> | `prokit-ui` |
 
 ## 설치하기
 

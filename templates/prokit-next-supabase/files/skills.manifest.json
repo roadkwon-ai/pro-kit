@@ -143,6 +143,16 @@
 					"skills": ["i-have-adhd"]
 				}
 			]
+		},
+		"taste": {
+			"description": "화면 디자인 보조 taste-skill(고른 화면에만. 검사에 Chrome 필요)",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "Leonxlnx/taste-skill",
+					"skills": ["design-taste-frontend"]
+				}
+			]
 		}
 	},
 	"brains": {

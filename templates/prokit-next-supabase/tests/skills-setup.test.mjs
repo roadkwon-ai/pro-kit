@@ -779,7 +779,7 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
   }
   for (const s of slotEntries.flatMap((e) => e.skills)) assert.ok(!names.includes(s), `${s}: 두뇌·과설계 방지 후보가 기본 설치와 같은 이름을 쓰면 정리할 때 헷갈린다`);
   for (const [k, o] of Object.entries(m.optional)) assert.ok(/^[a-z][a-z-]*$/.test(k) && o.description && o.skills.length, k);
-  assert.deepEqual(Object.keys(m.optional), ["ops", "motion", "mobile", "i-have-adhd"]);
+  assert.deepEqual(Object.keys(m.optional), ["ops", "motion", "mobile", "i-have-adhd", "taste"]);
   // 하나만 고르는 두 항목. 기본 설치(skills, claude)에는 두뇌와 과설계 방지 스킬을 두지 않는다(기본은 none).
   assert.deepEqual(Object.keys(m.brains), ["superpowers", "agent-skills", "pstack", "gstack", "oh-my", "mattpocock"]);
   assert.deepEqual(Object.keys(m.simplicity), ["ponytail", "caveman", "karpathy"]);

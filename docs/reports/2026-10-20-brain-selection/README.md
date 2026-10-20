@@ -9,7 +9,7 @@
 - mattpocock `domain-modeling`·`grilling`·`grill-with-docs`는 하네스로 늘 설치한다. 나머지 14개는 `--matt`로 고르는 추가 스킬이다.
 - i-have-adhd는 선택 묶음 `i-have-adhd`다. 새 프로젝트에서는 설치를 추천한다(`/i-have-adhd`로 켤 때만 동작한다).
 - Anthropic `frontend-design`은 템플릿에 넣지 않는다. impeccable이 이 스킬에서 출발해 더 많은 일을 한다. 전역에 켜져 있으면 설치기가 그 프로젝트에서만 끈다.
-- taste-skill은 impeccable 대체로 두지 않았다. 선택 묶음으로 보조하는 설계는 다음 작업으로 남겼다(설계 문서 11절).
+- taste-skill은 impeccable 대체로 두지 않았다. 같은 날 선택 묶음 `taste`로 넣어 사용자가 고른 화면에만 보조로 쓰게 했다(템플릿 `VERIFICATION.md`).
 
 설계와 결정 근거는 [설계 문서](../../plans/2026-10-20-prokit-brain-selection.md)에 있다. 2026-10-09의 [Karpathy 미도입 검토](../2026-10-09-karpathy-skill-adoption/README.md)는 "기본 지침은 ponytail 하나"였고, 이번에 "기본 설치 없음, 과설계 방지 스킬 하나를 고름(ponytail 추천)"으로 바뀌었다.
 

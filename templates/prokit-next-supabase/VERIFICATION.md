@@ -4,6 +4,10 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 모든 값은 2026-09-27에 측정한 실측값이다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 선택 묶음 taste: taste-skill 화면 디자인 보조 (2026-10-20)
+
+taste-skill(Leonxlnx/taste-skill의 `design-taste-frontend`)을 선택 묶음 `taste`로 더했다. 설치기와 `prokit-ui` 연결 규칙은 두 템플릿이 같다. 실제 설치 확인과 한계는 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#선택-묶음-taste-taste-skill-화면-디자인-보조-2026-10-20)에 있다. 두 템플릿 테스트는 각 314개 통과했다.
+
 ## 두뇌·과설계 방지 스킬 선택 설치 (2026-10-20)
 
 두뇌(superpowers, agent-skills, gstack, oh-my, pstack)와 과설계 방지 스킬(ponytail, caveman, karpathy)을 기본 설치에서 빼고, 프로젝트마다 하나씩 고르게 했다(`--brain`, `--simplicity`, 기본 `none`). mattpocock 필수 세 개는 늘 설치하고 나머지는 `--matt`, i-have-adhd는 선택 묶음이다. 결정과 상세 실측은 [두뇌·과설계 방지 선택 설치 보고서](../../docs/reports/2026-10-20-brain-selection/README.md)에 있다.

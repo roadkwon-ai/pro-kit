@@ -90,7 +90,7 @@ test("설치: 파일·스킬 링크·Codex·Antigravity 에이전트·스크립�
   assert.equal(cfg.commands.dbPush, undefined);
   assert.equal(cfg.commands.test, undefined);
   const ignored = readFileSync(join(root, ".gitignore"), "utf8").split("\n");
-  for (const l of ["tasks/evidence/", ".omc/", ".omx/", ".prokit/", ".claude/settings.local.json", ".env.*", "!.env.schema", "**/.impeccable/review/", "/html/"]) assert.ok(ignored.includes(l), `.gitignore에 ${l} 없음`);
+  for (const l of ["tasks/evidence/", ".omc/", ".omx/", ".prokit/", ".claude/settings.local.json", ".env.*", "!.env.schema", "**/.impeccable/review/", "/html/", "/.taste-skill/"]) assert.ok(ignored.includes(l), `.gitignore에 ${l} 없음`);
   assert.equal(cfg.brain, "none", "두뇌는 기본 none(기본 AI)");
   assert.equal(cfg.simplicity, "none");
   // status는 외부 스킬 업데이트를 확인한다. 테스트가 GitHub에 가지 않게 확인을 끈다.
@@ -285,7 +285,7 @@ test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 �
 test(".gitignore: 없는 줄만 더하고, 슬래시 표기가 달라도 같은 항목으로 본다", () => {
   const root = mkdtempSync(join(tmpdir(), "gi-"));
   const p = join(root, ".gitignore");
-  writeFileSync(p, "node_modules\n.omc\n/tasks/evidence/\n.claude/settings.local.json\n.env.*\n!.env.schema\n!.env.example\nhtml");
+  writeFileSync(p, "node_modules\n.omc\n/tasks/evidence/\n.claude/settings.local.json\n.env.*\n!.env.schema\n!.env.example\nhtml\n.taste-skill");
   writeFileSync(p, `${readFileSync(p, "utf8")}\n${IMPECCABLE_IGNORES.join("\n")}`);
   assert.deepEqual(ensureGitignore(root), [".omx/", ".prokit/"]);
   assert.ok(readFileSync(p, "utf8").endsWith("\n\n# OMC·OMX·pro-kit 런타임 상태\n.omx/\n.prokit/\n"));
@@ -466,10 +466,11 @@ test("설치기: 고른 값은 복사 전에 확인하고, --skip-skills여도 .
   assert.match(diff.stdout, /^\.dev-cycle\.json 기록 예정: brain superpowers/m);
   assert.deepEqual(snapshot(root), before);
 
-  const r = install(root, "--brain", "superpowers", "--simplicity", "ponytail", "--matt", "tdd,research", "--optional", "i-have-adhd");
+  const r = install(root, "--brain", "superpowers", "--simplicity", "ponytail", "--matt", "tdd,research", "--optional", "i-have-adhd,taste");
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.match(r.stdout, /^\.dev-cycle\.json 기록: brain superpowers, simplicity ponytail$/m);
   assert.match(r.stdout, /i-have-adhd는 \/i-have-adhd/);
+  assert.match(r.stdout, /taste\(design-taste-frontend\)는 화면 작업에서 사용자가 고른 화면에만/);
   const text = readFileSync(join(root, ".dev-cycle.json"), "utf8");
   assert.match(text, /^\{\n\s+"brain": "superpowers",\n\s+"simplicity": "ponytail",\n/, "맨 앞 키의 값만 바꾼다");
   assert.equal(install(root, "--simplicity", "caveman").status, 0, "다시 실행해 값만 바꾼다");

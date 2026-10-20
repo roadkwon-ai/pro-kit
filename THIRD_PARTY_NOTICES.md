@@ -44,6 +44,7 @@
 | caveman(과설계 방지 caveman) | Apache 2.0, `NOTICE`의 저작권 줄을 유지 | [확인 판 저장소](https://github.com/JuliusBrussee/caveman/tree/bad48a0e1df55e05e3f52249afa35ecc1909ee76) |
 | andrej-karpathy-skills(과설계 방지 karpathy) | 저장소에 LICENSE 파일이 없다. README·`plugin.json`·`SKILL.md`에 MIT 표기만 있다. 표준 라이선스로 확정하지 않는다 | [확인 판 plugin.json](https://github.com/multica-ai/andrej-karpathy-skills/blob/2c606141936f1eeef17fa3043a72095b4765b9c2/.claude-plugin/plugin.json) |
 | i-have-adhd(선택 묶음) | MIT | [확인 판 LICENSE](https://github.com/ayghri/i-have-adhd/blob/1ecea1993b7fce257ffbd686c070948b5e07eda6/LICENSE) |
+| taste-skill(선택 묶음 taste) | MIT | [확인 판 LICENSE](https://github.com/Leonxlnx/taste-skill/blob/63aba5f43b5056758b15bbe7d683da8c86a7a7ad/LICENSE) |
 
 ### 매니페스트의 외부 source 목록
 
@@ -53,6 +54,7 @@
 - [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)
 - [GENEXIS-AI/gpt-image-skill](https://github.com/GENEXIS-AI/gpt-image-skill)
 - [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman)
+- [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
 - [anthropics/skills](https://github.com/anthropics/skills)
 - [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)

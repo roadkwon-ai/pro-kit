@@ -64,6 +64,7 @@ export const SHARED = [
   "files/.agents/skills/prokit-ui/SKILL.md",
   "files/.agents/skills/prokit-ui/references/impeccable-map.md",
   "files/.agents/skills/prokit-ui/references/screen-only.md",
+  "files/.agents/skills/prokit-ui/references/taste.md",
   "files/.claude/agents/prokit-implementer.md",
   "files/.claude/agents/prokit-reviewer.md",
   "files/.claude/agents/specialist-reviewer.md",

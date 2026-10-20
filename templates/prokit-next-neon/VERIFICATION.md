@@ -4,6 +4,20 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 선택 묶음 taste: taste-skill 화면 디자인 보조 (2026-10-20)
+
+taste-skill(Leonxlnx/taste-skill의 `design-taste-frontend`, v2.1.3, MIT)을 선택 묶음 `taste`로 더했다. 같은 날 impeccable 대체로는 두지 않기로 했고(아래 "채택하지 않은 것", [두뇌 선택 설계](../../docs/plans/2026-10-20-prokit-brain-selection.md) 11절), 쓰고 싶은 사용자에게 선택권을 주자는 사용자 결정에 따라 보조 묶음으로 넣었다.
+
+- 연결: `prokit-ui`는 사용자가 고른 화면에만 taste를 쓴다(`references/taste.md`). 순서, `DESIGN.md`, 토큰 규칙, critique·audit 통과 기준은 그대로다. pro-kit의 `prokit-init`은 화면 디자인 보조를 네 번째 질문으로 묻고, 공개 페이지가 주 화면일 때만 추천한다.
+- 테스트: 두 템플릿 `node --test 'templates/<템플릿>/tests/*.test.mjs'` 각 314개 통과.
+- 실제 Better-T-Stack 프로젝트(neon, create-better-t-stack 3.47.0)에 `--brain none --simplicity none --optional taste`로 설치했다.
+  - skills CLI가 `.agents/skills/design-taste-frontend`에 받고 `.claude/skills`에 링크했다. `skills:check`는 exit 0이고 `선택 스킬:` 줄에 `taste 있음`이 보였다. `.gitignore`에 `/.taste-skill/`이 들어갔다.
+  - skills CLI 보안 평가는 Gen Safe, Socket 1 alert, Snyk Med Risk였다. 기본 설치하는 impeccable·skill-creator도 Socket 1 alert이고, Vercel의 `deploy-to-vercel`·`vercel-cli-with-tokens`도 Snyk Med Risk다.
+  - `TASTE_SKILL_HISTORY=.taste-skill/history.json`을 붙여 `draw.mjs`로 방향 셋과 전체 시트를 받았다. 기록은 프로젝트의 `.taste-skill/`에만 남았고 홈 폴더의 `~/.taste-skill`은 생기지 않았다. git은 그 폴더를 무시했다.
+  - `inspect.mjs`는 이 기기의 Chrome을 찾아 세 너비(1440, 768, 390px)의 화면과 `report.json`을 `.taste-skill/inspect/`에 남겼다. `lint.mjs apps/web/src`는 Better-T-Stack 기본 파일(Geist Mono, `<hr`, `text-indigo-600`, mode-toggle의 `transition-all`·`scale-0`)을 걸었다. 그래서 lint는 이번 화면의 파일만 검사하고 범위 밖 파일은 보고만 하게 했다.
+  - 시트는 서체를 Google Fonts `<link>`로 부르라고 한다. 서체는 impeccable-map "서체"대로 `next/font`로 받게 했다.
+- 한계: 실제 화면 하나를 taste로 만들어 critique·audit까지 잇는 라운드는 돌리지 않았다. Codex의 `$design-taste-frontend` 호출과, 고르지 않은 화면에서 스스로 불렸을 때 규칙대로 물러서는지는 확인하지 않았다. 2.1.0부터 2.1.3까지 10월 18일과 19일에 나와 판이 아직 흔들린다.
+
 ## 두뇌·과설계 방지 스킬 선택 설치 (2026-10-20)
 
 두뇌(superpowers, agent-skills, gstack, oh-my, pstack)와 과설계 방지 스킬(ponytail, caveman, karpathy)을 기본 설치에서 빼고, 프로젝트마다 하나씩 고르게 했다(`--brain`, `--simplicity`, 기본 `none`). mattpocock 필수 세 개는 늘 설치하고 나머지는 `--matt`, i-have-adhd는 선택 묶음이다. 결정과 상세 실측은 [두뇌·과설계 방지 선택 설치 보고서](../../docs/reports/2026-10-20-brain-selection/README.md)에 있다.
@@ -1015,7 +1029,7 @@ Claude 결과를 Codex에 그대로 적용할 수 있는지 실제 CLI로 확인
   - 한계: 조건마다 1회만 돌렸다. 비대화형이라 AskUserQuestion 대신 글로 물었다. 사용자가 고른 뒤의 받기·저장·토큰 적용·마감 merge는 돌리지 않았다.
 
 ### 채택하지 않은 것
-- **taste-skill**(Leonxlnx/taste-skill): 넣지 않았다.
+- **taste-skill**(Leonxlnx/taste-skill): 넣지 않았다. 2026-10-20에 impeccable을 대신하지 않는 선택 묶음 `taste`로 넣었다(맨 위 절).
   - 적용 범위가 다르다. 스스로 "Not dashboards, not data tables, not multi-step product UI"라고 밝힌다.
   - 절차가 부딪힌다. taste-skill은 짧은 방향 선언 뒤 바로 코드를 쓰고, `bts-ui`는 shape 브리프 확인 전에는 코드를 쓰지 않는다.
   - 서체가 부딪힌다. taste-skill이 권하는 Outfit을 impeccable은 반사적 선택 목록에 올려 두었다.

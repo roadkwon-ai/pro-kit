@@ -259,6 +259,7 @@ const GITIGNORE = [
     "**/.impeccable/review/",
     "**/.impeccable/questions/",
   ],
+  ["# taste-skill 작업 파일(선택 묶음 taste: 방향 시트, 기록, 검사 화면)", "/.taste-skill/"],
   // Better-T-Stack은 apps/web만 .env*를 무시한다. 루트와 packages/*의 .env.production 같은 파일도 막는다
   ["# 환경별 .env (비밀값). 배포 환경변수는 Vercel에 둔다", ".env.*", "!.env.schema", "!.env.example"],
   ["# pnpm export:html 결과(정적 HTML)", "/html/"],
@@ -512,6 +513,7 @@ export function main(argv) {
     "  5. 첫 UI 라운드에서 impeccable init으로 PRODUCT.md를 만든다",
     ...(picked.simplicity === "caveman" ? ["  - caveman 응답 압축은 /caveman(Codex $caveman)으로 켜고 \"stop caveman\"으로 끈다. 대화 응답에만 쓴다"] : []),
     ...(picked.optional.includes("i-have-adhd") ? ["  - i-have-adhd는 /i-have-adhd(Codex $i-have-adhd)로 켜고 \"stop adhd mode\"로 끈다. 대화 응답에만 쓴다"] : []),
+    ...(picked.optional.includes("taste") ? ["  - taste(design-taste-frontend)는 화면 작업에서 사용자가 고른 화면에만 쓴다(prokit-ui references/taste.md). 검사에는 Chrome·Edge·Chromium이 필요하다"] : []),
   ];
   console.log(out.join("\n"));
   if (skills && skills.status !== 0) return 2;

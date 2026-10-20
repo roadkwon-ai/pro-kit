@@ -2,7 +2,7 @@
 
 > 한눈에: 프로젝트마다 "어떤 순서로 진행할지"(두뇌)와 "얼마나 작게 만들지"(과설계 방지 스킬)를 하나씩 고르거나 고르지 않을 수 있어요. **아무것도 고르지 않으면 지금 쓰는 에이전트가 프로킷 내장 절차로 진행해요.** 새 프로젝트를 만들 때 `prokit-init` 스킬이 PRD를 먼저 받고, PRD에 맞는 것에 추천 표시를 붙여 물어봐요. PRD가 없으면 init하지 않아요.
 
-## 고르는 네 가지
+## 고르는 다섯 가지
 
 | 구분 | 고르는 수 | 기본 | 고르는 명령 |
 |---|---|---|---|
@@ -10,12 +10,13 @@
 | 과설계 방지 스킬 | 0\~1 | 없음(기본 AI) | `pnpm skills:setup --simplicity <이름>` |
 | mattpocock 추가 스킬 | 0개 이상 | 설치 안 함 | `pnpm skills:setup --matt <스킬>` |
 | 응답 방식(i-have-adhd) | 0\~1 | 설치 안 함 | `pnpm skills:setup --optional i-have-adhd` |
+| 화면 디자인 보조(taste-skill) | 0\~1 | 설치 안 함 | `pnpm skills:setup --optional taste` |
 
 ## 새 프로젝트에서 고르는 순서
 
-1. **PRD 주기**: PRD 파일이나 붙여 넣은 글, 요청 속 서비스 설명(누가 쓰는지와 핵심 기능), 프리셋 팩 중 하나가 있어야 해요. pro-kit 폴더에서 에이전트를 열었다면 스킬을 부르면서 줄 수도 있어요(Claude Code는 `/prokit-init <PRD 파일 경로나 내용>`, Codex는 `$prokit-init …`). 없으면 에이전트가 맨 먼저 PRD를 달라고 해요. 그래도 주지 않으면 PRD가 왜 필요한지 알리고 프로젝트를 만들지 않은 채 끝나요.
+1. **PRD 주기**: PRD 파일이나 붙여 넣은 글, 요청 속 서비스 설명(누가 쓰는지와 핵심 기능), 프리셋 팩 중 하나가 있어야 해요. pro-kit 폴더에서 에이전트를 열었다면 스킬을 부르면서 줄 수도 있어요(Claude Code는 `/prokit-init <PRD 파일 경로나 내용>`, Codex는 `$prokit-init …`). 없으면 에이전트가 맨 먼저 PRD를 달라고 해요. 그래도 주지 않으면 PRD가 왜 필요한지 알리고 프로젝트를 만들지 않은 채 끝나요. 적을 것은 [PRD 먼저 정하기](../start/prd.md)에 있어요.
 2. **추천 보기**: 에이전트가 PRD로 두뇌 일곱 개(없음 포함) 가운데 하나를 추천하고 근거 문장을 보여 줘요.
-3. **고르기**: 두뇌, 과설계 방지 스킬, 응답 방식을 한 번에 골라요. 추천한 선택지에 `(추천)`이 붙어 맨 앞에 있어요. 처음 질문에 없는 두뇌는 `다른 두뇌 보기`로 골라요.
+3. **고르기**: 두뇌, 과설계 방지 스킬, 응답 방식, 화면 디자인 보조를 한 번에 골라요. 추천한 선택지에 `(추천)`이 붙어 맨 앞에 있어요. 처음 질문에 없는 두뇌는 `다른 두뇌 보기`로 골라요.
 4. **추가 스킬 고르기**: mattpocock 추가 스킬 <!-- v:mattpocock.pool.count -->14<!-- /v -->개를 여러 개 골라요. PRD에 맞는 스킬에 `(추천)`이 붙어 있어요.
 
 이미 정한 항목(예: "두뇌는 superpowers")은 다시 묻지 않고, "알아서 골라줘"처럼 맡긴 항목은 추천대로 설치해요.
@@ -30,7 +31,7 @@
 |---|---|---|
 | 없음(기본 AI) | 지금 에이전트가 프로킷 내장 절차로 진행해요. 충돌이 없고 가장 가벼워요 | 모든 도구 |
 | `superpowers` | 설계 합의, 계획, 테스트 먼저, 작업별 리뷰를 강하게 거는 규율형이에요 | Claude Code, Codex, Antigravity, Grok Build |
-| `agent-skills` | 스펙부터 출시까지 보안·성능·접근성 기준을 단계별 명령으로 걸어요 | Claude Code, Codex, Antigravity, Grok Build |
+| `agent-skills` (addyosmani) | 스펙부터 출시까지 보안·성능·접근성 기준을 단계별 명령으로 걸어요 | Claude Code, Codex, Antigravity, Grok Build |
 | `gstack` | 무엇을 만들지 검토하는 제품 판단, 디자인, 실사용 QA가 강해요. 전역 설치(Bun)가 필요해요 | Claude Code, Codex |
 | `oh-my` | 여러 세션에 걸친 큰 작업을 자동·병렬 모드로 돌려요(Claude Code는 OMC, Codex는 OMX) | Claude Code, Codex(전역 OMX CLI 필요) |
 | `pstack` | React 코어팀 poteto의 엄격한 엔지니어링 방식이에요. `poteto-mode`가 일에 맞는 플레이북(기능, 버그, 성능, 리팩터, 시안)을 골라 코드는 적게 쓰고 실행 증거로 검증해요 | Claude Code만 |
@@ -53,7 +54,16 @@
 
 - **늘 설치**: `domain-modeling`, `grilling`, `grill-with-docs`. 용어와 설계 질문에 써요.
 - **고르면 설치**: <!-- v:mattpocock.pool.count -->14<!-- /v -->개예요. 구현·설계(`tdd`, `codebase-design`, `prototype`, `improve-codebase-architecture`), 디버깅·검토(`diagnosing-bugs`, `code-review`, `pr`, `writing-for-agents`), 조사·외부 설정(`research`, `wizard`, `to-questionnaire`), 인계·학습(`handoff`, `teach`, `wait-what`)으로 나눠 물어봐요. 목록에는 모두 나오고 PRD에 맞는 스킬에 `(추천)`이 붙어요. 고른 두뇌가 같은 일을 하는 스킬은 추천하지 않아요(두뇌가 `mattpocock`이면 빼지 않아요).
-- **i-have-adhd**: 다음 행동부터, 번호 단계로, 다음 할 일 하나로 짧게 답해요. `/i-have-adhd`로 켤 때만 쓰고 대화 답에만 적용해요. 켜기 전에는 평소 답 그대로라 새 프로젝트에서는 설치를 추천해요.
+- **i-have-adhd**([ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)): 에이전트가 답을 긴 글 속에 묻어 두지 않게 하는 스킬이에요. 다음 행동부터 말하고, 여러 단계는 번호로 나누고, 구체적인 다음 할 일 하나로 끝내요. 목록은 5개까지 쓰고 서론, 요약, 마무리 인사는 빼요. `/i-have-adhd`(Codex는 `$i-have-adhd`)로 켤 때만 쓰고 "stop adhd mode"로 꺼요. 대화 답에만 적용하고 파일, 커밋 메시지, 라운드 보고는 프로킷 형식을 따라요. 켜기 전에는 평소 답 그대로라 새 프로젝트에서는 설치를 추천해요.
+
+## 화면 디자인 보조
+
+**taste-skill**([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill))은 갤러리 사이트를 분석한 라이브러리에서 화면 방향을 뽑고, 공개 아카이브 사진과 실제 브라우저 검사로 AI가 만든 듯한 기본 화면을 피하게 하는 스킬이에요. 선택 묶음 `taste`로 설치해요.
+
+- **언제 추천하나**: 기본은 설치하지 않아요. PRD의 주 화면이 랜딩, 소개, 포트폴리오, 행사, 매장처럼 읽고 스크롤하는 공개 페이지이거나 "AI가 만든 티가 나지 않게"처럼 시각 완성도를 따로 요구하면 추천해요.
+- **어떻게 쓰나**: 설치해도 사용자가 고른 화면에만 써요. 화면을 요청할 때 "taste로"라고 하거나, 스타일 고르기 질문에서 "taste-skill로 방향 뽑기"를 고르면 돼요.
+- **impeccable과의 관계**: 대신하지 않고 보태요. 기획, 브리프 확인, critique·audit과 통과 기준은 그대로예요. 한글 서체와 `DESIGN.md`, 토큰 규칙은 프로킷 쪽이 우선이에요.
+- **준비물**: 검사(`inspect.mjs`)에 Chrome, Edge, Chromium 중 하나가 있어야 해요. 기록과 작업 파일은 프로젝트 안 `.taste-skill/`에 남기고 커밋하지 않아요.
 
 ## 바꾸기
 

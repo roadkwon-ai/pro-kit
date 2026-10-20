@@ -400,10 +400,10 @@
 | `mattpocock.pool.count` | 14 | --matt로 고를 수 있는 mattpocock 추가 스킬 수 | templates/*/files/skills.manifest.json mattpocock.pool | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `cli.<이름>.install` | 3개(`--list`) | 전역 CLI 설치 명령 | templates/*/files/skills.manifest.json global Neon CLI | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `cli.<이름>.installCode` | 3개(`--list`) | 같은 명령의 코드 꼴(백틱 포함) | templates/*/files/skills.manifest.json global Neon CLI | 정본 파일이 바뀌면 따라 바뀐다 | 10 |
-| `optional.names` | ops, motion, mobile, i-have-adhd | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `optional.namesCode` | `ops`, `motion`, `mobile`, `i-have-adhd` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
-| `optional.count` | 4 | 선택 스킬 묶음 수 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `optional.count.ko` | 네 | 선택 스킬 묶음 수의 한글 수 관형사 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `optional.names` | ops, motion, mobile, i-have-adhd, taste | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `optional.namesCode` | `ops`, `motion`, `mobile`, `i-have-adhd`, `taste` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
+| `optional.count` | 5 | 선택 스킬 묶음 수 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.count.ko` | 다섯 | 선택 스킬 묶음 수의 한글 수 관형사 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.skillsCode.neon` | `vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | neon 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.count.neon` | 4 | neon 템플릿 ops 묶음의 스킬 수 | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.skillsCode.supabase` | `vercel-optimize` | supabase 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-supabase/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
@@ -428,6 +428,12 @@
 | `optional.i-have-adhd.count.supabase` | 1 | supabase 템플릿 i-have-adhd 묶음의 스킬 수 | templates/prokit-next-supabase/files/skills.manifest.json optional.i-have-adhd | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.i-have-adhd.skillsCode.shared` | `i-have-adhd` | i-have-adhd 묶음에서 두 템플릿이 함께 가진 스킬(스킬마다 백틱) | templates/*/files/skills.manifest.json optional.i-have-adhd | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.i-have-adhd.skillsCode` | `i-have-adhd` | i-have-adhd 묶음의 스킬(두 템플릿이 같을 때. 스킬마다 백틱) | templates/*/files/skills.manifest.json optional.i-have-adhd | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.taste.skillsCode.neon` | `design-taste-frontend` | neon 템플릿 taste 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.taste | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.taste.count.neon` | 1 | neon 템플릿 taste 묶음의 스킬 수 | templates/prokit-next-neon/files/skills.manifest.json optional.taste | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.taste.skillsCode.supabase` | `design-taste-frontend` | supabase 템플릿 taste 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-supabase/files/skills.manifest.json optional.taste | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.taste.count.supabase` | 1 | supabase 템플릿 taste 묶음의 스킬 수 | templates/prokit-next-supabase/files/skills.manifest.json optional.taste | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.taste.skillsCode.shared` | `design-taste-frontend` | taste 묶음에서 두 템플릿이 함께 가진 스킬(스킬마다 백틱) | templates/*/files/skills.manifest.json optional.taste | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.taste.skillsCode` | `design-taste-frontend` | taste 묶음의 스킬(두 템플릿이 같을 때. 스킬마다 백틱) | templates/*/files/skills.manifest.json optional.taste | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
 | `eval.<스킬>.with` | 6개(`--list`) | 같은 요청 비교: prokit-<스킬> 스킬이 있을 때 체크 항목을 지킨 비율(%는 값 밖) | templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
 | `eval.<스킬>.without` | 6개(`--list`) | 같은 요청 비교: prokit-<스킬> 스킬이 없을 때 체크 항목을 지킨 비율(%는 값 밖) | templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
 | `eval.requests` | 13 | 같은 요청 비교에 쓴 요청 수 | 계산: templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표의 eval 수 합 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
@@ -441,7 +447,7 @@
 | `eval.designMd.secondScreen.without` | 97 | 브랜드 이름과 대표 색만 줬을 때 두 번째 화면이 첫 화면 색을 따른 비율(%는 값 밖) | 계산: templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `eval.designMd.palette.offTarget` | 29 | 브랜드 이름과 대표 색만 줬을 때 화면에 쓴 색 가운데 목표 밖 색의 비율(%는 값 밖) | 계산: 100 − templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표의 B 팔레트 일치율(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `handbook.sections.count` | 7 | 문서(handbook) 묶음 수 | handbook/README.md 묶음 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `handbook.pages.count` | 36 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `handbook.pages.count` | 37 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `b:agent-order-line` | (글 묶음) | 새 프로젝트를 만들 때 "에이전트는 이런 순서로 일해요" 도입 문장(옵션 없이 열었을 때 허락을 묻는다고 알린다). clone-create-prompt 묶음이 품는다 | docs/blocks/agent-order-line.md | 묶음 원본을 고친다 | 3 |
 | `b:clone-auth-feature-note` | (글 묶음) | 클론 튜토리얼 5장의 첫 NOTE(5장부터 기능을 하나씩 만든다) | docs/blocks/clone-auth-feature-note.md | 묶음 원본을 고친다 | 2 |
 | `b:clone-auth-open` | (글 묶음) | 클론 튜토리얼 5장의 1단계 첫 문단(4장 대화창을 그대로 써도 된다) | docs/blocks/clone-auth-open.md | 묶음 원본을 고친다 | 2 |

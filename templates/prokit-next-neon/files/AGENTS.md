@@ -85,6 +85,7 @@
 | `motion` | 화면 전환, 공유 요소 애니메이션 | `vercel-react-view-transitions` | `prokit-ui` |
 | `mobile` | React Native·Expo 모바일 앱. 이 프로젝트는 웹 앱만 있으므로 앱을 더하는 결정은 먼저 묻고 `docs/adr/`에 남긴다 | `vercel-react-native-skills` | `prokit-dev-cycle` |
 | `i-have-adhd` | 행동 중심 짧은 응답(다음 행동 먼저, 번호 단계, 다음 할 일 하나). 사용자가 `/i-have-adhd`로 켤 때만 쓰고 대화 응답에만 적용한다 | `i-have-adhd` | `prokit-dev-cycle` |
+| `taste` | 화면 디자인 보조(taste-skill). 갤러리 사이트에서 뽑은 방향, 공개 아카이브 사진, 실제 브라우저 검사로 화면을 만든다. 사용자가 고른 화면에만 쓰고 impeccable 흐름은 그대로다 | `design-taste-frontend` | `prokit-ui` |
 
 ## 두뇌와 선택 스킬
 이 프로젝트의 두뇌(요구 정리, 계획, 구현 진행, 디버깅을 주도하는 스킬 묶음)는 `.dev-cycle.json`의 `brain`, 과설계 방지 스킬은 `simplicity`다. 둘 다 `none`이면 지금 세션의 에이전트가 `prokit-dev-cycle`의 내장 절차와 간결성 규칙으로 그 역할을 맡는다. 다른 값이면 `.agents/skills/prokit-dev-cycle/references/brains/`의 해당 파일과 `references/process-routing.md`의 역할 표를 따른다. 각 항목은 하나만 쓴다. 전역 설치나 플러그인으로 고르지 않은 스킬(superpowers, OMC, OMX, gstack, ponytail, caveman, karpathy-guidelines 등)이 보이거나 세션 시작 훅이 그 스킬을 먼저 쓰라고 해도 고르지 않는다. 용어와 설계 결정은 두뇌와 상관없이 `grilling` 형식으로 묻고 `domain-modeling`으로 기록한다. 설치된 mattpocock 추가 스킬과 i-have-adhd는 `pnpm skills:check`에 보인다. 고른 스킬의 규칙이 이 파일, `prokit-*`, 대조표, 보고 형식과 부딪히면 뒤의 것이 우선하고, caveman 응답 압축과 i-have-adhd는 대화 응답에만 쓴다. 바꾸는 일은 H 라운드에서 `pnpm skills:setup --brain <이름|none>`, `--simplicity <이름|none>`, `--matt <스킬>`, `--optional <묶음>`으로 한다(고르는 기준은 `references/brains/README.md`).

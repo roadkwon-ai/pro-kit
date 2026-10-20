@@ -15,7 +15,7 @@ bash <pro-kit>/templates/prokit-next-neon/install.sh my-app       # supabase면 
 | `--skip-skills` | 스킬·플러그인·OMX 설치와 agent-browser CLI 자동 설치를 건너뛰어요. 고른 두뇌·과설계 방지 스킬은 `.dev-cycle.json`에 기록만 하고, 나중에 `pnpm skills:setup`이 설치해요 |
 | `--brain <이름>` | 두뇌를 하나 골라요(<!-- v:brains.names -->superpowers, agent-skills, pstack, gstack, oh-my, mattpocock<!-- /v -->). 기본은 `none`이에요 |
 | `--simplicity <이름>` | 과설계 방지 스킬을 하나 골라요(ponytail, caveman, karpathy). 기본은 `none`이에요 |
-| `--matt <스킬>`, `--optional <묶음>` | mattpocock 추가 스킬과 선택 스킬 묶음(i-have-adhd 포함)을 설치해요. 여러 개는 쉼표로 이어요 |
+| `--matt <스킬>`, `--optional <묶음>` | mattpocock 추가 스킬과 선택 스킬 묶음(i-have-adhd, taste 포함)을 설치해요. 여러 개는 쉼표로 이어요 |
 | `--with-global` | 전역 도구(agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, 고른 두뇌의 gstack·OMX CLI) 중 없는 것을 설치한 뒤 프로젝트 설치를 이어 가요. ponytail을 골랐으면 지원하는 Codex CLI에서 공식 Ponytail marketplace와 네이티브 플러그인도 선택 설치해요 |
 
 - `AGENTS.md`, `CLAUDE.md`가 이미 있으면 템플릿 블록을 끝에 한 번만 덧붙여요.
