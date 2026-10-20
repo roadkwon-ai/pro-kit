@@ -28,7 +28,7 @@
 | prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개와 에이전트 <!-- v:prokit.agents.count -->3<!-- /v -->개 | 분야마다 일하는 법, 구현 수행자와 전문·최종 읽기 전용 리뷰 에이전트 | [prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개](../skills/prokit-skills.md), [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
 | 공식 도메인 스킬 | Next.js, React, Better Auth, shadcn, impeccable, DB, Vercel 배포 등 | [공식 스킬과 연결](../skills/official-skills.md) |
 | 프로세스 스킬 | skill-creator, mattpocock 필수 3개(늘 설치), 고른 두뇌(<!-- v:brains.names -->superpowers, agent-skills, pstack, gstack, oh-my, mattpocock<!-- /v --> 중 하나), 고른 과설계 방지 스킬(ponytail, caveman, karpathy 중 하나) | [프로세스 스킬과 전역 도구](../skills/official-skills.md#프로세스-스킬과-전역-도구) |
-| 선택 스킬 묶음 | ops, motion, mobile | [선택 스킬 묶음](../skills/optional-bundles.md) |
+| 선택 스킬 묶음 | <!-- v:optional.names -->ops, motion, mobile, i-have-adhd<!-- /v --> | [선택 스킬 묶음](../skills/optional-bundles.md) |
 
 ## 명령줄 도구(CLI)
 

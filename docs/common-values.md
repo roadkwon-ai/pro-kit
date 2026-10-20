@@ -400,8 +400,8 @@
 | `mattpocock.pool.count` | 14 | --matt로 고를 수 있는 mattpocock 추가 스킬 수 | templates/*/files/skills.manifest.json mattpocock.pool | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `cli.<이름>.install` | 3개(`--list`) | 전역 CLI 설치 명령 | templates/*/files/skills.manifest.json global Neon CLI | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `cli.<이름>.installCode` | 3개(`--list`) | 같은 명령의 코드 꼴(백틱 포함) | templates/*/files/skills.manifest.json global Neon CLI | 정본 파일이 바뀌면 따라 바뀐다 | 10 |
-| `optional.names` | ops, motion, mobile, i-have-adhd | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
-| `optional.namesCode` | `ops`, `motion`, `mobile`, `i-have-adhd` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
+| `optional.names` | ops, motion, mobile, i-have-adhd | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `optional.namesCode` | `ops`, `motion`, `mobile`, `i-have-adhd` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
 | `optional.count` | 4 | 선택 스킬 묶음 수 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.count.ko` | 네 | 선택 스킬 묶음 수의 한글 수 관형사 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.skillsCode.neon` | `vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | neon 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |

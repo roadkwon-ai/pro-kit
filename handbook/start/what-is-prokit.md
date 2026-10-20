@@ -23,7 +23,8 @@ pro-kit 저장소는 새 프로젝트를 만들어 주는 생성기예요. 안�
 - 스타일 추천부터 `DESIGN.md`까지 이어지는 UI/UX 흐름
 - 내 컴퓨터의 Vercel CLI로 develop과 운영에 배포하는 스크립트와 절차
 - 에이전트가 쓰는 공식 스킬과 플러그인(그때의 최신판)
-- 필요할 때 더하는 선택 스킬 묶음(`ops`, `motion`, `mobile`)
+- 프로젝트마다 하나씩 고르는 두뇌와 과설계 방지 스킬. 고르지 않으면 지금 에이전트가 내장 절차로 진행해요([두뇌와 선택 스킬](../skills/brains.md))
+- 필요할 때 더하는 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`<!-- /v -->)
 
 ```text
 projects/
