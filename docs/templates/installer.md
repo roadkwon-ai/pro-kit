@@ -11,13 +11,17 @@ bash <pro-kit>/templates/prokit-next-neon/install.sh my-app       # supabase면 
 
 | 옵션 | 동작 |
 |---|---|
-| (없음) | 파일 복사, `package.json` 스크립트 추가, Claude Code 키 훅(`.claude/settings.json`) 추가, 이 프로젝트에 스킬·플러그인 설치와 OMX 설정(`omx`가 있을 때), agent-browser CLI(없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치) |
+| (없음) | 파일 복사, `package.json` 스크립트 추가, Claude Code 키 훅(`.claude/settings.json`) 추가, 이 프로젝트에 스킬·플러그인 설치(두뇌·과설계 방지 스킬은 없음), agent-browser CLI(없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치) |
 | `--diff` | 미리 보기예요. 템플릿과 다른 기존 파일의 차이, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 주고, 파일은 쓰지 않아요. 스킬·플러그인도 설치하지 않아요 |
-| `--skip-skills` | 스킬·플러그인·OMX 설치와 agent-browser CLI 자동 설치를 건너뛰어요. 나중에 `pnpm skills:setup`으로 해요 |
-| `--with-global` | 전역 도구(OMX CLI, gstack, agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI) 중 없는 것을 설치한 뒤 프로젝트 설치를 이어 가요. 지원하는 Codex CLI에서는 공식 Ponytail marketplace와 네이티브 플러그인도 선택 설치해요 |
+| `--skip-skills` | 스킬·플러그인·OMX 설치와 agent-browser CLI 자동 설치를 건너뛰어요. 고른 두뇌·과설계 방지 스킬은 `.dev-cycle.json`에 기록만 하고, 나중에 `pnpm skills:setup`이 설치해요 |
+| `--brain <이름>` | 두뇌를 하나 골라요(superpowers, agent-skills, pstack, gstack, oh-my, mattpocock). 기본은 `none`이에요 |
+| `--simplicity <이름>` | 과설계 방지 스킬을 하나 골라요(ponytail, caveman, karpathy). 기본은 `none`이에요 |
+| `--matt <스킬>`, `--optional <묶음>` | mattpocock 추가 스킬과 선택 스킬 묶음(i-have-adhd, taste 포함)을 설치해요. 여러 개는 쉼표로 이어요 |
+| `--with-global` | 전역 도구(agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, 고른 두뇌의 gstack·OMX CLI) 중 없는 것을 설치한 뒤 프로젝트 설치를 이어 가요. ponytail을 골랐으면 지원하는 Codex CLI에서 공식 Ponytail marketplace와 네이티브 플러그인도 선택 설치해요 |
 
 - `AGENTS.md`, `CLAUDE.md`가 이미 있으면 템플릿 블록을 끝에 한 번만 덧붙여요.
-- `--with-global`은 전역 설정과 훅을 바꾸므로 사용자가 전역 도구 설치를 요청할 때만 붙여요. gstack은 bun이 필요하고, 설치하면서 `~/.claude/settings.json`에 전역 훅을 등록해요. Codex Ponytail은 지원하는 CLI에만 설치하고, 이미 비활성화했거나 다른 출처로 설치한 플러그인은 바꾸지 않아요. 설치 성공은 훅 신뢰나 자동 실행을 뜻하지 않아요. `--with-global`은 Supabase CLI를 Homebrew로만 설치해요.
+- 무엇을 고를지는 [두뇌와 선택 스킬](https://prokit-web.vercel.app/docs/skills/brains/)에 있어요. 모르는 이름을 주면 아무것도 쓰지 않고 멈춰요.
+- `--with-global`은 전역 설정과 훅을 바꾸므로 사용자가 전역 도구 설치를 요청할 때만 붙여요. 두뇌 gstack은 bun이 필요하고, 설치하면서 `~/.claude/settings.json`에 전역 훅을 등록해요. Codex Ponytail은 지원하는 CLI에만 설치하고, 이미 비활성화했거나 다른 출처로 설치한 플러그인은 바꾸지 않아요. 설치 성공은 훅 신뢰나 자동 실행을 뜻하지 않아요. `--with-global`은 Supabase CLI를 Homebrew로만 설치해요.
 - Windows의 PowerShell이나 Git Bash에서 실행하면 WSL2를 안내하고 멈춰요.
 
 ## 설치한 뒤 할 일

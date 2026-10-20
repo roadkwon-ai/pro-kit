@@ -49,6 +49,10 @@ WSL2의 Ubuntu 안에서만 돼요. PowerShell이나 Git Bash에서는 설치가
 
 기능을 바꿀 때마다 DB의 테스트용 복사본(브랜치)을 만들어 확인하고 싶으면 neon, 이미 Supabase를 쓰고 있으면 supabase예요. 앱 코드 구성은 같아요([템플릿 고르기](https://prokit-web.vercel.app/docs/templates/choose/)).
 
+### PRD 없이 프로젝트를 만들 수 있나요?
+
+아니요. 에이전트가 PRD를 보고 두뇌와 스킬을 추천하고 개발 환경을 맞추므로 새 프로젝트에는 PRD가 꼭 필요해요. 길게 쓰지 않아도 돼요. 누가 쓰는지와 핵심 기능 몇 줄, PRD 파일 경로, 프리셋 팩 중 하나면 돼요. 요청에 빠지면 에이전트가 먼저 달라고 하고, 끝내 주지 않으면 아무것도 만들지 않고 끝나요([PRD 먼저 정하기](https://prokit-web.vercel.app/docs/start/prd/), [두뇌와 선택 스킬](https://prokit-web.vercel.app/docs/skills/brains/)).
+
 ### 스킬을 직접 불러야 하나요?
 
 아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/)).
@@ -81,7 +85,7 @@ WSL2의 Ubuntu 안에서만 돼요. PowerShell이나 Git Bash에서는 설치가
 
 ### Ponytail 플러그인을 설치했는데 훅도 켜진 건가요?
 
-설치와 훅 허용은 별도예요. Codex에서는 신뢰한 프로젝트의 `/hooks`에서 확인하고 새 세션을 열어요. 플러그인이 없으면 프로젝트 스킬을 읽어 같은 검토를 할 수 있으며, 직접 끈 모드는 대안 경로로 다시 켜지 않아요([Ponytail 사용하기](https://prokit-web.vercel.app/docs/skills/official-skills/#ponytail-사용하기)).
+과설계 방지 스킬로 ponytail을 고른 프로젝트 이야기예요. 설치와 훅 허용은 별도예요. Codex에서는 신뢰한 프로젝트의 `/hooks`에서 확인하고 새 세션을 열어요. 플러그인이 없으면 프로젝트 스킬을 읽어 같은 검토를 할 수 있으며, 직접 끈 모드는 대안 경로로 다시 켜지 않아요([Ponytail 사용하기](https://prokit-web.vercel.app/docs/skills/official-skills/#ponytail-사용하기)).
 
 ## 관련 문서
 

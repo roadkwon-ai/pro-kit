@@ -60,7 +60,7 @@ Better Auth는 `BETTER_AUTH_URL`만 믿어서 배포마다 생기는 고유 URL�
 
 ### 쓰지 않는 도구
 
-로그인 없이 `.env`까지 외부에 올리는 `vercel-deploy-claimable`, 커밋과 push까지 하는 gstack `ship`과 `land-and-deploy`, Vercel 플러그인의 `/vercel:deploy`는 이 프로젝트에서 쓰지 않아요.
+로그인 없이 `.env`까지 외부에 올리는 `vercel-deploy-claimable`, 커밋과 push까지 하는 gstack(두뇌)의 `ship`과 `land-and-deploy`, Vercel 플러그인의 `/vercel:deploy`는 이 프로젝트에서 쓰지 않아요.
 
 ### 화면만 프로젝트는 다른 길
 

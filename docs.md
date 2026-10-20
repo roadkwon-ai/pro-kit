@@ -15,7 +15,7 @@ https://prokit-web.vercel.app/docs/
 
 | 묶음 | 내용 |
 |---|---|
-| [시작하기](https://prokit-web.vercel.app/docs/start/) | 프로킷이 무엇인지, 어떤 분께 추천하는지, 준비물, 지원하는 에이전트, 화면만 만들기와 서비스 만들기의 빠른 시작, 만든 뒤 개발하기 |
+| [시작하기](https://prokit-web.vercel.app/docs/start/) | 프로킷이 무엇인지, 어떤 분께 추천하는지, 준비물, 지원하는 에이전트, 먼저 정할 PRD, 화면만 만들기와 서비스 만들기의 빠른 시작, 만든 뒤 개발하기 |
 | [핵심 개념](https://prokit-web.vercel.app/docs/concepts/) | 하네스, dev-cycle 라운드, 케이스와 대조표, 증거와 확인, 위임·리뷰 에이전트, 자원 관리 |
 | [템플릿](https://prokit-web.vercel.app/docs/templates/) | neon과 supabase 고르기, 템플릿이 더하는 것, 앱 구조, 설치기, 갱신 반영 |
 | [스킬과 에이전트](https://prokit-web.vercel.app/docs/skills/) | prokit 스킬, 공식 스킬과 연결, 선택 스킬 묶음, 설치와 업데이트 |

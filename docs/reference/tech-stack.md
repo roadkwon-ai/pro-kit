@@ -28,8 +28,8 @@ https://prokit-web.vercel.app/docs/reference/tech-stack/
 | AI 에이전트 | Claude Code, Codex, Antigravity, Grok Build 중 하나 | [지원하는 에이전트](https://prokit-web.vercel.app/docs/start/supported-agents/) |
 | prokit 스킬 9개와 에이전트 3개 | 분야마다 일하는 법, 구현 수행자와 전문·최종 읽기 전용 리뷰 에이전트 | [prokit 스킬 9개](https://prokit-web.vercel.app/docs/skills/prokit-skills/), [위임 에이전트와 리뷰 에이전트](https://prokit-web.vercel.app/docs/concepts/agent-roles/) |
 | 공식 도메인 스킬 | Next.js, React, Better Auth, shadcn, impeccable, DB, Vercel 배포 등 | [공식 스킬과 연결](https://prokit-web.vercel.app/docs/skills/official-skills/) |
-| 프로세스 스킬 | superpowers, ponytail, skill-creator, OMC(Claude Code), OMX(Codex), gstack | [프로세스 스킬과 전역 도구](https://prokit-web.vercel.app/docs/skills/official-skills/#프로세스-스킬과-전역-도구) |
-| 선택 스킬 묶음 | ops, motion, mobile | [선택 스킬 묶음](https://prokit-web.vercel.app/docs/skills/optional-bundles/) |
+| 프로세스 스킬 | skill-creator, mattpocock 필수 3개(늘 설치), 고른 두뇌(superpowers, agent-skills, pstack, gstack, oh-my, mattpocock 중 하나), 고른 과설계 방지 스킬(ponytail, caveman, karpathy 중 하나) | [프로세스 스킬과 전역 도구](https://prokit-web.vercel.app/docs/skills/official-skills/#프로세스-스킬과-전역-도구) |
+| 선택 스킬 묶음 | ops, motion, mobile, i-have-adhd, taste | [선택 스킬 묶음](https://prokit-web.vercel.app/docs/skills/optional-bundles/) |
 
 ## 명령줄 도구(CLI)
 
@@ -52,8 +52,8 @@ https://prokit-web.vercel.app/docs/reference/tech-stack/
 | GitHub CLI (`gh`) | 전역. 배포를 요청하면 없을 때 에이전트가 설치 | 원격 저장소 만들기, 릴리스, 화면만 프로젝트의 GitHub Pages | `gh auth login`, `gh repo create`, `pnpm release`(안에서 `gh release create`), `gh api …/pages` |
 | agent-browser CLI | 전역. 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치 | ego lite를 쓸 수 없을 때 화면 확인 | `agent-browser …` |
 | ego lite (`ego-browser`) | 전역(macOS 앱, 직접 설치) | 실제 브라우저 창으로 화면 확인(1순위) | `ego-browser …` |
-| OMX CLI (`omx`) | 전역(`npm install -g oh-my-codex`, `--with-global`) | Codex에서 OMX 스킬을 이 프로젝트에 설정할 때 | `omx setup --scope project` |
-| gstack | 전역(`--with-global`, bun 필요) | 계획 리뷰, 디버깅, 추가 리뷰, QA | `plan-eng-review`, `investigate`, `review`, `qa-only` |
+| OMX CLI (`omx`) | 전역(`npm install -g oh-my-codex`, 두뇌 oh-my를 고를 때) | Codex에서 OMX 스킬을 이 프로젝트에 설정할 때 | `omx setup --scope project` |
+| gstack | 전역(두뇌 gstack을 고를 때, bun 필요) | 제품 판단, 계획 리뷰, 디버깅, 추가 리뷰, QA | `plan-eng-review`, `investigate`, `review`, `qa-only` |
 | impeccable CLI | 프로젝트(`impeccable` 스킬에 들어 있음) | 디자인 규칙 검사 훅을 켤 때(개발자마다 한 번) | `.agents/skills/impeccable/scripts/impeccable hooks on` |
 | DESIGN.md 검사기 | 받을 필요 없음(`pnpm dlx`) | 디자인 규칙 파일을 받거나 고쳤을 때 | `pnpm dlx @google/design.md lint DESIGN.md` |
 | Biome | 프로젝트 | 형식과 lint | `pnpm check`, `pnpm exec biome check .` |
@@ -77,7 +77,7 @@ https://prokit-web.vercel.app/docs/reference/tech-stack/
 
 - **최신판을 받아요**: Better-T-Stack, skills CLI, 공식 스킬, Claude 플러그인, agent-browser CLI는 템플릿에 판을 고정하지 않고 설치할 때 최신판을 받아요. 새 판 때문에 생성이나 설치가 깨지면 템플릿을 고치고 확인한 판을 검증 기록에 남겨요([검증 결과](https://prokit-web.vercel.app/docs/reference/verification/)).
 - **비밀값은 남기지 않아요**: DB 연결 문자열, Vercel·GitHub 토큰은 파일과 출력에 남기지 않아요. Neon 연결 문자열은 `neon cs`로 명령마다 받고, 토큰은 그 명령에만 넣어요.
-- **배포 명령은 정해진 길로만 써요**: 서비스 배포는 `prokit-deploy`의 `pnpm vercel:deploy`로 하고, 운영에는 `pnpm release`로 만든 커밋만 올려요. gstack `ship`이나 Vercel 플러그인의 배포 명령은 쓰지 않아요([Vercel 배포](https://prokit-web.vercel.app/docs/deploy/vercel/)).
+- **배포 명령은 정해진 길로만 써요**: 서비스 배포는 `prokit-deploy`의 `pnpm vercel:deploy`로 하고, 운영에는 `pnpm release`로 만든 커밋만 올려요. 두뇌 gstack의 `ship`이나 Vercel 플러그인의 배포 명령은 쓰지 않아요([Vercel 배포](https://prokit-web.vercel.app/docs/deploy/vercel/)).
 
 ## 관련 문서
 

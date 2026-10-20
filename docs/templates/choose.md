@@ -30,9 +30,9 @@ flowchart LR
 | Vercel 배포 DB | develop: Neon `develop` 브랜치, production: 운영 브랜치 (앱은 pooled 주소) | develop: 스테이징 프로젝트, production: 운영 프로젝트 (앱은 transaction pooler 6543) |
 | 필요한 CLI | Podman 또는 Docker, compose provider. 원격 DB에는 Neon CLI, 배포에는 Vercel CLI | Supabase CLI 2.117 이상, Podman 또는 Docker. 배포에는 Vercel CLI |
 | 공식 도메인 스킬 | 28개 (neon 4개, Vercel 배포 3개 포함) | 25개 (`supabase`, `supabase-postgres-best-practices`, Vercel 배포 3개 포함) |
-| 선택 스킬 (`--optional`) | `ops` 4개(`vercel-optimize`, Neon 함수·파일 저장·LLM 게이트웨이), `motion`, `mobile` | `ops` 1개(`vercel-optimize`), `motion`, `mobile` |
+| 선택 스킬 (`--optional`) | `ops` 4개(`vercel-optimize`, Neon 함수·파일 저장·LLM 게이트웨이), `motion`, `mobile`, `i-have-adhd`, `taste` | `ops` 1개(`vercel-optimize`), `motion`, `mobile`, `i-have-adhd`, `taste` |
 
-프로세스 스킬과 에이전트 구성은 두 템플릿이 같아요. Ponytail 프로젝트 스킬 6종도 함께 받으며, Codex 네이티브 플러그인은 `--with-global`에서만 선택 설치해요([설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)).
+프로세스 스킬과 에이전트 구성은 두 템플릿이 같아요. 두뇌와 과설계 방지 스킬은 템플릿과 상관없이 프로젝트마다 하나씩 고르거나 고르지 않아요([두뇌와 선택 스킬](https://prokit-web.vercel.app/docs/skills/brains/)). ponytail을 고르면 Ponytail 프로젝트 스킬 6종도 받고, Codex 네이티브 플러그인은 `--with-global`에서만 선택 설치해요([설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)).
 
 ## 무엇으로 고르나요
 

@@ -3,7 +3,7 @@ https://prokit-web.vercel.app/docs/skills/optional-bundles/
 
 > 한눈에: 기본으로는 모든 프로젝트가 쓰는 스킬만 설치해요. 일부 프로젝트만 쓰는 공식 스킬은 묶음으로 나눠 두고, 필요할 때 명령 한 줄로 더해요. 묶음이 없는데 그 분야를 요청하면 에이전트가 설치를 먼저 제안해요.
 
-## 묶음 세 가지
+## 묶음 다섯 가지
 
 | 묶음 | 이럴 때 | 스킬 | 관련 prokit 스킬 |
 |---|---|---|---|
@@ -11,6 +11,8 @@ https://prokit-web.vercel.app/docs/skills/optional-bundles/
 | `ops` (neon만) | Neon에서 오래 도는 함수, 파일 저장, LLM 호출을 쓸 때. 새 서비스에 의존하게 되므로 도입 전에 사용자에게 묻고 ADR(설계 결정 기록)로 남겨요 | `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | `prokit-db` |
 | `motion` | 화면 전환이나 공유 요소 애니메이션(React `<ViewTransition>`)을 만들 때 | `vercel-react-view-transitions` | `prokit-ui` |
 | `mobile` | React Native·Expo 모바일 앱을 따로 만들 때. 템플릿은 웹 앱만 만들어요 | `vercel-react-native-skills` | `prokit-dev-cycle` |
+| `i-have-adhd` | 다음 행동부터, 번호 단계로 짧게 답받고 싶을 때. `/i-have-adhd`로 켤 때만 대화 답에 적용해요([두뇌와 선택 스킬](https://prokit-web.vercel.app/docs/skills/brains/)) | `i-have-adhd` | `prokit-dev-cycle` |
+| `taste` | 랜딩·소개처럼 보여 주는 화면을 갤러리 사이트에서 뽑은 방향, 공개 아카이브 사진, 실제 브라우저 검사로 만들고 싶을 때. 사용자가 고른 화면에만 쓰고, 검사에는 Chrome이 필요해요([두뇌와 선택 스킬](https://prokit-web.vercel.app/docs/skills/brains/#화면-디자인-보조)) | `design-taste-frontend` | `prokit-ui` |
 
 ## 설치하기
 
@@ -21,7 +23,7 @@ pnpm skills:check                         # 기본 스킬만 검사하고, 선�
 
 ## 자세히
 
-- **목록 위치**: 묶음은 `skills.manifest.json`의 `optional`에 있어요. 설치기(`install.sh`)는 선택 묶음을 설치하지 않아요. 설치한 뒤 `pnpm skills:setup --optional <묶음>`으로 더해요.
+- **목록 위치**: 묶음은 `skills.manifest.json`의 `optional`에 있어요. 설치기(`install.sh`)는 `--optional <묶음>`을 줄 때만 선택 묶음을 설치해요. 설치한 뒤에는 `pnpm skills:setup --optional <묶음>`으로 더해요.
 - **규칙의 우선순위**: 묶음을 설치한 뒤에도 관련 `prokit-*` 스킬의 규칙이 우선해요.
 - **팀원 클론**: 선택 묶음을 쓰는 프로젝트를 클론했다면 `pnpm skills:setup --optional <묶음>`으로 같은 묶음을 받아요.
 - **템플릿마다 다른 `ops`**: neon의 `ops`는 4개(`vercel-optimize`와 Neon 3개), supabase의 `ops`는 `vercel-optimize` 1개예요.
@@ -29,5 +31,6 @@ pnpm skills:check                         # 기본 스킬만 검사하고, 선�
 ## 관련 문서
 
 - [공식 스킬과 연결](https://prokit-web.vercel.app/docs/skills/official-skills/)
+- [두뇌와 선택 스킬](https://prokit-web.vercel.app/docs/skills/brains/)
 - [설치와 업데이트 구조](https://prokit-web.vercel.app/docs/skills/install-and-update/)
 - [Vercel 배포와 되돌리기](https://prokit-web.vercel.app/docs/deploy/vercel/)

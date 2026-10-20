@@ -24,7 +24,7 @@ https://prokit-web.vercel.app/docs/skills/official-skills/
 | 용어·설계 질문 | `domain-modeling`, `grill-with-docs`, `grilling` | mattpocock/skills | `prokit-dev-cycle`, `prokit-db`. F 스펙 행과 공통 문서 행 |
 | Vercel 배포 | `deploy-to-vercel`, `vercel-cli-with-tokens`, `access-protected-vercel-deployment` | vercel-labs/agent-skills, vercel/vercel-plugin | `prokit-deploy` |
 
-일부 프로젝트만 쓰는 스킬은 [선택 스킬 묶음](https://prokit-web.vercel.app/docs/skills/optional-bundles/)에 따로 모아 두었어요.
+일부 프로젝트만 쓰는 스킬은 [선택 스킬 묶음](https://prokit-web.vercel.app/docs/skills/optional-bundles/)에 따로 모아 두었어요. 화면 디자인을 보조하는 taste-skill([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill))도 선택 묶음 `taste`로 더할 수 있어요. 고른 화면에서만 방향 뽑기, 공개 아카이브 사진, 실제 브라우저 검사를 보태고 impeccable 흐름은 그대로예요([화면 디자인 보조](https://prokit-web.vercel.app/docs/skills/brains/#화면-디자인-보조)).
 
 재사용·컴포넌트화·설정 정본·환경 변수의 판단 기준은 설치된 `prokit-dev-cycle`의 [재사용과 설정 설계](https://github.com/roadkwon-ai/pro-kit/blob/main/templates/prokit-next-neon/files/.agents/skills/prokit-dev-cycle/references/reuse-design.md)에 있어요. 읽은 스킬 이름과 함께 기존 경로·소비자·적용한 결정을 남겨요. 새 스킬 설치로 대신하지 않아요.
 
@@ -36,16 +36,16 @@ https://prokit-web.vercel.app/docs/skills/official-skills/
 
 | 이름 | 무엇인가 | 설치 | 프로킷에서 맡는 일 |
 |---|---|---|---|
-| superpowers | 설계, 계획, TDD(테스트 먼저 쓰기), 디버깅, 완료 전 확인 절차를 담은 스킬 묶음(obra/superpowers) | 프로젝트에 자동. Claude Code는 플러그인, Codex는 스킬 15개 | 단계마다 1순위예요. 요구 정리 `brainstorming`, 계획 `writing-plans`, 구현 `subagent-driven-development`·`test-driven-development`, 디버깅 `systematic-debugging`, 리뷰 지적 처리 `receiving-code-review`, 검증 `verification-before-completion` |
-| ponytail | 필요 이상으로 복잡한 설계를 막는 모드와 읽기 전용 점검(DietrichGebert/ponytail) | 프로젝트에 자동. Claude Code는 플러그인(훅 3개), Codex는 `ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-help`, `ponytail-gain` 스킬이에요. `--with-global`은 지원할 때만 Codex 네이티브 플러그인도 설치해요 | 기획·계획·구현에서 기존 코드, 표준 기능, 설치된 의존성 순으로 해법을 찾아요. `ponytail-review`는 정확성, 안전, 부하, 테스트, 성능, 간결성 순으로 구현 diff를 한 번 검토해요. 나머지 보조 기능은 요청할 때만 읽고 파일을 고치지 않아요 |
-| skill-creator | 스킬을 만들고 평가하는 도구(Anthropic) | 프로젝트에 자동. Claude Code는 플러그인, Codex는 스킬 | 스킬 본문을 바꾼 라운드(케이스 H)에서 eval을 다시 돌려요 |
-| OMC (oh-my-claudecode) | Claude Code에서 여러 에이전트를 나눠 돌리는 플러그인 | 프로젝트에 자동(Claude Code 플러그인) | Claude Code에서 superpowers가 없을 때 쓰는 대안이에요. 요구 정리 `deep-interview`, 계획 `plan`·`ralplan`, 큰 병렬 구현 `team`·`ralph`, 디버깅 `debug`, 검증 `verify` |
-| OMX (oh-my-codex) | Codex에서 같은 일을 하는 도구 | CLI(`omx`)는 전역이라 `--with-global`이나 `npm install -g oh-my-codex`로 설치해요. `omx`가 있으면 설치기가 이 프로젝트에 스킬, 에이전트, 프롬프트(`.codex/`)를 설정하고, 없으면 건너뛰어요 | Codex에서 쓰는 대안이에요. 요구 정리 `deep-interview`, 계획 `plan`·`ralplan`, 병렬 구현 `team`(tmux 안에서만). 리뷰에서는 `code-review`를 추가 관점으로 써요 |
-| gstack | 계획 리뷰, 디버깅, 코드 리뷰, QA 스킬 묶음(garrytan/gstack) | 전역만 지원해요. `--with-global`일 때 설치하고 bun이 필요해요(Claude Code `~/.claude/skills/gstack`, Codex `~/.codex/skills/gstack`) | 계획 리뷰 `plan-eng-review`(화면이 있으면 `plan-design-review`), 디버깅 보강 `investigate`, F 병합 전 추가 리뷰 `review`, QA `qa-only`·`qa`(사용자가 요청할 때만) |
+| skill-creator | 스킬을 만들고 평가하는 도구(Anthropic) | 늘 설치. Claude Code는 플러그인, Codex는 스킬 | 스킬 본문을 바꾼 라운드(케이스 H)에서 eval을 다시 돌려요 |
+| 두뇌(하나 고름) | 요구 정리, 계획, 구현 진행, 디버깅의 순서를 주도하는 스킬 묶음: superpowers, agent-skills(addyosmani), gstack, oh-my(OMC·OMX), pstack, mattpocock(필수 3개 + 고른 추가 스킬) | 고른 것만 설치해요. 기본은 없음이고 지금 에이전트가 내장 절차로 진행해요. gstack과 OMX CLI만 전역이에요 | 고른 두뇌가 맡는 단계의 방법만 바꿔요. 대조표, 리뷰 게이트, audit, 배포 경로는 그대로예요([두뇌와 선택 스킬](https://prokit-web.vercel.app/docs/skills/brains/)) |
+| 과설계 방지 스킬(하나 고름) | 요청하지 않은 기능과 추상화를 막는 스킬: ponytail(추천), caveman, andrej-karpathy-skills | 고른 것만 설치해요. 기본은 없음이고 내장 간결성 규칙으로 진행해요. ponytail의 Codex 네이티브 플러그인은 `--with-global`에서만 설치해요 | 계획의 간결성 기준, 구현 diff 보완 검토, 공통화 점검을 맡아요. 아무것도 고르지 않으면 `prokit-reviewer`가 간결성까지 봐요 |
+| 응답 방식(고르면 설치) | 답을 긴 글 속에 묻어 두지 않게 하는 스킬: i-have-adhd([ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)). 다음 행동부터, 번호 단계로, 다음 할 일 하나로 짧게 답해요 | 선택 묶음 `i-have-adhd`라 고를 때만 설치해요 | `/i-have-adhd`로 켤 때만 대화 답에 적용해요. 파일과 라운드 보고는 프로킷 형식을 따라요([두뇌와 선택 스킬](https://prokit-web.vercel.app/docs/skills/brains/)) |
 | ego-browser (ego lite) | 실제 브라우저 창으로 화면을 보고 눌러 보는 macOS 앱 | 직접 설치해요([lite.ego.app](https://lite.ego.app/)) | `prokit-verify`의 화면 확인과 F의 QA 행에서 1순위예요. 없으면(macOS 밖, CI, Codex 샌드박스) agent-browser CLI로 같은 흐름을 확인해요 |
 | agent-browser CLI | 명령으로 브라우저를 다루는 도구 | 전역. 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치 | ego-browser가 없을 때 쓰는 대안이에요. 쓰는 법은 위 표의 `agent-browser` 스킬이 알려 줘요 |
 
 ### Ponytail 사용하기
+
+과설계 방지 스킬로 ponytail을 골랐을 때의 규칙이에요.
 
 - Codex는 사용 가능한 `$ponytail:ponytail-review`를 먼저 쓰고, 없을 때만 프로젝트의 `SKILL.md`를 읽어요. 두 경로로 같은 리뷰를 반복하지 않고, `off` 상태를 대체 경로로 되살리지 않아요.
 - `ponytail-review`는 한 번의 검토라 세션을 영구 review 모드로 바꾸지 않아요. 통합 리뷰 행은 `prokit-reviewer`의 판정으로 채워요. Ponytail은 전문 리뷰가 비운 계약만 보완하고 최종 게이트를 대신하지 않아요.
@@ -54,10 +54,10 @@ https://prokit-web.vercel.app/docs/skills/official-skills/
 
 ### 공통 운영 경계
 
-- 통합 리뷰를 완료하려면 `prokit-reviewer`의 최종 판정이 있어야 해요. `ponytail-review`, gstack `review`, OMX `code-review`, Claude Code의 `/code-review`는 추가 관점이에요.
-- OMC·OMX의 모드(`team`, `ralph` 등)는 실행 수단이에요. 모드가 낸 완료 보고는 증거가 아니고, 라운드가 끝났는지는 `pnpm dev-cycle audit`만 판정해요. 모드가 커밋, push, 배포를 하게 두지 않아요.
-- 코드를 고치거나 배포하는 gstack 스킬(`qa`, `ship`, `land-and-deploy`)은 사용자가 요청할 때만 써요. 배포는 `prokit-deploy`로 해요.
-- 빠진 것은 `pnpm skills:check`로 확인해요. `omx`가 없는 기기는 OMX를 빠진 것으로 세지 않아요.
+- 통합 리뷰를 완료하려면 `prokit-reviewer`의 최종 판정이 있어야 해요. 과설계 방지 스킬의 검토(`ponytail-review`, `caveman-review`), 두뇌의 리뷰 스킬, Claude Code의 `/code-review`, 추가 스킬 `code-review`는 추가 관점이에요.
+- 두뇌의 실행 모드(OMC·OMX의 `team`, `ralph` 등)는 실행 수단이에요. 모드가 낸 완료 보고는 증거가 아니고, 라운드가 끝났는지는 `pnpm dev-cycle audit`만 판정해요. 모드가 커밋, push, 배포를 하게 두지 않아요.
+- 두뇌가 gstack이어도 코드를 고치거나 배포하는 스킬(`qa`, `ship`, `land-and-deploy`)은 사용자가 요청할 때만 써요. 배포는 `prokit-deploy`로 해요.
+- 빠진 것과 고르지 않은 두뇌·과설계 방지 스킬의 설치본은 `pnpm skills:check`로 확인해요. 두뇌가 oh-my여도 `omx`가 없는 기기는 OMX를 빠진 것으로 세지 않아요.
 
 ## 읽을 스킬을 정해 두는 방법
 

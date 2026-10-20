@@ -57,7 +57,7 @@ Claude Code는 이 옵션으로 처음 열 때 경고 화면이 나와요. 읽�
 
 프로젝트 폴더에서 처음 열면 "이 폴더를 믿을지" 물어요. 튜토리얼에서 만든 폴더라면 "예"를 고르세요. 신뢰 여부에 따라 프로젝트 설정과 에이전트가 불러와져요.
 
-Codex 네이티브 Ponytail은 전역 도구 설치를 요청했을 때만 선택 설치해요. 설치했다면 `/hooks`에서 훅을 별도로 허용하고 새 세션을 열어 확인해요. 설치·프로젝트 신뢰·훅 허용의 차이는 [설치와 업데이트 구조](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/skills/install-and-update.md#ponytail-훅과-codex-네이티브-플러그인)에 있어요.
+Codex 네이티브 Ponytail은 과설계 방지 스킬로 ponytail을 고르고 전역 도구 설치를 요청했을 때만 선택 설치해요. 설치했다면 `/hooks`에서 훅을 별도로 허용하고 새 세션을 열어 확인해요. 설치·프로젝트 신뢰·훅 허용의 차이는 [설치와 업데이트 구조](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/skills/install-and-update.md#ponytail-훅과-codex-네이티브-플러그인)에 있어요.
 
 ## 스킬 이름을 몰라도 돼요
 

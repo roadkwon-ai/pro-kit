@@ -49,7 +49,7 @@ https://prokit-web.vercel.app/docs/start/requirements/
 
 ### 전역에만 설치되는 도구
 
-agent-browser CLI, OMX CLI(`oh-my-codex`), gstack, Vercel CLI, Neon CLI 또는 Supabase CLI, ego lite는 프로젝트가 아니라 컴퓨터 전체에 설치돼요. agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요. 나머지는 기본 실행에서 없는 것과 설치 명령만 알려 주고, `--with-global`을 주면 ego lite를 뺀 나머지 중 없는 것만 설치해요([설치기와 옵션](https://prokit-web.vercel.app/docs/templates/installer/)). 모두 없어도 dev-cycle은 진행돼요.
+agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, ego lite는 프로젝트가 아니라 컴퓨터 전체에 설치돼요. 두뇌 gstack과 OMX CLI(`oh-my-codex`)도 전역이지만 그 두뇌를 고를 때만 설치해요. agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요. 나머지는 기본 실행에서 없는 것과 설치 명령만 알려 주고, `--with-global`을 주면 ego lite를 뺀 나머지 중 없는 것만 설치해요([설치기와 옵션](https://prokit-web.vercel.app/docs/templates/installer/)). 모두 없어도 dev-cycle은 진행돼요.
 
 ### Windows
 

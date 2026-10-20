@@ -43,7 +43,7 @@ flowchart LR
   PLAN --> DB["prokit-db<br/>due_at 마이그레이션<br/>로컬 적용"]
   DB --> API["prokit-api<br/>프로시저 · 격리 테스트"]
   API --> UI["prokit-ui · prokit-web<br/>브리프 → 구현<br/>스크린샷 · 점수"]
-  UI --> RF["공통화 · 리팩토링<br/>ponytail-review"]
+  UI --> RF["공통화 · 리팩토링<br/>간결성 검토"]
   RF --> REV["prokit-reviewer<br/>독립 리뷰"]
   REV --> QA["시나리오 QA<br/>오류 예산 0 · 발견 수정"]
   QA --> CF["사용자 확인<br/>[confirm]"]

@@ -6,4 +6,4 @@
 3:[["children",{"s":"__PAGE__","h":160}]]
 2:[["children",{"s":{"n":"slug","t":"d","k":"speaker-portfolio","s":[]},"h":65632,"c":"$Q3"}]]
 1:[["children",{"s":"work","h":131136,"c":"$Q2"}]]
-0:{"b":"nimnXyyF3-equJViVE5m0","t":{"t":{"s":"","h":131088,"c":"$Q1"}}}
+0:{"b":"FVKcWtFox2-gt6-_RjlBB","t":{"t":{"s":"","h":131088,"c":"$Q1"}}}

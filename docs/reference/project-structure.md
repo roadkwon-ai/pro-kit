@@ -19,7 +19,7 @@ my-app/
 │   └── config/                 공유 tsconfig                                          (Better-T-Stack)
 ├── bts.jsonc, turbo.json, biome.json, pnpm-workspace.yaml                             (Better-T-Stack)
 ├── AGENTS.md, CLAUDE.md, GLOSSARY.md                                                   (템플릿)
-├── .agents/skills/             prokit-* 9개, 공식 도메인 스킬, superpowers·skill-creator·ponytail 6종(Codex·Antigravity·Grok Build)
+├── .agents/skills/             prokit-* 9개, 공식 도메인 스킬, mattpocock·skill-creator, 고른 두뇌·과설계 방지 스킬(Codex·Antigravity·Grok Build)
 ├── .agents/agents/             에이전트 생성물(Antigravity)
 ├── .claude/                    agents/(정본), skills/(링크), settings.json(플러그인, 키 훅)
 ├── .codex/                     agents/(생성물), skills·prompts(OMX)

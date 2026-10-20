@@ -20,12 +20,12 @@ https://prokit-web.vercel.app/docs/concepts/agent-roles/
 
 | focus | 먼저 읽는 것 | 확인하는 것 |
 |---|---|---|
-| `plan` | `prokit-dev-cycle`의 재사용·설정 참조, `ponytail`, 해당 계층 스킬 | 실제 기존 경로와 소비자, 공통 모듈의 책임, 환경 변수·설정 정본, 불필요한 추상화, 회귀 검사 |
+| `plan` | `prokit-dev-cycle`의 재사용·설정 참조, 고른 과설계 방지 스킬의 계획 기준(없으면 내장 재사용 순서), 해당 계층 스킬 | 실제 기존 경로와 소비자, 공통 모듈의 책임, 환경 변수·설정 정본, 불필요한 추상화, 회귀 검사 |
 | `code` | `prokit-web`, `prokit-api`, `GLOSSARY.md`, `docs/domain/project.md`, React가 바뀌었으면 `vercel-react-best-practices` | 정확성, 오류와 경계 처리, Server·Client Component 경계, 데이터 화면의 네 가지 상태, 불필요한 복잡도, 테스트가 동작을 실제로 검증하는지, 용어집과 어긋나는 새 이름, `docs/domain/project.md` 표에 빠진 항목 |
 | `security` | `prokit-api`, `better-auth-security-best-practices` | 세션 없는 접근, 입력으로 받은 소유자 id, where 조건의 소유자 누락, 출력에 섞인 내부 필드, 비밀값의 클라이언트 노출, 인증 설정 |
 | `db` | `prokit-db`, `supabase-postgres-best-practices` | 생성 SQL의 데이터 손실, 파괴적 변경의 단계 분리, FK·인덱스·nullable·기본값, `db:push` 흔적, 적용된 마이그레이션 파일의 사후 수정 |
 
-계획 리뷰에는 스펙·계획·브리프와 결정 위치, 재사용 후보 파일도 줘요. 리뷰어는 문서의 주장을 실제 파일과 대조해요. F의 계획 리뷰는 gstack 없이도 수행하고 N/A로 넘기지 않아요. 구현 전에 지적을 반영하거나 근거를 적어 기각해요.
+계획 리뷰에는 스펙·계획·브리프와 결정 위치, 재사용 후보 파일도 줘요. 리뷰어는 문서의 주장을 실제 파일과 대조해요. F의 계획 리뷰는 두뇌의 계획 리뷰가 없어도 수행하고 N/A로 넘기지 않아요. 구현 전에 지적을 반영하거나 근거를 적어 기각해요.
 
 supabase 템플릿은 db focus에서 `supabase` 스킬도 읽고, RLS를 끈 `public` 테이블과 `supabase db push` 흔적, Data API 노출을 함께 봐요. security focus에서는 `service_role` 같은 비밀 키가 `NEXT_PUBLIC_`으로 새는지, 합의 없이 들어온 supabase-js나 Supabase Auth가 있는지도 봐요.
 
@@ -45,7 +45,7 @@ supabase 템플릿은 db focus에서 `supabase` 스킬도 읽고, RLS를 끈 `pu
 - 리뷰 결과를 증거 칸에 요약해요. 예: `prokit-reviewer(code): approve, max=low, 지적 2 (반영 1, 기각 1: 재현 안 됨)`.
 - `skills_read`에 focus 스킬이 빠졌으면 읽고 다시 리뷰하게 해요.
 - 지적은 직접 확인한 뒤에만 고쳐요. high 이상 지적을 고쳤으면 같은 focus로 다시 리뷰받아요. 응답이 없거나 JSON이 깨졌으면 `blocked`로 적어요.
-- 코드 리뷰 행에서는 `ponytail-review`로 변경의 품질 지적도 받아 함께 적어요(`ponytail-review: 반영 2(Must fix 1), 기각 1, 백로그 1, Lean -12 lines`). 정확성·보안 지적은 회귀 테스트를 더한 뒤 반영하고, 간결성 규칙으로 기각하지 않아요. Codex에서는 네이티브 스킬을 쓸 수 있으면 먼저 쓰고, 없을 때만 프로젝트 스킬을 읽어요. 같은 변경을 두 경로로 반복하지 않고, `off` 상태를 대안 경로로 되살리지 않아요.
+- 코드 리뷰 행에서는 고른 과설계 방지 스킬의 검토(ponytail은 `ponytail-review`, caveman은 `caveman-review`)로 변경의 품질 지적도 받아 함께 적어요(`ponytail-review: 반영 2(Must fix 1), 기각 1, 백로그 1`). 검토 스킬이 없으면(karpathy, 없음) `prokit-reviewer`가 간결성까지 봐요. 정확성·보안 지적은 회귀 테스트를 더한 뒤 반영하고, 간결성 규칙으로 기각하지 않아요. ponytail을 고른 Codex에서는 네이티브 스킬을 쓸 수 있으면 먼저 쓰고, 없을 때만 프로젝트 스킬을 읽어요. 같은 변경을 두 경로로 반복하지 않고, `off` 상태를 대안 경로로 되살리지 않아요.
 - 구현을 맡길 때는 정확한 파일 목록, 읽을 `prokit-*` 스킬, 재사용·설정 결정 위치, 선택한 공급자의 실제 출처·해시·범위, 완료 조건과 담당 검사를 줘요. 여러 개를 나란히 맡길 때는 파일·생성 산출물·소비자가 겹치지 않게 나누고, 작은 관련 작업은 같은 수행자에게 묶어요. `AGENTS.md`, `.dev-cycle.json`, `package.json`, 루트 설정은 직접 고치되 파일을 명시해 배정하면 수행자가 그 파일만 고칠 수 있어요.
 - 공급자의 내장 리뷰가 없을 때만 `specialist-reviewer`에 전문 계약 검토를 맡겨요. 이 결과는 통합 리뷰를 대신하지 않아요. `prokit-reviewer`는 매번 전체 계약과 증거 해시를 다시 확인해요. 패킷과 `--context`는 검토 자료라서 Main 승인 증명이 아니며, 최종 게이트는 Main 런타임이 현재 작업 식별자와 결합해요. 응답·근거가 모자라면 필요한 내용을 최대 두 번 재지시하고, 해소하지 못하면 `unknown` 또는 `blocked`로 남겨요.
 - impeccable `critique`처럼 서브에이전트를 스스로 띄우는 스킬은 메인 세션에서 실행해요.
