@@ -11,8 +11,8 @@
 | `pnpm dev-cycle delegation capture`, `pnpm dev-cycle delegation diff <기준 파일> [--scope <글롭>]`, `pnpm dev-cycle delegation validate <패킷>` | 위임 전 기준 스냅샷을 남기고, 끝난 뒤 배정 밖 변경·커밋을 대조(있으면 exit 1)하고, 완료 패킷의 실제 변경·증거·허용 범위를 검사 |
 | `pnpm dev-cycle delegation accept` | 명시한 변경 영향 검사와 Codex 읽기 전용 리뷰를 직접 실행해 현재 로컬 기술 인수를 검증. 사용자 확인·close는 별도 |
 | `pnpm agents:sync`, `pnpm agents:check` | `.claude/agents`에서 `.codex/agents`(Codex)·`.agents/agents`(Antigravity) 생성, 차이 검사 |
-| `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬·플러그인·OMX 설정과 agent-browser CLI를 설치 (`--with-global`이면 나머지 전역 도구도) |
-| `pnpm skills:check` | 설치하지 않고 상태만 확인. 프로젝트 scope 항목이 빠졌으면 exit 1. 선택 묶음은 상태만 보여 준다 |
+| `pnpm skills:setup` | `skills.manifest.json`과 `.dev-cycle.json`의 선택대로 빠진 스킬·플러그인·OMX 설정과 agent-browser CLI를 설치 (`--with-global`이면 나머지 전역 도구도). `--brain`·`--simplicity`를 주면 기록하고 고르지 않은 설치본을 정리하며, `--matt`·`--optional`로 추가 스킬과 묶음을 설치한다 |
+| `pnpm skills:check` | 설치하지 않고 상태만 확인. 프로젝트 scope 항목이 빠졌거나 고르지 않은 두뇌·과설계 방지 스킬이 남아 있으면 exit 1. 선택 묶음과 추가 스킬은 상태만 보여 준다 |
 | `pnpm skills:update` | 설치한 외부 스킬을 GitHub 원본과 파일 단위로 비교해 바뀐 스킬과 빠진 스킬만 다시 설치한다. `--check`는 확인만 하고, 스크립트나 설정 파일이 바뀐 스킬은 그 파일을 보여 준다(설치 전에 원격 내용을 읽는다). `pnpm skills:update <이름>...`은 그 스킬만 설치한다. 스크립트가 바뀐 스킬은 `--check`로 검토한 뒤 이름을 지정해야 설치되고, 그사이 원격이 바뀌면 설치하지 않는다. 진행 중인 라운드가 없을 때 `pnpm dev-cycle status`가 `--if-due`로 하루 한 번 확인하고, 새 버전이 있으면 업데이트할지 묻는다(`prokit-skills-update`). 업데이트는 케이스 H 라운드로 커밋한다 |
 | `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음({{v:optional.namesCode}})을 설치. 여러 개는 쉼표로 잇는다(`ops,motion`) |
 | `pnpm export:html [--base /<하위 경로>]` | 화면을 정적 HTML로 내보내 `html/`에 둔다(git 무시). 프로젝트 파일은 바꾸지 않고 임시 복사본에서 `/api`·`/dashboard`를 빼고 빌드한다. 서버 전용 `.env` 값이 결과물에 들어가면 exit 2. 보기: `pnpm dlx serve html`. GitHub Pages처럼 하위 경로에 올릴 때 `--base` |

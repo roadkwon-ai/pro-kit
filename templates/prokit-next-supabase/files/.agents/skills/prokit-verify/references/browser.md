@@ -50,7 +50,7 @@ F 라운드의 사용자 흐름 QA도 같은 TaskSpace에서 ego-browser로 한�
 4. 흐름이 끝나면 `/_next/mcp`의 `get_errors`로 서버·브라우저 오류를 확인한다. ego-browser로 연 페이지가 브라우저 세션이 된다. 같은 경로를 agent-browser(깨끗한 프로필)로도 열어 `console`·`errors`를 본다. 한쪽에만 나는 오류는 원인(확장, 프로필 상태, 타이밍)을 가려 적는다. 오류 예산 규칙은 `prokit-verify` 본문의 "런타임과 브라우저"를 따른다.
 5. 대조표 QA 행에 시나리오별 통과·실패, 발견한 문제와 개선점, 오류 예산 수를 적는다. 고치는 일은 다음 행(QA 발견 수정과 재QA)에서 한다.
 
-React 내부 상태(react-devtools)가 필요하면 agent-browser를 쓴다. gstack `qa-only`·`qa`는 사용자가 요청할 때만 쓴다(자체 브라우저를 쓴다).
+React 내부 상태(react-devtools)가 필요하면 agent-browser를 쓴다. 두뇌가 gstack이면 `qa-only`는 보고만 하는 추가 관점으로 쓸 수 있고, 고치는 `qa`는 사용자가 요청할 때만 쓴다(자체 브라우저를 쓴다).
 
 ## 끝내기
 라운드의 마지막 브라우저 단계(F는 QA)가 성공으로 끝난 뒤 한 번만 에이전트 페이지를 닫는다. 스크린샷 단계 뒤에 QA가 남아 있으면 닫지 않는다. 실행마다 새 Node 프로세스이므로 `spaceId`로 다시 연다: `ego-browser nodejs -e 'const task = await taskSpace(<spaceId>); console.log(await task.finish({ keep: [] }));'`. blocked나 오류로 멈췄으면 닫지 않고 사용자가 볼 수 있게 둔다.

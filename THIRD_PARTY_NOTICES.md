@@ -37,17 +37,28 @@
 | Superpowers | MIT | [확인 판 LICENSE](https://github.com/obra/superpowers/blob/8ca22dba9a94f28898bbce59f2537ff4d87c747d/LICENSE) |
 | Ponytail | MIT | [확인 판 LICENSE](https://github.com/DietrichGebert/ponytail/blob/552acd5efd0aeae2583a12efe39373d2f076f25e/LICENSE) |
 | Anthropic skill-creator | 해당 skill 경로의 Apache 2.0 | [확인 판 LICENSE](https://github.com/anthropics/skills/blob/683bc88e56f3e09ba94f7055977f3d3aa499f202/skills/skill-creator/LICENSE.txt). 저장소 전체나 다른 스킬의 조건을 일괄 판정하지 않음 |
+| addyosmani/agent-skills(두뇌 agent-skills) | MIT | [확인 판 LICENSE](https://github.com/addyosmani/agent-skills/blob/aeac41d4d005999432bb7312f7ff06383a91d59d/LICENSE) |
+| cursor/plugins의 pstack(두뇌 pstack, Claude 플러그인) | pstack 경로의 MIT. 저장소 전체나 다른 플러그인의 조건을 일괄 판정하지 않음 | [확인 판 LICENSE](https://github.com/cursor/plugins/blob/88d47514b82e7c44f00f2b2a72ff6dd12158038c/pstack/LICENSE) |
+| gstack(두뇌 gstack, 전역 설치) | MIT, `NOTICE.md` 별도 | [확인 판 LICENSE](https://github.com/garrytan/gstack/blob/c580561e8a5ac08e6cbdd52c7a0ce521ab6310a5/LICENSE) |
+| oh-my-claudecode·oh-my-codex(두뇌 oh-my) | 각각 MIT | [OMC 확인 판](https://github.com/Yeachan-Heo/oh-my-claudecode/blob/6688a30e90d7285ff336af2dc5ab4b9709f1a8bc/LICENSE), [OMX 확인 판](https://github.com/Yeachan-Heo/oh-my-codex/blob/38a4a81b8086d5dd653d10e0ec919cc5f5a5f003/LICENSE) |
+| caveman(과설계 방지 caveman) | Apache 2.0, `NOTICE`의 저작권 줄을 유지 | [확인 판 저장소](https://github.com/JuliusBrussee/caveman/tree/bad48a0e1df55e05e3f52249afa35ecc1909ee76) |
+| andrej-karpathy-skills(과설계 방지 karpathy) | 저장소에 LICENSE 파일이 없다. README·`plugin.json`·`SKILL.md`에 MIT 표기만 있다. 표준 라이선스로 확정하지 않는다 | [확인 판 plugin.json](https://github.com/multica-ai/andrej-karpathy-skills/blob/2c606141936f1eeef17fa3043a72095b4765b9c2/.claude-plugin/plugin.json) |
+| i-have-adhd(선택 묶음) | MIT | [확인 판 LICENSE](https://github.com/ayghri/i-have-adhd/blob/1ecea1993b7fce257ffbd686c070948b5e07eda6/LICENSE) |
 
 ### 매니페스트의 외부 source 목록
 
-다음은 두 템플릿의 기본·선택 스킬 출처를 합친 목록이다. source 이름만으로 라이선스를 정하지 않는다.
+다음은 두 템플릿의 기본·선택 묶음 스킬, 두뇌·과설계 방지 후보의 스킬, mattpocock 추가 스킬 출처를 합친 목록이다. 두뇌·과설계 방지 스킬과 추가 스킬은 사용자가 고를 때만 설치한다. source 이름만으로 라이선스를 정하지 않는다.
 
 - [CaesiumY/ko-design-md](https://github.com/CaesiumY/ko-design-md)
 - [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)
 - [GENEXIS-AI/gpt-image-skill](https://github.com/GENEXIS-AI/gpt-image-skill)
+- [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman)
+- [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
 - [anthropics/skills](https://github.com/anthropics/skills)
+- [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)
 - [better-auth/skills](https://github.com/better-auth/skills)
 - [mattpocock/skills](https://github.com/mattpocock/skills)
+- [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)
 - [neondatabase/agent-skills](https://github.com/neondatabase/agent-skills)
 - [obra/superpowers](https://github.com/obra/superpowers)
 - [pbakaus/impeccable](https://github.com/pbakaus/impeccable)
@@ -59,7 +70,7 @@
 - [vercel/turborepo](https://github.com/vercel/turborepo)
 - [vercel/vercel-plugin](https://github.com/vercel/vercel-plugin)
 
-Claude marketplace 플러그인·OMX/gstack·CLI 등 별도 도구와 실행 패키지의 조건도 각각 구분한다. 실제 설치 대상은 manifest의 `claude`·`global` 및 선택 그룹에 있으며, 이 문서는 전체 설치본·전이 의존성에 대한 완전한 권리 감사를 주장하지 않는다.
+Claude marketplace 플러그인·OMX/gstack·CLI 등 별도 도구와 실행 패키지의 조건도 각각 구분한다. 실제 설치 대상은 manifest의 `claude`·`global`, 선택 그룹, 고른 `brains`·`simplicity` 항목에 있으며, 이 문서는 전체 설치본·전이 의존성에 대한 완전한 권리 감사를 주장하지 않는다.
 
 ## 사용자 작성 코드와 프리셋 팩
 

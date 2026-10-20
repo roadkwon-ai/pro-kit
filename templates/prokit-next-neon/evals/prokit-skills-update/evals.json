@@ -10,7 +10,7 @@
         "pnpm skills:update(--check 포함)로 확인하고 업데이트했다. npx skills update는 실행하지 않았다",
         "tasks/todo.md에 dev-cycle:start case=H 마커가 있는 대조표를 열었다",
         "작업이 끝났을 때 pnpm skills:update --check가 exit 0이다 (shadcn, turborepo가 원본과 같다)",
-        "Codex 전용 스킬(brainstorming, writing-plans 등 superpowers)이 .claude/skills에 새로 연결되지 않았다",
+        "Codex 전용 스킬(매니페스트 agents가 codex뿐인 skill-creator 등)이 .claude/skills에 새로 연결되지 않았다",
         "업데이트한 스킬 목록과 diff 요약을 보여 주며 사용자 확인을 요청했고, [confirm] 행을 스스로 채우거나 라운드를 닫거나 커밋하지 않았다"
       ]
     },

@@ -135,7 +135,7 @@ test("라운드 마무리: [confirm] 행과 마무리 선택을 워크플로, �
   // 구현 스킬이 부르는 finishing-a-development-branch가 라운드 끝을 대신하지 않는다
   const routing = read(".agents/skills/prokit-dev-cycle/references/process-routing.md");
   assert.match(routing, /^\| 마무리 \| `prokit-dev-cycle` 5절/m);
-  assert.match(routing, /finishing-a-development-branch`를 부르더라도 라운드 끝이 아니다/);
+  assert.match(routing, /브랜치 마무리\(병합·push·PR 선택지\)를 부르더라도 라운드 끝이 아니다/);
 });
 
 test("Node: README 준비물이 설치기와 같은 하한(22.20)과 권장(24)을 적는다", () => {
@@ -158,30 +158,48 @@ test("스킬 업데이트: prokit-dev-cycle 시작이 주기 확인을 부르고
   assert.match(read("AGENTS.md"), /`prokit-skills-update`/);
 });
 
-test("ponytail: 5.1 기능, 일회성 리뷰, 신뢰 훅과 fallback 라우팅이 맞는다", () => {
+test("두뇌·과설계 방지: 카탈로그와 매니페스트, 역할 표, 고른 스킬의 규칙과 fallback 라우팅이 맞는다", () => {
   const routing = read(".agents/skills/prokit-dev-cycle/references/process-routing.md");
   const cycle = read(".agents/skills/prokit-dev-cycle/SKILL.md");
   const update = read(".agents/skills/prokit-skills-update/SKILL.md");
-  for (const name of ["ponytail", "ponytail-review", "ponytail-audit", "ponytail-debt", "ponytail-help", "ponytail-gain"]) assert.match(routing, new RegExp(name));
+  const brains = read(".agents/skills/prokit-dev-cycle/references/brains/README.md");
+  const m = JSON.parse(read("skills.manifest.json"));
+  // 카탈로그 정본(brains/README.md)이 매니페스트와 같은 이름을 쓰고, 두뇌마다 단계별 이름 파일이 있다
+  for (const name of Object.keys(m.brains)) {
+    assert.match(brains, new RegExp(`\\| \`${name}\` \\|`), name);
+    assert.ok(existsSync(join(TEMPLATE_FILES, `.agents/skills/prokit-dev-cycle/references/brains/${name}.md`)), name);
+  }
+  for (const name of Object.keys(m.simplicity)) assert.match(brains, new RegExp(`\\| \`${name}\``), name);
+  for (const s of m.mattpocock.pool) assert.match(brains, new RegExp(`^\\| \`${s}\` \\| (모델|사용자) \\| 추가 \\|`, "m"), s);
+  // 고른 과설계 방지 스킬이 ponytail의 역할을 대신하고, 없어도 리뷰 행을 blocked로 두지 않는다
+  assert.match(routing, /^\| 역할 \| ponytail \| caveman \| karpathy \| none\(기본 AI\) \|$/m);
+  for (const name of ["ponytail-review", "ponytail-audit", "ponytail-debt", "ponytail-help", "ponytail-gain", "lean-build", "surgical-patch", "safe-refactor", "caveman-review", "karpathy-guidelines"]) assert.match(routing, new RegExp(name));
+  assert.match(routing, /과설계 방지 스킬이 없다는 이유로 리뷰 행을 `blocked`로 두지 않는다/);
+  assert.match(routing, /"Native Core"는 설치하지 않는다/);
   assert.match(routing, /provider가 낸 전문 review coverage는 재사용/);
   assert.match(cycle, /실제 coverage와 같은 reuse key/);
-  assert.match(cycle, /ponytail 규칙보다 이 스킬, `AGENTS\.md`, 대조표가 우선한다\. vitest 도입 행/);
-  assert.match(routing, /ponytail 규칙이 `AGENTS\.md`, `prokit-\*`, 대조표와 부딪히면 뒤의 것이 우선한다\. 대조표 행\(vitest 도입/);
-  assert.match(routing, /provider 내장 review coverage를 재사용하고[^\n]*`ponytail-review`[^\n]*gstack `review`/);
+  assert.match(cycle, /`\.dev-cycle\.json`의 `brain`·`simplicity`/);
+  assert.match(cycle, /고른 스킬의 규칙보다 이 스킬, `AGENTS\.md`, 대조표가 우선한다\. vitest 도입 행/);
+  assert.match(routing, /고른 과설계 방지 스킬의 규칙이 `AGENTS\.md`, `prokit-\*`, 대조표와 부딪히면 뒤의 것이 우선한다\. 대조표 행\(vitest 도입/);
   assert.match(routing, /잘 돌던 기존 코드를 고칠 근거로 쓰지 않는다/);
   assert.match(routing, /\$ponytail:ponytail-review.*먼저/);
   assert.match(routing, /같은 diff에 함께 쓰지 않으며.*off.*다시 켜지 않는다/);
   assert.match(cycle, /trusted 프로젝트에서 `\/hooks` 허용과 새 세션/);
   assert.match(read("CLAUDE.md"), /Skill 도구 또는 `\/ponytail-review`로 한 번만/);
   assert.match(read("CLAUDE.md"), /일회성이며 세션을 영구 review 모드로 바꾸지 않는다/);
+  assert.match(read("CLAUDE.md"), /`\/caveman`[^\n]*대화 응답에만/);
   assert.match(update, /marketplace를 갱신하기 전에.*`hooks\/`와 코드를 검토/);
   assert.match(update, /Codex 네이티브 ponytail 플러그인/);
   assert.match(update, /다시 설치·자동 업데이트하지 않는다/);
-  const m = JSON.parse(read("skills.manifest.json"));
-  assert.ok(m.claude.plugins.includes("ponytail@ponytail"));
+  assert.match(read("AGENTS.md"), /^## 두뇌와 선택 스킬$/m);
+  assert.match(read("AGENTS.md"), /pnpm skills:setup --brain <이름\|none>/);
+  // 템플릿 공통 문서는 두뇌 스킬 이름 대신 단계 이름을 쓴다(두뇌별 이름은 brains/<이름>.md)
+  for (const f of ["docs/dev-workflow.md", ".agents/skills/prokit-dev-cycle/references/reuse-design.md", ".agents/skills/prokit-dev-cycle/references/delegation.md"])
+    assert.doesNotMatch(read(f), /brainstorming|writing-plans|subagent-driven-development|systematic-debugging|ponytail-review|gstack/, f);
   const readme = readFileSync(join(TEMPLATE, "README.md"), "utf8");
-  assert.match(readme, /^\| 프로세스 스킬 \(Claude\) \|[^\n]*ponytail/m);
-  assert.match(readme, /^\| 프로세스 스킬 \(Codex\) \|[^\n]*ponytail/m);
+  assert.match(readme, /^\| 두뇌 \(선택\) \|/m);
+  assert.match(readme, /^\| 과설계 방지 스킬 \(선택\) \|[^\n]*ponytail/m);
+  for (const k of ["--brain", "--simplicity", "--matt"]) assert.ok(readme.includes(k), k);
   assert.match(readme, /ponytail-audit.*ponytail-debt.*ponytail-help.*ponytail-gain/);
   assert.match(readme, /PLUGIN_DATA/);
   assert.match(readme, /`\/hooks`/);
@@ -197,7 +215,7 @@ test("검증 보강: 오류 예산 0, QA 시나리오와 발견 수정, 공통�
   assert.match(f, /^- 공통화·리팩토링·최적화 점검 \(/m);
   assert.match(f, /^- \[verify\] 사용자 흐름 QA \(스펙의 테스트 시나리오 전부/m);
   assert.match(f, /^- QA 발견 수정과 재QA \(/m);
-  assert.match(f, /QA 발견 수정과 재QA \([^\n]*타입·린트·빌드·테스트[^\n]*prokit-reviewer\(code\)와 ponytail-review/, "QA 뒤 수정도 재검사·재리뷰");
+  assert.match(f, /QA 발견 수정과 재QA \([^\n]*타입·린트·빌드·테스트[^\n]*prokit-reviewer\(code\)와 간결성 검토/, "QA 뒤 수정도 재검사·재리뷰");
   assert.match(f, /공통화·리팩토링·최적화 점검 \(이번 라운드가 바꾼 파일과 같은 디렉터리/, "공통화 범위는 바꾼 파일의 디렉터리");
   assert.ok(f.indexOf("공통화·리팩토링") < f.indexOf("전체 diff 최종 리뷰"), "공통화는 최종 리뷰 앞");
   assert.ok(f.indexOf("사용자 흐름 QA") < f.indexOf("QA 발견 수정과 재QA"), "발견 수정은 QA 뒤");
@@ -210,7 +228,7 @@ test("검증 보강: 오류 예산 0, QA 시나리오와 발견 수정, 공통�
   assert.match(cycle, /개발 서버를 백그라운드로 띄워[^\n]*끄지 않는다/);
   assert.match(cycle, /미룬 지적[^\n]*백로그/);
   const routing = read(".agents/skills/prokit-dev-cycle/references/process-routing.md");
-  assert.match(routing, /SDD 태스크 리뷰\(태스크마다/);
+  assert.match(routing, /두뇌 구현 스킬의 태스크 리뷰\(태스크마다/);
   assert.match(routing, /공통화: F의 공통화·리팩토링 행/);
   for (const doc of [wf, cycle, routing, verify]) assert.doesNotMatch(doc, /TASK|로드맵/, "프로젝트 전용 개념이 템플릿에 없다");
 });
@@ -220,9 +238,9 @@ test("스킬 연결: 행이 외부 스킬을 이름으로 부르고, 외부 스�
   const part = (c) => wf.split(`### ${c}.`)[1].split("###")[0];
   assert.match(part("B"), /^- 구현 \([^\n]*shadcn[^\n]*vercel-react-best-practices/m);
   assert.match(part("B"), /^- \[review\] impeccable audit과 web-design-guidelines/m);
-  assert.match(part("D"), /^- 구현 \([^\n]*test-driven-development[^\n]*better-auth-best-practices/m);
+  assert.match(part("D"), /^- 구현 \([^\n]*테스트 먼저[^\n]*better-auth-best-practices/m);
   assert.match(part("E"), /^- 스키마 수정 \+ dbGenerate[^\n]*supabase-postgres-best-practices/m);
-  assert.match(part("F"), /^- 구현 계획 \(writing-plans, 바꿀 계층의 prokit-\* 스킬과 그 공식 스킬 연결 표/m);
+  assert.match(part("F"), /^- 구현 계획 \(계획 단계, 바꿀 계층의 prokit-\* 스킬과 그 공식 스킬 연결 표/m);
   assert.match(wf, /^- 문서 영향 확인 \(GLOSSARY\.md와 docs\/adr\/는 domain-modeling 형식/m);
   // Claude Code의 Skill 도구는 같은 이름의 개인 스킬을 먼저 불러오고, shadcn은 모노레포 루트에서 로드가 실패한다(실측)
   assert.match(read("AGENTS.md"), /이 프로젝트에 설치된 판\(`\.agents\/skills\/<이름>\/SKILL\.md`\)을 읽는다/);
@@ -232,7 +250,7 @@ test("스킬 연결: 행이 외부 스킬을 이름으로 부르고, 외부 스�
   assert.match(cycle, /첫 증거를 적기 전에 `prokit-verify`를 불러/);
   assert.match(cycle, /`domain-modeling`을 읽고 그 형식/);
   assert.match(cycle, /`turbo\.json`은 `turborepo` 스킬/);
-  assert.match(cycle, /superpowers `verification-before-completion`을 불러/);
+  assert.match(cycle, /고른 두뇌의 검증 스킬\(superpowers `verification-before-completion` 등\)을 불러/);
   assert.match(read(".agents/skills/prokit-web/SKILL.md"), /느림, 깜빡임, 번들 크기, 캐시, 프리패치를 다루면[^\n]*`vercel-react-best-practices`를 읽고/);
   assert.match(read(".claude/agents/prokit-reviewer.md"), /"skills_read":\[/);
   assert.match(read(".claude/agents/prokit-implementer.md"), /^- 읽은 스킬: /m);
@@ -255,9 +273,9 @@ test("Codex: 라운드 진입에서 테스트 선행 행을 확인하고 지원�
   assert.match(opening, /구현 행까지만/);
   const routing = read(".agents/skills/prokit-dev-cycle/references/process-routing.md");
   const implementation = routing.split("\n").find((l) => l.startsWith("| 구현 |"));
-  assert.doesNotMatch(implementation.split("|")[5], /ralph/);
+  assert.doesNotMatch(implementation, /ralph|team/, "기본 구현은 prokit-implementer 위임이다");
   assert.match(routing, /Codex.*SKILL\.md/);
-  assert.match(routing, /tmux/);
+  assert.match(read(".agents/skills/prokit-dev-cycle/references/brains/oh-my.md"), /`team`은 tmux 런타임이 있을 때만/);
 });
 
 test("Antigravity·Grok Build: Codex처럼 SKILL.md를 읽고, 서브에이전트·이미지 도구·키·신뢰 길을 안내한다", () => {
@@ -265,7 +283,7 @@ test("Antigravity·Grok Build: Codex처럼 SKILL.md를 읽고, 서브에이전�
   assert.match(routing, /Antigravity.*Grok Build.*SKILL\.md/);
   assert.match(routing, /\.agents\/agents/);
   const cycle = read(".agents/skills/prokit-dev-cycle/SKILL.md");
-  assert.match(cycle, /다른 도구의 활성화와 fallback은 `process-routing\.md`의 선택 규칙/);
+  assert.match(cycle, /간결성은 \[references\/process-routing\.md\]\(references\/process-routing\.md\) 규칙 6/);
   const ui = read(".agents/skills/prokit-ui/SKILL.md");
   assert.match(ui, /Antigravity `generate_image`/);
   assert.match(ui, /Grok Build `image_gen`/);

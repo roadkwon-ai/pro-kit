@@ -4,6 +4,21 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 모든 값은 2026-09-27에 측정한 실측값이다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 두뇌·과설계 방지 스킬 선택 설치 (2026-10-20)
+
+두뇌(superpowers, agent-skills, gstack, oh-my, pstack)와 과설계 방지 스킬(ponytail, caveman, karpathy)을 기본 설치에서 빼고, 프로젝트마다 하나씩 고르게 했다(`--brain`, `--simplicity`, 기본 `none`). mattpocock 필수 세 개는 늘 설치하고 나머지는 `--matt`, i-have-adhd는 선택 묶음이다. 결정과 상세 실측은 [두뇌·과설계 방지 선택 설치 보고서](../../docs/reports/2026-10-20-brain-selection/README.md)에 있다.
+
+- 판: macOS(darwin arm64), Node v24.22.0, pnpm 12.14.0, Claude Code 2.1.304, codex-cli 0.163.0, skills CLI 1.7.4, oh-my-codex 0.21.17, create-better-t-stack 3.47.0.
+- 테스트: 두 템플릿 `node --test 'templates/<템플릿>/tests/*.test.mjs'` 각 314개 통과(skill-creator `quick_validate`는 PyYAML이 있는 Python으로 실행).
+- 실제 Better-T-Stack 프로젝트(neon)에서 확인했다.
+  - 인자 없이 설치하면 두 항목 모두 `none`이고, 전역에 켜진 superpowers·OMC·ponytail·frontend-design과 gstack 개인 스킬을 `.claude/settings.local.json`으로 그 프로젝트에서만 껐다.
+  - superpowers + ponytail → caveman → karpathy → none 순서로 바꿀 때마다 이전 설치본을 출처로 지우고 `skills:check`가 exit 0이었다.
+  - oh-my를 고르면 OMC 플러그인과 `omx setup`, none으로 바꾸면 `omx uninstall --scope project`로 지웠다. `prokit-*` 에이전트와 `.omx/plans` 같은 작업 기록은 남았다(`--purge`는 `.omx/` 전체를 지워 쓰지 않는다).
+  - agent-skills → pstack → gstack → none 순서로 바꿀 때도 이전 플러그인과 스킬을 출처로 지우고 `skills:check`·`agents:check`가 exit 0이었다. gstack은 이 기기의 전역 본체를 썼고, 고르면 그 개인 스킬 끄기 항목을 지우고 none으로 바꾸면 다시 껐다.
+  - `--brain mattpocock --matt research,wizard`는 두뇌를 기록하고 추가 스킬만 설치했다(따로 설치하는 것이 없다). none으로 바꿔도 추가 스킬은 남았고 `skills:check`는 exit 0이었다.
+  - 키가 없는 옛 구성(superpowers·OMC·OMX·ponytail 설치)은 `skills:check`가 충돌로 exit 1을 냈고, `--brain none --simplicity ponytail`로 정리한 뒤 exit 0이었다.
+- 한계: gstack 본체를 `--with-global`로 새로 받는 경로는 확인하지 않았다(이 기기에 이미 있다). `/i-have-adhd`·`/caveman` 사용자 호출, mattpocock `code-review`·`prototype`·`research`와 하네스 내장 명령의 우선순위는 확인하지 않았다. OMX 제거 뒤 `.codex/config.toml`의 `model` 줄과 `.gitignore`의 OMX 줄은 남는다.
+
 ## 남은 한계 재검토: lease·실행 뒤 추정·부팅 ID·측정 속도 (2026-10-14)
 
 공통 스크립트(`resource-guard.mjs`)만 바뀌었다. 보완 내용, 컨테이너와 호스트 사이 실측, 리뷰, 남은 한계는 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#남은-한계-재검토-lease실행-뒤-추정부팅-id측정-속도-2026-10-14)에 있다. 이 템플릿의 테스트도 같은 판으로 다시 돌렸다.

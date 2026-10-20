@@ -10,22 +10,26 @@ import { TEMPLATE_FILES } from "./helpers.mjs";
 const SCRIPT = join(TEMPLATE_FILES, "scripts/skills-setup.mjs");
 
 // 스텁은 받은 인자를 $STUB_LOG에 적고, 진짜 도구가 만들었을 파일만 만든다.
+// npx(skills CLI): add는 스킬 폴더·Claude 링크·skills-lock.json 출처를 쓰고, remove는 그것을 지운다.
 const STUBS = {
-  npx: `#!/bin/sh
-echo "npx $*" >> "$STUB_LOG"
-mode=; skills=; claude=
-for a in "$@"; do
-  case "$a" in
-    --skill) mode=s ;;
-    --agent) mode=a ;;
-    -*) mode= ;;
-    *) if [ "$mode" = s ]; then skills="$skills $a"; elif [ "$mode" = a ] && [ "$a" = claude-code ]; then claude=1; fi ;;
-  esac
-done
-for s in $skills; do
-  mkdir -p ".agents/skills/$s" && echo "# $s" > ".agents/skills/$s/SKILL.md"
-  if [ -n "$claude" ]; then mkdir -p .claude/skills && ln -sfn "../../.agents/skills/$s" ".claude/skills/$s"; fi
-done
+  npx: `#!${process.execPath}
+const fs = require("node:fs");
+const a = process.argv.slice(2);
+fs.appendFileSync(process.env.STUB_LOG, \`npx \${a.join(" ")}\\n\`);
+const after = (flag) => { const i = a.indexOf(flag); const out = []; if (i < 0) return out; for (const x of a.slice(i + 1)) { if (x.startsWith("-")) break; out.push(x); } return out; };
+const lock = fs.existsSync("skills-lock.json") ? JSON.parse(fs.readFileSync("skills-lock.json", "utf8")) : { version: 1, skills: {} };
+if (a[2] === "add") {
+  const claude = after("--agent").includes("claude-code");
+  for (const s of after("--skill")) {
+    fs.mkdirSync(\`.agents/skills/\${s}\`, { recursive: true });
+    fs.writeFileSync(\`.agents/skills/\${s}/SKILL.md\`, \`# \${s}\\n\`);
+    if (claude) { fs.mkdirSync(".claude/skills", { recursive: true }); fs.rmSync(\`.claude/skills/\${s}\`, { force: true }); fs.symlinkSync(\`../../.agents/skills/\${s}\`, \`.claude/skills/\${s}\`); }
+    lock.skills[s] = { source: a[3], sourceType: "github", skillPath: \`skills/\${s}/SKILL.md\` };
+  }
+} else if (a[2] === "remove") {
+  for (const s of a.includes("--skill") ? after("--skill") : after("remove")) { fs.rmSync(\`.agents/skills/\${s}\`, { recursive: true, force: true }); fs.rmSync(\`.claude/skills/\${s}\`, { force: true }); delete lock.skills[s]; }
+}
+fs.writeFileSync("skills-lock.json", JSON.stringify(lock));
 `,
   claude: `#!/bin/sh
 echo "claude $*" >> "$STUB_LOG"
@@ -53,7 +57,10 @@ case " $* " in *" $STUB_FAIL "*) echo "failed" >&2; exit 1 ;; esac
 `,
   omx: `#!/bin/sh
 echo "omx $*" >> "$STUB_LOG"
-mkdir -p .omx && echo '{}' > .omx/setup-scope.json
+case "$1" in
+  setup) mkdir -p .omx .codex/.omx && echo '{}' > .omx/setup-scope.json ;;
+  uninstall) case " $* " in *" --purge "*) rm -rf .omx ;; *) rm -f .omx/setup-scope.json .omx/hud-config.json ;; esac ;;
+esac
 `,
 };
 
@@ -70,15 +77,49 @@ const MANIFEST = {
     },
     plugins: ["p1@mk", "p2@mk"],
   },
-  codex: {
-    marketplace: { name: "ponytail", source: "DietrichGebert/ponytail" },
-    plugins: ["ponytail@ponytail"],
-  },
-  omx: ["setup", "--scope", "project", "--no-merge-agents"],
   global: [],
 };
 
-function setup({ tools = ["npx", "claude", "codex", "omx"], manifest = MANIFEST, settings } = {}) {
+// 하나만 고르는 두 항목(두뇌 brains, 과설계 방지 simplicity)과 mattpocock 추가 스킬.
+const PONYTAIL_CODEX = { marketplace: { name: "ponytail", source: "DietrichGebert/ponytail" }, plugins: ["ponytail@ponytail"] };
+const SLOTS = {
+  mattpocock: { source: "org/matt", agents: ["claude-code", "codex"], pool: ["m-a", "m-b"] },
+  brains: {
+    sp: {
+      description: "규율",
+      skills: [{ agents: ["codex"], source: "org/sp", skills: ["sp-a", "shared"] }],
+      claude: { marketplaces: { mk: { source: "git", url: "https://example.com/mk.git" } }, plugins: ["sp@mk"] },
+    },
+    om: {
+      description: "자동",
+      claude: { marketplaces: { om: { source: "git", url: "https://example.com/om.git" } }, plugins: ["om@om"] },
+      omx: ["setup", "--scope", "project", "--no-merge-agents"],
+      global: [{ name: "OMX CLI", check: "command -v omx", install: "npm install -g oh-my-codex", tool: "codex" }],
+      userTraces: [{ path: ".claude/CLAUDE.md", contains: "<!-- OMC:START -->" }],
+    },
+    gs: {
+      description: "제품",
+      global: [{ name: "gs", check: 'test -d "$HOME/gs"', install: 'mkdir "$HOME/gs"' }],
+      userSkills: ".claude/skills/gstack",
+    },
+  },
+  simplicity: {
+    pt: {
+      description: "미니멀",
+      skills: [{ agents: ["codex"], source: "org/pt", skills: ["pt-a"] }],
+      claude: { marketplaces: { pt: { source: "github", repo: "org/pt" } }, plugins: ["pt@pt"] },
+      codex: PONYTAIL_CODEX,
+    },
+    cv: { description: "간결", skills: [{ agents: ["claude-code", "codex"], source: "org/cv", skills: ["cv-a", "cv-b"] }] },
+  },
+};
+// Codex 네이티브 플러그인만 보는 시험: 과설계 방지 pt를 고른 프로젝트.
+const CODEX_ONLY = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, simplicity: { pt: { description: "미니멀", codex: PONYTAIL_CODEX } } };
+// 설치기가 Biome로 맞춘 형식(탭, 짧은 객체는 한 줄). 기록은 이 형식을 지켜야 한다.
+const devCycleText = (keys = {}) =>
+  `{\n${Object.entries(keys).map(([k, v]) => `\t"${k}": "${v}",\n`).join("")}\t"todoPath": "tasks/todo.md",\n\t"ui": { "auditMin": 16, "a11yMin": 3 }\n}\n`;
+
+function setup({ tools = ["npx", "claude", "codex", "omx"], manifest = MANIFEST, settings, devCycle } = {}) {
   const root = mkdtempSync(join(tmpdir(), "skills-setup-"));
   const home = mkdtempSync(join(tmpdir(), "skills-home-"));
   const bin = join(root, ".stub-bin");
@@ -92,6 +133,7 @@ function setup({ tools = ["npx", "claude", "codex", "omx"], manifest = MANIFEST,
     mkdirSync(join(root, ".claude"), { recursive: true });
     writeFileSync(join(root, ".claude/settings.json"), JSON.stringify(settings));
   }
+  if (devCycle) writeFileSync(join(root, ".dev-cycle.json"), devCycleText(devCycle));
   const log = join(root, "stub.log");
   writeFileSync(log, "");
   const exec = (args = [], env = {}) =>
@@ -128,7 +170,7 @@ test("설치: 없는 스킬만 설치하고, Claude 선언을 병합하고, 두 
   assert.ok(c.includes("claude plugin marketplace add org/gh --scope project"), "github 형식은 owner/repo로 등록한다");
   assert.ok(c.includes("claude plugin install p2@mk --scope project"));
   assert.ok(!c.includes("claude plugin install p1@mk --scope project"), "사용자가 끈 플러그인은 설치하지 않는다(설치하면 다시 켜진다)");
-  assert.ok(c.includes("omx setup --scope project --no-merge-agents"));
+  assert.ok(!c.some((l) => l.startsWith("omx ")), "두뇌를 고르지 않으면 OMX를 설정하지 않는다");
 
   const before = calls().length;
   assert.equal(exec().status, 0);
@@ -174,7 +216,7 @@ test("선택 묶음: 기본 설치와 --check는 건너뛰고 상태만 보이�
 });
 
 test("도구가 없으면: 선언만 쓰고 설치 방법을 안내하며 exit 0, --check는 omx가 없으면 OMX를 빼고 본다", () => {
-  const { root, exec } = setup({ tools: [] });
+  const { root, exec } = setup({ tools: [], manifest: { ...MANIFEST, ...SLOTS }, devCycle: { brain: "om" } });
   for (const e of MANIFEST.skills)
     for (const s of e.skills) {
       mkdirSync(join(root, ".agents/skills", s), { recursive: true });
@@ -188,7 +230,7 @@ test("도구가 없으면: 선언만 쓰고 설치 방법을 안내하며 exit 0
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.match(r.stdout, /claude 없음/);
   assert.match(r.stdout, /npm install -g oh-my-codex/);
-  assert.deepEqual(Object.keys(JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).enabledPlugins), ["p1@mk", "p2@mk"]);
+  assert.deepEqual(Object.keys(JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).enabledPlugins), ["p1@mk", "p2@mk", "om@om"]);
   const check = exec(["--check"]);
   assert.equal(check.status, 0, check.stdout);
   assert.match(check.stdout, /OMX\(project\): omx 없음/);
@@ -198,8 +240,8 @@ test("도구가 없으면: 선언만 쓰고 설치 방법을 안내하며 exit 0
   assert.match(miss.stdout, /org\/process: proc-a/);
 });
 
-test("--check: omx가 있는데 OMX 프로젝트 설정이 없으면 exit 1", () => {
-  const { exec } = setup({ manifest: { ...MANIFEST, skills: [] } });
+test("--check: 두뇌가 oh-my인데 omx가 있고 OMX 프로젝트 설정이 없으면 exit 1", () => {
+  const { exec } = setup({ manifest: { ...MANIFEST, ...SLOTS, skills: [] }, devCycle: { brain: "om" } });
   const r = exec(["--check"]);
   assert.equal(r.status, 1);
   assert.match(r.stdout, /OMX 프로젝트 설정 없음/);
@@ -336,8 +378,8 @@ test("플러그인 설치가 실패하면 exit 2이고 실패한 이름을 보�
 });
 
 test("Codex 플러그인: 기본 실행과 --check는 상태만 보여 주고 설정을 바꾸지 않는다", () => {
-	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
-	const { exec, calls } = setup({ tools: ["codex"], manifest });
+	const manifest = CODEX_ONLY;
+	const { exec, calls } = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	for (const args of [[], ["--check"]]) {
 		const before = calls().length;
 		const r = exec(args);
@@ -351,8 +393,8 @@ test("Codex 플러그인: 기본 실행과 --check는 상태만 보여 주고 �
 });
 
 test("Codex 플러그인: --check --with-global도 조회만 하며 조회 오류는 선택 기능으로 둔다", () => {
-	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
-	const { home, exec, calls } = setup({ tools: ["codex"], manifest });
+	const manifest = CODEX_ONLY;
+	const { home, exec, calls } = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	const r = exec(["--check", "--with-global"]);
 	assert.equal(r.status, 0, r.stdout + r.stderr);
 	assert.deepEqual(calls(), [
@@ -368,8 +410,8 @@ test("Codex 플러그인: --check --with-global도 조회만 하며 조회 오�
 });
 
 test("Codex 플러그인: --with-global은 최초에만 올바른 marketplace와 ponytail을 설치한다", () => {
-	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
-	const { exec, calls } = setup({ tools: ["codex"], manifest });
+	const manifest = CODEX_ONLY;
+	const { exec, calls } = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	const r = exec(["--with-global"]);
 	assert.equal(r.status, 0, r.stdout + r.stderr);
 	assert.deepEqual(calls(), [
@@ -387,9 +429,9 @@ test("Codex 플러그인: --with-global은 최초에만 올바른 marketplace와
 });
 
 test("Codex 플러그인: 기존 공식 marketplace에서 처음 설치할 때만 갱신하고, 비활성 선택은 보존한다", () => {
-	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
+	const manifest = CODEX_ONLY;
 	const markets = '{"marketplaces":[{"name":"ponytail","marketplaceSource":{"sourceType":"git","source":"https://github.com/DietrichGebert/ponytail.git"}}]}';
-	const { exec, calls } = setup({ tools: ["codex"], manifest });
+	const { exec, calls } = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	assert.equal(exec(["--with-global"], { STUB_CODEX_MARKETS: markets }).status, 0);
 	assert.ok(calls().includes("codex plugin marketplace upgrade ponytail --json"));
 	assert.ok(calls().includes("codex plugin add ponytail@ponytail --json"));
@@ -407,7 +449,7 @@ test("Codex 플러그인: 기존 공식 marketplace에서 처음 설치할 때�
 		'{"installed":[{"pluginId":"ponytail@ponytail","installed":true,"enabled":true,"marketplaceSource":{"sourceType":"git","source":"https://example.com/other.git"}}],"available":[]}',
 		'{"installed":[{"pluginId":"ponytail@ponytail","installed":true,"enabled":true}],"available":[]}',
 	]) {
-		const unverified = setup({ tools: ["codex"], manifest });
+		const unverified = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 		const result = unverified.exec(["--with-global"], {
 			STUB_CODEX_MARKETS: markets,
 			STUB_CODEX_PLUGINS: plugins,
@@ -419,36 +461,36 @@ test("Codex 플러그인: 기존 공식 marketplace에서 처음 설치할 때�
 });
 
 test("Codex 플러그인: 지원하지 않는 CLI는 안내만 하고, JSON·명령 실패와 출처 충돌은 --with-global에서 실패한다", () => {
-	const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, omx: undefined };
-	const absent = setup({ tools: [], manifest });
+	const manifest = CODEX_ONLY;
+	const absent = setup({ tools: [], manifest, devCycle: { simplicity: "pt" } });
 	assert.equal(absent.exec(["--with-global"]).status, 0);
 	assert.match(absent.exec(["--with-global"]).stdout, /codex 없음/);
-	const unsupported = setup({ tools: ["codex"], manifest });
+	const unsupported = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	const noSupport = unsupported.exec(["--with-global"], { STUB_CODEX_UNSUPPORTED: "1" });
 	assert.equal(noSupport.status, 0, noSupport.stdout + noSupport.stderr);
 	assert.match(noSupport.stdout, /지원하지 않음/);
 
-	const malformed = setup({ tools: ["codex"], manifest });
+	const malformed = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	const badJson = malformed.exec(["--with-global"], { STUB_CODEX_MARKETS: "{" });
 	assert.equal(badJson.status, 2, badJson.stdout + badJson.stderr);
 	assert.match(badJson.stdout, /Codex 플러그인.*JSON/);
-	const nullJson = setup({ tools: ["codex"], manifest });
+	const nullJson = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	const nullResult = nullJson.exec(["--with-global"], { STUB_CODEX_MARKETS: "null" });
 	assert.equal(nullResult.status, 2, nullResult.stdout + nullResult.stderr);
 	assert.match(nullResult.stdout, /marketplaces 배열 없음/);
-	const failed = setup({ tools: ["codex"], manifest });
+	const failed = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	const failedInstall = failed.exec(["--with-global"], { STUB_FAIL: "ponytail@ponytail" });
 	assert.equal(failedInstall.status, 2, failedInstall.stdout + failedInstall.stderr);
 	assert.match(failedInstall.stdout, /Codex 플러그인 ponytail@ponytail/);
 
-	const conflict = setup({ tools: ["codex"], manifest });
+	const conflict = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	const r = conflict.exec(["--with-global"], {
 		STUB_CODEX_MARKETS: '{"marketplaces":[{"name":"ponytail","marketplaceSource":{"sourceType":"git","source":"https://example.com/other.git"}}]}',
 	});
 	assert.equal(r.status, 2, r.stdout + r.stderr);
 	assert.match(r.stdout, /source mismatch/);
 	assert.ok(!conflict.calls().some((line) => line.includes("marketplace add") || line.includes("plugin add")));
-	const local = setup({ tools: ["codex"], manifest });
+	const local = setup({ tools: ["codex"], manifest, devCycle: { simplicity: "pt" } });
 	const localResult = local.exec(["--with-global"], {
 		STUB_CODEX_MARKETS: '{"marketplaces":[{"name":"ponytail","marketplaceSource":{"sourceType":"local","source":"https://github.com/DietrichGebert/ponytail.git"}}]}',
 	});
@@ -466,38 +508,311 @@ test("깨진 .claude/settings.json은 덮어쓰지 않고 실패로 보고한다
   assert.equal(readFileSync(join(root, ".claude/settings.json"), "utf8"), "{ broken");
 });
 
-test("템플릿 매니페스트: 이름 중복 없음, 프로세스 스킬과 플러그인이 모두 있다", () => {
+const readJson = (p) => JSON.parse(readFileSync(p, "utf8"));
+const slotProject = (opts = {}) => setup({ manifest: { ...MANIFEST, ...SLOTS }, devCycle: {}, ...opts });
+
+test("단일 선택 항목: 기록이 없으면 none이라 두뇌·과설계 방지 스킬을 설치하지 않고 상태 줄만 보인다", () => {
+  const { root, exec, calls } = setup({ manifest: { ...MANIFEST, ...SLOTS } });
+  const r = exec();
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /^두뇌: 없음\(기본 AI\)$/m);
+  assert.match(r.stdout, /^과설계 방지: 없음\(기본 AI\)$/m);
+  assert.match(r.stdout, /^mattpocock 추가: 없음/m);
+  assert.ok(!calls().some((l) => /org\/(sp|pt|cv|matt)|sp@mk|pt@pt|om@om|^omx |^codex /.test(l)), calls().join("\n"));
+  assert.deepEqual(Object.keys(readJson(join(root, ".claude/settings.json")).enabledPlugins), ["p1@mk", "p2@mk"]);
+  assert.equal(existsSync(join(root, ".dev-cycle.json")), false, "인자가 없으면 기록하지 않는다");
+  assert.equal(exec(["--check"]).status, 0);
+});
+
+test("--brain·--simplicity: 형식을 지켜 기록하고 고른 것만 설치하며, 다시 실행하면 받지 않는다", () => {
+  const { root, exec, calls } = slotProject();
+  const r = exec(["--brain", "sp", "--simplicity", "cv"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.equal(readFileSync(join(root, ".dev-cycle.json"), "utf8"), devCycleText({ brain: "sp", simplicity: "cv" }), "키 값만 더하고 Biome 형식(탭, 한 줄 객체)을 지킨다");
+  assert.ok(existsSync(join(root, ".agents/skills/sp-a/SKILL.md")));
+  assert.equal(existsSync(join(root, ".claude/skills/sp-a")), false, "Codex 전용 스킬은 Claude에 연결하지 않는다");
+  assert.ok(lstatSync(join(root, ".claude/skills/cv-b")).isSymbolicLink());
+  assert.equal(existsSync(join(root, ".agents/skills/pt-a")), false);
+  const s = readJson(join(root, ".claude/settings.json"));
+  assert.equal(s.enabledPlugins["sp@mk"], true);
+  assert.equal("pt@pt" in s.enabledPlugins, false);
+  assert.ok(calls().includes("claude plugin install sp@mk --scope project"));
+  assert.match(r.stdout, /^두뇌: sp\(설치됨\)$/m);
+  assert.match(r.stdout, /^과설계 방지: cv\(설치됨\)$/m);
+
+  const before = calls().length;
+  assert.equal(exec().status, 0);
+  assert.equal(calls().slice(before).filter((l) => l.startsWith("npx")).length, 0, "기록된 선택을 다시 받지 않는다");
+  const check = exec(["--check"]);
+  assert.equal(check.status, 0, check.stdout);
+  assert.match(check.stdout, /^두뇌: sp\(설치됨\)$/m);
+  rmSync(join(root, ".agents/skills/cv-a"), { recursive: true });
+  const miss = exec(["--check"]);
+  assert.equal(miss.status, 1, "고른 항목의 스킬이 빠지면 누락이다");
+  assert.match(miss.stdout, /^과설계 방지: cv\(일부\)$/m);
+});
+
+test("바꾸기: 그 항목에서 고르지 않은 설치본을 skills-lock.json 출처로 찾아 지우고 플러그인은 끈다", () => {
+  const { root, exec, calls } = slotProject();
+  assert.equal(exec(["--brain", "sp", "--simplicity", "cv"]).status, 0);
+  // 같은 이름이라도 다른 출처에서 받은 스킬은 그 후보의 설치본이 아니다.
+  const lock = readJson(join(root, "skills-lock.json"));
+  lock.skills.shared.source = "org/other";
+  writeFileSync(join(root, "skills-lock.json"), JSON.stringify(lock));
+  const before = calls().length;
+  const r = exec(["--brain", "none", "--simplicity", "pt"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const c = calls().slice(before);
+  assert.ok(c.includes("npx -y skills@1.7.0 remove --skill sp-a -y"), c.join("\n"));
+  assert.ok(c.includes("npx -y skills@1.7.0 remove --skill cv-a cv-b -y"), c.join("\n"));
+  assert.ok(c.includes("claude plugin uninstall sp@mk --scope project"));
+  assert.ok(existsSync(join(root, ".agents/skills/shared/SKILL.md")), "출처가 다르면 지우지 않는다");
+  assert.equal(existsSync(join(root, ".agents/skills/cv-a")), false);
+  assert.ok(existsSync(join(root, ".agents/skills/pt-a/SKILL.md")));
+  const s = readJson(join(root, ".claude/settings.json"));
+  assert.equal(s.enabledPlugins["sp@mk"], false, "지운 플러그인은 false로 남겨 user scope 설치도 이 프로젝트에서 끈다");
+  assert.equal(s.enabledPlugins["pt@pt"], true);
+  assert.match(r.stdout, /^정리: sp\(플러그인 sp@mk, 스킬 sp-a\), cv\(스킬 cv-a, cv-b\)$/m);
+  assert.match(r.stdout, /^Claude 플러그인\(project\): \.claude\/settings\.json 선언 추가 [^\n]*pt@pt, 끔 sp@mk, 설치 완료$/m, "끈 플러그인도 알린다");
+  assert.equal(readFileSync(join(root, ".dev-cycle.json"), "utf8"), devCycleText({ brain: "none", simplicity: "pt" }));
+  assert.equal(exec(["--check"]).status, 0);
+});
+
+test("옛 구성: 기록이 없는 프로젝트의 남은 설치본은 --check가 충돌(exit 1)로 알리고, 인자로 같은 값을 줘도 정리한다", () => {
+  const settings = { enabledPlugins: { "p1@mk": true, "p2@mk": true, "sp@mk": true, "om@om": true, "pt@pt": true }, extraKnownMarketplaces: { om: { source: { source: "git", url: "https://example.com/om.git" } } } };
+  const { root, exec, calls } = slotProject({ settings });
+  exec(["--matt", "m-a"]);
+  const lock = readJson(join(root, "skills-lock.json"));
+  for (const [s, source] of [["sp-a", "org/sp"], ["pt-a", "org/pt"]]) {
+    mkdirSync(join(root, ".agents/skills", s), { recursive: true });
+    writeFileSync(join(root, ".agents/skills", s, "SKILL.md"), "#\n");
+    lock.skills[s] = { source, sourceType: "github", skillPath: `skills/${s}/SKILL.md` };
+  }
+  writeFileSync(join(root, "skills-lock.json"), JSON.stringify(lock));
+  mkdirSync(join(root, ".omx/plans"), { recursive: true });
+  writeFileSync(join(root, ".omx/setup-scope.json"), "{}");
+  writeFileSync(join(root, ".omx/plans/p.md"), "#\n");
+  const snap = () => [".claude/settings.json", ".dev-cycle.json", "skills-lock.json"].map((f) => readFileSync(join(root, f), "utf8"));
+  const before = snap();
+
+  const check = exec(["--check"]);
+  assert.equal(check.status, 1, check.stdout);
+  assert.match(check.stdout, /^두뇌: 없음\(기본 AI\), 고르지 않은 설치본: sp\(플러그인 sp@mk, 스킬 sp-a\), om\(플러그인 om@om, OMX 설정\) → pnpm skills:setup --brain <이름\|none>으로 고르면 정리된다\(기록: none\)$/m);
+  assert.match(check.stdout, /^과설계 방지: 없음\(기본 AI\), 고르지 않은 설치본: pt\(플러그인 pt@pt, 스킬 pt-a\) → pnpm skills:setup --simplicity <이름\|none>으로 고르면 정리된다\(기록: none\)$/m);
+  assert.deepEqual(snap(), before, "--check는 파일을 쓰지 않는다");
+
+  const plain = exec();
+  assert.equal(plain.status, 0, "인자가 없으면 지우지 않고 알리기만 한다");
+  assert.ok(existsSync(join(root, ".agents/skills/sp-a")));
+
+  const n = calls().length;
+  const r = exec(["--brain", "none", "--simplicity", "pt"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.ok(calls().slice(n).includes("npx -y skills@1.7.0 remove --skill sp-a -y"));
+  assert.ok(calls().slice(n).includes("omx uninstall --scope project"), "범위를 명시하고(없으면 user 범위가 대상이 될 수 있다) --purge는 주지 않는다");
+  assert.equal(existsSync(join(root, ".omx/setup-scope.json")), false, "OMX 기록이 있으면 OMX 프로젝트 설정을 지운다");
+  assert.ok(existsSync(join(root, ".omx/plans/p.md")), "OMX 작업 기록(.omx/plans 등)은 남긴다");
+  assert.ok(existsSync(join(root, ".agents/skills/pt-a")), "고른 것은 남긴다");
+  assert.ok(existsSync(join(root, ".agents/skills/m-a")), "추가 스킬은 정리하지 않는다");
+  const s = readJson(join(root, ".claude/settings.json"));
+  assert.deepEqual([s.enabledPlugins["sp@mk"], s.enabledPlugins["om@om"], s.enabledPlugins["pt@pt"]], [false, false, true]);
+  assert.equal("om" in s.extraKnownMarketplaces, false, "고르지 않은 후보만 쓰는 마켓플레이스 선언은 뺀다");
+  assert.ok("mk" in s.extraKnownMarketplaces, "기본 플러그인과 함께 쓰는 마켓플레이스는 남긴다");
+  assert.equal(exec(["--check"]).status, 0);
+});
+
+test("전역 설치본: 이 프로젝트에서 고르지 않은 user 플러그인·같은 일을 하는 플러그인·gstack 개인 스킬은 settings.local.json으로 끄고, 고르면 그 항목을 지운다", () => {
+  const manifest = { ...MANIFEST, ...SLOTS, skills: [], claude: { marketplaces: {}, plugins: [], conflicts: { "fd@x": "기본 스킬과 같은 일" } } };
+  const { root, home, exec } = setup({ manifest, devCycle: {} });
+  mkdirSync(join(home, ".claude/skills/gstack/plan"), { recursive: true });
+  writeFileSync(join(home, ".claude/skills/gstack/SKILL.md"), "#\n");
+  writeFileSync(join(home, ".claude/skills/gstack/plan/SKILL.md"), "#\n");
+  mkdirSync(join(home, ".claude/skills/plan"));
+  symlinkSync(join(home, ".claude/skills/gstack/plan/SKILL.md"), join(home, ".claude/skills/plan/SKILL.md"));
+  mkdirSync(join(home, ".claude/skills/mine"));
+  writeFileSync(join(home, ".claude/skills/mine/SKILL.md"), "#\n");
+  writeFileSync(join(home, ".claude/settings.json"), JSON.stringify({ enabledPlugins: { "sp@mk": true, "pt@pt": true, "fd@x": true, "other@y": true, "om@om": false } }));
+  writeFileSync(join(home, ".claude/CLAUDE.md"), "<!-- OMC:START -->\n");
+  const local = join(root, ".claude/settings.local.json");
+
+  const check = exec(["--check"]);
+  assert.equal(check.status, 0, "전역 설치본은 exit 코드에 넣지 않는다");
+  assert.match(check.stdout, /^전역: 이 프로젝트에서 끌 것 sp@mk, pt@pt, fd@x, 개인 스킬 gstack, plan → pnpm skills:setup$/m);
+  assert.match(check.stdout, /^전역 경고: om\(~\/\.claude\/CLAUDE\.md\)/m);
+  assert.equal(existsSync(local), false, "--check는 쓰지 않는다");
+
+  mkdirSync(join(root, ".claude"), { recursive: true });
+  writeFileSync(local, JSON.stringify({ permissions: { allow: ["x"] }, enabledPlugins: { "pt@pt": true } }));
+  const r = exec();
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  let l = readJson(local);
+  assert.deepEqual(l.permissions, { allow: ["x"] }, "다른 키는 그대로 둔다");
+  assert.deepEqual(l.enabledPlugins, { "pt@pt": true, "sp@mk": false, "fd@x": false }, "사용자가 local에 직접 켠 값은 두고, 켜진 것만 끈다");
+  assert.deepEqual(l.skillOverrides, { gstack: "off", plan: "off" }, "gstack을 가리키는 개인 스킬만 끈다");
+  assert.match(r.stdout, /^전역: 이 프로젝트에서 끔 sp@mk, fd@x, 개인 스킬 gstack, plan \(\.claude\/settings\.local\.json\)$/m);
+
+  assert.equal(exec(["--brain", "sp"]).status, 0);
+  l = readJson(local);
+  assert.equal("sp@mk" in l.enabledPlugins, false, "고른 플러그인의 끄기 항목은 지운다(local이 project보다 우선이다)");
+  assert.equal(readJson(join(root, ".claude/settings.json")).enabledPlugins["sp@mk"], true);
+  assert.equal(exec(["--brain", "gs"]).status, 0);
+  l = readJson(local);
+  assert.equal(l.skillOverrides, undefined, "gstack을 고르면 개인 스킬 끄기 항목을 지운다");
+  assert.equal(l.enabledPlugins["sp@mk"], false, "다시 고르지 않은 것이 되면 끈다");
+});
+
+test("--matt: pool에서 고른 추가 스킬만 설치하고 상태 줄에 보이며, 모르는 스킬은 exit 2", () => {
+  const { root, exec, calls } = slotProject();
+  const r = exec(["--matt", "m-a"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.ok(calls().includes("npx -y skills@1.7.0 add org/matt --skill m-a --agent claude-code codex -y"));
+  assert.match(r.stdout, /^mattpocock 추가: m-a /m);
+  assert.equal(existsSync(join(root, ".agents/skills/m-b")), false);
+  assert.equal(exec(["--check"]).status, 0, "추가 스킬은 기록하지 않으므로 인자 없는 --check가 요구하지 않는다");
+  const n = calls().length;
+  for (const bad of [["--matt", "nope"], ["--matt"], ["--matt", "m-a,grill-me"]]) {
+    const u = exec(bad);
+    assert.equal(u.status, 2, bad.join(" "));
+    assert.match(u.stderr, /추가 스킬: m-a, m-b/);
+    assert.match(u.stderr, /brains\/README\.md/);
+  }
+  assert.equal(calls().length, n, "모르는 스킬이면 아무것도 하지 않는다");
+});
+
+test("모르는 두뇌·과설계 방지 이름이나 기록할 .dev-cycle.json이 없으면 exit 2이고 아무것도 하지 않는다", () => {
+  const { root, exec, calls } = slotProject();
+  for (const bad of [["--brain", "nope"], ["--brain"], ["--simplicity", "sp"]]) {
+    const u = exec(bad);
+    assert.equal(u.status, 2, bad.join(" "));
+    assert.match(u.stderr, /두뇌: none\(기본 AI\), sp\(규율\), om\(자동\), gs\(제품\)|과설계 방지: none\(기본 AI\), pt\(미니멀\), cv\(간결\)/);
+  }
+  rmSync(join(root, ".dev-cycle.json"));
+  const missing = exec(["--brain", "sp"]);
+  assert.equal(missing.status, 2);
+  assert.match(missing.stderr, /\.dev-cycle\.json/);
+  assert.deepEqual(calls(), []);
+  assert.equal(existsSync(join(root, ".claude/settings.json")), false);
+});
+
+test("잘못된 인자와 깨진 파일: --brain=값은 exit 2, 깨진 개인 설정은 덮어쓰지 않고 건너뛰며, 깨진 skills-lock.json은 알린다", () => {
+  const { root, home, exec, calls } = slotProject();
+  const eq = exec(["--brain=sp"]);
+  assert.equal(eq.status, 2);
+  assert.match(eq.stderr, /--brain sp처럼 = 없이/);
+  assert.deepEqual(calls(), []);
+  writeFileSync(join(root, ".dev-cycle.json"), devCycleText({ brain: "constructor" }));
+  assert.match(exec(["--check"]).stdout, /^두뇌: constructor\(매니페스트에 없음\)/m);
+  writeFileSync(join(root, ".dev-cycle.json"), devCycleText());
+
+  mkdirSync(join(home, ".claude"), { recursive: true });
+  writeFileSync(join(home, ".claude/settings.json"), "{ broken");
+  const r = exec();
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /^전역 경고: 개인 설정을 읽지 못해 건너뜀: .*\.claude\/settings\.json/m);
+  assert.match(r.stdout, /^전역 도구:/m, "요약은 끝까지 보인다");
+  writeFileSync(join(home, ".claude/settings.json"), "{}");
+  mkdirSync(join(root, ".claude"), { recursive: true });
+  writeFileSync(join(root, ".claude/settings.local.json"), "{ mine");
+  assert.match(exec().stdout, /^전역 경고: 개인 설정을 읽지 못해 건너뜀: .*settings\.local\.json/m);
+  assert.equal(readFileSync(join(root, ".claude/settings.local.json"), "utf8"), "{ mine", "깨진 개인 설정은 덮어쓰지 않는다");
+
+  writeFileSync(join(root, "skills-lock.json"), "{ broken");
+  const chk = exec(["--check"]);
+  assert.equal(chk.status, 1);
+  assert.match(chk.stdout, /누락: .*skills-lock\.json 읽기/);
+});
+
+test("oh-my: 고르면 OMX 프로젝트 설정을 하고 OMX CLI는 --brain을 명시했을 때만 전역 설치한다", () => {
+  const { root, home, exec, calls } = slotProject({ tools: ["npx", "claude", "omx"] });
+  writeFileSync(join(root, ".dev-cycle.json"), devCycleText({ brain: "gs" }));
+  const plain = exec();
+  assert.equal(plain.status, 0, plain.stdout + plain.stderr);
+  assert.equal(existsSync(join(home, "gs")), false, "기록만으로는 두뇌 전역 항목을 설치하지 않는다");
+  assert.match(plain.stdout, /gs 없음 → mkdir/);
+  assert.match(plain.stdout, /^두뇌: gs\(없음\)/m, "전역 항목이 없으면 설치됨으로 보이지 않는다");
+  const chk = exec(["--check"]);
+  assert.equal(chk.status, 1, "고른 두뇌의 전역 항목이 없으면 누락이다");
+  assert.match(chk.stdout, /누락: .*전역 gs/);
+  assert.equal(exec(["--brain", "gs"]).status, 0);
+  assert.ok(existsSync(join(home, "gs")), "--brain을 명시하면 설치한다");
+
+  const r = exec(["--brain", "om"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.ok(calls().includes("omx setup --scope project --no-merge-agents"));
+  assert.ok(existsSync(join(root, ".omx/setup-scope.json")));
+  assert.equal(readJson(join(root, ".claude/settings.json")).enabledPlugins["om@om"], true);
+  assert.equal(exec(["--check"]).status, 0, "codex가 없는 기기는 OMX CLI를 누락으로 세지 않는다");
+  assert.equal(exec(["--brain", "none"]).status, 0);
+  assert.equal(existsSync(join(root, ".omx/setup-scope.json")), false);
+  assert.equal(existsSync(join(root, ".codex/.omx")), false, "uninstall이 남기는 OMX 장부도 지운다");
+});
+
+test("oh-my 정리: omx가 없으면 지우지 못한다고 실패로 알린다", () => {
+  const { root, exec } = slotProject({ tools: ["npx", "claude"], settings: { enabledPlugins: { "om@om": true } } });
+  mkdirSync(join(root, ".omx"), { recursive: true });
+  writeFileSync(join(root, ".omx/setup-scope.json"), "{}");
+  const r = exec(["--brain", "none"]);
+  assert.equal(r.status, 2, r.stdout + r.stderr);
+  assert.match(r.stdout, /실패: .*OMX 정리: omx 없음/);
+  assert.ok(existsSync(join(root, ".omx/setup-scope.json")));
+});
+
+test("Codex 네이티브 플러그인: 과설계 방지를 고르지 않았으면 조회하지 않는다", () => {
+  const { exec, calls } = setup({ tools: ["codex"], manifest: CODEX_ONLY });
+  const r = exec(["--with-global"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.doesNotMatch(r.stdout, /Codex 플러그인/);
+  assert.deepEqual(calls(), []);
+});
+
+test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 두뇌·과설계 방지 카탈로그가 맞다", () => {
   const m = JSON.parse(readFileSync(join(TEMPLATE_FILES, "skills.manifest.json"), "utf8"));
   const optional = Object.values(m.optional).flatMap((o) => o.skills);
-  const names = [...m.skills, ...optional].flatMap((e) => e.skills);
-  assert.equal(new Set(names).size, names.length, "기본과 선택 묶음에 같은 스킬이 두 번 있으면 안 된다");
-  for (const e of [...m.skills, ...optional]) {
+  const names = [...m.skills, ...optional].flatMap((e) => e.skills).concat(m.mattpocock.pool);
+  assert.equal(new Set(names).size, names.length, "기본, 선택 묶음, mattpocock 추가에 같은 스킬이 두 번 있으면 안 된다");
+  const slotItems = [...Object.values(m.brains), ...Object.values(m.simplicity)];
+  const slotEntries = slotItems.flatMap((i) => i.skills ?? []);
+  for (const e of [...m.skills, ...optional, ...slotEntries, m.mattpocock]) {
     assert.ok(e.agents.length && e.agents.every((a) => ["claude-code", "codex"].includes(a)), e.source);
     // skills:update는 GitHub owner/repo 형식만 확인한다(ref, URL, 하위 경로는 지원하지 않는다)
     assert.match(e.source, /^[\w.-]+\/[\w.-]+$/, e.source);
   }
-  for (const [k, o] of Object.entries(m.optional)) assert.ok(/^[a-z]+$/.test(k) && o.description && o.skills.length, k);
-  assert.deepEqual(Object.keys(m.optional), ["ops", "motion", "mobile"]);
-  const codexOnly = m.skills.filter((e) => !e.agents.includes("claude-code")).flatMap((e) => e.skills);
-  for (const s of [
-    "brainstorming", "writing-plans", "subagent-driven-development", "test-driven-development",
-    "systematic-debugging", "receiving-code-review", "verification-before-completion",
-    "finishing-a-development-branch", "skill-creator", "ponytail", "ponytail-review",
-    "ponytail-audit", "ponytail-debt", "ponytail-help", "ponytail-gain",
-  ]) assert.ok(codexOnly.includes(s), s);
-  for (const p of ["superpowers@claude-plugins-official", "oh-my-claudecode@omc", "skill-creator@claude-plugins-official", "ponytail@ponytail"]) {
-    assert.ok(m.claude.plugins.includes(p), p);
-  }
-  // 새 사용자 설정에는 claude-plugins-official도 등록되어 있지 않다(2026-09-27 실측). 둘 다 선언한다.
+  for (const s of slotEntries.flatMap((e) => e.skills)) assert.ok(!names.includes(s), `${s}: 두뇌·과설계 방지 후보가 기본 설치와 같은 이름을 쓰면 정리할 때 헷갈린다`);
+  for (const [k, o] of Object.entries(m.optional)) assert.ok(/^[a-z][a-z-]*$/.test(k) && o.description && o.skills.length, k);
+  assert.deepEqual(Object.keys(m.optional), ["ops", "motion", "mobile", "i-have-adhd"]);
+  // 하나만 고르는 두 항목. 기본 설치(skills, claude)에는 두뇌와 과설계 방지 스킬을 두지 않는다(기본은 none).
+  assert.deepEqual(Object.keys(m.brains), ["superpowers", "agent-skills", "pstack", "gstack", "oh-my", "mattpocock"]);
+  assert.deepEqual(Object.keys(m.simplicity), ["ponytail", "caveman", "karpathy"]);
+  for (const i of slotItems) assert.ok(i.description && (i.skills || i.claude || i.global || i === m.brains.mattpocock), JSON.stringify(i));
+  // mattpocock 두뇌는 따로 설치하는 것이 없다(필수 3개 + --matt 추가 스킬). 다른 두뇌로 바꿔도 추가 스킬을 지우지 않는다.
+  assert.deepEqual(Object.keys(m.brains.mattpocock), ["description", "hosts"]);
+  for (const s of ["brainstorming", "test-driven-development", "ponytail", "ponytail-review"]) assert.ok(!names.includes(s), `${s}는 기본 설치가 아니다`);
+  assert.deepEqual(m.claude.plugins, ["skill-creator@claude-plugins-official"]);
+  assert.deepEqual(Object.keys(m.claude.marketplaces), ["claude-plugins-official"]);
+  // 새 사용자 설정에는 claude-plugins-official도 등록되어 있지 않다(2026-09-27 실측). 고른 항목의 마켓플레이스도 선언한다.
   assert.deepEqual(m.claude.marketplaces["claude-plugins-official"], { source: "github", repo: "anthropics/claude-plugins-official" });
-  assert.deepEqual(m.claude.marketplaces.omc, { source: "git", url: "https://github.com/Yeachan-Heo/oh-my-claudecode.git" });
-  assert.deepEqual(m.claude.marketplaces.ponytail, { source: "github", repo: "DietrichGebert/ponytail" });
-  assert.deepEqual(m.codex, {
+  assert.deepEqual(Object.keys(m.claude.conflicts), ["frontend-design@claude-plugins-official"], "impeccable과 같은 일을 하는 전역 플러그인은 이 프로젝트에서 끈다");
+  assert.equal(m.codex, undefined);
+  assert.equal(m.omx, undefined);
+  assert.deepEqual(m.brains.superpowers.claude.plugins, ["superpowers@claude-plugins-official"]);
+  assert.deepEqual(m.brains["oh-my"].claude.marketplaces.omc, { source: "git", url: "https://github.com/Yeachan-Heo/oh-my-claudecode.git" });
+  assert.deepEqual(m.brains["oh-my"].omx, ["setup", "--scope", "project", "--no-merge-agents"]);
+  assert.deepEqual(m.brains.pstack.hosts, { "claude-code": "full", codex: "none" });
+  assert.deepEqual(m.simplicity.ponytail.claude, { marketplaces: { ponytail: { source: "github", repo: "DietrichGebert/ponytail" } }, plugins: ["ponytail@ponytail"] });
+  assert.deepEqual(m.simplicity.ponytail.codex, {
     marketplace: { name: "ponytail", source: "DietrichGebert/ponytail" },
     plugins: ["ponytail@ponytail"],
   });
-  assert.deepEqual(m.omx, ["setup", "--scope", "project", "--no-merge-agents"]);
-  for (const g of m.global) assert.ok(g.name && g.check && (g.install || g.hint), JSON.stringify(g));
+  assert.deepEqual(m.simplicity.ponytail.skills[0].skills, ["ponytail", "ponytail-review", "ponytail-audit", "ponytail-debt", "ponytail-help", "ponytail-gain"]);
+  // 용어·설계 질문의 필수 세 개는 기본 설치이고, grill-me 같은 제외 스킬은 추가 스킬로도 받지 않는다.
+  assert.ok(m.skills.some((e) => e.source === "mattpocock/skills" && ["domain-modeling", "grilling", "grill-with-docs"].every((s) => e.skills.includes(s))));
+  assert.equal(m.mattpocock.pool.length, 14);
+  for (const s of ["grill-me", "to-spec", "implement", "ask-matt"]) assert.ok(!m.mattpocock.pool.includes(s), s);
+  // 두뇌 전역 도구는 그 두뇌를 고를 때만 본다. 무조건 전역 목록에는 두지 않는다.
+  assert.deepEqual(m.brains.gstack.global.map((g) => g.name), ["gstack(Claude)", "gstack(Codex)"]);
+  assert.deepEqual(m.brains["oh-my"].global.map((g) => [g.name, g.tool]), [["OMX CLI", "codex"]]);
+  for (const g of [...m.global, ...slotItems.flatMap((i) => i.global ?? [])]) assert.ok(g.name && g.check && (g.install || g.hint), JSON.stringify(g));
+  assert.ok(!m.global.some((g) => /OMX|gstack/.test(g.name)));
   // ego lite는 macOS 전용이라 다른 OS와 CI에서는 agent-browser가 유일한 브라우저 도구다. 기본 설치한다.
   assert.deepEqual(m.global.filter((g) => g.auto).map((g) => g.name), ["agent-browser CLI(npm 최신판)"]);
   // 새 프로젝트는 설치할 때의 최신판을 받는다. 템플릿에 버전을 고정하지 않는다.
@@ -506,10 +821,22 @@ test("템플릿 매니페스트: 이름 중복 없음, 프로세스 스킬과 �
 });
 
 // --update (pnpm skills:update)
-const { changedFiles, remoteSkill, update } = await import(SCRIPT);
+const { changedFiles, recordChoices, remoteSkill, update } = await import(SCRIPT);
 const blob = (c) => createHash("sha1").update(`blob ${Buffer.byteLength(c)}\0`).update(c).digest("hex");
 const HOUR = 3_600_000;
 const NEXT = " → 라운드를 열기 전에 prokit-skills-update 스킬 1절을 따른다";
+
+test("recordChoices: 최상위 키만 바꾸고, 다른 값(같은 이름의 하위 키)이 바뀌게 되면 쓰지 않는다", () => {
+  const root = mkdtempSync(join(tmpdir(), "record-"));
+  const p = join(root, ".dev-cycle.json");
+  writeFileSync(p, devCycleText({ simplicity: "pt" }));
+  recordChoices(root, { brain: "sp", simplicity: "none" });
+  assert.equal(readFileSync(p, "utf8"), devCycleText({ brain: "sp", simplicity: "none" }));
+  const nested = '{\n\t"resources": { "brain": "x" },\n\t"brain": "none"\n}\n';
+  writeFileSync(p, nested);
+  assert.throws(() => recordChoices(root, { brain: "sp" }), /brain/);
+  assert.equal(readFileSync(p, "utf8"), nested);
+});
 
 test("업데이트 판정: 원격 스킬 폴더와 설치본을 파일 단위로 비교해 바뀐 파일을 돌려준다", () => {
   const tree = [
@@ -622,7 +949,10 @@ function updateProject() {
 }
 
 test("skills:update --check: 바뀐 스킬과 원격에서 없어진 스킬을 알리고, 설치하지 않은 선택 묶음은 보지 않는다", async () => {
-  const { calls, added, run } = updateProject();
+  const { root, calls, added, run } = updateProject();
+  // lock 항목 없이 이름만 같은 사용자 스킬은 선택 묶음 설치본으로 보지 않는다(업데이트하면 덮어쓴다).
+  mkdirSync(join(root, ".agents/skills/op-a"), { recursive: true });
+  writeFileSync(join(root, ".agents/skills/op-a/SKILL.md"), "mine");
   const r = await run(["--check"]);
   assert.equal(r.code, 1, r.out);
   assert.match(r.out, /4개 중 업데이트 1개, 빠짐 0개, 원격에서 없어짐 1개/);

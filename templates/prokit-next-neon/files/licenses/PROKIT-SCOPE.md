@@ -12,6 +12,7 @@
 - `.agents/skills/prokit-db/references/migration-flow.md`
 - `.agents/skills/prokit-deploy/SKILL.md`
 - `.agents/skills/prokit-dev-cycle/SKILL.md`
+- `.agents/skills/prokit-dev-cycle/references/brains/`
 - `.agents/skills/prokit-dev-cycle/references/process-routing.md`
 - `.agents/skills/prokit-skills-update/SKILL.md`
 - `.agents/skills/prokit-ui/SKILL.md`

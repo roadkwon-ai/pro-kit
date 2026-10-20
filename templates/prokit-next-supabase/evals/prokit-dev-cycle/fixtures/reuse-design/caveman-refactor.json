@@ -1,0 +1,8 @@
+{
+  ".dev-cycle.json": "{\n\t\"brain\": \"none\",\n\t\"simplicity\": \"caveman\",\n\t\"todoPath\": \"tasks/todo.md\"\n}\n",
+  "tasks/evidence/round-files.txt": "git diff --name-only <base> + 새 파일: apps/web/src/app/todos/todo-list.tsx, apps/web/src/app/todos/done-list.tsx\n",
+  "apps/web/src/components/empty-state.tsx": "export function EmptyState({ title, children }) {\n\treturn (\n\t\t<section className=\"py-12 text-center\">\n\t\t\t<h2 className=\"text-lg font-medium\">{title}</h2>\n\t\t\t{children}\n\t\t</section>\n\t);\n}\n",
+  "apps/web/src/app/todos/todo-list.tsx": "// 이번 라운드에서 만든 파일\nexport function TodoList({ items }) {\n\tif (items.length === 0)\n\t\treturn (\n\t\t\t<section className=\"py-12 text-center\">\n\t\t\t\t<h2 className=\"text-lg font-medium\">할 일이 없어요</h2>\n\t\t\t\t<p>새 할 일을 더해 보세요</p>\n\t\t\t</section>\n\t\t);\n\treturn <ul>{items.map((t) => <li key={t.id}>{t.title}</li>)}</ul>;\n}\n",
+  "apps/web/src/app/todos/done-list.tsx": "// 이번 라운드에서 만든 파일. todo-list와 같은 빈 상태 UI를 따로 만들었다\nexport function DoneList({ items }) {\n\tif (items.length === 0)\n\t\treturn (\n\t\t\t<section className=\"py-12 text-center\">\n\t\t\t\t<h2 className=\"text-lg font-medium\">끝낸 일이 없어요</h2>\n\t\t\t\t<p>할 일을 끝내면 여기에 보여요</p>\n\t\t\t</section>\n\t\t);\n\treturn <ul>{items.map((t) => <li key={t.id}>{t.title}</li>)}</ul>;\n}\n",
+  "apps/web/src/app/members/page.tsx": "// 예전 라운드의 화면(이번 diff 밖). 같은 빈 상태를 직접 그린다\nexport default function Members({ members = [] }) {\n\tif (members.length === 0)\n\t\treturn (\n\t\t\t<section className=\"py-12 text-center\">\n\t\t\t\t<h2 className=\"text-lg font-medium\">회원이 없어요</h2>\n\t\t\t</section>\n\t\t);\n\treturn null;\n}\n"
+}

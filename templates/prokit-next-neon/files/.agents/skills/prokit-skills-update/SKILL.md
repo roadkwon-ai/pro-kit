@@ -2,7 +2,7 @@
 name: prokit-skills-update
 description: >-
   이 Better-T-Stack 프로젝트가 skills.manifest.json으로 설치한 외부 스킬(Next.js, Vercel,
-  shadcn, Better Auth, DB, superpowers, impeccable 등)을 GitHub 원본과 비교해 새 버전을 확인하고
+  shadcn, Better Auth, DB, impeccable, 고른 두뇌·과설계 방지 스킬과 추가 스킬 등)을 GitHub 원본과 비교해 새 버전을 확인하고
   한 번에 업데이트한다. `pnpm dev-cycle status`나 `pnpm skills:update --if-due`가 UPDATE_AVAILABLE,
   UPSTREAM_GONE, CHECK_FAILED를 출력했을 때, 그리고 스킬 업데이트해줘, 스킬 최신인지 확인해줘,
   스킬 버전 올려줘, npx skills update 같은 요청에 사용한다. prokit-* 스킬 갱신(템플릿 새 버전),
@@ -29,7 +29,7 @@ description: >-
 - exit 0은 모두 최신이다. 1은 업데이트할 스킬, 빠진 스킬, 원격에서 없어진 스킬이 남았다는 뜻이다. 2는 설치 실패, 설치 거부, 실행 오류(모르는 옵션 포함), 3은 확인 실패(설치는 끝났을 수 있다)다. 출력을 그대로 보고한다.
 - 확인 결과와 알림 설정은 이 기기의 `node_modules/.cache/skills-update.json`에만 둔다. 커밋하지 않고, `node_modules`를 지우면 기본값으로 돌아간다.
 - 토큰이 없으면 GitHub API는 시간당 60회까지다. `gh auth login`이 되어 있으면 그 토큰을 쓴다.
-- `npx skills update`는 쓰지 않는다. 에이전트를 지정하지 않고 모든 스킬을 다시 설치해서, 이 기기에서 찾은 모든 에이전트 폴더에 스킬을 연결한다. 그러면 Codex 전용인 superpowers 스킬이 Claude 플러그인과 겹치고, 바뀌지 않은 스킬까지 lock과 파일이 흔들린다. `pnpm skills:update`는 바뀐 스킬만 매니페스트의 `agents`대로 설치한다.
+- `npx skills update`는 쓰지 않는다. 에이전트를 지정하지 않고 모든 스킬을 다시 설치해서, 이 기기에서 찾은 모든 에이전트 폴더에 스킬을 연결한다. 그러면 Codex 전용인 스킬(고른 두뇌·ponytail의 Codex용 스킬)이 Claude 플러그인과 겹치고, 바뀌지 않은 스킬까지 lock과 파일이 흔들린다. `pnpm skills:update`는 바뀐 스킬만 매니페스트의 `agents`대로 설치한다.
 
 ## 1. 요청과 알림 처리
 - 사용자가 업데이트를 직접 요청했으면("스킬 업데이트해줘", "최신이면 업데이트해줘") 알림 방식과 상관없이 묻지 않는다. `pnpm skills:update --check` 결과를 보여 주고 바로 2절을 한다. 원격에서 없어진 스킬은 아래 표대로 알린다.
@@ -76,6 +76,6 @@ description: >-
 ## 대상이 아닌 것
 - `prokit-*` 스킬: 템플릿 저장소(pro-kit)의 새 버전으로 갱신한다. 그 저장소 `AGENTS.md`의 "기존 프로젝트에 템플릿 갱신 반영" 절차를 따른다.
 - 매니페스트에 없는 스킬(`npx skills add`로 직접 더한 것): 확인하지 않는다. 계속 쓸 스킬이면 `skills.manifest.json`에 더한다(H 라운드).
-- Claude 플러그인(superpowers, skill-creator, oh-my-claudecode, ponytail): `pnpm skills:update`는 올리지 않는다. 네 플러그인 모두 훅이 있어 올리는 즉시 새 코드가 돌고, 이 경로는 설치 전 검토를 거치지 않는다. 사용자가 요청하면 marketplace를 갱신하기 전에 플러그인 저장소의 `hooks/`와 코드를 검토하고, `claude plugin marketplace update <마켓플레이스>`(`skills.manifest.json`의 `claude.marketplaces`) 뒤 `claude plugin update <플러그인> --scope project`로 올린다. 새 프로젝트는 설치할 때 마켓플레이스를 갱신하므로 최신판을 받는다. 올린 플러그인은 세션을 다시 열어야 적용된다. 커밋할 파일이 없으므로 라운드를 열지 않는다.
-- Codex 네이티브 ponytail 플러그인: `pnpm skills:update` 밖의 선택 항목이다. 설치하지 않았거나 사용자가 비활성화했으면 다시 설치·자동 업데이트하지 않는다. 사용자가 요청했을 때만 hooks와 코드를 검토한 뒤 `codex plugin marketplace upgrade ponytail`로 Ponytail 원본 GitHub marketplace snapshot을 새로고침한다. 이 명령만으로 플러그인 갱신 완료를 판정하지 않는다. 실제 설치판 변경은 사용자가 원하고 비활성화 상태가 아닐 때만 `codex plugin add ponytail@ponytail`로 하고, `codex plugin list --json`으로 설치판을 확인한다. 훅 신뢰와 새 세션은 별도다. CLI가 이 명령을 지원하지 않으면 프로젝트의 ponytail 스킬을 계속 쓴다.
-- 전역 도구: gstack은 `/gstack-upgrade`, 그 밖은 `pnpm skills:check`가 보여 주는 설치 안내를 따른다.
+- Claude 플러그인(skill-creator와 고른 두뇌·과설계 방지 스킬의 플러그인. 예: superpowers, oh-my-claudecode, ponytail): `pnpm skills:update`는 올리지 않는다. 훅이 있는 플러그인은 올리는 즉시 새 코드가 돌고, 이 경로는 설치 전 검토를 거치지 않는다. 사용자가 요청하면 marketplace를 갱신하기 전에 플러그인 저장소의 `hooks/`와 코드를 검토하고, `claude plugin marketplace update <마켓플레이스>`(`skills.manifest.json`의 `claude.marketplaces`, `brains.<이름>.claude.marketplaces`, `simplicity.<이름>.claude.marketplaces`) 뒤 `claude plugin update <플러그인> --scope project`로 올린다. 새 프로젝트는 설치할 때 마켓플레이스를 갱신하므로 최신판을 받는다. 올린 플러그인은 세션을 다시 열어야 적용된다. 커밋할 파일이 없으므로 라운드를 열지 않는다.
+- Codex 네이티브 ponytail 플러그인(과설계 방지 스킬로 ponytail을 골랐을 때): `pnpm skills:update` 밖의 선택 항목이다. 설치하지 않았거나 사용자가 비활성화했으면 다시 설치·자동 업데이트하지 않는다. 사용자가 요청했을 때만 hooks와 코드를 검토한 뒤 `codex plugin marketplace upgrade ponytail`로 Ponytail 원본 GitHub marketplace snapshot을 새로고침한다. 이 명령만으로 플러그인 갱신 완료를 판정하지 않는다. 실제 설치판 변경은 사용자가 원하고 비활성화 상태가 아닐 때만 `codex plugin add ponytail@ponytail`로 하고, `codex plugin list --json`으로 설치판을 확인한다. 훅 신뢰와 새 세션은 별도다. CLI가 이 명령을 지원하지 않으면 프로젝트의 ponytail 스킬을 계속 쓴다.
+- 전역 도구: 두뇌가 gstack이면 `/gstack-upgrade`(`references/brains/gstack.md`), 그 밖은 `pnpm skills:check`가 보여 주는 설치 안내를 따른다.

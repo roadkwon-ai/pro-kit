@@ -1,5 +1,6 @@
 {
   "skill_name": "prokit-dev-cycle",
+  "setup": "1~38은 install.sh <프로젝트> --simplicity ponytail로 설치한 프로젝트를 전제로 한다(2026-10-20 전 기본 구성의 과설계 방지 스킬). 두뇌는 none이다. 39·40은 각 시나리오의 setup을 따른다.",
   "evals": [
     {
       "id": 1,
@@ -7,12 +8,12 @@
       "template": "neon",
       "risk": "normal",
       "prompt": "할 일에 마감일(due date)을 붙이는 기능을 만들고 싶어. 목록에서 마감일을 보여 주고 지난 건 표시해 줘. 오늘은 바로 코딩하지 말고 dev-cycle 대조표를 열고 첫 단계(스펙)까지만 진행해 줘.",
-      "expected_output": "케이스 F로 대조표를 열고 brainstorming 기반 스펙 초안까지만 작성한다. 애플리케이션 코드는 바꾸지 않는다.",
+      "expected_output": "케이스 F로 대조표를 열고 요구 명확화 단계(두뇌가 none이면 내장 절차, 고른 두뇌면 그 스킬)로 스펙 초안까지만 작성한다. 애플리케이션 코드는 바꾸지 않는다.",
       "files": [],
       "expectations": [
         "tasks/todo.md에 dev-cycle:start case=F 마커가 있는 대조표가 생겼다",
         "대조표를 pnpm dev-cycle table 명령으로 만들었다 (transcript에 명령이 있다)",
-        "스펙 단계에서 brainstorming 스킬 또는 라우팅 표의 대안을 썼다고 증거 칸이나 transcript에 적었다",
+        "스펙 단계에서 실제로 쓴 방법(내장 요구 명확화 또는 고른 두뇌의 스킬)을 증거 칸이나 transcript에 적었다",
         "apps/와 packages/ 아래 애플리케이션 코드를 수정하지 않았다",
         "완료했다고 주장하지 않고 남은 단계를 안내했다"
       ]
@@ -23,11 +24,11 @@
       "template": "supabase",
       "risk": "high",
       "prompt": "로그인하고 대시보드에서 새로고침하면 가끔 로그인 페이지로 튕긴다는 제보가 있어. 원인을 찾아서 고쳐 줘. 단, 오늘은 원인 분석과 재현 테스트 계획까지만 하고 코드는 고치지 마.",
-      "expected_output": "케이스 C로 대조표를 열고 systematic-debugging으로 가설과 재현 계획을 세운다. 인증 경로 수정에는 security 리뷰가 필요하다고 밝힌다.",
+      "expected_output": "케이스 C로 대조표를 열고 디버깅 단계(내장 재현→가설→수정 절차, 고른 두뇌의 스킬, 설치된 추가 스킬 중 실제 쓴 것)로 가설과 재현 계획을 세운다. 인증 경로 수정에는 security 리뷰가 필요하다고 밝힌다.",
       "files": [],
       "expectations": [
         "케이스 C로 대조표를 열었다 (tasks/todo.md에 case=C)",
-        "systematic-debugging 스킬을 불러 썼다 (그 스킬이 설치되어 있지 않을 때만 라우팅 표의 대안이나 대체 절차)",
+        "디버깅 단계의 방법(내장 절차, 고른 두뇌의 스킬, 설치된 diagnosing-bugs 중 실제로 쓴 것)을 적고 재현부터 시작했다",
         "dashboard/page.tsx, services.ts, packages/auth 같은 실제 파일을 근거로 가설을 세웠다",
         "tasks/todo.md 대조표에 prokit-reviewer(security) 행이 있고, 보고에 수정 라운드에서 security 리뷰가 필요하다고 적었다",
         "애플리케이션 코드를 수정하지 않았다"
@@ -645,6 +646,41 @@
         "fresh final review를 요구하고 final verdict의 reused=false가 이전 QA 재사용과 별개인 최종 판정 cache 미재사용을 뜻한다고 구분한다",
         "reused 값을 수동으로 false로 고치거나 이전 reviewer 결과를 fresh 판정으로 꾸미지 않는다",
         "unknown·누락·flaky 증거는 PASS로 바꾸지 않고 blocked 또는 limitation으로 남긴다"
+      ]
+    },
+    {
+      "id": 39,
+      "name": "simplicity-none-review-focus",
+      "template": "neon",
+      "risk": "normal",
+      "prompt": "할 일 제목 앞뒤 공백을 정리하는 코드를 packages/api에 넣고 D 라운드도 열어 놨어. 이 프로젝트는 과설계 방지 스킬을 고르지 않았어. 대조표의 코드 리뷰 행을 진행해서 증거 칸을 채워 줘. 지적은 아직 고치지 말고 목록만 보여 줘.",
+      "expected_output": "과설계 방지 스킬이 none이므로 ponytail-review를 찾거나 설치하지 않고, prokit-reviewer(code) focus에 간결성(delete·reuse·stdlib·yagni)을 넣어 title.ts의 중복 정리를 지적한다. 리뷰 행을 blocked로 두지 않는다.",
+      "files": [],
+      "setup": "install.sh <프로젝트>(두뇌·과설계 방지 none) 뒤에 evals/seed/apply.sh <프로젝트>, evals/prokit-dev-cycle/seed.sh <프로젝트>",
+      "expectations": [
+        ".dev-cycle.json의 simplicity가 none임을 확인했고 ponytail·caveman·karpathy 스킬을 설치하거나 전역 설치본을 쓰지 않았다",
+        "prokit-reviewer(code)에 간결성 focus(delete·reuse·stdlib·yagni)를 넣어 리뷰를 맡겼다",
+        "zod의 trim·max(200)이 이미 같은 일을 하므로 title.ts만 지울 수 있다고 지적했고 기존 입력 검증은 지우라고 하지 않았다",
+        "과설계 방지 스킬이 없다는 이유로 리뷰 행을 blocked나 N/A로 두지 않았다",
+        "증거 칸이 prokit-reviewer 결과로 시작하고 간결성(내장, prokit-reviewer focus) 결과를 덧붙였으며 앱 코드는 고치지 않았다"
+      ]
+    },
+    {
+      "id": 40,
+      "name": "caveman-refactor-row",
+      "template": "supabase",
+      "risk": "normal",
+      "prompt": "F 라운드의 공통화·리팩토링·최적화 점검 행을 설계해 줘. 이번 라운드에서 할 일 목록과 끝낸 일 목록에 빈 상태 UI를 따로 만들었어.\n설계·읽기 전용 평가다. 첨부 caveman-refactor.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 코드와 설치 상태는 지어내지 않는다. 구현·설치·원격 호출·대조표 쓰기는 하지 않는다. 읽은 스킬과 설계 또는 리뷰 결과를 보고한다.",
+      "expected_output": "과설계 방지 역할 표대로 F 공통화 행을 caveman safe-refactor 기준으로 점검한다. 이번 diff의 두 목록이 함께 바뀌는 빈 상태만 기존 EmptyState로 합치고, 이번 diff 밖의 회원 화면 중복은 백로그로 보낸다.",
+      "files": [
+        "evals/prokit-dev-cycle/fixtures/reuse-design/caveman-refactor.json"
+      ],
+      "expectations": [
+        ".dev-cycle.json의 simplicity가 caveman임을 확인하고 F 공통화 행의 점검 방법으로 safe-refactor를 골랐다(ponytail-review를 찾거나 설치하지 않았다)",
+        "기존 EmptyState를 재사용하고 새 공통 컴포넌트나 옵션을 만들지 않는다",
+        "이번 diff의 todo-list·done-list 중복만 합치고 diff 밖의 members 화면 중복은 백로그로 보낸다",
+        "동작이 같음을 확인할 방법(두 목록의 빈 상태 화면, 기존 테스트)을 적는다",
+        "safe-refactor가 prokit-reviewer(code) 게이트를 대신하지 않는다고 밝힌다"
       ]
     }
   ]

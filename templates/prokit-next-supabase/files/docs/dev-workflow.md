@@ -36,7 +36,7 @@
 - DESIGN.md 갱신 여부 (impeccable document. 카탈로그에서 들여온 파일은 merge와 diff 확인) → 갱신 내역과 lint 결과 또는 N/A: 사유
 
 ### C. 버그
-- 재현 테스트 작성, 실패 확인 (systematic-debugging) → 테스트 이름과 실패 출력
+- 재현 테스트 작성, 실패 확인 (디버깅 단계) → 테스트 이름과 실패 출력
 - 수정 → 변경 파일 요약
 - [verify] 재현 테스트 통과 → 통과 출력
 - @inherit verify review
@@ -44,7 +44,7 @@
 ### D. 서버·API
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
 - zod 입출력 계약 정의 (prokit-api) → 프로시저 이름과 스키마 위치
-- 구현 (protectedProcedure, 세션 기반 소유자, test-driven-development로 격리 테스트부터, Better Auth 설정은 better-auth-best-practices) → 변경 파일 요약, 사용한 스킬
+- 구현 (protectedProcedure, 세션 기반 소유자, 테스트 먼저(격리 테스트부터), Better Auth 설정은 better-auth-best-practices) → 변경 파일 요약, 사용한 스킬
 - [verify] 2계정 격리 테스트 → 테스트 이름과 통과 출력
 - [verify] 타입·린트·테스트 → 명령과 결과
 - [review] prokit-reviewer(code) → verdict, max_severity, 반영·기각 내역
@@ -60,17 +60,17 @@
 - [review] prokit-reviewer(db) → verdict, max_severity, 반영·기각 내역
 
 ### F. 신규 기능
-- 스펙 작성 (brainstorming + ponytail 사다리로 범위 줄이기, 스펙에 '만들지 않는 것' 절과 인수 조건·테스트 시나리오 절(정상·빈·오류·경계 상태, 너비·테마·키보드), 새 용어는 domain-modeling으로 GLOSSARY.md에 바로 기록, 선택: /grill-with-docs, UI가 있으면 impeccable shape 브리프 링크) → 사용한 스킬, 스펙 경로, 추가·변경한 용어
-- 구현 계획 (writing-plans, 바꿀 계층의 prokit-* 스킬과 그 공식 스킬 연결 표를 읽고 계획의 스키마·API·화면 결정에 반영) → 사용한 스킬과 계획 경로
+- 스펙 작성 (요구 명확화 단계 + 간결성 사다리로 범위 줄이기, 스펙에 '만들지 않는 것' 절과 인수 조건·테스트 시나리오 절(정상·빈·오류·경계 상태, 너비·테마·키보드), 새 용어는 domain-modeling으로 GLOSSARY.md에 바로 기록, 용어·설계 질문은 grilling 형식(사용자는 /grill-with-docs), UI가 있으면 impeccable shape 브리프 링크) → 사용한 스킬, 스펙 경로, 추가·변경한 용어
+- 구현 계획 (계획 단계, 바꿀 계층의 prokit-* 스킬과 그 공식 스킬 연결 표를 읽고 계획의 스키마·API·화면 결정에 반영) → 사용한 스킬과 계획 경로
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
-- [review] prokit-reviewer(plan) 계획 리뷰 (ponytail 사다리의 적용, 재사용·설정 결정 검토. gstack이 있으면 plan-eng-review, UI는 plan-design-review로 보강) → prokit-reviewer(plan): approve, max=none|low|medium, 반영·기각 내역. N/A 불가
-- 구현 방식 (subagent-driven-development + test-driven-development, ponytail 모드) → 사용한 스킬, provider 검증, snapshot·evidence packet hash, reviewCoverage와 위임 내역
+- [review] prokit-reviewer(plan) 계획 리뷰 (간결성 사다리와 고른 과설계 방지 스킬의 계획 기준 적용, 재사용·설정 결정 검토. 고른 두뇌에 계획 리뷰가 있으면 보강) → prokit-reviewer(plan): approve, max=none|low|medium, 반영·기각 내역. N/A 불가
+- 구현 방식 (구현 단계: prokit-implementer 위임과 테스트 먼저, 고른 과설계 방지 스킬의 간결성 규칙) → 사용한 스킬, provider 검증, snapshot·evidence packet hash, reviewCoverage와 위임 내역
 - @include E D B
 - [verify] next-dev-loop 통합 런타임 확인 → 확인한 경로와 결과
-- 공통화·리팩토링·최적화 점검 (이번 라운드가 바꾼 파일과 같은 디렉터리·계획에서 확인한 공통 모듈의 소비자에 ponytail-review, 한쪽이 이번 diff이고 같은 책임으로 함께 바뀌는 반복 코드·UI만 적절한 위치로 추출하고 나머지는 백로그로, 필요 없는 추상화는 걷어 냄, 빌드 출력의 라우트 크기와 새 의존성·글꼴·이미지 확인) → 반영 내역, 영향 재확인(타입·린트·테스트·화면) 결과, 미룬 항목과 기록 위치
+- 공통화·리팩토링·최적화 점검 (이번 라운드가 바꾼 파일과 같은 디렉터리·계획에서 확인한 공통 모듈의 소비자에 간결성 검토(고른 과설계 방지 스킬의 공통화 점검, 없으면 prokit-reviewer(code) focus), 한쪽이 이번 diff이고 같은 책임으로 함께 바뀌는 반복 코드·UI만 적절한 위치로 추출하고 나머지는 백로그로, 필요 없는 추상화는 걷어 냄, 빌드 출력의 라우트 크기와 새 의존성·글꼴·이미지 확인) → 반영 내역, 영향 재확인(타입·린트·테스트·화면) 결과, 미룬 항목과 기록 위치
 - [review] prokit-reviewer(code) 전체 diff 최종 리뷰 → verdict, max_severity, 반영·기각 내역
 - [verify] 사용자 흐름 QA (스펙의 테스트 시나리오 전부를 ego-browser(없으면 agent-browser)로, 오류 예산은 깨끗한 프로필(agent-browser)로도, 보고만) → 시나리오별 통과·실패, 오류 예산 수
-- QA 발견 수정과 재QA (문제와 개선점을 고친 뒤 실패한 검사와 입력·공통 소비자가 바뀐 타입·린트·빌드·테스트를 다시 돌리고, 수정 diff에 fresh prokit-reviewer(code)와 ponytail-review를 받되 같은 Ponytail 검토를 중복 호출하지 않으며, 실패한 시나리오와 오류 예산을 다시 확인. 발견이 없으면 N/A: 사유) → 수정 내역, 영향 재검사·재리뷰·재QA 결과
+- QA 발견 수정과 재QA (문제와 개선점을 고친 뒤 실패한 검사와 입력·공통 소비자가 바뀐 타입·린트·빌드·테스트를 다시 돌리고, 수정 diff에 fresh prokit-reviewer(code)와 간결성 검토를 받되 같은 검토를 중복 호출하지 않으며, 실패한 시나리오와 오류 예산을 다시 확인. 발견이 없으면 N/A: 사유) → 수정 내역, 영향 재검사·재리뷰·재QA 결과
 
 ### H. 하네스
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사

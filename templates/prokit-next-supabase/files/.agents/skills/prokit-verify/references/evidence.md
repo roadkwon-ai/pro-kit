@@ -14,9 +14,9 @@
 | 스크린샷 | `<경로들>` | `tasks/evidence/todo-list/desktop.png, mobile.png` |
 | 리뷰 | `prokit-reviewer(<focus>): <verdict>, max=<등급>, 지적 <n> (반영 <a>, 기각 <b>: 사유)` | `prokit-reviewer(db): approve, max=none, 지적 0` |
 | UI 평가 | `critique <점수>, P0 <n>, P1 <n>` / `audit <점수>/20, 접근성 <점수>/4` | `audit 17/20, 접근성 4/4` |
-| 스킬 사용 | `<스킬> → <산출물>` | `brainstorming → docs/superpowers/specs/2026-10-01-todo-due.md` |
+| 스킬 사용 | `사용: <스킬 또는 내장(단계)> → <산출물>` | `사용: 내장(요구 명확화) → docs/specs/2026-10-01-todo-due.md`, `사용: superpowers:brainstorming → docs/superpowers/specs/2026-10-01-todo-due.md`, `사용: tdd(추가 스킬) → todo.test.ts` |
 | 외부 스킬 | `사용: <스킬>(<적용한 규칙>)` | `사용: vercel-react-best-practices(async-parallel), shadcn` |
-| 대안 사용 | `대안: <스킬·도구> (<1순위> 없음) → <산출물>` | `대안: OMC plan (superpowers 없음) → .omc/plans/todo.md`, `대안: agent-browser (ego-browser 창 표시 불가) → tasks/evidence/todo-list/` |
+| 대안 사용 | `대안: <스킬·도구> (<1순위> 없음) → <산출물>` | `대안: 내장(계획) (oh-my-claudecode:omc-plan 없음) → docs/plans/todo.md`, `대안: agent-browser (ego-browser 창 표시 불가) → tasks/evidence/todo-list/` |
 | 사용자 확인 (`[confirm]` 행) | `<사용자가 확인한 내용>(<날짜>)` | `사용자가 /todos에서 마감일을 넣고 지난 항목 표시를 확인(2026-10-01)` |
 | 해당 없음 | `N/A: <사유>` | `N/A: 스키마 변화 없음` |
 | 막힘 | `blocked: <사유>` | `blocked: 브라우저 도구 없음(ego-browser·agent-browser)` |
@@ -30,4 +30,4 @@
 - `오류 0(…은 제외)`처럼 원인을 추정해 뺀 오류 수 (깨끗한 프로필로 원인을 가르고 고치거나 알려진 문제로 보고한다)
 - `skipped`로 끝난 테스트
 - 프로시저를 호출하지 않고 SQL로 조건을 흉내 낸 확인을 격리 테스트로 적은 것
-- OMC나 OMX 모드의 "완료" 보고
+- 두뇌 실행 모드(OMC·OMX 등)의 "완료" 보고

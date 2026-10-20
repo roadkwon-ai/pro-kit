@@ -366,9 +366,9 @@ test("계산값 2: 비용 단위, 한글 수사, 케이스 범위, 화면 점수
   const want = {
     "cost.tokensPerUsd": "5.5만", "cost.cachedPerUsd": "275만", "cost.multiplier": "2~3", "cost.multiplierModel": "1~2", "cost.multiplierRefine": "1.1~3",
     "cost.feature.time": "15분", "cost.feature.usd": "7", "cost.date": "2026-10-05", "cost.image.tokens": "1.7만",
-    "templates.count.ko": "두", "prokit.skills.count.ko": "아홉", "prokit.agents.count.ko": "세", "agents.count.ko": "네", "devCycle.cases.count.ko": "일곱", "optional.count": "3", "optional.count.ko": "세",
+    "templates.count.ko": "두", "prokit.skills.count.ko": "아홉", "prokit.agents.count.ko": "세", "agents.count.ko": "네", "devCycle.cases.count.ko": "일곱", "optional.count": "4", "optional.count.ko": "네",
     "devCycle.cases.range": "A\\~F·H", "devCycle.ui.auditMin": "16", "devCycle.ui.a11yMin": "3",
-    "optional.names": "ops, motion, mobile", "optional.namesCode": "`ops`, `motion`, `mobile`",
+    "optional.names": "ops, motion, mobile, i-have-adhd", "optional.namesCode": "`ops`, `motion`, `mobile`, `i-have-adhd`",
     "optional.ops.skillsCode.neon": "`vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway`", "optional.ops.skillsCode.supabase": "`vercel-optimize`",
     "optional.ops.skillsCode.shared": "`vercel-optimize`", "optional.ops.skillsCode.neonOnly": "`neon-functions`, `neon-object-storage`, `neon-ai-gateway`", "optional.ops.count.neon": "4", "optional.ops.count.supabase": "1", "optional.motion.skillsCode": "`vercel-react-view-transitions`", "optional.mobile.skillsCode": "`vercel-react-native-skills`",
     "agent.claude.install": "curl -fsSL https://claude.ai/install.sh | bash", "agent.codex.install": "curl -fsSL https://chatgpt.com/codex/install.sh | sh",
@@ -439,7 +439,7 @@ test("설치본 AGENTS.md의 선택 스킬 묶음 표가 skills.manifest.json op
   for (const t of ["neon", "supabase"]) {
     const dir = `templates/prokit-next-${t}/files`;
     const optional = JSON.parse(read(`${dir}/skills.manifest.json`)).optional;
-    const rows = [...read(`${dir}/AGENTS.md`).matchAll(/^\| `(\w+)` \| [^|]* \| ([^|]*) \| `prokit-[\w-]+` \|$/gm)].map((m) => [m[1], m[2].match(/`([\w-]+)`/g).map((s) => s.slice(1, -1))]);
+    const rows = [...read(`${dir}/AGENTS.md`).matchAll(/^\| `([\w-]+)` \| [^|]* \| ([^|]*) \| `prokit-[\w-]+` \|$/gm)].map((m) => [m[1], m[2].match(/`([\w-]+)`/g).map((s) => s.slice(1, -1))]);
     assert.deepEqual([...new Set(rows.map(([b]) => b))], Object.keys(optional), `${t} 묶음 이름`);
     for (const [b, def] of Object.entries(optional)) {
       const want = def.skills.flatMap((s) => s.skills);
@@ -463,13 +463,14 @@ test("설치본 prokit-deploy/SKILL.md의 Vercel Node 20 중단일과 바꿀 판
   }
 });
 
-// 두 템플릿 manifest의 스킬 → 출처(source)
+// 두 템플릿 manifest의 스킬 → 출처(source). 두뇌·과설계 방지 후보와 mattpocock 추가 스킬도 넣는다
 function manifestSources() {
   const map = new Map();
   const all = [];
   for (const t of ["neon", "supabase"]) {
     const m = JSON.parse(read(`templates/prokit-next-${t}/files/skills.manifest.json`));
-    for (const group of [...m.skills, ...Object.values(m.optional).flatMap((o) => o.skills)]) {
+    const picked = [...Object.values(m.brains), ...Object.values(m.simplicity)].flatMap((i) => i.skills ?? []);
+    for (const group of [...m.skills, ...Object.values(m.optional).flatMap((o) => o.skills), ...picked, { source: m.mattpocock.source, skills: m.mattpocock.pool }]) {
       all.push(group.source);
       for (const s of group.skills) map.set(s, group.source);
     }
@@ -485,13 +486,14 @@ test("THIRD_PARTY_NOTICES.md의 외부 source 목록이 두 템플릿 manifest�
   assert.deepEqual(listed.map(([a]) => a), manifestSources().sources);
 });
 
-test("저장소 루트에는 관리용 문서 스킬(prokit-docs·prokit-writing)만 추적한다", () => {
-  const allowed = ["prokit-docs", "prokit-writing"];
+test("저장소 루트에는 관리용 스킬(prokit-docs·prokit-writing·prokit-init)만 추적한다", () => {
+  // prokit-init은 이 저장소에서 새 프로젝트를 만들 때 쓰는 자체 스킬이라 skills-lock.json에 없다
+  const allowed = ["prokit-docs", "prokit-writing", "prokit-init"];
   const tracked = spawnSync("git", ["ls-files", ".agents", ".claude/skills", ".claude/agents", ".codex"], { cwd: ROOT, encoding: "utf8" }).stdout;
   const names = [...new Set(tracked.split("\n").filter(Boolean).map((f) => f.split("/").slice(0, 3).join("/")))];
   const extra = names.filter((n) => !allowed.some((s) => n === `.agents/skills/${s}` || n === `.claude/skills/${s}`));
   assert.deepEqual(extra, [], "외부 스킬·제작 스킬·역할은 검증이 끝나면 지운다(AGENTS.md 템플릿 수정 규칙)");
-  assert.deepEqual(Object.keys(JSON.parse(read("skills-lock.json")).skills).sort(), allowed);
+  assert.deepEqual(Object.keys(JSON.parse(read("skills-lock.json")).skills).sort(), ["prokit-docs", "prokit-writing"]);
 });
 
 test("handbook/skills/official-skills.md 표의 스킬과 출처 열이 manifest의 source와 같다", () => {
@@ -559,7 +561,9 @@ test("handbook/reference/commands.md의 pnpm 명령(앞부분과 플래그)이 �
 test("전역 CLI 설치 명령(cli.<이름>.install)은 템플릿 skills.manifest.json의 global install을 정본으로 읽은 값이다", () => {
   const values = loadValues();
   for (const [id, name] of [["neon", "Neon CLI"], ["vercel", "Vercel CLI"], ["omx", "OMX CLI"]]) {
-    const cmds = ["neon", "supabase"].flatMap((t) => JSON.parse(read(`templates/prokit-next-${t}/files/skills.manifest.json`)).global.filter((g) => g.name === name).map((g) => g.install));
+    // 두뇌의 전역 도구(OMX CLI 등)는 그 두뇌 항목의 global에 있다
+    const globals = (m) => [...m.global, ...Object.values(m.brains).flatMap((b) => b.global ?? [])];
+    const cmds = ["neon", "supabase"].flatMap((t) => globals(JSON.parse(read(`templates/prokit-next-${t}/files/skills.manifest.json`))).filter((g) => g.name === name).map((g) => g.install));
     assert.ok(cmds.length >= 1 && new Set(cmds).size === 1, `${name}: 두 템플릿의 install이 같다`);
     assert.equal(values.get(`cli.${id}.install`)?.value, cmds[0]);
     assert.equal(values.get(`cli.${id}.installCode`)?.value, `\`${cmds[0]}\``);

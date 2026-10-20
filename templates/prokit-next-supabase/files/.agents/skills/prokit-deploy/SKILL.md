@@ -36,7 +36,7 @@ Vercel CLI의 일반 사용법(설치, 로그인, 토큰, `vercel env`·`domains
 - `vercel-deploy-claimable`은 `node_modules`와 `.git`만 빼고 프로젝트를 로그인 없이 외부 서비스에 올린다. `.env`도 함께 나간다. 쓰지 않는다.
 - `deploy-to-vercel`의 흐름 중 확인 없는 `vercel link`, `git add . && git commit && git push` 배포, 로그인 없는 배포(`resources/deploy.sh`, claim URL), "배포 URL을 확인하지 않는다"는 따르지 않는다. 연결은 사용자가 요청할 때, 커밋은 요청할 때와 라운드 끝(`prokit-dev-cycle` 5절)에 하고, 배포는 확인까지 한다.
 - `vercel-cli-with-tokens`의 토큰 찾기 중 토큰 값을 출력하는 명령(`grep '^VERCEL_TOKEN=' .env`, `printenv VERCEL_TOKEN`, `echo $VERCEL_TOKEN`)은 쓰지 않는다. 있는지만 `grep -q`나 `test -n "$VERCEL_TOKEN"`의 exit로 본다.
-- gstack `ship`, `land-and-deploy`, `setup-deploy`는 커밋, push, PR 병합을 하거나 `CLAUDE.md`를 고치므로 배포에 쓰지 않는다.
+- 두뇌가 gstack이어도 `ship`, `land-and-deploy`, `setup-deploy`는 커밋, push, PR 병합을 하거나 `CLAUDE.md`를 고치므로 배포에 쓰지 않는다.
 
 ## 준비 (프로젝트마다 한 번, 사용자가 요청할 때)
 1. **CLI와 로그인**: `vercel --version`, `vercel whoami`. 없거나 실패하면 `deploy-to-vercel`의 설치·로그인 안내를 사용자에게 전한다. 인증 실패 때는 재로그인을 묻기 전에 현재 프로젝트와 사용자 명시로 신뢰한 dotenv/envrc의 키 존재·로딩 우선순위·세션과의 차이만 `scripts/load-keys.mjs`와 `vercel-cli-with-tokens` 설정 경로로 확인한다. 무관한 홈 탐색·전체 환경 덤프·값 출력은 하지 않고, 적용 뒤에도 권한 확인 전 성공으로 가정하거나 스킬 선택 권한과 실제 인증 권한을 섞지 않는다. 전역 설치와 `vercel login`은 사용자가 한다. 토큰만 쓰는 환경(CI, Codex 샌드박스)은 `vercel-cli-with-tokens`를 따른다. 이때는 `VERCEL_ORG_ID`와 `VERCEL_PROJECT_ID`를 함께 두면 스크립트가 연결된 것으로 본다.

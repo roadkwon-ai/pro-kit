@@ -55,7 +55,7 @@ description: >-
 - 명령: `pnpm check-types → exit 0`. 실패면 첫 오류 한 줄을 적는다.
 - 테스트: `vitest todo.isolation → 3 passed`.
 - 리뷰: `prokit-reviewer(code): approve, max=low, 지적 2 (반영 1, 기각 1: 재현 안 됨)`.
-- 스킬 사용: `writing-plans → docs/superpowers/plans/…`. 대안을 썼으면 `대안: OMC plan (superpowers 없음)`. 외부 스킬을 읽었으면 적용한 규칙과 함께 적는다(`사용: supabase-postgres-best-practices(schema-data-types)`).
+- 스킬 사용: 기본 AI면 `사용: 내장(계획) → docs/plans/…`, 두뇌를 썼으면 `사용: superpowers:writing-plans → docs/superpowers/plans/…`처럼 실제 스킬과 산출물을 적는다. 대안을 썼으면 `대안: <대안> (<1순위> 없음)`. 외부 스킬을 읽었으면 적용한 규칙과 함께 적는다(`사용: supabase-postgres-best-practices(schema-data-types)`).
 - 같은 명령을 여러 행이 요구하면(F의 타입·린트 행 등) 한 번 실행하고 뒤 행에는 `6행과 같음: pnpm check-types → exit 0`처럼 적는다. 그사이 검사 입력이나 공유 소비자가 바뀌면 다시 실행하고, 관련성을 알 수 없으면 다시 실행한다.
 - `✓`, `ok`, `done`, `완료`만 적거나 공백을 뺀 4자 미만으로 적는 것은 증거가 아니다. 해당 없으면 `N/A: 사유`.
 - 비밀값, 토큰, 연결 문자열, 실사용자 데이터는 증거에 복사하지 않는다.
@@ -63,4 +63,4 @@ description: >-
 ## 완료 보고
 완료 처리를 요청받으면 먼저 `pnpm dev-cycle audit`으로 남은 빈 칸을 확인해 사용자에게 보고한다. 이번 세션에서 실제로 실행한 검사 칸과, 원칙에 맞는 `blocked`·`N/A` 칸만 채운다. 하지 않은 작업(스펙, 구현, 리뷰 등)을 `blocked:`·`미실행:`으로 적어 audit을 넘기지 않는다. 사용자가 그 단계를 범위에서 빼겠다고 명시하면 `미실행: 사용자 요청으로 범위 제외(<날짜>)`로 적는다. 표 끝의 `[confirm]` 행은 예외다. 사용자가 확인한 내용과 날짜만 적고 N/A·blocked·미실행으로 채우지 않는다(`prokit-dev-cycle` 5절).
 
-`pnpm dev-cycle audit`이 통과한 뒤에만 완료라고 말한다. audit은 `blocked:`·`미실행:` 칸도 채운 것으로 보므로, 그런 행이 있으면 "부분 완료(blocked N건, 미실행 M건)"로 보고한다. 보고에는 실행한 검사와 결과, 실행하지 못한 검사와 이유를 넣는다. superpowers `verification-before-completion`이 있으면 함께 따른다.
+`pnpm dev-cycle audit`이 통과한 뒤에만 완료라고 말한다. audit은 `blocked:`·`미실행:` 칸도 채운 것으로 보므로, 그런 행이 있으면 "부분 완료(blocked N건, 미실행 M건)"로 보고한다. 보고에는 실행한 검사와 결과, 실행하지 못한 검사와 이유를 넣는다. 고른 두뇌에 검증 스킬(superpowers `verification-before-completion` 등)이 있으면 함께 따른다.

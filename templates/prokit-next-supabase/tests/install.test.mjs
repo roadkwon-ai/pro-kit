@@ -90,7 +90,9 @@ test("설치: 파일·스킬 링크·Codex·Antigravity 에이전트·스크립�
   assert.equal(cfg.commands.dbPush, undefined);
   assert.equal(cfg.commands.test, undefined);
   const ignored = readFileSync(join(root, ".gitignore"), "utf8").split("\n");
-  for (const l of ["tasks/evidence/", ".omc/", ".omx/", ".prokit/", ".env.*", "!.env.schema", "**/.impeccable/review/", "/html/"]) assert.ok(ignored.includes(l), `.gitignore에 ${l} 없음`);
+  for (const l of ["tasks/evidence/", ".omc/", ".omx/", ".prokit/", ".claude/settings.local.json", ".env.*", "!.env.schema", "**/.impeccable/review/", "/html/"]) assert.ok(ignored.includes(l), `.gitignore에 ${l} 없음`);
+  assert.equal(cfg.brain, "none", "두뇌는 기본 none(기본 AI)");
+  assert.equal(cfg.simplicity, "none");
   // status는 외부 스킬 업데이트를 확인한다. 테스트가 GitHub에 가지 않게 확인을 끈다.
   mkdirSync(join(root, "node_modules/.cache"), { recursive: true });
   writeFileSync(join(root, "node_modules/.cache/skills-update.json"), '{"mode":"off"}');
@@ -283,7 +285,7 @@ test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 �
 test(".gitignore: 없는 줄만 더하고, 슬래시 표기가 달라도 같은 항목으로 본다", () => {
   const root = mkdtempSync(join(tmpdir(), "gi-"));
   const p = join(root, ".gitignore");
-  writeFileSync(p, "node_modules\n.omc\n/tasks/evidence/\n.env.*\n!.env.schema\n!.env.example\nhtml");
+  writeFileSync(p, "node_modules\n.omc\n/tasks/evidence/\n.claude/settings.local.json\n.env.*\n!.env.schema\n!.env.example\nhtml");
   writeFileSync(p, `${readFileSync(p, "utf8")}\n${IMPECCABLE_IGNORES.join("\n")}`);
   assert.deepEqual(ensureGitignore(root), [".omx/", ".prokit/"]);
   assert.ok(readFileSync(p, "utf8").endsWith("\n\n# OMC·OMX·pro-kit 런타임 상태\n.omx/\n.prokit/\n"));
@@ -419,24 +421,60 @@ test("OMX가 .codex/agents에 쓴 에이전트는 agents:check가 고아로 보�
   assert.ok(existsSync(join(root, ".codex/agents/executor.toml")));
 });
 
-test("설치기: --with-global을 skills-setup에 넘기고, 설치 실패(exit 2)를 그대로 돌려준다", () => {
+test("설치기: --with-global과 고른 값을 skills-setup에 넘기고, 설치 실패(exit 2)를 그대로 돌려준다", () => {
   const root = fakeBts();
   const bin = mkdtempSync(join(tmpdir(), "stub-bin-"));
   const home = mkdtempSync(join(tmpdir(), "stub-home-"));
   // PATH를 좁혀 실제 전역 설치(npm, bun, brew)와 네트워크가 일어나지 않게 한다. npx·npm 스텁은 실패한다.
   // /usr/bin에 npm이 있는 기기(apt로 받은 Node)에서도 agent-browser 자동 설치가 실제로 돌지 않게 npm을 가린다.
-  for (const [name, body] of [["pnpm", "exit 0"], ["npx", "exit 1"], ["npm", "exit 1"]]) {
+  // codex 스텁: OMX CLI는 codex가 있는 기기에만 설치한다.
+  for (const [name, body] of [["pnpm", "exit 0"], ["npx", "exit 1"], ["npm", "exit 1"], ["codex", "exit 1"]]) {
     writeFileSync(join(bin, name), `#!/bin/sh\n${body}\n`);
     chmodSync(join(bin, name), 0o755);
   }
   symlinkSync(process.execPath, join(bin, "node"));
-  const r = spawnSync("bash", [join(TEMPLATE, "install.sh"), root, "--with-global"], {
+  const r = spawnSync("bash", [join(TEMPLATE, "install.sh"), root, "--with-global", "--brain", "oh-my"], {
     encoding: "utf8",
     env: { PATH: `${bin}:/usr/bin:/bin`, HOME: home },
   });
   assert.equal(r.status, 2, r.stdout + r.stderr);
-  assert.match(r.stdout, /전역 설치: OMX CLI → npm install -g oh-my-codex/);
+  assert.match(r.stdout, /전역 설치: Vercel CLI → npm install -g vercel/);
+  assert.match(r.stdout, /전역 설치: OMX CLI → npm install -g oh-my-codex/, "고른 두뇌의 전역 도구");
+  assert.match(r.stdout, /^두뇌: oh-my/m);
   assert.match(r.stdout, /스킬·플러그인: 실패 \(exit 2\)/);
+});
+
+test("설치기: 고른 값은 복사 전에 확인하고, --skip-skills여도 .dev-cycle.json에 형식을 지켜 기록한다", () => {
+  const root = fakeBts();
+  const before = snapshot(root);
+  const bad = install(root, "--brain", "nope");
+  assert.equal(bad.status, 1, bad.stdout + bad.stderr);
+  assert.match(bad.stderr, /두뇌: none\(기본 AI\), superpowers\(/);
+  assert.deepEqual(snapshot(root), before, "잘못된 값이면 아무것도 쓰지 않는다");
+  assert.equal(install(root, "--matt").status, 1, "값이 빠진 인자를 프로젝트 경로로 보지 않는다");
+  assert.match(install(root, "--brain=superpowers").stderr, /--brain superpowers처럼 = 없이/, "= 형식을 조용히 무시하지 않는다");
+  assert.deepEqual(snapshot(root), before);
+  // 기존 프로젝트의 옛 판 skills-setup.mjs는 덮어쓰지 않으므로 --brain을 모른다고 알린다.
+  mkdirSync(join(root, "scripts"), { recursive: true });
+  writeFileSync(join(root, "scripts/skills-setup.mjs"), 'const o = argv.includes("--optional");\n');
+  const old = spawnSync("bash", [join(TEMPLATE, "install.sh"), root, "--diff", "--brain", "none"], { encoding: "utf8" });
+  assert.match(old.stdout, /^경고: 이 프로젝트의 scripts\/skills-setup\.mjs는 --brain·--simplicity·--matt를 모르는 옛 판이다/m);
+  rmSync(join(root, "scripts"), { recursive: true });
+
+  const diff = spawnSync("bash", [join(TEMPLATE, "install.sh"), root, "--diff", "--brain", "superpowers"], { encoding: "utf8" });
+  assert.equal(diff.status, 0, diff.stderr);
+  assert.match(diff.stdout, /^\.dev-cycle\.json 기록 예정: brain superpowers/m);
+  assert.deepEqual(snapshot(root), before);
+
+  const r = install(root, "--brain", "superpowers", "--simplicity", "ponytail", "--matt", "tdd,research", "--optional", "i-have-adhd");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /^\.dev-cycle\.json 기록: brain superpowers, simplicity ponytail$/m);
+  assert.match(r.stdout, /i-have-adhd는 \/i-have-adhd/);
+  const text = readFileSync(join(root, ".dev-cycle.json"), "utf8");
+  assert.match(text, /^\{\n\s+"brain": "superpowers",\n\s+"simplicity": "ponytail",\n/, "맨 앞 키의 값만 바꾼다");
+  assert.equal(install(root, "--simplicity", "caveman").status, 0, "다시 실행해 값만 바꾼다");
+  const cfg = JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8"));
+  assert.deepEqual([cfg.brain, cfg.simplicity], ["superpowers", "caveman"]);
 });
 
 test("--diff는 미리 보기라 파일을 쓰지 않고 더할 항목만 보여 준다", () => {

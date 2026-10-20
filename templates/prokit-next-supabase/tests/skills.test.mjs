@@ -86,9 +86,9 @@ test("팩 활용 스킬은 실제 복원 도구와 비교 기준을 연결한다
   assert.match(load("prokit-ui").body, /prokit-pack-use/);
 });
 
-test("prokit-dev-cycle 위임·Ponytail 평가는 38개 시나리오와 각 5개 검증 항목을 가진다", () => {
+test("prokit-dev-cycle 위임·과설계 방지 평가는 40개 시나리오와 각 5개 검증 항목을 가진다", () => {
   const evals = JSON.parse(readFileSync(join(TEMPLATE, "evals/prokit-dev-cycle/evals.json"), "utf8")).evals;
-  assert.equal(evals.length, 38);
+  assert.equal(evals.length, 40);
   for (const scenario of evals) {
     assert.match(scenario.name, /^[a-z0-9-]+$/, `eval ${scenario.id}: name`);
     assert.ok(["neon", "supabase"].includes(scenario.template), `eval ${scenario.id}: template`);

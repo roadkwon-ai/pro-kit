@@ -391,14 +391,19 @@
 | `devCycle.ui.a11yMin` | 3 | 화면 작업 접근성 점수 하한(4점 만점) | templates/*/files/.dev-cycle.json ui.a11yMin | 정본 파일이 바뀌면 따라 바뀐다 | 3 |
 | `skills.official.neon` | 28 | neon 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치) | templates/prokit-next-neon/files/skills.manifest.json | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
 | `skills.official.supabase` | 25 | supabase 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치) | templates/prokit-next-supabase/files/skills.manifest.json | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
-| `skills.codex.superpowers` | 15 | Codex에 설치하는 superpowers 스킬 수 | templates/*/files/skills.manifest.json obra/superpowers | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
-| `skills.codex.ponytail` | 6 | 프로젝트에 설치하는 Ponytail 프로세스 스킬 수 | templates/*/files/skills.manifest.json DietrichGebert/ponytail | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
+| `skills.codex.superpowers` | 15 | superpowers를 두뇌로 고르면 Codex에 설치하는 스킬 수 | templates/*/files/skills.manifest.json brains.superpowers | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `skills.codex.ponytail` | 6 | ponytail을 고르면 프로젝트에 설치하는 Ponytail 프로세스 스킬 수 | templates/*/files/skills.manifest.json simplicity.ponytail | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
+| `brains.names` | superpowers, agent-skills, pstack, gstack, oh-my, mattpocock | 고를 수 있는 두뇌 이름(기본은 none) | templates/*/files/skills.manifest.json brains | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `brains.namesCode` | `superpowers`, `agent-skills`, `pstack`, `gstack`, `oh-my`, `mattpocock` | 두뇌 이름의 코드 꼴 | templates/*/files/skills.manifest.json brains | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `simplicity.names` | ponytail, caveman, karpathy | 고를 수 있는 과설계 방지 스킬 이름(기본은 none) | templates/*/files/skills.manifest.json simplicity | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `simplicity.namesCode` | `ponytail`, `caveman`, `karpathy` | 과설계 방지 스킬 이름의 코드 꼴 | templates/*/files/skills.manifest.json simplicity | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `mattpocock.pool.count` | 14 | --matt로 고를 수 있는 mattpocock 추가 스킬 수 | templates/*/files/skills.manifest.json mattpocock.pool | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `cli.<이름>.install` | 3개(`--list`) | 전역 CLI 설치 명령 | templates/*/files/skills.manifest.json global Neon CLI | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `cli.<이름>.installCode` | 3개(`--list`) | 같은 명령의 코드 꼴(백틱 포함) | templates/*/files/skills.manifest.json global Neon CLI | 정본 파일이 바뀌면 따라 바뀐다 | 11 |
-| `optional.names` | ops, motion, mobile | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
-| `optional.namesCode` | `ops`, `motion`, `mobile` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
-| `optional.count` | 3 | 선택 스킬 묶음 수 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `optional.count.ko` | 세 | 선택 스킬 묶음 수의 한글 수 관형사 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `cli.<이름>.installCode` | 3개(`--list`) | 같은 명령의 코드 꼴(백틱 포함) | templates/*/files/skills.manifest.json global Neon CLI | 정본 파일이 바뀌면 따라 바뀐다 | 10 |
+| `optional.names` | ops, motion, mobile, i-have-adhd | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `optional.namesCode` | `ops`, `motion`, `mobile`, `i-have-adhd` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
+| `optional.count` | 4 | 선택 스킬 묶음 수 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.count.ko` | 네 | 선택 스킬 묶음 수의 한글 수 관형사 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.skillsCode.neon` | `vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | neon 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.count.neon` | 4 | neon 템플릿 ops 묶음의 스킬 수 | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.skillsCode.supabase` | `vercel-optimize` | supabase 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-supabase/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
@@ -417,6 +422,12 @@
 | `optional.mobile.count.supabase` | 1 | supabase 템플릿 mobile 묶음의 스킬 수 | templates/prokit-next-supabase/files/skills.manifest.json optional.mobile | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.mobile.skillsCode.shared` | `vercel-react-native-skills` | mobile 묶음에서 두 템플릿이 함께 가진 스킬(스킬마다 백틱) | templates/*/files/skills.manifest.json optional.mobile | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.mobile.skillsCode` | `vercel-react-native-skills` | mobile 묶음의 스킬(두 템플릿이 같을 때. 스킬마다 백틱) | templates/*/files/skills.manifest.json optional.mobile | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
+| `optional.i-have-adhd.skillsCode.neon` | `i-have-adhd` | neon 템플릿 i-have-adhd 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.i-have-adhd | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.i-have-adhd.count.neon` | 1 | neon 템플릿 i-have-adhd 묶음의 스킬 수 | templates/prokit-next-neon/files/skills.manifest.json optional.i-have-adhd | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.i-have-adhd.skillsCode.supabase` | `i-have-adhd` | supabase 템플릿 i-have-adhd 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-supabase/files/skills.manifest.json optional.i-have-adhd | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.i-have-adhd.count.supabase` | 1 | supabase 템플릿 i-have-adhd 묶음의 스킬 수 | templates/prokit-next-supabase/files/skills.manifest.json optional.i-have-adhd | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.i-have-adhd.skillsCode.shared` | `i-have-adhd` | i-have-adhd 묶음에서 두 템플릿이 함께 가진 스킬(스킬마다 백틱) | templates/*/files/skills.manifest.json optional.i-have-adhd | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.i-have-adhd.skillsCode` | `i-have-adhd` | i-have-adhd 묶음의 스킬(두 템플릿이 같을 때. 스킬마다 백틱) | templates/*/files/skills.manifest.json optional.i-have-adhd | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `eval.<스킬>.with` | 6개(`--list`) | 같은 요청 비교: prokit-<스킬> 스킬이 있을 때 체크 항목을 지킨 비율(%는 값 밖) | templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
 | `eval.<스킬>.without` | 6개(`--list`) | 같은 요청 비교: prokit-<스킬> 스킬이 없을 때 체크 항목을 지킨 비율(%는 값 밖) | templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
 | `eval.requests` | 13 | 같은 요청 비교에 쓴 요청 수 | 계산: templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표의 eval 수 합 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
@@ -430,7 +441,7 @@
 | `eval.designMd.secondScreen.without` | 97 | 브랜드 이름과 대표 색만 줬을 때 두 번째 화면이 첫 화면 색을 따른 비율(%는 값 밖) | 계산: templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `eval.designMd.palette.offTarget` | 29 | 브랜드 이름과 대표 색만 줬을 때 화면에 쓴 색 가운데 목표 밖 색의 비율(%는 값 밖) | 계산: 100 − templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표의 B 팔레트 일치율(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `handbook.sections.count` | 7 | 문서(handbook) 묶음 수 | handbook/README.md 묶음 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `handbook.pages.count` | 35 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `handbook.pages.count` | 36 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `b:agent-order-line` | (글 묶음) | 새 프로젝트를 만들 때 "에이전트는 이런 순서로 일해요" 도입 문장(옵션 없이 열었을 때 허락을 묻는다고 알린다). clone-create-prompt 묶음이 품는다 | docs/blocks/agent-order-line.md | 묶음 원본을 고친다 | 3 |
 | `b:clone-auth-feature-note` | (글 묶음) | 클론 튜토리얼 5장의 첫 NOTE(5장부터 기능을 하나씩 만든다) | docs/blocks/clone-auth-feature-note.md | 묶음 원본을 고친다 | 2 |
 | `b:clone-auth-open` | (글 묶음) | 클론 튜토리얼 5장의 1단계 첫 문단(4장 대화창을 그대로 써도 된다) | docs/blocks/clone-auth-open.md | 묶음 원본을 고친다 | 2 |
@@ -605,7 +616,7 @@
 | `b:tpl-readme-commands-plugin` | (글 묶음) | 두 템플릿 README 명령 표의 플러그인 업데이트 행(supabase 템플릿은 앞에 supabase 행 둘이 더 있다). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/tpl-readme-commands-plugin.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-commands` | (글 묶음) | 두 템플릿 README "설치된 프로젝트에서 자주 쓰는 명령" 표의 공통 행(표 머리는 빼고). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 뒤의 행은 템플릿마다 달라 따로 두고, 같은 마지막 행은 `tpl-readme-commands-plugin`이다 | docs/blocks/tpl-readme-commands.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-dev` | (글 묶음) | 두 템플릿 README "템플릿 자체 개발" 절의 목록. 인자: me(이 템플릿 이름), other(다른 템플릿 이름), josa(other 뒤 조사. 와 또는 과) | docs/blocks/tpl-readme-dev.md | 묶음 원본을 고친다 | 2 |
-| `b:tpl-readme-install-rows` | (글 묶음) | 두 템플릿 README "설치되는 것" 표에서 프로세스 스킬 행부터 문서 골격 행까지(공식 스킬 행만 템플릿마다 다르다). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 인자: db(neon 또는 supabase. 선택 스킬 행의 ops 묶음 스킬 키) | docs/blocks/tpl-readme-install-rows.md | 묶음 원본을 고친다 | 2 |
+| `b:tpl-readme-install-rows` | (글 묶음) | 두 템플릿 README "설치되는 것" 표에서 프로세스 스킬·두뇌·과설계 방지 스킬 행부터 문서 골격 행까지(공식 스킬 행만 템플릿마다 다르다). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 인자: db(neon 또는 supabase. 선택 스킬 행의 ops 묶음 스킬 키) | docs/blocks/tpl-readme-install-rows.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-license` | (글 묶음) | 두 템플릿 README 맨 위의 사용 조건 인용(MIT 라이선스). 템플릿 README는 새 프로젝트에 설치되지 않아 표시를 달 수 있다. 상대 링크는 templates/<이름>/README.md 깊이를 따른다 | docs/blocks/tpl-readme-license.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-options` | (글 묶음) | 두 템플릿 README "옵션" 절의 옵션 목록과 설치기가 덮어쓰지 않는다는 문단. 인자: cli(--with-global이 설치하는 DB CLI 이름. Neon 또는 Supabase) | docs/blocks/tpl-readme-options.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-prereq-node` | (글 묶음) | 두 템플릿 README "준비물" 목록의 Node 줄. 목록 중간이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 이 줄의 값 표시는 README에 그대로 둔다(테스트 "Node 판"이 본다) | docs/blocks/tpl-readme-prereq-node.md | 묶음 원본을 고친다 | 2 |

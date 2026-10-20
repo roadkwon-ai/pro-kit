@@ -475,11 +475,19 @@ export function loadValues(root = ROOT) {
   const count = (list) => list.reduce((n, s) => n + s.skills.length, 0);
   for (const t of T)
     add(`skills.official.${t}`, count(manifest(t).filter((s) => s.agents.includes("claude-code"))), `templates/prokit-next-${t}/files/skills.manifest.json`, `${t} 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치)`);
-  same("skills.codex.superpowers", (t) => count(manifest(t).filter((s) => s.source === "obra/superpowers")), "templates/*/files/skills.manifest.json obra/superpowers", "Codex에 설치하는 superpowers 스킬 수");
-  same("skills.codex.ponytail", (t) => count(manifest(t).filter((s) => s.source === "DietrichGebert/ponytail")), "templates/*/files/skills.manifest.json DietrichGebert/ponytail", "프로젝트에 설치하는 Ponytail 프로세스 스킬 수");
+  // 두뇌·과설계 방지 스킬은 하나만 골라 설치하는 카탈로그(brains, simplicity)에 있다
+  const full = (t) => JSON.parse(readFileSync(tpl(t, "files", "skills.manifest.json"), "utf8"));
+  same("skills.codex.superpowers", (t) => count(full(t).brains.superpowers.skills), "templates/*/files/skills.manifest.json brains.superpowers", "superpowers를 두뇌로 고르면 Codex에 설치하는 스킬 수");
+  same("skills.codex.ponytail", (t) => count(full(t).simplicity.ponytail.skills), "templates/*/files/skills.manifest.json simplicity.ponytail", "ponytail을 고르면 프로젝트에 설치하는 Ponytail 프로세스 스킬 수");
+  const code = (list) => list.map((s) => `\`${s}\``).join(", ");
+  same("brains.names", (t) => Object.keys(full(t).brains).join(", "), "templates/*/files/skills.manifest.json brains", "고를 수 있는 두뇌 이름(기본은 none)");
+  same("brains.namesCode", (t) => code(Object.keys(full(t).brains)), "templates/*/files/skills.manifest.json brains", "두뇌 이름의 코드 꼴");
+  same("simplicity.names", (t) => Object.keys(full(t).simplicity).join(", "), "templates/*/files/skills.manifest.json simplicity", "고를 수 있는 과설계 방지 스킬 이름(기본은 none)");
+  same("simplicity.namesCode", (t) => code(Object.keys(full(t).simplicity)), "templates/*/files/skills.manifest.json simplicity", "과설계 방지 스킬 이름의 코드 꼴");
+  same("mattpocock.pool.count", (t) => full(t).mattpocock.pool.length, "templates/*/files/skills.manifest.json mattpocock.pool", "--matt로 고를 수 있는 mattpocock 추가 스킬 수");
 
-  // 전역 CLI 설치 명령: manifest의 global 항목(name → install)이 정본이다. 두 템플릿에 모두 있으면 같아야 한다
-  const globalInstall = (t, name) => JSON.parse(readFileSync(tpl(t, "files", "skills.manifest.json"), "utf8")).global.find((g) => g.name === name)?.install;
+  // 전역 CLI 설치 명령: manifest의 global 항목과 두뇌의 global 항목(name → install)이 정본이다. 두 템플릿에 모두 있으면 같아야 한다
+  const globalInstall = (t, name) => [...full(t).global, ...Object.values(full(t).brains).flatMap((b) => b.global ?? [])].find((g) => g.name === name)?.install;
   for (const [id, name] of [["neon", "Neon CLI"], ["vercel", "Vercel CLI"], ["omx", "OMX CLI"]]) {
     const cmds = [...new Set(T.map((t) => globalInstall(t, name)).filter(Boolean))];
     if (cmds.length !== 1) throw new Error(`cli.${id}.install: 두 템플릿 manifest의 ${name} install이 없거나 다르다(${cmds})`);
@@ -490,7 +498,6 @@ export function loadValues(root = ROOT) {
   // 선택 스킬 묶음(skills.manifest.json optional). 묶음 이름은 두 템플릿이 같고 ops의 스킬만 다르다
   const optional = (t) => JSON.parse(readFileSync(tpl(t, "files", "skills.manifest.json"), "utf8")).optional;
   const bundleSkills = (t, b) => optional(t)[b].skills.flatMap((s) => s.skills);
-  const code = (list) => list.map((s) => `\`${s}\``).join(", ");
   same("optional.names", (t) => Object.keys(optional(t)).join(", "), "templates/*/files/skills.manifest.json optional", "선택 스킬 묶음 이름");
   same("optional.namesCode", (t) => code(Object.keys(optional(t))), "templates/*/files/skills.manifest.json optional", "선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱)");
   same("optional.count", (t) => Object.keys(optional(t)).length, "templates/*/files/skills.manifest.json optional", "선택 스킬 묶음 수");

@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 // pro-kit 템플릿 설치기. install.sh가 이 파일을 실행한다. prokit-next-neon과 prokit-next-supabase에서 내용이 같다(tests/shared-files.test.mjs).
 // 사용법: install.sh <project-dir> [--diff] [--skip-skills] [--with-global]
+//          [--brain <이름|none>] [--simplicity <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]]
 import { spawnSync } from "node:child_process";
 import {
   appendFileSync, copyFileSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, readlinkSync, realpathSync, symlinkSync, writeFileSync,
 } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { readChoices, recordChoices } from "./files/scripts/skills-setup.mjs";
 
 export const TEMPLATE_DIR = dirname(fileURLToPath(import.meta.url));
 export const FILES_DIR = join(TEMPLATE_DIR, "files");
@@ -17,6 +19,11 @@ const MERGE_MD = new Set(["AGENTS.md", "CLAUDE.md"]);
 const IGNORE = new Set([".DS_Store", ".omc"]);
 // 설치기가 첫 복사 뒤 프로젝트 값으로 채우는 파일. 템플릿과 늘 다르므로 "유지(템플릿과 다름)"·--diff에서 뺀다.
 const FILLED = new Set([".dev-cycle.json"]);
+// 값을 받는 인자. 그대로 skills-setup.mjs에 넘긴다.
+const VALUE_FLAGS = new Set(["--brain", "--simplicity", "--matt", "--optional"]);
+const OLD_SETUP =
+  "이 프로젝트의 scripts/skills-setup.mjs는 --brain·--simplicity·--matt를 모르는 옛 판이다 → 템플릿의 scripts/skills-setup.mjs와 skills.manifest.json을 먼저 옮긴 뒤 pnpm skills:setup을 다시 실행한다";
+const USAGE = "사용법: install.sh <project-dir> [--diff] [--skip-skills] [--with-global] [--brain <이름|none>] [--simplicity <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]]";
 
 const run = (cmd, args, opts = {}) => spawnSync(cmd, args, { encoding: "utf8", ...opts });
 
@@ -239,6 +246,8 @@ export function addScripts(target, { dryRun = false, wrapResources = false } = {
 const GITIGNORE = [
   ["# dev-cycle 증거 파일 (스크린샷 등)", "tasks/evidence/"],
   ["# OMC·OMX·pro-kit 런타임 상태", ".omc/", ".omx/", ".prokit/"],
+  // skills-setup이 이 기기 전역의 고르지 않은 두뇌·플러그인을 끄는 개인 설정(기기마다 다르다)
+  ["# Claude Code 개인 설정", ".claude/settings.local.json"],
   // impeccable README "Keeping .impeccable out of git"의 권장 블록에서 live 모드 줄을 뺀 것이다(live는 impeccable이
   // .git/info/exclude에 직접 쓴다). critique/*.md, config.json, design.json은 공유 산출물이라 무시하지 않는다.
   [
@@ -377,12 +386,26 @@ export function formatWithBiome(target, rels) {
 }
 
 export function main(argv) {
-  const flags = new Set(argv.filter((a) => a.startsWith("--")));
-  const args = argv.filter((a) => !a.startsWith("--"));
+  const flags = new Set();
+  const args = [];
+  const pass = [];
+  for (let i = 0; i < argv.length; i++) {
+    if (VALUE_FLAGS.has(argv[i])) pass.push(argv[i], argv[++i] ?? "");
+    else if (argv[i].startsWith("--")) flags.add(argv[i]);
+    else args.push(argv[i]);
+  }
   if (args.length !== 1) {
-    console.error("사용법: install.sh <project-dir> [--diff] [--skip-skills] [--with-global]");
+    console.error(USAGE);
     return 1;
   }
+  // 고르는 값은 복사하기 전에 템플릿 매니페스트로 확인한다.
+  // argv 전체를 넘겨 --brain=x 같은 잘못된 형식도 잡는다(pass에는 들어가지 않는다).
+  const picked = readChoices(argv, JSON.parse(readFileSync(join(FILES_DIR, "skills.manifest.json"), "utf8")));
+  if (picked.error) {
+    console.error(picked.error);
+    return 1;
+  }
+  const choices = ["brain", "simplicity"].filter((k) => k in picked).map((k) => `${k} ${picked[k]}`);
   // realpath: 대상이 심볼릭 링크로 연결된 경로(예: macOS의 /tmp)면 node가 하위 프로세스로 실행하는
   // 스크립트의 import.meta.url과 argv 경로가 달라져 CLI 진입점 판별이 어긋난다. 실재 경로로 고정한다.
   const abs = resolve(args[0]);
@@ -400,6 +423,13 @@ export function main(argv) {
   const freshBts = isFreshBtsInstall(target);
   const files = copyFiles(target, { diff });
   const kept = files.kept.map((k) => k.rel).join(", ") || "없음";
+  // 템플릿 파일은 덮어쓰지 않으므로, 옛 판 skills-setup.mjs가 남으면 --brain 등을 조용히 무시한다.
+  const oldSetup =
+    (choices.length > 0 || picked.matt.length > 0) &&
+    files.kept.some((k) => k.rel === "scripts/skills-setup.mjs") &&
+    !readFileSync(join(target, "scripts/skills-setup.mjs"), "utf8").includes('"--brain"')
+      ? [`경고: ${OLD_SETUP}`]
+      : [];
   if (diff) {
     // 미리 보기: 파일을 쓰지 않고 차이와 더할 항목만 보여 준다. 반영은 그 프로젝트의 dev-cycle 라운드에서 한다.
     const biome = ensureBiomeConfig(target, { dryRun: true });
@@ -421,12 +451,16 @@ export function main(argv) {
       ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
       ...(turbo === "manual" ? [`경고: ${TURBO_MANUAL}`] : []),
       ...legacyWarning(target),
+      ...(choices.length ? [`.dev-cycle.json 기록 예정: ${choices.join(", ")} (고르지 않은 설치본 정리는 반영할 때 skills-setup이 한다)`] : []),
+      ...oldSetup,
       "미리 보기라 파일을 쓰지 않았다. 없는 파일과 항목은 --diff 없이 다시 실행해 더하고(--skip-skills. 템플릿 파일은 덮어쓰지 않고 설정 파일에는 항목만 더한다), 유지(템플릿과 다름) 파일은 직접 옮긴다",
     ].join("\n"));
     return 0;
   }
   const links = linkSkills(target);
   const dc = files.copied.includes(".dev-cycle.json") ? configureDevCycle(target) : null;
+  // --skip-skills여도 선택값은 기록한다. 나중에 pnpm skills:setup이 그 값을 설치한다.
+  if (choices.length) recordChoices(target, picked);
   const scripts = addScripts(target, { wrapResources: freshBts });
   const gitignore = ensureGitignore(target);
   const biomeConfig = ensureBiomeConfig(target);
@@ -443,7 +477,7 @@ export function main(argv) {
   const skipSkills = flags.has("--skip-skills") ? "--skip-skills" : null;
   const skills = skipSkills
     ? null
-    : run(process.execPath, [join(target, "scripts/skills-setup.mjs"), ...(flags.has("--with-global") ? ["--with-global"] : [])], {
+    : run(process.execPath, [join(target, "scripts/skills-setup.mjs"), ...(flags.has("--with-global") ? ["--with-global"] : []), ...pass], {
         cwd: target,
         stdio: "inherit",
       });
@@ -453,6 +487,8 @@ export function main(argv) {
     ...files.filled.map((f) => `${f}: 설치기가 채움, 유지`),
     `스킬 링크: 생성 ${links.created.join(", ") || "없음"}${links.conflicts.length ? `, 충돌 ${links.conflicts.join(", ")} (직접 확인)` : ""}`,
     ...(dc ? [`.dev-cycle.json: 기본 브랜치 ${dc.defaultBranch}, commands ${Object.keys(dc.commands).join(", ") || "없음"}`] : []),
+    ...(choices.length ? [`.dev-cycle.json 기록: ${choices.join(", ")}`] : []),
+    ...oldSetup,
     `package.json scripts 추가: ${scripts.added.join(", ") || "없음"}${scripts.wrapped.length ? `, resource 래퍼 ${scripts.wrapped.join(", ")}` : ""}`,
     ...(!freshBts ? ["기존 설치본: resource 래퍼 전환은 H 라운드에서 원본 명령과 증거를 확인한 뒤 한다"] : []),
     ...(gitignore.length ? [`.gitignore: ${gitignore.join(", ")} 추가`] : []),
@@ -474,6 +510,8 @@ export function main(argv) {
     "  3. 개발자마다 한 번 프로젝트 루트에서 .agents/skills/impeccable/scripts/impeccable hooks on (스킬 호출로 켜지 않는다. Codex는 /hooks에서 신뢰 확인. Antigravity에서는 돌지 않고 Grok Build에서 도는지는 확인하지 않았다)",
     "  4. GLOSSARY.md와 docs/domain/project.md에 서비스 이름과 요약을 채운다",
     "  5. 첫 UI 라운드에서 impeccable init으로 PRODUCT.md를 만든다",
+    ...(picked.simplicity === "caveman" ? ["  - caveman 응답 압축은 /caveman(Codex $caveman)으로 켜고 \"stop caveman\"으로 끈다. 대화 응답에만 쓴다"] : []),
+    ...(picked.optional.includes("i-have-adhd") ? ["  - i-have-adhd는 /i-have-adhd(Codex $i-have-adhd)로 켜고 \"stop adhd mode\"로 끈다. 대화 응답에만 쓴다"] : []),
   ];
   console.log(out.join("\n"));
   if (skills && skills.status !== 0) return 2;

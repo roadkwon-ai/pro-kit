@@ -22,7 +22,7 @@ exact native 이름은 현재 task/run의 accepted runtime receipt가 같은 `ag
 
 ## 작업 단위와 패킷
 
-한 작업 단위에는 한 수행 흐름만 둔다. SDD·Impeccable처럼 자체 리뷰를 제공하면 그 coverage를 `reviewCoverage`에 기록해 재사용하고, 보안·DB·계약처럼 빠진 관점만 보완 체인으로 붙인다. gstack 심층 리뷰는 조건에 맞을 때만 추가하고, 보고만 필요한 QA는 `qa-only`를 쓴다.
+한 작업 단위에는 한 수행 흐름만 둔다. 두뇌의 구현 스킬·Impeccable처럼 자체 리뷰를 제공하면 그 coverage를 `reviewCoverage`에 기록해 재사용하고, 보안·DB·계약처럼 빠진 관점만 보완 체인으로 붙인다. 고른 두뇌의 심층 리뷰는 조건에 맞을 때만 추가한다(`brains/<이름>.md`). QA는 보고만 하고 발견은 다음 행에서 고친다.
 
 실행 전에는 `resolveProvider` 결과와 `captureSnapshot`을 Main 기준으로 고정하고 `taskId`, `runId`, `approvedPaths`, 허용 side effect와 환경 context를 배정한다. 이 단계에서는 완료 패킷을 검증하지 않는다.
 

@@ -1,4 +1,6 @@
 {
+	"brain": "none",
+	"simplicity": "none",
 	"todoPath": "tasks/todo.md",
 	"archiveDir": "tasks/archive",
 	"workflowDoc": "docs/dev-workflow.md",

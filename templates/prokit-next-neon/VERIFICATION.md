@@ -4,6 +4,22 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 두뇌·과설계 방지 스킬 선택 설치 (2026-10-20)
+
+두뇌(superpowers, agent-skills, gstack, oh-my, pstack)와 과설계 방지 스킬(ponytail, caveman, karpathy)을 기본 설치에서 빼고, 프로젝트마다 하나씩 고르게 했다(`--brain`, `--simplicity`, 기본 `none`). mattpocock 필수 세 개는 늘 설치하고 나머지는 `--matt`, i-have-adhd는 선택 묶음이다. 결정과 상세 실측은 [두뇌·과설계 방지 선택 설치 보고서](../../docs/reports/2026-10-20-brain-selection/README.md)에 있다.
+
+- 판: macOS(darwin arm64), Node v24.22.0, pnpm 12.14.0, Claude Code 2.1.304, codex-cli 0.163.0, skills CLI 1.7.4, oh-my-codex 0.21.17, create-better-t-stack 3.47.0.
+- 테스트: 두 템플릿 `node --test 'templates/<템플릿>/tests/*.test.mjs'` 각 314개 통과(skill-creator `quick_validate`는 PyYAML이 있는 Python으로 실행).
+- 실제 Better-T-Stack 프로젝트(neon)에서 확인했다.
+  - 인자 없이 설치하면 두 항목 모두 `none`이고, 전역에 켜진 superpowers·OMC·ponytail·frontend-design과 gstack 개인 스킬을 `.claude/settings.local.json`으로 그 프로젝트에서만 껐다.
+  - superpowers + ponytail → caveman → karpathy → none 순서로 바꿀 때마다 이전 설치본을 출처로 지우고 `skills:check`가 exit 0이었다.
+  - oh-my를 고르면 OMC 플러그인과 `omx setup`, none으로 바꾸면 `omx uninstall --scope project`로 지웠다. `prokit-*` 에이전트와 `.omx/plans` 같은 작업 기록은 남았다(`--purge`는 `.omx/` 전체를 지워 쓰지 않는다).
+  - agent-skills → pstack → gstack → none 순서로 바꿀 때도 이전 플러그인과 스킬을 출처로 지우고 `skills:check`·`agents:check`가 exit 0이었다. gstack은 이 기기의 전역 본체를 썼고, 고르면 그 개인 스킬 끄기 항목을 지우고 none으로 바꾸면 다시 껐다.
+  - `--brain mattpocock --matt research,wizard`는 두뇌를 기록하고 추가 스킬만 설치했다(따로 설치하는 것이 없다). none으로 바꿔도 추가 스킬은 남았고 `skills:check`는 exit 0이었다.
+  - 키가 없는 옛 구성(superpowers·OMC·OMX·ponytail 설치)은 `skills:check`가 충돌로 exit 1을 냈고, `--brain none --simplicity ponytail`로 정리한 뒤 exit 0이었다.
+- 실제 Claude Code 세션에서 `prokit-init`으로 처음부터 끝까지 만들었다. 작업 폴더에 pro-kit을 두고 PRD를 넣은 요청을 보냈고, 세션은 질문 화면 두 번(두뇌·과설계 방지·응답 방식, 추가 스킬 네 묶음)으로 고르게 한 뒤 `--brain none --simplicity ponytail --matt tdd --optional i-have-adhd`로 설치했다. 추가 스킬 세 묶음을 비워 제출해도 진행했다. 5432가 쓰이고 있어 `DB_PORT`로 바꿔 DB를 띄웠고, 첫 마이그레이션, `skills:check`·`agents:check`·`check-types`·`biome check .`(모두 exit 0), `docs/first-request.md`를 넣은 커밋까지 마쳤다. PRD 없이 보낸 요청은 PRD 요청 하나만 보냈고, "없어"라는 답에는 만들지 않고 끝냈다.
+- 한계: gstack 본체를 `--with-global`로 새로 받는 경로는 확인하지 않았다(이 기기에 이미 있다). `/i-have-adhd`·`/caveman` 사용자 호출, mattpocock `code-review`·`prototype`·`research`와 하네스 내장 명령의 우선순위는 확인하지 않았다. OMX 제거 뒤 `.codex/config.toml`의 `model` 줄과 `.gitignore`의 OMX 줄은 남는다.
+
 ## 남은 한계 재검토: lease·실행 뒤 추정·부팅 ID·측정 속도 (2026-10-14)
 
 바로 아래 절에 남긴 한계를 다시 검토해 고쳤다(Linux·WSL 전용 항목 제외). 그 절은 "실행 뒤 측정이 unknown이면 exit 75"를 사용자 결정으로 적었다. 하지만 사용자가 정한 것은 실행 중 unknown은 경고만 하고 시작 전 검사는 그대로 막는 것뿐이었다. 실행 뒤 75는 원래 설계가 남은 것이라 이번에 고쳤고, 아래 절들의 표기도 바로잡았다.
