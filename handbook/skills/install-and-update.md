@@ -8,13 +8,16 @@
 flowchart TD
   M["skills.manifest.json"] --> S["scripts/skills-setup.mjs<br/>install.sh와 pnpm skills:setup이 실행"]
   S --> P1["공식 도메인 스킬<br/>.agents/skills + .claude/skills 링크"]
-  S --> P2["Claude 플러그인<br/>.claude/settings.json<br/>superpowers · skill-creator · OMC · ponytail"]
-  S --> P3["Codex 프로젝트 스킬<br/>.agents/skills<br/>superpowers · skill-creator · Ponytail"]
-  S -.->|"omx CLI가 있을 때만"| P4["OMX 프로젝트 설정<br/>.codex/skills · agents · prompts"]
-  S -.->|"--optional 묶음일 때만"| OPT["선택 스킬 묶음<br/>ops · motion · mobile<br/>.agents/skills + .claude/skills 링크"]
+  S --> P2["Claude 플러그인<br/>.claude/settings.json<br/>skill-creator"]
+  S -.->|"고른 두뇌·과설계 방지 스킬만<br/>(.dev-cycle.json brain · simplicity)"| SEL["두뇌: superpowers · agent-skills · gstack · oh-my · pstack · mattpocock 중 하나<br/>과설계 방지: ponytail · caveman · karpathy 중 하나<br/>플러그인 또는 .agents/skills"]
+  S -.->|"두뇌가 oh-my이고 omx CLI가 있을 때"| P4["OMX 프로젝트 설정<br/>.codex/skills · agents · prompts"]
+  S -.->|"--matt 스킬일 때만"| MATT["mattpocock 추가 스킬<br/>.agents/skills + .claude/skills 링크"]
+  S -.->|"--optional 묶음일 때만"| OPT["선택 스킬 묶음<br/>ops · motion · mobile · i-have-adhd<br/>.agents/skills + .claude/skills 링크"]
   S -->|"없거나 최신판보다 낮으면"| AB["agent-browser CLI<br/>(전역)"]
-  S -.->|"--with-global일 때만"| G["나머지 전역 도구<br/>OMX CLI · gstack · Vercel CLI<br/>Neon CLI 또는 Supabase CLI"]
-  S -.->|"--with-global + 지원 CLI"| CP["Codex 네이티브 Ponytail<br/>공식 marketplace · plugin<br/>선택 항목"]
+  S -.->|"--with-global일 때만"| G["나머지 전역 도구<br/>Vercel CLI<br/>Neon CLI 또는 Supabase CLI"]
+  S -.->|"고른 두뇌가 gstack·oh-my이고<br/>--brain을 줬거나 --with-global"| BG["두뇌 전역 도구<br/>gstack · OMX CLI"]
+  S -.->|"ponytail을 고르고 --with-global + 지원 CLI"| CP["Codex 네이티브 Ponytail<br/>공식 marketplace · plugin<br/>선택 항목"]
+  S -.->|"전역에 켜진 고르지 않은 플러그인"| LOC[".claude/settings.local.json<br/>이 프로젝트에서만 끔"]
   CHK["pnpm skills:check<br/>설치 없이 상태만 확인<br/>선택 묶음은 설치 여부만"] -.->|"같은 스크립트를 --check로 실행"| S
   UPD["pnpm skills:update<br/>GitHub 원본과 비교해 바뀐 스킬만 다시 설치<br/>prokit-dev-cycle 시작에서 하루 한 번 확인"] -.->|"같은 스크립트를 --update로 실행"| S
 ```
@@ -60,15 +63,15 @@ claude plugin update <플러그인> --scope project   # 세션을 다시 열어�
 
 ### Ponytail 훅과 Codex 네이티브 플러그인
 
-ponytail(Claude 플러그인)은 훅 3개(SessionStart, SubagentStart, UserPromptSubmit)로 세션과 서브에이전트에 과설계를 막는 규칙을 넣어요. 상태는 `CLAUDE_CONFIG_DIR` 또는 `~/.claude` 아래에 두며, `CLAUDE_PROJECT_DIR`이 있으면 프로젝트 hash별 모드와 공유 플래그를 써요.
+과설계 방지 스킬로 ponytail을 고르면 Claude 플러그인이 훅 3개(SessionStart, SubagentStart, UserPromptSubmit)로 세션과 서브에이전트에 과설계를 막는 규칙을 넣어요. 상태는 `CLAUDE_CONFIG_DIR` 또는 `~/.claude` 아래에 두며, `CLAUDE_PROJECT_DIR`이 있으면 프로젝트 hash별 모드와 공유 플래그를 써요.
 
 없으면 shared 상태를 써요. 같은 저장소의 세션은 모드를 함께 쓰므로 `stop ponytail`도 함께 적용돼요. 전역 helper 파일을 쓸 수 있지만 statusline 설정은 사용자가 원할 때만 바꿔요.
 
-이 프로젝트에서만 끄려면 `.claude/settings.local.json`의 `enabledPlugins`에 `"ponytail@ponytail": false`를 둬요.
+고르지 않았는데 전역에 켜져 있으면 설치기가 `.claude/settings.local.json`의 `enabledPlugins`에 `"ponytail@ponytail": false`를 넣어 이 프로젝트에서만 꺼요([두뇌와 선택 스킬](brains.md)).
 
 시작 훅의 대략적 코드 지도는 재사용 후보를 찾는 참고 자료예요. 지도에 나온 항목은 실제 코드·호출자·테스트·설정·내보내기를 읽고 확인해요.
 
-Codex는 프로젝트에 `ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-help`, `ponytail-gain` <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬을 받아요. 지원하는 CLI에서 `--with-global`을 주면 공식 원본 marketplace와 네이티브 플러그인을 추가할 수 있어요. 설치된 플러그인의 출처와 비활성화 선택은 보존하며, 설치기가 다시 설치하거나 자동으로 올리지 않아요.
+ponytail을 고르면 Codex는 프로젝트에 `ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-help`, `ponytail-gain` <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬을 받아요. 지원하는 CLI에서 `--with-global`을 주면 공식 원본 marketplace와 네이티브 플러그인을 추가할 수 있어요. 설치된 플러그인의 출처와 비활성화 선택은 보존하며, 설치기가 다시 설치하거나 자동으로 올리지 않아요.
 
 플러그인 설치와 훅 신뢰는 별개예요. Codex에서 `/hooks`로 현재 플러그인을 신뢰하고 새 세션을 연 뒤에만 자동 훅 실행을 기대할 수 있어요. 신뢰 기록을 대신 쓰거나 우회하지 않아요.
 

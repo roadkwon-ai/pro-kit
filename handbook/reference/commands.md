@@ -26,14 +26,14 @@
 | 명령 | 하는 일 |
 |---|---|
 | `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬, 플러그인, OMX 설정과 agent-browser CLI 설치. `--with-global`이면 나머지 전역 도구도 |
-| `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`<!-- /v -->) 설치. 여러 개는 쉼표로(`ops,motion`) |
+| `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`<!-- /v -->) 설치. 여러 개는 쉼표로(`ops,motion`) |
 | `pnpm skills:check` | 설치하지 않고 상태만 확인. 프로젝트 범위 항목이 빠졌으면 exit 1 |
 | `pnpm skills:update --check` | 설치한 외부 스킬을 GitHub 원본과 비교해 새 버전만 알려 주기 |
 | `pnpm skills:update [<이름>...]` | 바뀐 스킬과 빠진 스킬만(또는 지정한 스킬만) 다시 설치 |
 | `pnpm agents:sync` | `.claude/agents`에서 `.codex/agents`(Codex)와 `.agents/agents`(Antigravity) 만들기 |
 | `pnpm agents:check` | 정본과 생성물이 맞는지 검사 |
 | `claude plugin update <플러그인> --scope project` | Claude 플러그인 업데이트(`skills:update`는 플러그인을 올리지 않아요) |
-| `codex plugin marketplace upgrade ponytail` | Ponytail 원본 GitHub marketplace snapshot을 새로고침해요. 이 명령만으로 플러그인 갱신 완료를 판정하지 않아요. 사용자가 원하고 비활성화 상태가 아니면 hooks와 코드를 먼저 검토한 뒤 `codex plugin add ponytail@ponytail`을 실행하고 `codex plugin list --json`으로 설치판을 확인해요. 훅 신뢰와 새 세션은 별도예요 |
+| `codex plugin marketplace upgrade ponytail` | 과설계 방지 스킬로 ponytail을 골랐을 때 Ponytail 원본 GitHub marketplace snapshot을 새로고침해요. 이 명령만으로 플러그인 갱신 완료를 판정하지 않아요. 사용자가 원하고 비활성화 상태가 아니면 hooks와 코드를 먼저 검토한 뒤 `codex plugin add ponytail@ponytail`을 실행하고 `codex plugin list --json`으로 설치판을 확인해요. 훅 신뢰와 새 세션은 별도예요 |
 
 `pnpm skills:setup --with-global`에서만 Codex 네이티브 Ponytail 설치를 시도해요. 기본 실행과 `--check`는 Codex 사용자 설정을 바꾸지 않고, 네이티브 플러그인이 없어도 선택 기능의 상태로 알려 줘요. 프로젝트 스킬의 필수 누락과 플러그인·훅 상태를 구분하는 방법은 [설치와 업데이트 구조](../skills/install-and-update.md)에 있어요.
 
@@ -76,7 +76,8 @@
 
 | 명령 | 하는 일 |
 |---|---|
-| `bash templates/<템플릿>/install.sh <프로젝트>` | 템플릿 설치. `--diff`, `--skip-skills`, `--with-global`([설치기와 옵션](../templates/installer.md)) |
+| `/prokit-init <PRD 파일 경로나 내용>` | 새 프로젝트 만들기. PRD로 두뇌와 스킬을 추천해 고르게 한 뒤 아래 설치까지 해요. PRD가 없으면 먼저 받고, 끝내 없으면 만들지 않아요. Claude Code 기준이고 Codex는 `$prokit-init`이에요. pro-kit 폴더에서 연 세션에서만 불러요([두뇌와 선택 스킬](../skills/brains.md)) |
+| `bash templates/<템플릿>/install.sh <프로젝트>` | 템플릿 설치. `--brain`, `--simplicity`, `--matt`, `--optional`, `--diff`, `--skip-skills`, `--with-global`([설치기와 옵션](../templates/installer.md)) |
 | `node scripts/pack.mjs <이름>` | 프리셋 팩을 받아 sha256을 확인한 뒤 `packs/<이름>/`에 풀기 |
 | `node scripts/pack.mjs <이름> --zip <경로>` | 미리 받아 둔 팩 zip을 같은 확인을 거쳐 `packs/<이름>/`에 풀기 |
 

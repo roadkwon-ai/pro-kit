@@ -31,7 +31,7 @@ flowchart TD
   DEP --> OFF
   LAYER -.->|그 분야일 때| OPT["선택 스킬 묶음<br/>ops · motion · mobile<br/>없으면 설치 제안"]
   DEP -.->|비용·성능 점검| OPT
-  DC --> PROC["프로세스 스킬<br/>superpowers · ponytail · gstack<br/>대안: OMC(Claude) · OMX(Codex)"]
+  DC --> PROC["두뇌 · 과설계 방지 스킬(고른 것만)<br/>없으면 내장 절차와 간결성 규칙"]
   DC --> IMP["prokit-implementer<br/>검증한 전문 공급자 수행"]
   IMP -.->|내장 리뷰 없음| SREV["specialist-reviewer<br/>전문 계약 읽기 전용 검토"]
   IMP --> REV["prokit-reviewer<br/>최종 통합 리뷰<br/>plan · code · security · db"]
@@ -43,7 +43,7 @@ flowchart TD
 ## 자세히
 
 - **프로세스 스킬 고르기**: 설계, 계획, 구현, 디버깅, 리뷰, QA, 검증에 쓸 프로세스 스킬은 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`에 표로 정리돼 있어요. 단계마다 1순위 스킬, Claude와 Codex의 대안, 스킬이 없을 때의 절차가 적혀 있어요. 필요한 전문 스킬이 없으면 검증한 대안을 찾고, 대안도 없으면 막힌 이유를 남겨요.
-- **과설계 막기**: 설계, 계획, 구현, 리뷰에 ponytail을 써요. 스펙에 "만들지 않는 것" 절을 두고, 계획은 `prokit-reviewer(plan)`이 재사용·설정 결정까지 검토해요. 구현 diff에는 `ponytail-review`를 적용해 품질과 불필요한 복잡도를 함께 봐요. ponytail 규칙보다 `prokit-dev-cycle`, `AGENTS.md`, 대조표가 우선해요.
+- **과설계 막기**: 스펙에 "만들지 않는 것" 절을 두고, 계획은 `prokit-reviewer(plan)`이 재사용·설정 결정까지 검토해요. 고른 과설계 방지 스킬(ponytail 추천, caveman, karpathy)이 계획 기준과 구현 diff 검토를 맡고, 고르지 않으면 내장 간결성 규칙과 `prokit-reviewer`가 맡아요. 어떤 스킬의 규칙보다 `prokit-dev-cycle`, `AGENTS.md`, 대조표가 우선해요([두뇌와 선택 스킬](../skills/brains.md)).
 - **하네스를 고치는 일**: 스킬, 에이전트, dev-cycle 자체를 바꾸는 작업도 라운드로 해요. 케이스 H예요([케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)). 대조표 행의 정본인 `docs/dev-workflow.md`는 프로젝트에 맞게 고쳐도 되고, 고치는 일 자체가 케이스 H 변경이에요.
 - **새 세션도 같은 규칙으로**: 규칙 문서와 대조표가 파일로 남아 있어서 새 세션은 `pnpm dev-cycle status`로 진행 중인 라운드를 이어받아요. 닫은 라운드와 완료한 일반 할 일은 `tasks/archive/README.md`에서 찾고, `tasks/todo.md`에는 남은 항목만 남아요.
 - **공급자와 자원 경계**: 매니페스트는 설치할 항목의 정본이에요. 실제 공급자 선택은 출처·내용 해시·범위·의존성·부작용을 확인하고 정해요. 현재 작업에 연결된 프로젝트·워크트리·관리 임시 폴더만 보수적으로 재고, 전역 정리나 영구 환경 삭제는 하지 않아요. [위임과 자원 관리](delegation-and-resources.md)에서 이유와 증거를 확인해요.

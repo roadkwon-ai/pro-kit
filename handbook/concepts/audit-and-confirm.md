@@ -11,11 +11,11 @@
 | 명령 | `pnpm check-types → exit 0`. 실패하면 첫 오류 한 줄 |
 | 테스트 | `vitest todo.isolation → 3 passed` |
 | 리뷰 | `prokit-reviewer(code): approve, max=low, 지적 2 (반영 1, 기각 1: 재현 안 됨)` |
-| 스킬 사용 | `writing-plans → docs/superpowers/plans/…`. 대안을 썼으면 `대안: OMC plan (superpowers 없음)` |
+| 스킬 사용 | `사용: 내장(계획) → docs/plans/…`. 두뇌를 골랐으면 `사용: superpowers:writing-plans → docs/superpowers/plans/…`처럼 실제 스킬과 산출물을 적어요 |
 | 같은 명령을 여러 행이 요구할 때 | 한 번 실행하고 뒤 행에는 `6행과 같음: pnpm check-types → exit 0`. 그사이 해당 검사의 입력이 바뀌었거나 변경 영향을 확인하지 못했으면 다시 실행 |
 | 해당 없는 행 | `N/A: 사유` |
 
-- F의 `prokit-reviewer(plan)` 행에는 리뷰어의 `approve`와 `max=none|low|medium`을 적어요. N/A나 일반 검사 결과로 넘기지 않아요. gstack이 없어도 프로젝트 리뷰어로 수행해요. 도구 실패는 `blocked: 사유`로 남기고 부분 완료로 보고해요.
+- F의 `prokit-reviewer(plan)` 행에는 리뷰어의 `approve`와 `max=none|low|medium`을 적어요. N/A나 일반 검사 결과로 넘기지 않아요. 두뇌의 계획 리뷰가 없어도 프로젝트 리뷰어로 수행해요. 도구 실패는 `blocked: 사유`로 남기고 부분 완료로 보고해요.
 - `✓`, `ok`, `done`, `완료`만 적거나 공백을 뺀 4자 미만으로 적으면 증거가 아니에요.
 - 결과를 얻지 못했으면 `blocked: 사유`나 `미실행: 사유`로 적어요. `blocked`는 이번 세션에서 해소할 수 없는 원인(외부 서비스, 권한, 사용자 허락 없이 설치할 수 없는 도구 등)에 쓰고, `미실행`은 사용자가 범위에서 뺀 단계나 앞 단계가 blocked여서 할 수 없는 뒤 단계에 써요.
 - 테스트 러너(vitest 도입 행)나 로컬 테스트 DB처럼 라운드 안에서 준비하기로 된 것이 없다는 이유로는 `blocked`를 쓰지 않고 그 준비부터 해요.

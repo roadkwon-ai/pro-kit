@@ -75,7 +75,7 @@ flowchart LR
 
 화면은 스타일 추천부터 `DESIGN.md`, 모든 페이지까지 [UI/UX 흐름](handbook/design/ui-flow.md)을 따르고, 배포는 내 컴퓨터의 Vercel CLI로 develop과 운영에 올리며 릴리스를 남깁니다([Vercel 배포와 되돌리기](handbook/deploy/vercel.md)). 전체 그림은 [하네스 엔지니어링](handbook/concepts/harness.md)에 있습니다.
 
-프리셋 제작 프롬프트에 고른 서체·색상·모드·언어를 반영하고, 실제 서비스에는 선택한 디자인을 고정합니다([프리셋 디자인 설정](handbook/design/ui-flow.md#프리셋)). Ponytail은 재사용과 정확성·안전성·테스트를 살피는 외부 프로세스 스킬로 연결하며, 설치와 일회성 검토 방법은 [공식 스킬과 연결](handbook/skills/official-skills.md#ponytail-사용하기)에 있습니다.
+프리셋 제작 프롬프트에 고른 서체·색상·모드·언어를 반영하고, 실제 서비스에는 선택한 디자인을 고정합니다([프리셋 디자인 설정](handbook/design/ui-flow.md#프리셋)). 두뇌(진행을 주도하는 스킬 묶음)와 과설계 방지 스킬(ponytail 추천)은 프로젝트마다 하나씩 고르거나 고르지 않으며, 고르는 법은 [두뇌와 선택 스킬](handbook/skills/brains.md), ponytail의 일회성 검토 방법은 [공식 스킬과 연결](handbook/skills/official-skills.md#ponytail-사용하기)에 있습니다.
 
 그냥 AI에게 맡길 때와 이렇게 다릅니다.
 
@@ -102,9 +102,9 @@ claude
 끝에 "GitHub Pages에 배포해줘"나 "Vercel에 배포해줘"를 붙이면 인터넷에 올립니다. 나중에 "실제 서비스로 바꿀 거야"라고 하면 로컬 DB와 로그인·저장이 되는 개발로 이어집니다. 자세히: [빠른 시작: 화면만 만들기](handbook/start/quickstart-screens.md), 단계별 안내는 [튜토리얼](tutorials/README.md).
 
 ### 서비스 만들기 (로그인과 DB)
-DB 종류와 프로젝트 이름(영어 소문자와 하이픈)을 넣어 요청합니다. DB 종류를 빼면 에이전트가 차이를 설명하고 묻습니다.
+DB 종류, 프로젝트 이름(영어 소문자와 하이픈), PRD(파일 경로나 누가 쓰고 무엇을 하는 서비스인지)를 넣어 요청합니다. DB 종류를 빼면 에이전트가 차이를 설명하고 묻습니다. PRD는 꼭 있어야 합니다. 에이전트가 PRD로 두뇌와 스킬을 추천해 고르게 하고 개발 환경을 맞추기 때문입니다. 요청에 없으면 먼저 PRD를 받고, 그래도 없으면 프로젝트를 만들지 않고 끝납니다. Claude Code에서는 `/prokit-init <PRD 파일 경로나 내용>`으로 바로 불러도 됩니다.
 
-> supabase 템플릿으로 my-app 프로젝트 만들어줘
+> supabase 템플릿으로 my-app 프로젝트 만들어줘. PRD는 [~/Documents/my-app-prd.md]에 있어.
 
 에이전트가 앱 뼈대를 만들고 템플릿을 설치한 뒤, 내 컴퓨터에 개발용 DB를 띄우고 첫 마이그레이션과 커밋까지 마칩니다. 프로젝트는 이 저장소 옆(`../my-app`)에 만들어지고, 원격 DB 연결, 배포, GitHub 올리기는 요청할 때만 합니다. 자세히: [빠른 시작: 서비스 만들기](handbook/start/quickstart-service.md).
 
@@ -174,7 +174,7 @@ git clone https://github.com/roadkwon-ai/pro-kit
 ## 문서 지도
 | 어디 | 무엇이 있나요 |
 |---|---|
-| [문서(handbook)](handbook/README.md) | 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->35<!-- /v -->개. [시작하기](handbook/start/README.md), [핵심 개념](handbook/concepts/README.md), [템플릿](handbook/templates/README.md), [스킬과 에이전트](handbook/skills/README.md), [디자인](handbook/design/README.md), [배포와 릴리스](handbook/deploy/README.md), [레퍼런스](handbook/reference/README.md) |
+| [문서(handbook)](handbook/README.md) | 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->36<!-- /v -->개. [시작하기](handbook/start/README.md), [핵심 개념](handbook/concepts/README.md), [템플릿](handbook/templates/README.md), [스킬과 에이전트](handbook/skills/README.md), [디자인](handbook/design/README.md), [배포와 릴리스](handbook/deploy/README.md), [레퍼런스](handbook/reference/README.md) |
 | [튜토리얼](tutorials/README.md) | 코드를 몰라도 프롬프트를 붙여 넣으며 화면을 만드는 단계별 안내. [시작하기](tutorials/start/README.md), [컨셉으로 화면 만들기](tutorials/samples/README.md), [Nextflix](tutorials/01-nextflix/README.md), [Claudle](tutorials/02-claudle/README.md), 비용과 키·배포·용어·문제 해결·Windows 가이드. [프로킷 사이트](https://prokit-web.vercel.app/tutorials/)에서도 읽을 수 있습니다 |
 | 템플릿 README와 검증 기록 | 명령과 옵션의 정본은 템플릿 README([neon](templates/prokit-next-neon/README.md) · [supabase](templates/prokit-next-supabase/README.md)), 검증 결과와 한계는 VERIFICATION.md([neon](templates/prokit-next-neon/VERIFICATION.md) · [supabase](templates/prokit-next-supabase/VERIFICATION.md)) |
 | [AGENTS.md](AGENTS.md) | 에이전트가 새 프로젝트를 만들 때 따르는 절차와 이 저장소의 규칙 |

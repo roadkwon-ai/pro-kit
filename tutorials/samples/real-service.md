@@ -34,10 +34,10 @@ pro-kit에는 DB를 어디에 둘지에 따라 템플릿이 두 개 있어요. �
 
 ### supabase: 새 프로젝트로 옮기기
 
-작업 폴더(`~/projects`)에서 연 에이전트에 보내세요. 이름은 바꿔도 돼요.
+작업 폴더(`~/projects`)에서 연 에이전트에 보내세요. 이름은 바꿔도 돼요. 화면만 프로젝트에서 만든 기획 문서 `PRODUCT.md`를 PRD로 줘요.
 
 ```prompt
-pro-kit의 AGENTS.md대로 supabase 템플릿으로 living-app 프로젝트 만들어줘.
+pro-kit의 AGENTS.md대로 supabase 템플릿으로 living-app 프로젝트 만들어줘. PRD는 living/PRODUCT.md야.
 ```
 
 끝나면 에이전트를 닫고(`/exit`, Codex는 `/quit`) 새 폴더에서 다시 여세요.

@@ -1,16 +1,18 @@
 <!-- 클론 튜토리얼 1장의 1단계 프롬프트, 에이전트가 하는 일, 성공 기준, 보고에 나오는 할 일 표. 인자: name(프로젝트 폴더 이름. nextflix 또는 claudle) -->
 ```prompt
 neon 템플릿으로 [{{name}}] 프로젝트 만들어줘.
+PRD는 {{name}} 프리셋 팩이야. pro-kit의 packs/{{name}}에 없으면 node scripts/pack.mjs {{name}}로 받아서 읽어줘.
 ```
 
 neon 템플릿은 pro-kit의 {{v:templates.count.ko}} 템플릿 가운데 하나예요. 개발할 때는 내 컴퓨터의 DB를 쓰고, 배포할 때는 [Neon](../reference/glossary.md#올리기)(인터넷에 있는 DB 서비스)에 올리는 구성이에요.
 
 {{b:agent-order-line}}
 
-1. 준비물(Node {{v:node.min}} 이상, pnpm, git, Docker 또는 Podman)이 있는지 확인해요. 없으면 설치 방법을 알려 주고 멈춰요.
-2. 최신 Better-T-Stack(웹 서비스의 기본 틀을 한 번에 만들어 주는 도구)으로 웹 프로젝트를 만들고, pro-kit을 설치해요. 에이전트 규칙, 스킬, 검사 도구가 들어가요.
-3. 내 컴퓨터에 DB를 켜고, 로그인 정보를 담을 표를 만드는 첫 [마이그레이션](../reference/glossary.md#만들기)({{v:gloss.migration}})을 적용해요.
-4. 코드 모양을 정리하고 검사한 뒤 첫 기록(커밋)을 남겨요.
+1. 프리셋 팩을 PRD(만들 서비스를 적은 기획 문서)로 읽고, 개발 진행 방식을 정하는 두뇌와 스킬을 추천해 물어요. 잘 모르겠으면 `(추천)`이 붙은 것을 고르면 돼요.
+2. 준비물(Node {{v:node.min}} 이상, pnpm, git, Docker 또는 Podman)이 있는지 확인해요. 없으면 설치 방법을 알려 주고 멈춰요.
+3. 최신 Better-T-Stack(웹 서비스의 기본 틀을 한 번에 만들어 주는 도구)으로 웹 프로젝트를 만들고, pro-kit을 설치해요. 에이전트 규칙, 스킬, 검사 도구가 들어가요.
+4. 내 컴퓨터에 DB를 켜고, 로그인 정보를 담을 표를 만드는 첫 [마이그레이션](../reference/glossary.md#만들기)({{v:gloss.migration}})을 적용해요.
+5. 코드 모양을 정리하고 검사한 뒤 첫 기록(커밋)을 남겨요.
 
 **이렇게 되면 성공**
 - 보고에 프로젝트 위치(`~/projects/{{name}}`)와 로컬 DB 주소, DB를 끄는 명령이 나와요.
