@@ -5,9 +5,9 @@
     "CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE": "1"
   },
   "enabledPlugins": {
-    "superpowers@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
-    "oh-my-claudecode@omc": true,
+    "oh-my-claudecode@omc": false,
     "ponytail@ponytail": true
   },
   "extraKnownMarketplaces": {
@@ -15,12 +15,6 @@
       "source": {
         "source": "github",
         "repo": "anthropics/claude-plugins-official"
-      }
-    },
-    "omc": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
       }
     },
     "ponytail": {

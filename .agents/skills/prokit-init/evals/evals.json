@@ -1,0 +1,174 @@
+{
+  "skill_name": "prokit-init",
+  "note": "읽기 전용 계획 평가다. 실제 프로젝트를 만들지 않는다. 실행 결과는 묻는 질문(AskUserQuestion 내용), 고른 값, 실행할 install.sh 명령, 보고 초안을 outputs/plan.md에 적는다. 사용자 답이 필요한 곳에서는 질문까지만 적고 멈춘다.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "no-prd-stops",
+      "prompt": "템플릿으로 todo 앱 만들어줘",
+      "expected_output": "PRD가 없으므로 첫 단계로 PRD를 요청한다. PRD로 스킬을 추천하고 개발 환경을 맞추기 때문이라고 알린다. 프로젝트 생성·설치 명령을 실행하지 않고, 스킬 구성 질문도 하지 않는다.",
+      "files": [],
+      "expectations": [
+        "지금 보내는 대화는 PRD 요청 하나이고 템플릿·이름·스킬 구성 질문을 섞지 않는다",
+        "PRD로 줄 것(파일 경로나 붙여 넣기, 누가 쓰는지와 핵심 기능)을 안내한다",
+        "PRD가 필요한 이유(PRD로 스킬을 추천하고 개발 환경을 맞춘다)를 알린다",
+        "PRD를 받기 전에 템플릿·두뇌 같은 값을 정하거나 install.sh 명령을 확정하지 않는다"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "prd-skipped-stops",
+      "prompt": "supabase 템플릿으로 ../shop 만들고 두뇌는 superpowers. PRD는 없어, 그냥 만들어줘.",
+      "expected_output": "요청에 PRD가 없으므로 첫 단계로 PRD를 요청하고 만들지 않는다. 무엇을 주면 되는지(누가 쓰는지, 핵심 기능, 또는 파일 경로) 알려 준다. install.sh 명령을 만들지 않는다.",
+      "files": [],
+      "expectations": [
+        "요청에 'PRD는 없어'가 있어도 바로 끝내지 않고 PRD 입력 안내(첫 단계)를 먼저 보낸다",
+        "PRD 없이 만들지 않고 PRD 안내로 멈춘다",
+        "'그냥 만들어줘'를 PRD 대신으로 받지 않고, none 같은 기본값으로 우회해 만들지 않는다",
+        "요청에 있는 템플릿(supabase)·이름(shop)·두뇌(superpowers)는 적어 두고 다시 묻지 않는다"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "screen-only-with-concept",
+      "prompt": "화면만 만들 거야. [living] 폴더로. 같이 사는 사람들이 함께 쓴 생활비를 적고, 월말에 누가 누구에게 얼마를 보내면 되는지 알려 주는 서비스야.",
+      "expected_output": "요청의 서비스 설명을 PRD로 인정하고 neon 템플릿, 이름 living으로 정한다. 두뇌 일곱 개를 추천 표시와 함께 보여 주고, 두뇌·과설계 방지·응답 방식 세 질문을 한 번에 묻는다. 응답 방식 첫 선택지는 i-have-adhd (추천)이다. 두뇌가 정해진 뒤 mattpocock 추가 스킬 14개를 여러 선택 질문으로 묻는다고 적는다.",
+      "files": [],
+      "expectations": [
+        "요청의 서비스 설명을 PRD로 인정한다",
+        "템플릿 neon, 이름 living",
+        "두뇌 일곱 개를 추천 표시와 함께 대화로 보여 준다",
+        "두뇌·과설계 방지·응답 방식 세 질문을 한 AskUserQuestion으로 묻는다",
+        "응답 방식 첫 선택지가 i-have-adhd (추천)이다",
+        "두뇌가 정해진 뒤 matt 추가 스킬 14개를 여러 선택 질문으로 묻는다고 적는다"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "delegate-ops-prd",
+      "prompt": "neon 템플릿으로 ../billing-ops 만들어줘. PRD는 아래와 같아. 두뇌랑 스킬은 알아서 골라줘.\n\n# 정산 운영 콘솔 PRD\n- 사내 재무팀이 매일 쓰는 운영 서비스다. 출시 후 장애 대응과 성능 지표 모니터링이 필수다.\n- 보안 요구: 역할 기반 접근, 감사 로그, 개인정보 마스킹. 분기마다 외부 보안 점검을 받는다.\n- 성능: 정산 목록 p95 300ms 이하, 대시보드 LCP 2.5초 이하.\n- 접근성 WCAG AA, 관측성(구조화 로그, 트레이스) 기준을 팀이 같은 완료 기준으로 쓴다.\n- 금액 계산과 수수료 규칙이 많고 결제 대행사 API와 연동한다.",
+      "expected_output": "질문 없이 추천대로 가되 고른 값과 근거를 알린다. 두뇌는 agent-skills(품질·출시 기준)를 근거와 함께 추천하고, 추가 스킬은 agent-skills와 겹치는 tdd·diagnosing-bugs·code-review를 빼고 research·wizard 등 신호가 맞는 것을 고른다. 과설계 방지는 ponytail, 응답 방식은 i-have-adhd를 설치하며(--optional i-have-adhd) 이 값을 설치 명령에 반영한다.",
+      "files": [],
+      "expectations": [
+        "질문하지 않는다",
+        "두뇌 agent-skills를 근거와 함께 고른다",
+        "--matt에 tdd·diagnosing-bugs·code-review를 넣지 않는다",
+        "--simplicity ponytail",
+        "--optional i-have-adhd를 포함한다",
+        "PRD를 docs/prd.md에 남겨 9번 커밋에 넣는다",
+        "맡긴 두뇌·추가 스킬의 고른 값과 근거를 사용자에게 알린다"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "matt-from-vague-prd",
+      "prompt": "neon으로 ../clinic-booking 만들어줘. matt 스킬도 골라줘. 요구는 이래: 동네 병원 환자가 진료 예약을 하고 병원 직원이 접수와 대기를 관리하는 서비스인데 '접수', '예약', '대기'가 정확히 뭐가 다른지 아직 원장님이랑 정해야 해. 카카오 로그인이랑 토스 결제를 붙이고, 문자 알림은 외부 API를 써. 취소 수수료 규칙이 복잡해.",
+      "expected_output": "두뇌는 mattpocock(용어가 흐리고 기법 위주)을 추천하고, 두뇌·과설계 방지·응답 방식은 맡기지 않았으니 추천 표시를 붙여 묻는다. 맡긴 matt 추가 스킬은 research·wizard·tdd·to-questionnaire 등을 신호와 함께 고르고 --matt에 반영한다. 제외 스킬은 이유를 밝혀 뺀다.",
+      "files": [],
+      "expectations": [
+        "두뇌 추천이 mattpocock이다",
+        "두뇌·과설계 방지·응답 방식을 추천 표시를 붙여 묻는다",
+        "matt 추가 스킬은 묻지 않고 추천대로 --matt에 반영한다(research·wizard 포함)",
+        "설치하지 않는 스킬(grill-me, to-spec 등)을 --matt에 넣지 않는다"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "global-plugins-caveman",
+      "prompt": "neon으로 ../notes 만들고 과설계 방지는 caveman으로. 나 혼자 쓰는 메모 앱이고 메모 작성, 태그, 검색이 핵심이야. 참고로 내 컴퓨터에는 superpowers랑 ponytail 플러그인이 전역으로 켜져 있어.",
+      "expected_output": "서비스 설명을 PRD로 쓰고 caveman은 다시 묻지 않는다. 두뇌와 응답 방식은 추천 표시를 붙여 묻는다. 전역 superpowers·ponytail 플러그인은 설치기가 새 프로젝트의 .claude/settings.local.json으로 끈다고 보고하고 전역 설정은 고치지 않는다. caveman을 켜는 /caveman과 대화 응답에만 쓴다는 점을 안내한다.",
+      "files": [],
+      "expectations": [
+        "서비스 설명을 PRD로 쓴다",
+        "caveman을 다시 묻지 않는다",
+        "두뇌와 응답 방식을 추천 표시를 붙여 한 AskUserQuestion으로 묻고 과설계 방지 질문은 넣지 않는다",
+        "두뇌가 정해진 뒤 matt 추가 스킬을 여러 선택 질문으로 묻는다",
+        "전역 플러그인은 settings.local.json으로 끈다고 하고 전역 설정을 고치지 않는다",
+        "/caveman 안내"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "karpathy-adhd-pasted-prd",
+      "prompt": "neon 템플릿으로 ../memo 만들고, 과설계 방지는 karpathy, adhd도 넣어줘. PRD: 프리랜서 번역가가 의뢰마다 메모와 마감일을 적고, 마감이 가까운 순서로 보고, 의뢰처별로 모아 찾는 앱이야.",
+      "expected_output": "붙여 넣은 PRD로 추천을 만든다. karpathy와 i-have-adhd는 다시 묻지 않고 두뇌만 추천 표시를 붙여 묻는다. 두뇌가 정해지면 matt 추가 스킬을 여러 선택으로 묻는다. 설치 명령은 --simplicity karpathy와 --optional i-have-adhd를 쓴다. karpathy는 diff 검토 스킬이 없어 prokit-reviewer focus가 맡는다는 점과 /i-have-adhd로 켜는 법을 안내한다.",
+      "files": [],
+      "expectations": [
+        "붙여 넣은 글을 PRD로 쓴다",
+        "karpathy·i-have-adhd를 다시 묻지 않는다",
+        "두뇌만 추천 표시를 붙여 묻는다(과설계 방지·응답 방식 질문 없음)",
+        "두뇌가 정해진 뒤 matt 추가 스킬 14개를 여러 선택 질문으로 묻는다",
+        "설치 명령이 --simplicity karpathy(선택지 이름이 아닌 설치 값)와 --optional i-have-adhd를 쓴다",
+        "karpathy의 diff 검토를 prokit-reviewer가 맡는다는 점과 /i-have-adhd 켜는 법을 안내한다"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "pstack-recommended",
+      "prompt": "neon으로 ../live-board 만들어줘. PRD: 팀원 10~50명이 한 화면에서 함께 쓰는 실시간 칸반 보드야. 카드 드래그와 동시 편집이 60fps로 끊기지 않아야 하고, 여러 명이 같은 카드를 고칠 때 충돌 없이 합쳐져야 해. 렌더링 성능 회귀와 재현이 어려운 동기화 버그가 가장 큰 위험이야. 코드는 적게, 실행 증거로 검증하는 방식을 원해.",
+      "expected_output": "Claude Code 세션이므로 pstack을 근거(성능 목표, 재현 어려운 버그, 실행 증거로 검증)와 함께 추천하고 첫 선택지를 `pstack (추천)`으로 둔다. 두뇌 질문과 `다른 두뇌 보기`를 합치면 일곱 개(none, superpowers, agent-skills, pstack, gstack, oh-my, mattpocock)가 모두 나온다.",
+      "files": [],
+      "expectations": [
+        "두뇌 추천이 pstack이고 첫 선택지가 pstack (추천)이다",
+        "근거로 PRD의 성능·버그·검증 문장을 든다",
+        "AskUserQuestion 선택지 기준으로 두뇌 질문과 '다른 두뇌 보기' 질문을 합쳐 일곱 개가 모두 나온다(pstack·mattpocock 포함)"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "mattpocock-brain-picker",
+      "prompt": "neon으로 ../recipe-box 만들어줘. 두뇌는 mattpocock으로 할게. PRD: 집에서 요리하는 사람이 레시피를 저장하고 장보기 목록을 자동으로 만드는 서비스야. 식재료 단위 변환(그램, 컵, 큰술)과 인분 조절 계산이 정확해야 하고, 레시피 사이트 링크를 붙여 넣으면 재료를 뽑아 와야 해.",
+      "expected_output": "두뇌는 mattpocock으로 다시 묻지 않는다. 과설계 방지·응답 방식은 추천 표시를 붙여 묻는다. 이어서 필수 3개를 뺀 matt 추가 스킬 14개를 네 묶음 여러 선택 질문으로 모두 보여 주고, PRD에 맞는 tdd·research 등에 (추천)을 붙여 묶음 맨 앞에 둔다. 두뇌가 mattpocock이라 겹침으로 빼는 스킬이 없다. 설치 명령은 --brain mattpocock과 고른 --matt를 함께 쓴다.",
+      "files": [],
+      "expectations": [
+        "두뇌 mattpocock을 다시 묻지 않는다",
+        "matt 추가 스킬 14개를 네 묶음 여러 선택 질문으로 모두 보여 준다",
+        "추천 스킬에 (추천)을 붙여 묶음 맨 앞에 둔다",
+        "14개 선택지에 '겹침' 표시나 겹침 제외가 없다",
+        "질문 본문에 아무것도 고르지 않는 방법(Other에 없음)을 안내한다",
+        "설치 명령이 --brain mattpocock과 --matt를 함께 쓴다(답 뒤)"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "prd-file-argument",
+      "prompt": "/prokit-init .agents/skills/prokit-init/evals/files/study-planner-prd.md",
+      "expected_output": "인자로 받은 파일을 PRD로 읽고 PRD를 다시 요청하지 않는다. PRD에 DB와 이름이 정해져 있지 않으므로 템플릿·이름·위치를 한 번에 묻고 답을 기다린다.",
+      "files": [
+        ".agents/skills/prokit-init/evals/files/study-planner-prd.md"
+      ],
+      "expectations": [
+        "인자의 파일을 읽어 PRD로 쓰고 PRD를 다시 요청하지 않는다",
+        "템플릿·이름·위치를 한 AskUserQuestion으로 묻는다",
+        "템플릿 질문 전에 두뇌·스킬 구성을 정하거나 install.sh 명령을 확정하지 않는다",
+        "PRD를 docs/prd.md에 옮기고 첫 줄에 원래 경로를 적는다고 계획한다"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "prd-missing-after-ask-ends",
+      "prompt": "/prokit-init .agents/skills/prokit-init/evals/files/없는-prd.md\n\n(이어진 대화) 에이전트가 PRD를 요청하자 사용자가 답했다: \"PRD는 없어. 알아서 기본으로 만들어줘.\"",
+      "expected_output": "첫 응답은 읽지 못한 파일 경로를 알리고 PRD를 요청한다. 사용자 답에도 PRD가 없으므로 PRD 입력이 필수인 이유를 알리고 다시 시작하는 방법을 적은 뒤 init을 끝낸다.",
+      "files": [],
+      "expectations": [
+        "첫 응답에서 읽지 못한 파일 경로를 알리고 PRD를 요청한다(바로 끝내지 않는다)",
+        "사용자 답 뒤에 PRD 입력이 필수이고 PRD로 스킬을 추천하고 개발 환경을 맞추기 때문이라고 알린다",
+        "다시 시작하는 방법(/prokit-init <PRD 파일 경로나 내용>)을 알린다",
+        "답 뒤에 다시 묻지 않고 템플릿·스킬 질문이나 install.sh 명령 없이 끝낸다"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "workfolder-no-prd-restart",
+      "prompt": "(작업 폴더 ~/projects에서 연 세션. 작업 폴더에 git으로 받은 pro-kit이 이미 있다.)\nhttps://github.com/roadkwon-ai/pro-kit 을 이 폴더에 받고, 그 안의 AGENTS.md대로 neon 템플릿으로 memo-app 프로젝트를 pro-kit 옆에 만들어줘.\n\n(이어진 대화) 에이전트가 PRD를 요청하자 사용자가 답했다: \"없어\"",
+      "expected_output": "pro-kit을 pull --ff-only로 최신으로 맞춘 뒤 PRD를 요청한다. 답에 PRD가 없으므로 PRD가 필수인 이유를 알리고 끝낸다. 작업 폴더 세션에는 /prokit-init이 없으므로 처음 요청에 PRD를 붙여 다시 보내라고 안내한다.",
+      "files": [],
+      "expectations": [
+        "PRD를 요청하기 전에 pro-kit을 pull --ff-only로 최신으로 맞춘다",
+        "첫 응답의 사용자 대화는 PRD 요청 하나이고 템플릿·이름·스킬 구성 질문을 섞지 않는다",
+        "답 뒤에 PRD가 필수인 이유(PRD로 스킬을 추천하고 개발 환경을 맞춘다)를 알리고 만들지 않고 끝낸다",
+        "다시 시작하는 방법으로 /prokit-init을 주 안내로 내밀지 않고, 처음 요청에 PRD를 붙여 다시 보내라고 안내한다"
+      ]
+    }
+  ]
+}
