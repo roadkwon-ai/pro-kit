@@ -27,6 +27,14 @@ flowchart TD
 
 기존 프로젝트에 프로킷을 들이는 방법은 따라 하는 과정이 따로 없어요. [기존 프로젝트에 도입하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/adopt.md)에서 유형(초기 프로젝트, 운영 중인 Next.js, 다른 언어에서 전환)을 고르고, 에이전트에게 요청하세요. 도입한 뒤에는 새 세션이 프로젝트를 분석하고 진행 계획을 세워 Task 하나씩 진행해요. 튜토리얼의 장별 프롬프트는 새 프로젝트용이에요.
 
+| 이런 분이라면 | 이 길로 가세요 |
+|---|---|
+| AI 에이전트를 처음 써 봐요. 어디서 무엇을 눌러야 할지 막막해요 | [시작하기](start/README.md)로 준비하고, 해 보기 전에 [처음 한 시간](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/first-hour.md)과 [요청하고 이어 가는 법](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/ask-well.md)을 읽어요 |
+| 화면과 HTML만 만들고 싶어요. DB와 로그인은 필요 없어요 | [컨셉으로 화면 만들기](samples/README.md)로 시작해요. Docker도 필요 없어요 |
+| 로그인과 저장이 되는 진짜 서비스를 만들어 보고 싶어요 | [Nextflix](01-nextflix/README.md)나 [Claudle](02-claudle/README.md)를 장마다 따라 해요. 프로젝트 만들기부터 배포까지 프로킷의 기능을 거의 모두 써 봐요 |
+| 이미 진행하던 프로젝트가 있어요 | 튜토리얼 대신 [기존 프로젝트에 도입하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/adopt.md)로 가요 |
+| 팩을 받아 바로 시작하고 싶어요 | [프리셋 팩으로 시작하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/quickstart-pack.md)를 보세요 |
+
 ## 프로킷이 작업을 맡기는 방식
 
 프로킷은 공식 스킬뿐 아니라 현재 쓸 수 있는 사용자 지정·프로젝트별 전문 스킬에도 작업을 맡겨요. 진행을 관리하는 에이전트는 범위와 실행 증거를 확인하고, 필요한 수정 지시와 최종 검수를 맡아요. 자세한 기준은 [위임과 자원 관리](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/delegation-and-resources.md)에 있어요.
@@ -91,7 +99,7 @@ flowchart LR
 | 쪽 | 내용 |
 |---|---|
 | [처음 보는 용어](reference/glossary.md) | 튜토리얼에 나오는 말 풀이 |
-| [막혔을 때](reference/troubleshooting.md) | 증상별로 붙여 넣을 프롬프트 |
+| [막혔을 때](reference/troubleshooting.md) | 증상별로 붙여 넣을 프롬프트, 에이전트가 멈췄을 때(blocked, 부분 완료, 리뷰 반복, 비밀값 검사 등) 보낼 말 |
 | [에이전트별 차이](reference/claude-code-and-codex.md) | 지원하는 에이전트 <!-- v:agents.count -->4<!-- /v -->개의 요금제, 설치, 조작 차이 |
 | [비용과 키](reference/costs-and-keys.md) | 요금제, 시간과 비용 읽는 법, <!-- v:limit.window -->5시간<!-- /v --> 한도, 이미지 그리기(Codex CLI, OpenAI 키) |
 | [만드는 과정과 걸리는 시간](reference/process-and-time.md) | 시작하는 방법 세 가지, 레퍼런스 사이트 리서치부터 하는 과정, 프리셋을 만들 때 실제로 걸린 시간, 고칠 때마다 더 드는 시간, 시간을 줄이는 법 |

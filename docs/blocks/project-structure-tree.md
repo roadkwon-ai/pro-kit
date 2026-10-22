@@ -20,8 +20,9 @@ my-app/
 ├── release/                    production 배포마다 릴리스 노트 (pnpm release)
 ├── skills.manifest.json, skills-lock.json, .dev-cycle.json, .vercelignore
 ├── .impeccable/                impeccable 기록(critique/*.md 등. 화면을 리뷰하면 생기고 커밋해요)
-├── docs/                       dev-workflow.md, adr/, domain/project.md, plans/(진행 계획),
+├── licenses/                   PROKIT-SCOPE.md, PROKIT-LICENSE.txt: 템플릿이 전한 파일의 MIT 범위 안내   (템플릿)
+├── docs/                       dev-workflow.md, adr/, domain/project.md, plans/(진행 계획), briefs/(화면 설계 브리프),
 │                               prokit/(기존 프로젝트를 들였을 때: intake.md 도입 기록, analysis.md 정밀 분석)
 └── tasks/                      todo.md(남은 할 일·진행 중 대조표), plan.md(진행 계획의 Task 표, 있으면),
-                                archive/(날짜별 완료 기록·README 색인)
+                                archive/(날짜별 완료 기록·README 색인), evidence/(스크린샷·화면 audit 보고서. git이 무시해요)
 ```

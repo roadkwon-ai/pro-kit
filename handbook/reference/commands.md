@@ -2,6 +2,20 @@
 
 > 한눈에: 프로킷이 설치된 프로젝트와 pro-kit 저장소에서 쓰는 명령을 모았어요. 평소에는 에이전트가 알아서 실행하니 외우지 않아도 돼요. 직접 확인하고 싶을 때 찾아보세요.
 
+## 내가 직접 칠 일은 거의 없어요
+
+평소에는 말로 요청하면 에이전트가 명령을 실행해요. 사용자가 직접 쳐 볼 만한 것은 이 정도예요. 모든 명령은 프로젝트 폴더의 터미널에서 실행해요.
+
+| 명령 | 언제 | 무엇을 알 수 있나요 |
+|---|---|---|
+| `pnpm dev-cycle status` | 지금 어디까지 했는지 궁금할 때 | 열린 라운드, 채운 칸 수, 다음 할 일 |
+| `pnpm skills:check` | 스킬이 제대로 설치됐는지 볼 때 | 빠진 스킬이나 플러그인 |
+| `pnpm dev:web` | 화면을 내 브라우저로 볼 때 | 개발 서버 주소(보통 `http://localhost:3001`) |
+| `pnpm export:html` | 화면만 프로젝트를 HTML 파일로 내보낼 때 | `html/` 폴더(보통은 "HTML로 내보내줘"라고 말해요) |
+| `.agents/skills/impeccable/scripts/impeccable hooks on` | 새 프로젝트에서 처음 한 번, 화면을 고칠 때마다 디자인 검사를 켤 때 | 훅이 켜졌다는 출력 |
+
+아래 목록은 필요할 때 찾아보는 전체 목록이에요. 용어는 [처음 보는 용어](../../tutorials/reference/glossary.md#도구)에 있어요.
+
 ## 설치된 프로젝트
 
 ### dev-cycle
@@ -59,6 +73,21 @@
 | `pnpm dev-cycle delegation accept` | 명시한 영향 검사와 새 Codex 읽기 전용 리뷰를 직접 실행해 로컬 기술 인수를 검증해요. 사용자 확인과 라운드 close는 별도예요 |
 
 새 프로젝트에서는 `dev`, `dev:web`, `build`가 자원 보호 래퍼를 거쳐 실행돼요. 원래 명령은 내부 `prokit:original:<이름>`으로 보관해요. 이미 설치된 프로젝트는 설치기가 원래 명령을 바꾸지 않으므로, 케이스 H 라운드에서 원본과 증거를 확인한 뒤에만 전환해요. 자원 경계와 정리 조건은 [위임과 자원 관리](../concepts/delegation-and-resources.md)에 있어요.
+
+### package.json의 짧은 이름
+
+설치기가 `package.json`에 더하는 `scripts` 이름이에요. 아래는 그 이름이 부르는 실제 명령이에요.
+
+| 이름(앞에 `pnpm`을 붙여 실행해요) | 부르는 명령 |
+|---|---|
+| `dev-cycle` | `node scripts/dev-cycle.mjs` |
+| `resource:check`, `resource:run`, `resource:clean` | `node scripts/resource-guard.mjs`에 `check`, `run`, `clean` |
+| `delegation:capture`, `delegation:validate` | `node scripts/delegation.mjs`에 `capture`, `validate` |
+| `agents:sync`, `agents:check` | `node scripts/sync-agents.mjs`, 같은 명령에 `--check` |
+| `skills:setup`, `skills:check`, `skills:update` | `node scripts/skills-setup.mjs`, `--check`, `--update` |
+| `vercel:deploy`, `export:html`, `release` | `node scripts/vercel-deploy.mjs`, `export-html.mjs`, `release.mjs` |
+
+`pnpm vercel:deploy`의 옵션은 `--check`(배포하지 않고 준비 상태와 새 마이그레이션만 보기) 하나예요. 하네스만 설치한 `--adopt` 프로젝트에는 `vercel:deploy`, `export:html`, `release`가 없어요.
 
 ### 화면, 배포, 릴리스
 

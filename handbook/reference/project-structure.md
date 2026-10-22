@@ -28,14 +28,17 @@ my-app/
 ├── release/                    production 배포마다 릴리스 노트 (pnpm release)
 ├── skills.manifest.json, skills-lock.json, .dev-cycle.json, .vercelignore
 ├── .impeccable/                impeccable 기록(critique/*.md 등. 화면을 리뷰하면 생기고 커밋해요)
-├── docs/                       dev-workflow.md, adr/, domain/project.md, plans/(진행 계획),
+├── licenses/                   PROKIT-SCOPE.md, PROKIT-LICENSE.txt: 템플릿이 전한 파일의 MIT 범위 안내   (템플릿)
+├── docs/                       dev-workflow.md, adr/, domain/project.md, plans/(진행 계획), briefs/(화면 설계 브리프),
 │                               prokit/(기존 프로젝트를 들였을 때: intake.md 도입 기록, analysis.md 정밀 분석)
 └── tasks/                      todo.md(남은 할 일·진행 중 대조표), plan.md(진행 계획의 Task 표, 있으면),
-                                archive/(날짜별 완료 기록·README 색인)
+                                archive/(날짜별 완료 기록·README 색인), evidence/(스크린샷·화면 audit 보고서. git이 무시해요)
 ```
 <!-- /b -->
 
 ## 자세히
+
+어떤 파일을 직접 고쳐도 되는지는 [고쳐도 되는 파일](what-to-edit.md)에, `.dev-cycle.json`의 키는 [`.dev-cycle.json` 설정 읽기](dev-cycle-config.md)에 있어요. 전문 용어는 [처음 보는 용어](../../tutorials/reference/glossary.md#도구)를 보세요.
 
 ### 에이전트가 읽고 쓰는 파일
 
@@ -54,6 +57,7 @@ my-app/
 | `skills.manifest.json`, `skills-lock.json` | 설치할 스킬 목록과 설치한 판 | [설치와 업데이트 구조](../skills/install-and-update.md) |
 | `.claude/agents/`, `.codex/agents/`, `.agents/agents/` | 구현 수행자, 전문 리뷰어, 최종 리뷰어, 정밀 분석(`prokit-analyzer`)의 정본과 생성물(Codex용, Antigravity용) | [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
 | `scripts/delegation.mjs`, `scripts/resource-guard.mjs`, `.prokit/` | 위임 패킷의 실제 변경 검증과 자원 보호. `.prokit/` 실행 상태는 Git과 Biome에서 제외해요 | [위임과 자원 관리](../concepts/delegation-and-resources.md) |
+| `licenses/` | `PROKIT-SCOPE.md`는 템플릿이 전달한 파일(스킬, 스크립트, 문서)과 외부 구성 요소를 구분하는 안내, `PROKIT-LICENSE.txt`는 프로킷 자체 코드·스킬·문서의 MIT 사본이에요. 내 앱 전체의 라이선스를 정하지 않고, 내가 쓴 코드의 권리를 프로킷에 넘기지도 않아요. 지우지 않고 그대로 둬요 | [프로킷의 사용 조건](../../README.md) |
 | `.vercelignore` | 배포에서 비밀값 파일을 빼요 | [비밀값 지키기](../deploy/secrets.md) |
 | `release/` | 릴리스 노트 | [버전과 릴리스](../deploy/release.md) |
 
@@ -81,3 +85,4 @@ Codex 네이티브 Ponytail 플러그인은 `--with-global`에서만 사용자 �
 - [앱 구조](../templates/app-structure.md)
 - [템플릿이 더하는 것](../templates/what-it-adds.md)
 - [명령 모음](commands.md)
+- [고쳐도 되는 파일](what-to-edit.md)

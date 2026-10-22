@@ -2,6 +2,8 @@
 
 > 한눈에: 서비스 프로젝트는 내 컴퓨터의 Vercel CLI로 확인용(develop)과 운영(production)에 배포해요. 배포 전에 검사를 통과해야 하고, 새 DB 변경이 있으면 DB에 먼저 적용해요. 문제가 생기면 이전 배포로 되돌리는 명령을 알려 줘요.
 
+처음 올린다면 [처음 배포하기](first-deploy.md)를 먼저 보세요. 이 쪽의 낯선 말(Preview, alias, pooler, expand → contract)은 맨 아래 "용어 풀이"에 있어요.
+
 ## 두 가지 배포
 
 | 대상 | Vercel 환경 | DB | 명령 |
@@ -60,6 +62,16 @@ Better Auth는 `BETTER_AUTH_URL`만 믿어서 배포마다 생기는 고유 URL�
 ### 쓰지 않는 도구
 
 로그인 없이 `.env`까지 외부에 올리는 `vercel-deploy-claimable`, 커밋과 push까지 하는 gstack(두뇌)의 `ship`과 `land-and-deploy`, Vercel 플러그인의 `/vercel:deploy`는 이 프로젝트에서 쓰지 않아요.
+
+### 용어 풀이
+
+| 말 | 뜻 |
+|---|---|
+| Preview | Vercel이 production이 아닌 배포에 붙이는 이름이에요. develop 배포가 여기에 해당해요 |
+| 고정 주소(alias) | 배포마다 바뀌는 임시 주소 대신 늘 같은 이름으로 열리는 주소예요 |
+| 풀러(pooler) 주소 | 서버리스 앱이 DB에 많이 연결해도 견디게 중간에서 연결을 모아 주는 DB 주소예요. 배포 환경의 `DATABASE_URL`에는 이 주소를 써요 |
+| expand → contract | 데이터를 잃을 수 있는 DB 변경(컬럼 이름 바꾸기, 지우기)을 두 번에 나눠 하는 방법이에요. 먼저 새 컬럼을 더해(expand) 옛 코드와 새 코드가 모두 돌게 하고, 새 코드만 남은 뒤 옛 컬럼을 지워요(contract) |
+| rollback, promote | 이전 배포로 되돌리기(rollback), 어느 배포를 운영 주소에 올리기(promote)예요 |
 
 ### 화면만 프로젝트는 다른 길
 

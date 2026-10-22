@@ -47,8 +47,8 @@
 | `node.min` | 22.20 | 준비물 Node 최소 판(설치기가 이보다 낮으면 멈춘다) | doc-values.json node.min | `doc-values.json`을 고친다 | 20 |
 | `node.recommended` | 24 | 권장 Node 판(지금 LTS. 이보다 낮으면 설치기가 경고한다) | doc-values.json node.recommended | `doc-values.json`을 고친다 | 15 |
 | `node.eol` | 2026-04-30 | Node 20 지원 종료일 | doc-values.json node.eol | `doc-values.json`을 고친다 | 5 |
-| `vercel.node` | 24.x | Vercel 프로젝트 Settings의 Node.js Version으로 고르는 판 | doc-values.json vercel.node | `doc-values.json`을 고친다 | 9 |
-| `vercel.node20Stop` | 2026-10-01 | Vercel이 Node.js 20.x 새 배포를 막는 날 | doc-values.json vercel.node20Stop | `doc-values.json`을 고친다 | 4 |
+| `vercel.node` | 24.x | Vercel 프로젝트 Settings의 Node.js Version으로 고르는 판 | doc-values.json vercel.node | `doc-values.json`을 고친다 | 10 |
+| `vercel.node20Stop` | 2026-10-01 | Vercel이 Node.js 20.x 새 배포를 막는 날 | doc-values.json vercel.node20Stop | `doc-values.json`을 고친다 | 5 |
 | `policy.agentBrowser.da` | agent-browser CLI가 없거나 npm 최신판보다 낮으면 전역에 최신판을 설치한다 | agent-browser CLI 설치 정책 문장(~다체. 에이전트·템플릿 README용). 기본 실행도 이 정책을 따른다 | doc-values.json policy.agentBrowser.da | `doc-values.json`을 고친다 | 11 |
 | `policy.agentBrowser.yo` | agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요 | agent-browser CLI 설치 정책 문장(~요체. handbook용) | doc-values.json policy.agentBrowser.yo | `doc-values.json`을 고친다 | 5 |
 | `policy.agentBrowser.cell` | 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치 | 같은 정책의 표 칸 꼴(주어와 끝맺음 없이 "…설치"). 행 이름이 agent-browser CLI인 칸, "agent-browser CLI는" 뒤, "agent-browser CLI(" 괄호 안에 쓴다 | doc-values.json policy.agentBrowser.cell | `doc-values.json`을 고친다 | 4 |
@@ -64,7 +64,7 @@
 | `policy.resource.fullTimeout` | 5분 | 전체 inventory 점검 주기 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `policy.resource.fullWorkerTimeout` | 30초 | 전체 inventory 점검이 부르는 별도 bounded worker 측정 예산 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 3 |
 | `meta.presetModel` | Opus 5.5 | 프리셋을 만든 모델 | doc-values.json meta.presetModel | `doc-values.json`을 고친다 | 4 |
-| `gloss.presetPack` | 만들 서비스의 화면 구성, 디자인, 예시 데이터, 그림을 묶어 둔 폴더 | 용어 "프리셋 팩"의 짧은 풀이(본문에서 용어 링크 뒤 괄호에 쓴다). 용어집 tutorials/reference/glossary.md도 이 값을 쓴다 | doc-values.json gloss.presetPack | `doc-values.json`을 고친다 | 1 |
+| `gloss.presetPack` | 만들 서비스의 화면 구성, 디자인, 예시 데이터, 그림을 묶어 둔 폴더 | 용어 "프리셋 팩"의 짧은 풀이(본문에서 용어 링크 뒤 괄호에 쓴다). 용어집 tutorials/reference/glossary.md도 이 값을 쓴다 | doc-values.json gloss.presetPack | `doc-values.json`을 고친다 | 3 |
 | `gloss.clonePack` | 만들 서비스의 화면 구성, 기능 규칙, 디자인 노트, 예시 데이터, 그림을 묶어 둔 폴더 | 클론 튜토리얼(Nextflix, Claudle) 팩의 풀이(features.md·design-notes.md가 든다). 화면 프리셋 팩 9개에는 없으니 용어집은 gloss.presetPack을 쓴다 | doc-values.json gloss.clonePack | `doc-values.json`을 고친다 | 19 |
 | `gloss.round` | 기능 하나를 만들거나 요청한 것을 고치고 확인까지 마치는 작업 묶음 | 용어 "라운드"의 짧은 풀이(본문에서 용어 링크 뒤 괄호에 쓴다). 용어집 tutorials/reference/glossary.md도 이 값을 쓴다 | doc-values.json gloss.round | `doc-values.json`을 고친다 | 24 |
 | `gloss.migration` | DB의 표를 만들거나 바꾸는 기록 | 용어 "마이그레이션"의 짧은 풀이(본문에서 용어 링크 뒤 괄호에 쓴다). 용어집 tutorials/reference/glossary.md도 이 값을 쓴다 | doc-values.json gloss.migration | `doc-values.json`을 고친다 | 17 |
@@ -121,7 +121,7 @@
 | `cost.unit.second.time` | 6\~10분 | 잰 단위값: 두 번째 화면(따로 만들 때)의 시간. 물결은 \~로 바꾼 값 | doc-values.json cost.unit.second.time | `doc-values.json`을 고친다 | 1 |
 | `cost.unit.second.usd` | 2.74\~3.05 | 잰 단위값: 두 번째 화면(따로 만들 때)의 API 요금 환산(달러). 물결은 \~로 바꾼 값 | doc-values.json cost.unit.second.usd | `doc-values.json`을 고친다 | 1 |
 | `supabaseCli.min` | 2.117 | supabase 템플릿의 Supabase CLI 최소 판 | doc-values.json supabaseCli.min | `doc-values.json`을 고친다 | 6 |
-| `limit.window` | 5시간 | 구독 요금제의 사용량 한도 시간("5시간 한도"). 링크 주소의 앵커(#5시간-한도에-걸리면)에는 표시를 달 수 없어 링크 검사가 지킨다 | doc-values.json limits.window | `doc-values.json`을 고친다 | 37 |
+| `limit.window` | 5시간 | 구독 요금제의 사용량 한도 시간("5시간 한도"). 링크 주소의 앵커(#5시간-한도에-걸리면)에는 표시를 달 수 없어 링크 검사가 지킨다 | doc-values.json limits.window | `doc-values.json`을 고친다 | 39 |
 | `limit.waitLong` | 4시간 | 한도에 걸렸을 때 길면 기다리는 시간(처음 쓰기 시작하고 한 시간쯤 만에 걸린 경우의 어림) | 계산: doc-values.json limits.window − 1시간 | `doc-values.json`을 고친다 | 1 |
 | `limit.pro5h.tokens` | 170만 | Pro 5시간 한도 어림(토큰). 한도 횟수 계산에 쓴다 | doc-values.json limits.pro5h.tokens | `doc-values.json`을 고친다 | 1 |
 | `limit.pro5h.usd` | 30 | 같은 한도의 API 요금 환산(달러) | doc-values.json limits.pro5h.usd | `doc-values.json`을 고친다 | 1 |
@@ -131,31 +131,31 @@
 | `agent.<이름>.open` | 4개(`--list`) | 에이전트를 요청과 함께 여는 명령 | doc-values.json agents.<이름>.open | `doc-values.json`을 고친다 | 5 |
 | `agent.<이름>.start` | 4개(`--list`) | 에이전트를 요청 없이 여는 명령 | doc-values.json agents.<이름>.start | `doc-values.json`을 고친다 | 8 |
 | `agent.<이름>.openCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 표 칸처럼 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.open | `doc-values.json`을 고친다 | 6 |
-| `agent.<이름>.startCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 표 칸처럼 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.start | `doc-values.json`을 고친다 | 4 |
+| `agent.<이름>.startCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 표 칸처럼 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.start | `doc-values.json`을 고친다 | 6 |
 | `agent.<이름>.yolo` | 4개(`--list`) | 에이전트를 묻지 않고 진행하게 여는 명령 | doc-values.json agents.<이름>.yolo | `doc-values.json`을 고친다 | 29 |
-| `agent.<이름>.yoloCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.yolo | `doc-values.json`을 고친다 | 22 |
+| `agent.<이름>.yoloCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.yolo | `doc-values.json`을 고친다 | 24 |
 | `agent.<이름>.install` | 2개(`--list`) | 에이전트 설치 명령 | doc-values.json agents.<이름>.install | `doc-values.json`을 고친다 | 3 |
 | `agent.<이름>.installCell` | 2개(`--list`) | 같은 명령의 표 칸 안 코드 꼴(백틱 포함, 파이프는 \\|) | doc-values.json agents.<이름>.install | `doc-values.json`을 고친다 | 2 |
 | `agents.count` | 4 | 지원 에이전트 수 | doc-values.json agents 수 | `doc-values.json`을 고친다 | 3 |
 | `agents.count.ko` | 네 | 지원 에이전트 수의 한글 수 관형사 | doc-values.json agents 수 | `doc-values.json`을 고친다 | 1 |
-| `agents.list` | Claude Code, Codex, Antigravity, Grok Build | 지원 에이전트 목록 | doc-values.json agents 이름 | `doc-values.json`을 고친다 | 14 |
+| `agents.list` | Claude Code, Codex, Antigravity, Grok Build | 지원 에이전트 목록 | doc-values.json agents 이름 | `doc-values.json`을 고친다 | 15 |
 | `agents.imageTools` | Codex, Antigravity, Grok Build | 자체 이미지 도구가 있어 준비 없이 그리는 에이전트 목록 | doc-values.json agents imageTool | `doc-values.json`을 고친다 | 14 |
 | `catalogs.<이름>.name` | 3개(`--list`) | 디자인 카탈로그 이름 | doc-values.json catalogs.<이름>.name | `doc-values.json`을 고친다 | 11 |
 | `catalogs.<이름>.url` | 3개(`--list`) | 디자인 카탈로그 이름 링크의 주소(주소 안에는 표시를 달 수 없어 테스트가 같은지 본다) | doc-values.json catalogs.<이름>.url | `doc-values.json`을 고친다 | 0 |
 | `catalogs.<이름>.count` | 3개(`--list`) | 카탈로그가 싣는 스타일 수(개). 센 날은 date | doc-values.json catalogs.<이름>.count | `doc-values.json`을 고친다 | 6 |
 | `catalogs.<이름>.date` | 3개(`--list`) | 스타일 수를 센 날 | doc-values.json catalogs.<이름>.date | `doc-values.json`을 고친다 | 3 |
-| `port.web` | 3001 | 템플릿 웹 개발 서버 포트(pnpm dev) | doc-values.json ports.web | `doc-values.json`을 고친다 | 4 |
+| `port.web` | 3001 | 템플릿 웹 개발 서버 포트(pnpm dev) | doc-values.json ports.web | `doc-values.json`을 고친다 | 5 |
 | `port.neonDb` | 5432 | neon 템플릿 로컬 DB(compose Postgres) 포트 | doc-values.json ports.neonDb | `doc-values.json`을 고친다 | 6 |
 | `port.supabaseDb` | 54322 | supabase 템플릿 로컬 DB(Supabase 스택 Postgres) 포트 | doc-values.json ports.supabaseDb | `doc-values.json`을 고친다 | 1 |
 | `port.supabasePooler` | 6543 | supabase 템플릿 원격 Supabase의 transaction pooler 포트(배포한 앱의 DATABASE_URL). 설치본 prokit-db 스킬의 같은 값은 테스트가 비교한다 | doc-values.json ports.supabasePooler | `doc-values.json`을 고친다 | 4 |
-| `port.web.urlCode` | `http://localhost:3001` | 웹 개발 서버 주소의 코드 꼴(백틱 포함) | doc-values.json ports.web | `doc-values.json`을 고친다 | 8 |
+| `port.web.urlCode` | `http://localhost:3001` | 웹 개발 서버 주소의 코드 꼴(백틱 포함) | doc-values.json ports.web | `doc-values.json`을 고친다 | 9 |
 | `port.neonDb.addrCode` | `localhost:5432` | neon 로컬 DB 주소의 코드 꼴(백틱 포함) | doc-values.json ports.neonDb | `doc-values.json`을 고친다 | 2 |
 | `port.supabaseDb.addrCode` | `127.0.0.1:54322` | supabase 로컬 DB 주소의 코드 꼴(백틱 포함) | doc-values.json ports.supabaseDb | `doc-values.json`을 고친다 | 1 |
-| `preset.<이름>.title` | 13개(`--list`) | 프리셋 이름 | doc-values.json presets.<이름>.title | `doc-values.json`을 고친다 | 115 |
+| `preset.<이름>.title` | 13개(`--list`) | 프리셋 이름 | doc-values.json presets.<이름>.title | `doc-values.json`을 고친다 | 128 |
 | `preset.<이름>.kind` | 13개(`--list`) | 분류(landing 랜딩페이지, app 앱 화면, clone 클론 튜토리얼) | doc-values.json presets.<이름>.kind | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.kindLabel` | 13개(`--list`) | 분류 이름(랜딩페이지, 앱 화면, 클론 튜토리얼) | 계산: doc-values.json presets.<이름>.kind | `doc-values.json`을 고친다 | 26 |
-| `preset.<이름>.field` | 13개(`--list`) | 짧은 분야(README 대표 예시, 프로킷 사이트 카드) | doc-values.json presets.<이름>.field | `doc-values.json`을 고친다 | 4 |
-| `preset.<이름>.summary` | 11개(`--list`) | 컨셉 한 줄(tutorials/samples/README.md 표) | doc-values.json presets.<이름>.summary | `doc-values.json`을 고친다 | 11 |
+| `preset.<이름>.kindLabel` | 13개(`--list`) | 분류 이름(랜딩페이지, 앱 화면, 클론 튜토리얼) | 계산: doc-values.json presets.<이름>.kind | `doc-values.json`을 고친다 | 39 |
+| `preset.<이름>.field` | 13개(`--list`) | 짧은 분야(README 대표 예시, 프로킷 사이트 카드) | doc-values.json presets.<이름>.field | `doc-values.json`을 고친다 | 6 |
+| `preset.<이름>.summary` | 11개(`--list`) | 컨셉 한 줄(tutorials/samples/README.md 표) | doc-values.json presets.<이름>.summary | `doc-values.json`을 고친다 | 22 |
 | `preset.<이름>.difficulty` | 11개(`--list`) | 실제 서비스로 바꾸는 난이도(tutorials/samples/README.md 표) | doc-values.json presets.<이름>.difficulty | `doc-values.json`을 고친다 | 11 |
 | `preset.<이름>.pages` | 12개(`--list`) | 페이지 수 | doc-values.json presets.<이름>.pages | `doc-values.json`을 고친다 | 85 |
 | `preset.<이름>.pages.rest` | 12개(`--list`) | 첫 화면을 뺀 나머지 페이지 수 | 계산: doc-values.json presets.<이름>.pages − 1 | `doc-values.json`을 고친다 | 8 |
@@ -386,9 +386,9 @@
 | `devCycle.cases.count` | 7 | dev-cycle 케이스 수 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.count.ko` | 일곱 | dev-cycle 케이스 수의 한글 수 관형사 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.list` | A, B, C, D, E, F, H | dev-cycle 케이스 목록 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `devCycle.cases.range` | A\~F·H | dev-cycle 케이스를 이어지는 구간으로 묶은 글(A\~F·H) | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
-| `devCycle.ui.auditMin` | 16 | 화면 작업 audit 점수 하한(20점 만점) | templates/*/files/.dev-cycle.json ui.auditMin | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
-| `devCycle.ui.a11yMin` | 3 | 화면 작업 접근성 점수 하한(4점 만점) | templates/*/files/.dev-cycle.json ui.a11yMin | 정본 파일이 바뀌면 따라 바뀐다 | 3 |
+| `devCycle.cases.range` | A\~F·H | dev-cycle 케이스를 이어지는 구간으로 묶은 글(A\~F·H) | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 19 |
+| `devCycle.ui.auditMin` | 16 | 화면 작업 audit 점수 하한(20점 만점) | templates/*/files/.dev-cycle.json ui.auditMin | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
+| `devCycle.ui.a11yMin` | 3 | 화면 작업 접근성 점수 하한(4점 만점) | templates/*/files/.dev-cycle.json ui.a11yMin | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
 | `skills.official.neon` | 28 | neon 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치) | templates/prokit-next-neon/files/skills.manifest.json | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
 | `skills.official.supabase` | 25 | supabase 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치) | templates/prokit-next-supabase/files/skills.manifest.json | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
 | `skills.codex.superpowers` | 15 | superpowers를 두뇌로 고르면 Codex에 설치하는 스킬 수 | templates/*/files/skills.manifest.json brains.superpowers | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
@@ -447,7 +447,7 @@
 | `eval.designMd.secondScreen.without` | 97 | 브랜드 이름과 대표 색만 줬을 때 두 번째 화면이 첫 화면 색을 따른 비율(%는 값 밖) | 계산: templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `eval.designMd.palette.offTarget` | 29 | 브랜드 이름과 대표 색만 줬을 때 화면에 쓴 색 가운데 목표 밖 색의 비율(%는 값 밖) | 계산: 100 − templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표의 B 팔레트 일치율(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `handbook.sections.count` | 7 | 문서(handbook) 묶음 수 | handbook/README.md 묶음 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `handbook.pages.count` | 39 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `handbook.pages.count` | 46 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `b:agent-order-line` | (글 묶음) | 새 프로젝트를 만들 때 "에이전트는 이런 순서로 일해요" 도입 문장(옵션 없이 열었을 때 허락을 묻는다고 알린다). clone-create-prompt 묶음이 품는다 | docs/blocks/agent-order-line.md | 묶음 원본을 고친다 | 3 |
 | `b:clone-auth-feature-note` | (글 묶음) | 클론 튜토리얼 5장의 첫 NOTE(5장부터 기능을 하나씩 만든다) | docs/blocks/clone-auth-feature-note.md | 묶음 원본을 고친다 | 2 |
 | `b:clone-auth-open` | (글 묶음) | 클론 튜토리얼 5장의 1단계 첫 문단(4장 대화창을 그대로 써도 된다) | docs/blocks/clone-auth-open.md | 묶음 원본을 고친다 | 2 |

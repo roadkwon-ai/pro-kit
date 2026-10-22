@@ -136,7 +136,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 ### 4. 답하며 4장까지 가기
 
 <!-- b:clone-readme-qa-intro auth=05-auth-profiles.md -->
-새 폴더에서 열린 에이전트는 프리셋 팩을 읽고, 화면을 만들기 전에 몇 가지를 물어봐요. [2장](02-plan.md)~[4장](04-screens.md)의 "에이전트가 물어보면"과 같은 질문이고, 스킬 업데이트 질문은 [5장](05-auth-profiles.md#에이전트가-물어보면) 표에 있어요. 선택지 창이 뜨면 직접 입력하는 칸을 고르고 아래 답을 붙여 넣으세요([질문에 답하는 법](../reference/claude-code-and-codex.md#질문에-답하는-법)).
+새 폴더에서 열린 에이전트는 프리셋 팩을 읽고, 화면을 만들기 전에 몇 가지를 물어봐요. [2장](02-plan.md)\~[4장](04-screens.md)의 "에이전트가 물어보면"과 같은 질문이고, 스킬 업데이트 질문은 [5장](05-auth-profiles.md#에이전트가-물어보면) 표에 있어요. 선택지 창이 뜨면 직접 입력하는 칸을 고르고 아래 답을 붙여 넣으세요([질문에 답하는 법](../reference/claude-code-and-codex.md#질문에-답하는-법)).
 <!-- /b -->
 
 | 에이전트가 묻는 것 | 이렇게 답해요 |
@@ -187,7 +187,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 ## 장별로 자세히
 
 <!-- b:clone-readme-chapters-intro -->
-가장 쉬운 방법을 장으로 나눴어요. **1~4장은 가장 쉬운 방법이 한 번에 하는 일이라 그 방법으로 4장까지 왔다면 5장부터 하면 돼요.** 1장은 pro-kit을 직접 받아 둔 상태에서 시작해요([시작하기](../start/README.md#직접-준비하기-선택)의 "직접 준비하기").
+가장 쉬운 방법을 장으로 나눴어요. **1\~4장은 가장 쉬운 방법이 한 번에 하는 일이라 그 방법으로 4장까지 왔다면 5장부터 하면 돼요.** 1장은 pro-kit을 직접 받아 둔 상태에서 시작해요([시작하기](../start/README.md#직접-준비하기-선택)의 "직접 준비하기").
 <!-- /b -->
 
 | 장 | 할 일 | 결과 |
@@ -204,6 +204,24 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 | [10. 재생과 이어 보기](10-watch.md) | 본 위치와 시청 기록을 프로필마다 저장해요 | 이어 보기 줄과 진행 막대, 시청 기록 숨기기, 기록으로 매긴 TOP 10 |
 | [11. 검사와 다듬기](11-check.md) | 지금까지 만든 것을 검사하고 디자인 리뷰로 다듬어요 | 검사를 통과한 서비스 |
 | [12. 배포(선택)](12-deploy.md) | 인터넷에 올려요. GitHub, Vercel, Neon 계정이 필요해요 | 누구나 들어올 수 있는 주소 |
+
+## 이 과정에서 배우는 프로킷 기능
+
+장마다 프로킷의 다른 기능을 써요. 이 표는 "이 장에서 무엇을 하면 프로킷의 어떤 부분이 움직이는지"를 보여 줘요. 따라 하면서 용어가 낯설면 [처음 보는 용어](../reference/glossary.md)를 찾아보세요.
+
+| 장 | 쓰는 프로킷 기능 | 이 장의 라운드에서 일어나는 일 | 더 알아보기 |
+|---|---|---|---|
+| 1 | PRD, 스킬 구성 고르기, 로컬 DB | 프리셋 팩을 PRD로 읽고 두뇌와 과설계 방지 스킬을 추천해 물어요. 프로젝트를 만들어 로컬 DB와 첫 마이그레이션까지 해요 | [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md), [두뇌와 선택 스킬](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/skills/brains.md) |
+| 2 | 기획 문서(`PRODUCT.md`, `GLOSSARY.md`, 사이트맵) | 코드를 바꾸지 않고 문서만 채워요. 사용자가 확인하는 칸이 있어요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
+| 3 | `DESIGN.md`, 구성도 고르기 | 팩의 디자인 메모대로 디자인 규칙 파일을 만들고, 홈 화면 구성을 골라요 | [DESIGN.md](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/design-md.md) |
+| 4 | 화면 라운드(케이스 B), 화면 리뷰 기록 | 재사용·설정 점검 행(`[design]`)과 구현, 데스크톱·휴대폰 스크린샷, `critique`와 `audit` 점수 기록, 코드 리뷰를 거쳐 내가 확인해요 | [케이스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/cases.md), [증거와 audit, 사용자 확인](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/audit-and-confirm.md) |
+| 5 | 인증, DB 마이그레이션, 두 계정 격리 테스트, 보안 리뷰 | 새 프로젝트의 첫 서버 라운드라서 테스트 도구(vitest) 설치 행이 맨 앞에 붙어요. 두 계정으로 서로의 프로필을 건드릴 수 없는지 테스트하고, 로그인 파일을 고치니 보안 리뷰가 저절로 붙어요 | [케이스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/cases.md), [위임 에이전트와 리뷰 에이전트](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/agent-roles.md) |
+| 6 | 마이그레이션과 시드 데이터 | 작품 표를 만드는 마이그레이션과 다시 돌려도 겹치지 않는 시드 스크립트를 만들어요. 화면은 그대로이고 값만 DB에서 와요 | [프로킷 스킬](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/skills/prokit-skills.md) |
+| 7\~10 | 기능 라운드(케이스 F): 스펙, 계획 리뷰, 구현, 사용자 흐름 QA | 기능마다 스펙을 보여 주고 확인받은 뒤 만들어요. 프로필 격리 테스트와 어린이 프로필 등급 상한을 매번 다시 검사해요 | [개발 사이클](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/dev-cycle.md) |
+| 11 | 전체 검증, 디자인 리뷰 | 타입, 린트, 빌드, 테스트와 모든 페이지의 화면 검사, 점수와 P0\~P3 문제 목록 | [증거와 audit, 사용자 확인](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/audit-and-confirm.md) |
+| 12 | 배포와 릴리스 | develop과 운영을 나눠 올려요. 릴리스 노트와 운영 DB 마이그레이션은 내 동의를 받고, 되돌리는 명령도 보고돼요 | [처음 배포하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/first-deploy.md), [릴리스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/release.md), [Vercel](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/vercel.md) |
+
+장마다 라운드(작업 묶음 하나)가 열리고 닫혀요. 라운드는 스펙이나 브리프, 구현, 테스트, 리뷰, 내 확인 순서로 흐르고, 에이전트가 단계마다 증거를 대조표에 적어요. 한 라운드가 실제로 어떻게 흘러가는지는 [라운드 한 번 따라가 보기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/round-example.md)에서 예시로 볼 수 있어요.
 
 ## 시간과 비용
 

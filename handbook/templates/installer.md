@@ -2,6 +2,10 @@
 
 > 한눈에: 템플릿은 명령 하나로 새 프로젝트에 설치돼요. 이미 진행하던 프로젝트에도 유형 옵션으로 설치할 수 있어요. 이미 있는 파일은 건드리지 않고, 여러 번 실행해도 결과가 같아요. 설치한 뒤에는 DB 준비, 코드 정리와 저장(커밋), 새 대화 열기 순서로 마무리해요.
 
+## 직접 실행할 일은 거의 없어요
+
+새 프로젝트를 만들거나 기존 프로젝트에 들일 때는 에이전트(`prokit-init` 스킬)가 이 설치기를 알아서 실행하고 옵션도 골라요. 이 쪽은 그 명령이 무엇을 하는지 알고 싶거나, 설치기를 직접 실행해야 할 때(팀원이 클론한 뒤, 에러가 났을 때, 옵션을 바꿔 다시 실행할 때) 찾아보는 참고 쪽이에요. 처음이라면 [빠른 시작: 서비스 만들기](../start/quickstart-service.md)부터 따라 하세요. 설치기는 이미 있는 파일을 건드리지 않고 여러 번 실행해도 결과가 같아서, 실행해 보고 틀리면 다시 실행해도 안전해요.
+
 ## 실행하기
 
 ```bash
@@ -50,6 +54,18 @@ flowchart TD
   A --> R
   R --> K["--skip-skills가 아니면 skills-setup으로 스킬·플러그인 설치"]
 ```
+
+### 유형별 설치 범위 한눈에
+
+| 유형(설치 옵션) | 설치하는 것 | 설치하지 않거나 바꾸는 것 |
+|---|---|---|
+| 새 프로젝트(`new` 또는 옵션 없음) | 전체 템플릿: 스킬 10개, 에이전트, dev-cycle과 스크립트 전부(배포, 릴리스, HTML 내보내기 포함), 문서 골격, `licenses/`, `tasks/`, 제작 표시 컴포넌트. `dev`·`build`에 자원 보호 래퍼, Biome 포맷, turbo 설정 | 없음 |
+| 초기 프로젝트(`early`) | 새 프로젝트와 같아요. `.dev-cycle.json`에 `projectType: early`를 기록해요 | 옮겨 둔 `prototype/` 폴더는 Biome 검사에서 빼요 |
+| 운영 중, Better-T-Stack(`operating`) | 전체 템플릿에서 아래만 빼고 같아요 | `dev`·`build`에 자원 보호 래퍼를 씌우지 않고(배포와 CI가 쓰는 명령), 제작 표시 컴포넌트를 더하지 않아요 |
+| 운영 중, 그 밖의 Next.js(`operating --adopt`) | 하네스만: 스킬 6개(`prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`), 스크립트 6개(`dev-cycle`, `delegation`, `resource-guard`, `skills-setup`, `sync-agents`, `load-keys`), `.claude/agents`, `tasks/`, `licenses/`, `AGENTS.md`·`CLAUDE.md`(adopt 블록), `.dev-cycle.json`, `skills.manifest.json`, `GLOSSARY.md`, `docs/dev-workflow.md`, `docs/domain/project.md` | `prokit-api`, `prokit-db`, `prokit-deploy`, `prokit-pack-use`, 배포·릴리스·HTML 내보내기 스크립트와 그 `package.json` 명령(`vercel:deploy`, `export:html`, `release`), `.vercelignore`, `docs/adr/`, 제작 표시 컴포넌트, 자원 보호 래퍼, Biome 포맷, `biome.json`·`turbo.json` 수정. Better-T-Stack 전용 공식 스킬도 건너뛰어요 |
+| 전환(`migration`) | 새 프로젝트와 같고(새 폴더에 설치), `legacy.path`에 기존 코드 위치를 적어요 | 기존 코드는 읽기만 하고 바꾸지 않아요 |
+
+위 표의 `.claude/agents`는 에이전트 원본이고, `.codex/agents`와 `.agents/agents`는 설치할 때 `sync-agents`가 이 원본에서 만들어요. 새 프로젝트에서 설치기가 쓰는 파일의 전체 목록은 [설치된 프로젝트의 폴더 구조](../reference/project-structure.md)에 있어요.
 
 `--adopt`는 하네스만 설치해요.
 

@@ -22,7 +22,7 @@ pro-kit/
 └── packs/                      받은 프리셋 팩 (scripts/pack.mjs. git에 넣지 않음)
 ```
 
-문서 원본 `handbook/`은 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->39<!-- /v -->개입니다. 템플릿 하나의 안쪽은 이렇습니다. 설치된 프로젝트의 구조는 [폴더 구조](handbook/reference/project-structure.md)에 있습니다.
+문서 원본 `handbook/`은 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->46<!-- /v -->개입니다. 템플릿 하나의 안쪽은 이렇습니다. 설치된 프로젝트의 구조는 [폴더 구조](handbook/reference/project-structure.md)에 있습니다.
 
 ```text
 templates/prokit-next-supabase/

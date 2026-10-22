@@ -51,7 +51,7 @@ AI 코딩 에이전트가 일할 개발 환경을 프로젝트에 설치하는 �
 
 전문 작업은 공식 스킬과 사용자 지정 스킬에 맡기고, 프로킷은 범위·증거·재검토·최종 수용을 관리합니다. 개발 중에는 캐시와 설치 환경의 용량도 감시합니다([위임과 자원 관리](handbook/concepts/delegation-and-resources.md)).
 
-더 알아보기: [프로킷이란](handbook/start/what-is-prokit.md) · [이런 분께 추천해요](handbook/start/who-is-it-for.md) · [처음 보는 용어](tutorials/reference/glossary.md)
+더 알아보기: [프로킷이란](handbook/start/what-is-prokit.md) · [이런 분께 추천해요](handbook/start/who-is-it-for.md) · [처음 한 시간](handbook/start/first-hour.md) · [처음 보는 용어](tutorials/reference/glossary.md)
 
 ## 프로킷은 이렇게 일합니다
 이 저장소는 생성기입니다. [Better-T-Stack](handbook/templates/what-it-adds.md#better-t-stack이란)이 만든 앱 뼈대(Next.js, oRPC, Better Auth, Drizzle 모노레포)에 아래 하네스를 설치하고, 개발은 그렇게 만든 새 프로젝트 폴더에서 합니다([폴더 구조](handbook/reference/project-structure.md)).
@@ -98,6 +98,8 @@ cd pro-kit
 claude
 ```
 
+pro-kit 폴더가 아직 없으면 `git clone https://github.com/roadkwon-ai/pro-kit`로 받거나, 아래 "화면만 만들기"처럼 작업 폴더에서 연 에이전트에게 받기부터 맡깁니다. 처음 열 때 나오는 질문(폴더 신뢰, 명령 허락, 스킬 고르기)과 첫 요청부터 확인까지의 순서는 [처음 한 시간](handbook/start/first-hour.md)에 있습니다.
+
 ### 화면만 만들기 (DB 없이)
 코드를 몰라도 됩니다. 작업 폴더(예: `~/projects`)에서 에이전트를 열고 프롬프트 하나를 보내면, 이 저장소를 받는 일부터 화면 만들기와 HTML 내보내기까지 이어집니다.
 
@@ -110,7 +112,7 @@ PRD(파일 경로나 누가 쓰고 무엇을 하는 서비스인지), DB 종류,
 
 > supabase 템플릿으로 my-app 프로젝트 만들어줘. PRD는 [~/Documents/my-app-prd.md]에 있어.
 
-에이전트가 PRD에 맞는 두뇌와 스킬 구성을 추천해 고르게 하고, 앱 뼈대를 만들어 템플릿을 설치한 뒤, 내 컴퓨터에 개발용 DB를 띄우고 첫 마이그레이션과 커밋까지 마칩니다. 프로젝트는 이 저장소 옆(`../my-app`)에 만들어지고, 원격 DB 연결, 배포, GitHub 올리기는 요청할 때만 합니다. 자세히: [빠른 시작: 서비스 만들기](handbook/start/quickstart-service.md).
+에이전트가 PRD에 맞는 두뇌와 스킬 구성을 추천해 고르게 하고, 앱 뼈대를 만들어 템플릿을 설치한 뒤, 내 컴퓨터에 개발용 DB를 띄우고 첫 마이그레이션과 커밋까지 마칩니다. 프로젝트는 이 저장소 옆(`../my-app`)에 만들어지고, 원격 DB 연결, 배포, GitHub 올리기는 요청할 때만 합니다. 자세히: [빠른 시작: 서비스 만들기](handbook/start/quickstart-service.md). 완성된 프리셋을 되살려 시작하려면 [프리셋 팩으로 시작하기](handbook/start/quickstart-pack.md)를 봅니다.
 
 ### 기존 프로젝트에 도입하기
 이미 진행하던 프로젝트도 들일 수 있습니다. 에이전트가 그 프로젝트를 읽기만 하며 분석하고, 맞는 설정을 추천한 뒤 동의를 받아 적용합니다. 동의하기 전에는 아무것도 바꾸지 않습니다.
@@ -128,7 +130,7 @@ cd ../my-app
 claude
 ```
 
-"수업 예약 첫 화면 디자인해줘. 서비스에 맞는 스타일도 추천해줘"처럼 평소 말로 요청하면, 에이전트가 스펙과 화면 설계를 보여 주고 확인받은 뒤 만들고 검사합니다. 여러 라운드가 걸리는 큰 일은 "이 기능 묶음을 진행 계획으로 나눠줘"처럼 요청하면 Task로 나눠 차례로 진행합니다. 예시 프롬프트와 배포 흐름은 [만든 뒤 개발하기](handbook/start/after-create.md)에 있습니다.
+"수업 예약 첫 화면 디자인해줘. 서비스에 맞는 스타일도 추천해줘"처럼 평소 말로 요청하면, 에이전트가 스펙과 화면 설계를 보여 주고 확인받은 뒤 만들고 검사합니다. 여러 라운드가 걸리는 큰 일은 "이 기능 묶음을 진행 계획으로 나눠줘"처럼 요청하면 Task로 나눠 차례로 진행합니다. 예시 프롬프트와 배포 흐름은 [만든 뒤 개발하기](handbook/start/after-create.md), 요청 크기 고르기와 멈췄을 때·이어 갈 때 보낼 말은 [요청하고 이어 가는 법](handbook/start/ask-well.md), 작업 한 번이 실제로 어떻게 흘러가는지는 [라운드 한 번 따라가 보기](handbook/concepts/round-example.md)에 있습니다. 직접 고쳐도 되는 파일은 [고쳐도 되는 파일](handbook/reference/what-to-edit.md), 처음 인터넷에 올리는 순서는 [처음 배포하기](handbook/deploy/first-deploy.md)에서 봅니다.
 
 ## 만들어 본 예시
 프로킷으로 만든 사이트 중 대표 예시 4개입니다. 화면 예시는 사이트맵의 모든 페이지를 갖춰 링크와 버튼이 모두 동작하고 404나 "준비 중" 페이지가 없으며, 디자인 추천과 사이트맵은 에이전트가 낸 그대로이고 고르기와 수정 요청은 사용자가 직접 했습니다([만든 과정](handbook/design/ui-flow.md#프리셋), [검증 결과](handbook/reference/verification.md#화면-프리셋)).
@@ -185,7 +187,7 @@ git clone https://github.com/roadkwon-ai/pro-kit
 ## 문서 지도
 | 어디 | 무엇이 있나요 |
 |---|---|
-| [문서(handbook)](handbook/README.md) | 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->39<!-- /v -->개. [시작하기](handbook/start/README.md), [핵심 개념](handbook/concepts/README.md), [템플릿](handbook/templates/README.md), [스킬과 에이전트](handbook/skills/README.md), [디자인](handbook/design/README.md), [배포와 릴리스](handbook/deploy/README.md), [레퍼런스](handbook/reference/README.md) |
+| [문서(handbook)](handbook/README.md) | 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->46<!-- /v -->개. [시작하기](handbook/start/README.md), [핵심 개념](handbook/concepts/README.md), [템플릿](handbook/templates/README.md), [스킬과 에이전트](handbook/skills/README.md), [디자인](handbook/design/README.md), [배포와 릴리스](handbook/deploy/README.md), [레퍼런스](handbook/reference/README.md) |
 | [튜토리얼](tutorials/README.md) | 코드를 몰라도 프롬프트를 붙여 넣으며 화면을 만드는 단계별 안내. [시작하기](tutorials/start/README.md), [컨셉으로 화면 만들기](tutorials/samples/README.md), [Nextflix](tutorials/01-nextflix/README.md), [Claudle](tutorials/02-claudle/README.md), 비용과 키·배포·용어·문제 해결·Windows 가이드. [프로킷 사이트](https://prokit-web.vercel.app/tutorials/)에서도 읽을 수 있습니다 |
 | 템플릿 README와 검증 기록 | 명령과 옵션의 정본은 템플릿 README([neon](templates/prokit-next-neon/README.md) · [supabase](templates/prokit-next-supabase/README.md)), 검증 결과와 한계는 VERIFICATION.md([neon](templates/prokit-next-neon/VERIFICATION.md) · [supabase](templates/prokit-next-supabase/VERIFICATION.md)) |
 | [AGENTS.md](AGENTS.md) | 에이전트가 새 프로젝트를 만들거나 기존 프로젝트에 도입할 때 따르는 절차와 이 저장소의 규칙 |

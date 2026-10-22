@@ -208,6 +208,22 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 6. [검사하고 다듬기](06-review.md)
 7. [HTML로 내보내기](07-export.md)
 
+## 이 과정에서 배우는 프로킷 기능
+
+화면만 만드는 과정이라 DB, 로그인, 배포 절차는 쓰지 않아요. 대신 기획과 디자인, 화면 라운드, 검사, 내 확인을 모두 한 번씩 거쳐요.
+
+| 장 | 쓰는 프로킷 기능 | 이 장에서 일어나는 일 | 더 알아보기 |
+|---|---|---|---|
+| 1 | 화면만 프로젝트, 스킬 구성 | 로컬 DB와 마이그레이션 없이 프로젝트를 만들고, 서비스 설명을 PRD로 읽어 스킬을 추천해요 | [화면만 프로젝트와 HTML 내보내기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/screen-only.md), [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md) |
+| 2 | 기획 문서(`PRODUCT.md`) | 컨셉 질문에 답해 서비스 소개 문서를 만들어요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
+| 3 | 디자인 카탈로그, `DESIGN.md` | 스타일 후보 1\~3위 중 하나를 골라 디자인 규칙 파일로 저장해요 | [DESIGN.md](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/design-md.md) |
+| 4 | 사이트맵과 브리프 | 모든 페이지의 목록과 설계 메모를 만들기 전에 확인해요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
+| 5 | 화면 라운드(케이스 B) | 재사용·설정 점검 행(`[design]`), 구현, 스크린샷 확인, `critique`와 `audit`, 코드 리뷰가 한 라운드에 들어가요. 마지막에 내가 확인해야 닫혀요 | [케이스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/cases.md), [증거와 audit, 사용자 확인](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/audit-and-confirm.md) |
+| 6 | 화면 검사와 다듬기 | 링크와 버튼을 모두 눌러 보고 점수와 문제 목록으로 다듬어요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
+| 7 | HTML 내보내기 | `pnpm export:html`이 임시 복사본에서 빌드해 `html/` 폴더를 만들어요 | [화면만 프로젝트와 HTML 내보내기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/screen-only.md) |
+
+라운드가 실제로 어떻게 흘러가는지는 [라운드 한 번 따라가 보기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/round-example.md)에서 예시로 볼 수 있어요. 로그인과 DB가 필요해지면 [실제 서비스로 만들기](real-service.md)로 넘어가요.
+
 ## 시간과 비용
 
 프리셋 팩으로 만들 때 프리셋 하나에 **<!-- v:presets.pack.time.text -->한 번에 완성하면 약 36분\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지)<!-- /v -->** 걸리고, 토큰은 최소 **약 <!-- v:presets.pack.tokens.range -->73.4만\~550만<!-- /v -->**(캐시 포함 약 <!-- v:presets.pack.cached.range -->3671.3만\~2.8억<!-- /v -->)이 들어요. 이 튜토리얼로 화면을 처음부터 만들 때는 <!-- v:presets.scratch.time.text -->한 번에 완성하면 약 1시간 5분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지)<!-- /v --> 걸리고, 토큰은 최소 약 <!-- v:presets.scratch.tokens.range -->154.7만\~800만<!-- /v -->(캐시 포함 약 <!-- v:presets.scratch.cached.range -->6650.7만\~4.0억<!-- /v -->)이 들어요. 프리셋마다 값은 각 쪽의 "시간과 비용"에 있어요.

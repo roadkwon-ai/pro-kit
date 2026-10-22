@@ -78,6 +78,18 @@ WSL2의 Ubuntu 안에서만 돼요. PowerShell이나 Git Bash에서는 설치가
 
 아니요. 에이전트는 시작할 때 `AGENTS.md`, `GLOSSARY.md`(용어집), `docs/domain/project.md`(프로젝트 소개)를 읽고, `pnpm dev-cycle status`로 진행 중인 작업과 진행 계획의 다음 Task를 이어받아요. "하던 작업 이어서 해줘"라고 하면 돼요([만든 뒤 개발하기](../start/after-create.md)).
 
+### 에이전트가 엉뚱한 일을 하면 어떻게 멈추나요
+
+Claude Code와 Codex는 `Esc`를 눌러 하던 일을 바로 멈춰요([Claude Code와 Codex](../../tutorials/reference/claude-code-and-codex.md)). 멈춘 뒤에 무엇이 바뀌었는지 "방금 바꾼 파일을 알려줘"라고 물어보고, 원치 않는 변경은 "그 변경을 되돌려줘"라고 시켜요. 이미 저장(커밋)한 것은 에이전트가 새 커밋으로 정리해요. Antigravity와 Grok Build의 중단 키는 각 도구의 안내를 확인하세요. 프로킷은 운영 DB 적용, 배포, push 같은 큰 일 앞에서는 늘 사용자에게 물어요.
+
+### 어떤 파일을 직접 고쳐도 되나요
+
+용어집과 서비스 소개 문서, 내 컴퓨터의 `.env` 값만 직접 고치고, 코드와 디자인 파일은 에이전트에게 시켜요. `.dev-cycle.json`, 생성 파일, 대조표의 증거 칸은 건드리지 않아요([고쳐도 되는 파일](what-to-edit.md)).
+
+### 설정 파일은 어디서 보나요
+
+케이스 판정 경로, 검사 명령, 화면 점수 기준은 프로젝트 루트의 `.dev-cycle.json`에 있어요. 읽는 법은 [`.dev-cycle.json` 설정 읽기](dev-cycle-config.md)에 있고, 두뇌와 스킬 목록은 `skills.manifest.json`, 설치한 스킬의 출처와 판은 `skills-lock.json`이에요([폴더 구조](project-structure.md)).
+
 ### 에이전트가 운영 DB나 배포를 마음대로 하나요?
 
 아니요. 원격 DB 연결과 전역 도구 설치(agent-browser CLI와, 고른 두뇌의 gstack·OMX CLI·OpenSpec CLI 제외)는 요청할 때만 해요. 커밋과 push는 작업(라운드)을 마칠 때 해요. 다만 하네스만 들인 기존 프로젝트와, 배포 방법을 프로킷에 맞추기 전의 운영 중 프로젝트는 커밋까지만 하고 push는 요청할 때만 해요. 배포는 요청하거나 라운드 끝에서 고를 때만 해요. 운영 DB에 마이그레이션을 적용하기 전에는 목록을, 운영에 배포할 때마다 버전과 릴리스 노트를 보여 주고 동의를 받아요([Vercel 배포와 되돌리기](../deploy/vercel.md)).
@@ -110,4 +122,5 @@ WSL2의 Ubuntu 안에서만 돼요. PowerShell이나 Git Bash에서는 설치가
 
 - [프로킷이란](../start/what-is-prokit.md)
 - [막혔을 때](../../tutorials/reference/troubleshooting.md)
+- [처음 배포하기](../deploy/first-deploy.md)
 - [처음 보는 용어](../../tutorials/reference/glossary.md)

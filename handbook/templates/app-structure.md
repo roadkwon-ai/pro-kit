@@ -31,6 +31,20 @@ flowchart LR
 | `packages/api` | oRPC 라우터와 프로시저. 로그인이 필요한 프로시저는 `protectedProcedure` | `prokit-api` |
 | `packages/auth` | Better Auth 설정 | `prokit-api` |
 | `packages/db` | Drizzle 스키마와 마이그레이션 | `prokit-db` |
+| `packages/config` | 앱과 패키지가 함께 쓰는 공유 설정(tsconfig) | 없음 |
+
+## 내 요청은 어디를 바꾸나
+
+처음에는 폴더 이름을 몰라도 돼요. "할 일에 마감일 붙여줘"처럼 말하면 에이전트가 아래 위치 가운데 필요한 곳을 골라 고치고, 그 위치에 맞는 스킬을 읽어요.
+
+| 이런 요청 | 바뀌는 곳 |
+|---|---|
+| 화면 모양, 문구, 버튼 | `apps/web`, `packages/ui` |
+| 서버에 새 기능(데이터 저장, 조회) | `packages/api` |
+| 로그인, 권한 | `packages/auth`, `packages/api` |
+| 저장하는 데이터 항목 추가 | `packages/db`(마이그레이션 파일이 생겨요) |
+
+용어 풀이: oRPC는 화면이 서버 기능을 함수처럼 부르게 하는 도구, Better Auth는 로그인 도구, Drizzle은 DB를 코드로 다루는 도구예요([용어](../../tutorials/reference/glossary.md#만들기)). 서버 컴포넌트(RSC)는 화면 일부를 서버에서 그려 보내는 Next.js 방식이에요.
 
 ## 자세히
 

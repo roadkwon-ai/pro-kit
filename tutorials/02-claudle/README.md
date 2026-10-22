@@ -140,7 +140,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 ### 4. 답하며 4장까지 가기
 
 <!-- b:clone-readme-qa-intro auth=05-auth-chats.md -->
-새 폴더에서 열린 에이전트는 프리셋 팩을 읽고, 화면을 만들기 전에 몇 가지를 물어봐요. [2장](02-plan.md)~[4장](04-screens.md)의 "에이전트가 물어보면"과 같은 질문이고, 스킬 업데이트 질문은 [5장](05-auth-chats.md#에이전트가-물어보면) 표에 있어요. 선택지 창이 뜨면 직접 입력하는 칸을 고르고 아래 답을 붙여 넣으세요([질문에 답하는 법](../reference/claude-code-and-codex.md#질문에-답하는-법)).
+새 폴더에서 열린 에이전트는 프리셋 팩을 읽고, 화면을 만들기 전에 몇 가지를 물어봐요. [2장](02-plan.md)\~[4장](04-screens.md)의 "에이전트가 물어보면"과 같은 질문이고, 스킬 업데이트 질문은 [5장](05-auth-chats.md#에이전트가-물어보면) 표에 있어요. 선택지 창이 뜨면 직접 입력하는 칸을 고르고 아래 답을 붙여 넣으세요([질문에 답하는 법](../reference/claude-code-and-codex.md#질문에-답하는-법)).
 <!-- /b -->
 
 | 에이전트가 묻는 것 | 이렇게 답해요 |
@@ -188,7 +188,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 ## 장별로 자세히
 
 <!-- b:clone-readme-chapters-intro -->
-가장 쉬운 방법을 장으로 나눴어요. **1~4장은 가장 쉬운 방법이 한 번에 하는 일이라 그 방법으로 4장까지 왔다면 5장부터 하면 돼요.** 1장은 pro-kit을 직접 받아 둔 상태에서 시작해요([시작하기](../start/README.md#직접-준비하기-선택)의 "직접 준비하기").
+가장 쉬운 방법을 장으로 나눴어요. **1\~4장은 가장 쉬운 방법이 한 번에 하는 일이라 그 방법으로 4장까지 왔다면 5장부터 하면 돼요.** 1장은 pro-kit을 직접 받아 둔 상태에서 시작해요([시작하기](../start/README.md#직접-준비하기-선택)의 "직접 준비하기").
 <!-- /b -->
 
 | 장 | 할 일 | 결과 |
@@ -205,6 +205,22 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 | [10. 아티팩트](10-artifacts.md) | 답의 HTML 코드를 안전한 창에서 미리 봐요 | 오른쪽 미리 보기 창 |
 | [11. 검사와 다듬기](11-check.md) | 지금까지 만든 것을 검사하고 디자인 리뷰로 다듬어요 | 검사를 통과한 서비스 |
 | [12. 배포(선택)](12-deploy.md) | 인터넷에 올려요. GitHub, Vercel, Neon 계정이 필요해요 | 누구나 들어올 수 있는 주소 |
+
+## 이 과정에서 배우는 프로킷 기능
+
+장마다 쓰는 프로킷 기능이에요. 기능 라운드가 어떤 모양인지는 [Nextflix의 같은 절](../01-nextflix/README.md#이-과정에서-배우는-프로킷-기능)에서 먼저 설명했고, 여기서는 Claudle에서 새로 만나는 것을 중심으로 정리했어요.
+
+| 장 | 쓰는 프로킷 기능 | 이 장에서 눈여겨볼 것 | 더 알아보기 |
+|---|---|---|---|
+| 1\~2 | PRD, 스킬 구성, 기획 문서 | 프리셋 팩이 PRD 역할을 해요. 문서만 채우는 2장은 코드를 바꾸지 않아요 | [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md), [두뇌와 선택 스킬](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/skills/brains.md) |
+| 3 | `DESIGN.md`, 구성도 고르기 | 디자인 규칙을 파일로 고정하면 뒤의 모든 화면이 같은 규칙을 따라요 | [DESIGN.md](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/design-md.md) |
+| 4 | 화면 라운드(케이스 B), 화면 리뷰 기록 | 모의 응답으로 대화가 흐르는 화면까지 만들고, 디자인 점수와 접근성 점수를 남겨요 | [케이스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/cases.md), [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
+| 5 | 인증, 마이그레이션, 두 계정 격리 테스트 | 새 프로젝트의 첫 서버 라운드라서 테스트 도구 설치가 먼저 와요. 남의 대화를 읽을 수 없는지 두 계정으로 검사해요 | [증거와 audit, 사용자 확인](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/audit-and-confirm.md) |
+| 6, 8, 9 | 기능 라운드(케이스 F) | 저장, 검색, 프로젝트마다 스펙을 확인받고 만들어요. 매번 "내 데이터만 보이는지"를 다시 검사해요 | [개발 사이클](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/dev-cycle.md), [위임 에이전트와 리뷰 에이전트](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/agent-roles.md) |
+| 7 | 비밀값 다루기 | AI 키(`KILO_API_KEY`)는 내가 `.env`에 직접 넣어요. 에이전트는 키 값을 화면, 기록, 커밋에 남기지 않고, 커밋 전에 비밀값 검사를 해요 | [비밀값과 환경변수](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/secrets.md) |
+| 10 | 보안 요구가 있는 화면 | 모델이 쓴 코드를 안전한 창에서 돌려요. 창 밖의 로그인 정보를 못 읽는지 자동 테스트로 확인해요 | [위임 에이전트와 리뷰 에이전트](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/agent-roles.md) |
+| 11 | 전체 검증, 디자인 리뷰 | 타입, 린트, 빌드, 테스트와 모든 페이지 화면 검사, P0\~P3 문제 목록 | [증거와 audit, 사용자 확인](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/audit-and-confirm.md) |
+| 12 | 배포와 릴리스 | develop과 운영을 나눠 올리고, 릴리스와 운영 DB 적용은 내 동의를 받아요 | [처음 배포하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/first-deploy.md), [릴리스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/release.md) |
 
 ## 시간과 비용
 

@@ -4,12 +4,15 @@
 
 | 쪽 | 내용 |
 |---|---|
-| [프로킷이란](what-is-prokit.md) | AI 에이전트에 설치하는 개발 키트, 시작하는 네 가지 방법(새·초기·운영 중·전환), 요청이 배포까지 가는 길, 그냥 맡길 때와 무엇이 다른지 |
+| [프로킷이란](what-is-prokit.md) | 왜 필요한지, AI 에이전트에 설치하는 개발 키트, 시작하는 네 가지 방법(새·초기·운영 중·전환), 요청이 배포까지 가는 길, 그냥 맡길 때와 무엇이 다른지, 읽는 순서 |
 | [이런 분께 추천해요](who-is-it-for.md) | 프로킷을 추천하는 분과 맞지 않을 때, 프로킷 없이와 프로킷으로 비교, 실제 사례 |
-| [준비물](requirements.md) | Node <!-- v:node.min -->22.20<!-- /v -->, pnpm, git, 컨테이너 엔진, Supabase CLI, Windows는 WSL2 |
-| [지원하는 에이전트](supported-agents.md) | <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v -->가 읽는 파일, 이미지 도구, 여는 명령 |
+| [처음 한 시간](first-hour.md) | 에이전트를 처음 열어 첫 결과를 확인하기까지 나와 에이전트가 하는 일, 처음 나오는 질문과 답하는 법 |
+| [준비물](requirements.md) | Node <!-- v:node.min -->22.20<!-- /v -->, pnpm, git, 컨테이너 엔진, Supabase CLI, 왜 필요한지, 에이전트에게 확인 맡기기, Windows는 WSL2 |
+| [지원하는 에이전트](supported-agents.md) | 어떤 에이전트를 고를지, <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v -->가 읽는 파일, 이미지 도구, 여는 명령 |
 | [PRD 먼저 정하기](prd.md) | 프로킷이 PRD로 스킬을 추천하고 개발 환경을 만드는 까닭, 적을 것, 주는 법 |
-| [기존 프로젝트에 도입하기](adopt.md) | 초기·운영 중·전환 프로젝트에 프로킷을 들이는 흐름, 초기 분석과 동의, 유형별 적용 |
-| [빠른 시작: 화면만 만들기](quickstart-screens.md) | DB 없이 프롬프트 하나로 모든 화면과 HTML 내보내기까지 |
-| [빠른 시작: 서비스 만들기](quickstart-service.md) | 템플릿 고르기부터 로컬 DB, 첫 마이그레이션, 커밋까지 |
-| [만든 뒤 개발하기](after-create.md) | 새 세션에서 평소 말로 요청하기, 예시 프롬프트 |
+| [빠른 시작: 화면만 만들기](quickstart-screens.md) | DB 없이 프롬프트 하나로 모든 화면과 HTML 내보내기까지, 프롬프트 문장별 역할 |
+| [빠른 시작: 서비스 만들기](quickstart-service.md) | 어디서 열지, 템플릿 고르기부터 로컬 DB, 첫 마이그레이션, 커밋까지, 에이전트가 물어보는 것 |
+| [프리셋 팩으로 시작하기](quickstart-pack.md) | 완성된 프리셋 팩으로 시작하기, 팩 받기와 복원, 받을 수 있는 팩 |
+| [만든 뒤 개발하기](after-create.md) | 새 세션에서 평소 말로 요청하기, 크기별 예시 프롬프트 |
+| [요청하고 이어 가는 법](ask-well.md) | 요청 크기와 문장, 질문에 답하기, 멈추기와 이어 가기, 멈췄을 때 보내는 말 |
+| [기존 프로젝트에 도입하기](adopt.md) | 초기·운영 중·전환 프로젝트에 프로킷을 들이는 흐름, 초기 분석과 동의, 안전 점검, 유형별 적용 |

@@ -2,6 +2,44 @@
 
 > 한눈에: 프로젝트마다 "어떤 순서로 진행할지"(두뇌)와 "얼마나 작게 만들지"(과설계 방지 스킬)를 고르거나 고르지 않을 수 있어요. **아무것도 고르지 않으면 지금 쓰는 에이전트가 프로킷 내장 절차로 진행해요.** 두뇌는 하나를 권하지만 여럿을 함께 고를 수도 있어요. 프로킷을 처음 들일 때 `prokit-init` 스킬이 PRD(기존 프로젝트면 초기 분석)에 맞는 것에 추천 표시를 붙여 물어보고, 진행 중에는 `prokit-skills-manage`로 바꾸거나 더하거나 빼요.
 
+## 모르겠으면 이렇게 해요
+
+두뇌와 스킬 이름을 몰라도 괜찮아요. 처음 프로젝트를 만들 때 에이전트가 PRD(만들 서비스 설명)를 읽고 추천을 붙여 물어요. 고르기 어려우면 `(추천)`이 붙은 것을 고르거나 "알아서 골라줘"라고 답하면 돼요. 추천은 `prokit-init` 스킬이 정한 기준으로 만들고, 뭘 골라도 나중에 말로 바꿀 수 있어요.
+
+| 항목 | 모르겠을 때 | 이유 |
+|---|---|---|
+| 두뇌 | 추천을 따라요. 신호가 약하면 추천이 **없음(기본 AI)** 이에요 | 없음은 지금 쓰는 에이전트가 프로킷 내장 절차(요구 정리, 계획, 구현, 확인)로 진행해요. 충돌이 없고 가장 가벼워요 |
+| 과설계 방지 스킬 | `ponytail (추천)` | 요청하지 않은 기능이 늘어나지 않게 가장 작게 만들어 줘요. 항상 첫 선택지로 나와요 |
+| 응답 방식 | `i-have-adhd (추천)`. 길고 자세한 설명이 좋다면 SKIP | 설치해도 `/i-have-adhd`로 켤 때만 짧은 답으로 바뀌어서 평소 답은 그대로예요 |
+| 화면 디자인 보조 | SKIP | 랜딩, 소개, 포트폴리오처럼 읽고 스크롤하는 공개 페이지가 주 화면이거나 "AI가 만든 티가 나지 않게"를 원할 때만 `taste-skill`을 추천해요 |
+| mattpocock 추가 스킬 | 아무것도 고르지 않아요 | 필수 3개(`domain-modeling`, `grilling`, `grill-with-docs`)는 늘 설치돼요. 추가 스킬은 PRD에 맞는 것만 `(추천)`이 붙어요 |
+
+뜻을 모르는 말은 [처음 보는 용어](../../tutorials/reference/glossary.md#도구)의 "두뇌", "하네스", "스킬"을 보세요. 프로젝트가 정해지면 [선택 스킬 묶음](optional-bundles.md)처럼 나중에 더해도 늦지 않아요.
+
+## 처음 들일 때 이렇게 물어요
+
+아래는 예시예요. 실제 문구와 선택지는 PRD에 따라 달라져요. Claude Code는 질문 상자(AskUserQuestion)로, 다른 도구는 번호 목록으로 같은 내용을 물어요.
+
+```text
+에이전트(예시): PRD를 읽어 보니 사용자 한 종류가 할 일을 적고 끝내는 작은 서비스예요.
+요구가 짧고 분명해서 두뇌는 "없음(기본 AI)"을 추천해요.
+
+[질문 1 두뇌]
+  - 없음(기본 AI) (추천)   지금 에이전트가 프로킷 내장 절차로 진행해요. 충돌이 없고 가장 가벼워요
+  - mattpocock             필수 3개에 PRD에 맞는 추가 스킬을 골라 단계마다 기법으로 써요
+  - superpowers            설계 합의, 계획, 테스트 먼저, 작업별 리뷰를 강하게 거는 규율형이에요
+  - 다른 두뇌 보기·여럿 고르기
+[질문 2 과설계 방지]  ponytail (추천) / caveman / andrej-karpathy-skills / SKIP(기본 AI)
+[질문 3 응답 방식]    i-have-adhd (추천) / SKIP
+[질문 4 화면 디자인]  SKIP (추천) / taste-skill
+```
+
+한 번에 네 가지를 묻고, 답하면 이어서 다음을 물어요.
+
+1. **`다른 두뇌 보기·여럿 고르기`를 골랐을 때**: 두뇌 아홉 개를 세 묶음(진행 규율, 스펙 주도, 제품·장기 실행·학습)에서 골라요. 하나만 골라도 되고, 둘 이상 고르면 "주 두뇌는?"을 한 번 더 물어요.
+2. **mattpocock 추가 스킬**: 두뇌가 정해지면 [아래 14개](#mattpocock-추가-스킬-14개)를 네 묶음(구현·설계, 디버깅·검토, 조사·외부 설정, 인계·학습)의 여러 선택으로 물어요. PRD에 맞는 스킬에 `(추천)`이 붙고, 추가하지 않으려면 아무것도 고르지 않거나 Other에 "없음"이라고 적어요.
+3. **마무리**: 고른 값이 `install.sh`의 `--brain`, `--simplicity`, `--matt`, `--optional`로 들어가고, 끝나면 보고에 `pnpm skills:check`의 해당 줄이 나와요.
+
 ## 고르는 다섯 가지
 
 | 구분 | 고르는 수 | 기본 | 고르는 명령 |
@@ -33,7 +71,46 @@
 
 대조표, 위임 검증, `prokit-reviewer` 최종 리뷰, audit, 사용자 확인, `prokit-deploy` 배포는 무엇을 골라도 그대로예요.
 
-## 두뇌
+## 준비물과 전역 설치
+
+대부분의 두뇌는 프로젝트 안에만 설치돼서 따로 준비할 것이 없어요. 아래 표의 네 가지만 컴퓨터 전체(전역)에 설치되거나 먼저 필요한 도구가 있어요. 전역 설치는 그 두뇌를 고르고 `--brain`을 명시했거나 `--with-global`을 줄 때만 해요. 설치하기 전에 에이전트가 먼저 알려요.
+
+| 두뇌 | 먼저 있어야 하는 것 | 이 컴퓨터 전체에 설치되는 것 |
+|---|---|---|
+| `gstack` | Bun | gstack 본체(Claude Code는 `~/.claude/skills/gstack`, Codex는 `~/.codex/skills/gstack`). 설치하면서 `~/.claude/settings.json`에 Stop 훅(자동 실행 설정)을 등록하고 `~/.gstack`에 상태를 만들어요. 다른 프로젝트에서도 Stop 훅은 돌아요(gstack 스킬은 설치기가 그 프로젝트에서 꺼요. Codex 전역 스킬은 끌 수 없어요) |
+| `oh-my` | Codex를 쓰면 OMX CLI(`omx`). OMX `team` 모드는 tmux가 있어야 돌아요(없어도 멈추지 않고 보고에만 적어요) | OMX CLI(`npm install -g oh-my-codex`). Codex가 있는 기기에만 설치해요. Claude Code의 OMC는 프로젝트 플러그인이에요 |
+| `openspec` | npm | OpenSpec CLI(`npm install -g @fission-ai/openspec@latest`). 사용 통계를 기본으로 보내서 끄려면 `OPENSPEC_TELEMETRY=0`을 셸 설정에 둬요 |
+| `spec-kit` | uv(설치할 때만) | 없음. 프로젝트 안에 도구 파일만 만들고 훅은 쓰지 않아요 |
+| `superpowers`, `agent-skills`, `pstack`, `mattpocock`, `compound-engineering` | 없음 | 없음. `pstack`은 Claude Code만 지원해요 |
+
+다른 두뇌로 바꿔도 전역에 설치한 것은 지우지 않아요(다른 프로젝트가 쓸 수 있어서요). 도구가 없는데 그 두뇌를 고르면 설치기가 멈추거나 경고하고 설치 방법을 알려 줘요.
+
+## mattpocock 추가 스킬 14개
+
+필수 3개(`domain-modeling`, `grilling`, `grill-with-docs`)는 용어와 설계 질문을 맡아서 무엇을 골라도 설치돼요. 아래 14개는 서로 독립된 기법이라 PRD에 맞는 것만 더해요. "호출"이 사용자인 스킬은 에이전트가 스스로 부르지 않고, 그 단계에서 명령(예: `/handoff`)을 제안해요. "겹치는 두뇌"는 그 두뇌가 같은 일을 자기 스킬로 맡는다는 뜻이라 추천에서만 빼고 설치는 막지 않아요(두뇌가 `mattpocock`이면 보지 않아요).
+
+| 스킬 | 호출 | 하는 일 | 이런 PRD에 맞아요 | 겹치는 두뇌 |
+|---|---|---|---|---|
+| `tdd` | 모델 | 테스트를 먼저 쓰고 구현해요 | 계산, 상태 전이, 권한, 금액처럼 규칙 로직이 많아요 | superpowers, agent-skills, pstack, oh-my(OMC) |
+| `diagnosing-bugs` | 모델 | 어려운 버그와 성능 퇴행을 재현부터 진단해요 | 외부 연동이 많거나 가져온 코드가 있어 원인 찾기 어려운 버그가 예상되고, 성능 목표가 있어요 | superpowers, agent-skills, gstack, pstack, oh-my(OMC) |
+| `codebase-design` | 모델 | 모듈 경계와 인터페이스를 깊게 설계해요 | 패키지와 모듈이 여럿이고 공용 API 설계가 범위에 있어요 | agent-skills, pstack |
+| `prototype` | 모델 | 버리는 시안으로 상태 모델과 화면을 먼저 확인해요 | 화면과 흐름이 새롭거나 "느낌을 보고 정하자"는 수준이에요 | oh-my(OMC), pstack |
+| `improve-codebase-architecture` | 사용자 | 구조 개선 후보를 보고서로 뽑아요 | 가져온 기존 코드가 있거나 큰 리팩터가 범위에 있어요(새 프로젝트는 보통 해당 없음) | oh-my(OMC) |
+| `code-review` | 모델 | 스펙 대비 추가 관점 리뷰를 해요. `prokit-reviewer` 최종 게이트를 대신하지 않아요 | 인수 조건이 길고 엄격해 스펙 기준 검토를 따로 받고 싶어요 | superpowers, agent-skills, gstack, pstack, oh-my |
+| `pr` | 모델 | PR(변경 제안) 본문을 써요. 프로킷 기본 마무리는 기본 브랜치 커밋과 push예요 | 팀이 PR로 병합하는 흐름이 PRD에 있어요 | 없음 |
+| `writing-for-agents` | 모델 | 프로젝트 전용 스킬과 `AGENTS.md`를 고치는 일을 도와요 | 전용 스킬이나 에이전트 규칙을 만들 계획이 PRD에 있어요 | superpowers, agent-skills, oh-my(OMC) |
+| `research` | 모델 | 외부 API, SDK, 규정 조사 결과를 저장소 문서로 남겨요 | 결제, 지도, AI API 같은 외부 연동이나 낯선 도메인 규칙, 법규가 있어요 | 없음 |
+| `wizard` | 모델 | 사람이 해야 하는 외부 설정 단계를 안내해요. 배포는 `prokit-deploy`가 맡아요 | OAuth 앱 등록, 결제 키, DNS, 외부 대시보드 설정이 여러 개예요 | 없음 |
+| `to-questionnaire` | 사용자 | 결정권자가 따로 있는 질문을 질문지로 만들어요 | 고객, 기획자, 법무처럼 사용자 밖의 결정권자가 PRD에 있어요 | 없음 |
+| `handoff` | 사용자 | 세션이나 두뇌를 넘길 때 인계 문서를 만들어요 | 여러 세션에 걸친 큰 범위이거나 여러 사람이 이어 받아요 | 없음 |
+| `teach` | 사용자 | 배우면서 만드는 흐름으로 설명해요 | 학습 목적, 입문자, 튜토리얼이에요 | pstack |
+| `wait-what` | 사용자 | 설명이 와닿지 않을 때 다시 설명해 달라고 해요 | `teach`와 같은 신호예요 | pstack |
+
+`code-review`, `prototype`, `research`는 Claude Code 같은 도구의 내장 명령과 이름이 겹쳐요. 어느 쪽이 불렸는지는 증거에 이름을 적어서 구분해요. 설치하지 않는 mattpocock 스킬(`grill-me`, `to-spec`, `implement` 등)과 이유는 설치된 프로젝트의 `brains/README.md`에 있어요.
+
+## 직접 고르고 싶을 때: 두뇌 비교
+
+아래는 추천을 따르지 않고 스스로 고를 때 보는 비교표예요. 처음이라면 위의 "모르겠으면 이렇게 해요"만 읽어도 돼요.
 
 | 이름 | 이럴 때 골라요 | 쓰는 도구 |
 |---|---|---|
@@ -64,7 +141,7 @@
 ## mattpocock 스킬과 응답 방식
 
 - **늘 설치**: `domain-modeling`, `grilling`, `grill-with-docs`. 용어와 설계 질문에 써요.
-- **고르면 설치**: <!-- v:mattpocock.pool.count -->14<!-- /v -->개예요. 구현·설계(`tdd`, `codebase-design`, `prototype`, `improve-codebase-architecture`), 디버깅·검토(`diagnosing-bugs`, `code-review`, `pr`, `writing-for-agents`), 조사·외부 설정(`research`, `wizard`, `to-questionnaire`), 인계·학습(`handoff`, `teach`, `wait-what`)으로 나눠 물어봐요. 목록에는 모두 나오고 PRD에 맞는 스킬에 `(추천)`이 붙어요. 고른 두뇌가 같은 일을 하는 스킬은 추천하지 않아요(두뇌가 `mattpocock`이면 빼지 않아요).
+- **고르면 설치**: <!-- v:mattpocock.pool.count -->14<!-- /v -->개예요. 구현·설계, 디버깅·검토, 조사·외부 설정, 인계·학습 네 묶음으로 나눠 물어봐요(스킬별 설명은 위 [mattpocock 추가 스킬 14개](#mattpocock-추가-스킬-14개)). 목록에는 모두 나오고 PRD에 맞는 스킬에 `(추천)`이 붙어요. 고른 두뇌가 같은 일을 하는 스킬은 추천하지 않아요(두뇌가 `mattpocock`이면 빼지 않아요).
 - **i-have-adhd**([ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)): 에이전트가 답을 긴 글 속에 묻어 두지 않게 하는 스킬이에요. 다음 행동부터 말하고, 여러 단계는 번호로 나누고, 구체적인 다음 할 일 하나로 끝내요. 목록은 5개까지 쓰고 서론, 요약, 마무리 인사는 빼요. `/i-have-adhd`(Codex는 `$i-have-adhd`)로 켤 때만 쓰고 "stop adhd mode"로 꺼요. 대화 답에만 적용하고 파일, 커밋 메시지, 라운드 보고는 프로킷 형식을 따라요. 켜기 전에는 평소 답 그대로라 새 프로젝트에서는 설치를 추천해요.
 
 ## 화면 디자인 보조
