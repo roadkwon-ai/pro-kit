@@ -24,6 +24,6 @@
 | 설계 | SKILL.md 1단계 인벤토리(그 서비스에만 있는 것 8~12개), 2단계 argument(섹션마다 주장과 증거), 4단계 idea 문장과 live thing, 5단계 copy deck | shape 브리프의 절로 넣는다. 사용자 확인 뒤에 구현한다 |
 | 시각 자산 | 서체: 라틴 서체는 시트대로 고르되 받는 법은 impeccable-map "서체"의 받기(`next/font`)를 따르고 시트의 `<link>`는 쓰지 않는다. 한글 본문·제목은 impeccable-map "서체"의 한글 서체에서 시트 인상에 가까운 것을 고른다. 이미지: `prokit-ui` "이미지 그리기"의 ①~③이 없으면 ④ 배치도로 가기 전에 `node <skill>/scripts/assets.mjs "<인벤토리 검색어>"`로 공개 아카이브 사진을 찾고 `--get <ref> --to apps/web/public/images/<화면>`으로 받는다 | 출처 줄(`assets.mjs --credits --to <같은 폴더>`)은 푸터와 보고. 찾은 사진을 그 서비스의 제품, 사람, 공간으로 내세우지 않는다 |
 | 개발 | 시트와 `references/`의 `type.md`, `colour.md`, `layout.md`, `motion.md`를 따른다. `assets/`의 CSS·JS는 그대로 복사하지 않고 토큰과 shadcn 컴포넌트로 옮긴다 | 대조표 구현 행에 방향 id |
-| 리뷰 | `node <skill>/scripts/lint.mjs <이번 화면의 파일이나 폴더>`와 `inspect.mjs <개발 서버 주소> --out .taste-skill/inspect`(app은 `--app`). FAIL을 고친 뒤 impeccable `critique`·`audit`을 한다. 이번 범위 밖 파일(`packages/ui`, Better-T-Stack 기본 화면)에서 걸린 것은 고치지 않고 보고에 적는다 | 대조표 critique 행 증거에 `taste inspect FAIL 0, WARN <수>`를 함께 적는다 |
+| 리뷰 | `node <skill>/scripts/lint.mjs <이번 화면의 파일이나 폴더>`와 `inspect.mjs <개발 서버 주소> --out .taste-skill/inspect`(app은 `--app`). FAIL을 고친 뒤 impeccable `critique`·`audit`을 한다. 이번 범위 밖 파일(`packages/ui`, Better-T-Stack 기본 화면)에서 걸린 것은 고치지 않고 보고에 적는다 | 대조표 critique 행 증거에 `taste inspect FAIL 0, WARN <수>`를 함께 적는다(critique 점수와 `.impeccable/critique/` 기록 파일 경로는 그대로 적는다) |
 
 리디자인이면 critique 전에 `inspect.mjs <주소> --out .taste-skill/before`로 지금 화면을 재고, 마감 뒤 `--out .taste-skill/after`로 다시 재어 전후를 보고한다.

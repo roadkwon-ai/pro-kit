@@ -27,6 +27,7 @@ my-app/
 │                               vercel-deploy.mjs, release.mjs, export-html.mjs, load-keys.mjs
 ├── release/                    production 배포마다 릴리스 노트 (pnpm release)
 ├── skills.manifest.json, skills-lock.json, .dev-cycle.json, .vercelignore
+├── .impeccable/                impeccable 기록(critique/*.md 등. 화면을 리뷰하면 생기고 커밋해요)
 ├── docs/                       dev-workflow.md, adr/, domain/project.md, plans/(진행 계획),
 │                               prokit/(기존 프로젝트를 들였을 때: intake.md 도입 기록, analysis.md 정밀 분석)
 └── tasks/                      todo.md(남은 할 일·진행 중 대조표), plan.md(진행 계획의 Task 표, 있으면),
@@ -49,7 +50,7 @@ my-app/
 | `docs/prokit/intake.md`, `docs/prokit/analysis.md`, `docs/first-request.md` | 기존 프로젝트 도입 기록, 정밀 분석 결과, 새 세션에서 이어 갈 첫 요청. 도입했을 때만 생겨요 | [기존 프로젝트에 도입하기](../start/adopt.md) |
 | `tasks/plan.md`, `docs/plans/` | 진행 계획의 Task 표와 계획 문서 | [정밀 분석과 진행 계획](../concepts/project-plan.md) |
 | `openspec/`, `specs/`, `.specify/` | openspec·spec-kit 두뇌를 골랐을 때만 생기는 명세 문서. 두뇌를 바꿔도 문서는 남겨요 | [두뇌와 선택 스킬](../skills/brains.md) |
-| `tasks/todo.md`, `tasks/archive/`, `tasks/evidence/` | 남은 일반 할 일·백로그와 진행 중 대조표, 날짜별 완료 기록과 색인, 스크린샷 같은 증거 | [증거와 audit, 사용자 확인](../concepts/audit-and-confirm.md) |
+| `tasks/todo.md`, `tasks/archive/`, `tasks/evidence/` | 남은 일반 할 일·백로그와 진행 중 대조표, 날짜별 완료 기록과 색인, 스크린샷과 `ui-audit-*.md` 같은 증거(`tasks/evidence/`는 git이 무시해요) | [증거와 audit, 사용자 확인](../concepts/audit-and-confirm.md) |
 | `skills.manifest.json`, `skills-lock.json` | 설치할 스킬 목록과 설치한 판 | [설치와 업데이트 구조](../skills/install-and-update.md) |
 | `.claude/agents/`, `.codex/agents/`, `.agents/agents/` | 구현 수행자, 전문 리뷰어, 최종 리뷰어, 정밀 분석(`prokit-analyzer`)의 정본과 생성물(Codex용, Antigravity용) | [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
 | `scripts/delegation.mjs`, `scripts/resource-guard.mjs`, `.prokit/` | 위임 패킷의 실제 변경 검증과 자원 보호. `.prokit/` 실행 상태는 Git과 Biome에서 제외해요 | [위임과 자원 관리](../concepts/delegation-and-resources.md) |

@@ -6,7 +6,7 @@ pro-kit 저장소를 고치고 릴리스하는 사람을 위한 안내입니다.
 
 ```text
 pro-kit/
-├── AGENTS.md, CLAUDE.md        에이전트 규칙 (새 프로젝트 만드는 절차, 템플릿 수정, 릴리스)
+├── AGENTS.md, CLAUDE.md        에이전트 규칙 (새 프로젝트 만들기와 기존 프로젝트 도입 절차, 템플릿 수정, 릴리스)
 ├── README.md, CONTRIBUTING.md, LICENSE, THIRD_PARTY_NOTICES.md
 ├── templates/
 │   ├── prokit-next-neon/       Neon 템플릿
@@ -14,8 +14,9 @@ pro-kit/
 ├── handbook/                   문서 원본 (프로킷 사이트 /docs의 원본)
 ├── tutorials/                  비개발자용 튜토리얼 (사이트 /tutorials/의 원본). packs.json: 프리셋 팩 목록
 ├── scripts/                    release.mjs, pack.mjs, site-links.mjs, doc-values.mjs와 테스트
+├── evals/                      저장소 자체 스킬의 eval 입력 (prokit-init)
 ├── site-links.json, doc-values.json   공개 주소와 공통 값의 정본
-├── docs/                       assets/(README 이미지), blocks/(공통 글 묶음), reports/(측정 보고서), superpowers/(설계 스펙과 계획)
+├── docs/                       assets/(README 이미지), blocks/(공통 글 묶음), plans/(설계 결정), reports/(측정 보고서), superpowers/(설계 스펙과 계획)
 ├── release/                    릴리스 노트 (릴리스마다 추가)
 ├── .env.example                작업 폴더 .env 예시 (이미지 키, 배포 토큰)
 └── packs/                      받은 프리셋 팩 (scripts/pack.mjs. git에 넣지 않음)
@@ -46,7 +47,7 @@ node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, h
 
 ## 템플릿 수정 흐름
 
-규칙의 원문은 [AGENTS.md "템플릿 수정 규칙"](AGENTS.md#템플릿-수정-규칙)입니다. 요약하면 저장소 루트에서 작업하고, 공유 파일은 두 템플릿에서 바이트가 같게 두고, 설치기를 바꾸면 실제 Better-T-Stack 프로젝트에 설치해 확인하고, 검증 결과는 템플릿의 `VERIFICATION.md`에 적습니다. 이미 만든 프로젝트에 변경을 옮기는 절차는 [AGENTS.md](AGENTS.md#기존-프로젝트에-템플릿-갱신-반영)와 [갱신 반영](handbook/templates/update-existing.md)에 있습니다. 설계 문서는 [docs/superpowers/specs](docs/superpowers/specs/)에 있습니다.
+규칙의 원문은 [AGENTS.md "템플릿 수정 규칙"](AGENTS.md#템플릿-수정-규칙)입니다. 요약하면 저장소 루트에서 작업하고, 공유 파일은 두 템플릿에서 바이트가 같게 두고, 설치기를 바꾸면 실제 Better-T-Stack 프로젝트에 설치해 확인하고, 검증 결과는 템플릿의 `VERIFICATION.md`에 적습니다. 이미 만든 프로젝트에 변경을 옮기는 절차는 [AGENTS.md](AGENTS.md#기존-프로젝트에-템플릿-갱신-반영)와 [갱신 반영](handbook/templates/update-existing.md)에 있습니다. 설계 문서는 [docs/plans](docs/plans/)와 [docs/superpowers/specs](docs/superpowers/specs/)에 있습니다.
 
 ### 스킬·에이전트 계약을 바꿀 때
 
@@ -55,7 +56,7 @@ node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, h
 - 스킬과 라우팅, 에이전트와 생성 프로필, 평가 입력, 연결 문서 중 영향받는 곳을 함께 맞춥니다. 두 템플릿의 공유 파일을 일치시키고, 설치기를 바꿨으면 실제 Better-T-Stack 설치도 확인합니다.
 - 검증은 변경 영향을 기준으로 고릅니다. 이전 통과 증거는 출처·계약·환경·입력이 그대로인 범위에서만 재사용하고, 미통과 항목과 영향받은 검사를 다시 합니다. 이전 기록을 덮어쓰거나 확인하지 못한 환경을 통과로 바꾸지 않습니다.
 - 병렬 배정은 파일·생성 출력·상태의 소유권을 분리하고, 중첩 worker까지 실행 수에 포함합니다. 실패 원시 결과와 실제 경과시간은 보존하며, 재시도 성공을 최초 성공으로 합치지 않습니다([배정과 검증 기준](handbook/concepts/delegation-and-resources.md#독립-작업을-나눠서-확인하기), [이번 검증 기록](docs/reports/2026-10-10-parallel-verification/README.md)).
-- 결과와 한계는 각 템플릿의 `VERIFICATION.md`에 적고, 상세 기록은 `docs/reports/`에서 연결합니다. 현재 결정은 [재사용 설계](docs/reports/2026-10-09-reuse-design-review/README.md), [위임·자원 인수](docs/reports/2026-10-09-orchestration-resources/README.md), [Karpathy 미도입 검토](docs/reports/2026-10-09-karpathy-skill-adoption/README.md), [두뇌·과설계 방지 선택 설치](docs/reports/2026-10-20-brain-selection/README.md)에 있습니다. 2026-10-09 검토의 "기본 지침은 ponytail 하나" 결론은 2026-10-20에 "기본 설치 없음, 과설계 방지 스킬 하나를 고름(ponytail 추천, karpathy도 고를 수 있음)"으로 바뀌었습니다.
+- 결과와 한계는 각 템플릿의 `VERIFICATION.md`에 적고, 상세 기록은 `docs/reports/`에서 연결합니다. 현재 결정은 [재사용 설계](docs/reports/2026-10-09-reuse-design-review/README.md), [위임·자원 인수](docs/reports/2026-10-09-orchestration-resources/README.md), [Karpathy 미도입 검토](docs/reports/2026-10-09-karpathy-skill-adoption/README.md), [두뇌·과설계 방지 선택 설치](docs/reports/2026-10-20-brain-selection/README.md), [프로젝트 유형별 도입과 두뇌 확장](docs/plans/2026-10-22-prokit-project-types-and-brains.md)에 있습니다. 2026-10-09 검토의 "기본 지침은 ponytail 하나" 결론은 2026-10-20에 "기본 설치 없음, 과설계 방지 스킬 하나를 고름(ponytail 추천, karpathy도 고를 수 있음)"으로 바뀌었습니다.
 
 ### 프리셋 디자인을 바꿀 때
 
@@ -65,7 +66,7 @@ node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, h
 
 ## 문서
 
-- 문서 쪽을 쓰거나 구조를 바꿀 때는 `prokit-docs`, 문장을 쓰고 다듬을 때는 `prokit-writing` 스킬을 씁니다. 두 스킬의 원본은 `roadkwon-ai/pro-kit-docs-skills` 저장소이고, 이 저장소에는 `.agents/skills`에 설치한 사본을 커밋합니다. 스킬을 갱신할 때는 저장소 루트에서 `npx -y skills@latest add roadkwon-ai/pro-kit-docs-skills -a claude-code -a codex -y`를 다시 실행하고 바뀐 파일을 커밋합니다. 이 원본은 pro-kit 관리용이며, 템플릿으로 만든 프로젝트에는 문서 스킬을 임의로 복사하지 않습니다. 저장소 루트에는 이 두 스킬과 이 저장소 자체 스킬 `prokit-init`(새 프로젝트를 만들 때 PRD를 받아 두뇌·선택 스킬을 추천해 고르게 하고, PRD가 없으면 프로젝트를 만들지 않는 스킬. `skills-lock.json` 밖)만 둡니다. 공식·외부 스킬은 템플릿으로 만든 프로젝트에 설치하고, 이 저장소에서 검증에 필요하면 잠시 설치했다가 끝나면 스킬 폴더와 `skills-lock.json` 항목을 지웁니다.
+- 문서 쪽을 쓰거나 구조를 바꿀 때는 `prokit-docs`, 문장을 쓰고 다듬을 때는 `prokit-writing` 스킬을 씁니다. 두 스킬의 원본은 `roadkwon-ai/pro-kit-docs-skills` 저장소이고, 이 저장소에는 `.agents/skills`에 설치한 사본을 커밋합니다. 스킬을 갱신할 때는 저장소 루트에서 `npx -y skills@latest add roadkwon-ai/pro-kit-docs-skills -a claude-code -a codex -y`를 다시 실행하고 바뀐 파일을 커밋합니다. 이 원본은 pro-kit 관리용이며, 템플릿으로 만든 프로젝트에는 문서 스킬을 임의로 복사하지 않습니다. 저장소 루트에는 이 두 스킬과 이 저장소 자체 스킬 `prokit-init`(먼저 프로젝트 유형을 정하고, 새 프로젝트는 PRD를 받아 두뇌와 선택 스킬을 추천하며 PRD가 없으면 만들지 않고, 기존 프로젝트는 읽기 전용 초기 분석과 동의를 거쳐 도입하는 스킬입니다. `skills-lock.json` 밖에 두고 eval은 `evals/prokit-init`에 있습니다)만 둡니다. 공식·외부 스킬은 템플릿으로 만든 프로젝트에 설치하고, 이 저장소에서 검증에 필요하면 잠시 설치했다가 끝나면 스킬 폴더와 `skills-lock.json` 항목을 지웁니다.
 - 루트 `README.md`에는 요약과 링크만 둡니다. 상세는 `handbook/`, `tutorials/`, 템플릿 README에 쓰고 README에서 링크합니다.
 - `handbook/`의 순서는 문서 홈과 묶음마다 `README.md`의 쪽 표가 정합니다. 쪽은 `# 제목`, 빈 줄, `> 한눈에: …`로 시작합니다.
 - 홈페이지는 문서 쪽마다 마크다운 복사, AI로 보내기, `<쪽>.md` 주소, 도식 내려받기를 붙입니다. 새 문서 묶음을 더하면 홈페이지에도 붙는지 확인합니다([AGENTS.md](AGENTS.md#템플릿-수정-규칙)).

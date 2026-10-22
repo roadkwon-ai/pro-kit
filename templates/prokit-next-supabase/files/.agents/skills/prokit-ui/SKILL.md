@@ -53,7 +53,7 @@ description: >-
 | 설계 (새 화면과 흐름마다) | 코드 없이 사이트맵과 브리프를 만들고 사용자 확인을 받는다 | `shape <기능>` |
 | 시각 자산 (새 화면마다) | 구현 전에 브리프의 서체 파일을 받아 자체 호스팅한다. 이미지를 그릴 수 있으면(아래 규칙 "이미지 그리기") comp를 먼저 만들고 사진·일러스트는 plate 이미지로 만든다. 상세는 impeccable-map "시각 자산" | 이미지: comp-led new-work(`visualize`, `generate-image`) |
 | 개발 | 편집 직전에 impeccable의 `reference/craft-floor.md`를 읽는다. 브리프에 따라 필요할 때만 `layout`, `typeset`, `colorize`, `clarify`, `harden`, `onboard`, `adapt`, `animate`. 화면 전환과 공유 요소 애니메이션은 React `<ViewTransition>`으로 만들고 `vercel-react-view-transitions` 스킬(선택 묶음 `motion`)을 따른다 | new-work |
-| 리뷰 | 메인 세션에서 실행한다. 서브에이전트 안에서 실행하지 않는다. `web-design-guidelines` 스킬로 코드도 검사해 결과를 별도 절로 보고한다 | `critique`, `audit` + `web-design-guidelines` |
+| 리뷰 | 메인 세션에서 실행한다. 서브에이전트 안에서 실행하지 않는다. `web-design-guidelines` 스킬로 코드도 검사해 결과를 별도 절로 보고한다. critique는 `.impeccable/critique/` 기록 파일을 남기고, audit과 `web-design-guidelines` 결과는 `tasks/evidence/ui-audit-<YYYYMMDD-HHmm>.md`에 저장해 대조표 증거에 점수와 경로를 적는다(`dev-cycle audit`이 이번 라운드 파일인지와 점수를 대조한다) | `critique`, `audit` + `web-design-guidelines` |
 | 마감 | 수정을 한 번에 모아 적용하고 재확인은 1회만 한다 | `polish` |
 | 정본 갱신 | 토큰이나 컴포넌트가 바뀌었을 때. 덮어쓰기 전에 사용자에게 묻는다. 카탈로그에서 들여온 `DESIGN.md`는 덮어쓰지 않고 merge로 바뀐 토큰만 더한다. `DESIGN.md`를 쓰거나 고친 뒤에는 명세 lint로 확인한다(impeccable-map "DESIGN.md 검사") | `document` |
 
@@ -61,7 +61,7 @@ description: >-
 
 ## 규칙
 - 새 작업은 `shape` 브리프가 확정되기 전에 코드를 쓰지 않는다. 좁은 개선만 브리프 없이 진행하고, 대조표에 `N/A: 좁은 개선(버튼 간격)`처럼 적는다.
-- 리뷰만 요청받으면 코드를 고치지 않는다. 보고에는 critique 점수와 P0~P3, audit 총점과 접근성 점수, `web-design-guidelines` 위반(`file:line`)을 넣는다. 독립 평가자를 띄울 수 없는 환경이면 축소 모드로 했다고 밝힌다.
+- 리뷰만 요청받으면 코드를 고치지 않는다. 보고에는 critique 점수와 P0~P3, audit 총점과 접근성 점수, `web-design-guidelines` 위반(`file:line`), critique 기록 파일과 audit 보고서 경로를 넣는다. 독립 평가자를 띄울 수 없는 환경이면 축소 모드로 했다고 밝힌다.
 - 고비용 최종 리뷰 전에는 evidence packet에서 현재 변경 범위와 필수 audit·a11y 평가 항목·소스 조건을 먼저 대조한다. 현재 변경 범위의 평가는 이전 점수로 대신하지 않고, 주관 시각 점수와 정본 audit/a11y 점수도 환산·혼용하지 않으며 누락한 증거만 보완해 통과한 검사를 반복하지 않는다.
 - 링크와 버튼은 모두 실제 페이지나 실제 동작(모달, 드로어, 상태 바꾸기, 복사, 폼 제출 뒤 완료 화면)으로 이어진다. 404, "준비 중", `#`만 걸린 링크, 눌러도 반응이 없는 버튼을 두지 않는다. 이번에 만들지 않는 페이지로 가는 링크는 화면에 두지 않는다. 팩이 제공하는 URL 미설정 샘플은 비대화형 카드로 유지할 수 있으며, 클릭 가능한 가짜 링크나 임의 모달로 바꾸지 않는다. 새 작업은 시작과 마감에 브라우저로 페이지마다 모든 링크와 버튼을 눌러 확인하고, 중간 수정은 영향받은 화면만 다시 확인할 수 있다(impeccable-map "사이트맵과 상호작용").
 - 색, 간격, 반경, 그림자는 토큰으로만 쓴다. 원시 hex 값이나 임의 Tailwind 값(`bg-[#123456]`, `mt-[13px]`)을 새로 넣지 않는다.

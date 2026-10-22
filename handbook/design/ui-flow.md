@@ -28,7 +28,7 @@ flowchart LR
 | 설계 (화면마다) | 사이트맵에 링크와 버튼이 이어지는 곳을 모두 적고, impeccable `shape`로 화면마다 상호작용, 서체, 이미지, 아이콘, 모션 계획을 세워요. 이름이나 헤드라인을 새로 정하면 비슷한 서비스를 조사해 후보 3~4개를 내요 | `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 브리프 확인, 이름·문구 고르기 |
 | 시각 자산 (화면마다) | 서체 파일을 받아 프로젝트에 직접 넣어요. 이미지를 그릴 수 있으면 방향 comp 3장을 그리고, 고른 comp에 맞춰 사진·일러스트(plate)를 만들어요 | `apps/web/src/fonts/`, `apps/web/public/images/`, `.impeccable/mocks/` | comp 고르기 |
 | 개발 | 디자인 토큰을 `globals.css`의 shadcn 변수로 옮기고 컴포넌트를 조합해 화면을 만들어요 | 코드 | |
-| 리뷰 | 스크린샷, 모든 링크·버튼 누르기(404, "준비 중", 반응 없는 버튼이 없어야 해요), `critique`, `audit`, `web-design-guidelines` | 점수, P0~P3, 위반 목록 | |
+| 리뷰 | 스크린샷, 모든 링크·버튼 누르기(404, "준비 중", 반응 없는 버튼이 없어야 해요), `critique`, `audit`, `web-design-guidelines` | 점수, P0~P3, 위반 목록, critique 기록(`.impeccable/critique/…md`), audit 보고서(`tasks/evidence/ui-audit-<시각>.md`) | |
 | 마감 | `polish`(마무리 손질), 재확인 1회 | 통과 점수 | 기준에 못 미치면 더 다듬을지 결정 |
 | 기록 | `document` merge(기존 파일에 합치기), lint, diff | 갱신한 `DESIGN.md` | 덮어쓰기 전 확인 |
 
@@ -73,7 +73,7 @@ flowchart LR
 
 - **모든 링크와 버튼이 동작해요**: 실제 페이지나 실제 동작(모달, 드로어, 상태 바꾸기, 복사, 폼 제출 뒤 완료 화면)으로 이어져요. 404, "준비 중", `#`만 걸린 링크는 두지 않아요.
 - **토큰만 써요**: 색, 간격, 반경, 그림자는 토큰으로만 쓰고 색 코드(hex)나 임의 Tailwind 값(`bg-[#123456]`)을 새로 넣지 않아요.
-- **통과 기준**: critique의 P0·P1은 해결하거나 사유를 적어요. audit 총점은 <!-- v:devCycle.ui.auditMin -->16<!-- /v -->/20 이상, 접근성 점수는 <!-- v:devCycle.ui.a11yMin -->3<!-- /v -->/4 이상이에요(`.dev-cycle.json`의 `ui.auditMin`, `ui.a11yMin`). 못 미치면 완료로 보고하지 않고 더 다듬을지 물어요.
+- **통과 기준**: critique의 P0·P1은 해결하거나 사유를 적어요. audit 총점은 <!-- v:devCycle.ui.auditMin -->16<!-- /v -->/20 이상, 접근성 점수는 <!-- v:devCycle.ui.a11yMin -->3<!-- /v -->/4 이상이에요(`.dev-cycle.json`의 `ui.auditMin`, `ui.a11yMin`). 못 미치면 완료로 보고하지 않고 더 다듬을지 물어요. 점수만 적어서는 안 되고, 이번 라운드에 실행해 남긴 critique 기록 파일과 audit 보고서가 있어야 해요. 파일이 없거나 점수가 다르면 `dev-cycle audit`이 거절해요.
 - **편집 중 자동 검사**: 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`을 실행해 켜 두면(스킬 호출로 켜지 않아요) UI 파일을 고칠 때마다 detector가 결과를 알려 줘요.
 
 ### 이미지 그리기

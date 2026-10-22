@@ -27,7 +27,7 @@
 > **사용 전에**: 프로킷 자체 코드·스킬·문서는 [MIT License](LICENSE)로 제공합니다. 상업적 이용, 유료 고객 개발, 수정·재판매와 비공개 제품 개발을 허용하며, 재배포할 때 저작권 표시와 허가문을 함께 유지해야 합니다. 외부 스킬에는 [원래 조건](THIRD_PARTY_NOTICES.md)이 적용됩니다.
 
 <p align="center">
-  <strong>PRD로 스킬 추천 &middot; 기존 프로젝트 도입·전환 &middot; 템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개 &middot; 구현·리뷰 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->7<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
+  <strong>PRD로 스킬 추천 &middot; 기존 프로젝트 도입·전환 &middot; 템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개 &middot; 구현·리뷰·분석 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->7<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
 </p>
 
 <p align="center">
@@ -54,7 +54,9 @@ AI 코딩 에이전트가 일할 개발 환경을 프로젝트에 설치하는 �
 더 알아보기: [프로킷이란](handbook/start/what-is-prokit.md) · [이런 분께 추천해요](handbook/start/who-is-it-for.md) · [처음 보는 용어](tutorials/reference/glossary.md)
 
 ## 프로킷은 이렇게 일합니다
-이 저장소는 생성기입니다. [Better-T-Stack](handbook/templates/what-it-adds.md#better-t-stack이란)이 만든 앱 뼈대(Next.js, oRPC, Better Auth, Drizzle 모노레포)에 아래 하네스를 설치하고, 개발은 그렇게 만든 새 프로젝트 폴더에서 합니다([폴더 구조](handbook/reference/project-structure.md)). 기능 하나를 만들거나 고치는 작업 한 번(라운드)은 이렇게 흘러갑니다.
+이 저장소는 생성기입니다. [Better-T-Stack](handbook/templates/what-it-adds.md#better-t-stack이란)이 만든 앱 뼈대(Next.js, oRPC, Better Auth, Drizzle 모노레포)에 아래 하네스를 설치하고, 개발은 그렇게 만든 새 프로젝트 폴더에서 합니다([폴더 구조](handbook/reference/project-structure.md)).
+
+시작할 때는 에이전트가 먼저 어떤 프로젝트인지 점검합니다. 아직 코드가 없으면 새 프로젝트(PRD로 시작), 기획 자료나 프로토타입만 있으면 초기 프로젝트, 운영 중인 Next.js면 운영 중 도입, 다른 언어로 만든 서비스면 전환입니다. 새 프로젝트는 PRD로, 기존 프로젝트는 폴더를 읽기만 하는 초기 분석으로 설정을 추천하고, 기존 프로젝트는 동의를 받은 뒤 적용합니다([기존 프로젝트에 도입하기](handbook/start/adopt.md)). 기능 하나를 만들거나 고치는 작업 한 번(라운드)은 이렇게 흘러갑니다.
 
 ```mermaid
 flowchart LR
@@ -62,14 +64,14 @@ flowchart LR
   G -.->|원할 때| H["릴리스·배포"]
 ```
 
-화면만 만들 때는 프롬프트 → 프로젝트 준비 → 기획과 디자인 → 모든 페이지 → 검사와 리뷰 → 내보내기·배포 순서입니다.
+화면만 만들 때는 프롬프트 → 분석과 추천(PRD로 두뇌와 스킬 추천) → 프로젝트 준비 → 기획과 디자인 → 모든 페이지 → 검사와 리뷰 → 내보내기·배포 순서입니다.
 
 | 하네스를 이루는 것 | 하는 일 |
 |---|---|
 | 규칙 문서 | 에이전트가 시작할 때 `AGENTS.md`, 용어집, 프로젝트 소개를 읽어 새 세션도 같은 원칙으로 일합니다 |
 | 스킬 | 전용 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개가 프로젝트 계약을 지키며 공식·사용자 지정 전문 스킬에 작업을 맡기고 결과를 검수합니다. 필요하면 선택 스킬 묶음을 더합니다. [prokit 스킬](handbook/skills/prokit-skills.md) · [공식 스킬과 연결](handbook/skills/official-skills.md) |
-| 역할 나누기 | 수행자가 전문 작업을 맡고, 필요한 전문 리뷰와 프로킷의 최종 검수를 분리합니다. [위임 에이전트와 리뷰 에이전트](handbook/concepts/agent-roles.md) |
-| 대조표와 audit | 작업을 케이스로 나눠 대조표를 열고, 모든 칸에 실행한 증거가 있어야 라운드를 닫습니다. [dev-cycle 라운드](handbook/concepts/dev-cycle.md) · [케이스와 대조표](handbook/concepts/cases.md) |
+| 역할 나누기 | 수행자가 전문 작업을 맡고, 필요한 전문 리뷰와 프로킷의 최종 검수를 분리합니다. 기존 프로젝트는 계획을 세우기 전에 읽기 전용 분석 에이전트가 정밀 분석합니다. [위임 에이전트와 리뷰 에이전트](handbook/concepts/agent-roles.md) |
+| 대조표와 audit | 작업을 케이스로 나눠 대조표를 열고, 모든 칸에 실행한 증거가 있어야 라운드를 닫습니다. 화면 리뷰 점수는 리뷰 기록 파일과 맞춰 봅니다. 큰 일은 진행 계획을 Task로 나눠 앞 Task가 끝나야 다음 Task를 엽니다. [dev-cycle 라운드](handbook/concepts/dev-cycle.md) · [케이스와 대조표](handbook/concepts/cases.md) · [정밀 분석과 진행 계획](handbook/concepts/project-plan.md) |
 | 자동 검사 | 타입, 린트, 빌드, 테스트, 화면 디자인, 커밋 전 비밀값, 배포 준비를 명령으로 확인합니다. 독립 검사는 병렬로 진행하고, 영향이 없는 통과 증거는 조건을 확인해 재사용합니다. [검사 배정과 재사용](handbook/concepts/delegation-and-resources.md#독립-작업을-나눠서-확인하기) |
 | 개발 자원 보호 | 관리하는 캐시·설치 환경의 용량과 여유 공간을 확인합니다. [감시 범위와 안전한 정리](handbook/concepts/delegation-and-resources.md#관리-범위-안-자원만-다루기) |
 
@@ -126,7 +128,7 @@ cd ../my-app
 claude
 ```
 
-"수업 예약 첫 화면 디자인해줘. 서비스에 맞는 스타일도 추천해줘"처럼 평소 말로 요청하면, 에이전트가 스펙과 화면 설계를 보여 주고 확인받은 뒤 만들고 검사합니다. 예시 프롬프트와 배포 흐름은 [만든 뒤 개발하기](handbook/start/after-create.md)에 있습니다.
+"수업 예약 첫 화면 디자인해줘. 서비스에 맞는 스타일도 추천해줘"처럼 평소 말로 요청하면, 에이전트가 스펙과 화면 설계를 보여 주고 확인받은 뒤 만들고 검사합니다. 여러 라운드가 걸리는 큰 일은 "이 기능 묶음을 진행 계획으로 나눠줘"처럼 요청하면 Task로 나눠 차례로 진행합니다. 예시 프롬프트와 배포 흐름은 [만든 뒤 개발하기](handbook/start/after-create.md)에 있습니다.
 
 ## 만들어 본 예시
 프로킷으로 만든 사이트 중 대표 예시 4개입니다. 화면 예시는 사이트맵의 모든 페이지를 갖춰 링크와 버튼이 모두 동작하고 404나 "준비 중" 페이지가 없으며, 디자인 추천과 사이트맵은 에이전트가 낸 그대로이고 고르기와 수정 요청은 사용자가 직접 했습니다([만든 과정](handbook/design/ui-flow.md#프리셋), [검증 결과](handbook/reference/verification.md#화면-프리셋)).

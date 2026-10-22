@@ -3,6 +3,8 @@
 사용자 데이터를 다루는 프로시저를 추가하거나 바꾸면 이 패턴으로 테스트를 쓴다. 다른 계정의 데이터를 읽거나 고치거나 지울 수 없고, 로그인하지 않으면 거절된다는 것을 **실제 Postgres**에서 확인한다.
 
 ## 준비 (최초 1회, 대조표의 vitest 도입 행)
+D·E·F 대조표는 `table`이 이 행을 넣고, C 라운드나 패키지 폴더가 없을 때는 직접 더한다. E만 고치는 라운드면 `packages/db`에만 vitest와 `test` 스크립트를 두고 아래 2의 루트 등록과 5는 처음 D 라운드에서 한다(`prokit-verify`의 "테스트 러너").
+
 1. `pnpm --filter @<프로젝트>/api add -D vitest`
 2. `packages/api/package.json` scripts에 `"test": "vitest run"`, 루트 `package.json`에 `"test": "turbo run test"`를 추가한다.
 3. `turbo.json`의 `tasks`에 `"test": { "cache": false }`를 추가하고, `globalEnv`에 `"TEST_DATABASE_URL"`을 추가한다 (turbo는 선언하지 않은 환경변수를 태스크에 넘기지 않는다).

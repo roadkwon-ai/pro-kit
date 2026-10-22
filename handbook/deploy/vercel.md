@@ -9,7 +9,7 @@
 | develop | Preview + 고정 주소(alias) | 병합 전 확인용 원격 DB (neon `develop` 브랜치, supabase 스테이징 프로젝트) | `pnpm vercel:deploy develop` |
 | production | Production | 운영 DB | `pnpm release` 뒤 `pnpm vercel:deploy production` (기본 브랜치의 릴리스한 커밋만) |
 
-새 프로젝트 세션에서 "develop에 배포해줘", "운영에 배포해줘"처럼 요청하면 `prokit-deploy` 스킬이 준비 확인부터 배포 뒤 확인까지 진행해요. 배포는 두 경우에만 해요. 사용자가 요청할 때, 그리고 기능 라운드를 마친 뒤 사용자가 "릴리스하고 production 배포"를 고를 때예요.
+새 프로젝트 세션에서 "develop에 배포해줘", "운영에 배포해줘"처럼 요청하면 `prokit-deploy` 스킬이 준비 확인부터 배포 뒤 확인까지 진행해요. 배포는 두 경우에만 해요. 사용자가 요청할 때, 그리고 기능 라운드를 마친 뒤 사용자가 "릴리스하고 production 배포"를 고를 때예요. 기존 프로젝트에 들인 프로젝트(하네스만 설치한 경우)와 배포 방법을 아직 프로킷에 맞추지 않은 운영 중 프로젝트는 라운드를 마칠 때 이 선택을 묻지 않고 커밋까지만 해요.
 
 ```mermaid
 flowchart LR

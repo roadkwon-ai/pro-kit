@@ -20,7 +20,7 @@ bash <pro-kit>/templates/prokit-next-neon/install.sh my-app       # supabase면 
 | `--legacy <경로>` | `migration`에서만 써요. 기존 코드 폴더를 새 프로젝트 기준 상대 경로로 `legacy.path`에 기록해요. 안내용이라 코드는 읽기만 하고, `pnpm dev-cycle status`에 보여 줘요 |
 | `--adopt` | `operating`이면서 Better-T-Stack이 아닌 Next.js 프로젝트에 하네스만 설치해요. 아래 "기존 프로젝트에 설치하기"를 보세요 |
 | `--default-branch <브랜치>` | dev-cycle의 기준 브랜치를 기록해요. 기존 프로젝트를 `prokit/setup` 브랜치에서 들일 때 써요(합칠 기본 브랜치, 또는 도입 브랜치에서 계속하면 `prokit/setup`) |
-| `--with-global` | 전역 도구(agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, 고른 두뇌의 gstack·OMX CLI) 중 없는 것을 설치한 뒤 프로젝트 설치를 이어 가요. ponytail을 골랐으면 지원하는 Codex CLI에서 공식 Ponytail marketplace와 네이티브 플러그인도 선택 설치해요 |
+| `--with-global` | 전역 도구(agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, 고른 두뇌의 gstack·OMX·OpenSpec CLI) 중 없는 것을 설치한 뒤 프로젝트 설치를 이어 가요. ponytail을 골랐으면 지원하는 Codex CLI에서 공식 Ponytail marketplace와 네이티브 플러그인도 선택 설치해요 |
 
 - `AGENTS.md`, `CLAUDE.md`가 이미 있으면 템플릿 블록을 끝에 한 번만 덧붙여요.
 - 무엇을 고를지는 [두뇌와 선택 스킬](../skills/brains.md)에 있어요. 모르는 이름을 주면 아무것도 쓰지 않고 멈춰요.
@@ -57,7 +57,7 @@ bash <pro-kit>/templates/prokit-next-neon/install.sh my-app       # supabase면 
 3. **새 세션 열기**: 스킬과 에이전트는 새 세션부터 보여요. 첫 실행 때 묻는 신뢰 질문에 동의해야 프로젝트 설정이 켜져요. Claude Code는 플러그인, Codex는 에이전트와 프로젝트 스킬, Grok Build는 규칙과 스킬이에요(`grok --trust`로 열면 묻지 않고 신뢰해요). `--with-global`로 Codex Ponytail을 선택 설치했다면 `/hooks`에서 별도로 신뢰한 뒤 새 세션을 열어요. Antigravity는 `AGENTS.md`, `.agents/skills`, `.agents/agents`를 그대로 읽어요([지원하는 에이전트](../start/supported-agents.md#신뢰-질문)).
 4. **화면 디자인 검사 켜기**: 개발자마다 한 번, 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`을 실행해요. 켠 뒤 `.claude/settings.local.json`의 훅 명령이 `…/scripts/impeccable" hook`인지 확인해요.
 5. **프로젝트 소개 채우기**: `GLOSSARY.md`와 `docs/domain/project.md`를 채워요.
-6. **첫 요청**: "…을 만들어줘"처럼 요청하면 `prokit-dev-cycle`이 라운드를 열어요([dev-cycle 라운드](../concepts/dev-cycle.md)).
+6. **첫 요청**: "…을 만들어줘"처럼 요청하면 `prokit-dev-cycle`이 라운드를 열어요([dev-cycle 라운드](../concepts/dev-cycle.md)). 기존 프로젝트를 들였다면 새 세션이 `docs/first-request.md`를 읽고 정밀 분석부터 시작해요([기존 프로젝트에 도입하기](../start/adopt.md)).
 
 ## 자세히
 

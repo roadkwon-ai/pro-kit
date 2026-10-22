@@ -30,16 +30,16 @@ flowchart LR
 |---|---|
 | 프로젝트 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개 | `prokit-dev-cycle`(작업 진행), `prokit-web`(라우팅·RSC·캐시), `prokit-ui`(화면·UX), `prokit-api`(oRPC·인증·데이터 주인 확인), `prokit-db`(스키마·마이그레이션), `prokit-verify`(검사·증거), `prokit-deploy`(Vercel 배포·릴리스), `prokit-pack-use`(완성팩 활용), `prokit-skills-update`(외부 스킬 업데이트), `prokit-skills-manage`(진행 중 두뇌·스킬 구성 바꾸기) |
 | 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | `prokit-analyzer`(기존 프로젝트를 읽기만 하며 정밀 분석), `prokit-implementer`(범위를 받은 수행), `specialist-reviewer`(부족한 전문 계약만 읽기 전용 검토), `prokit-reviewer`(증거·통합 수용을 보는 최종 읽기 전용 게이트). Prokit은 외부 전문 수행자에게 일을 맡기고 범위·증거·재지시를 관리해요. `.claude/agents`가 원본이고, `.codex/agents`(Codex)와 `.agents/agents`(Antigravity)는 이 원본에서 자동으로 만들어요 |
-| dev-cycle | 작업을 케이스(<!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->)로 나눠요. 케이스별 대조표의 모든 행에 증거를 채워야 라운드가 끝나요(`pnpm dev-cycle …`) |
+| dev-cycle | 작업을 케이스(<!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->)로 나눠요. 케이스별 대조표의 모든 행에 증거를 채워야 라운드가 끝나요(`pnpm dev-cycle …`). 기존 프로젝트는 진행 계획을 확정한 뒤 Task 단위(`--task T<n>`)로 라운드를 열어요 |
 | 기존 프로젝트 도입 | 이미 있는 프로젝트에도 설치할 수 있어요. 유형(`--project-type`)에 따라 같은 폴더, 새 브랜치, 새 폴더로 적용하고 `docs/prokit/intake.md`(도입 기록), `docs/prokit/analysis.md`(정밀 분석), `tasks/plan.md`(진행 계획)를 남겨요([기존 프로젝트에 도입하기](../start/adopt.md), [정밀 분석과 진행 계획](../concepts/project-plan.md)) |
 | 문서 골격 | `AGENTS.md`(맨 앞에 개발 원칙: 계획, 서브에이전트, 교훈 기록, 완료 전 확인. 이어서 공통 규칙), `CLAUDE.md`(`@AGENTS.md`로 같은 지침을 읽어요), `GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md`, `docs/dev-workflow.md` |
 | 내부 스킬 (이 프로젝트에만, 자동 설치) | 공식 도메인 스킬(Next.js, React, Better Auth, shadcn, impeccable, turborepo, DB 스킬, Vercel 배포 스킬 등), mattpocock 필수 3개, skill-creator(Claude 플러그인과 Codex 스킬). 두뇌와 과설계 방지 스킬은 고른 것만 설치해요(기본은 없음. [두뇌와 선택 스킬](../skills/brains.md)). ponytail을 고르면 Codex 스킬 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->종도 받고, Codex 네이티브 Ponytail은 `--with-global`일 때만 선택 설치해요 |
 | 외부 스킬 위임 | 설치 목록 밖에서도 현재 접근 가능한 사용자 지정·프로젝트별 전문 스킬을 확인해 연결해요. 출처와 부작용을 확인하고 결과와 증거를 받아 최종 검수해요 |
-| 개발 자원 보호 | 캐시·Next 출력·설치 패키지·Python 실행환경·관리 임시 폴더를 감시해요. 새 프로젝트의 개발·빌드 명령에 연결하고, 기존 프로젝트는 H 라운드에서 반영해요([위임과 자원 관리](../concepts/delegation-and-resources.md)) |
+| 개발 자원 보호 | 캐시·Next 출력·설치 패키지·Python 실행환경·관리 임시 폴더를 감시해요. 새 프로젝트의 개발·빌드 명령에 연결하고, 이미 프로킷을 설치한 프로젝트는 H 라운드에서 반영해요([위임과 자원 관리](../concepts/delegation-and-resources.md)) |
 | 선택 스킬 묶음 (기본 설치 안 함) | `ops`(배포한 서비스의 비용·성능 점검. neon은 Neon 함수·파일 저장·LLM 게이트웨이 포함), `motion`(화면 전환 애니메이션), `mobile`(React Native·Expo 앱), `i-have-adhd`(짧은 행동 중심 응답), `taste`(화면 디자인 보조 taste-skill) |
 | 화면만 프로젝트 | `scripts/export-html.mjs`로 DB 없이 만든 화면을 정적 HTML로 내보내요(`pnpm export:html`). 선택해서 쓸 수 있는 사이트 하단 제작 표시 컴포넌트 `apps/web/src/components/prokit-credit.tsx`를 함께 둬요. `scripts/load-keys.mjs`와 SessionStart 훅이 프로젝트나 작업 폴더 `.env`의 `OPENAI_API_KEY`를 Claude Code 세션에 불러와요 |
 | Vercel 배포와 릴리스 | `pnpm vercel:deploy develop`·`production`이 배포 전 검사, 배포, 되돌리기 명령 안내를 맡아요. 운영에는 `pnpm release`로 버전 태그, `release/` 노트, GitHub Release를 만든 커밋만 배포해요. `.vercelignore`와 `.gitignore`의 `.env.*` 규칙 덕분에 로컬 비밀값이 배포나 커밋에 섞이지 않아요 |
-| 전역 도구 | <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. Vercel CLI, Neon CLI 또는 Supabase CLI와 지원하는 Codex의 네이티브 Ponytail(ponytail을 고른 경우)은 `--with-global`을 줄 때만 설치해요. 두뇌 gstack과 OMX CLI는 그 두뇌를 고를 때만 설치해요. ego lite(macOS)는 직접 설치해요 |
+| 전역 도구 | <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. Vercel CLI, Neon CLI 또는 Supabase CLI와 지원하는 Codex의 네이티브 Ponytail(ponytail을 고른 경우)은 `--with-global`을 줄 때만 설치해요. 두뇌 gstack, OMX CLI, OpenSpec CLI는 그 두뇌를 고를 때만 설치해요. ego lite(macOS)는 직접 설치해요 |
 
 ## Better-T-Stack이란
 

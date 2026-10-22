@@ -28,7 +28,7 @@ flowchart TD
 - **전역 도구는 둘로 나뉘어요**: <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지 전역 도구는 `--with-global`을 줄 때만 설치해요.
 
 - **openspec과 spec-kit은 자기 init 명령으로 설치해요**: OpenSpec은 전역 npm CLI(고를 때만 설치), Spec Kit은 설치할 때만 uv가 필요해요. 지울 때는 도구 파일만 지우고 `openspec/`, `specs/`, `.specify/memory/` 문서는 남겨요. Compound Engineering은 Claude 프로젝트 플러그인과 skills CLI로 받는 Codex 스킬이에요([두뇌와 선택 스킬](brains.md)).
-- **기존 프로젝트 도입(`--adopt`)**: `install.sh --adopt`는 하네스만 넣어요. `prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`만 복사하고, 매니페스트에서 `stack: true`인 Better-T-Stack 전용 스킬(better-auth, neon, turborepo)은 건너뛰어요([기존 프로젝트에 도입하기](../start/adopt.md)).
+- **기존 프로젝트 도입(`--adopt`)**: `install.sh --adopt`는 하네스만 넣어요. `prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`만 복사하고, 매니페스트에서 `stack: true`인 Better-T-Stack 전용 스킬(neon 템플릿은 better-auth, neon, turborepo, supabase 템플릿은 better-auth, turborepo)은 건너뛰어요([기존 프로젝트에 도입하기](../start/adopt.md)).
 
 ## 설치 목록과 실제 선택은 달라요
 

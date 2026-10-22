@@ -21,6 +21,7 @@
 | 스킬·에이전트 실행 준비 | 작업 범위, 검사 담당자, 리뷰 문맥과 평가의 일치를 확인해요. 읽기 전용 비교는 실제 개발 시간 측정과 구분해요 | [추가 개선 기록](../../docs/reports/2026-10-10-skill-agent-efficiency/README.md) |
 | Ponytail 통합 | 프로젝트 스킬과 선택 플러그인의 설치 회귀, 격리한 실제 Better-T-Stack 설치와 모드 처리를 확인했어요. 직접 훅 스크립트를 실행한 결과와 호스트의 자동 훅 실행은 구분해요 | [통합 결과와 미검증 범위](../../docs/reports/2026-10-10-ponytail-5-integration/README.md) |
 | 두뇌 선택과 PRD로 시작하기 | 고른 두뇌·과설계 방지 스킬만 설치하고, 바꾸면 이전 설치본을 지우는지 실제 프로젝트에서 확인했어요. `prokit-init`은 평가와 실제 Claude Code 세션으로 PRD 없이 끝나는 흐름과 PRD를 받아 커밋까지 만드는 흐름을 확인했어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#두뇌과설계-방지-스킬-선택-설치-2026-10-20) · [보고서](../../docs/reports/2026-10-20-brain-selection/README.md) |
+| 프로젝트 유형별 도입과 Task 게이트 | 새·초기·운영 중·전환 유형 설치, `--adopt`, 두뇌 3종 추가, 진행 계획과 Task 게이트를 실제 프로젝트에서 확인했어요. Codex 실제 세션은 CX1 9/10, 고친 뒤 CX2 10/10이고, Antigravity(Gemini 3.8 Flash)는 AG1~AG9를 돌렸어요. 화면 리뷰 기록 대조 같은 채점 지적 보완은 실제 세션으로 다시 시험하지 않았어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#프로젝트-유형별-도입-두뇌-확장-task-게이트-2026-10-22) |
 | 화면 디자인 보조 taste | 선택 묶음 `taste`로 taste-skill을 설치하고, 기록이 프로젝트 안에만 남는지와 브라우저 검사가 도는지 실제 프로젝트에서 확인했어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#선택-묶음-taste-taste-skill-화면-디자인-보조-2026-10-20) |
 | 기존 프로젝트 이행 | 지정한 프로젝트의 H 라운드에서 차이·검사·리뷰를 확인했어요. 다른 프로젝트에 일괄 적용한 결과는 아니에요 | [H 이행 기록](../../docs/reports/2026-10-10-h-migration/README.md) |
 | DESIGN.md 효과 | `DESIGN.md`가 있을 때와 브랜드 이름과 대표 색만 줬을 때의 디자인 일치율 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#designmd-효과-측정-2026-09-30-추가) |

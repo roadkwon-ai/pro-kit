@@ -19,6 +19,7 @@ my-app/
 │                               vercel-deploy.mjs, release.mjs, export-html.mjs, load-keys.mjs
 ├── release/                    production 배포마다 릴리스 노트 (pnpm release)
 ├── skills.manifest.json, skills-lock.json, .dev-cycle.json, .vercelignore
+├── .impeccable/                impeccable 기록(critique/*.md 등. 화면을 리뷰하면 생기고 커밋해요)
 ├── docs/                       dev-workflow.md, adr/, domain/project.md, plans/(진행 계획),
 │                               prokit/(기존 프로젝트를 들였을 때: intake.md 도입 기록, analysis.md 정밀 분석)
 └── tasks/                      todo.md(남은 할 일·진행 중 대조표), plan.md(진행 계획의 Task 표, 있으면),

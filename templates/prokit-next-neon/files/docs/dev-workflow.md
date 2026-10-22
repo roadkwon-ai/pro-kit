@@ -9,6 +9,7 @@
 - 행 형식은 `- [태그] 단계 → 증거 형식`이다. `verify`·`review` 태그 행은 C 케이스가 상속한다.
 - `@include X Y`는 다른 케이스의 행을 그 자리에 펼친다. `@inherit verify review`는 경로로 판정된 케이스에서 해당 태그 행만 가져온다. 같은 문구의 행은 한 번만 들어간다.
 - 인증 민감 경로(`.dev-cycle.json`의 `authPaths`)를 건드리면 러너가 `[review] prokit-reviewer(security)` 행을 자동으로 붙인다.
+- 러너가 맨 앞에 붙이는 행도 있다. D·E·F 표는 그 계층 패키지(`packages/api`, E는 `packages/db`)에 `test` 스크립트가 없으면 `vitest 도입(최초 1회)` 행, `--task`로 연 라운드는 Task 세부 계획과 그 리뷰 행, `--plan`으로 연 라운드는 정밀 분석(기존 프로젝트만)·진행 계획 문서·계획 리뷰 행이다. 이 행들은 이 문서에 적지 않는다.
 - `[confirm]` 행(사용자 확인)은 증거 칸을 N/A·PASS·blocked·미실행·대기 같은 건너뛰기 표시로 채울 수 없다. audit이 거부하고 `close --partial`로도 닫히지 않는다. 라운드를 닫은 뒤의 커밋·push, 릴리스, 배포는 `prokit-dev-cycle`의 "5. 종료"를 따른다.
 - 위임은 `prokit-dev-cycle`의 `references/delegation.md`를 따른다. provider의 실제 내용·hash·scope·의존성·capability·side effect와 snapshot·evidence packet을 확인한 뒤 한 작업 단위에 한 수행 흐름만 둔다. 고위험 미검사는 parked 또는 degraded로 남기며 PASS로 적지 않는다.
 

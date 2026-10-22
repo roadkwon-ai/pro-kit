@@ -10,12 +10,12 @@
 |---|---|
 | `pnpm dev-cycle status` | 진행 중인 라운드의 케이스, 채운 칸 수, 다음 행과 진행 계획의 다음 Task 확인. 전환 프로젝트는 기존 코드 경로도 보여 줘요. 라운드가 없으면 여는 법을 알려 주고, 외부 스킬 새 버전도 하루 한 번 확인 |
 | `pnpm dev-cycle case` | 현재 diff의 케이스 판정 |
-| `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기. `--upgrade`는 더 무거운 케이스로 올리기 |
+| `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기. `--upgrade`는 더 무거운 케이스로 올리기. D·E·F에서 그 계층 패키지에 `test` 스크립트가 없으면 vitest 도입 행이 맨 앞에 자동으로 들어가요 |
 | `pnpm dev-cycle table <케이스> --write --title "T1 …" --task T1` | 진행 계획의 Task 라운드 열기. 앞 Task가 완료·제외가 아니면 열리지 않고, 대조표 맨 앞에 세부 계획과 계획 리뷰 행이 붙어요(케이스 F는 세부 계획 행만) |
 | `pnpm dev-cycle table A --write --title "정밀 분석과 진행 계획" --plan` | 진행 계획을 세우거나 고치는 라운드 열기. 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 계획 리뷰 행이 붙고, audit은 `tasks/plan.md`에 진행 계획 블록이 있는지 봐요 |
 | `pnpm dev-cycle table <케이스> --write --title "<요약>" --no-task` | 진행 계획을 확정하기 전인 기존 프로젝트에서, 사용자가 먼저 하라고 한 급한 버그 수정·템플릿 갱신 반영·스킬 구성 변경 라운드 열기. 그 밖의 라운드는 진행 계획을 확정해야 열려요 |
 | `pnpm dev-cycle plan [--json]` | `tasks/plan.md`의 Task 표, 다음에 열 Task, 문제를 보기. 진행 계획 라운드 중에는 사용자 확인에 적을 Task 구성의 지문(`sig=`)도 보여요. 문제가 있으면 exit 1 |
-| `pnpm dev-cycle audit` | 빈 칸, 건너뛸 수 없는 칸, 케이스 상향 검사 |
+| `pnpm dev-cycle audit` | 빈 칸, 건너뛸 수 없는 칸, 케이스 상향 검사. 화면 리뷰 행은 이번 라운드의 critique 기록(`.impeccable/critique/`)과 audit 보고서(`tasks/evidence/ui-audit-*.md`)의 점수와 맞는지 대조하고, 진행 계획의 지문(`sig=`)과 Task 상태도 확인해요 |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관. 미완료 항목과 코드 예시는 남기고, 끝난 하위 항목은 부모 문맥과 함께 기록 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일의 내용으로 바꿔요(끝 줄바꿈 하나는 허용해요). 표의 헤더·stage와 다른 행, 메모, 코드 블록은 그대로 둬요 |
 | `pnpm dev-cycle close` | audit과 실제 사용자 확인 뒤 대조표와 완료한 일반 할 일·백로그를 KST 날짜의 파일로 보관해 라운드 닫기. `blocked`나 `미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial` |
@@ -82,7 +82,7 @@
 
 | 명령 | 하는 일 |
 |---|---|
-| `/prokit-init <PRD 파일 경로나 내용>` | 새 프로젝트 만들기. PRD로 두뇌와 스킬을 추천해 고르게 한 뒤 아래 설치까지 해요. PRD가 없으면 먼저 받고, 끝내 없으면 만들지 않아요. Claude Code 기준이고 Codex는 `$prokit-init`이에요. pro-kit 폴더에서 연 세션에서만 불러요([두뇌와 선택 스킬](../skills/brains.md)) |
+| `/prokit-init <PRD 파일 경로나 내용>`, `/prokit-init [프로젝트 경로]` | 새 프로젝트 만들기, 또는 기존 프로젝트에 들이기(PRD는 없어도 돼요). 새 프로젝트는 PRD로 두뇌와 스킬을 추천해 고르게 한 뒤 아래 설치까지 해요. 새 프로젝트는 PRD가 없으면 먼저 받고, 끝내 없으면 만들지 않아요. Claude Code 기준이고 Codex는 `$prokit-init`이에요. pro-kit 폴더에서 연 세션에서만 불러요([두뇌와 선택 스킬](../skills/brains.md)) |
 | `bash templates/<템플릿>/install.sh <프로젝트>` | 템플릿 설치. `--brain`, `--simplicity`, `--matt`, `--optional`, `--diff`, `--skip-skills`, `--with-global`, 기존 프로젝트용 `--project-type`, `--legacy`, `--adopt`, `--default-branch`([설치기와 옵션](../templates/installer.md)) |
 | `node scripts/pack.mjs <이름>` | 프리셋 팩을 받아 sha256을 확인한 뒤 `packs/<이름>/`에 풀기 |
 | `node scripts/pack.mjs <이름> --zip <경로>` | 미리 받아 둔 팩 zip을 같은 확인을 거쳐 `packs/<이름>/`에 풀기 |

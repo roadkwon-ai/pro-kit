@@ -22,6 +22,9 @@
 | Vercel CLI (<!-- v:cli.vercel.installCode -->`npm install -g vercel`<!-- /v -->)와 Vercel 계정 | develop과 운영에 배포할 때 |
 | ego lite (macOS) | 브라우저로 화면을 확인할 때 먼저 쓰는 도구 |
 | agent-browser CLI | ego lite를 쓸 수 없을 때의 브라우저 확인 도구. <!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v --> |
+| Bun | 두뇌 gstack을 고를 때 |
+| uv | 두뇌 Spec Kit을 설치할 때만 |
+| OpenSpec CLI (npm) | 두뇌 OpenSpec을 고를 때. 설치기가 전역에 설치해요 |
 
 앱 스택, CLI 도구, 외부 서비스 전체는 [쓰는 기술과 도구](../reference/tech-stack.md)에 모았어요. 에이전트 설치와 로그인은 튜토리얼 [시작하기](../../tutorials/start/README.md)에 있어요. 요금제는 [비용과 키](../../tutorials/reference/costs-and-keys.md)를 보세요.
 
@@ -48,7 +51,7 @@
 
 ### 전역에만 설치되는 도구
 
-agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, ego lite는 프로젝트가 아니라 컴퓨터 전체에 설치돼요. 두뇌 gstack과 OMX CLI(`oh-my-codex`)도 전역이지만 그 두뇌를 고를 때만 설치해요. <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지는 기본 실행에서 없는 것과 설치 명령만 알려 주고, `--with-global`을 주면 ego lite를 뺀 나머지 중 없는 것만 설치해요([설치기와 옵션](../templates/installer.md)). 모두 없어도 dev-cycle은 진행돼요.
+agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, ego lite는 프로젝트가 아니라 컴퓨터 전체에 설치돼요. 두뇌 gstack, OMX CLI(`oh-my-codex`), OpenSpec CLI도 전역이지만 그 두뇌를 고를 때만 설치해요. <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지는 기본 실행에서 없는 것과 설치 명령만 알려 주고, `--with-global`을 주면 ego lite를 뺀 나머지 중 없는 것만 설치해요([설치기와 옵션](../templates/installer.md)). 모두 없어도 dev-cycle은 진행돼요.
 
 ### Windows
 

@@ -4,24 +4,26 @@
 
 ## 설치되는 공식 스킬
 
-기본으로 neon은 <!-- v:skills.official.neon -->28<!-- /v -->개, supabase는 <!-- v:skills.official.supabase -->25<!-- /v -->개를 설치해요. 기준 목록은 각 템플릿의 `files/skills.manifest.json`이에요. 용어 정리에 쓰는 `domain-modeling`처럼 널리 쓰이는 외부 스킬도 같은 방식으로 설치해요.
+기본으로 neon은 <!-- v:skills.official.neon -->28<!-- /v -->개, supabase는 <!-- v:skills.official.supabase -->25<!-- /v -->개를 설치해요(`--adopt` 설치는 이보다 적어요). 기준 목록은 각 템플릿의 `files/skills.manifest.json`이에요. 용어 정리에 쓰는 `domain-modeling`처럼 널리 쓰이는 외부 스킬도 같은 방식으로 설치해요.
 
 | 분야 | 스킬 | 출처 | 읽는 곳 |
 |---|---|---|---|
 | Next.js 동작·성능 | `next-dev-loop`, `next-cache-components-adoption`, `next-cache-components-optimizer`, `next-partial-prefetching-adoption`, `next-partial-prefetching-optimizer` | vercel/next.js | `prokit-web`, `prokit-verify`. `next-dev-loop`는 B·F 런타임 확인 행 |
-| React·화면 규칙 | `vercel-react-best-practices`, `vercel-composition-patterns`, `web-design-guidelines` | vercel-labs/agent-skills | `prokit-web`(앞의 둘), `prokit-reviewer`(컴포넌트·훅은 react-best-practices, 합성 결정은 composition-patterns), `prokit-ui`(web-design-guidelines). B·F 설계 점검(재사용 API·합성), B 구현 행(react-best-practices), audit 행(web-design-guidelines) |
+| React·화면 규칙 | `vercel-react-best-practices`, `vercel-composition-patterns`, `web-design-guidelines` | vercel-labs/agent-skills | `prokit-web`(앞의 둘), `prokit-reviewer`(컴포넌트·훅은 react-best-practices, 합성 결정은 composition-patterns), `prokit-ui`(web-design-guidelines). B·F 설계 점검(재사용 API·합성), B 구현 행(react-best-practices), audit 행(web-design-guidelines). audit 행은 위반 목록을 impeccable audit 보고서와 함께 `tasks/evidence/ui-audit-<시각>.md`에 저장하고, `dev-cycle audit`이 그 파일을 확인해요 |
 | 컴포넌트 | `shadcn` | shadcn/ui | `prokit-ui`. B 구현 행 |
-| 화면 디자인 | `impeccable` | pbakaus/impeccable | `prokit-ui`. B·F 브리프, critique, audit 행 |
+| 화면 디자인 | `impeccable` | pbakaus/impeccable | `prokit-ui`. B·F 브리프, critique, audit 행. critique는 `.impeccable/critique/<시각>__<대상>.md` 기록을 남겨야 하고 그 점수가 증거와 같아야 해요. audit의 N/20은 저장한 보고서에 있어야 해요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요. 기존 디자인을 이어 가는 프로젝트는 지금 화면에서 `DESIGN.md`를 만들어요 |
 | 이미지 그리기 (ChatGPT 요금제) | `gpt-image` | GENEXIS-AI/gpt-image-skill | `prokit-ui`. Claude Code에서 `OPENAI_API_KEY`가 없고 Codex CLI가 ChatGPT로 로그인되어 있을 때 comp와 plate 이미지를 그려요 |
-| 디자인 스타일 카탈로그 | `use-design-md` | CaesiumY/ko-design-md | `prokit-ui`. B 첫 행에서 고른 스타일(getdesign.kr, awesome-design-md, Refero Styles)의 DESIGN.md를 받아 적용해요. 받은 파일은 Google 스펙 CLI(`@google/design.md`)로 lint해요 |
-| 브라우저 확인 | `agent-browser` | vercel-labs/agent-browser | `prokit-verify`. B·F 런타임 확인 행(macOS는 ego lite를 먼저 써요) |
+| 디자인 스타일 카탈로그 | `use-design-md` | CaesiumY/ko-design-md | `prokit-ui`. B 첫 행에서 고른 스타일(getdesign.kr, awesome-design-md, Refero Styles)의 DESIGN.md를 받아 적용해요. 받은 파일은 Google 스펙 CLI(`@google/design.md`)로 lint해요. 기존 디자인을 이어 가기로 한 프로젝트는 쓰지 않아요 |
+| 브라우저 확인 | `agent-browser` | vercel-labs/agent-browser | `prokit-verify`. B·F 런타임 확인 행(macOS는 ego lite를 먼저 써요). 견본이 콘솔 오류와 가로 넘침을 모아 `결함:` 줄로 출력하고, 이 줄은 오류 예산에 들어가요. 띄우기 전에 3001 포트를 `lsof`로 보고, 다른 프로세스가 쓰면 끄지 않고 알려요 |
 | 인증 | `better-auth-best-practices`, `better-auth-security-best-practices`, `email-and-password-best-practices` | better-auth/skills | `prokit-api`, `prokit-reviewer`(security). D 구현 행 |
 | Postgres 스키마 | `supabase-postgres-best-practices` | supabase/agent-skills | `prokit-db`, `prokit-reviewer`(db). E 스키마 행 |
 | Neon (neon만) | `neon`, `neon-postgres`, `neon-postgres-branches`, `neon-postgres-egress-optimizer` | neondatabase/agent-skills | `prokit-db`. `neon-postgres-branches`는 E 병합 전 행 |
 | Supabase (supabase만) | `supabase` | supabase/agent-skills | `prokit-db`, `prokit-reviewer`(db). E advisors 행의 보안 체크리스트 |
 | 모노레포 | `turborepo` | vercel/turborepo | `prokit-web`, `prokit-dev-cycle`. 태스크·패키지 의존·환경 변수 캐시 입력을 설계하고 `turbo.json`을 바꿀 때 |
-| 용어·설계 질문 | `domain-modeling`, `grill-with-docs`, `grilling` | mattpocock/skills | `prokit-dev-cycle`, `prokit-db`. F 스펙 행과 공통 문서 행 |
+| 용어·설계 질문 | `domain-modeling`, `grill-with-docs`, `grilling` | mattpocock/skills | `prokit-dev-cycle`, `prokit-db`. F 스펙 행과 공통 문서 행. 진행 계획 라운드에서는 계획 전에 결과를 바꾸는 질문을 물을 때도 써요 |
 | Vercel 배포 | `deploy-to-vercel`, `vercel-cli-with-tokens`, `access-protected-vercel-deployment` | vercel-labs/agent-skills, vercel/vercel-plugin | `prokit-deploy` |
+
+`--adopt`로 하네스만 들인 기존 프로젝트는 `stack` 표시가 붙은 Better-T-Stack 전용 스킬(`better-auth` 3종, neon의 `neon` 4종, `turborepo`)을 설치하지 않아요. `prokit-api`, `prokit-db`, `prokit-deploy`도 없어서 이 스킬들이 맡던 행은 그 프로젝트의 기존 방식으로 해요([설치와 업데이트 구조](install-and-update.md)).
 
 일부 프로젝트만 쓰는 스킬은 [선택 스킬 묶음](optional-bundles.md)에 따로 모아 두었어요. 화면 디자인을 보조하는 taste-skill([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill))도 선택 묶음 `taste`로 더할 수 있어요. 고른 화면에서만 방향 뽑기, 공개 아카이브 사진, 실제 브라우저 검사를 보태고 impeccable 흐름은 그대로예요([화면 디자인 보조](brains.md#화면-디자인-보조)).
 
@@ -36,10 +38,10 @@
 | 이름 | 무엇인가 | 설치 | 프로킷에서 맡는 일 |
 |---|---|---|---|
 | skill-creator | 스킬을 만들고 평가하는 도구(Anthropic) | 늘 설치. Claude Code는 플러그인, Codex는 스킬 | 스킬 본문을 바꾼 라운드(케이스 H)에서 eval을 다시 돌려요 |
-| 두뇌(하나 권장, 여럿 가능) | 요구 정리, 계획, 구현 진행, 디버깅의 순서를 주도하는 스킬 묶음: superpowers, agent-skills(addyosmani), gstack, oh-my(OMC·OMX), pstack, mattpocock(필수 3개 + 고른 추가 스킬), openspec, spec-kit, compound-engineering | 고른 것만 설치해요. 기본은 없음이고 지금 에이전트가 내장 절차로 진행해요. gstack, OMX CLI, OpenSpec CLI만 전역이에요. 진행 중 바꾸기는 `prokit-skills-manage`가 맡아요 | 고른 두뇌가 맡는 단계의 방법만 바꿔요. 대조표, 리뷰 게이트, audit, 배포 경로는 그대로예요([두뇌와 선택 스킬](brains.md)) |
+| 두뇌(하나 권장, 여럿 가능) | 요구 정리, 계획, 구현 진행, 디버깅의 순서를 주도하는 스킬 묶음: superpowers, agent-skills(addyosmani), gstack, oh-my(OMC·OMX), pstack, mattpocock(필수 3개 + 고른 추가 스킬), openspec, spec-kit, compound-engineering | 고른 것만 설치해요. 기본은 없음이고 지금 에이전트가 내장 절차로 진행해요. gstack, OMX CLI, OpenSpec CLI만 전역이에요. Spec Kit은 설치할 때 uv가 있어야 해요. 진행 중 바꾸기는 `prokit-skills-manage`가 맡아요 | 고른 두뇌가 맡는 단계의 방법만 바꿔요. 대조표, 리뷰 게이트, audit, 배포 경로는 그대로예요([두뇌와 선택 스킬](brains.md)) |
 | 과설계 방지 스킬(하나 고름) | 요청하지 않은 기능과 추상화를 막는 스킬: ponytail(추천), caveman, andrej-karpathy-skills | 고른 것만 설치해요. 기본은 없음이고 내장 간결성 규칙으로 진행해요. ponytail의 Codex 네이티브 플러그인은 `--with-global`에서만 설치해요 | 계획의 간결성 기준, 구현 diff 보완 검토, 공통화 점검을 맡아요. 아무것도 고르지 않으면 `prokit-reviewer`가 간결성까지 봐요 |
 | 응답 방식(고르면 설치) | 답을 긴 글 속에 묻어 두지 않게 하는 스킬: i-have-adhd([ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)). 다음 행동부터, 번호 단계로, 다음 할 일 하나로 짧게 답해요 | 선택 묶음 `i-have-adhd`라 고를 때만 설치해요 | `/i-have-adhd`로 켤 때만 대화 답에 적용해요. 파일과 라운드 보고는 프로킷 형식을 따라요([두뇌와 선택 스킬](brains.md)) |
-| ego-browser (ego lite) | 실제 브라우저 창으로 화면을 보고 눌러 보는 macOS 앱 | 직접 설치해요([lite.ego.app](https://lite.ego.app/)) | `prokit-verify`의 화면 확인과 F의 QA 행에서 1순위예요. 없으면(macOS 밖, CI, Codex 샌드박스) agent-browser CLI로 같은 흐름을 확인해요 |
+| ego-browser (ego lite) | 실제 브라우저 창으로 화면을 보고 눌러 보는 macOS 앱 | 직접 설치해요([lite.ego.app](https://lite.ego.app/)) | `prokit-verify`의 화면 확인과 F의 QA 행에서 1순위예요. agent-browser와 같은 견본(오류 수집, 넘침 검사, `결함:` 출력)을 써요. 없으면(macOS 밖, CI, Codex 샌드박스) agent-browser CLI로 같은 흐름을 확인해요 |
 | agent-browser CLI | 명령으로 브라우저를 다루는 도구 | 전역. <!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v --> | ego-browser가 없을 때 쓰는 대안이에요. 쓰는 법은 위 표의 `agent-browser` 스킬이 알려 줘요 |
 
 ### Ponytail 사용하기
@@ -71,12 +73,12 @@
 
 ### 호출률과 활용도
 
-새 세션에서 사용자가 할 법한 요청 7개(스펙·계획, 화면, API, DB, 인증 설정, 성능 분석, 배포 준비)를 두 판으로 두 번씩 실행하고 각 단계에서 읽어야 할 스킬을 실제로 읽었는지 로그로 셌어요. 두 판은 v0.6.1(before)과 공식 스킬 연결을 보강한 판(after)이에요(neon 템플릿, `claude -p`, Opus 5.5, 2026-09-30). 무엇을 읽어야 하는지는 보강하기 전에 미리 정했어요.
+새 세션에서 사용자가 할 법한 요청 7개(스펙·계획, 화면, API, DB, 인증 설정, 성능 분석, 배포 준비)를 두 판으로 두 번씩 실행하고 각 단계에서 읽어야 할 스킬을 실제로 읽었는지 로그로 셌어요. 두 판은 공개 전 이력의 v0.6.1(before)과 공식 스킬 연결을 보강한 판(after)이에요(neon 템플릿, `claude -p`, Opus 5.5, 2026-09-30). 무엇을 읽어야 하는지는 보강하기 전에 미리 정했어요.
 
 ```mermaid
 %%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2a78d6, #8c929b"}}}}%%
 xychart-beta
-  title "기대 스킬 호출률 (%) — 회색 before, 파랑 after"
+  title "기대 스킬 호출률 (%): 회색 before, 파랑 after"
   x-axis ["전체 110항목", "공식 스킬 36", "프로세스 스킬 20", "prokit 스킬 44"]
   y-axis "호출률 (%)" 0 --> 100
   bar [95, 97, 90, 95]

@@ -25,9 +25,9 @@
 | 무엇 | 내용 | 자세히 |
 |---|---|---|
 | AI 에이전트 | <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나 | [지원하는 에이전트](../start/supported-agents.md) |
-| prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개와 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | 분야마다 일하는 법, 구현 수행자와 전문·최종 읽기 전용 리뷰 에이전트 | [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md), [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
+| prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개와 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | 분야마다 일하는 법, 기존 프로젝트 정밀 분석(읽기 전용), 구현 수행자, 전문·최종 읽기 전용 리뷰 에이전트 | [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md), [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
 | 공식 도메인 스킬 | Next.js, React, Better Auth, shadcn, impeccable, DB, Vercel 배포 등 | [공식 스킬과 연결](../skills/official-skills.md) |
-| 프로세스 스킬 | skill-creator, mattpocock 필수 3개(늘 설치), 고른 두뇌(<!-- v:brains.names -->superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering<!-- /v --> 중 하나), 고른 과설계 방지 스킬(ponytail, caveman, karpathy 중 하나) | [프로세스 스킬과 전역 도구](../skills/official-skills.md#프로세스-스킬과-전역-도구) |
+| 프로세스 스킬 | skill-creator, mattpocock 필수 3개(늘 설치), 고른 두뇌(하나 이상, 첫 번째가 주 두뇌. <!-- v:brains.names -->superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering<!-- /v --> 중에서), 고른 과설계 방지 스킬(ponytail, caveman, karpathy 중 하나) | [프로세스 스킬과 전역 도구](../skills/official-skills.md#프로세스-스킬과-전역-도구) |
 | 선택 스킬 묶음 | <!-- v:optional.names -->ops, motion, mobile, i-have-adhd, taste<!-- /v --> | [선택 스킬 묶음](../skills/optional-bundles.md) |
 
 ## 명령줄 도구(CLI)
@@ -52,6 +52,8 @@
 | agent-browser CLI | 전역. <!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v --> | ego lite를 쓸 수 없을 때 화면 확인 | `agent-browser …` |
 | ego lite (`ego-browser`) | 전역(macOS 앱, 직접 설치) | 실제 브라우저 창으로 화면 확인(1순위) | `ego-browser …` |
 | OMX CLI (`omx`) | 전역(<!-- v:cli.omx.installCode -->`npm install -g oh-my-codex`<!-- /v -->, 두뇌 oh-my를 고를 때) | Codex에서 OMX 스킬을 이 프로젝트에 설정할 때 | `omx setup --scope project` |
+| OpenSpec CLI (`openspec`) | 전역(`npm install -g @fission-ai/openspec@latest`, 두뇌 openspec을 고를 때) | 변경마다 제안·설계·작업 목록을 합의하는 스킬을 이 프로젝트에 설정할 때 | `openspec init` |
+| uv (`uvx`) | 전역(준비물, 두뇌 spec-kit을 설치할 때만) | Spec Kit을 이 프로젝트에 설정할 때 | `uvx --from specify-cli specify init` |
 | gstack | 전역(두뇌 gstack을 고를 때, bun 필요) | 제품 판단, 계획 리뷰, 디버깅, 추가 리뷰, QA | `plan-eng-review`, `investigate`, `review`, `qa-only` |
 | impeccable CLI | 프로젝트(`impeccable` 스킬에 들어 있음) | 디자인 규칙 검사 훅을 켤 때(개발자마다 한 번) | `.agents/skills/impeccable/scripts/impeccable hooks on` |
 | DESIGN.md 검사기 | 받을 필요 없음(`pnpm dlx`) | 디자인 규칙 파일을 받거나 고쳤을 때 | `pnpm dlx @google/design.md lint DESIGN.md` |

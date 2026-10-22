@@ -25,7 +25,7 @@ flowchart LR
 |---|---|
 | 시작 | `pnpm dev-cycle status`로 진행 중인 라운드가 있는지 봐요. 있으면 이어서 하고, 없으면 외부 스킬의 새 버전도 확인해요(원격은 하루 한 번). `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`를 읽고, 요청을 한 문장으로 다시 써 보고, 결과가 달라질 만큼 모호한 데가 있으면 먼저 물어요 |
 | 케이스 판정 | 요청이 어떤 종류인지 정해요. 새 기능은 F, 버그는 C이고, 애매하면 더 무거운 쪽을 골라요([케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)) |
-| 대조표 열기 | `pnpm dev-cycle table <케이스> --write --title "<요청 요약>"`. `--write` 없이 실행하면 미리 보기만 해요 |
+| 대조표 열기 | `pnpm dev-cycle table <케이스> --write --title "<요청 요약>"`. `--write` 없이 실행하면 미리 보기만 해요. 진행 계획의 Task면 `--task T<n>`, 진행 계획 라운드면 `--plan`, 계획 전에 하라고 한 급한 일이면 `--no-task`를 붙여요([정밀 분석과 진행 계획](project-plan.md)) |
 | 행 실행 | 위에서부터 순서대로 하고, 끝낸 행마다 증거 칸을 채워요. 행에 적힌 스킬은 실제로 불러 쓰고 증거에 이름을 적어요 |
 | 사용자 확인 | 결과를 보여 주고, 사용자가 직접 보거나 써 본 뒤 확인을 받아요([증거와 audit, 사용자 확인](audit-and-confirm.md)) |
 | 마무리 | audit 통과 → close → 커밋·push → 사용자가 고르면 릴리스와 production 배포 |
@@ -54,7 +54,7 @@ flowchart LR
 
 ### 명령
 
-`status`, `case`, `table`, `audit`, `archive`, `close`, `secrets` 명령과 옵션(`--upgrade`, `--partial`, `--json` 등)은 [명령 모음의 dev-cycle](../reference/commands.md#dev-cycle)에 있어요.
+`status`, `case`, `table`, `plan`, `evidence`, `audit`, `archive`, `close`, `secrets` 명령과 옵션(`--upgrade`, `--partial`, `--json` 등)은 [명령 모음의 dev-cycle](../reference/commands.md#dev-cycle)에 있어요.
 
 ### 작업 기록 보관
 
@@ -71,13 +71,14 @@ flowchart LR
 - 고치거나 만들어 달라는 요청이면, 이번에는 원인 분석이나 스펙·계획까지만 하라고 해도 라운드를 열어요. 분석 결과는 대조표 블록 안 메모나 `tasks/evidence/`에 남기고, 행의 증거 칸은 그 행을 실제로 끝냈을 때만 채워요.
 - 코드를 바꾸지 않는 질문이나 설명 요청에는 라운드를 열지 않아요.
 - 배포 요청도 코드를 바꾸지 않으므로 라운드 없이 `prokit-deploy`가 맡아요.
+- 기존 프로젝트는 진행 계획을 확정하기 전(`sig=`가 없을 때)에는 `--task` 없는 라운드도 열리지 않아요. 사용자가 계획 전에 하라고 한 급한 버그 수정, 템플릿 갱신 반영, 스킬 구성 변경만 `--no-task`로 열고, 대조표에 `notask=true`로 남아요.
 
 ### 행을 채우는 법
 
 - 첫 증거를 적기 전에 `prokit-verify`를 불러 그 스킬이 정한 검사 고르기와 증거 형식을 따라요.
 - 문서는 그 계층을 구현하는 행에서 함께 고쳐요. 새 용어는 `GLOSSARY.md`에, 새 화면·프로시저·테이블은 `docs/domain/project.md`에 넣어요. 그래야 뒤의 리뷰 행이 문서까지 봐요.
 - B·D·E·F·H는 구현 전에 `[design]` 행에서 기존 경로·소비자, 공통화·분리 결정과 환경 변수·설정 영향을 확인해요. F는 계층별 점검을 합쳐 한 번만 적고 독립 계획 리뷰를 받아요. A·C는 관련 변경에 같은 판단 기준을 쓰되 새 설계 단계를 강제하지 않아요.
-- 서버나 DB 테스트가 필요한데 테스트 러너가 없으면 첫 행 앞에 `vitest 도입(최초 1회)` 행이 들어가고 그것부터 해요. D·E·F 표는 `table`이 넣고, C는 에이전트가 더해요.
+- 서버나 DB 테스트가 필요한데 테스트 러너가 없으면 첫 행 앞에 `vitest 도입(최초 1회)` 행이 들어가고 그것부터 해요. D·E·F 표는 `table`이 넣고(`packages/api`, E는 `packages/db`에 `test` 스크립트가 없을 때), C나 그 폴더가 없는 구조는 에이전트가 더해요.
 - 작업 중 다른 계층을 건드리면 audit이 케이스를 올리라고 알려 줘요. `pnpm dev-cycle table <새 케이스> --write --upgrade`로 올려도 이미 채운 증거와 메모는 남아요.
 
 ### 마무리
@@ -90,7 +91,7 @@ flowchart LR
 6. 커밋 전에 `pnpm dev-cycle secrets`를 실행하고, 이 라운드에서 바꾼 파일과 `tasks/`만 커밋해요. 제목은 Conventional Commits 접두어(`feat:`, `fix:`, `docs:` …)로 써요. 릴리스 노트의 절이 여기서 정해지고, `!`는 깨지는 변경으로 버전을 올려요. 이어서 push해요.
 7. 릴리스와 production 배포를 골랐다면 `prokit-deploy`의 배포 순서를 따라요([Vercel 배포와 되돌리기](../deploy/vercel.md)).
 
-[기존 프로젝트에 도입한](../start/adopt.md) 프로젝트(하네스만 설치한 `adopt`)는 배포 스크립트가 없어서 배포 확인과 릴리스를 하지 않아요. 묻지 않고 커밋까지 하고, 대조표에 `배포 PASS: adopt(기존 배포 절차)`를 적어요. 배포는 그 프로젝트의 기존 절차를 따르고, push는 요청할 때만 해요.
+[기존 프로젝트에 도입한](../start/adopt.md) 프로젝트(하네스만 설치한 `adopt`)는 배포 스크립트가 없어서 배포 확인과 릴리스를 하지 않아요. 묻지 않고 커밋까지 하고, 대조표에 `배포 PASS: adopt(기존 배포 절차)`를 적어요. 배포는 그 프로젝트의 기존 절차를 따르고, push는 요청할 때만 해요. 운영 중인 Better-T-Stack 프로젝트(`operating`)도 기본 브랜치 push가 기존 CI·배포를 부를 수 있어서, 배포 방법을 `prokit-deploy`에 맞췄다고 `docs/adr/`에 기록하기 전까지는 같게 해요(`배포 PASS: 운영 중(기존 배포 절차)`).
 
 Vercel 프로젝트의 Git 연결이 push마다 배포를 만드는 경우(`Git 자동 배포`)에는 push가 곧 운영 배포라서 커밋만 하고 push하지 않아요. 연결을 끊거나 이 기기에서 확인할 수 있게 한 뒤 push하라고 안내해요.
 

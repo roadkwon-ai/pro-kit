@@ -379,7 +379,7 @@
 | `process.olgot.work` | 7시간 35분 | 올곧 라운드 합에서 백그라운드 기다림을 뺀 일한 시간(5분 단위) | 계산: process.olgot.total − doc-values.json process.olgot.wait | `doc-values.json`을 고친다 | 1 |
 | `templates.count` | 2 | 템플릿 수 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 15 |
-| `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 28 |
+| `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 30 |
 | `prokit.skills.count.ko` | 열 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `prokit.agents.count` | 4 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |
 | `prokit.agents.count.ko` | 네 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수의 한글 수 관형사 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
