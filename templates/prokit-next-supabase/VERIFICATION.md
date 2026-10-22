@@ -56,9 +56,16 @@
   - A5 다시(7/7): 계획이 나오기 전에 받은 승인을 옮기지 않고, 리뷰로 바뀐 최종 계획을 다시 보여 주고 답을 받은 뒤 `[confirm]`을 적었다. close 뒤 `sig=`가 적혔고, 그 계획의 T2·T3 순서를 손으로 바꾸자 `plan`·audit이 잡았다.
   - Supabase DB Task와 새 세션 이어 가기(8/8): 새 Supabase 프로젝트에서 수강권 테이블 E 라운드를 했다. RLS를 켠 테이블과 마이그레이션, 로컬 Supabase(DB만) 적용, `supabase db advisors --local` `No issues found`, `prokit-reviewer(db)` approve까지 갔다. 스키마 행이 채워진 순간 세션을 끊고, 대화 기억이 없는 새 세션에 "하던 작업 이어서 해줘"만 보냈다. 새 세션은 `git status`, `tasks/todo.md`, `pnpm dev-cycle status`로 열린 라운드를 찾아 새로 열지 않고 마쳤고 마이그레이션을 다시 만들지 않았다. 로컬 DB에 앞선 마이그레이션이 없는 것도 찾아 함께 적용했다. 이 라운드는 `turbo.json`을 바꿔 새 규칙으로 H 행과 빌드 행이 붙었다.
   - 로컬 DB: 설치 단계는 neon 4개(포트 충돌 시 `DB_PORT`)와 Supabase 1개, 프로젝트 세션은 neon(전환 T1)과 Supabase(위)에서 실제로 적용했다.
-- 테스트: 두 템플릿 각 354개, 저장소 106개, 문서 검사 67개, `doc-values --check` 통과.
+- Codex 시험(같은 날, Codex CLI 0.163, `gpt-6.1-sol`): A5와 같은 전환 프로젝트에서 `codex exec`로 정밀 분석부터 T1 세부 계획까지 돌렸다. 독립 채점은 CX1 9/10, 고친 뒤 CX2 10/10이다.
+  - 분석·리뷰 에이전트는 Codex 하위 에이전트(`spawn_agent`의 `agent_type`)로 떴고 기존 코드는 읽기만 했다. 계획을 보기 전에 받은 승인을 확인으로 쓰지 않았고, 전역 oh-my-codex 지시도 따르지 않았다.
+  - CX1은 진행 계획 라운드를 닫고 커밋하지 않은 채 T1을 열었다. 그래서 `tasks/plan.md`에 커밋하지 않은 변경이 있으면 Task 게이트가 `--task`를 열지 않게 했다. CX2는 배포 준비 확인, `pnpm dev-cycle secrets`, 커밋을 마친 뒤 T1을 열었다.
+  - `spawn_agent`의 기본값(`fork_turns: "all"`)은 메인 대화를 모두 넘겨, 리뷰 에이전트가 구현 과정을 본 채 리뷰했다. `AGENTS.md`에 분석·리뷰 에이전트는 `fork_turns: "none"`으로 띄우라고 적었고, CX2의 하위 에이전트 세 개가 모두 따랐다.
+  - 하위 에이전트 모델은 사용자 Codex 설정의 `[agents] default_subagent_model`을 따른다. CX1은 세션이 `gpt-6.1-sol`, 하위 에이전트가 `gpt-5.6-terra`였다. handbook의 "세션의 모델을 그대로 쓴다"는 설명을 고쳤다.
+  - CX2 채점 지적: T1을 H로 열었지만 세부 계획에 `packages/api/`(D) 파일이 있었고, 계획 리뷰가 이를 잡지 못했다. Task 세부 계획과 `prokit-reviewer(plan)`이 바꿀 파일과 연 케이스를 맞추게 했다.
+  - Codex는 `exec`로 연 폴더를 사용자 설정의 신뢰 목록에 저장했다. 시험 경로 항목은 지웠다.
+- 테스트: 두 템플릿 각 355개, 저장소 106개, 문서 검사 67개, `doc-values --check` 통과.
 - 남은 한계:
-  - 시나리오마다 한 번 돌렸고 답은 사용자 역할 모델이 했다. AskUserQuestion 화면, 원격 저장소, 배포, 운영 DB는 시험하지 않았다. 처음 시험의 일부 세션은 사용량 한도로 끊겨 같은 세션을 이어 갔다. 대화 기억 없이 새 세션으로 이어 가는 것은 추가 시험에서 따로 확인했다.
+  - 시나리오마다 한 번 돌렸고 답은 사용자 역할 모델이 했다. AskUserQuestion 화면, 원격 저장소, 배포, 운영 DB는 시험하지 않았다. 처음 시험의 일부 세션은 사용량 한도로 끊겨 같은 세션을 이어 갔다. 대화 기억 없이 새 세션으로 이어 가는 것은 추가 시험에서 따로 확인했다. Codex는 전환 시나리오 하나만 시험했고 Antigravity와 Grok Build는 시험하지 않았다.
   - adopt 프로젝트의 루트 `package.json`·`biome.json`·`tsconfig.json`은 A로 판정된다. 루트 `package.json`이 앱의 의존성 목록이라 H로 두면 의존성을 더할 때마다 H 행이 붙는다. 정밀 분석 뒤 첫 H Task에서 그 프로젝트에 맞춘다.
   - operating 설치는 루트 `package.json`·`biome.json`을 Biome 형식(탭)으로 다시 써서 공백 diff가 생긴다.
   - `pnpm-workspace.yaml`은 A로 판정된다. 기능 의존성을 더하는 `catalog:`와 네이티브 빌드 허용(`allowBuilds`)·`overrides`가 한 파일에 있어 경로로는 가를 수 없다. `allowBuilds`·`overrides` 변경은 코드 리뷰에서 본다.

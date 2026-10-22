@@ -23,6 +23,11 @@ function project(rows, sig) {
   return { ...repo, config: loadConfig(repo.root) };
 }
 const plan = (root) => parsePlan(readFileSync(join(root, "tasks/plan.md"), "utf8")).tasks;
+// 라운드를 닫은 뒤의 커밋(prokit-dev-cycle 5절). Task 게이트는 tasks/plan.md가 커밋돼 있어야 연다.
+const commit = (root) => {
+  spawnSync("git", ["add", "-A"], { cwd: root });
+  spawnSync("git", ["commit", "-qm", "round", "--allow-empty"], { cwd: root });
+};
 
 // 활성 라운드의 빈 칸을 채운다. 사용자 확인 행만 다른 값이다.
 function fill(root, value = "pnpm check-types → exit 0") {
@@ -45,6 +50,7 @@ function fill(root, value = "pnpm check-types → exit 0") {
 test("Task 게이트: 앞 Task가 끝나야 다음 Task 라운드가 열리고, close가 그 Task를 완료로 기록한다", () => {
   const { root, config } = project([["T1", "경로 규칙 맞추기", "대기"], ["T2", "회원 모델 옮기기", "대기"]]);
   assert.throws(() => writeTable(root, config, "A", { write: true, title: "T2", task: "T2" }), /앞 Task가 끝나지 않았다: T1\(대기\)/);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 경로 규칙", task: "T1" });
   assert.match(readFileSync(join(root, config.todoPath), "utf8"), /<!-- dev-cycle:start case=A [^>]* task=T1 -->/);
   assert.equal(plan(root)[0].state, "진행");
@@ -60,12 +66,14 @@ test("Task 게이트: 앞 Task가 끝나야 다음 Task 라운드가 열리고, 
   assert.deepEqual(planCheck(root, config).problems, []);
   assert.equal(planCheck(root, config).next.id, "T2");
   assert.throws(() => writeTable(root, config, "A", { write: true, title: "T1 다시", task: "T1" }), /T1는 이미 완료이다/);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T2 회원 모델", task: "T2" });
   assert.equal(plan(root)[1].state, "진행");
 });
 
 test("부분 완료: close --partial은 Task를 진행으로 두어 다음 Task를 막고, 같은 Task를 다시 열어 끝낸다", () => {
   const { root, config } = project([["T1", "인증 옮기기", "대기"], ["T2", "화면 옮기기", "대기"]]);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 인증", task: "T1" });
   fill(root, "blocked: 외부 OAuth 앱 승인 대기");
   assert.equal(close(root, config).ok, false, "blocked가 있으면 --partial 없이는 닫지 않는다");
@@ -74,6 +82,7 @@ test("부분 완료: close --partial은 Task를 진행으로 두어 다음 Task�
   assert.equal(t1.state, "진행");
   assert.match(readFileSync(join(root, t1.record), "utf8"), /<!-- dev-cycle:archived closed=\S+ partial=true case=A [^>]*task=T1 -->/);
   assert.throws(() => writeTable(root, config, "A", { write: true, title: "T2", task: "T2" }), /T1\(진행\)/);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 인증 마무리", task: "T1" });
   fill(root);
   assert.equal(close(root, config).ok, true);
@@ -118,6 +127,7 @@ test("제외한 Task는 건너뛰고, --task 없이 연 라운드는 Task를 끝
   fill(root);
   assert.equal(close(root, config).ok, true);
   assert.equal(plan(root)[1].state, "대기", "Task 라운드가 아니면 계획을 바꾸지 않는다");
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T2 예약 화면", task: "T2" });
   assert.equal(plan(root)[1].state, "진행");
   // 뒤쪽 Task를 먼저 제외해도 문제가 아니다. 다음 Task는 남은 앞 Task다.
@@ -153,6 +163,7 @@ test("계획 표 경계: T1·T10을 구분하고, 블록 밖 예시 행과 CRLF 
   const example = "예: | T1 | 예시 | 대기 | |\n\n";
   writeFileSync(join(root, "tasks/plan.md"), (example + planText(rows)).replace(/\n/g, "\r\n"));
   assert.deepEqual(planCheck(root, config).problems, []);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 a", task: "T1" });
   const text = readFileSync(join(root, "tasks/plan.md"), "utf8");
   assert.ok(text.startsWith("예: | T1 | 예시 | 대기 | |\r\n"), "블록 밖 예시 행은 그대로다");
@@ -171,6 +182,7 @@ test("계획 표 경계: T1·T10을 구분하고, 블록 밖 예시 행과 CRLF 
 
 test("보관 전에 계획을 고칠 수 없으면 라운드를 닫지 않는다", () => {
   const { root, config } = project([["T1", "a", "대기"]]);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 a", task: "T1" });
   fill(root);
   // 라운드 중에 Task 행이 지워지면 audit이 막는다(라운드는 그대로 남아 다시 고칠 수 있다).
@@ -183,6 +195,7 @@ test("보관 전에 계획을 고칠 수 없으면 라운드를 닫지 않는다
 
 test("Task 라운드: 세부 계획·계획 리뷰 행을 맨 앞에 두고 audit이 필수로 보며, F처럼 계획 리뷰가 이미 있으면 한 번만 둔다", () => {
   const { root, config } = project([["T1", "a", "대기"], ["T2", "b", "대기"]]);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 a", task: "T1" });
   const p = join(root, config.todoPath);
   let a = parseActive(readFileSync(p, "utf8"));
@@ -228,6 +241,7 @@ test("다른 도구의 계획 문서: dev-cycle:plan 블록이 없는 tasks/plan
 test("들여쓴 Task 표: 읽은 행의 상태를 그대로 바꾸고 들여쓰기를 지킨다", () => {
   const { root, config } = project([]);
   writeFileSync(join(root, "tasks/plan.md"), planText([["T1", "a", "대기"], ["T2", "b", "대기"]]).replace(/^\| T/gm, "  | T"));
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 a", task: "T1" });
   assert.equal(plan(root)[0].state, "진행");
   assert.match(readFileSync(join(root, "tasks/plan.md"), "utf8"), /^ {2}\| T1 \| a \| 진행 \| \|$/m);
@@ -238,6 +252,7 @@ test("들여쓴 Task 표: 읽은 행의 상태를 그대로 바꾸고 들여쓰�
 
 test("부분 완료 기록을 두고 손으로 완료라고 적으면 plan이 잡고 다음 Task를 열지 않는다", () => {
   const { root, config } = project([["T1", "a", "대기"], ["T2", "b", "대기"]]);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 a", task: "T1" });
   fill(root, "blocked: 승인 대기");
   assert.equal(close(root, config, new Date(), { partial: true }).ok, true);
@@ -255,6 +270,7 @@ test("다음 Task 안내: --task 없이 열면 끝나지 않은 Task를 알리�
   assert.match(status(root, config).line, /다음 T1 "a"\(대기\) → 열린 라운드를 닫은 뒤 pnpm dev-cycle table/, "다른 라운드가 열려 있으면 먼저 닫으라고 한다");
   fill(root);
   assert.equal(close(root, config).ok, true);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 a", task: "T1" });
   assert.match(status(root, config).line, /^진행 계획: 0\/2 끝남 — 다음 T1 "a"\(진행\) → 열린 라운드에서 이어 간다$/m);
   assert.match(run(root, "plan").stdout, /^다음: T1 "a" → 열린 라운드에서 이어 간다$/m);
@@ -304,6 +320,7 @@ test("진행 계획 라운드(--plan): 기존 프로젝트는 정밀 분석·계
   assert.equal(close(repo.root, config).ok, true);
   assert.equal(writeTable(repo.root, config, "A", { title: "계획 고치기", plan: true }).warning, undefined, "Task가 남아 있어도 계획을 고치는 라운드는 알리지 않는다");
   // 진행 계획 라운드가 아닌 열린 라운드(Task 라운드 등)에는 --plan을 쓰지 않는다.
+  commit(repo.root);
   writeTable(repo.root, config, "A", { write: true, title: "T1 a", task: "T1" });
   assert.throws(() => writeTable(repo.root, config, "A", { write: true, upgrade: true, plan: true }), /--plan은 진행 계획 라운드에만 쓴다/);
   const fresh = makeRepo({ name: "dc-plan-new-" });
@@ -341,6 +358,7 @@ test("Task 구성 지문: 진행 계획 라운드를 닫으면 지문을 적고,
   // 제외와 close가 바꾸는 상태·기록 칸은 지문에 들지 않는다.
   handEdit([["T1", "경로 규칙", "제외", "제외: 필요 없어짐 (사용자, 2026-10-23)"], rows[1], rows[2]]);
   assert.deepEqual(planCheck(root, config).problems, []);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T2 회원 모델", task: "T2" });
   handEdit([["T1", "경로 규칙", "제외", "제외: 필요 없어짐 (사용자, 2026-10-23)"], ["T2", "회원 모델", "진행"], ["T3", "화면 다시", "대기"]]);
   assert.ok(audit(root, config).problems.some((x) => x.startsWith("진행 계획: Task 구성")), "Task 라운드 안에서 손으로 고쳐도 audit이 잡는다");
@@ -381,5 +399,19 @@ test("지문 머리: sig=가 둘이거나 doc 경로에 sig=가 들어 있어도
   const md = readFileSync(planPath, "utf8");
   assert.match(md, new RegExp(`<!-- dev-cycle:plan doc=docs/plans/sig=1\\.md sig=${planSig(parsePlan(md).tasks)} -->`));
   assert.deepEqual(planCheck(root, config).problems, []);
+  commit(root);
   writeTable(root, config, "A", { write: true, title: "T1 인증", task: "T1" });
+});
+
+test("Task 게이트: 앞 라운드가 남긴 tasks/plan.md 변경을 커밋하지 않으면 다음 Task를 열지 않는다(미리 보기는 된다)", () => {
+  const { root, config } = project([["T1", "인증", "대기"], ["T2", "화면", "대기"]]);
+  assert.throws(() => writeTable(root, config, "A", { write: true, title: "T1", task: "T1" }), /tasks\/plan\.md에 커밋하지 않은 변경이 있다/, "진행 계획을 커밋하지 않았다");
+  assert.ok(writeTable(root, config, "A", { title: "T1", task: "T1" }).block, "미리 보기는 막지 않는다");
+  commit(root);
+  writeTable(root, config, "A", { write: true, title: "T1 인증", task: "T1" });
+  fill(root);
+  assert.equal(close(root, config).ok, true);
+  assert.throws(() => writeTable(root, config, "A", { write: true, title: "T2", task: "T2" }), /커밋하지 않은 변경이 있다/, "T1을 닫고 커밋하지 않았다");
+  commit(root);
+  writeTable(root, config, "A", { write: true, title: "T2 화면", task: "T2" });
 });

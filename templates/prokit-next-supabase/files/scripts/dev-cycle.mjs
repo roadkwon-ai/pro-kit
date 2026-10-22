@@ -609,6 +609,14 @@ export function writeTable(
 			);
 		if (!["대기", "진행"].includes(chk.plan.tasks[at].state))
 			throw new UsageError(`${task}는 이미 ${chk.plan.tasks[at].state}이다`);
+		// 앞 라운드가 남긴 계획 변경(지문, Task 상태)을 커밋하지 않으면 이 Task의 diff와 커밋에 섞인다.
+		if (
+			write &&
+			git(root, ["status", "--porcelain", "--", config.planPath]).trim()
+		)
+			throw new UsageError(
+				`${config.planPath}에 커밋하지 않은 변경이 있다. 앞 라운드(진행 계획이나 앞 Task)의 결과를 커밋한 뒤 연다(prokit-dev-cycle 5. 종료)`,
+			);
 	}
 	// Task 게이트는 --task로 열 때만 본다. Task 일을 --task 없이 여는 실수는 알린다(버그 수정·하네스 변경은 --task 없이 연다).
 	const pending =

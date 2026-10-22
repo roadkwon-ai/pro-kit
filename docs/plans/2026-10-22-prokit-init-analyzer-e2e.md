@@ -75,3 +75,17 @@
 - 채점 지적으로 문서를 고쳤다. zsh에서 설치기 종료 코드를 보는 법, 띄운 로컬 DB의 중지 명령 보고, 구현 위임의 `git stash` 금지다.
 - 이 회차 코드는 독립 코드 리뷰(High 0, 7건)를 받아 고쳤다. 지문이 없는 계획은 Task 게이트가 막고, 지운 지문은 audit이 잡는다. adopt는 H 규칙을 앞에 둔다. 시험 프로젝트에서 기능 의존성이 `apps/web`·`packages/*`의 `package.json`에 들어가는 것을 확인하고 루트 `package.json`·`biome.json`·`tsconfig.json`·`packages/config/`를 H(작업공간 설정)로 판정하게 했다. 공용 의존성 `catalog:`가 있는 `pnpm-workspace.yaml`은 재확인 리뷰 지적으로 뺐다.
 - 정리: yoga-studio Supabase(볼륨 포함), 세션이 `/tmp`에 남긴 파일, 남은 Next 텔레메트리 프로세스, 세 프로젝트의 project scope 플러그인을 지웠다. 전역 `~/.claude/settings.json`은 그대로다.
+
+### Codex 시험(같은 날)
+
+같은 전환 프로젝트(I5)를 Codex CLI 0.163(`gpt-6.1-sol`)으로 시험했다. `codex exec`와 `codex exec resume`로 턴을 잇고, 답은 같은 사용자 역할 모델이 했다.
+
+| ID | 판 | 확인할 것 | 통과 |
+|---|---|---|---|
+| CX1 | 추가 시험 뒤 판 | A5c와 같은 흐름. 하위 에이전트 호출, 전역 oh-my-codex 지시 무시, `sig=`, 라운드 끝 커밋 | 9/10 |
+| CX2 | CX1 지적을 고친 판, 하위 에이전트도 `gpt-6.1-sol` | 같은 흐름. 커밋 뒤 Task 열기, `fork_turns: "none"` | 10/10 |
+
+- CX1 실패: 진행 계획 라운드를 닫고 커밋하지 않은 채 T1을 열었다. Task 게이트가 커밋하지 않은 `tasks/plan.md`를 막게 했다.
+- CX1 메모: 리뷰 에이전트가 메인 대화를 모두 이어받았다(`fork_turns` 기본값 `all`). 하위 에이전트는 사용자 설정의 `default_subagent_model`(`gpt-5.6-terra`)로 돌았다. `AGENTS.md`에 `fork_turns: "none"`을 적었고 handbook 설명을 고쳤다.
+- CX2 메모: T1을 H로 열었지만 세부 계획에 D 경로 파일이 있었다. Task 세부 계획과 계획 리뷰가 바꿀 파일과 케이스를 맞추게 했다.
+- 정리: Codex가 사용자 설정에 저장한 시험 경로 신뢰 항목 세 개를 지웠다. 나머지 설정 값은 시험 전과 같다.

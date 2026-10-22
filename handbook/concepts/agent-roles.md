@@ -61,7 +61,9 @@ pnpm agents:sync    # .claude/agents에서 .codex/agents와 .agents/agents를 �
 pnpm agents:check   # 정본과 생성물이 맞는지 검사한다
 ```
 
-`.claude/agents` 정의 파일에는 쓸 모델도 적혀 있어요. 구현과 전문 리뷰는 `sonnet`, 최종 리뷰는 `opus`예요. Codex·Antigravity용 파일에는 모델을 적지 않고 세션의 모델을 그대로 써요. 읽기 전용 리뷰 에이전트는 파일을 읽고 찾고 명령을 실행하는 도구만 받아요.
+`.claude/agents` 정의 파일에는 쓸 모델도 적혀 있어요. 구현과 전문 리뷰는 `sonnet`, 최종 리뷰는 `opus`예요. Codex·Antigravity용 파일에는 모델을 적지 않아요. Codex는 사용자 설정(`config.toml`)에 `[agents] default_subagent_model`이 있으면 하위 에이전트를 그 모델로 띄우니, 세션과 같은 모델을 쓰려면 그 값을 확인해요. 읽기 전용 리뷰 에이전트는 파일을 읽고 찾고 명령을 실행하는 도구만 받아요.
+
+Codex에서는 분석과 리뷰 에이전트를 메인 대화 없이(`spawn_agent`의 `fork_turns: "none"`) 띄워요. 기본값은 메인 대화를 모두 넘겨서, 구현 과정을 본 채로 리뷰하게 되기 때문이에요.
 
 ## 관련 문서
 
