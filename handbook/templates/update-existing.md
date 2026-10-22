@@ -6,13 +6,21 @@
 
 ## 순서
 
-pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 요청하면 에이전트가 1~3번을 하고, 4번과 5번은 그 프로젝트에서 연 세션에서 하도록 안내해요([AGENTS.md](../../AGENTS.md) "기존 프로젝트에 템플릿 갱신 반영").
+pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 요청하면 에이전트가 1\~3번을 하고, 4번과 5번은 그 프로젝트에서 연 세션에서 하도록 안내해요([AGENTS.md](../../AGENTS.md) "기존 프로젝트에 템플릿 갱신 반영").
 
 1. **차이 보기**: `bash templates/<템플릿>/install.sh <프로젝트> --diff`로 차이를 봐요. 파일을 쓰지 않고, 템플릿과 다른 파일의 diff, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 줘요.
 2. **`.dev-cycle.json` 따로 보기**: 설치기가 값을 채우는 파일이라 `--diff`에 나오지 않아요. 템플릿의 `files/.dev-cycle.json`과 직접 비교해요.
 3. **옮길 항목 정리**: 옮길 항목을 정리해 보고해요. 그 프로젝트가 스스로 고친 내용(예: `DB_PORT` 변수화)은 옮길 항목에서 빼요.
 4. **옛 이름 옮기기** (프로젝트 세션): 아래 "옛 이름이 남아 있을 때"를 먼저 해요.
 5. **라운드로 반영** (프로젝트 세션): 실제 반영은 그 프로젝트에서 연 세션이 dev-cycle 케이스 H 라운드로 해요(도입한 프로젝트가 아직 진행 계획을 확정하지 않았으면 `--no-task`를 붙여 열어요). 라운드에서는 `install.sh <프로젝트> --skip-skills`로 없는 파일과 설정 항목을 더하고(템플릿 파일은 덮어쓰지 않고 설정 파일에는 항목만 더해요), 템플릿과 다른 파일은 직접 옮겨요.
+
+```mermaid
+flowchart LR
+  D["1. --diff로 차이 보기"] --> J["2. .dev-cycle.json 직접 비교"]
+  J --> L["3. 옮길 항목 정리와 보고"]
+  L --> N["4. 옛 이름 옮기기<br/>(프로젝트 세션)"]
+  N --> H["5. H 라운드로 반영<br/>--skip-skills · 직접 옮기기"]
+```
 
 ## 자세히
 
@@ -30,6 +38,20 @@ pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 
 3. `.claude/skills/bts-*` 링크를 지워요.
 4. `AGENTS.md`·`CLAUDE.md`의 `bts-template` 마커와 문서의 `bts-*` 참조를 고쳐요.
 5. `pnpm agents:sync`로 `.codex/agents`와 `.agents/agents`를 다시 만들어요.
+
+### v0.3.0 이전에 만든 프로젝트
+
+기존 프로젝트 도입(v0.3.0)이 더한 것은 새 파일과 바뀐 파일로 나뉘어요. 먼저 `--diff`로 차이를 본 뒤 H 라운드에서 옮겨요.
+
+| 종류 | 항목 | 옮기는 법 |
+|---|---|---|
+| 새 파일 | 에이전트 `prokit-analyzer`, 스킬 `prokit-skills-manage`, `prokit-dev-cycle`의 `references/project-plan.md`·`references/analysis.md` | `install.sh <프로젝트> --skip-skills`가 없는 파일을 복사하고, 스킬 링크를 만들고, `.codex/agents`와 `.agents/agents`를 다시 만들어요 |
+| 바뀐 파일 | `scripts/dev-cycle.mjs`, `scripts/skills-setup.mjs`, `skills.manifest.json`, `prokit-*` 스킬의 `SKILL.md`와 `references/`, `AGENTS.md`·`CLAUDE.md`의 템플릿 블록 | 설치기는 이미 있는 파일을 덮어쓰지 않아요. `--diff`로 본 차이를 H 라운드에서 직접 옮겨요 |
+| 설정 | `.dev-cycle.json` | 템플릿의 `files/.dev-cycle.json`과 비교해 빠진 항목을 직접 더해요. 규칙 중 빌드·배포 설정(`next.config`, `vercel.json`, `turbo.json`, CI 파일)과 작업공간 설정(루트 `package.json`, `tsconfig.json`, `biome.json` 등)을 H로 보는 규칙이 새로 생겼고, `ui`와 `resources` 항목도 같이 봐요 |
+
+- **Task 게이트는 `projectType`이 있어야 켜져요**: `dev-cycle.mjs`는 `projectType`이 `early`, `operating`, `migration`일 때만 진행 계획과 Task 게이트를 적용해요. 값이 없거나 `new`이면 이전처럼 라운드를 바로 열어요. 기존 프로젝트로 다루려면 `install.sh <프로젝트> --skip-skills --project-type <유형>`으로 유형을 기록해요. 설치기는 다시 실행해도 이 값을 기록해요.
+- **새 두뇌와 구성 변경**: openspec, spec-kit, compound-engineering과 두뇌 여러 개 고르기는 옮긴 `skills-setup.mjs`와 `skills.manifest.json`이 있어야 돼요. 옛 판이면 `--brain`을 줄 때 설치기가 경고해요. 고르는 일 자체는 `prokit-skills-manage`로 해요([두뇌와 선택 스킬](../skills/brains.md#바꾸기)).
+- **열린 라운드와 진행 계획**: 열린 라운드는 먼저 닫아요. 도입한 프로젝트가 아직 진행 계획을 확정하지 않았다면 이 반영 라운드는 `--no-task`로 열어요([정밀 분석과 진행 계획](../concepts/project-plan.md)).
 
 ### 공식 스킬과 Codex 선택 플러그인은 따로 업데이트해요
 

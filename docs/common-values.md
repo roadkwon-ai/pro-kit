@@ -144,7 +144,7 @@
 | `catalogs.<이름>.url` | 3개(`--list`) | 디자인 카탈로그 이름 링크의 주소(주소 안에는 표시를 달 수 없어 테스트가 같은지 본다) | doc-values.json catalogs.<이름>.url | `doc-values.json`을 고친다 | 0 |
 | `catalogs.<이름>.count` | 3개(`--list`) | 카탈로그가 싣는 스타일 수(개). 센 날은 date | doc-values.json catalogs.<이름>.count | `doc-values.json`을 고친다 | 6 |
 | `catalogs.<이름>.date` | 3개(`--list`) | 스타일 수를 센 날 | doc-values.json catalogs.<이름>.date | `doc-values.json`을 고친다 | 3 |
-| `port.web` | 3001 | 템플릿 웹 개발 서버 포트(pnpm dev) | doc-values.json ports.web | `doc-values.json`을 고친다 | 0 |
+| `port.web` | 3001 | 템플릿 웹 개발 서버 포트(pnpm dev) | doc-values.json ports.web | `doc-values.json`을 고친다 | 4 |
 | `port.neonDb` | 5432 | neon 템플릿 로컬 DB(compose Postgres) 포트 | doc-values.json ports.neonDb | `doc-values.json`을 고친다 | 6 |
 | `port.supabaseDb` | 54322 | supabase 템플릿 로컬 DB(Supabase 스택 Postgres) 포트 | doc-values.json ports.supabaseDb | `doc-values.json`을 고친다 | 1 |
 | `port.supabasePooler` | 6543 | supabase 템플릿 원격 Supabase의 transaction pooler 포트(배포한 앱의 DATABASE_URL). 설치본 prokit-db 스킬의 같은 값은 테스트가 비교한다 | doc-values.json ports.supabasePooler | `doc-values.json`을 고친다 | 4 |
@@ -378,7 +378,7 @@
 | `process.olgot.total` | 8시간 20분 | 올곧 라운드 합(벽시계, 5분 단위). preset.olgot.actual.total.time과 같아야 한다 | 계산: doc-values.json process.olgot(wait 빼고) + cost.revise의 올곧 예시 셋 | `doc-values.json`을 고친다 | 1 |
 | `process.olgot.work` | 7시간 35분 | 올곧 라운드 합에서 백그라운드 기다림을 뺀 일한 시간(5분 단위) | 계산: process.olgot.total − doc-values.json process.olgot.wait | `doc-values.json`을 고친다 | 1 |
 | `templates.count` | 2 | 템플릿 수 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
-| `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 15 |
+| `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 16 |
 | `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 30 |
 | `prokit.skills.count.ko` | 열 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `prokit.agents.count` | 4 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |

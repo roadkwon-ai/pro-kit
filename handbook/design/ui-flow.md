@@ -25,7 +25,7 @@ flowchart LR
 |---|---|---|---|
 | 기획 (프로젝트당 1회) | impeccable `init` 인터뷰로 서비스를 파악해요 | `PRODUCT.md` | 질문에 답하기 |
 | 시각 방향 (첫 화면, 리디자인) | 리디자인이면 지금 화면을 찍어 critique하고 버릴 것을 적어요. 카탈로그 1\~3위와 "직접 정하기"를 추천하고(선택 묶음 `taste`가 있으면 taste-skill 방향도), 고른 스타일의 원문을 받아 스펙 검사기(lint)로 확인해요 | `DESIGN.md` | 스타일과 대표 색 고르기 |
-| 설계 (화면마다) | 사이트맵에 링크와 버튼이 이어지는 곳을 모두 적고, impeccable `shape`로 화면마다 상호작용, 서체, 이미지, 아이콘, 모션 계획을 세워요. 이름이나 헤드라인을 새로 정하면 비슷한 서비스를 조사해 후보 3~4개를 내요 | `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 브리프 확인, 이름·문구 고르기 |
+| 설계 (화면마다) | 사이트맵에 링크와 버튼이 이어지는 곳을 모두 적고, impeccable `shape`로 화면마다 상호작용, 서체, 이미지, 아이콘, 모션 계획을 세워요. 이름이나 헤드라인을 새로 정하면 비슷한 서비스를 조사해 후보 3\~4개를 내요 | `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 브리프 확인, 이름·문구 고르기 |
 | 시각 자산 (화면마다) | 서체 파일을 받아 프로젝트에 직접 넣어요. 이미지를 그릴 수 있으면 방향 comp 3장을 그리고, 고른 comp에 맞춰 사진·일러스트(plate)를 만들어요 | `apps/web/src/fonts/`, `apps/web/public/images/`, `.impeccable/mocks/` | comp 고르기 |
 | 개발 | 디자인 토큰을 `globals.css`의 shadcn 변수로 옮기고 컴포넌트를 조합해 화면을 만들어요 | 코드 | |
 | 리뷰 | 스크린샷, 모든 링크·버튼 누르기(404, "준비 중", 반응 없는 버튼이 없어야 해요), `critique`, `audit`, `web-design-guidelines` | 점수, P0~P3, 위반 목록, critique 기록(`.impeccable/critique/…md`), audit 보고서(`tasks/evidence/ui-audit-<시각>.md`) | |
@@ -45,7 +45,7 @@ flowchart LR
 
 새 프로젝트는 이 질문을 하지 않고 위 흐름 그대로 진행해요.
 
-## 스타일 추천 1~3위
+## 스타일 추천 1\~3위
 
 후보는 세 카탈로그에서만 뽑아요. 목록에 없는 브랜드는 지어내지 않아요.
 

@@ -13,10 +13,10 @@ pro-kit/
 │   └── prokit-next-supabase/   Supabase 템플릿
 ├── handbook/                   문서 원본 (프로킷 사이트 /docs의 원본)
 ├── tutorials/                  비개발자용 튜토리얼 (사이트 /tutorials/의 원본). packs.json: 프리셋 팩 목록
-├── scripts/                    release.mjs, pack.mjs, site-links.mjs, doc-values.mjs와 테스트
+├── scripts/                    release.mjs, pack.mjs, apply-pack.mjs, site-links.mjs, doc-values.mjs, ai-service-config.mjs, preset-*.mjs와 테스트
 ├── evals/                      저장소 자체 스킬의 eval 입력 (prokit-init)
 ├── site-links.json, doc-values.json   공개 주소와 공통 값의 정본
-├── docs/                       assets/(README 이미지), blocks/(공통 글 묶음), plans/(설계 결정), reports/(측정 보고서), superpowers/(설계 스펙과 계획)
+├── docs/                       assets/(README 이미지), blocks/(공통 글 묶음), common-values.md(공통 값 목록), plans/(설계 결정), prompts/(시험 프롬프트), research/(조사 기록), reports/(측정 보고서), superpowers/(설계 스펙과 계획)
 ├── release/                    릴리스 노트 (릴리스마다 추가)
 ├── .env.example                작업 폴더 .env 예시 (이미지 키, 배포 토큰)
 └── packs/                      받은 프리셋 팩 (scripts/pack.mjs. git에 넣지 않음)
@@ -42,7 +42,7 @@ templates/prokit-next-supabase/
 ```bash
 node --test 'templates/prokit-next-neon/tests/*.test.mjs'
 node --test 'templates/prokit-next-supabase/tests/*.test.mjs'
-node --test scripts/*.test.mjs        # release, pack, site-links, doc-values, handbook(README와 CONTRIBUTING.md 링크 포함)
+node --test scripts/*.test.mjs        # release, pack, apply-pack, site-links, doc-values, ai-service-config, preset-*, handbook(README와 CONTRIBUTING.md 링크 포함)
 ```
 
 ## 템플릿 수정 흐름

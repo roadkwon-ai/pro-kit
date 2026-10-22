@@ -21,6 +21,8 @@
 | `pnpm dev-cycle close` | audit과 실제 사용자 확인 뒤 대조표와 완료한 일반 할 일·백로그를 KST 날짜의 파일로 보관해 라운드 닫기. `blocked`나 `미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial` |
 | `pnpm dev-cycle secrets` | 커밋 전에 스테이징한 변경에서 비밀값 찾기. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
 
+`table`의 옵션에는 이런 제한이 있어요. `--plan`은 케이스 A로만 열어요(`--upgrade`와 함께 쓰는 경우는 예외예요). `--plan`, `--task`, `--no-task`는 서로 함께 쓰지 못해요. `--task`는 `--upgrade`와 함께 쓰지 못하고(상향은 지금 라운드의 Task를 그대로 써요), 진행 계획에 지문(`sig=`)이 있어야 열려요. 열린 라운드가 진행 계획 라운드가 아니면 `--plan`을 거부하니 `close`로 닫은 뒤 새로 열어요. `evidence`는 진행 계획 라운드의 `[confirm]` 행을 지문(`sig=`) 없이, 또는 앞 행이 끝나기 전에 채우려 하면 거부해요.
+
 `--json`을 붙이면 결과를 JSON으로 출력해요. 라운드가 무엇이고 어떻게 도는지는 [dev-cycle](../concepts/dev-cycle.md)에 있어요.
 
 증거 파일은 프로젝트 안의 일반 파일이고 비어 있지 않은 한 줄이어야 해요. FIFO, 심볼릭 링크, 헤더가 섞인 입력과 프로젝트 밖 경로는 받지 않아요. `tasks/evidence/`에는 실행 전후 산출물, 환경·자원 helper의 실제 결과를 각각 한 번만 남겨요. private guard token이나 owner receipt의 내용은 파일·명령 출력·증거 칸에 직접 넣지 않아요.

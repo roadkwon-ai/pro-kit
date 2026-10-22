@@ -145,7 +145,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 |---|---|---|
 | 준비: pro-kit 받기, 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 |
 | 기획: 서비스 질문, 이름, 사이트맵 | <!-- v:cost.stage.plan.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 | <!-- v:cost.stage.plan.scratch.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
-| 디자인: DESIGN.md (처음부터는 스타일 추천 1~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
+| 디자인: DESIGN.md (처음부터는 스타일 추천 1\~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
 | 화면 구성 | 팩의 스크린샷을 따라요 | 시안 3장 <!-- v:cost.stage.mockup.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
 | 그림 <!-- v:preset.studyday.design.images -->3<!-- /v -->장 | 팩에서 받기 <!-- v:cost.stage.packImages.time -->1분<!-- /v --> | <!-- v:preset.studyday.stages.images.time -->2분<!-- /v --> · 5만 · 1달러 미만 |
 | 첫 화면 | <!-- v:cost.stage.first.pack.time -->10분<!-- /v --> · <!-- v:cost.tokens.4 -->22만<!-- /v --> · 4달러 | <!-- v:cost.stage.first.scratch.time -->15분<!-- /v --> · <!-- v:cost.tokens.6 -->33만<!-- /v --> · 6달러 |
@@ -180,7 +180,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 |---|---|---|
 | 1. 기획 | 서비스 설명(`PRODUCT.md`)과 첫 화면(오늘)·두 번째 화면(주간 리포트) 설계만 미리 적었어요. 스타일과 색은 적지 않았어요 | 이름은 처음부터 하루공부 |
 | 2. 첫 판 | 추천 후보(토스, 팀스파르타, 코드잇)와 직접 정하기 중 2위 팀스파르타를 고르고 대표 색을 인디고 `#4F46E5`로 바꿨어요 | 디자인 리뷰 17/28 |
-| 3. 리디자인 | "할 일 목록과 막대 몇 개뿐이라 동기부여가 안 되고, 글자가 작아"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1~3위(<!-- v:preset.studyday.design.rec1 -->Wise<!-- /v -->, <!-- v:preset.studyday.design.rec2 -->Bento<!-- /v -->, <!-- v:preset.studyday.design.rec3 -->Clay<!-- /v -->) 중 1위 <!-- v:preset.studyday.design.rec1 -->Wise<!-- /v -->, 대표 색은 원본 라임색 그대로. 시안 3장 중 <!-- v:preset.studyday.design.comp -->A<!-- /v -->(<!-- v:preset.studyday.design.compName -->이번 주 무대<!-- /v -->)를 골랐어요. 큰 D-day와 이번 주 막대를 검은 무대에 세우고 오늘 할 일을 옆에 두는 구도예요 | 디자인 리뷰 20/28, 리디자인에 50분 |
+| 3. 리디자인 | "할 일 목록과 막대 몇 개뿐이라 동기부여가 안 되고, 글자가 작아"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1\~3위(<!-- v:preset.studyday.design.rec1 -->Wise<!-- /v -->, <!-- v:preset.studyday.design.rec2 -->Bento<!-- /v -->, <!-- v:preset.studyday.design.rec3 -->Clay<!-- /v -->) 중 1위 <!-- v:preset.studyday.design.rec1 -->Wise<!-- /v -->, 대표 색은 원본 라임색 그대로. 시안 3장 중 <!-- v:preset.studyday.design.comp -->A<!-- /v -->(<!-- v:preset.studyday.design.compName -->이번 주 무대<!-- /v -->)를 골랐어요. 큰 D-day와 이번 주 막대를 검은 무대에 세우고 오늘 할 일을 옆에 두는 구도예요 | 디자인 리뷰 20/28, 리디자인에 50분 |
 | 4. 넓히기 | 첫 화면 하나를 모든 페이지를 갖춘 사이트로 넓혔어요. 이름은 그대로 두고 문구만 자연스러운 말로 고쳤어요. 할 일 체크, 집중 타이머, 단원 체크, 오답 노트, 다시 나누기 창이 실제로 동작해요 | 페이지 <!-- v:preset.studyday.pages -->14<!-- /v -->개 |
 | 5. 마무리 | 링크·버튼 검사, 디자인 리뷰, 다듬기. 다시 만든 사진은 없어요 | 디자인 리뷰 <!-- v:preset.studyday.design.critique -->33<!-- /v -->/40 |
 

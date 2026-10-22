@@ -107,7 +107,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 
 ## 시간과 비용
 
-위 "프리셋 팩으로 만들어 보기" 프롬프트로 만들 때 **<!-- v:preset.olgot.pack.time.text -->한 번에 완성하면 약 3시간 55분\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지)<!-- /v -->** 걸리고, 토큰은 최소 **약 <!-- v:preset.olgot.pack.tokens -->550만<!-- /v -->**(캐시 포함 약 <!-- v:preset.olgot.pack.cached -->2.8억<!-- /v -->)이 들어요. 팩 없이 [이 컨셉으로 처음부터](#이-컨셉으로-처음부터-만들기) 만들 때는 <!-- v:preset.olgot.scratch.time.text -->한 번에 완성하면 약 5시간 45분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지)<!-- /v --> 걸리고, 토큰은 최소 약 <!-- v:preset.olgot.scratch.tokens -->800만<!-- /v -->이라 <!-- v:limit.window -->5시간<!-- /v --> 한도에 약 <!-- v:preset.olgot.scratch.limit -->4<!-- /v -->번 걸려서 2~3일에 나눠 만들어요. 페이지는 <!-- v:preset.olgot.pages -->203<!-- /v -->개지만 반 상세 74개, 복습 영상 상세 60개처럼 같은 틀로 찍어 내는 페이지가 많아서 페이지 <!-- v:preset.olgot.pageTypes -->48<!-- /v -->종으로 어림했어요.
+위 "프리셋 팩으로 만들어 보기" 프롬프트로 만들 때 **<!-- v:preset.olgot.pack.time.text -->한 번에 완성하면 약 3시간 55분\~7시간 50분(여러 번 고쳐 달라고 하면 약 11시간 45분까지)<!-- /v -->** 걸리고, 토큰은 최소 **약 <!-- v:preset.olgot.pack.tokens -->550만<!-- /v -->**(캐시 포함 약 <!-- v:preset.olgot.pack.cached -->2.8억<!-- /v -->)이 들어요. 팩 없이 [이 컨셉으로 처음부터](#이-컨셉으로-처음부터-만들기) 만들 때는 <!-- v:preset.olgot.scratch.time.text -->한 번에 완성하면 약 5시간 45분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지)<!-- /v --> 걸리고, 토큰은 최소 약 <!-- v:preset.olgot.scratch.tokens -->800만<!-- /v -->이라 <!-- v:limit.window -->5시간<!-- /v --> 한도에 약 <!-- v:preset.olgot.scratch.limit -->4<!-- /v -->번 걸려서 2\~3일에 나눠 만들어요. 페이지는 <!-- v:preset.olgot.pages -->203<!-- /v -->개지만 반 상세 74개, 복습 영상 상세 60개처럼 같은 틀로 찍어 내는 페이지가 많아서 페이지 <!-- v:preset.olgot.pageTypes -->48<!-- /v -->종으로 어림했어요.
 
 <!-- b:revise-time-detail -->
 <details>
@@ -145,7 +145,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 3번 걸려요)
 |---|---|---|
 | 준비: pro-kit 받기, 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 |
 | 기획: 서비스 질문, 이름, 사이트맵 | <!-- v:cost.stage.plan.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 | <!-- v:cost.stage.plan.scratch.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
-| 디자인: DESIGN.md (처음부터는 스타일 추천 1~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
+| 디자인: DESIGN.md (처음부터는 스타일 추천 1\~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
 | 화면 구성 | 팩의 스크린샷을 따라요 | 시안 3장 <!-- v:cost.stage.mockup.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
 | 그림 <!-- v:preset.olgot.design.images -->81<!-- /v -->장 | 팩에서 받기 <!-- v:cost.stage.packImages.time -->1분<!-- /v --> | <!-- v:preset.olgot.stages.images.time -->41분<!-- /v --> · <!-- v:cost.tokens.24.5 -->130만<!-- /v --> · 25달러 |
 | 첫 화면 | <!-- v:cost.stage.first.pack.time -->10분<!-- /v --> · <!-- v:cost.tokens.4 -->22만<!-- /v --> · 4달러 | <!-- v:cost.stage.first.scratch.time -->15분<!-- /v --> · <!-- v:cost.tokens.6 -->33만<!-- /v --> · 6달러 |

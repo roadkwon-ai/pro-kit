@@ -188,8 +188,8 @@ taste-skill(Leonxlnx/taste-skill의 `design-taste-frontend`, v2.1.3, MIT)을 선
   - lease 스크립트를 BusyBox ash와 dash(lsof 설치 전후)에서 돌렸다. guard·자식 그룹(`kill -0 -N`)·Next pid·build lock(`lsof -t`)으로 이어 가고, 모두 끝나면 멈추고, token이 다르면 바로 멈췄다. `touch -c`는 파일을 만들지 않았다.
   - 모든 실행 뒤 남은 lease 프로세스는 없었다.
 - 측정(파일 4.7만 개, 1GB `node_modules`를 마운트):
-  - 측정만: 옛 판 61~90초, 새 판 19~24초. 호스트는 0.66초에서 0.46초로 줄었다.
-  - guard 실행(`run --kind build`): 옛 판은 실행 전 측정이 30초 제한에 걸려 명령을 시작하지 못했다(30.1초, exit 75). 새 판은 명령을 실행하고 exit 0이었다(실행 전후 측정을 합쳐 27~33초).
+  - 측정만: 옛 판 61\~90초, 새 판 19\~24초. 호스트는 0.66초에서 0.46초로 줄었다.
+  - guard 실행(`run --kind build`): 옛 판은 실행 전 측정이 30초 제한에 걸려 명령을 시작하지 못했다(30.1초, exit 75). 새 판은 명령을 실행하고 exit 0이었다(실행 전후 측정을 합쳐 27\~33초).
   - 캐시가 빈 첫 측정은 102초까지 걸렸다. 이때는 여전히 실행 전 검사가 시간 초과다.
 
 리뷰: 독립 리뷰(`oh-my-claudecode:code-reviewer`)는 COMMENT였다(HIGH 0, MEDIUM 4, LOW 10).
@@ -248,7 +248,7 @@ taste-skill(Leonxlnx/taste-skill의 `design-taste-frontend`, v2.1.3, MIT)을 선
 - `pnpm dev:web`의 캐시: guard 종류 이름에 `:`를 쓸 수 없어 `dev:web`은 `dev-web`으로 실행된다. 이 종류가 표준 캐시 목록에 없어서 `dev:web`이 만든 캐시에는 소유 기록이 없었고 `clean`이 지울 수 없었다(실측에서 찾음). 목록에 더했다.
 - 컨테이너 저장소: `resource check`가 Podman·Docker의 `system df`(10초 제한)로 이미지·컨테이너·볼륨 크기와 회수 가능한 크기를 `containers`로 보여 준다. podman이 응답하지 않으면 docker를 다시 기다리지 않는다. 엔진이 관리하는 자원이라 예산에 넣지 않고 지우지도 않는다.
 - 위임 전후 대조: `delegation diff`에 기준 파일을 절대 경로로 주면 usage(exit 2)로 거부했다. 에이전트는 절대 경로를 쓰라는 규칙 때문에 그렇게 준다(행동 eval에서 찾음). 프로젝트 안이면 받고, 밖이면 그대로 거부한다.
-- 라운드 날짜: 대조표 마커의 `opened`가 UTC 날짜였다. 한국 시간 0~9시에 라운드를 열면 전날로 찍혔다(실측에서 찾음). 아카이브처럼 한국 시간으로 고쳤다.
+- 라운드 날짜: 대조표 마커의 `opened`가 UTC 날짜였다. 한국 시간 0\~9시에 라운드를 열면 전날로 찍혔다(실측에서 찾음). 아카이브처럼 한국 시간으로 고쳤다.
 - supabase의 `prokit-db`: drizzle-kit이 만든 커스텀 마이그레이션 파일에는 끝 줄바꿈 없는 주석 한 줄만 있다. RLS 네 줄을 `>>`로 바로 덧붙이면 첫 줄이 주석에 붙는다. 그러면 `user` 테이블의 RLS가 꺼진 채 적용된다(실측에서 찾음, advisors가 `rls_disabled_in_public`으로 잡았다). 스킬에 주석 다음 줄부터 쓰라고 적었다.
 - 이름: supabase 검증 기록 도입부의 옛 링크 글(`bts-next-neon`)을 고쳤다.
 
@@ -290,7 +290,7 @@ Supabase 실측(scratchpad, Better-T-Stack 3.44.3 `--db-setup supabase --manual-
 - 현재 판 eval에서 `delegation diff`의 절대 경로 거부를 찾아 위에서 고쳤다.
 
 리뷰: 독립 리뷰(`oh-my-claudecode:code-reviewer`)의 판정은 APPROVE였다.
-- 퍼즈: 회수 지점 다섯 곳과 자식 실행 중에 무작위 SIGKILL을 넣었다. guard 8~10개로 약 300번 실행하고 약 150번 강제 종료했는데 겹친 실행은 0번이었다.
+- 퍼즈: 회수 지점 다섯 곳과 자식 실행 중에 무작위 SIGKILL을 넣었다. guard 8\~10개로 약 300번 실행하고 약 150번 강제 종료했는데 겹친 실행은 0번이었다.
 - 지적은 MEDIUM 1건, LOW 9건이었다. 고친 것:
   - MEDIUM: 재부팅 뒤에도 네임스페이스가 다르면 죽은 lock을 영영 회수하지 않던 것. Linux·WSL2·컨테이너가 영향을 받는다.
   - 세 단계 회수가 막혔을 때의 안내.
@@ -335,7 +335,7 @@ Supabase 실측(scratchpad, Better-T-Stack 3.44.3 `--db-setup supabase --manual-
 
 설치 실측(scratchpad, Better-T-Stack 3.44.3, Next.js 16.4.0, Node 24.21.0, pnpm 12.10.1, Podman 6.0.2):
 - 설치: `install.sh` exit 0, 프로젝트 스킬 50개, `dev`·`dev:web`·`build` guard 래퍼. 로컬 DB는 5432·5433이 사용 중이라 README의 `DB_PORT=5434` 방식으로 띄웠고 첫 마이그레이션 적용, `pnpm check`, `skills:check`, `agents:check`, `check-types`, `biome check .` 모두 exit 0.
-- 측정 시간: 파일 38,945개에서 빠른 측정 0.55~1.28초(pnpm 시작 포함), 전체 측정 약 0.5초.
+- 측정 시간: 파일 38,945개에서 빠른 측정 0.55\~1.28초(pnpm 시작 포함), 전체 측정 약 0.5초.
 - `secrets`: `delegation.mjs`를 빼면 옛 판은 exit 1(`ERR_MODULE_NOT_FOUND`), 새 판은 exit 0. `resource-guard.mjs`에 문법 오류를 넣어도 `secrets`는 exit 0이고 `resource check`만 exit 2.
 - 위임 전후 대조: 배정 안 변경만 exit 0, 배정 밖 `README.md` 수정은 exit 1(`outside`), scope 없이 대조하면 변경 전체가 `outside`로 exit 1, 수행자 커밋은 `headChanged`로 exit 1, 항목을 지운 기준 파일과 없는 파일은 exit 2.
 - 라운드: LF·CRLF로 끝나는 증거 파일을 `evidence`가 받아들였고, `audit`·`close` exit 0. 옛 `delegation=required` 마커가 남은 라운드도 `close` exit 0. exit 1 검사를 담은 packet은 `audit --packet`이 "실패한 command를 완료 증거로 냈다"로 거부했다. `close --packet`은 exit 2. `delegation accept`에 실패하는 검사를 주면 Codex 리뷰 전에 `blocked`.
@@ -570,7 +570,7 @@ E2E에서 찾아 고친 템플릿 결함:
 <details><summary>닫은 대조표 (tasks/archive/2026-09.md)</summary>
 
 <!-- dev-cycle:archived closed=2026-09-25 case=F base=cc3e64ee286dafdcfb3f38f239bf41b58d58417d auth=false opened=2026-09-25 -->
-## 라운드: F — todo 수정·삭제 프로시저 + 첫 마이그레이션 + 2계정 격리 테스트
+## 라운드: F, todo 수정·삭제 프로시저 + 첫 마이그레이션 + 2계정 격리 테스트
 | # | 단계 | 증거 |
 |---|---|---|
 | 1 | 스펙 작성 (brainstorming, 선택: /grill-with-docs, UI가 있으면 impeccable shape 브리프 링크) → 사용한 스킬과 스펙 경로 | 미실행: Task 14 E2E 범위(DB·API·리뷰·audit 경로 검증). 요구사항은 템플릿 계획 Task 14 Step 3으로 대체, brainstorming 미사용 |
@@ -660,9 +660,9 @@ E2E에서 찾아 고친 템플릿 결함:
 
 | 스킬 | 이전 | 재실행 | 수정 뒤 |
 |---|---|---|---|
-| bts-dev-cycle | 93% | 14/14 (100%) | — |
-| bts-api | 100% | 8/8 (100%) | — |
-| bts-db | 100% | 7/7 (100%) | — |
+| bts-dev-cycle | 93% | 14/14 (100%) | - |
+| bts-api | 100% | 8/8 (100%) | - |
+| bts-db | 100% | 7/7 (100%) | - |
 | bts-web | 88% | 7/8 (88%) | eval-1 4/4 → 8/8 (100%) |
 | bts-ui | 100% | 8/8 (100%) | eval-1 assertion 추가 뒤 5/5 |
 | bts-verify | 100% | 6/7 (86%) | eval-2 3/3 → 7/7 (100%) |
@@ -1057,7 +1057,7 @@ E에서는 `bts-verify`를 읽지 않아, bts-verify가 금지한 `git stash`로
 - **이름**: 두 매니페스트의 원격 14곳(선택 묶음 포함) HEAD 트리에서 스킬을 찾았다. 빠진 스킬은 없다. vercel-labs/agent-skills(`react-best-practices` 등)와 better-auth/skills(`best-practices` 등)는 폴더 이름이 스킬 이름과 다르지만 frontmatter `name`은 매니페스트와 같다. lock의 `skillPath`로 비교하므로 `skills:update`에도 영향이 없다.
 - **설치본과 HEAD 차이**: 2026-09-29에 설치한 프로젝트와 비교하면 `impeccable`만 7개 파일이 바뀌었다(참조 문서 6개, `scripts/VERSION`). 기존 프로젝트는 그 프로젝트 세션에서 `pnpm skills:update`(`bts-skills-update`)로 올린다.
 - **bts 스킬이 가리키는 내용**: HEAD에 모두 있다. `vercel-react-best-practices`의 async-parallel·rerender-memo 규칙, `next-dev-loop`의 `/_next/mcp`, `domain-modeling`의 `GLOSSARY-FORMAT.md`, `supabase`의 보안 체크리스트, `turborepo`의 번들 문서 안내, impeccable 스크립트가 해당한다. `shadcn`은 로드할 때 여전히 `npx shadcn@latest info --json`을 실행하므로 Read 규칙을 유지한다. `neon`·`neon-functions` 본문의 `` process.env.X!` ``는 Claude Code가 명령으로 보지 않는다. 이름을 바꾼 사본을 Skill 도구로 불러 정상 로드를 확인했다(haiku).
-- **버전**: skills CLI 1.7.0과 turbo 2.11.5는 최신이다. agent-browser는 0.31.1에서 0.38.1로 올렸다(설치 버전과 검사 하한 모두). agent-browser 스킬은 본문을 CLI가 주는 안내 스텁이라(`agent-browser skills get core`) CLI 판이 곧 스킬 판이다. HEAD 스텁은 0.31.1에 없는 `derive-client`, `protected-vercel-deployments`, `webmcp-gen`을 가리킨다. 0.32.0~0.38.1 릴리스 노트에는 명령 제거나 이름 변경이 없다. 대시보드 origin 검증과 domain allowlist가 강화됐고, 데몬이 1시간 유휴 뒤 종료하는 기본값이 생겼다.
+- **버전**: skills CLI 1.7.0과 turbo 2.11.5는 최신이다. agent-browser는 0.31.1에서 0.38.1로 올렸다(설치 버전과 검사 하한 모두). agent-browser 스킬은 본문을 CLI가 주는 안내 스텁이라(`agent-browser skills get core`) CLI 판이 곧 스킬 판이다. HEAD 스텁은 0.31.1에 없는 `derive-client`, `protected-vercel-deployments`, `webmcp-gen`을 가리킨다. 0.32.0\~0.38.1 릴리스 노트에는 명령 제거나 이름 변경이 없다. 대시보드 origin 검증과 domain allowlist가 강화됐고, 데몬이 1시간 유휴 뒤 종료하는 기본값이 생겼다.
 - **0.38.1 확인**: scratch Next 16.3.7 앱에 로컬 설치로 `next-dev-loop` 절차를 돌렸다. `session id --scope worktree`, `--restore --enable react-devtools open`, `snapshot -i`, `click`, `react tree --json`, `react renders start/stop`, `vitals`, `screenshot`, `--restore close`, `/_next/mcp` `tools/list`(9개)가 모두 동작했다. `react tree`의 텍스트 출력이 `✓ Done`뿐인 것은 0.31.1도 같다. 전역 설치 경로(`npm install -g agent-browser@0.38.1`)는 이 기기에서 실행하지 않았다.
 - **올리지 않은 것**: BTS 3.44.2는 Vercel web·server 배포 템플릿 수정을 담고 있어, 두 템플릿을 실제로 생성·설치해 다시 검증한 뒤 따로 올린다. Next는 BTS가 정한다(현재 최신 16.3.7).
 
@@ -1115,7 +1115,7 @@ Claude 결과를 Codex에 그대로 적용할 수 있는지 실제 CLI로 확인
 ### 바꾼 것
 - `use-design-md`(CaesiumY/ko-design-md, MIT)를 기본 설치에 더했다. getdesign.kr이 제공하는 소비자 스킬이다. 공식 도메인 스킬은 neon 27개, supabase 24개가 됐다. 같은 저장소의 `design-md`(카탈로그 작성용)는 받지 않는다.
 - `bts-ui`: 새 작업에서 `DESIGN.md`가 없고 화면이 BTS 기본 화면뿐이거나 리디자인이면 스타일을 고르게 한다.
-  - 두 카탈로그(getdesign.kr, getdesign.md)에서 1~3위를 추리고 "카탈로그 없이 impeccable로 정하기"를 함께 내놓는다. 브리프 확인과 한 번에 묻는다.
+  - 두 카탈로그(getdesign.kr, getdesign.md)에서 1\~3위를 추리고 "카탈로그 없이 impeccable로 정하기"를 함께 내놓는다. 브리프 확인과 한 번에 묻는다.
   - 이미 만든 화면이 있으면 묻지 않는다. impeccable도 "Missing DESIGN.md alone does not make a project greenfield"라고 한다.
   - 절차는 `impeccable-map.md`의 "디자인 카탈로그에서 고르기"에 있다. 받기, 저장, 브랜드 요소 바꾸기, 토큰 적용을 다룬다.
   - 들여온 `DESIGN.md`는 마감의 `document`에서 merge만 한다.
@@ -1134,7 +1134,7 @@ Claude 결과를 Codex에 그대로 적용할 수 있는지 실제 CLI로 확인
 
   | PRODUCT.md | 결과 |
   |---|---|
-  | 스타일 지정 없음 | B 대조표를 열었다. getdesign.kr 목록과 getdesign.md sitemap을 curl로 본 뒤 1~3위(bezier, remember, vapor-ui)와 이유·미리보기 주소, 직접 정하기, 대표 색 질문, 브리프(`docs/briefs/home.md`)를 냈다. 코드 없이 멈췄다. $1.46 |
+  | 스타일 지정 없음 | B 대조표를 열었다. getdesign.kr 목록과 getdesign.md sitemap을 curl로 본 뒤 1\~3위(bezier, remember, vapor-ui)와 이유·미리보기 주소, 직접 정하기, 대표 색 질문, 브리프(`docs/briefs/home.md`)를 냈다. 코드 없이 멈췄다. $1.46 |
   | "원티드 스타일" 지정 | 지정된 원티드를 1위로 하나만 냈다. 대표 색 선택과 직접 정하기, 브리프 확인을 함께 물었다. 코드 없이 멈췄다. $1.68 |
 
   - 같은 fixture에 "보관함" 화면(DB·API가 필요하다)을 요청하면 F로 분류돼 범위부터 물었다. `bts-ui` 단계까지 가지 않았고, 이 판단은 맞다.
@@ -1178,7 +1178,7 @@ Claude 결과를 Codex에 그대로 적용할 수 있는지 실제 CLI로 확인
     - `rounded`의 `%` 오류와 `orphaned-tokens`: 그대로 둔다.
   - 카탈로그 파일을 merge할 때는 실행 전 판을 `/tmp`에 두고, diff로 `removed`가 비었는지 본다. HEAD와 비교하지 않는다. 첫 라운드에서 카탈로그를 들여오고 바로 merge하면 HEAD에 파일이 없기 때문이다.
 - **결함 수정**:
-  - 문제: 카탈로그 후보 1단계가 getdesign.md 이름을 sitemap의 `/design-md/<slug>`에서 뽑게 적혀 있었다. 566개 중 551개는 원문이 없는 분석 요청 페이지라 원문 주소가 404다. 앞 절의 행동 확인에서는 1~3위가 모두 getdesign.kr이라 이 경로를 거치지 않았다.
+  - 문제: 카탈로그 후보 1단계가 getdesign.md 이름을 sitemap의 `/design-md/<slug>`에서 뽑게 적혀 있었다. 566개 중 551개는 원문이 없는 분석 요청 페이지라 원문 주소가 404다. 앞 절의 행동 확인에서는 1\~3위가 모두 getdesign.kr이라 이 경로를 거치지 않았다.
   - 수정: 원문이 있는 `/<slug>/design-md` 76개에서 뽑게 고쳤다. frontmatter가 없는 파일은 추천 후보에서 뒤로 둔다.
 - `bts-ui`의 정본 갱신 행과 `docs/dev-workflow.md` B 첫 행·마지막 행의 증거에 lint 결과를 넣었다. 마지막 행에는 diff 확인도 넣었다.
 
@@ -1232,10 +1232,10 @@ DESIGN.md가 결과를 얼마나 바꾸는지 A/B로 쟀다. 보고서는 [DESIG
 - B: 새 세션에서 같은 브리프로 "<브랜드> 느낌으로, 대표 색은 <hex>"라고 요청하고 카탈로그와 `DESIGN.md`는 쓰지 않게 했다. 두 번째 화면도 새 세션에서 같은 말로 요청했다.
 - 두 조건 모두 `claude -p --model claude-opus-5-5 --permission-mode bypassPermissions`다. 측정용으로 대조표 채우기, critique·audit·polish, 리뷰 에이전트, 커밋을 빼고 구현 → `check-types`·biome → 개발 서버 스크린샷까지만 시켰다.
 - 측정: 사본마다 `next build`와 `next start`를 돌리고 Chrome 헤드리스(playwright-core, 설치된 Chrome)로 1440×900과 390×844를 찍었다. 데스크톱 화면의 계산된 스타일(글자·배경·테두리·SVG 색, 반경, 글자 크기, 서체)을 A가 저장한 `DESIGN.md` 토큰과 비교했다. B도 같은 파일과 비교했다. axe-core(WCAG 2.2 AA), impeccable `detect --no-config --no-design-system`, 화면 코드의 원시 색 값과 임의 Tailwind 값(`git diff -w`, `apps/web/src`)도 셌다.
-- 블라인드 평가: Opus 5.5에 두 조건의 스크린샷을 X·Y로만 주고 목표 `DESIGN.md`와 브리프를 기준으로 충실도, 일관성, 완성도, 명료성, 종합을 1~10점으로 매기게 했다. 서비스마다 좌우를 바꿔 두 번씩 돌렸다.
+- 블라인드 평가: Opus 5.5에 두 조건의 스크린샷을 X·Y로만 주고 목표 `DESIGN.md`와 브리프를 기준으로 충실도, 일관성, 완성도, 명료성, 종합을 1\~10점으로 매기게 했다. 서비스마다 좌우를 바꿔 두 번씩 돌렸다.
 
 ### 추천과 선택
-| 서비스 | 추천 1~3위 (에이전트) | 사용자 선택 | A의 lint |
+| 서비스 | 추천 1\~3위 (에이전트) | 사용자 선택 | A의 lint |
 |---|---|---|---|
 | 같이살림 | 토스, 당근, 직접 정하기 | 1위 토스, 제품 색 #12805C | 오류 0, 경고 0 |
 | 핏슬롯 | 토스, 쏘카, 당근, 직접 정하기 | 3위 당근, 제품 색 #0F766E | 오류 0, 경고 0 |
@@ -1294,15 +1294,15 @@ DESIGN.md가 결과를 얼마나 바꾸는지 A/B로 쟀다. 보고서는 [DESIG
   - 4단계: Refero 원문에 frontmatter를 붙이는 방법을 적었다. 표 값을 그대로 옮기고, 표에 없는 값과 `%` 반경은 넣지 않는다. `Similar Brands`와 `Quick Start`는 지운다.
   - DESIGN.md 검사: lint의 `section-order`, `No YAML content found` 처리를 더했다.
 - 설치기 `.gitignore`: impeccable README("Keeping .impeccable out of git")가 권하는 블록에서 live 모드 줄을 뺀 6줄을 더했다. 스크린샷(`*.png`, `review/`), 훅 캐시, 개인 설정, 질문 파일이다. live 모드 파일은 impeccable이 `.git/info/exclude`에 직접 쓴다. `critique/*.md`, `config.json`, `design.json`은 공유 산출물이라 무시하지 않는다. 테스트에 `git check-ignore`로 두 쪽을 확인하는 경우를 더했다. 샘플 fixture 사본에 `install.sh --diff`와 `--skip-skills`를 실행해 6줄이 더해지는 것, 두 번째 실행에서 중복이 생기지 않는 것, `.impeccable/critique/*.md`만 추적 대상으로 남는 것을 확인했다.
-- 루트 README: "스타일 추천 1~3위"에 카탈로그 표를 넣었다. "랜딩페이지 샘플" 절, 흐름 그림, 원칙 표, 공식 스킬 표, 빠른 시작 예시 프롬프트도 고쳤다. 템플릿 README "설치한 뒤" 7번도 고쳤다.
+- 루트 README: "스타일 추천 1\~3위"에 카탈로그 표를 넣었다. "랜딩페이지 샘플" 절, 흐름 그림, 원칙 표, 공식 스킬 표, 빠른 시작 예시 프롬프트도 고쳤다. 템플릿 README "설치한 뒤" 7번도 고쳤다.
 
 ### 랜딩페이지 샘플 실행
 - fixture: 앞 절의 fixture를 복사했다. 이번 `impeccable-map.md`, 템플릿 `AGENTS.md`, 설치기의 biome override를 반영하고 `pnpm check`를 해 `biome check .`가 exit 0인 상태로 커밋했다.
-- 서비스 4개를 기획했다. 울림(AI 내레이션 스튜디오), 제철상자(제철 농산물 정기배송), 발맞춤(동네 러닝 크루 매칭), 해담(가정용 태양광 배터리)이다. `PRODUCT.md`의 Brand Commitments에는 원하는 인상만 적었다(극적인 시네마틱, 계절 잡지, 스포츠 포스터, 갤러리 조명 아래 하드웨어). 랜딩 브리프(`docs/briefs/landing.md`, 섹션 10~12개)는 확정 상태로 두었다. 사진과 외부 이미지는 쓰지 않고 그림을 CSS·SVG로 만들게 했다.
+- 서비스 4개를 기획했다. 울림(AI 내레이션 스튜디오), 제철상자(제철 농산물 정기배송), 발맞춤(동네 러닝 크루 매칭), 해담(가정용 태양광 배터리)이다. `PRODUCT.md`의 Brand Commitments에는 원하는 인상만 적었다(극적인 시네마틱, 계절 잡지, 스포츠 포스터, 갤러리 조명 아래 하드웨어). 랜딩 브리프(`docs/briefs/landing.md`, 섹션 10\~12개)는 확정 상태로 두었다. 사진과 외부 이미지는 쓰지 않고 그림을 CSS·SVG로 만들게 했다.
 - 첫 턴: "<제품>의 랜딩페이지(`/`)를 새로 디자인해줘. … 디자인 스타일을 먼저 골라야 하면 추천해줘." 같은 세션의 둘째 턴에서 순위와 대표 색을 답했다. 둘째 턴은 "받아 저장하고 검사한 다음 브리프대로 구현, critique 한 번, P0·P1을 polish"다. 대조표 채우기, audit, web-design-guidelines, 리뷰 에이전트, document, 커밋은 뺐다. 모두 `claude -p --model claude-opus-5-5 --permission-mode bypassPermissions`이고 4개를 동시에 돌렸다.
 - 확인: `next build`와 `next start` 뒤 Chrome 헤드리스로 1440×900 첫 화면, 1440 전체, 390 전체를 찍고 axe-core를 돌렸다.
 
-| 서비스 | 추천 1~3위 (에이전트) | 사용자 선택 | lint | critique | 비용·시간 |
+| 서비스 | 추천 1\~3위 (에이전트) | 사용자 선택 | lint | critique | 비용·시간 |
 |---|---|---|---|---|---|
 | 울림 | Sequel, Slash, Ciridae (모두 Refero), 직접 정하기 | 1위, 원본 색 | 오류 1(`50%` 반경), 경고 2(미사용 토큰) | 22/32, P0 0, P1 2 → 고침 | $10.01 · 20.3분 |
 | 제철상자 | Fable, Monocle, sweetgreen (모두 Refero), 직접 정하기 | 1위, 제품 색 #ba2b28 | 오류 0, 경고 4(미사용 토큰) | 22/28, P0 0, P1 2 → 1건 고침, 1건 일부(원문의 하늘색 띠는 `DESIGN.md`를 바꿔야 해서 사용자에게 물음) | $9.79 · 22.0분 |
@@ -1364,7 +1364,7 @@ DESIGN.md가 결과를 얼마나 바꾸는지 A/B로 쟀다. 보고서는 [DESIG
   - 대조표, 커밋, 리뷰 에이전트, document는 뺐다. 모두 `claude -p --model claude-opus-5-5 --permission-mode bypassPermissions`로 8개를 동시에 돌렸다.
 - 확인: 작업공간 사본에서 `/`만 남기고 `output: "export"`로 빌드했다. 정적 서버에서 Chrome으로 1440×900 첫 화면, 1440과 390 전체 페이지를 찍고 axe를 돌렸다. 콘솔 오류, 실패한 요청, 깨진 이미지, 로드 실패한 서체도 셌다.
 
-| 서비스 | 추천 1~3위 (에이전트) | 선택 | critique 이전 판 → 새 판 | 화면용 AI 이미지 | 비용 · 시간 |
+| 서비스 | 추천 1\~3위 (에이전트) | 선택 | critique 이전 판 → 새 판 | 화면용 AI 이미지 | 비용 · 시간 |
 |---|---|---|---|---|---|
 | 울림 | MasterClass (Refero), Runway (awesome-design-md), Fable (Refero) | 1위, 원본 색, 스타일 comp | 22/32 → 23/32 | 11 | $25.87 · 47분 |
 | 제철상자 | Oakâme, Telescope, Hungry Tiger (모두 Refero) | 1위, #ba2b28, 스타일 comp | 26/32 → 24/32(구현 직후, 재확인 채점 없음) | 16 | $20.17 · 49분 |
@@ -1378,7 +1378,7 @@ DESIGN.md가 결과를 얼마나 바꾸는지 A/B로 쟀다. 보고서는 [DESIG
 - 8개 모두 첫 턴에 지금 화면(앱은 이전 스크린샷)을 critique하고 브리프에 "버릴 것"과 "지킬 것", 시각 자산 계획을 적었다. 이전 판과 같은 계열(토스, Sequel 계열, Notion 등)은 스스로 뺐다. 3개는 `PRODUCT.md`의 "사진 금지" 줄을 사용자 허용대로 고쳤다.
 - critique 점수는 사용성 휴리스틱이고, 해당 없는 항목을 빼서 분모가 다르다. 울림 에이전트도 "시각적 완성도의 향상은 잘 반영되지 않는다"고 적었다. 비교 이미지는 `docs/assets/redesign-before-after.webp`에 있다.
 - 서체는 8개 모두 파일로 받아 `next/font/local`로 자체 호스팅했다(울림은 Black Han Sans와 Hahmlet을 `next/font/google`로 더함). Pretendard와 SUIT는 배포처 파일을 그대로 썼고, 쓰는 글자로 줄인 것은 RFN이 없는 Wanted Sans뿐이다.
-- 정적 HTML 8개: axe 위반 0, 가로 넘침 0, 서체·이미지 로드 실패 0, 런타임 오류 0이다. 남은 404는 샘플에 없는 화면으로 가는 링크의 prefetch다. 사이트당 2.2~7.9MB, 합계 31MB다. GitHub Pages에 올린 뒤 실제 주소 8곳에서도 같은 결과였다.
+- 정적 HTML 8개: axe 위반 0, 가로 넘침 0, 서체·이미지 로드 실패 0, 런타임 오류 0이다. 남은 404는 샘플에 없는 화면으로 가는 링크의 prefetch다. 사이트당 2.2\~7.9MB, 합계 31MB다. GitHub Pages에 올린 뒤 실제 주소 8곳에서도 같은 결과였다.
 - 비용: 에이전트 30턴 $194.86(샘플 평균 $24.36, 52분). OpenAI 이미지 비용은 따로 청구되고 여기서 세지 않았다.
 
 ### 찾은 결함과 수정
@@ -1411,7 +1411,7 @@ DESIGN.md가 결과를 얼마나 바꾸는지 A/B로 쟀다. 보고서는 [DESIG
   - 제품 이름이나 첫 화면 헤드라인을 정해야 하면 후보를 함께 낸다.
 - `impeccable-map.md`(공유 파일):
   - "사이트맵과 상호작용" 절: 사이트맵, 링크와 버튼, 상호작용 계획(hover·focus-visible, 툴팁, 모달, 드로어·시트, 햄버거 메뉴, 사이드바, 토스트), 확인 방법을 적었다.
-  - "이름과 문구" 절: 비슷한 서비스 8~12개 조사, 후보 3~4개, 겹치는 이름 확인, 한 번에 묻기를 적었다.
+  - "이름과 문구" 절: 비슷한 서비스 8\~12개 조사, 후보 3\~4개, 겹치는 이름 확인, 한 번에 묻기를 적었다.
   - 시각 자산의 이미지 항목에 인물 사진 규칙을 더했다. 자세를 구체적으로 적고, 서로 맞지 않는 자세는 피하고, 해부학 조건을 넣고, 후보를 2장 이상 만들어 사람 부분을 원본 크기로 확인한다.
 - 템플릿 README "설치한 뒤" 7번, 루트 README UI/UX 흐름·단계 표·샘플 절, 루트 AGENTS.md 샘플 규칙(사이트맵 전체, 영구 작업 폴더)을 맞췄다.
 
@@ -1448,7 +1448,7 @@ DESIGN.md가 결과를 얼마나 바꾸는지 A/B로 쟀다. 보고서는 [DESIG
 - gh-pages 루트(`https://roadkwonai.github.io/bts-starter-kit/`)에 샘플 8개를 모아 보는 페이지를 두었다(2026-10-01). 같은 `bts-ui` 흐름(14islands 스타일, 방향 comp 고르기)으로 만들었고, 내보낸 결과에서 페이지 10개와 링크 285개가 200, 콘솔 오류 0이다.
 - gh-pages에 올린 뒤 실제 주소에서도 8개 모두 200으로 열리고, 옛 주소(`balmatchum`, `haedam`, `living`)는 루트 `404.html`이 새 주소로 보낸다.
 - 상호작용은 따로 셌다(130페이지):
-  - 버튼을 눌러 모달이 열린 횟수는 샘플마다 11~114번이고, 드로어·시트는 3~63번이다.
+  - 버튼을 눌러 모달이 열린 횟수는 샘플마다 11\~114번이고, 드로어·시트는 3\~63번이다.
   - 툴팁은 트리거가 보이는 페이지에서 마우스를 올리면 뜬다. 고루의 복사 버튼처럼 누른 뒤 "복사했어요"로만 뜨는 툴팁도 있다.
   - 모바일(390px)에서는 머리글 메뉴 버튼이 메뉴를 연다. 고루는 하단 탭 막대를 쓰고, 로그인·가입과 신청 단계 화면은 메뉴 대신 홈, 나가기, 로그인·가입 같은 링크만 둔다.
   - 페이지를 열고 스크롤하는 동안 애니메이션이 도는 페이지는 128개다. 나머지 둘(제철상자 주문, 하루공부 집중 모드)은 작업 화면이라 상태가 바뀔 때만 움직인다.
@@ -1530,11 +1530,11 @@ DESIGN.md가 결과를 얼마나 바꾸는지 A/B로 쟀다. 보고서는 [DESIG
 - 같은 파일 3번: `agent-browser` 다운로드가 실패하면 `curl`로 받은 페이지의 DESIGN.md 탭 `<pre><code>`를 쓴다.
 - `bts-ui/SKILL.md`(공유) 새 작업 2번: 브랜드를 지목하면 세 카탈로그에서 찾아 1위로 두고, 없으면 "카탈로그에 없음"이라고 알린다.
 - 독립 리뷰(MEDIUM 3, LOW 6): 대체 경로의 `\n` 풀기, 같은 절의 중복 문장, 설계 문서의 "3절대로"(절대로로 읽힘), Refero 범위 문구, 긴 항목 나누기, SKILL.md·README와 맞추기를 반영했다. getdesign.kr 수(README 22개는 2026-09-30, 이번 23개)는 날짜가 달라 그대로 뒀다.
-- 루트 README "스타일 추천 1~3위", 튜토리얼 설계 3·6절, 로드맵 서비스별 체크리스트.
+- 루트 README "스타일 추천 1\~3위", 튜토리얼 설계 3·6절, 로드맵 서비스별 체크리스트.
 
 ### 실제 확인 (2026-10-04)
 - getdesign.kr `llms.txt` 서비스 23개, awesome-design-md README에 넷플릭스 없음(원문 주소 404). `getdesign.md/netflix/design-md`와 없는 slug `zzznotreal123`이 둘 다 200, 약 31.7KB로 같은 빈 화면이었다.
-- Refero 분류 페이지 11개에 실린 스타일은 12~24개씩이다(사이트맵 1,342개). Netflix(`32959012…`)는 `editorial-websites`에만 있고 `dark-mode-websites`에는 없다. Netflix Spain(`0e4d933c…`)은 어느 분류에도 없다. 웹 검색 `Netflix design system site:styles.refero.design` 결과에 두 스타일과 Disney+(`e586b296…`, 페이지 제목 "Watch new Originals")가 나왔다.
+- Refero 분류 페이지 11개에 실린 스타일은 12\~24개씩이다(사이트맵 1,342개). Netflix(`32959012…`)는 `editorial-websites`에만 있고 `dark-mode-websites`에는 없다. Netflix Spain(`0e4d933c…`)은 어느 분류에도 없다. 웹 검색 `Netflix design system site:styles.refero.design` 결과에 두 스타일과 Disney+(`e586b296…`, 페이지 제목 "Watch new Originals")가 나왔다.
 - 두 넷플릭스 스타일을 절차대로 `agent-browser … download '[aria-label="Download DESIGN.md"]'`로 받은 파일이 `curl`로 받은 페이지 `<pre><code>` 내용(HTML 엔티티와 `\n`만 풂)과 바이트까지 같았다.
 
 ### 한계
@@ -1587,7 +1587,7 @@ DESIGN.md가 결과를 얼마나 바꾸는지 A/B로 쟀다. 보고서는 [DESIG
 
 ### 실제 확인 (2026-10-08)
 - 새 BTS 프로젝트(scratchpad)에 neon 템플릿을 설치했다. `pnpm agents:check` "에이전트 정의 일치", `.agents/agents`에 두 에이전트가 생겼고, 생성물은 그 프로젝트의 Biome에서 고칠 것이 없었다.
-- Antigravity CLI 1.3.1: `agy -p`로 물어 `AGENTS.md`, 서브에이전트 2개, prokit 스킬 8개를 읽는 것을 확인했다. 같은 프로젝트 복사본에서 `agy -p … --dangerously-skip-permissions`로 첫 화면 제목 바꾸기를 dev-cycle로 맡겼다(15분). 케이스 B 대조표를 열고 1~12행을 채웠다. 구현은 `prokit-implementer`, 리뷰는 `prokit-reviewer`(approve, 지적 0)를 서브에이전트로 불렀다. check-types·biome·build exit 0, 1440·390 스크린샷, critique 36/40, audit 20/20. `pnpm dev-cycle audit`은 요청대로 확인 직전에서 멈춰 #13 [confirm]만 비었다고 실패했다. 기본 포트가 차 있어 개발 서버를 3000으로 띄웠다가 껐다.
+- Antigravity CLI 1.3.1: `agy -p`로 물어 `AGENTS.md`, 서브에이전트 2개, prokit 스킬 8개를 읽는 것을 확인했다. 같은 프로젝트 복사본에서 `agy -p … --dangerously-skip-permissions`로 첫 화면 제목 바꾸기를 dev-cycle로 맡겼다(15분). 케이스 B 대조표를 열고 1\~12행을 채웠다. 구현은 `prokit-implementer`, 리뷰는 `prokit-reviewer`(approve, 지적 0)를 서브에이전트로 불렀다. check-types·biome·build exit 0, 1440·390 스크린샷, critique 36/40, audit 20/20. `pnpm dev-cycle audit`은 요청대로 확인 직전에서 멈춰 #13 [confirm]만 비었다고 실패했다. 기본 포트가 차 있어 개발 서버를 3000으로 띄웠다가 껐다.
 - Grok Build 1.0.46: 신뢰하지 않은 폴더에서는 `grok inspect`에 에이전트만 보이고 프로젝트 규칙과 스킬이 없다. `grok --trust`로 연 폴더에서는 `AGENTS.md`·`CLAUDE.md`, 에이전트 2개, prokit 스킬 8개, `.claude/settings.json` 훅을 읽었다. 같은 라운드를 맡기자 `prokit-dev-cycle`을 읽고 케이스 B 대조표를 연 뒤 `prokit-ui`와 `impeccable context`까지 진행했고, 82초 만에 무료 사용량 한도("free Grok Build usage limit")로 멈췄다. 유료 요금제(SuperGrok)는 쓰지 않았다. Grok Build는 Claude 호환이 기본으로 켜져 있어, 이 측정에는 사용자 전역 Claude 플러그인(OMC, superpowers 등)과 `~/.claude/CLAUDE.md`가 함께 실려 있었다.
 - `node --test 'templates/<템플릿>/tests/*.test.mjs'` 두 템플릿 모두 통과.
 

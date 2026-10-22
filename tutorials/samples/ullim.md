@@ -145,7 +145,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도 안) · [5시간 한�
 |---|---|---|
 | 준비: pro-kit 받기, 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 |
 | 기획: 서비스 질문, 이름, 사이트맵 | <!-- v:cost.stage.plan.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 | <!-- v:cost.stage.plan.scratch.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
-| 디자인: DESIGN.md (처음부터는 스타일 추천 1~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
+| 디자인: DESIGN.md (처음부터는 스타일 추천 1\~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
 | 화면 구성 | 팩의 스크린샷을 따라요 | 시안 3장 <!-- v:cost.stage.mockup.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
 | 그림 <!-- v:preset.ullim.design.images -->41<!-- /v -->장 | 팩에서 받기 <!-- v:cost.stage.packImages.time -->1분<!-- /v --> | <!-- v:preset.ullim.stages.images.time -->21분<!-- /v --> · 68만 · 12달러 |
 | 첫 화면 | <!-- v:cost.stage.first.pack.time -->10분<!-- /v --> · <!-- v:cost.tokens.4 -->22만<!-- /v --> · 4달러 | <!-- v:cost.stage.first.scratch.time -->15분<!-- /v --> · <!-- v:cost.tokens.6 -->33만<!-- /v --> · 6달러 |
@@ -180,7 +180,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도 안) · [5시간 한�
 |---|---|---|
 | 1. 기획 | 서비스 설명(`PRODUCT.md`)과 첫 화면 설계만 미리 적었어요. 스타일과 색은 적지 않고 원하는 인상(극적이고 시네마틱한 느낌)만 적었어요 | 이름은 울림 |
 | 2. 첫 판 | 추천 후보(Sequel, Slash, Ciridae)와 직접 정하기 중 1위 Sequel을 고르고 대표 색은 원본 그대로 두었어요 | 디자인 리뷰 22/32 |
-| 3. 리디자인 | "제목이 가늘고 작아서 힘이 없고, 파형 말고는 볼 게 없고, 섹션이 단조로워"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1~3위(<!-- v:preset.ullim.design.rec1 -->MasterClass<!-- /v -->, <!-- v:preset.ullim.design.rec2 -->Runway<!-- /v -->, <!-- v:preset.ullim.design.rec3 -->Fable<!-- /v -->) 중 1위 <!-- v:preset.ullim.design.rec1 -->MasterClass<!-- /v -->, 대표 색은 원본 마젠타. 시안 3장 중 MasterClass 시안을 그대로 승인했어요. 목소리 인물 사진이 AI로 만든 가상 인물이라는 문구도 작게 넣었어요 | 디자인 리뷰 23/32 |
+| 3. 리디자인 | "제목이 가늘고 작아서 힘이 없고, 파형 말고는 볼 게 없고, 섹션이 단조로워"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1\~3위(<!-- v:preset.ullim.design.rec1 -->MasterClass<!-- /v -->, <!-- v:preset.ullim.design.rec2 -->Runway<!-- /v -->, <!-- v:preset.ullim.design.rec3 -->Fable<!-- /v -->) 중 1위 <!-- v:preset.ullim.design.rec1 -->MasterClass<!-- /v -->, 대표 색은 원본 마젠타. 시안 3장 중 MasterClass 시안을 그대로 승인했어요. 목소리 인물 사진이 AI로 만든 가상 인물이라는 문구도 작게 넣었어요 | 디자인 리뷰 23/32 |
 | 4. 넓히기 | 첫 화면 하나를 모든 페이지를 갖춘 사이트로 넓혔어요. 이름은 그대로 두고 첫 화면 문구를 "글에 목소리를 입히다"로 정해 줬어요. 목소리 상세 창, 새 프로젝트 창, 내보내기 창까지 동작해요 | 페이지 <!-- v:preset.ullim.pages -->11<!-- /v -->개 |
 | 5. 첫 화면 문구 바꾸기 | 문구가 마음에 들지 않아 [다시 요청](refine.md#이름과-문구)했어요. 음성 합성 서비스 카피를 조사한 후보 중 "쓴 글 그대로, 마음을 울리는 목소리로"가 마음에 들어 앞부분만 다시 받았고, "한 줄의 대본도, 마음을 울리는 목소리로"로 정했어요. "원고"보다 "대본"이 자연스럽다는 지적에 따라 사이트 전체의 "원고"를 "대본"으로 바꿨어요 | "원고" → "대본" 70곳 |
 | 6. 마무리 | 링크·버튼 검사, 디자인 리뷰, 다듬기. 헤드폰에 상표처럼 보이는 무늬가 있던 사진을 포함해 인물 사진 4장을 다시 만들었어요 | 디자인 리뷰 <!-- v:preset.ullim.design.critique -->29<!-- /v -->/40 |

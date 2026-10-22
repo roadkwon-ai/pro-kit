@@ -51,7 +51,7 @@
 
 ### 매니페스트의 외부 source 목록
 
-다음은 두 템플릿의 기본·선택 묶음 스킬, 두뇌·과설계 방지 후보의 스킬, mattpocock 추가 스킬 출처를 합친 목록이다. 두뇌·과설계 방지 스킬과 추가 스킬은 사용자가 고를 때만 설치한다. source 이름만으로 라이선스를 정하지 않는다.
+다음은 두 템플릿의 기본·선택 묶음 스킬, 두뇌·과설계 방지 후보의 스킬, mattpocock 추가 스킬 출처를 합친 목록이다. 두뇌·과설계 방지 스킬과 추가 스킬은 사용자가 고를 때만 설치한다. source 이름만으로 라이선스를 정하지 않는다. 두뇌 OpenSpec과 Spec Kit은 매니페스트의 source가 아니라 각 도구의 init 명령이 프로젝트에 스킬을 만들므로 이 목록에 없고 위 라이선스 표에만 있다.
 
 - [CaesiumY/ko-design-md](https://github.com/CaesiumY/ko-design-md)
 - [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)

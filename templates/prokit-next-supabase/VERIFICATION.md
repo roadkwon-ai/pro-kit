@@ -2,7 +2,7 @@
 
 > 기록 속 vX.Y.Z와 커밋 해시는 공개 전 비공개 이력(2026-10-08 공개 때 이력을 새로 시작)의 것이다.
 
-템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 모든 값은 2026-09-27에 측정한 실측값이다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
+템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
 ## 프로젝트 유형별 도입, 두뇌 확장, Task 게이트 (2026-10-22)
 
@@ -213,7 +213,7 @@ fixture 생성 명령은 README의 "새 프로젝트 시작"과 같다(`--db-set
 | `drizzle-kit generate --custom --name=enable_rls_auth` + `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` 4줄 → `db:migrate` | 적용 성공, advisors `No issues found`, `--fail-on error` exit 0 |
 | RLS 없는 `public` 테이블을 하나 만든 뒤 advisors `--fail-on error` | `--local`, `--db-url` 모두 exit 1, 해당 테이블 지적 |
 | 역할 | `postgres`: superuser 아님, `rolbypassrls = t`, 네 테이블의 소유자. `anon`·`authenticated`: bypassrls 없음 |
-| `set role anon; select count(*) from public.user` | 0 (실제 1행) — 정책 없는 RLS가 Data API 역할을 막는다 |
+| `set role anon; select count(*) from public.user` | 0(실제 1행). 정책 없는 RLS가 Data API 역할을 막는다 |
 | RLS를 켠 상태에서 `pnpm --filter web dev` → `POST /api/auth/sign-up/email`, `GET /api/auth/get-session` | 둘 다 HTTP 200, `user`·`session` 각 1행 |
 | `drizzle-kit push`(`db:push`), `schemaFilter` 없음 | 적용 전에 멈췄다(exit 2). 계획에 Supabase 내부 스키마 `auth`, `storage`, `realtime`, `_realtime`, `vault`, `extensions`, `supabase_functions` 삭제(데이터 손실 확인 15건)가 들어 있었다 |
 | `drizzle-kit push`, `schemaFilter: ["public"]` | 인증 테이블 4개에 `DISABLE ROW LEVEL SECURITY`를 적용했다(스키마 파일에 RLS가 없으므로). 그래서 Supabase 템플릿은 `db:push`를 로컬에서도 금지한다. 시험 뒤 RLS를 다시 켜고 설정을 되돌렸다 |
@@ -592,7 +592,7 @@ Supabase에서 따로 확인한 것(새 BTS 프로젝트에 이 템플릿을 설
 | 2. 다른 작업 중 주기 알림 | 2/4 | 4/4 | 2/4 | 2/4 |
 | 3. 원격에서 없어진 스킬(next-best-practices) | 5/5 | 6/6 | 6/6 | 4/6 |
 
-- 스킬 없음(옛 템플릿)은 1차에 한 번 돌리고 2·3차에 그대로 썼다. 두 실행 모두 `npx skills update -p -y`로 39개를 다시 설치해 평균 456초가 걸렸다(스킬 있음 146~193초). eval 1에서는 Codex 전용 스킬 링크 16개가 `.claude/skills`에 생겨 에이전트가 직접 지웠고, impeccable은 경로 충돌로 건너뛰었으며, 원본에 없는 `metadata.json`이 두 개 생겼다. eval 3에서는 바뀌지 않은 스킬까지 lock이 바뀌었다.
+- 스킬 없음(옛 템플릿)은 1차에 한 번 돌리고 2·3차에 그대로 썼다. 두 실행 모두 `npx skills update -p -y`로 39개를 다시 설치해 평균 456초가 걸렸다(스킬 있음 146\~193초). eval 1에서는 Codex 전용 스킬 링크 16개가 `.claude/skills`에 생겨 에이전트가 직접 지웠고, impeccable은 경로 충돌로 건너뛰었으며, 원본에 없는 `metadata.json`이 두 개 생겼다. eval 3에서는 바뀌지 않은 스킬까지 lock이 바뀌었다.
 - 1차 eval 2: 에이전트가 `bts-dev-cycle`의 별도 `--if-due` 단계를 건너뛰었다. 그래서 확인을 에이전트가 늘 실행하는 `status` 안으로 옮기고 출력 줄에 다음 할 일을 붙였다. 2차 eval 2는 4/4다.
 - 2차 eval 1: 사용자가 업데이트를 요청했는데 `status`의 `mode=ask` 알림을 따라 다시 물었다. 스킬 1절에서 직접 요청과 알림을 나눈 뒤 3차에 5/5가 됐다.
 - 3차 eval 2: README 오타를 사소한 문서 수정으로 보고 `bts-dev-cycle` 없이 바로 고쳐 확인 자체가 없었다. 주기 확인은 `bts-dev-cycle`의 `status`에 걸려 있어 이 스킬을 부르지 않으면 돌지 않는다(아래 한계).
@@ -603,7 +603,7 @@ Supabase에서 따로 확인한 것(새 BTS 프로젝트에 이 템플릿을 설
 - eval은 조건마다 한 번 돌렸고, 서브에이전트가 Claude Code 세션을 흉내 낸 것이다(프로젝트 플러그인과 훅은 불러오지 않았다). 편차는 모른다. neon 템플릿으로는 eval을 돌리지 않았다.
 - vercel·vercel-labs 스킬은 skills CLI가 skills.sh 스냅샷으로 설치한다. 스냅샷이 GitHub보다 늦으면 다시 설치해도 업데이트로 남는다. 재확인 결과로 보고하고 다음 확인에 맡긴다.
 - `core.autocrlf`나 원본 `.gitattributes`의 `eol=crlf`로 clone 설치 파일의 줄 끝이 바뀌면 모든 스킬이 업데이트로 보일 수 있다. 확인하지 않았다.
-- 토큰이 없으면 GitHub API는 시간당 60회다. 한 번 확인에 저장소 수(12~13)만큼, 적용은 그 두 배와 skills CLI 자체 호출을 쓴다. 트리가 10만 항목을 넘어 잘리면 그 저장소는 확인 실패로 둔다(현재 가장 큰 vercel/next.js는 약 4.9만).
+- 토큰이 없으면 GitHub API는 시간당 60회다. 한 번 확인에 저장소 수(12\~13)만큼, 적용은 그 두 배와 skills CLI 자체 호출을 쓴다. 트리가 10만 항목을 넘어 잘리면 그 저장소는 확인 실패로 둔다(현재 가장 큰 vercel/next.js는 약 4.9만).
 - 매니페스트의 GitHub `owner/repo` 스킬만 본다. lock의 `ref`는 쓰지 않고 기본 브랜치 HEAD와 비교한다. 매니페스트에 없는 스킬과 `bts-*` 스킬, Claude 플러그인, 전역 도구는 대상이 아니다.
 - 업데이트는 로컬에서 고친 외부 스킬을 덮어쓴다(스킬 4번의 diff 검토로만 다룬다). 훅이 실행하는 스크립트(impeccable)는 아래 "보안 리뷰 지적 반영" 절의 설치 전 검토로 다룬다.
 - 알림 설정과 확인 결과는 기기별 `node_modules/.cache`에 있어 `node_modules`를 지우면 기본값(ask)으로 돌아간다. `UPSTREAM_GONE`은 한 번만 알리므로 `status --json`을 다른 도구가 먼저 읽으면 사람에게 보이지 않을 수 있다.
@@ -733,7 +733,7 @@ Supabase에서 따로 확인한 것(새 BTS 프로젝트에 이 템플릿을 설
 - 훅은 전역 파일을 쓰고, 모드 파일이 전역이라 다른 프로젝트 세션에도 영향을 준다. SubagentStart는 `bts-reviewer`(security, db)에도 ponytail 규칙을 넣는다. README에 적었고 막지는 않았다.
 - 플러그인은 버전을 고정하지 않는다(OMC와 같다). 업데이트는 `skills:update`의 설치 전 검토 밖이라 `hooks/` 변경을 사람이 본다.
 - `ponytail:` 주석을 모아 할 일로 넘기는 절차(`ponytail-debt`)는 없다.
-- eval은 eval 4·5를 설정마다 2회, supabase fixture로만 돌렸다. `bts-dev-cycle` eval 1~3과 `bts-skills-update` eval("대상이 아닌 것" 한 줄만 바뀌었다)은 다시 돌리지 않았다.
+- eval은 eval 4·5를 설정마다 2회, supabase fixture로만 돌렸다. `bts-dev-cycle` eval 1\~3과 `bts-skills-update` eval("대상이 아닌 것" 한 줄만 바뀌었다)은 다시 돌리지 않았다.
 - Codex 커스텀 역할: 신뢰한 프로젝트의 eval 4 네 실행은 모두 세션 기록(`$CODEX_HOME/sessions`)에 `spawn_agent(agent_type="bts-reviewer")`가 남았다. 신뢰를 뺀 실행(`--ignore-user-config`)에서는 커스텀 역할이 불리지 않았다. JSON 이벤트(`codex exec --json`)에는 역할 이름이 나오지 않는다.
 - 실제 환경의 Claude 세 실행이 vitest 도입 행을 실행하면서 `.dev-cycle.json`의 `commands.test`를 고쳤다. 그러자 diff가 H(하네스)로도 판정돼 `--upgrade`가 H 행을 붙였고, 직접 추가한 vitest 행이 표 끝 `[confirm]` 앞으로 옮겨졌다(3절에 적힌 동작이다). ponytail과 관계없는 dev-cycle 동작이라 이번에는 고치지 않았다.
 - eval 5는 0행(vitest 도입)이 있는지만 보고, 그 행을 실행하거나 `blocked: 사유`로 적었는지는 보지 않는다. Codex는 두 설정 모두 0행을 비운 채 1·2행을 채웠다(ponytail과 관계없는 행 순서 문제).
@@ -847,7 +847,7 @@ Supabase DB 사례는 수정한 판으로 실행했다. BTS 3.44.2, Codex CLI 0.
 
 ### 실제 확인 (2026-10-08)
 - 새 BTS 프로젝트(scratchpad)에 neon 템플릿을 설치했다. supabase 템플릿은 따로 설치하지 않았다(바꾼 설치 파일과 스크립트는 두 템플릿에서 바이트가 같다). `pnpm agents:check` "에이전트 정의 일치", `.agents/agents`에 두 에이전트가 생겼고, 생성물은 그 프로젝트의 Biome에서 고칠 것이 없었다.
-- Antigravity CLI 1.3.1: `agy -p`로 물어 `AGENTS.md`, 서브에이전트 2개, prokit 스킬 8개를 읽는 것을 확인했다. 같은 프로젝트 복사본에서 `agy -p … --dangerously-skip-permissions`로 첫 화면 제목 바꾸기를 dev-cycle로 맡겼다(15분). 케이스 B 대조표를 열고 1~12행을 채웠다. 구현은 `prokit-implementer`, 리뷰는 `prokit-reviewer`(approve, 지적 0)를 서브에이전트로 불렀다. check-types·biome·build exit 0, 1440·390 스크린샷, critique 36/40, audit 20/20. `pnpm dev-cycle audit`은 요청대로 확인 직전에서 멈춰 #13 [confirm]만 비었다고 실패했다. 기본 포트가 차 있어 개발 서버를 3000으로 띄웠다가 껐다.
+- Antigravity CLI 1.3.1: `agy -p`로 물어 `AGENTS.md`, 서브에이전트 2개, prokit 스킬 8개를 읽는 것을 확인했다. 같은 프로젝트 복사본에서 `agy -p … --dangerously-skip-permissions`로 첫 화면 제목 바꾸기를 dev-cycle로 맡겼다(15분). 케이스 B 대조표를 열고 1\~12행을 채웠다. 구현은 `prokit-implementer`, 리뷰는 `prokit-reviewer`(approve, 지적 0)를 서브에이전트로 불렀다. check-types·biome·build exit 0, 1440·390 스크린샷, critique 36/40, audit 20/20. `pnpm dev-cycle audit`은 요청대로 확인 직전에서 멈춰 #13 [confirm]만 비었다고 실패했다. 기본 포트가 차 있어 개발 서버를 3000으로 띄웠다가 껐다.
 - Grok Build 1.0.46: 신뢰하지 않은 폴더에서는 `grok inspect`에 에이전트만 보이고 프로젝트 규칙과 스킬이 없다. `grok --trust`로 연 폴더에서는 `AGENTS.md`·`CLAUDE.md`, 에이전트 2개, prokit 스킬 8개, `.claude/settings.json` 훅을 읽었다. 같은 라운드를 맡기자 `prokit-dev-cycle`을 읽고 케이스 B 대조표를 연 뒤 `prokit-ui`와 `impeccable context`까지 진행했고, 82초 만에 무료 사용량 한도("free Grok Build usage limit")로 멈췄다. 유료 요금제(SuperGrok)는 쓰지 않았다. Grok Build는 Claude 호환이 기본으로 켜져 있어, 이 측정에는 사용자 전역 Claude 플러그인(OMC, superpowers 등)과 `~/.claude/CLAUDE.md`가 함께 실려 있었다.
 - `node --test 'templates/<템플릿>/tests/*.test.mjs'` 두 템플릿 모두 통과.
 

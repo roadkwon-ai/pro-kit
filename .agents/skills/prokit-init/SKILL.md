@@ -31,7 +31,7 @@ argument-hint: "[PRD 파일 경로나 PRD 내용, 또는 기존 프로젝트 경
 - 기존 프로젝트 안에서 세션을 열었으면 그 폴더가 대상이고, pro-kit은 그 옆(`../pro-kit`)에 받는다. 프로젝트 안에 받지 않는다.
 
 ## 0. PRD 받기 (새 프로젝트: 첫 단계, 필수)
-기존 프로젝트 유형(`early`, `operating`, `migration`)은 PRD가 필수가 아니다. 있으면 받아 초기 분석과 추천에 쓰고, 없으면 대상 폴더의 기획 자료와 코드가 근거다(7절). 아래 1~3은 새 프로젝트에만 적용한다.
+기존 프로젝트 유형(`early`, `operating`, `migration`)은 PRD가 필수가 아니다. 있으면 받아 초기 분석과 추천에 쓰고, 없으면 대상 폴더의 기획 자료와 코드가 근거다(7절). 아래 1\~3은 새 프로젝트에만 적용한다.
 
 prokit은 PRD를 바탕으로 두뇌와 스킬을 추천하고, PRD에 맞춰 개발 환경을 만든다. 대부분의 사용자는 두뇌와 스킬의 차이를 몰라서 고르라고만 하면 고르지 못한다. 그래서 PRD 없이는 init하지 않는다. 이 단계는 다른 질문과 실행보다 먼저 한다. 다만 작업 폴더에서 시작했으면 pro-kit 받기(`AGENTS.md` "작업 폴더에서 시작했을 때"의 clone이나 `pull --ff-only`)를 이 단계보다 먼저 한다. 이 스킬과 절차가 받은 pro-kit 안에 있어서, 최신판을 받아야 그 판의 규칙으로 PRD를 받는다.
 
@@ -110,7 +110,7 @@ Claude Code는 AskUserQuestion으로 묻는다. 한 번에 질문 4개, 질문�
 ## 5. 실행
 1. 설치 전에 이 기기 전역의 두뇌·과설계 방지 스킬을 확인해 보고 목록을 만든다. `~/.claude/settings.json`의 `enabledPlugins`에서 켜진 두뇌·과설계 방지 플러그인(superpowers, agent-skills, pstack, oh-my-claudecode, ponytail)과 frontend-design 플러그인, `~/.claude/skills/gstack`, `~/.claude/CLAUDE.md`의 `<!-- OMC:START -->` 블록을 본다. 지우거나 고치지 않는다. 고르지 않은 것은 설치기가 새 프로젝트의 `.claude/settings.local.json`으로 끈다.
 2. `AGENTS.md` 3번 준비물에 고른 두뇌의 준비물을 더해 확인한다. gstack은 Bun, Spec Kit은 uv(설치할 때만)가 필요하다. oh-my는 Codex를 쓰면 OMX CLI(`omx`)가 필요하고, OMX `team`은 tmux가 필요하다(tmux가 없으면 멈추지 않고 보고에 적는다). gstack, OMX CLI, OpenSpec CLI(npm)는 그 두뇌를 고르면 설치기가 전역에 설치한다(`--brain`을 명시하므로). 설치 전에 그 사실을 알린다. 그 밖의 전역 설치는 사용자가 요청할 때만 한다.
-3. `AGENTS.md` 1~10을 그대로 하되, 5번 설치 명령에 고른 값을 붙인다: `bash <pro-kit>/templates/<템플릿>/install.sh <경로> --brain <값> --simplicity <값>`. `none`도 명시한다. 두뇌가 여럿이면 주 두뇌를 앞에 둔 쉼표 목록이다(`--brain openspec,superpowers`). 새 프로젝트는 `--project-type new`를 붙여도 되고 빼도 된다. 선택지 이름이 아니라 설치 값을 쓴다: `agent-skills (addyosmani)`는 `agent-skills`, `andrej-karpathy-skills`는 `karpathy`, `SKIP(기본 AI)`·`없음(기본 AI)`은 `none`이고, 응답 방식 `SKIP`은 `--optional i-have-adhd`를, 화면 디자인 `SKIP`은 `--optional taste`를 빼는 것이다. 추가 스킬은 `--matt <스킬>[,<스킬>]`, i-have-adhd는 `--optional i-have-adhd`, taste-skill은 `--optional taste`를 더한다(둘 다면 `--optional i-have-adhd,taste`). mattpocock 두뇌는 `--brain mattpocock`과 고른 `--matt`를 함께 준다. exit 0이 아니면 `AGENTS.md` 5번대로 출력을 보고하고 멈춘다.
+3. `AGENTS.md` 1\~10을 그대로 하되, 5번 설치 명령에 고른 값을 붙인다: `bash <pro-kit>/templates/<템플릿>/install.sh <경로> --brain <값> --simplicity <값>`. `none`도 명시한다. 두뇌가 여럿이면 주 두뇌를 앞에 둔 쉼표 목록이다(`--brain openspec,superpowers`). 새 프로젝트는 `--project-type new`를 붙여도 되고 빼도 된다. 선택지 이름이 아니라 설치 값을 쓴다: `agent-skills (addyosmani)`는 `agent-skills`, `andrej-karpathy-skills`는 `karpathy`, `SKIP(기본 AI)`·`없음(기본 AI)`은 `none`이고, 응답 방식 `SKIP`은 `--optional i-have-adhd`를, 화면 디자인 `SKIP`은 `--optional taste`를 빼는 것이다. 추가 스킬은 `--matt <스킬>[,<스킬>]`, i-have-adhd는 `--optional i-have-adhd`, taste-skill은 `--optional taste`를 더한다(둘 다면 `--optional i-have-adhd,taste`). mattpocock 두뇌는 `--brain mattpocock`과 고른 `--matt`를 함께 준다. exit 0이 아니면 `AGENTS.md` 5번대로 출력을 보고하고 멈춘다.
 4. PRD를 새 프로젝트에 남겨 9번 커밋에 넣는다. 추천의 근거이고, 나중에 두뇌를 바꿀 때도 읽는다. 작업 폴더 흐름에서 첫 요청을 `docs/first-request.md`에 적었고 PRD가 그 요청 안에 있으면 그 파일로 충분하다(문장은 바꾸지 않는다). 그 밖에는 `docs/prd.md`에 둔다: 파일이면 내용을 옮기고 원래 경로를 첫 줄에 적고, 요청 속 설명이면 그 문장을 그대로, 프리셋 팩이면 팩 이름과 경로를 적는다.
 5. 8번 확인에서 `pnpm skills:check`가 exit 0이고 `두뇌:`·`과설계 방지:`·`mattpocock 추가:` 줄이 고른 값인지 본다. i-have-adhd나 taste-skill을 골랐으면 `선택 스킬:` 줄에 `i-have-adhd 있음`, `taste 있음`이 보여야 한다.
 
@@ -130,7 +130,7 @@ Claude Code는 AskUserQuestion으로 묻는다. 한 번에 질문 4개, 질문�
 
 1. **자료 받기**: 대상 경로(있어야 하고 pro-kit 폴더가 아니어야 한다)와 PRD·기획 자료(화면 정의서, 디자인 시스템 문서)를 받는다. PRD는 있으면 받고, 없어도 진행한다. 요청에 이미 있으면 다시 묻지 않는다.
 2. **초기 분석(기본 AI, 읽기 전용)**: 지금 세션의 에이전트가 직접 대상 폴더를 읽는다. 두뇌나 다른 스킬을 쓰지 않고, 대상 폴더에 아무것도 쓰지 않는다. 결과는 요약 틀대로 대화로 보여 준다. 유형이 맞지 않으면 근거와 함께 다시 묻는다(references 3절).
-3. **맞춤 설정 제안과 확정**: 초기 분석과 PRD로 템플릿·적용 방식·작업 브랜치(유형별 항목은 references 4절)와 스킬 구성(2~4절. 두뇌는 하나를 권하되 여럿 가능)을 추천해 한 번에 보여 주고, references 4절대로 두 번에 나눠 묻는다. 맡긴 항목은 묻지 않는다. 디자인 방향(기존 디자인 유지 또는 리디자인)은 여기서 묻지 않는다. 첫 화면 작업에서 `prokit-ui`가 묻는다.
+3. **맞춤 설정 제안과 확정**: 초기 분석과 PRD로 템플릿·적용 방식·작업 브랜치(유형별 항목은 references 4절)와 스킬 구성(2\~4절. 두뇌는 하나를 권하되 여럿 가능)을 추천해 한 번에 보여 주고, references 4절대로 두 번에 나눠 묻는다. 맡긴 항목은 묻지 않는다. 디자인 방향(기존 디자인 유지 또는 리디자인)은 여기서 묻지 않는다. 첫 화면 작업에서 `prokit-ui`가 묻는다.
 4. **유형별 동의**: references 5절의 문구로 한 번 묻는다. "지금은 하지 않음"이면 아무것도 바꾸지 않고 초기 분석 요약과 고른 설정을 보고한 뒤 끝낸다. 질문에 답할 수 없는 실행이면 동의를 받은 것으로 보지 않고 같은 보고로 끝낸다.
 5. **안전 점검**: references 6절. early와 operating은 커밋하지 않은 변경이 있으면 멈춘다. 대상이 git 저장소가 아니면 유형별로 다르다(운영 중이면 첫 커밋을 남길지 묻는다). `git init`을 했으면 첫 커밋 전에 `.env*`·`node_modules/`를 `.gitignore`에 넣는다.
 6. **적용**: `AGENTS.md` "기존 프로젝트에 도입하기" 5번을 유형대로 한다. 설치 명령에는 유형과 고른 값을 붙인다.

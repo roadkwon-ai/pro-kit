@@ -46,7 +46,7 @@ neon 템플릿으로 study-planner 프로젝트 만들어줘. 학생이 과목�
 
 ```mermaid
 flowchart TD
-  A["1. 프로젝트 생성<br/>pnpm create better-t-stack@latest"] --> B["2. 템플릿 설치<br/>bash templates/템플릿/install.sh 프로젝트"]
+  A["1. 프로젝트 생성<br/>pnpm create better-t-stack@latest"] --> B["2. 템플릿 설치<br/>bash templates/템플릿/install.sh 프로젝트<br/>--brain · --simplicity"]
   B --> B1["파일 복사<br/>스킬 · 에이전트 · dev-cycle · 문서 골격"]
   B --> B2["scripts/skills-setup.mjs<br/>내부 스킬 · 플러그인 설치<br/>OMX 설정(omx가 있을 때)"]
   B1 --> C["3. 로컬 DB 시작"]
@@ -62,13 +62,13 @@ flowchart TD
 
 ### 에이전트가 따르는 절차
 
-에이전트는 [AGENTS.md](../../AGENTS.md)의 "템플릿으로 새 프로젝트 만들기" 1~10번을 순서대로 따르고, 명령은 템플릿 README의 "새 프로젝트 시작"과 "설치한 뒤"를 그대로 써요.
+에이전트는 [AGENTS.md](../../AGENTS.md)의 "템플릿으로 새 프로젝트 만들기" 1\~10번을 순서대로 따르고, 명령은 템플릿 README의 "새 프로젝트 시작"과 "설치한 뒤"를 그대로 써요.
 
 | 단계 | 하는 일 |
 |---|---|
 | 위치 | pro-kit 밖에 만들어요. 기본은 pro-kit의 상위 폴더(`../<이름>`)예요. 대상 폴더가 이미 있으면 멈추고 물어요 |
 | 생성 | neon은 `--db-setup docker`, supabase는 `--db-setup supabase --manual-db`로 `pnpm create better-t-stack@latest <이름> …`을 실행해요 |
-| 설치 | `bash <pro-kit>/templates/<템플릿>/install.sh <프로젝트 경로>`로 설치해요. `--with-global`은 전역 도구 설치를 요청할 때만 붙여요 |
+| 설치 | `bash <pro-kit>/templates/<템플릿>/install.sh <프로젝트 경로> --brain <값> --simplicity <값>`으로 설치해요. 고르지 않았으면 둘 다 `none`을 명시해요. 추가 스킬은 `--matt <스킬>[,<스킬>]`, 응답 방식은 `--optional i-have-adhd`, 화면 디자인 보조는 `--optional taste`를 더해요. `--with-global`은 전역 도구 설치를 요청할 때만 붙여요 |
 | 로컬 DB (neon) | <!-- v:port.neonDb -->5432<!-- /v --> 포트가 쓰이는지 먼저 보고, 쓰이면 `DB_PORT`로 바꿔요. `packages/db`에서 `podman compose up -d`(Docker면 `db:start`)로 띄워요 |
 | 로컬 DB (supabase) | Podman이면 `DOCKER_HOST`를 먼저 설정해요. `packages/db`에서 `supabase init`을 실행하고 `project_id`를 프로젝트 이름으로 바꾼 뒤 `supabase start -x …`로 DB만 띄워요 |
 | 첫 마이그레이션 | `db:generate`로 인증 테이블 마이그레이션을 만들고 `db:migrate`로 적용해요. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션을 더하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인해요. Better-T-Stack이 만든 README의 `db:push` 단계는 따르지 않아요 |
@@ -83,7 +83,7 @@ flowchart TD
 명령 전체는 각 템플릿 README의 "새 프로젝트 시작"에 있어요([neon](../../templates/prokit-next-neon/README.md#새-프로젝트-시작) · [supabase](../../templates/prokit-next-supabase/README.md#새-프로젝트-시작)).
 
 1. 상위 폴더에서 `pnpm create better-t-stack@latest my-app …`을 실행해요. 옵션은 템플릿 README에 적힌 그대로 써요.
-2. `bash pro-kit/templates/<템플릿>/install.sh my-app`으로 설치해요.
+2. `bash pro-kit/templates/<템플릿>/install.sh my-app --brain <값> --simplicity <값>`으로 설치해요. 두뇌와 과설계 방지 스킬을 고르지 않으면 둘 다 `none`으로 줘요([두뇌와 선택 스킬](../skills/brains.md)).
 3. 로컬 DB를 띄워요. neon은 `packages/db`에서 `podman compose up -d`, supabase는 `supabase init`, `project_id` 변경, `supabase start -x …`예요.
 4. `db:generate` → (supabase는 `enable_rls_auth` 커스텀 마이그레이션) → `db:migrate` 순서로 첫 마이그레이션을 적용해요.
 5. `pnpm check`로 포맷을 정리하고 `pnpm exec biome check .`가 exit 0인지 본 뒤 기본 브랜치에 커밋해요.

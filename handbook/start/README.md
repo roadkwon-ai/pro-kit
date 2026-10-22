@@ -4,7 +4,7 @@
 
 | 쪽 | 내용 |
 |---|---|
-| [프로킷이란](what-is-prokit.md) | AI 에이전트에 설치하는 개발 키트, 그냥 맡길 때와 무엇이 다른지 |
+| [프로킷이란](what-is-prokit.md) | AI 에이전트에 설치하는 개발 키트, 시작하는 네 가지 방법(새·초기·운영 중·전환), 요청이 배포까지 가는 길, 그냥 맡길 때와 무엇이 다른지 |
 | [이런 분께 추천해요](who-is-it-for.md) | 프로킷을 추천하는 분과 맞지 않을 때, 프로킷 없이와 프로킷으로 비교, 실제 사례 |
 | [준비물](requirements.md) | Node <!-- v:node.min -->22.20<!-- /v -->, pnpm, git, 컨테이너 엔진, Supabase CLI, Windows는 WSL2 |
 | [지원하는 에이전트](supported-agents.md) | <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v -->가 읽는 파일, 이미지 도구, 여는 명령 |

@@ -73,7 +73,7 @@ xychart-beta
 
 ### 만드는 길
 
-- **카탈로그에서 고르기**: 스타일 1~3위 중 하나를 고르면 그 원문을 받아 `DESIGN.md`로 저장하고 lint로 확인해요. getdesign.kr과 awesome-design-md는 `curl`로, Refero는 `agent-browser`로 페이지의 다운로드 버튼을 눌러 받아요. Refero 원문은 Google 스펙 형식이 아니라서(표와 글뿐이고 맨 위의 YAML 토큰 머리말이 없어요) 본문 표의 값을 그대로 옮겨 토큰 머리말을 붙여요. 다른 브랜드 이름(`Similar Brands`)과 새 토큰을 만드는 예시(`Quick Start`)는 지우고, robots.txt가 막은 사이트 검색과 `/api/`는 쓰지 않아요.
+- **카탈로그에서 고르기**: 스타일 1\~3위 중 하나를 고르면 그 원문을 받아 `DESIGN.md`로 저장하고 lint로 확인해요. getdesign.kr과 awesome-design-md는 `curl`로, Refero는 `agent-browser`로 페이지의 다운로드 버튼을 눌러 받아요. Refero 원문은 Google 스펙 형식이 아니라서(표와 글뿐이고 맨 위의 YAML 토큰 머리말이 없어요) 본문 표의 값을 그대로 옮겨 토큰 머리말을 붙여요. 다른 브랜드 이름(`Similar Brands`)과 새 토큰을 만드는 예시(`Quick Start`)는 지우고, robots.txt가 막은 사이트 검색과 `/api/`는 쓰지 않아요.
 - **기존 디자인으로 만들기**: 기존 프로젝트에서 디자인 유지를 골랐을 때 쓰는 길이에요. 아래에서 따로 설명해요.
 - **직접 정하기**: "카탈로그 없이 impeccable로 정하기"를 고르면 시작 전에 `DESIGN.md`를 지어내지 않아요. 만든 화면을 바탕으로 마감 때 impeccable `document`로 기록해요.
 

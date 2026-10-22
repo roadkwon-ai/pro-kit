@@ -46,7 +46,7 @@ flowchart TD
 
 ### 운영 중인 Next.js
 - 새 브랜치 `prokit/setup`에 하네스(dev-cycle, 두뇌, 리뷰 게이트, 분석 에이전트)만 설치해요. 앱 코드와 배포 설정은 바꾸지 않아요.
-- Better-T-Stack 구조가 아니면 Better-T-Stack 전용 스킬(API, DB, 배포)은 설치하지 않아요. Better-T-Stack이어도 DB가 Postgres와 Drizzle이 아니면 같아요. Postgres면 실제 DB(Neon이나 Supabase)에 맞는 템플릿을 골라요. 계층별 경로 규칙은 정밀 분석 뒤 첫 Task에서 이 프로젝트에 맞춰요.
+- Better-T-Stack 구조이고 DB가 Postgres와 Drizzle이면 실제 DB(Neon이나 Supabase)에 맞는 템플릿(`--project-type operating`)을 골라요. 그렇지 않으면 하네스만 설치하는 `--adopt`로 설치하고, Better-T-Stack 전용 스킬(API, DB, 배포)은 설치하지 않아요. 계층별 경로 규칙은 정밀 분석 뒤 첫 Task에서 이 프로젝트에 맞춰요.
 - 하네스 커밋을 검토해 기본 브랜치에 합치길 권해요. 도입 브랜치에서 계속할 수도 있어요. 계속했다가 나중에 합치면 기준 브랜치 기록(`.dev-cycle.json`의 `defaultBranch`)을 기본 브랜치로 되돌려요.
 - `dev`·`build` 명령에는 자원 보호 래퍼를 씌우지 않아요. 배포와 CI가 쓰는 명령이라서예요.
 - 라운드가 끝나도 커밋까지만 하고 배포는 하지 않아요. 기본 브랜치에 push하면 기존 배포가 돌 수 있어서 push도 요청할 때만 해요. 배포 방법을 프로킷에 맞출지는 정밀 분석 뒤 첫 Task에서 정해요.

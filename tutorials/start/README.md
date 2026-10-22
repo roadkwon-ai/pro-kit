@@ -5,6 +5,17 @@
 > [!NOTE]
 > 에이전트는 <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나만 있으면 돼요. 이미 쓰는 요금제에 맞춰 고르세요. 이 쪽은 튜토리얼을 확인한 Claude Code와 Codex로 설명해요. 에이전트마다 필요한 요금제와 조작 차이, Antigravity와 Grok Build로 여는 법은 [에이전트별 차이](../reference/claude-code-and-codex.md)에 있어요.
 
+준비는 이 순서예요. 에이전트가 열린 뒤부터는 튜토리얼의 프롬프트가 이끌어 줘요.
+
+```mermaid
+flowchart LR
+  A[1. 준비물 확인] --> B[2. 터미널 열기]
+  B --> C[3. 에이전트 설치]
+  C --> D[4. 로그인]
+  D --> E[5. 작업 폴더에서 에이전트 열기]
+  E --> F[튜토리얼의 첫 프롬프트]
+```
+
 ## 1. 준비할 것
 
 | 무엇 | 설명 |

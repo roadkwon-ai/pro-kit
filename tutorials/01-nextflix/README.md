@@ -143,7 +143,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 |---|---|
 | 서비스 질문: 누가 쓰는지, 무엇이 좋아지는지 | `질문의 답은 프리셋 팩에서 채우고, 없는 건 추천대로 해줘` |
 | 첫 화면 문구 후보 | 마음에 드는 번호. 모르겠으면 `추천대로 해줘` |
-| 디자인 스타일 1~3위 | `프리셋 팩에 적힌 주소의 스타일로 해줘` |
+| 디자인 스타일 1\~3위 | `프리셋 팩에 적힌 주소의 스타일로 해줘` |
 | 대표 색을 원본대로 쓸지 바꿀지 | `design-notes.md대로 바꿔줘` |
 | 페이지 목록(사이트맵)과 페이지별 설계 | 빠진 화면이 없으면 `이대로 진행해줘` |
 | 화면 구성 고르기 | 브라우저에 열린 고르기 페이지에서 마음에 드는 카드를 눌러요 |
@@ -211,7 +211,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 
 | 어디까지 | 시간 | 최소 토큰 | <!-- v:limit.pro5h.plans -->Claude Pro · ChatGPT Plus(Codex)<!-- /v --> |
 |---|---|---|---|
-| 화면까지(1~4장) | <!-- v:preset.nextflix.screens.time.cell -->약 2시간 25분\~4시간 50분 (여러 번 고치면 약 7시간 15분까지)<!-- /v --> | 약 <!-- v:preset.nextflix.screens.tokens -->440만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.screens.cached -->2.2억<!-- /v -->) | 가능 (<!-- v:preset.nextflix.screens.limitText -->5시간 한도에 약 2번 걸려요<!-- /v -->) |
+| 화면까지(1\~4장) | <!-- v:preset.nextflix.screens.time.cell -->약 2시간 25분\~4시간 50분 (여러 번 고치면 약 7시간 15분까지)<!-- /v --> | 약 <!-- v:preset.nextflix.screens.tokens -->440만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.screens.cached -->2.2억<!-- /v -->) | 가능 (<!-- v:preset.nextflix.screens.limitText -->5시간 한도에 약 2번 걸려요<!-- /v -->) |
 | 끝까지(1\~12장) | <!-- v:preset.nextflix.full.time.cell -->약 5시간 15분\~10시간 30분 (여러 번 고치면 약 15시간 45분까지)<!-- /v --> | 약 <!-- v:preset.nextflix.full.tokens -->770만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.full.cached -->3.9억<!-- /v -->) | 가능 (<!-- v:preset.nextflix.full.limitText -->5시간 한도에 약 4번 걸려요<!-- /v -->. 2\~3일에 나눠 만들어요) |
 
 [<!-- v:limit.window -->5시간<!-- /v --> 한도란?](../reference/costs-and-keys.md#5시간-한도에-걸리면)
@@ -250,7 +250,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 | 장 | 시간 | 토큰 | 캐시 포함 | API 요금 환산 | 근거 |
 |---|---|---|---|---|---|
 | 1장 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> | <!-- v:cost.tokens.1 -->5.5만<!-- /v --> | <!-- v:cost.cached.1 -->280만<!-- /v --> | 1달러 | 예상 |
-| 2장 서비스 기획 | <!-- v:preset.nextflix.chapter.2.time -->8분<!-- /v --> | <!-- v:cost.tokens.3 -->17만<!-- /v --> | <!-- v:cost.cached.3 -->830만<!-- /v --> | 3달러 | 실측(2~3장 <!-- v:preset.nextflix.actual.plan.time -->24분<!-- /v -->, 약 <!-- v:preset.nextflix.actual.plan.usd -->11<!-- /v -->달러)에서 나눔 |
+| 2장 서비스 기획 | <!-- v:preset.nextflix.chapter.2.time -->8분<!-- /v --> | <!-- v:cost.tokens.3 -->17만<!-- /v --> | <!-- v:cost.cached.3 -->830만<!-- /v --> | 3달러 | 실측(2\~3장 <!-- v:preset.nextflix.actual.plan.time -->24분<!-- /v -->, 약 <!-- v:preset.nextflix.actual.plan.usd -->11<!-- /v -->달러)에서 나눔 |
 | 3장 디자인 정하기(구성도로 고르기) | <!-- v:cost.stage.clone.design.time -->10분<!-- /v --> | <!-- v:cost.tokens.4 -->22만<!-- /v --> | <!-- v:cost.cached.4 -->1,100만<!-- /v --> | 4달러 | 같음. 시안을 그리면 약 <!-- v:cost.stage.clone.mockup.time -->5분<!-- /v -->, 2달러 더 들고 이미지 요금은 따로예요 |
 | 4장 모든 화면 만들기 | <!-- v:preset.nextflix.chapter.4.time -->2시간<!-- /v --> | <!-- v:cost.tokens.70 -->390만<!-- /v --> | <!-- v:cost.cached.70 -->1.9억<!-- /v --> | 70달러 | 실측 4장에서 끊겨 이어 간 몫을 빼고 넓힌 범위를 더함 |
 | (선택) 4장 화면을 GitHub Pages에 올리기 | <!-- v:cost.stage.pages.time -->5분<!-- /v --> | <!-- v:cost.tokens.1 -->5.5만<!-- /v --> | <!-- v:cost.cached.1 -->280만<!-- /v --> | 1달러 | 예상 |
@@ -274,7 +274,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 
 | 라운드 | 시간 | 토큰 |
 |---|---|---|
-| 2~4장으로 프리셋 만들기(넓히기 전 프리셋 팩, 시안 3장, 4장에서 한 번 끊겨 이어 감) | 약 <!-- v:preset.nextflix.actual.build.time -->2시간 25분<!-- /v --> | 약 <!-- v:preset.nextflix.actual.build.tokens -->500만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.actual.build.cached -->2.5억<!-- /v -->, API 요금 환산 약 <!-- v:preset.nextflix.actual.build.usd -->90<!-- /v -->달러) |
+| 2\~4장으로 프리셋 만들기(넓히기 전 프리셋 팩, 시안 3장, 4장에서 한 번 끊겨 이어 감) | 약 <!-- v:preset.nextflix.actual.build.time -->2시간 25분<!-- /v --> | 약 <!-- v:preset.nextflix.actual.build.tokens -->500만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.actual.build.cached -->2.5억<!-- /v -->, API 요금 환산 약 <!-- v:preset.nextflix.actual.build.usd -->90<!-- /v -->달러) |
 | 프리셋 팩에 맞춘 고침 | 약 <!-- v:preset.nextflix.actual.fix.time -->75분<!-- /v --> | 약 <!-- v:preset.nextflix.actual.fix.tokens -->110만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.actual.fix.cached -->5,500만<!-- /v -->, 약 <!-- v:preset.nextflix.actual.fix.usd -->20<!-- /v -->달러) |
 | 만들기 합계(Claude) | 약 <!-- v:preset.nextflix.made.time -->3시간 40분<!-- /v --> | 약 <!-- v:preset.nextflix.made.tokens -->610만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.made.cached -->3.0억<!-- /v -->, 약 <!-- v:preset.nextflix.made.usd -->110<!-- /v -->달러) |
 | 범위 넓히기(Codex, ChatGPT 구독) | 약 <!-- v:preset.nextflix.actual.expand.time -->4시간<!-- /v --> | Codex 구독 사용량이라 세지 않음 |
@@ -294,8 +294,8 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 ## 만든 기록
 
 - 2026-10-05 기준 pro-kit에 맞춰 썼어요.
-- Nextflix 프리셋은 Claude Code(<!-- v:meta.presetModel -->Opus 5.5<!-- /v -->)에 2~4장 프롬프트를 그대로 넣어 프리셋 팩만으로 만들었어요. 이때 3장은 시안을 그리는 판(지금 3장 프롬프트의 넷째 줄을 `시안을 그려서 보여 줘.`로 바꾼 것)이었어요. 그 뒤 프리셋 팩을 고친 내용에 맞추려고 한 번 더 손봤어요. 두 라운드에 든 시간과 비용은 [시간과 비용](#시간과-비용)의 "만든 사람이 실제로 쓴 값"에 있어요.
+- Nextflix 프리셋은 Claude Code(<!-- v:meta.presetModel -->Opus 5.5<!-- /v -->)에 2\~4장 프롬프트를 그대로 넣어 프리셋 팩만으로 만들었어요. 이때 3장은 시안을 그리는 판(지금 3장 프롬프트의 넷째 줄을 `시안을 그려서 보여 줘.`로 바꾼 것)이었어요. 그 뒤 프리셋 팩을 고친 내용에 맞추려고 한 번 더 손봤어요. 두 라운드에 든 시간과 비용은 [시간과 비용](#시간과-비용)의 "만든 사람이 실제로 쓴 값"에 있어요.
 - 그 뒤 넷플릭스 웹에서 되는 기능을 흉내 내도록 범위를 넓힌 라운드(R4)를 따로 돌렸어요. 게임, 계정 보안, 자막처럼 위 "무엇을 만드나요"에 더한 화면이 이때 들어갔어요. R4는 4장 프롬프트가 아니라 바뀐 프리셋 팩 절을 가리키는 별도 지시로 만들어서, 넓힌 범위를 4장 프롬프트 한 번으로 만드는 것은 확인하지 않았어요.
-- R4는 Codex(gpt-6-astra, ChatGPT 구독 사용량)로 2026-10-05 13:35~17:35에 했어요(구현, 이름 고침, 최종 화면 검사 포함).
+- R4는 Codex(gpt-6-astra, ChatGPT 구독 사용량)로 2026-10-05 13:35\~17:35에 했어요(구현, 이름 고침, 최종 화면 검사 포함).
 - 5\~12장은 실행해 확인하지 않았어요. 그래서 5\~12장의 시간과 비용은 예상이에요. 5\~10장에 보여 주는 화면 그림은 R4까지 마친 프리셋 사이트의 같은 화면이에요.
 - 같은 프롬프트라도 결과는 매번 달라요. 튜토리얼 그림과 내 화면이 달라도 정상이에요.

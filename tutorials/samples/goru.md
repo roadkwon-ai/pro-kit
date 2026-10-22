@@ -145,7 +145,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도 안) · [5시간 한�
 |---|---|---|
 | 준비: pro-kit 받기, 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 |
 | 기획: 서비스 질문, 이름, 사이트맵 | <!-- v:cost.stage.plan.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 | <!-- v:cost.stage.plan.scratch.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
-| 디자인: DESIGN.md (처음부터는 스타일 추천 1~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
+| 디자인: DESIGN.md (처음부터는 스타일 추천 1\~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
 | 화면 구성 | 팩의 스크린샷을 따라요 | 시안 3장 <!-- v:cost.stage.mockup.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
 | 그림 <!-- v:preset.goru.design.images -->5<!-- /v -->장 | 팩에서 받기 <!-- v:cost.stage.packImages.time -->1분<!-- /v --> | <!-- v:preset.goru.stages.images.time -->3분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 |
 | 첫 화면 | <!-- v:cost.stage.first.pack.time -->10분<!-- /v --> · <!-- v:cost.tokens.4 -->22만<!-- /v --> · 4달러 | <!-- v:cost.stage.first.scratch.time -->15분<!-- /v --> · <!-- v:cost.tokens.6 -->33만<!-- /v --> · 6달러 |
@@ -180,7 +180,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도 안) · [5시간 한�
 |---|---|---|
 | 1. 기획 | 서비스 설명(`PRODUCT.md`)과 첫 화면·정산 화면 설계만 미리 적었어요. 스타일과 색은 적지 않았어요 | 이름은 같이살림 |
 | 2. 첫 판 | 추천 후보(토스, 당근)와 직접 정하기 중 1위 토스를 고르고 대표 색을 초록으로 바꿨어요 | 디자인 리뷰 20/32 |
-| 3. 리디자인 | "평범한 관리자 화면 같아"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1~3위(<!-- v:preset.goru.design.rec1 -->Monzo<!-- /v -->, <!-- v:preset.goru.design.rec2 -->당근 SEED<!-- /v -->, <!-- v:preset.goru.design.rec3 -->Monarch<!-- /v -->) 중 1위 <!-- v:preset.goru.design.rec1 -->Monzo<!-- /v -->, 대표 색은 추천대로 <!-- v:preset.goru.design.color -->홍시색<!-- /v -->. 시안 3장 중 <!-- v:preset.goru.design.comp -->A<!-- /v -->(<!-- v:preset.goru.design.compName -->9월 타임라인<!-- /v -->)에 B의 아래 두 단을 섞었어요 | 리디자인에 <!-- v:preset.goru.actual.redesign.time -->56분<!-- /v --> |
+| 3. 리디자인 | "평범한 관리자 화면 같아"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1\~3위(<!-- v:preset.goru.design.rec1 -->Monzo<!-- /v -->, <!-- v:preset.goru.design.rec2 -->당근 SEED<!-- /v -->, <!-- v:preset.goru.design.rec3 -->Monarch<!-- /v -->) 중 1위 <!-- v:preset.goru.design.rec1 -->Monzo<!-- /v -->, 대표 색은 추천대로 <!-- v:preset.goru.design.color -->홍시색<!-- /v -->. 시안 3장 중 <!-- v:preset.goru.design.comp -->A<!-- /v -->(<!-- v:preset.goru.design.compName -->9월 타임라인<!-- /v -->)에 B의 아래 두 단을 섞었어요 | 리디자인에 <!-- v:preset.goru.actual.redesign.time -->56분<!-- /v --> |
 | 4. 넓히기와 이름 | 첫 화면 하나를 모든 페이지를 갖춘 사이트로 넓히며 이름을 Evenly로 정했어요. 같은 분야 앱이 앱 스토어에 있어서 후보 10개를 다시 받아 고루로 바꾼 뒤 페이지를 만들었어요. 지출 추가 창, 지출 상세 창, 정산 완료까지 동작해요 | 페이지 <!-- v:preset.goru.pages -->7<!-- /v -->개, "생활비, 고루 나눠요" |
 | 5. 마무리 | 링크·버튼 검사, 디자인 리뷰, 다듬기. 손이 셋으로 그려진 인물 사진 1장을 다시 만들었어요 | 디자인 리뷰 <!-- v:preset.goru.design.critique -->30<!-- /v -->/40 |
 

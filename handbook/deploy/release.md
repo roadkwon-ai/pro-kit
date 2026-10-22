@@ -9,7 +9,7 @@
 3. **동의와 발행**: 버전과 노트를 보여 주고(큰 묶음이면 에이전트가 "minor 추천"을 함께 적어요) 동의를 받은 뒤 `pnpm release --publish <노트>`를 실행해요. 노트와 `package.json` version을 `chore(release): vX.Y.Z`로 커밋하고, 태그를 달아 기본 브랜치와 함께 push한 뒤 GitHub Release를 만들어요.
 4. **배포**: production을 배포해요([Vercel 배포와 되돌리기](vercel.md)).
 
-운영 배포를 요청하면 릴리스도 함께 해요. develop은 릴리스하지 않아요.
+운영 배포를 요청하면 릴리스도 함께 해요. develop은 릴리스하지 않아요. 하네스만 설치한 `--adopt` 프로젝트에는 `pnpm release`와 배포 스크립트가 없어서 이 절차를 쓰지 않아요([설치기와 옵션](../templates/installer.md#기존-프로젝트에-설치하기)).
 
 ## 버전 규칙
 

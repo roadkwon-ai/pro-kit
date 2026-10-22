@@ -147,7 +147,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 |---|---|
 | 서비스 질문: 누가 쓰는지, 무엇이 좋아지는지 | `질문의 답은 프리셋 팩에서 채우고, 없는 건 추천대로 해줘` |
 | 첫 화면 문구 후보 | 마음에 드는 번호. 모르겠으면 `추천대로 해줘` |
-| 디자인 스타일 1~3위 | `프리셋 팩에 적힌 주소의 스타일로 해줘` |
+| 디자인 스타일 1\~3위 | `프리셋 팩에 적힌 주소의 스타일로 해줘` |
 | 대표 색을 원본대로 쓸지 바꿀지 | `design-notes.md대로 바꿔줘` |
 | 페이지 목록(사이트맵)과 페이지별 설계 | 빠진 화면이 없으면 `이대로 진행해줘` |
 | 화면 구성 고르기 | 브라우저에 열린 고르기 페이지에서 마음에 드는 카드를 눌러요 |
@@ -212,7 +212,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 
 | 어디까지 | 시간 | 최소 토큰 | <!-- v:limit.pro5h.plans -->Claude Pro · ChatGPT Plus(Codex)<!-- /v --> |
 |---|---|---|---|
-| 화면까지(1~4장) | <!-- v:preset.claudle.screens.time.cell -->약 2시간 25분\~4시간 50분 (여러 번 고치면 약 7시간 15분까지)<!-- /v --> | 약 <!-- v:preset.claudle.screens.tokens -->300만<!-- /v -->(캐시 포함 약 <!-- v:preset.claudle.screens.cached -->1.5억<!-- /v -->) | 가능 (<!-- v:preset.claudle.screens.limitText -->5시간 한도에 약 1번 걸려요<!-- /v -->) |
+| 화면까지(1\~4장) | <!-- v:preset.claudle.screens.time.cell -->약 2시간 25분\~4시간 50분 (여러 번 고치면 약 7시간 15분까지)<!-- /v --> | 약 <!-- v:preset.claudle.screens.tokens -->300만<!-- /v -->(캐시 포함 약 <!-- v:preset.claudle.screens.cached -->1.5억<!-- /v -->) | 가능 (<!-- v:preset.claudle.screens.limitText -->5시간 한도에 약 1번 걸려요<!-- /v -->) |
 | 끝까지(1\~12장) | <!-- v:preset.claudle.full.time.cell -->약 5시간\~10시간 (여러 번 고치면 약 15시간까지)<!-- /v --> | 약 <!-- v:preset.claudle.full.tokens -->610만<!-- /v -->(캐시 포함 약 <!-- v:preset.claudle.full.cached -->3억<!-- /v -->) | 가능 (<!-- v:preset.claudle.full.limitText -->5시간 한도에 약 3번 걸려요<!-- /v -->) |
 
 [<!-- v:limit.window -->5시간<!-- /v --> 한도란?](../reference/costs-and-keys.md#5시간-한도에-걸리면)
@@ -252,7 +252,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 | 장 | 시간 | 토큰 | 캐시 포함 | API 요금 환산 | 근거 |
 |---|---|---|---|---|---|
 | 1장 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> | <!-- v:cost.tokens.1 -->5.5만<!-- /v --> | <!-- v:cost.cached.1 -->280만<!-- /v --> | 1달러 | 예상 |
-| 2장 서비스 기획 | <!-- v:preset.claudle.chapter.2.time -->8분<!-- /v --> | <!-- v:cost.tokens.3 -->17만<!-- /v --> | <!-- v:cost.cached.3 -->830만<!-- /v --> | 3달러 | 실측(2~3장 <!-- v:preset.claudle.actual.plan.time -->18분<!-- /v -->, 약 <!-- v:preset.claudle.actual.plan.usd -->7<!-- /v -->달러)에서 나눔 |
+| 2장 서비스 기획 | <!-- v:preset.claudle.chapter.2.time -->8분<!-- /v --> | <!-- v:cost.tokens.3 -->17만<!-- /v --> | <!-- v:cost.cached.3 -->830만<!-- /v --> | 3달러 | 실측(2\~3장 <!-- v:preset.claudle.actual.plan.time -->18분<!-- /v -->, 약 <!-- v:preset.claudle.actual.plan.usd -->7<!-- /v -->달러)에서 나눔 |
 | 3장 디자인 정하기(구성도로 고르기) | <!-- v:cost.stage.clone.design.time -->10분<!-- /v --> | <!-- v:cost.tokens.4 -->22만<!-- /v --> | <!-- v:cost.cached.4 -->1,100만<!-- /v --> | 4달러 | 같음. 시안을 그리면 약 <!-- v:cost.stage.clone.mockup.time -->5분<!-- /v -->, 2달러 더 들고 이미지 요금은 따로예요 |
 | 4장 모든 화면 만들기 | <!-- v:preset.claudle.actual.screens.time -->2시간<!-- /v --> | <!-- v:cost.tokens.46 -->250만<!-- /v --> | <!-- v:cost.cached.46 -->1.3억<!-- /v --> | 46달러 | 실측 |
 | 5장 로그인과 대화 저장 | <!-- v:preset.claudle.chapter.5.time -->30분<!-- /v --> | <!-- v:cost.tokens.12 -->66만<!-- /v --> | <!-- v:cost.cached.12 -->3,300만<!-- /v --> | 12달러 | 예상 |
@@ -273,11 +273,11 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 <details>
 <summary>만든 사람이 실제로 쓴 값</summary>
 
-2~4장 프롬프트로 프리셋을 만든 라운드와 공개 전에 손본 라운드, 그 전에 원래 서비스를 조사하고 프리셋 팩을 만든 값이에요. 프롬프트에 없는 검토와 다듬기, 공개 전 손보기가 들어 있어서 위 최솟값보다 커요.
+2\~4장 프롬프트로 프리셋을 만든 라운드와 공개 전에 손본 라운드, 그 전에 원래 서비스를 조사하고 프리셋 팩을 만든 값이에요. 프롬프트에 없는 검토와 다듬기, 공개 전 손보기가 들어 있어서 위 최솟값보다 커요.
 
 | 라운드 | 시간 | 토큰 |
 |---|---|---|
-| 2~3장 기획과 디자인(구성도 세 안을 보여 줄 때까지) | 약 <!-- v:preset.claudle.actual.plan.time -->18분<!-- /v --> | 약 <!-- v:preset.claudle.actual.plan.tokens -->39만<!-- /v -->(캐시 포함 약 <!-- v:preset.claudle.actual.plan.cached -->1,900만<!-- /v -->, API 요금 환산 약 <!-- v:preset.claudle.actual.plan.usd -->7<!-- /v -->달러) |
+| 2\~3장 기획과 디자인(구성도 세 안을 보여 줄 때까지) | 약 <!-- v:preset.claudle.actual.plan.time -->18분<!-- /v --> | 약 <!-- v:preset.claudle.actual.plan.tokens -->39만<!-- /v -->(캐시 포함 약 <!-- v:preset.claudle.actual.plan.cached -->1,900만<!-- /v -->, API 요금 환산 약 <!-- v:preset.claudle.actual.plan.usd -->7<!-- /v -->달러) |
 | 4장 모든 화면(<!-- v:preset.claudle.pages -->13<!-- /v -->쪽과 겹쳐 뜨는 창, 검사 포함) | 약 <!-- v:preset.claudle.actual.screens.time -->2시간<!-- /v --> | 약 <!-- v:preset.claudle.actual.screens.tokens -->250만<!-- /v -->(캐시 포함 약 <!-- v:preset.claudle.actual.screens.cached -->1.3억<!-- /v -->, 약 <!-- v:preset.claudle.actual.screens.usd -->46<!-- /v -->달러) |
 | 검토와 다듬기, 확정 | 약 <!-- v:preset.claudle.actual.review.time -->2시간 50분<!-- /v --> | 약 <!-- v:preset.claudle.actual.review.tokens -->280만<!-- /v -->(캐시 포함 약 <!-- v:preset.claudle.actual.review.cached -->1.4억<!-- /v -->, 약 <!-- v:preset.claudle.actual.review.usd -->51<!-- /v -->달러) |
 | 공개 전 손보기(모의 응답 규칙 더하기, 남은 기본 코드 지우기, 정적 내보내기 확인, 확정) | 약 <!-- v:preset.claudle.actual.polish.time -->42분<!-- /v --> | 약 <!-- v:preset.claudle.actual.polish.tokens -->61만<!-- /v -->(캐시 포함 약 <!-- v:preset.claudle.actual.polish.cached -->3,000만<!-- /v -->, 약 <!-- v:preset.claudle.actual.polish.usd -->11<!-- /v -->달러) |
@@ -296,8 +296,8 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 ## 만든 기록
 
 - 2026-10-08 기준 pro-kit에 맞춰 썼어요.
-- Claudle 프리셋은 Claude Code(<!-- v:meta.presetModel -->Opus 5.5<!-- /v -->)에 2~4장 프롬프트를 그대로 넣어 프리셋 팩만으로 만들었어요. 1장의 프로젝트는 템플릿으로 미리 만들어 두었어요.
-- 먼저 2~3장 라운드가 기획과 디자인을 채우고 소개 쪽(홈) 구성도 세 안을 보여 줬어요. 만든 사람이 A안을 고른 뒤 4장 라운드가 <!-- v:preset.claudle.pages -->13<!-- /v -->쪽과 겹쳐 뜨는 창을 만들었어요.
+- Claudle 프리셋은 Claude Code(<!-- v:meta.presetModel -->Opus 5.5<!-- /v -->)에 2\~4장 프롬프트를 그대로 넣어 프리셋 팩만으로 만들었어요. 1장의 프로젝트는 템플릿으로 미리 만들어 두었어요.
+- 먼저 2\~3장 라운드가 기획과 디자인을 채우고 소개 쪽(홈) 구성도 세 안을 보여 줬어요. 만든 사람이 A안을 고른 뒤 4장 라운드가 <!-- v:preset.claudle.pages -->13<!-- /v -->쪽과 겹쳐 뜨는 창을 만들었어요.
 - 이어서 검토 라운드에서 디자인 리뷰와 검사, 프리셋 팩 값과 맞추기, 다크 모드, 서비스 이름 정리, 코드 리뷰를 했어요. 만든 사람이 개발 서버에서 둘러보고 확인한 뒤 라운드를 닫았어요.
 - 공개 전에 손보기 라운드를 한 번 더 했어요. 프리셋 팩에 나중에 더한 모의 응답 규칙(HTML 카운터 위젯을 코드 블록으로 답하는 규칙)을 프리셋에 넣고, 프로젝트를 만들 때 생긴 기본 코드(대시보드 쪽과 그 링크) 중 쓰지 않는 것을 지운 뒤 정적 내보내기로 확인했어요. 만든 사람이 확인한 뒤 라운드를 닫았어요. 라운드마다 든 시간과 비용은 [시간과 비용](#시간과-비용)의 "만든 사람이 실제로 쓴 값"에 있어요.
 - 5\~12장은 실행해 확인하지 않았어요. 그래서 5\~12장의 시간과 비용은 예상이에요.

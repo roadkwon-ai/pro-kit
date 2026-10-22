@@ -38,7 +38,7 @@
 | 첫 화면(다듬기 없이) | <!-- v:cost.unit.first.time -->12\~19분<!-- /v -->, <!-- v:cost.unit.first.usd -->4.45\~6.34<!-- /v -->달러 |
 | 두 번째 화면(따로 만들 때) | <!-- v:cost.unit.second.time -->6\~10분<!-- /v -->, <!-- v:cost.unit.second.usd -->2.74\~3.05<!-- /v -->달러 |
 | 기능 하나를 만들고 검사하기 | 약 <!-- v:cost.feature.time -->15분<!-- /v -->, <!-- v:cost.feature.usd -->7<!-- /v -->달러 |
-| Nextflix 2~4장(4장에서 끊겨 이어 간 값 포함) | 약 <!-- v:preset.nextflix.actual.build.time -->2시간 25분<!-- /v -->, 약 <!-- v:preset.nextflix.actual.build.usd -->90<!-- /v -->달러 |
+| Nextflix 2\~4장(4장에서 끊겨 이어 간 값 포함) | 약 <!-- v:preset.nextflix.actual.build.time -->2시간 25분<!-- /v -->, 약 <!-- v:preset.nextflix.actual.build.usd -->90<!-- /v -->달러 |
 
 실제로 프리셋을 만들 때 단계마다 걸린 시간과 그 이유, 고쳐 달라고 할 때마다 더 드는 시간(한 군데 약 <!-- v:cost.revise.oneSpot -->10분<!-- /v -->, 마무리 검토 한 번 더 <!-- v:cost.revise.reviewRound -->2\~3시간<!-- /v -->)은 [만드는 과정과 걸리는 시간](process-and-time.md)에 있어요.
 

@@ -38,7 +38,7 @@ flowchart LR
 | 개발 자원 보호 | 캐시·Next 출력·설치 패키지·Python 실행환경·관리 임시 폴더를 감시해요. 새 프로젝트의 개발·빌드 명령에 연결하고, 이미 프로킷을 설치한 프로젝트는 H 라운드에서 반영해요([위임과 자원 관리](../concepts/delegation-and-resources.md)) |
 | 선택 스킬 묶음 (기본 설치 안 함) | `ops`(배포한 서비스의 비용·성능 점검. neon은 Neon 함수·파일 저장·LLM 게이트웨이 포함), `motion`(화면 전환 애니메이션), `mobile`(React Native·Expo 앱), `i-have-adhd`(짧은 행동 중심 응답), `taste`(화면 디자인 보조 taste-skill) |
 | 화면만 프로젝트 | `scripts/export-html.mjs`로 DB 없이 만든 화면을 정적 HTML로 내보내요(`pnpm export:html`). 선택해서 쓸 수 있는 사이트 하단 제작 표시 컴포넌트 `apps/web/src/components/prokit-credit.tsx`를 함께 둬요. `scripts/load-keys.mjs`와 SessionStart 훅이 프로젝트나 작업 폴더 `.env`의 `OPENAI_API_KEY`를 Claude Code 세션에 불러와요 |
-| Vercel 배포와 릴리스 | `pnpm vercel:deploy develop`·`production`이 배포 전 검사, 배포, 되돌리기 명령 안내를 맡아요. 운영에는 `pnpm release`로 버전 태그, `release/` 노트, GitHub Release를 만든 커밋만 배포해요. `.vercelignore`와 `.gitignore`의 `.env.*` 규칙 덕분에 로컬 비밀값이 배포나 커밋에 섞이지 않아요 |
+| Vercel 배포와 릴리스 | `pnpm vercel:deploy develop`·`production`이 배포 전 검사, 배포, 되돌리기 명령 안내를 맡아요. 운영에는 `pnpm release`로 버전 태그, `release/` 노트, GitHub Release를 만든 커밋만 배포해요. `.vercelignore`와 `.gitignore`의 `.env.*` 규칙 덕분에 로컬 비밀값이 배포나 커밋에 섞이지 않아요. `--adopt`로 하네스만 들인 프로젝트에는 이 스크립트가 없어요 |
 | 전역 도구 | <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. Vercel CLI, Neon CLI 또는 Supabase CLI와 지원하는 Codex의 네이티브 Ponytail(ponytail을 고른 경우)은 `--with-global`을 줄 때만 설치해요. 두뇌 gstack, OMX CLI, OpenSpec CLI는 그 두뇌를 고를 때만 설치해요. ego lite(macOS)는 직접 설치해요 |
 
 ## Better-T-Stack이란
@@ -56,7 +56,7 @@ flowchart LR
 | 인증 | Better Auth | `--auth better-auth` |
 | 모노레포·린트 | Turborepo, Biome | `--addons turborepo biome` |
 | 패키지 매니저 | pnpm | `--package-manager pnpm` |
-| CLI 버전 | 생성할 때의 최신판 (마지막 확인 3.44.3) | `pnpm create better-t-stack@latest` |
+| CLI 버전 | 생성할 때의 최신판 (마지막 확인 3.47.0) | `pnpm create better-t-stack@latest` |
 
 DB 옵션만 템플릿마다 달라요(neon은 `--db-setup docker`, supabase는 `--db-setup supabase --manual-db`).
 

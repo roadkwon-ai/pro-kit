@@ -39,6 +39,8 @@ flowchart LR
 - **이미 Supabase를 쓰고 있으면** → supabase
 - **화면만 만들면(DB 없이)** → 묻지 않고 neon으로 만들어요. 나중에 실제 서비스로 바꿀 때 로컬 DB를 더해요([빠른 시작: 화면만 만들기](../start/quickstart-screens.md)).
 
+- **운영 중인 Next.js 프로젝트에 들이면** → Better-T-Stack 구조이고 DB가 Postgres와 Drizzle이면 실제 DB에 맞는 템플릿(neon 또는 supabase)을 고르고, 그 밖의 Next.js 프로젝트는 템플릿 파일 없이 하네스만 설치하는 `--adopt`예요([설치기와 옵션](installer.md#기존-프로젝트에-설치하기), [기존 프로젝트에 도입하기](../start/adopt.md)).
+
 요청에 DB 종류가 없으면 에이전트가 추측하지 않고 이 비교표로 차이를 설명한 뒤 물어요.
 
 ## 자세히

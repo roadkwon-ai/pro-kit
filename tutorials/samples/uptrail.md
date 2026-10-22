@@ -145,7 +145,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 |---|---|---|
 | 준비: pro-kit 받기, 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 |
 | 기획: 서비스 질문, 이름, 사이트맵 | <!-- v:cost.stage.plan.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 | <!-- v:cost.stage.plan.scratch.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
-| 디자인: DESIGN.md (처음부터는 스타일 추천 1~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
+| 디자인: DESIGN.md (처음부터는 스타일 추천 1\~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
 | 화면 구성 | 팩의 스크린샷을 따라요 | 시안 3장 <!-- v:cost.stage.mockup.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
 | 그림 <!-- v:preset.uptrail.design.images -->2<!-- /v -->장 | 팩에서 받기 <!-- v:cost.stage.packImages.time -->1분<!-- /v --> | <!-- v:preset.uptrail.stages.images.time -->1분<!-- /v --> · 3.3만 · 1달러 미만 |
 | 첫 화면 | <!-- v:cost.stage.first.pack.time -->10분<!-- /v --> · <!-- v:cost.tokens.4 -->22만<!-- /v --> · 4달러 | <!-- v:cost.stage.first.scratch.time -->15분<!-- /v --> · <!-- v:cost.tokens.6 -->33만<!-- /v --> · 6달러 |
@@ -180,7 +180,7 @@ Uptrail은 한 번에 나오지 않았어요. 결과를 보고 몇 번 다시 �
 |---|---|---|
 | 1. 기획 | 서비스 설명(`PRODUCT.md`)과 첫 화면(상태 개요)·두 번째 화면(인시던트 상세) 설계만 미리 적었어요. 스타일과 색은 적지 않았어요 | 이름은 처음부터 Uptrail |
 | 2. 첫 판 | 추천 후보(그리팅, 구름 Vapor, 채널톡 Bezier)와 직접 정하기 중 2위 구름 Vapor를 고르고 대표 색은 원본 그대로 썼어요 | 디자인 리뷰 19/32 |
-| 3. 리디자인 | "기본 관리자 화면 같아"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1~3위(<!-- v:preset.uptrail.design.rec1 -->Default<!-- /v -->, <!-- v:preset.uptrail.design.rec2 -->리멤버<!-- /v -->, <!-- v:preset.uptrail.design.rec3 -->ClickHouse<!-- /v -->) 중 1위 <!-- v:preset.uptrail.design.rec1 -->Default<!-- /v -->, 대표 색은 원본 그대로예요. 시안 3장 중 <!-- v:preset.uptrail.design.comp -->B<!-- /v -->(<!-- v:preset.uptrail.design.compName -->관제 벽<!-- /v -->)를 고르고, 원인 후보 줄에는 A의 "배포 → 7분 → 장애 감지 → 23분" 흐름을 작게 섞었어요. HTML 파일로 내보낼 수 있게 고치는 요청도 한 번 더 보냈어요 | 리디자인에 45분 |
+| 3. 리디자인 | "기본 관리자 화면 같아"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1\~3위(<!-- v:preset.uptrail.design.rec1 -->Default<!-- /v -->, <!-- v:preset.uptrail.design.rec2 -->리멤버<!-- /v -->, <!-- v:preset.uptrail.design.rec3 -->ClickHouse<!-- /v -->) 중 1위 <!-- v:preset.uptrail.design.rec1 -->Default<!-- /v -->, 대표 색은 원본 그대로예요. 시안 3장 중 <!-- v:preset.uptrail.design.comp -->B<!-- /v -->(<!-- v:preset.uptrail.design.compName -->관제 벽<!-- /v -->)를 고르고, 원인 후보 줄에는 A의 "배포 → 7분 → 장애 감지 → 23분" 흐름을 작게 섞었어요. HTML 파일로 내보낼 수 있게 고치는 요청도 한 번 더 보냈어요 | 리디자인에 45분 |
 | 4. 넓히기 | 링크를 누르면 없는 페이지가 뜨던 첫 화면 하나를 모든 페이지를 갖춘 사이트로 넓혔어요. 사이트맵과 시안 12장을 보고 "모두 좋아"라고 답한 뒤 구현했어요. 인시던트 상태 바꾸기와 해결 확인, 배포 롤백 확인 창, 알림 규칙 편집이 동작해요 | 페이지 <!-- v:preset.uptrail.pages -->22<!-- /v -->개 |
 | 5. 마무리 | 링크·버튼 검사, 디자인 리뷰, 다듬기. 다시 만든 사진은 없어요 | 디자인 리뷰 <!-- v:preset.uptrail.design.critique -->28<!-- /v -->/40 |
 

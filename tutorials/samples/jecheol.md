@@ -145,7 +145,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 |---|---|---|
 | 준비: pro-kit 받기, 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 |
 | 기획: 서비스 질문, 이름, 사이트맵 | <!-- v:cost.stage.plan.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 | <!-- v:cost.stage.plan.scratch.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
-| 디자인: DESIGN.md (처음부터는 스타일 추천 1~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
+| 디자인: DESIGN.md (처음부터는 스타일 추천 1\~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
 | 화면 구성 | 팩의 스크린샷을 따라요 | 시안 3장 <!-- v:cost.stage.mockup.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
 | 그림 <!-- v:preset.jecheol.design.images -->32<!-- /v -->장 | 팩에서 받기 <!-- v:cost.stage.packImages.time -->1분<!-- /v --> | <!-- v:preset.jecheol.stages.images.time -->16분<!-- /v --> · 53만 · 10달러 |
 | 첫 화면 | <!-- v:cost.stage.first.pack.time -->10분<!-- /v --> · <!-- v:cost.tokens.4 -->22만<!-- /v --> · 4달러 | <!-- v:cost.stage.first.scratch.time -->15분<!-- /v --> · <!-- v:cost.tokens.6 -->33만<!-- /v --> · 6달러 |
@@ -180,7 +180,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 |---|---|---|
 | 1. 기획 | 서비스 설명(`PRODUCT.md`)과 첫 화면 설계를 미리 적었어요. 스타일과 색은 적지 않았어요. 원하는 인상만 "계절 잡지"라고 적었어요 | 이름은 제철상자 |
 | 2. 첫 판 | 추천 후보(Fable, Monocle, sweetgreen)와 직접 정하기 중 1위 Fable을 고르고 대표 색을 가을 붉은빛으로 바꿨어요 | 디자인 리뷰 22/28 |
-| 3. 리디자인 | "제목 서체가 가늘고 평범하고, 농산물 그림이 클립아트 같아서 싸 보여"라고 [다시 요청](refine.md#스타일과-색)했어요. 추천 1~3위(<!-- v:preset.jecheol.design.rec1 -->Oakâme<!-- /v -->, <!-- v:preset.jecheol.design.rec2 -->Telescope<!-- /v -->, <!-- v:preset.jecheol.design.rec3 -->Hungry Tiger<!-- /v -->) 중 1위 <!-- v:preset.jecheol.design.rec1 -->Oakâme<!-- /v -->를 골랐어요. Oakâme에는 대표 색이 없어서 첫 판의 사과 빨강 `#ba2b28`을 더했어요. 시안 3장 중 Oakâme 시안을 그대로 골랐어요 | 시안을 따라 첫 화면 완성 |
+| 3. 리디자인 | "제목 서체가 가늘고 평범하고, 농산물 그림이 클립아트 같아서 싸 보여"라고 [다시 요청](refine.md#스타일과-색)했어요. 추천 1\~3위(<!-- v:preset.jecheol.design.rec1 -->Oakâme<!-- /v -->, <!-- v:preset.jecheol.design.rec2 -->Telescope<!-- /v -->, <!-- v:preset.jecheol.design.rec3 -->Hungry Tiger<!-- /v -->) 중 1위 <!-- v:preset.jecheol.design.rec1 -->Oakâme<!-- /v -->를 골랐어요. Oakâme에는 대표 색이 없어서 첫 판의 사과 빨강 `#ba2b28`을 더했어요. 시안 3장 중 Oakâme 시안을 그대로 골랐어요 | 시안을 따라 첫 화면 완성 |
 | 4. 넓히기 | 첫 화면 하나를 모든 페이지를 갖춘 사이트로 넓혔어요. 사이트맵과 페이지별 시안 16장을 확인하고, 에이전트가 미리 정한 내용(토요일 배송 선택지, 농부 한 명과 레시피 하나 추가)도 그대로 받아들였어요. 첫 화면 문구 "지금 사과가 제일 맛있어요"는 이 요청에서 정해 줬어요. 주소 찾기 창, 건너뛰기 확인 창, 구독 해지 흐름까지 동작해요 | 페이지 <!-- v:preset.jecheol.pages -->21<!-- /v -->개 |
 | 5. 마무리 | 링크·버튼 검사, 디자인 리뷰, 다듬기. 손가락이 엉킨 사진 등 4장을 다시 만들었어요 | 디자인 리뷰 <!-- v:preset.jecheol.design.critique -->35<!-- /v -->/40 |
 

@@ -35,15 +35,28 @@ bash <pro-kit>/templates/prokit-next-neon/install.sh my-app       # supabase면 
 | 유형 | 설치 |
 |---|---|
 | `early` | 같은 폴더에 Better-T-Stack 프로젝트를 만든 뒤 `--project-type early`로 보통처럼 설치해요 |
-| `operating`(Better-T-Stack) | 보통 설치에 `--project-type operating`만 더해요 |
+| `operating`(Better-T-Stack) | 보통 설치에 `--project-type operating`만 더해요. 배포와 CI가 쓰는 `dev`·`build`에는 자원 보호 래퍼를 씌우지 않고, 쓰지 않는 제작 표시 컴포넌트도 더하지 않아요. 이 둘은 필요하면 H 라운드에서 바꿔요 |
 | `operating`(그 밖의 Next.js) | `--adopt`. `next`가 루트나 `apps/*`, `packages/*`에 있어야 해요. 없으면 멈춰요 |
 | `migration` | 새 폴더에 Better-T-Stack 프로젝트를 만들고 `--project-type migration --legacy <기존 코드 경로>`로 설치해요 |
+
+```mermaid
+flowchart TD
+  S["install.sh 프로젝트 경로 + 옵션"] --> T{"프로젝트 유형"}
+  T -->|"new, early, migration"| B["Better-T-Stack 프로젝트에<br/>전체 템플릿 설치<br/>래퍼 · Biome 포맷 · turbo 설정 포함"]
+  T -->|"operating, Better-T-Stack"| O["전체 템플릿 설치<br/>dev · build 래퍼와 제작 표시 컴포넌트는 제외"]
+  T -->|"operating, 그 밖의 Next.js"| A["--adopt: 하네스만 설치<br/>AGENTS.md · CLAUDE.md는 adopt/ 블록"]
+  B --> R["공통: 스킬 링크 · sync-agents · .dev-cycle.json 기록<br/>(projectType, brain, simplicity, legacy.path, defaultBranch)"]
+  O --> R
+  A --> R
+  R --> K["--skip-skills가 아니면 skills-setup으로 스킬·플러그인 설치"]
+```
 
 `--adopt`는 하네스만 설치해요.
 
 - 하네스 파일(dev-cycle, 두뇌, 리뷰 게이트, 분석 에이전트와 일부 `prokit-*` 스킬)과 `AGENTS.md`·`CLAUDE.md` 블록(템플릿의 `adopt/`)만 복사해요. DB·API·배포 스킬은 설치하지 않아요.
-- 자원 보호 래퍼, `biome.json`·`turbo.json` 수정, Biome 포맷, `vercel:deploy`·`export:html`·`release` 스크립트, `.gitignore`의 `/html/` 줄은 더하지 않아요.
+- 자원 보호 래퍼, Better-T-Stack용 `biome.json`·`turbo.json` 수정, Biome 포맷, `vercel:deploy`·`export:html`·`release` 스크립트, `.gitignore`의 `/html/` 줄은 더하지 않아요.
 - ESLint flat config(`eslint.config.*`)가 있으면 `globalIgnores`에 벤더 스킬(`.agents/**`)과 하네스 스크립트만 더해요. 그대로 두면 설치만으로 `lint`가 실패해서예요. `globalIgnores([`가 없거나 옛 `.eslintrc`면 직접 더하라고 경고해요. Biome 2 `biome.json`이 있으면 `files.includes`에 하네스·벤더 파일 제외만 더하고, Biome 1이나 `biome.jsonc`면 직접 빼라고 경고해요.
+- `package.json`에도 `vercel:deploy`·`export:html`·`release` 스크립트를 더하지 않아요. 그래서 이 프로젝트에는 프로킷의 `pnpm release`와 Vercel 배포 절차가 없고, 라운드는 배포를 묻지 않고 커밋까지 해요([버전과 릴리스](../deploy/release.md), [Vercel 배포와 되돌리기](../deploy/vercel.md)).
 - `.dev-cycle.json`에 `adopt: true`와 추정한 경로 규칙(H, E·D·B, 나머지 코드는 F)을 적어요. 정밀 분석 뒤 첫 H Task에서 이 프로젝트에 맞게 고쳐요.
 - 그 프로젝트의 패키지 관리자와 타입 검사 스크립트 이름(`check-types`, `typecheck`, `type-check`)을 써요.
 - 나중에 `--adopt` 없이 다시 실행해도 adopt 상태를 유지해요.

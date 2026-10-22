@@ -145,7 +145,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 |---|---|---|
 | 준비: pro-kit 받기, 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 |
 | 기획: 서비스 질문, 이름, 사이트맵 | <!-- v:cost.stage.plan.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 | <!-- v:cost.stage.plan.scratch.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
-| 디자인: DESIGN.md (처음부터는 스타일 추천 1~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
+| 디자인: DESIGN.md (처음부터는 스타일 추천 1\~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
 | 화면 구성 | 팩의 스크린샷을 따라요 | 시안 3장 <!-- v:cost.stage.mockup.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
 | 그림 <!-- v:preset.fitslot.design.images -->18<!-- /v -->장 | 팩에서 받기 <!-- v:cost.stage.packImages.time -->1분<!-- /v --> | <!-- v:preset.fitslot.stages.images.time -->9분<!-- /v --> · <!-- v:cost.tokens.5.5 -->30만<!-- /v --> · 6달러 |
 | 첫 화면 | <!-- v:cost.stage.first.pack.time -->10분<!-- /v --> · <!-- v:cost.tokens.4 -->22만<!-- /v --> · 4달러 | <!-- v:cost.stage.first.scratch.time -->15분<!-- /v --> · <!-- v:cost.tokens.6 -->33만<!-- /v --> · 6달러 |
@@ -180,7 +180,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 |---|---|---|
 | 1. 기획 | 서비스 설명(`PRODUCT.md`)과 첫 화면·두 번째 화면 설계만 미리 적었어요. 스타일과 색은 적지 않았어요 | 이름은 핏슬롯 |
 | 2. 첫 판 | 추천 후보(토스, 쏘카, 당근)와 직접 정하기 중 3위 당근을 고르고 대표 색을 `#0F766E`로 정했어요 | 디자인 리뷰 25/40 |
-| 3. 리디자인 | "표 같은 목록뿐이라 스튜디오 분위기가 없고, 글자가 작아"라고 [다시 요청](refine.md#스타일과-색)했어요. 추천 1~3위(<!-- v:preset.fitslot.design.rec1 -->sweetgreen<!-- /v -->, <!-- v:preset.fitslot.design.rec2 -->Oakâme<!-- /v -->, <!-- v:preset.fitslot.design.rec3 -->MasterClass<!-- /v -->) 중 1위 <!-- v:preset.fitslot.design.rec1 -->sweetgreen<!-- /v -->, 대표 색은 원본 짙은 숲색 그대로. 시안 3장 중 <!-- v:preset.fitslot.design.comp -->C<!-- /v -->(<!-- v:preset.fitslot.design.compName -->시간 기둥<!-- /v -->)를 고르고, 시안에서 틀린 곳(아바타 글자, 19:00 수업의 난이도, 라임색을 쓴 곳)은 고치게 했어요 | 리디자인에 49분 |
+| 3. 리디자인 | "표 같은 목록뿐이라 스튜디오 분위기가 없고, 글자가 작아"라고 [다시 요청](refine.md#스타일과-색)했어요. 추천 1\~3위(<!-- v:preset.fitslot.design.rec1 -->sweetgreen<!-- /v -->, <!-- v:preset.fitslot.design.rec2 -->Oakâme<!-- /v -->, <!-- v:preset.fitslot.design.rec3 -->MasterClass<!-- /v -->) 중 1위 <!-- v:preset.fitslot.design.rec1 -->sweetgreen<!-- /v -->, 대표 색은 원본 짙은 숲색 그대로. 시안 3장 중 <!-- v:preset.fitslot.design.comp -->C<!-- /v -->(<!-- v:preset.fitslot.design.compName -->시간 기둥<!-- /v -->)를 고르고, 시안에서 틀린 곳(아바타 글자, 19:00 수업의 난이도, 라임색을 쓴 곳)은 고치게 했어요 | 리디자인에 49분 |
 | 4. 넓히기 | 첫 화면 하나를 모든 페이지를 갖춘 사이트로 넓혔어요. 이름은 그대로 두었어요. 예약 확인 창, 대기 신청, 예약 취소 확인, 수강권 구매(상품, 결제 요약, 완료), 캘린더 파일 내려받기가 동작해요 | 페이지 <!-- v:preset.fitslot.pages -->20<!-- /v -->개 |
 | 5. 마무리 | 링크·버튼 검사, 디자인 리뷰, 다듬기. 바렐 플로우 사진의 다리가 이상하다고 짚어 줘서, 자세가 어색한 사진을 고치고 같은 조건으로 수업·강사·스튜디오 사진까지 모두 16장을 [다시 만들었어요](refine.md#사진-이미지를-그릴-수-있을-때) | 디자인 리뷰 <!-- v:preset.fitslot.design.critique -->28<!-- /v -->/40 |
 

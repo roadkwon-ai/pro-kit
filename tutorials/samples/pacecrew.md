@@ -145,7 +145,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 |---|---|---|
 | 준비: pro-kit 받기, 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 |
 | 기획: 서비스 질문, 이름, 사이트맵 | <!-- v:cost.stage.plan.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 | <!-- v:cost.stage.plan.scratch.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
-| 디자인: DESIGN.md (처음부터는 스타일 추천 1~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
+| 디자인: DESIGN.md (처음부터는 스타일 추천 1\~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
 | 화면 구성 | 팩의 스크린샷을 따라요 | 시안 3장 <!-- v:cost.stage.mockup.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
 | 그림 <!-- v:preset.pacecrew.design.images -->46<!-- /v -->장 | 팩에서 받기 <!-- v:cost.stage.packImages.time -->1분<!-- /v --> | <!-- v:preset.pacecrew.stages.images.time -->23분<!-- /v --> · 76만 · 14달러 |
 | 첫 화면 | <!-- v:cost.stage.first.pack.time -->10분<!-- /v --> · <!-- v:cost.tokens.4 -->22만<!-- /v --> · 4달러 | <!-- v:cost.stage.first.scratch.time -->15분<!-- /v --> · <!-- v:cost.tokens.6 -->33만<!-- /v --> · 6달러 |
@@ -180,7 +180,7 @@ PACECREW는 한 번에 나오지 않았어요. 결과를 보고 몇 번 다시 �
 |---|---|---|
 | 1. 기획 | 서비스 설명(`PRODUCT.md`)과 랜딩 화면 설계만 미리 적었어요. 스타일과 색은 적지 않고 원하는 인상(스포츠 포스터)만 적었어요 | 이름은 발맞춤 |
 | 2. 첫 판 | 추천 후보(Flying Papers, The Verge, Hungry Tiger)와 직접 정하기 중 1위 Flying Papers를 고르고, 원래 팔레트의 형광 노랑을 주 버튼 색으로 올렸어요 | 디자인 리뷰 23/32 |
-| 3. 리디자인 | 레이아웃이 빽빽하고 아래로 갈수록 평범하다고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1~3위(<!-- v:preset.pacecrew.design.rec1 -->Vodafone<!-- /v -->, <!-- v:preset.pacecrew.design.rec2 -->Lightship<!-- /v -->, <!-- v:preset.pacecrew.design.rec3 -->Hungry Tiger<!-- /v -->) 중 1위 <!-- v:preset.pacecrew.design.rec1 -->Vodafone<!-- /v -->, 대표 색은 추천대로 <!-- v:preset.pacecrew.design.color -->형광 노랑<!-- /v --> <!-- v:preset.pacecrew.design.hexCode -->`#f4ed36`<!-- /v -->. 시안 3장 중 <!-- v:preset.pacecrew.design.comp -->B<!-- /v -->(<!-- v:preset.pacecrew.design.compName -->잡지 표지<!-- /v -->)를 고르고, C의 노란 페이스 레인 구성을 아래 레인 섹션에 살렸어요 | 디자인 리뷰 19/28에서 25/28, 리디자인에 64분 |
+| 3. 리디자인 | 레이아웃이 빽빽하고 아래로 갈수록 평범하다고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1\~3위(<!-- v:preset.pacecrew.design.rec1 -->Vodafone<!-- /v -->, <!-- v:preset.pacecrew.design.rec2 -->Lightship<!-- /v -->, <!-- v:preset.pacecrew.design.rec3 -->Hungry Tiger<!-- /v -->) 중 1위 <!-- v:preset.pacecrew.design.rec1 -->Vodafone<!-- /v -->, 대표 색은 추천대로 <!-- v:preset.pacecrew.design.color -->형광 노랑<!-- /v --> <!-- v:preset.pacecrew.design.hexCode -->`#f4ed36`<!-- /v -->. 시안 3장 중 <!-- v:preset.pacecrew.design.comp -->B<!-- /v -->(<!-- v:preset.pacecrew.design.compName -->잡지 표지<!-- /v -->)를 고르고, C의 노란 페이스 레인 구성을 아래 레인 섹션에 살렸어요 | 디자인 리뷰 19/28에서 25/28, 리디자인에 64분 |
 | 4. 넓히기와 이름 | 첫 화면 하나를 모든 페이지를 갖춘 사이트로 넓히면서 이름을 발맞춤에서 PACECREW로 바꾸고, 첫 화면 문구를 "내 페이스, 내 크루."로 정했어요. 크루 가입 신청 창, 레이스 참가 신청 창, 단계별 크루 추천, 앱 받기 창이 동작해요 | 페이지 <!-- v:preset.pacecrew.pages -->22<!-- /v -->개 |
 | 5. 마무리 | 링크·버튼 검사, 디자인 리뷰, 다듬기. 다리가 붙거나 신발 짝이 다른 사진을 포함해 인물 사진 7장을 다시 만들었어요 | 디자인 리뷰 29/40에서 <!-- v:preset.pacecrew.design.critique -->31<!-- /v -->/40 |
 

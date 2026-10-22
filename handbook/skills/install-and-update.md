@@ -16,7 +16,7 @@ flowchart TD
   S -.->|"--optional 묶음일 때만"| OPT["선택 스킬 묶음<br/>ops · motion · mobile · i-have-adhd · taste<br/>.agents/skills + .claude/skills 링크"]
   S -->|"없거나 최신판보다 낮으면"| AB["agent-browser CLI<br/>(전역)"]
   S -.->|"--with-global일 때만"| G["나머지 전역 도구<br/>Vercel CLI<br/>Neon CLI 또는 Supabase CLI"]
-  S -.->|"고른 두뇌가 gstack·oh-my이고<br/>--brain을 줬거나 --with-global"| BG["두뇌 전역 도구<br/>gstack · OMX CLI"]
+  S -.->|"고른 두뇌가 gstack·oh-my·openspec이고<br/>--brain을 줬거나 --with-global"| BG["두뇌 전역 도구<br/>gstack · OMX CLI · OpenSpec CLI"]
   S -.->|"ponytail을 고르고 --with-global + 지원 CLI"| CP["Codex 네이티브 Ponytail<br/>공식 marketplace · plugin<br/>선택 항목"]
   S -.->|"전역에 켜진 고르지 않은 플러그인"| LOC[".claude/settings.local.json<br/>이 프로젝트에서만 끔"]
   CHK["pnpm skills:check<br/>설치 없이 상태만 확인<br/>선택 묶음은 설치 여부만"] -.->|"같은 스크립트를 --check로 실행"| S

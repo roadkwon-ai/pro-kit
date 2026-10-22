@@ -8,7 +8,7 @@ pro-kit으로 Claudle 프로젝트를 만들어요. 이 장에서 만드는 건 
 
 <!-- b:clone-create-easy-note auth=05-auth-chats.md -->
 > [!NOTE]
-> [가장 쉬운 방법](README.md#가장-쉬운-방법)으로 시작했다면 1~4장은 에이전트가 이미 했어요. [5장](05-auth-chats.md)으로 가세요.
+> [가장 쉬운 방법](README.md#가장-쉬운-방법)으로 시작했다면 1\~4장은 에이전트가 이미 했어요. [5장](05-auth-chats.md)으로 가세요.
 <!-- /b -->
 
 ## 1. 프로젝트 만들기

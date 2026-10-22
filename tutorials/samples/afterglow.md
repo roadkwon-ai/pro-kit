@@ -145,7 +145,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 |---|---|---|
 | 준비: pro-kit 받기, 프로젝트 만들기 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 | <!-- v:cost.stage.setup.time -->5분<!-- /v --> · <!-- v:cost.tokens.1 -->5.5만<!-- /v --> · 1달러 |
 | 기획: 서비스 질문, 이름, 사이트맵 | <!-- v:cost.stage.plan.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.1.5 -->8.3만<!-- /v --> · 2달러 | <!-- v:cost.stage.plan.scratch.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
-| 디자인: DESIGN.md (처음부터는 스타일 추천 1~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
+| 디자인: DESIGN.md (처음부터는 스타일 추천 1\~3위 포함) | <!-- v:cost.stage.design.pack.time -->5분<!-- /v --> · <!-- v:cost.tokens.2 -->11만<!-- /v --> · 2달러 | <!-- v:cost.stage.design.scratch.time -->8분<!-- /v --> · <!-- v:cost.tokens.3.5 -->19만<!-- /v --> · 4달러 |
 | 화면 구성 | 팩의 스크린샷을 따라요 | 시안 3장 <!-- v:cost.stage.mockup.time -->10분<!-- /v --> · <!-- v:cost.tokens.3 -->17만<!-- /v --> · 3달러 |
 | 그림 <!-- v:preset.afterglow.design.images -->22<!-- /v -->장 | 팩에서 받기 <!-- v:cost.stage.packImages.time -->1분<!-- /v --> | <!-- v:preset.afterglow.stages.images.time -->11분<!-- /v --> · <!-- v:cost.tokens.6.5 -->36만<!-- /v --> · 7달러 |
 | 첫 화면 | <!-- v:cost.stage.first.pack.time -->10분<!-- /v --> · <!-- v:cost.tokens.4 -->22만<!-- /v --> · 4달러 | <!-- v:cost.stage.first.scratch.time -->15분<!-- /v --> · <!-- v:cost.tokens.6 -->33만<!-- /v --> · 6달러 |
@@ -180,7 +180,7 @@ AFTERGLOW는 한 번에 나오지 않았어요. 결과를 보고 몇 번 다시 
 |---|---|---|
 | 1. 기획 | 서비스 설명(`PRODUCT.md`)과 첫 화면 설계만 미리 적었어요. 스타일과 색은 적지 않고, 원하는 인상(갤러리 조명 아래 놓인 정밀한 하드웨어)만 적었어요 | 이름은 해담 |
 | 2. 첫 판 | 추천 후보(ORYZO AI, Apple, teenage engineering)와 직접 정하기 중 2위 Apple을 고르고, 대표 색은 파랑 대신 따뜻한 햇빛 계열로 바꿨어요 | 디자인 리뷰 27/36 |
-| 3. 리디자인 | "제목이 작고 가늘어", "제품이 흰 상자라 안 보여", "첫 화면이 텅 비어 보여"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1~3위(<!-- v:preset.afterglow.design.rec1 -->ORYZO AI<!-- /v -->, <!-- v:preset.afterglow.design.rec2 -->bugatti<!-- /v -->, <!-- v:preset.afterglow.design.rec3 -->Lamborghini<!-- /v -->) 중 1위 <!-- v:preset.afterglow.design.rec1 -->ORYZO AI<!-- /v -->, 대표 색은 원본 Ember 그대로. 시안 3장 중 ORYZO AI 시안으로 만들고, bugatti 시안의 해 질 녘 집 외벽 장면은 설치 사진으로 살렸어요 | 디자인 리뷰 23/32에서 28/32로, 56분 |
+| 3. 리디자인 | "제목이 작고 가늘어", "제품이 흰 상자라 안 보여", "첫 화면이 텅 비어 보여"라고 [다시 요청](refine.md#구도와-화면)했어요. 추천 1\~3위(<!-- v:preset.afterglow.design.rec1 -->ORYZO AI<!-- /v -->, <!-- v:preset.afterglow.design.rec2 -->bugatti<!-- /v -->, <!-- v:preset.afterglow.design.rec3 -->Lamborghini<!-- /v -->) 중 1위 <!-- v:preset.afterglow.design.rec1 -->ORYZO AI<!-- /v -->, 대표 색은 원본 Ember 그대로. 시안 3장 중 ORYZO AI 시안으로 만들고, bugatti 시안의 해 질 녘 집 외벽 장면은 설치 사진으로 살렸어요 | 디자인 리뷰 23/32에서 28/32로, 56분 |
 | 4. 넓히기와 이름 | 첫 화면 하나를 모든 페이지를 갖춘 사이트로 넓혔어요. 이름을 해담에서 AFTERGLOW로, 제품 이름을 Afterglow Cell로 바꿨어요. 상담 신청(4단계와 완료 화면), 절감액 계산, 알림 상세, 설정이 동작해요 | 페이지 <!-- v:preset.afterglow.pages -->17<!-- /v -->개 |
 | 5. 첫 화면 문구 바꾸기 | 처음 문구는 "해는 졌고, 전기는 남았습니다"였어요. 문구가 마음에 들지 않아 후보를 두 번 받았지만 모두 거절했어요. 그다음 "전기요금 부담이 준다"는 내용을 넣어 달라고 [다시 요청](refine.md#이름과-문구)했고, 후보 중 1번을 골랐어요 | "전기요금은 가볍게, 정전에도 든든하게" |
 | 6. 마무리 | 링크·버튼 검사, 디자인 리뷰, 다듬기. 다시 만든 사진은 없어요 | 디자인 리뷰 <!-- v:preset.afterglow.design.critique -->29<!-- /v -->/40 |
