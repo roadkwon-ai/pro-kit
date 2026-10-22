@@ -111,6 +111,10 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 
 묻지 않고 진행하는 옵션이 마음에 걸리면 `claude`나 `codex`만 입력해 열어도 돼요. 명령마다 허락을 구하니 느리지만, 튜토리얼의 프롬프트는 똑같이 써요. 에이전트가 처음이라 무엇을 말해야 할지 막막하면 [처음 한 시간](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/first-hour.md)을 먼저 읽어 보세요.
 
+**이렇게 되면 성공**
+- 작업 폴더 `~/projects`에서 연 에이전트의 대화창이 보여요.
+- 폴더를 믿을지 묻는 질문에 "예"를 골랐어요.
+
 이제 준비가 끝났어요. 고른 튜토리얼의 첫 프롬프트를 붙여 넣으세요. 예: [컨셉으로 화면 만들기의 첫 프롬프트](../samples/README.md#2-프롬프트-하나로-프로젝트-시작하기)
 
 > [!TIP]

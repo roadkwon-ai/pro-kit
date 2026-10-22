@@ -37,13 +37,24 @@ flowchart LR
 
 ## 무엇으로 고르나요
 
+```mermaid
+flowchart TD
+  Q{"어떤 서비스인가요?"} -->|"DB 없이 화면만"| N0["neon으로 만들어요<br/>묻지 않아요"]
+  Q -->|"DB가 있는 서비스"| D{"이미 Supabase를 쓰나요?"}
+  D -->|"예"| SU["supabase"]
+  D -->|"아니요"| C{"작업마다 DB 테스트 복사본으로<br/>확인하고 싶나요?"}
+  C -->|"예"| NE["neon"]
+  C -->|"모르겠어요"| ASK["에이전트가 비교표로<br/>차이를 설명하고 물어요"]
+  Q -->|"운영 중인 Next.js"| OP["Better-T-Stack + Postgres + Drizzle이면<br/>실제 DB에 맞는 템플릿<br/>그 밖에는 --adopt"]
+```
+
 - **PR(변경 제안)마다 DB 브랜치(테스트용 복사본)를 만들어 확인하고 싶으면** → neon
 - **이미 Supabase를 쓰고 있으면** → supabase
 - **화면만 만들면(DB 없이)** → 묻지 않고 neon으로 만들어요. 나중에 실제 서비스로 바꿀 때 로컬 DB를 더해요([빠른 시작: 화면만 만들기](../start/quickstart-screens.md)).
-
 - **운영 중인 Next.js 프로젝트에 들이면** → Better-T-Stack 구조이고 DB가 Postgres와 Drizzle이면 실제 DB에 맞는 템플릿(neon 또는 supabase)을 고르고, 그 밖의 Next.js 프로젝트는 템플릿 파일 없이 하네스만 설치하는 `--adopt`예요([설치기와 옵션](installer.md#기존-프로젝트에-설치하기), [기존 프로젝트에 도입하기](../start/adopt.md)).
 
-요청에 DB 종류가 없으면 에이전트가 추측하지 않고 이 비교표로 차이를 설명한 뒤 물어요.
+> [!NOTE]
+> 요청에 DB 종류가 없으면 에이전트가 추측하지 않고 이 비교표로 차이를 설명한 뒤 물어요.
 
 ## 자세히
 

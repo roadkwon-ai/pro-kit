@@ -434,8 +434,8 @@
 | `optional.taste.count.supabase` | 1 | supabase 템플릿 taste 묶음의 스킬 수 | templates/prokit-next-supabase/files/skills.manifest.json optional.taste | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.taste.skillsCode.shared` | `design-taste-frontend` | taste 묶음에서 두 템플릿이 함께 가진 스킬(스킬마다 백틱) | templates/*/files/skills.manifest.json optional.taste | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.taste.skillsCode` | `design-taste-frontend` | taste 묶음의 스킬(두 템플릿이 같을 때. 스킬마다 백틱) | templates/*/files/skills.manifest.json optional.taste | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
-| `eval.<스킬>.with` | 6개(`--list`) | 같은 요청 비교: prokit-<스킬> 스킬이 있을 때 체크 항목을 지킨 비율(%는 값 밖) | templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
-| `eval.<스킬>.without` | 6개(`--list`) | 같은 요청 비교: prokit-<스킬> 스킬이 없을 때 체크 항목을 지킨 비율(%는 값 밖) | templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
+| `eval.<스킬>.with` | 6개(`--list`) | 같은 요청 비교: prokit-<스킬> 스킬이 있을 때 체크 항목을 지킨 비율(%는 값 밖) | templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표 | 정본 파일이 바뀌면 따라 바뀐다 | 23 |
+| `eval.<스킬>.without` | 6개(`--list`) | 같은 요청 비교: prokit-<스킬> 스킬이 없을 때 체크 항목을 지킨 비율(%는 값 밖) | templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표 | 정본 파일이 바뀌면 따라 바뀐다 | 23 |
 | `eval.requests` | 13 | 같은 요청 비교에 쓴 요청 수 | 계산: templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표의 eval 수 합 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `eval.checks` | 52 | 같은 요청 비교의 체크 항목 수 | 계산: templates/prokit-next-neon/VERIFICATION.md 스킬 동작 eval 표의 assertion 수 합 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `eval.designMd.services` | 4 | DESIGN.md 효과를 잰 서비스 수 | templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 '추천과 선택' 표의 행 수 | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
@@ -615,6 +615,7 @@
 | `b:sample-stage-tail` | (글 묶음) | 프리셋 쪽 "단계별 예상" 표의 끝쪽 공통 행 2개(HTML 내보내기, 선택 GitHub Pages 배포). tutorials/samples/ 쪽에서 쓴다. 표 한 행이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/sample-stage-tail.md | 묶음 원본을 고친다 | 9 |
 | `b:samples-trouble` | (글 묶음) | tutorials/samples/README.md(컨셉으로 화면 만들기)의 "막히면" 목록 전체. 목록이 끊기지 않게 목록 전체를 묶는다. 첫 줄들은 first-trouble 묶음이다. 인자: folder(프로젝트 폴더) | docs/blocks/samples-trouble.md | 묶음 원본을 고친다 | 1 |
 | `b:screen-prompt` | (글 묶음) | 화면만 만드는 첫 프롬프트. 인자: folder(프로젝트 폴더), concept(누가 쓰고 무엇을 하는 서비스), end(마지막 일. 없으면 "HTML 파일로 내보내줘"), ref(서비스 줄 뒤에 붙는 레퍼런스 리서치 문장. 앞에 띄어쓰기를 둔다. 없으면 붙이지 않는다), design(마지막 줄 앞부분의 디자인 지시. 끝에 쉼표와 띄어쓰기를 둔다. 없으면 "디자인 스타일은 서비스에 어울리는 걸로 추천해주고, ". 레퍼런스를 따를 때는 카탈로그 추천과 섞이지 않게 바꾼다) | docs/blocks/screen-prompt.md | 묶음 원본을 고친다 | 14 |
+| `b:skill-effect-chart` | (글 묶음) | handbook/reference/verification.md "스킬이 있을 때와 없을 때"의 막대그래프(mermaid xychart). 값은 같은 절 표와 같이 eval.<스킬>.with/without(neon VERIFICATION.md 스킬 동작 eval에서 읽는 값, doc-values.json)이다 | docs/blocks/skill-effect-chart.md | 묶음 원본을 고친다 | 1 |
 | `b:start-check-prompt` | (글 묶음) | tutorials/start/README.md "pro-kit 받기"의 에이전트에게 부탁하는 첫 프롬프트(준비물 확인과 pro-kit 받기). Node 판은 값으로 채운다 | docs/blocks/start-check-prompt.md | 묶음 원본을 고친다 | 1 |
 | `b:tpl-readme-after-install-format` | (글 묶음) | 두 템플릿 README "설치한 뒤" 번호 목록의 2번(포맷 정리와 첫 커밋). 번호 목록 중간이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 인자: dir(커밋에 더 넣을 폴더 목록. 쉼표와 띄어쓰기로 끝낸다. 없으면 붙이지 않는다) | docs/blocks/tpl-readme-after-install-format.md | 묶음 원본을 고친다 | 2 |
 | `b:tpl-readme-after-install-steps` | (글 묶음) | 두 템플릿 README "설치한 뒤" 번호 목록의 3~7번(새 세션, impeccable 훅, 용어집, 라운드, 첫 화면). 번호 목록 중간이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/tpl-readme-after-install-steps.md | 묶음 원본을 고친다 | 2 |

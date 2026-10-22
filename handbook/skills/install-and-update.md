@@ -1,10 +1,13 @@
 # 설치와 업데이트 구조
 
-> 한눈에: 스킬 목록은 파일 하나에 모여 있고, 설치할 때 프로젝트에 빠진 것만 넣어요. 설치한 스킬은 프로젝트와 함께 저장돼요. 새 버전은 하루 한 번 확인해서 올릴지 물어요.
+> 한눈에: 스킬 목록은 파일 하나에 모여 있고, 설치할 때 프로젝트에 빠진 것만 넣어요. **설치한 스킬은 프로젝트와 함께 저장돼요.** 새 버전은 하루 한 번 확인해서 올릴지 물어요.
 
 ## 먼저 이것만 알면 돼요
 
-스킬(에이전트가 읽는 작업 설명서. [용어](../../tutorials/reference/glossary.md#도구))은 프로젝트에 설치될 때 한 번 복사돼요. 원본 저장소가 바뀌어도 내 프로젝트의 스킬은 저절로 바뀌지 않아요. 대신 프로킷이 새 버전이 있는지 알아봐 줘요.
+스킬(에이전트가 읽는 작업 설명서. [용어](../../tutorials/reference/glossary.md#도구))은 프로젝트에 설치될 때 한 번 복사돼요. 대신 프로킷이 새 버전이 있는지 알아봐 줘요.
+
+> [!IMPORTANT]
+> 원본 저장소가 바뀌어도 내 프로젝트의 스킬은 저절로 바뀌지 않아요.
 
 | 누가 | 무엇을 |
 |---|---|
@@ -32,7 +35,8 @@
 
 ### 알림 조절하기
 
-에이전트에게 말로 부탁해도 되고, 같은 명령을 직접 실행해도 돼요.
+> [!TIP]
+> 에이전트에게 말로 부탁해도 되고, 같은 명령을 직접 실행해도 돼요.
 
 | 하고 싶은 일 | 말 | 명령 |
 |---|---|---|
@@ -42,7 +46,8 @@
 | 지금 한 번 확인만 | "스킬 최신인지 확인해줘" | `pnpm skills:update --check` |
 | 하루 한 번 확인(자동으로 불리는 명령) | | `pnpm --silent skills:update --if-due`. 설치하지 않고, 알릴 것이 있을 때만 출력해요 |
 
-확인 결과와 알림 설정은 이 컴퓨터의 `node_modules/.cache/skills-update.json`에만 저장돼요. 커밋하지 않고, `node_modules`를 지우면 기본값(묻기)으로 돌아가요.
+> [!NOTE]
+> 확인 결과와 알림 설정은 이 컴퓨터의 `node_modules/.cache/skills-update.json`에만 저장돼요. 커밋하지 않고, `node_modules`를 지우면 기본값(묻기)으로 돌아가요.
 
 ## 설치되는 길
 
@@ -68,7 +73,6 @@ flowchart TD
 - **최신판을 받아요**: 공식 스킬은 템플릿에 복사해 두지 않고, 설치할 때 원본 저장소의 최신 커밋을 받아요(skills CLI도 `skills@latest`). Claude 플러그인은 마켓플레이스를 최신으로 받은 뒤 설치해요.
 - **프로젝트 설치와 Codex 선택 설치는 달라요**: 프로젝트 스킬과 Claude 플러그인은 프로젝트 범위(project scope)에 들어가요. Codex 네이티브 Ponytail은 `--with-global`일 때만 사용자 설정에 공식 marketplace와 플러그인을 등록하는 선택 항목이에요. 기본 설치와 `pnpm skills:check`는 그 설정을 바꾸지 않아요.
 - **전역 도구는 둘로 나뉘어요**: <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지 전역 도구는 `--with-global`을 줄 때만 설치해요.
-
 - **openspec과 spec-kit은 자기 init 명령으로 설치해요**: OpenSpec은 전역 npm CLI(고를 때만 설치), Spec Kit은 설치할 때만 uv가 필요해요. 지울 때는 도구 파일만 지우고 `openspec/`, `specs/`, `.specify/memory/` 문서는 남겨요. Compound Engineering은 Claude 프로젝트 플러그인과 skills CLI로 받는 Codex 스킬이에요([두뇌와 선택 스킬](brains.md)).
 - **기존 프로젝트 도입(`--adopt`)**: `install.sh --adopt`는 하네스만 넣어요. `prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`만 복사하고, 매니페스트에서 `stack: true`인 Better-T-Stack 전용 스킬(neon 템플릿은 better-auth, neon, turborepo, supabase 템플릿은 better-auth, turborepo)은 건너뛰어요([기존 프로젝트에 도입하기](../start/adopt.md)).
 
@@ -91,7 +95,8 @@ pnpm skills:update <이름>...   # 지정한 스킬만 다시 설치한다
 pnpm skills:setup --drop <스킬|묶음>[,…]   # 추가 스킬이나 선택 묶음을 지운다
 ```
 
-`--drop`은 `skills-lock.json`의 출처가 맞는 설치본만 지워요. 필수 mattpocock 3개와 공식 스킬은 지울 수 없고, `--check`와 함께 쓸 수 없어요.
+> [!WARNING]
+> `--drop`은 `skills-lock.json`의 출처가 맞는 설치본만 지워요. 필수 mattpocock 3개와 공식 스킬은 지울 수 없고, `--check`와 함께 쓸 수 없어요.
 
 - **하루 한 번 확인**: 진행 중인 라운드가 없을 때 `pnpm dev-cycle status`가 하루 한 번 새 버전을 확인해요(GitHub API를 저장소마다 한 번 호출). 새 버전이 있으면 `prokit-skills-update`가 업데이트할지 물어요(지금, 항상 자동, 나중에, 다시 묻지 않기).
 - **케이스 H로 커밋**: 업데이트는 하네스를 바꾸는 일이라 케이스 H 라운드로 커밋해요.
@@ -105,7 +110,10 @@ pnpm skills:setup --drop <스킬|묶음>[,…]   # 추가 스킬이나 선택 �
 
 ### 플러그인은 따로 올려요
 
-Claude 플러그인은 `skills:update`가 업데이트하지 않아요. 네 플러그인 모두 훅이 있어서 업데이트하는 즉시 새 코드가 실행되기 때문이에요. 사용자가 요청하면 플러그인 저장소의 `hooks/` 변경을 먼저 보고 올려요.
+> [!WARNING]
+> Claude 플러그인은 `skills:update`가 업데이트하지 않아요. 네 플러그인 모두 훅이 있어서 업데이트하는 즉시 새 코드가 실행되기 때문이에요.
+
+사용자가 요청하면 플러그인 저장소의 `hooks/` 변경을 먼저 보고 올려요.
 
 ```bash
 claude plugin marketplace update <마켓플레이스>

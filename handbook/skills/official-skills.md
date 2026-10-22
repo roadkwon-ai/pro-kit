@@ -1,10 +1,13 @@
 # 공식 스킬과 연결
 
-> 한눈에: 공식 스킬은 Next.js, Vercel, Better Auth처럼 도구를 만든 곳이 직접 관리하는 에이전트 스킬이에요. 프로킷은 새 프로젝트를 만들 때 그 최신판을 설치하고, 어느 단계에서 어떤 스킬을 읽을지 에이전트의 짐작에 맡기지 않고 미리 정해 둬요. 읽은 스킬은 대조표의 증거 칸에 이름이 남아요.
+> 한눈에: 공식 스킬은 Next.js, Vercel, Better Auth처럼 도구를 만든 곳이 직접 관리하는 에이전트 스킬이에요. 프로킷은 새 프로젝트를 만들 때 그 최신판을 설치하고, 어느 단계에서 어떤 스킬을 읽을지 에이전트의 짐작에 맡기지 않고 미리 정해 둬요. **읽은 스킬은 대조표의 증거 칸에 이름이 남아요.**
 
 ## 처음에는 읽지 않아도 돼요
 
-이 쪽은 프로젝트에 어떤 공식 스킬이 설치되고 어디서 읽히는지 찾아보는 참고 쪽이에요. 설치와 연결은 프로킷이 알아서 하므로, 일반적인 개발에서는 읽지 않고 넘어가도 돼요.
+이 쪽은 프로젝트에 어떤 공식 스킬이 설치되고 어디서 읽히는지 찾아보는 참고 쪽이에요.
+
+> [!TIP]
+> 설치와 연결은 프로킷이 알아서 하므로, 일반적인 개발에서는 읽지 않고 넘어가도 돼요.
 
 - **왜 필요한가**: 에이전트는 학습한 시점의 지식으로 일해서 Next.js나 Better Auth처럼 자주 바뀌는 도구는 옛 방식으로 쓰기 쉬워요. 도구를 만든 곳이 직접 쓴 스킬(공식 스킬)을 읽게 하면 최신 방식으로 만들어요.
 - **무엇인가**: 도구 제작사가 공개한 에이전트용 작업 설명서예요([용어](../../tutorials/reference/glossary.md#도구)). 프로킷은 새 프로젝트를 만들 때 그 최신판을 받아 프로젝트 안에 설치해요.
@@ -20,7 +23,7 @@
 | Next.js 동작·성능 | `next-dev-loop`, `next-cache-components-adoption`, `next-cache-components-optimizer`, `next-partial-prefetching-adoption`, `next-partial-prefetching-optimizer` | vercel/next.js | `prokit-web`, `prokit-verify`. `next-dev-loop`는 B·F 런타임 확인 행 |
 | React·화면 규칙 | `vercel-react-best-practices`, `vercel-composition-patterns`, `web-design-guidelines` | vercel-labs/agent-skills | `prokit-web`(앞의 둘), `prokit-reviewer`(컴포넌트·훅은 react-best-practices, 합성 결정은 composition-patterns), `prokit-ui`(web-design-guidelines). B·F 설계 점검(재사용 API·합성), B 구현 행(react-best-practices), audit 행(web-design-guidelines). audit 행은 위반 목록을 impeccable audit 보고서와 함께 `tasks/evidence/ui-audit-<시각>.md`에 저장하고, `dev-cycle audit`이 그 파일을 확인해요 |
 | 컴포넌트 | `shadcn` | shadcn/ui | `prokit-ui`. B 구현 행 |
-| 화면 디자인 | `impeccable` | pbakaus/impeccable | `prokit-ui`. B·F 브리프, critique, audit 행. critique는 `.impeccable/critique/<시각>__<대상>.md` 기록을 남겨야 하고 그 점수가 증거와 같아야 해요. audit의 N/20은 저장한 보고서에 있어야 해요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요. 기존 디자인을 이어 가는 프로젝트는 지금 화면에서 `DESIGN.md`를 만들어요 |
+| 화면 디자인 | `impeccable` | pbakaus/impeccable | `prokit-ui`. B·F 화면 설계, critique, audit 행. critique는 `.impeccable/critique/<시각>__<대상>.md` 기록을 남겨야 하고 그 점수가 증거와 같아야 해요. audit의 N/20은 저장한 보고서에 있어야 해요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요. 기존 디자인을 이어 가는 프로젝트는 지금 화면에서 `DESIGN.md`를 만들어요 |
 | 이미지 그리기 (ChatGPT 요금제) | `gpt-image` | GENEXIS-AI/gpt-image-skill | `prokit-ui`. Claude Code에서 `OPENAI_API_KEY`가 없고 Codex CLI가 ChatGPT로 로그인되어 있을 때 comp와 plate 이미지를 그려요 |
 | 디자인 스타일 카탈로그 | `use-design-md` | CaesiumY/ko-design-md | `prokit-ui`. B 첫 행에서 고른 스타일(getdesign.kr, awesome-design-md, Refero Styles)의 DESIGN.md를 받아 적용해요. 받은 파일은 Google 스펙 CLI(`@google/design.md`)로 lint해요. 기존 디자인을 이어 가기로 한 프로젝트는 쓰지 않아요 |
 | 브라우저 확인 | `agent-browser` | vercel-labs/agent-browser | `prokit-verify`. B·F 런타임 확인 행(macOS는 ego lite를 먼저 써요). 견본이 콘솔 오류와 가로 넘침을 모아 `결함:` 줄로 출력하고, 이 줄은 오류 예산에 들어가요. 띄우기 전에 3001 포트를 `lsof`로 보고, 다른 프로세스가 쓰면 끄지 않고 알려요 |
@@ -32,7 +35,8 @@
 | 용어·설계 질문 | `domain-modeling`, `grill-with-docs`, `grilling` | mattpocock/skills | `prokit-dev-cycle`, `prokit-db`. F 스펙 행과 공통 문서 행. 진행 계획 라운드에서는 계획 전에 결과를 바꾸는 질문을 물을 때도 써요 |
 | Vercel 배포 | `deploy-to-vercel`, `vercel-cli-with-tokens`, `access-protected-vercel-deployment` | vercel-labs/agent-skills, vercel/vercel-plugin | `prokit-deploy` |
 
-`--adopt`로 하네스만 들인 기존 프로젝트는 `stack` 표시가 붙은 Better-T-Stack 전용 스킬(`better-auth` 3종, neon의 `neon` 4종, `turborepo`)을 설치하지 않아요. `prokit-api`, `prokit-db`, `prokit-deploy`도 없어서 이 스킬들이 맡던 행은 그 프로젝트의 기존 방식으로 해요([설치와 업데이트 구조](install-and-update.md)).
+> [!NOTE]
+> `--adopt`로 하네스만 들인 기존 프로젝트는 `stack` 표시가 붙은 Better-T-Stack 전용 스킬(`better-auth` 3종, neon의 `neon` 4종, `turborepo`)을 설치하지 않아요. `prokit-api`, `prokit-db`, `prokit-deploy`도 없어서 이 스킬들이 맡던 행은 그 프로젝트의 기존 방식으로 해요([설치와 업데이트 구조](install-and-update.md)).
 
 일부 프로젝트만 쓰는 스킬은 [선택 스킬 묶음](optional-bundles.md)에 따로 모아 두었어요. 화면 디자인을 보조하는 taste-skill([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill))도 선택 묶음 `taste`로 더할 수 있어요. 고른 화면에서만 방향 뽑기, 공개 아카이브 사진, 실제 브라우저 검사를 보태고 impeccable 흐름은 그대로예요([화면 디자인 보조](brains.md#화면-디자인-보조)).
 
@@ -64,8 +68,12 @@
 
 ### 공통 운영 경계
 
-- 통합 리뷰를 완료하려면 `prokit-reviewer`의 최종 판정이 있어야 해요. 과설계 방지 스킬의 검토(`ponytail-review`, `caveman-review`), 두뇌의 리뷰 스킬, Claude Code의 `/code-review`, 추가 스킬 `code-review`는 추가 관점이에요.
-- 두뇌의 실행 모드(OMC·OMX의 `team`, `ralph` 등)는 실행 수단이에요. 모드가 낸 완료 보고는 증거가 아니고, 라운드가 끝났는지는 `pnpm dev-cycle audit`만 판정해요. 모드가 커밋, push, 배포를 하게 두지 않아요.
+> [!IMPORTANT]
+> 통합 리뷰를 완료하려면 `prokit-reviewer`의 최종 판정이 있어야 해요. 과설계 방지 스킬의 검토(`ponytail-review`, `caveman-review`), 두뇌의 리뷰 스킬, Claude Code의 `/code-review`, 추가 스킬 `code-review`는 추가 관점이에요.
+
+> [!WARNING]
+> 두뇌의 실행 모드(OMC·OMX의 `team`, `ralph` 등)는 실행 수단이에요. 모드가 낸 완료 보고는 증거가 아니고, 라운드가 끝났는지는 `pnpm dev-cycle audit`만 판정해요. 모드가 커밋, push, 배포를 하게 두지 않아요.
+
 - 두뇌가 gstack이어도 코드를 고치거나 배포하는 스킬(`qa`, `ship`, `land-and-deploy`)은 사용자가 요청할 때만 써요. 배포는 `prokit-deploy`로 해요.
 - 빠진 것과 고르지 않은 두뇌·과설계 방지 스킬의 설치본은 `pnpm skills:check`로 확인해요. 두뇌가 oh-my여도 `omx`가 없는 기기는 OMX를 빠진 것으로 세지 않아요.
 

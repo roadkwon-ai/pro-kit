@@ -217,7 +217,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 | 1 | 화면만 프로젝트, 스킬 구성 | 로컬 DB와 마이그레이션 없이 프로젝트를 만들고, 서비스 설명을 PRD로 읽어 스킬을 추천해요 | [화면만 프로젝트와 HTML 내보내기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/screen-only.md), [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md) |
 | 2 | 기획 문서(`PRODUCT.md`) | 컨셉 질문에 답해 서비스 소개 문서를 만들어요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
 | 3 | 디자인 카탈로그, `DESIGN.md` | 스타일 후보 1\~3위 중 하나를 골라 디자인 규칙 파일로 저장해요 | [DESIGN.md](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/design-md.md) |
-| 4 | 사이트맵과 브리프 | 모든 페이지의 목록과 설계 메모를 만들기 전에 확인해요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
+| 4 | 사이트맵과 화면 설계 | 모든 페이지의 목록과 설계 메모를 만들기 전에 확인해요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
 | 5 | 화면 라운드(케이스 B) | 재사용·설정 점검 행(`[design]`), 구현, 스크린샷 확인, `critique`와 `audit`, 코드 리뷰가 한 라운드에 들어가요. 마지막에 내가 확인해야 닫혀요 | [케이스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/cases.md), [증거와 audit, 사용자 확인](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/audit-and-confirm.md) |
 | 6 | 화면 검사와 다듬기 | 링크와 버튼을 모두 눌러 보고 점수와 문제 목록으로 다듬어요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
 | 7 | HTML 내보내기 | `pnpm export:html`이 임시 복사본에서 빌드해 `html/` 폴더를 만들어요 | [화면만 프로젝트와 HTML 내보내기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/screen-only.md) |

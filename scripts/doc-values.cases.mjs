@@ -125,6 +125,7 @@ export const CASES = [
   ["handbook/start/after-create.md", "open-in-project", {}],
   ["handbook/design/ui-flow.md", "ui-flow-diagram", {}],
   ["handbook/design/design-md.md", "design-md-effect-chart", {}],
+  ["handbook/reference/verification.md", "skill-effect-chart", {}],
   ["handbook/templates/what-it-adds.md", "what-it-adds-diagram", {}],
   ["handbook/reference/project-structure.md", "project-structure-tree", {}],
   ["tutorials/01-nextflix/README.md", "open-already-line", {}],

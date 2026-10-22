@@ -1,6 +1,6 @@
 # 템플릿이 더하는 것
 
-> 한눈에: 앱 뼈대를 만들어 주는 도구(Better-T-Stack)는 실행되는 앱까지만 만들어요. 에이전트가 그 위에서 안정적으로 개발하려면 프로젝트 규칙, 분야별 작업 지식, 끝났다고 말하기 전에 거치는 확인 절차가 더 필요해요. 템플릿이 이 세 가지를 채워요.
+> 한눈에: 앱 뼈대를 만들어 주는 도구(Better-T-Stack)는 실행되는 앱까지만 만들어요. 에이전트가 그 위에서 안정적으로 개발하려면 프로젝트 규칙, 분야별 작업 지식, 끝났다고 말하기 전에 거치는 확인 절차가 더 필요해요. **템플릿이 이 세 가지를 채워요.**
 
 ## 뼈대와 그 위에 더하는 것
 
@@ -39,7 +39,10 @@ flowchart LR
 | 선택 스킬 묶음 (기본 설치 안 함) | `ops`(배포한 서비스의 비용·성능 점검. neon은 Neon 함수·파일 저장·LLM 게이트웨이 포함), `motion`(화면 전환 애니메이션), `mobile`(React Native·Expo 앱), `i-have-adhd`(짧은 행동 중심 응답), `taste`(화면 디자인 보조 taste-skill) |
 | 화면만 프로젝트 | `scripts/export-html.mjs`로 DB 없이 만든 화면을 정적 HTML로 내보내요(`pnpm export:html`). 선택해서 쓸 수 있는 사이트 하단 제작 표시 컴포넌트 `apps/web/src/components/prokit-credit.tsx`를 함께 둬요. `scripts/load-keys.mjs`와 SessionStart 훅이 프로젝트나 작업 폴더 `.env`의 `OPENAI_API_KEY`를 Claude Code 세션에 불러와요 |
 | Vercel 배포와 릴리스 | `pnpm vercel:deploy develop`·`production`이 배포 전 검사, 배포, 되돌리기 명령 안내를 맡아요. 운영에는 `pnpm release`로 버전 태그, `release/` 노트, GitHub Release를 만든 커밋만 배포해요. `.vercelignore`와 `.gitignore`의 `.env.*` 규칙 덕분에 로컬 비밀값이 배포나 커밋에 섞이지 않아요. `--adopt`로 하네스만 들인 프로젝트에는 이 스크립트가 없어요 |
-| 전역 도구 | <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. Vercel CLI, Neon CLI 또는 Supabase CLI와 지원하는 Codex의 네이티브 Ponytail(ponytail을 고른 경우)은 `--with-global`을 줄 때만 설치해요. 두뇌 gstack, OMX CLI, OpenSpec CLI는 그 두뇌를 고를 때만 설치해요. ego lite(macOS)는 직접 설치해요 |
+| 전역 도구 | <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 두뇌 gstack, OMX CLI, OpenSpec CLI는 그 두뇌를 고를 때만 설치해요. ego lite(macOS)는 직접 설치해요 |
+
+> [!WARNING]
+> Vercel CLI, Neon CLI 또는 Supabase CLI와 지원하는 Codex의 네이티브 Ponytail(ponytail을 고른 경우)은 `--with-global`을 줄 때만 설치해요. 이 옵션은 전역 설정을 바꿔요.
 
 ## 설치한 뒤 폴더에 생기는 것
 
@@ -62,7 +65,9 @@ flowchart LR
 | `release/` | `pnpm release`가 production 배포 전에 쓰는 릴리스 노트(처음엔 없어요) |
 | `apps/web/src/components/prokit-credit.tsx` | 사이트 하단에 제작 표시를 달고 싶을 때 쓰는 선택 컴포넌트예요 |
 
-`--adopt`로 하네스만 들인 프로젝트에는 이 중 일부만 들어가요([설치기와 옵션](installer.md#기존-프로젝트에-설치하기)).
+> [!NOTE]
+> `--adopt`로 하네스만 들인 프로젝트에는 이 중 일부만 들어가요([설치기와 옵션](installer.md#기존-프로젝트에-설치하기)).
+
 
 ## Better-T-Stack이란
 

@@ -1,6 +1,9 @@
 # Windows 준비
 
-pro-kit은 Windows에서 WSL2(Windows 안에서 Linux를 쓰게 해 주는 기능)의 Ubuntu로만 써요. PowerShell이나 Git Bash에서는 설치가 멈춰요.
+pro-kit은 Windows에서 WSL2(Windows 안에서 Linux를 쓰게 해 주는 기능)의 Ubuntu로만 써요.
+
+> [!WARNING]
+> PowerShell이나 Git Bash에서는 설치가 멈춰요.
 
 ## 1. WSL2와 Ubuntu 설치
 
@@ -21,7 +24,9 @@ pro-kit은 Windows에서 WSL2(Windows 안에서 Linux를 쓰게 해 주는 기�
 1. [docker.com](https://www.docker.com/products/docker-desktop/)에서 Windows용 Docker Desktop을 받아 설치하세요.
 2. Docker Desktop을 열고 **Settings → Resources → WSL integration**에서 Ubuntu를 켜세요.
 
-Docker Desktop은 직원 250명 이상이거나 연 매출 1천만 달러 이상인 조직이 업무에 쓰려면 유료 구독이 필요해요. 개인 학습용이면 보통 상관없지만 회사 컴퓨터라면 확인하세요. 무료로 쓰고 싶으면 Docker Desktop 대신 Ubuntu 안에 Podman을 설치해도 돼요(Linux에서는 Podman 머신 설정이 따로 필요 없어요). 설치 명령은 에이전트에게 `Podman으로 로컬 DB를 띄울 수 있게 준비해줘`라고 부탁하세요. 컴퓨터 비밀번호(sudo)가 필요한 명령은 에이전트가 알려 주면 Ubuntu 창에서 직접 실행하세요.
+Docker Desktop은 직원 250명 이상이거나 연 매출 1천만 달러 이상인 조직이 업무에 쓰려면 유료 구독이 필요해요. 개인 학습용이면 보통 상관없지만 회사 컴퓨터라면 확인하세요.
+
+무료로 쓰고 싶으면 Docker Desktop 대신 Ubuntu 안에 Podman을 설치해도 돼요(Linux에서는 Podman 머신 설정이 따로 필요 없어요). 설치 명령은 에이전트에게 `Podman으로 로컬 DB를 띄울 수 있게 준비해줘`라고 부탁하세요. 컴퓨터 비밀번호(sudo)가 필요한 명령은 에이전트가 알려 주면 Ubuntu 창에서 직접 실행하세요.
 
 ## 3. 앞으로 지킬 것
 

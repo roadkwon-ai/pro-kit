@@ -221,7 +221,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 | 11 | 전체 검증, 디자인 리뷰 | 타입, 린트, 빌드, 테스트와 모든 페이지의 화면 검사, 점수와 P0\~P3 문제 목록 | [증거와 audit, 사용자 확인](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/audit-and-confirm.md) |
 | 12 | 배포와 릴리스 | develop과 운영을 나눠 올려요. 릴리스 노트와 운영 DB 마이그레이션은 내 동의를 받고, 되돌리는 명령도 보고돼요 | [처음 배포하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/first-deploy.md), [릴리스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/release.md), [Vercel](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/vercel.md) |
 
-장마다 라운드(작업 묶음 하나)가 열리고 닫혀요. 라운드는 스펙이나 브리프, 구현, 테스트, 리뷰, 내 확인 순서로 흐르고, 에이전트가 단계마다 증거를 대조표에 적어요. 한 라운드가 실제로 어떻게 흘러가는지는 [라운드 한 번 따라가 보기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/round-example.md)에서 예시로 볼 수 있어요.
+장마다 라운드(작업 묶음 하나)가 열리고 닫혀요. 라운드는 스펙이나 화면 설계, 구현, 테스트, 리뷰, 내 확인 순서로 흐르고, 에이전트가 단계마다 증거를 대조표에 적어요. 한 라운드가 실제로 어떻게 흘러가는지는 [라운드 한 번 따라가 보기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/round-example.md)에서 예시로 볼 수 있어요.
 
 ## 시간과 비용
 
@@ -296,7 +296,7 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 | 프리셋 팩에 맞춘 고침 | 약 <!-- v:preset.nextflix.actual.fix.time -->75분<!-- /v --> | 약 <!-- v:preset.nextflix.actual.fix.tokens -->110만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.actual.fix.cached -->5,500만<!-- /v -->, 약 <!-- v:preset.nextflix.actual.fix.usd -->20<!-- /v -->달러) |
 | 만들기 합계(Claude) | 약 <!-- v:preset.nextflix.made.time -->3시간 40분<!-- /v --> | 약 <!-- v:preset.nextflix.made.tokens -->610만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.made.cached -->3.0억<!-- /v -->, 약 <!-- v:preset.nextflix.made.usd -->110<!-- /v -->달러) |
 | 범위 넓히기(Codex, ChatGPT 구독) | 약 <!-- v:preset.nextflix.actual.expand.time -->4시간<!-- /v --> | Codex 구독 사용량이라 세지 않음 |
-| 원래 서비스 조사와 분석(넷플릭스를 둘러보고 화면 브리프 쓰기, 로그인 확인을 기다린 시간 포함) | 약 <!-- v:preset.nextflix.prep.research.time -->1시간 22분<!-- /v --> | 약 <!-- v:preset.nextflix.prep.research.tokens -->220만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.prep.research.cached -->6,600만<!-- /v -->, 약 <!-- v:preset.nextflix.prep.research.usd -->39<!-- /v -->달러) |
+| 원래 서비스 조사와 분석(넷플릭스를 둘러보고 화면 설계 메모 쓰기, 로그인 확인을 기다린 시간 포함) | 약 <!-- v:preset.nextflix.prep.research.time -->1시간 22분<!-- /v --> | 약 <!-- v:preset.nextflix.prep.research.tokens -->220만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.prep.research.cached -->6,600만<!-- /v -->, 약 <!-- v:preset.nextflix.prep.research.usd -->39<!-- /v -->달러) |
 | 기획(튜토리얼 설계와 실행 계획) | 약 <!-- v:preset.nextflix.prep.plan.time -->49분<!-- /v --> | 약 <!-- v:preset.nextflix.prep.plan.tokens -->53만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.prep.plan.cached -->1,400만<!-- /v -->, 약 <!-- v:preset.nextflix.prep.plan.usd -->10<!-- /v -->달러) |
 | 프리셋 팩 첫 판(팩 도구, 예시 데이터, 배치도, 그림 104장) | 약 <!-- v:preset.nextflix.prep.pack.time -->1시간 26분<!-- /v --> | 약 <!-- v:preset.nextflix.prep.pack.tokens -->400만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.prep.pack.cached -->7,200만<!-- /v -->, 약 <!-- v:preset.nextflix.prep.pack.usd -->73<!-- /v -->달러) |
 | 프리셋 팩 다듬기(라운드에서 찾은 점을 팩에 되먹임, 에이전트 시간 합) | 약 <!-- v:preset.nextflix.packFix.time -->1시간 7분<!-- /v --> | 약 <!-- v:preset.nextflix.packFix.tokens -->230만<!-- /v -->(캐시 포함 약 <!-- v:preset.nextflix.packFix.cached -->4,900만<!-- /v -->, 약 <!-- v:preset.nextflix.packFix.usd -->42<!-- /v -->달러) |

@@ -44,7 +44,13 @@
 
 ## 에이전트에게 확인을 맡기기
 
-내 컴퓨터에 무엇이 있는지 몰라도 돼요. 에이전트에게 맡기면 설치된 것과 빠진 것을 알려 줘요. 튜토리얼 [시작하기의 "에이전트에게 부탁하기"](../../tutorials/start/README.md#pro-kit-받기)에 복사해 쓸 프롬프트가 있어요. 확인하고, 없는 것은 무엇을 설치할지 먼저 보여 준 뒤 내가 허락하면 설치해요. 비밀번호를 묻는 명령은 내가 터미널에서 직접 실행하게 명령만 알려 줘요.
+> [!TIP]
+> 내 컴퓨터에 무엇이 있는지 몰라도 돼요. 에이전트에게 맡기면 설치된 것과 빠진 것을 알려 줘요.
+
+튜토리얼 [시작하기의 "에이전트에게 부탁하기"](../../tutorials/start/README.md#pro-kit-받기)에 복사해 쓸 프롬프트가 있어요. **확인하고, 없는 것은 무엇을 설치할지 먼저 보여 준 뒤 내가 허락하면 설치해요.**
+
+> [!WARNING]
+> 비밀번호를 묻는 명령은 내가 터미널에서 직접 실행하게 명령만 알려 줘요.
 
 에이전트의 답은 이런 모양이에요(예시).
 
@@ -60,14 +66,14 @@ Supabase CLI는 없어요. supabase 템플릿을 쓸 때만 필요해요.
 
 프로젝트를 만들어 달라고 하면 에이전트가 준비물부터 확인해요([AGENTS.md](../../AGENTS.md) "템플릿으로 새 프로젝트 만들기" 3번).
 
-- 빠진 것이 있으면 설치 명령을 알려 주고 멈춰요. 전역 설치는 사용자가 요청할 때만 해요.
+- **빠진 것이 있으면 설치 명령을 알려 주고 멈춰요.** 전역 설치는 사용자가 요청할 때만 해요.
 - 화면만 만들 때는 컨테이너 엔진을 확인하지 않아요. 요청에 "없는 준비물은 설치해줘"가 있으면 빠진 Node <!-- v:node.min -->22.20<!-- /v --> 이상, pnpm, git을 에이전트가 설치해요. 비밀번호가 필요한 명령은 실행하지 않고 사용자에게 알려 줘요.
 - Node는 <!-- v:node.min -->22.20<!-- /v --> 이상이면 돼요. 이보다 낮으면 설치기가 멈춰요(새 프로젝트를 만들고 스킬을 받는 도구가 요구하는 하한이에요). 새로 설치한다면 지금 LTS인 <!-- v:node.recommended -->24<!-- /v -->를 받으세요. <!-- v:node.recommended -->24<!-- /v --> 미만이면 설치기가 권장 경고만 내요. Node 20은 <!-- v:node.eol -->2026-04-30<!-- /v -->에 지원이 끝났어요. Vercel에 배포할 때는 프로젝트의 Node.js를 <!-- v:vercel.node -->24.x<!-- /v -->로 둬요.
 
 ### 컨테이너 엔진
 
 - neon 템플릿은 compose로 로컬 Postgres를 띄워요. `podman compose`는 외부 provider(docker-compose나 podman-compose)를 부르므로 둘 중 하나가 있어야 해요.
-- macOS에서 Podman을 쓰면 머신을 먼저 켜야 해요(`podman machine init`, `podman machine start`). 에이전트는 머신이 멈춰 있으면 켜고 보고하고, 머신이 없으면 `podman machine init`을 안내하고 멈춰요. Linux와 WSL의 Podman에는 머신이 없어요.
+- **macOS에서 Podman을 쓰면 머신을 먼저 켜야 해요**(`podman machine init`, `podman machine start`). 에이전트는 머신이 멈춰 있으면 켜고 보고하고, 머신이 없으면 `podman machine init`을 안내하고 멈춰요. Linux와 WSL의 Podman에는 머신이 없어요.
 - supabase 템플릿에서 Podman을 쓰면 Supabase CLI를 쓰는 셸마다 `DOCKER_HOST`를 설정해요. 값은 macOS와 Linux·WSL이 달라요(템플릿 README [준비물](../../templates/prokit-next-supabase/README.md#준비물)).
 
 ### 브라우저 확인 도구
@@ -77,11 +83,14 @@ Supabase CLI는 없어요. supabase 템플릿을 쓸 때만 필요해요.
 
 ### 전역에만 설치되는 도구
 
-agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, ego lite는 프로젝트가 아니라 컴퓨터 전체에 설치돼요. 두뇌 gstack, OMX CLI(`oh-my-codex`), OpenSpec CLI도 전역이지만 그 두뇌를 고를 때만 설치해요. <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지는 기본 실행에서 없는 것과 설치 명령만 알려 주고, `--with-global`을 주면 ego lite를 뺀 나머지 중 없는 것만 설치해요([설치기와 옵션](../templates/installer.md)). 모두 없어도 dev-cycle은 진행돼요.
+agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, ego lite는 **프로젝트가 아니라 컴퓨터 전체에 설치돼요.** 두뇌 gstack, OMX CLI(`oh-my-codex`), OpenSpec CLI도 전역이지만 그 두뇌를 고를 때만 설치해요. <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지는 기본 실행에서 없는 것과 설치 명령만 알려 주고, `--with-global`을 주면 ego lite를 뺀 나머지 중 없는 것만 설치해요([설치기와 옵션](../templates/installer.md)). 모두 없어도 dev-cycle은 진행돼요.
 
 ### Windows
 
-Windows에서는 WSL2의 Ubuntu 안에서 설치하고 개발해요. 설치기와 스킬이 bash와 Linux 명령을 쓰기 때문이에요. PowerShell이나 Git Bash에서 실행하면 설치기가 WSL2를 안내하고 멈춰요. 설치 순서는 [Windows 준비](../../tutorials/reference/windows.md)와 템플릿 README의 Windows 절([neon](../../templates/prokit-next-neon/README.md#windows) · [supabase](../../templates/prokit-next-supabase/README.md#windows))에 있어요.
+> [!IMPORTANT]
+> Windows에서는 WSL2의 Ubuntu 안에서 설치하고 개발해요.
+
+설치기와 스킬이 bash와 Linux 명령을 쓰기 때문이에요. PowerShell이나 Git Bash에서 실행하면 설치기가 WSL2를 안내하고 멈춰요. 설치 순서는 [Windows 준비](../../tutorials/reference/windows.md)와 템플릿 README의 Windows 절([neon](../../templates/prokit-next-neon/README.md#windows) · [supabase](../../templates/prokit-next-supabase/README.md#windows))에 있어요.
 
 ## 관련 문서
 

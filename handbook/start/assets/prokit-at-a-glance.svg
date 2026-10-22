@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 816 506" width="816" height="506" role="img" style="font-family:Pretendard,Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <title>프로킷 한눈에</title>
+  <desc>내가 서비스 설명이나 진행 중인 프로젝트를 주면, 프로킷이 규칙 문서, 전용 스킬, 역할 에이전트, dev-cycle과 audit, 자동 검사를 프로젝트에 깔아 줘요. 그러면 에이전트가 정해진 순서와 검사로 일해서 실행 증거가 남은 변경, 독립 리뷰, 내가 확인한 결과, 커밋과 배포 준비를 받아요.</desc>
+  <rect data-fill-role="canvas" fill="#F2F2F2" x="0" y="0" width="816" height="506"/>
+  <defs><marker id="ah" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M2 2 L10 6 L2 10" fill="none" stroke="#6B6B6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+  <rect data-fill-role="focus" fill="#070707" x="28" y="28" width="3" height="38" rx="1.5"/>
+  <text data-fill-role="ink" fill="#070707" x="41" y="47" font-size="22" font-weight="700" dominant-baseline="central">프로킷 한눈에</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="41" y="81" font-size="14" dominant-baseline="central">말로 요청하면 에이전트가 정해진 순서와 검사로 일해요</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="28" y="114" width="232" height="364" rx="14"/>
+  <text data-fill-role="ink" fill="#070707" x="44" y="140" font-size="16" font-weight="700" dominant-baseline="central">내가 주는 것</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="40" y="224" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="52" y="241" font-size="15" font-weight="700" dominant-baseline="central">서비스 설명(PRD)</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="52" y="261" font-size="13" dominant-baseline="central">새 프로젝트는 PRD부터 받아요</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="40" y="286" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="52" y="303" font-size="15" font-weight="700" dominant-baseline="central">진행 중인 프로젝트</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="52" y="323" font-size="13" dominant-baseline="central">기존 프로젝트도 들일 수 있어요</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="40" y="348" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="52" y="365" font-size="15" font-weight="700" dominant-baseline="central">평소 말로 하는 요청</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="52" y="385" font-size="13" dominant-baseline="central">확인 질문에 답해요</text>
+  <path data-stroke-role="external-line" stroke="#6B6B6B" stroke-width="2" fill="none" stroke-linecap="round" marker-end="url(#ah)" d="M266 296 H286"/>
+  <rect data-fill-role="surface-tint" data-stroke-role="rule" fill="#FFF4BE" stroke="#E6E6E6" stroke-width="1" x="292" y="114" width="232" height="364" rx="14"/>
+  <text data-fill-role="ink" fill="#070707" x="308" y="140" font-size="16" font-weight="700" dominant-baseline="central">프로킷이 깔아 주는 것</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="304" y="162" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="316" y="179" font-size="15" font-weight="700" dominant-baseline="central">규칙 문서</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="316" y="199" font-size="13" dominant-baseline="central">AGENTS.md · GLOSSARY.md</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="304" y="224" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="316" y="241" font-size="15" font-weight="700" dominant-baseline="central">전용 스킬</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="316" y="261" font-size="13" dominant-baseline="central">prokit-* 스킬과 공식 스킬</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="304" y="286" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="316" y="303" font-size="15" font-weight="700" dominant-baseline="central">역할 에이전트</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="316" y="323" font-size="13" dominant-baseline="central">수행 · 리뷰 · 분석</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="304" y="348" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="316" y="365" font-size="15" font-weight="700" dominant-baseline="central">dev-cycle과 audit</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="316" y="385" font-size="13" dominant-baseline="central">케이스 · 대조표 · 빈칸 검사</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="304" y="410" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="316" y="427" font-size="15" font-weight="700" dominant-baseline="central">자동 검사</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="316" y="447" font-size="13" dominant-baseline="central">타입 · 테스트 · 비밀값 · 배포 전</text>
+  <path data-stroke-role="external-line" stroke="#6B6B6B" stroke-width="2" fill="none" stroke-linecap="round" marker-end="url(#ah)" d="M530 296 H550"/>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="556" y="114" width="232" height="364" rx="14"/>
+  <text data-fill-role="ink" fill="#070707" x="572" y="140" font-size="16" font-weight="700" dominant-baseline="central">내가 받는 것</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="568" y="193" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="580" y="210" font-size="15" font-weight="700" dominant-baseline="central">실행 증거가 남은 변경</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="580" y="230" font-size="13" dominant-baseline="central">명령과 결과가 대조표에 남아요</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="568" y="255" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="580" y="272" font-size="15" font-weight="700" dominant-baseline="central">독립 리뷰</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="580" y="292" font-size="13" dominant-baseline="central">만든 쪽과 다른 에이전트가 봐요</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="568" y="317" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="580" y="334" font-size="15" font-weight="700" dominant-baseline="central">내가 확인한 결과</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="580" y="354" font-size="13" dominant-baseline="central">마지막 확인은 내 몫이에요</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="568" y="379" width="208" height="52" rx="10"/>
+  <text data-fill-role="ink" fill="#070707" x="580" y="396" font-size="15" font-weight="700" dominant-baseline="central">커밋과 배포 준비</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="580" y="416" font-size="13" dominant-baseline="central">배포 전 검사를 통과해야 해요</text>
+</svg>

@@ -4,7 +4,7 @@
 
 ## 폴더 한눈에 보기
 
-오른쪽 괄호는 파일을 만든 쪽이에요(Better-T-Stack 또는 템플릿).
+오른쪽 괄호는 파일을 만든 쪽이에요(Better-T-Stack 또는 템플릿). **직접 열어 볼 파일은 `GLOSSARY.md`와 `docs/domain/project.md` 정도예요.**
 
 <!-- b:project-structure-tree -->
 ```text
@@ -29,7 +29,7 @@ my-app/
 ├── skills.manifest.json, skills-lock.json, .dev-cycle.json, .vercelignore
 ├── .impeccable/                impeccable 기록(critique/*.md 등. 화면을 리뷰하면 생기고 커밋해요)
 ├── licenses/                   PROKIT-SCOPE.md, PROKIT-LICENSE.txt: 템플릿이 전한 파일의 MIT 범위 안내   (템플릿)
-├── docs/                       dev-workflow.md, adr/, domain/project.md, plans/(진행 계획), briefs/(화면 설계 브리프),
+├── docs/                       dev-workflow.md, adr/, domain/project.md, plans/(진행 계획), briefs/(화면 설계),
 │                               prokit/(기존 프로젝트를 들였을 때: intake.md 도입 기록, analysis.md 정밀 분석)
 └── tasks/                      todo.md(남은 할 일·진행 중 대조표), plan.md(진행 계획의 Task 표, 있으면),
                                 archive/(날짜별 완료 기록·README 색인), evidence/(스크린샷·화면 audit 보고서. git이 무시해요)
@@ -41,6 +41,8 @@ my-app/
 어떤 파일을 직접 고쳐도 되는지는 [고쳐도 되는 파일](what-to-edit.md)에, `.dev-cycle.json`의 키는 [`.dev-cycle.json` 설정 읽기](dev-cycle-config.md)에 있어요. 전문 용어는 [처음 보는 용어](../../tutorials/reference/glossary.md#도구)를 보세요.
 
 ### 에이전트가 읽고 쓰는 파일
+
+어떤 파일이 무슨 일을 하는지 궁금할 때 찾아보는 표예요.
 
 | 파일 | 하는 일 | 자세히 |
 |---|---|---|
@@ -61,14 +63,39 @@ my-app/
 | `.vercelignore` | 배포에서 비밀값 파일을 빼요 | [비밀값 지키기](../deploy/secrets.md) |
 | `release/` | 릴리스 노트 | [버전과 릴리스](../deploy/release.md) |
 
+### 스킬과 에이전트 폴더 안
+
+`prokit-*` 스킬과 에이전트는 템플릿이 설치해요. 스킬은 `.agents/skills/`에, 에이전트의 정본은 `.claude/agents/`에 있어요.
+
+```text
+.agents/skills/
+├── prokit-api/               서버 경계(oRPC, Better Auth, 권한)
+├── prokit-db/                DB 스키마와 마이그레이션
+├── prokit-deploy/            Vercel 배포
+├── prokit-dev-cycle/         라운드 절차(references/에 두뇌·정밀 분석·진행 계획 등)
+├── prokit-pack-use/          완성 프리셋 팩 복원과 활용
+├── prokit-skills-manage/     스킬 구성 바꾸기
+├── prokit-skills-update/     외부 스킬의 새 버전 확인과 갱신
+├── prokit-ui/                화면 모양과 사용자 경험
+├── prokit-verify/            검사 선택과 증거 기록
+└── prokit-web/               apps/web의 라우팅·컴포넌트 경계·캐시
+.claude/agents/
+├── prokit-analyzer.md        정밀 분석(읽기 전용)
+├── prokit-implementer.md     구현 수행자
+├── prokit-reviewer.md        최종 리뷰어(읽기 전용)
+└── specialist-reviewer.md    전문 리뷰어(읽기 전용)
+```
+
 ### 화면을 만들면 생기는 파일
+
+화면을 만든 프로젝트에 생겨요.
 
 | 파일 | 하는 일 |
 |---|---|
 | `PRODUCT.md` | 제품 맥락(impeccable `init` 인터뷰 결과) |
 | `DESIGN.md` | 디자인 값(토큰)과 이유 |
 | `docs/preset-design.json` | 프리셋에서 받은 디자인 설정이나 요청한 변경의 선택 기록. 서체 파일·굵기·라이선스, 모드별 토큰과 초기 언어·모드를 `DESIGN.md`와 맞춰요 |
-| `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 사이트맵과 화면 설계(브리프) |
+| `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 사이트맵과 화면 설계 |
 | `apps/web/src/fonts/`, `apps/web/public/images/` | 자체 호스팅 서체와 이미지 |
 | `html/` | `pnpm export:html` 결과(git이 무시해요) |
 
@@ -78,7 +105,8 @@ Codex 네이티브 Ponytail 플러그인은 `--with-global`에서만 사용자 �
 
 완성팩을 적용하는 작업은 `.agents/skills/prokit-pack-use/`가 맡아요. `preset-manifest.json`이 있으면 지원 환경·수정 범위·비교 자료를 읽고, 소스 무결성 목록과 실제 파일을 대조해요. 공식 프리셋의 원본 조사·COPY 역할은 일반 사용자 템플릿에 포함하지 않아요([담당 구분](../design/preset-publication.md#담당-구분)).
 
-하네스만 설치한 기존 Next.js 프로젝트(`--adopt`)에는 이 구조 가운데 하네스 파일만 들어가요. `packages/` 계층, `scripts/`의 배포·내보내기·릴리스 도구, `release/`는 없어요([설치기와 옵션](../templates/installer.md#기존-프로젝트에-설치하기)).
+> [!IMPORTANT]
+> 하네스만 설치한 기존 Next.js 프로젝트(`--adopt`)에는 이 구조 가운데 하네스 파일만 들어가요. `packages/` 계층, `scripts/`의 배포·내보내기·릴리스 도구, `release/`는 없어요([설치기와 옵션](../templates/installer.md#기존-프로젝트에-설치하기)).
 
 ## 관련 문서
 

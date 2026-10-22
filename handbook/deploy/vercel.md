@@ -11,6 +11,9 @@
 | develop | Preview + 고정 주소(alias) | 병합 전 확인용 원격 DB (neon `develop` 브랜치, supabase 스테이징 프로젝트) | `pnpm vercel:deploy develop` |
 | production | Production | 운영 DB | `pnpm release` 뒤 `pnpm vercel:deploy production` (기본 브랜치의 릴리스한 커밋만) |
 
+> [!IMPORTANT]
+> production은 기본 브랜치에서 `pnpm release`로 릴리스한 커밋만 배포해요. 릴리스하지 않은 커밋은 스크립트가 막아요.
+
 새 프로젝트 세션에서 "develop에 배포해줘", "운영에 배포해줘"처럼 요청하면 `prokit-deploy` 스킬이 준비 확인부터 배포 뒤 확인까지 진행해요. 배포는 두 경우에만 해요. 사용자가 요청할 때, 그리고 기능 라운드를 마친 뒤 사용자가 "릴리스하고 production 배포"를 고를 때예요. [기존 프로젝트에 들인](../start/adopt.md) 프로젝트(하네스만 설치한 `--adopt`는 `vercel:deploy` 스크립트 자체가 없어요)와 배포 방법을 아직 프로킷에 맞추지 않은 운영 중 프로젝트는 라운드를 마칠 때 이 선택을 묻지 않고 커밋까지만 해요.
 
 ```mermaid
@@ -27,10 +30,18 @@ flowchart LR
 ## 배포 순서
 
 1. **검사**: `pnpm vercel:deploy <대상> --check`로 준비 상태와 지난 배포 이후 새 마이그레이션을 봐요. 커밋하지 않은 변경, 빠진 환경변수, production의 기본 브랜치와 릴리스, Vercel Git 자동 배포를 검사해서 하나라도 걸리면 배포하지 않아요.
-2. **DB 먼저**: 새 마이그레이션이 있으면(첫 배포처럼 지난 배포 기록이 없으면 전체) 배포 전에 대상 DB에 적용해요. develop DB에는 바로 적용하고, 운영 DB는 적용할 목록을 보여 주고 동의를 받은 뒤 적용해요. 새 코드가 새 컬럼을 쓰므로 순서가 바뀌면 배포 직후 오류가 나요. 컬럼이나 테이블을 지우는 변경만은 새 코드를 먼저 배포하고 그다음 적용해요.
+2. **DB 먼저**: 새 마이그레이션이 있으면(첫 배포처럼 지난 배포 기록이 없으면 전체) 배포 전에 대상 DB에 적용해요. develop DB에는 바로 적용하고, 운영 DB는 적용할 목록을 보여 주고 동의를 받은 뒤 적용해요.
 3. **배포**: `pnpm vercel:deploy <대상>`.
 4. **확인**: 고정 주소에서 `/api/auth/get-session`이 200인지 봐요. 운영 데이터를 만드는 확인(가입, 글쓰기)은 하지 않아요.
 5. **보고**: 배포 URL, 릴리스(production만), DB 적용 결과, 확인 결과, 되돌리기 명령을 알려 줘요.
+
+> [!WARNING]
+> DB는 배포보다 먼저 적용해요. 새 코드가 새 컬럼을 쓰므로 순서가 바뀌면 배포 직후 오류가 나요. 컬럼이나 테이블을 지우는 변경만은 새 코드를 먼저 배포하고 그다음 적용해요.
+
+**이렇게 되면 성공**
+
+- 고정 주소에서 `/api/auth/get-session`이 200이에요.
+- 보고에 배포 URL, DB 적용 결과, 되돌리기 명령이 있어요.
 
 ## 되돌리기
 
@@ -40,9 +51,12 @@ flowchart LR
 | develop | `vercel alias set <이전 배포 URL> <고정 주소>` |
 
 - 되돌린 뒤에는 새 production 배포가 운영 주소를 자동으로 가져가지 않으므로 고친 배포를 `vercel promote <배포 URL>`로 올려요.
-- production을 되돌려도 릴리스(태그, 노트, GitHub Release)는 지우지 않아요. 고친 코드는 새 patch 릴리스로 배포해요.
-- DB 마이그레이션은 되돌리지 않아요. 앱만 되돌려도 동작하도록 데이터를 잃을 수 있는 변경은 두 번(expand → contract)에 나눠요.
+- production을 되돌린 뒤 고친 코드는 새 patch 릴리스로 배포해요.
+- 앱만 되돌려도 동작하도록 데이터를 잃을 수 있는 변경은 두 번(expand → contract)에 나눠요.
 - 되돌리기도 배포라서 사용자가 요청할 때만 해요.
+
+> [!WARNING]
+> production을 되돌려도 릴리스(태그, 노트, GitHub Release)는 지우지 않아요. DB 마이그레이션도 되돌리지 않아요.
 
 ## 자세히
 

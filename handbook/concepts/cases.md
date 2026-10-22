@@ -7,14 +7,15 @@
 | 케이스 | 언제 | 판정 경로 | 대조표의 대표 행 |
 |---|---|---|---|
 | A | 문서나 설정처럼 규칙에 걸리지 않는 경미한 변경 | 아래 경로 밖 | 타입·린트 검사 |
-| B | 화면, 컴포넌트, 스타일 | `apps/web/src/app`, `apps/web/src/components`, `packages/ui` | impeccable 브리프, 스크린샷과 오류 예산 0, critique·audit, 코드 리뷰(+간결성 검토) |
+| B | 화면, 컴포넌트, 스타일 | `apps/web/src/app`, `apps/web/src/components`, `packages/ui` | impeccable 화면 설계, 스크린샷과 오류 예산 0, critique·audit, 코드 리뷰(+간결성 검토) |
 | C | 버그 수정 | 경로와 상관없이 선언 | 재현 테스트 먼저 작성, 수정 뒤 통과 |
 | D | 서버와 API | `packages/api`, `apps/web/src/app/api` | zod 계약, 2계정 격리 테스트, 코드 리뷰 |
 | E | DB 스키마와 마이그레이션 | `packages/db` | 생성 SQL 검토, 로컬 적용, 병합 전 원격 적용, DB 리뷰 |
 | F | 화면·API·DB 중 둘 이상에 걸친 새 기능 | 두 계층 이상, 또는 새 기능으로 선언 | 스펙(테스트 시나리오 포함)과 계획, 계획 리뷰, E·D·B 행 전체, 전체를 실제로 실행해 확인, 공통화·리팩토링, 최종 리뷰, 시나리오 QA와 발견 수정 |
 | H | 스킬, 에이전트, dev-cycle 자체와 빌드·배포·작업공간 설정 | `.agents/skills/`, `.agents/agents/`, `.claude/agents/`, `skills.manifest.json`, `scripts/dev-cycle.mjs`, `docs/dev-workflow.md`, `next.config.*`, 루트 `package.json` 등 | `agents:check`, `skills:check`, 빌드·검사, 스킬 eval |
 
-모든 대조표 끝에는 공통 행 두 개가 붙어요. 문서 영향 확인(`GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md`, 미룬 지적은 백로그로)과 사용자 확인(`[confirm]`)이에요.
+> [!IMPORTANT]
+> 모든 대조표 끝에는 공통 행 두 개가 붙어요. 문서 영향 확인(`GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md`, 미룬 지적은 백로그로)과 사용자 확인(`[confirm]`)이에요.
 
 ## 이런 요청은 이 케이스
 
@@ -72,8 +73,11 @@ flowchart TD
 
 ### 케이스별 행
 
+<details>
+<summary>케이스별 행 전체 보기</summary>
+
 - **A. 경미**: 타입·린트 검사.
-- **B. UI**: impeccable context와 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 impeccable init, `DESIGN.md`가 없고 Better-T-Stack 기본 화면뿐이면 스타일 1\~3위와 직접 정하기 중 사용자 선택) → impeccable shape 브리프 확정 → `[design]` 재사용·설정 설계 점검 → 구현 → 타입·린트·빌드 → 런타임 확인과 desktop·mobile 스크린샷(오류 예산) → impeccable critique → impeccable audit과 web-design-guidelines 검사 → 수정과 polish → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
+- **B. UI**: impeccable context와 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 impeccable init, `DESIGN.md`가 없고 Better-T-Stack 기본 화면뿐이면 스타일 1\~3위와 직접 정하기 중 사용자 선택) → impeccable shape로 화면 설계 확정 → `[design]` 재사용·설정 설계 점검 → 구현 → 타입·린트·빌드 → 런타임 확인과 desktop·mobile 스크린샷(오류 예산) → impeccable critique → impeccable audit과 web-design-guidelines 검사 → 수정과 polish → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
   - 기존 프로젝트(`early`·`operating`·`migration`)는 첫 화면 작업에서 스타일을 고르기 전에 디자인 방향을 먼저 물어요(`기존 디자인 유지 (추천)` 또는 `리디자인`).
   - critique 행의 증거에는 impeccable이 남긴 `.impeccable/critique/<시각>__<대상>.md` 경로와 그 파일 머리의 점수를 적어요. audit 행(web-design-guidelines 검사 포함)은 보고서를 `tasks/evidence/ui-audit-<시각>.md`로 저장하고 그 경로와 총점(N/20)을 적어요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요([증거와 audit, 사용자 확인](audit-and-confirm.md)).
 - **C. 버그**: 재현 테스트 작성과 실패 확인 → 수정 → 재현 테스트 통과 → 판정된 케이스의 검사·리뷰 행. 화면 문구·모양 버그는 테스트 파일 대신 고치기 전과 뒤의 화면 스크린샷으로 재현과 통과를 보여요.
@@ -82,11 +86,14 @@ flowchart TD
 - **F. 새 기능**: 스펙(만들지 않는 것, 인수 조건, 테스트 시나리오) → 구현 계획 → `[design]` 재사용·설정 설계 점검 → 계획 리뷰 → 구현 방식 → E·D·B 행 → 통합 런타임 확인 → 공통화·리팩토링·최적화 점검 → 전체 diff 최종 리뷰 → 사용자 흐름 QA → QA 발견 수정과 재QA.
 - **H. 하네스**: `[design]` 재사용·설정 설계 점검 → `pnpm agents:check` → `pnpm skills:check` → `pnpm dev-cycle case`·`status` 실행 확인 → 빌드·배포 설정이나 작업공간 설정을 바꿨으면 `pnpm build`와 타입·린트 검사 → 스크립트·CI·배포·작업공간 설정을 바꿨으면 `prokit-reviewer(code)` → 스킬을 바꿨으면 skill-creator eval 재실행. 스킬, 에이전트, dev-cycle 파일과 함께 빌드·배포 설정(`next.config.*`, `vercel.json`, `turbo.json`, `.github/workflows/`)과 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`, `packages/config/`)을 바꿔도 H로 판정돼요. [기존 프로젝트에 하네스만 설치한](../start/adopt.md) `adopt`는 앱의 루트 `package.json`, `biome.json`, `tsconfig.json`이 그 프로젝트의 것이라 H가 아니라 A로 봐요. 기능 의존성이 들어가는 `apps/web`·`packages/*`의 `package.json`, `pnpm-workspace.yaml`의 `catalog:`, `pnpm-lock.yaml`은 해당하지 않아요.
 
+</details>
+
 행의 전체 문구(괄호 안의 스킬과 증거 형식)는 템플릿의 [`docs/dev-workflow.md`](../../templates/prokit-next-neon/files/docs/dev-workflow.md)에서 볼 수 있어요. 프로젝트에 맞게 행을 고쳐도 되고, 고치는 일 자체가 케이스 H예요.
 
 ### 첫 라운드가 무거워지는 경우
 
-프로젝트를 만든 뒤 설치 결과와 첫 마이그레이션을 기본 브랜치에 커밋하지 않으면 그 파일이 첫 라운드의 diff에 섞여 실제 작업보다 무거운 케이스로 판정돼요. 라운드는 기본 브랜치와 갈라진 지점(merge-base)부터 바뀐 것을 보므로 기능 브랜치에 커밋해도 해결되지 않아요([빠른 시작: 서비스 만들기](../start/quickstart-service.md)).
+> [!WARNING]
+> 프로젝트를 만든 뒤 설치 결과와 첫 마이그레이션을 기본 브랜치에 커밋하지 않으면 그 파일이 첫 라운드의 diff에 섞여 실제 작업보다 무거운 케이스로 판정돼요. 라운드는 기본 브랜치와 갈라진 지점(merge-base)부터 바뀐 것을 보므로 기능 브랜치에 커밋해도 해결되지 않아요([빠른 시작: 서비스 만들기](../start/quickstart-service.md)).
 
 ## 관련 문서
 

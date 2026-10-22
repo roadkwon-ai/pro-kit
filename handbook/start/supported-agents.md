@@ -4,7 +4,7 @@
 
 ## 어떤 에이전트를 고를까요
 
-에이전트(대화로 부탁하면 코드를 쓰고 명령을 실행해 주는 AI, [용어](../../tutorials/reference/glossary.md#도구))는 하나만 있으면 돼요. 프로킷은 네 도구에 같은 규칙과 스킬을 설치하므로, 이미 쓰는 요금제에 맞춰 고르면 돼요.
+에이전트(대화로 부탁하면 코드를 쓰고 명령을 실행해 주는 AI, [용어](../../tutorials/reference/glossary.md#도구))는 **하나만 있으면 돼요.** 프로킷은 네 도구에 같은 규칙과 스킬을 설치하므로, 이미 쓰는 요금제에 맞춰 고르면 돼요.
 
 | 상황 | 권하는 선택 |
 |---|---|
@@ -26,13 +26,17 @@
 | 여는 명령 | <!-- v:agent.claude.openCode -->`claude`<!-- /v --> | <!-- v:agent.codex.openCode -->`codex`<!-- /v --> | <!-- v:agent.agy.openCode -->`agy -i "<요청>"`<!-- /v --> | <!-- v:agent.grok.openCode -->`grok --trust "<요청>"`<!-- /v --> |
 | 묻지 않고 진행하게 열 때 | <!-- v:agent.claude.yoloCode -->`claude --dangerously-skip-permissions`<!-- /v --> | <!-- v:agent.codex.yoloCode -->`codex --yolo`<!-- /v --> | <!-- v:agent.agy.yoloCode -->`agy --dangerously-skip-permissions`<!-- /v --> | <!-- v:agent.grok.yoloCode -->`grok --permission-mode bypassPermissions`<!-- /v --> |
 
-서브에이전트는 구현이나 리뷰처럼 한 가지 일을 맡아 따로 일하는 보조 에이전트예요. 생성물은 `pnpm agents:sync`가 `.claude/agents`에서 만들어요. 그림을 그릴 길이 없으면 배치도로 구성을 골라요([UI/UX 흐름](../design/ui-flow.md#이미지-그리기)). 묻지 않고 진행하게 여는 옵션은 위험도 함께 알고 써요([묻지 않고 진행하게 열기](../../tutorials/reference/claude-code-and-codex.md#묻지-않고-진행하게-열기)).
+서브에이전트는 구현이나 리뷰처럼 한 가지 일을 맡아 따로 일하는 보조 에이전트예요. 생성물은 `pnpm agents:sync`가 `.claude/agents`에서 만들어요. 그림을 그릴 길이 없으면 배치도로 구성을 골라요([UI/UX 흐름](../design/ui-flow.md#이미지-그리기)).
+
+> [!WARNING]
+> 묻지 않고 진행하게 여는 옵션은 위험도 함께 알고 써요([묻지 않고 진행하게 열기](../../tutorials/reference/claude-code-and-codex.md#묻지-않고-진행하게-열기)).
 
 ## 자세히
 
 ### 신뢰 질문
 
-새 프로젝트를 처음 열면 도구가 이 폴더를 믿을지 물어요. 동의해야 프로젝트 설정이 켜져요.
+> [!IMPORTANT]
+> 새 프로젝트를 처음 열면 도구가 이 폴더를 믿을지 물어요. 동의해야 프로젝트 설정이 켜져요.
 
 - Claude Code: 프로젝트 플러그인(skill-creator와 고른 두뇌·과설계 방지 스킬의 플러그인)
 - Codex: `.codex/agents`의 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트와 프로젝트 스킬을 써요. ponytail을 고르고 `--with-global`로 Ponytail 네이티브 플러그인을 설치한 경우에는 `/hooks`에서 별도로 신뢰하고 새 세션을 열어야 훅이 자동으로 돌아요. 설치만으로 신뢰를 대신하지 않으며, 플러그인이 없어도 프로젝트의 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬은 보여요. 두뇌는 고른 것에 따라 쓰는 도구가 달라요([두뇌와 선택 스킬](../skills/brains.md))
@@ -46,7 +50,7 @@ Grok Build는 Claude 호환이 기본으로 켜져 있어 사용자 전역의 Cl
 
 ### 확인한 범위
 
-네 도구 모두 같은 규칙과 스킬을 읽지만, 실제 세션으로 어디까지 시험했는지는 도구마다 달라요. 아래는 확인한 판과 범위만 줄였어요. 채점 점수, 고친 점, 시험 방법은 [검증 결과](../reference/verification.md#실제-에이전트-세션-시험-2026-10-22)와 템플릿의 `VERIFICATION.md`에 있어요.
+**네 도구 모두 같은 규칙과 스킬을 읽지만, 실제 세션으로 어디까지 시험했는지는 도구마다 달라요.** 아래는 확인한 판과 범위만 줄였어요. 채점 점수, 고친 점, 시험 방법은 [검증 결과](../reference/verification.md#실제-에이전트-세션-시험-2026-10-22)와 템플릿의 `VERIFICATION.md`에 있어요.
 
 | 도구 | 확인한 판과 날짜 | 어디까지 |
 |---|---|---|

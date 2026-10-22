@@ -10,11 +10,13 @@
 - 값을 GitHub, 메신저, 스크린샷에 올리지 않아요.
 - `.env`를 커밋하거나 배포 폴더에 넣지 않아요.
 
-실수로 올렸다면 그 값을 발급한 서비스에서 바로 새 값으로 바꿔요(키 재발급). 파일에서 지우는 것만으로는 이미 알려진 값이 안전해지지 않아요.
+> [!WARNING]
+> 실수로 올렸다면 그 값을 발급한 서비스에서 바로 새 값으로 바꿔요(키 재발급). 파일에서 지우는 것만으로는 이미 알려진 값이 안전해지지 않아요.
 
 ## 값을 두는 곳
 
-환경변수 값은 환경마다 한 곳에만 둬요. 파일에 두는 값은 로컬 값뿐이에요.
+> [!IMPORTANT]
+> 환경변수 값은 환경마다 한 곳에만 둬요. 파일에 두는 값은 로컬 값뿐이에요.
 
 | 환경 | 앱 환경변수 |
 |---|---|
@@ -22,7 +24,17 @@
 | develop | Vercel Preview 환경변수 |
 | production | Vercel Production 환경변수 |
 
-배포 값을 `.env.development`나 `.env.production`에 두지 않아요. 이 파일은 `.vercelignore`에 걸려 배포에 올라가지 않고, Vercel은 Preview도 `NODE_ENV=production`으로 빌드해서 파일로는 develop과 운영을 나눌 수도 없어요. 쓰이지 않는 비밀값 사본만 남고, 에이전트가 그 파일을 읽으면 값이 대화 기록에 남아요.
+> [!WARNING]
+> 배포 값을 `.env.development`나 `.env.production`에 두지 않아요. 이 파일은 `.vercelignore`에 걸려 배포에 올라가지 않고, Vercel은 Preview도 `NODE_ENV=production`으로 빌드해서 파일로는 develop과 운영을 나눌 수도 없어요. 쓰이지 않는 비밀값 사본만 남고, 에이전트가 그 파일을 읽으면 값이 대화 기록에 남아요.
+
+값마다 어디에 두는지는 이 표로 봐요.
+
+| 값 | 두는 곳 |
+|---|---|
+| 앱 환경변수(`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`) | 로컬은 `apps/web/.env`, 배포는 Vercel 환경변수예요 |
+| 배포 토큰(`GH_TOKEN`, `VERCEL_TOKEN`) | 작업 폴더나 프로젝트의 `.env`예요. 명령마다 `node scripts/load-keys.mjs -- <명령>`으로 그 명령에만 넣어요 |
+| 이미지 키(`OPENAI_API_KEY`) | 프로젝트나 작업 폴더의 `.env`예요 |
+| 커밋하는 파일, 대화창, 대조표의 증거 칸 | 어떤 비밀값도 두지 않아요 |
 
 ## 막는 장치
 

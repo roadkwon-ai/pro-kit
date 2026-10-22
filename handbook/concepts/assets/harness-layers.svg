@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 502" width="800" height="502" role="img" style="font-family:Pretendard,Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <title>하네스를 이루는 것</title>
+  <desc>가운데 AI 에이전트를 규칙 문서, 스킬, 역할 나누기, 대조표와 audit, 자동 검사 다섯 층이 안쪽부터 차례로 감싸고 있어요.</desc>
+  <rect data-fill-role="canvas" fill="#F2F2F2" x="0" y="0" width="800" height="502"/>
+  <defs><marker id="ah" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M2 2 L10 6 L2 10" fill="none" stroke="#6B6B6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+  <rect data-fill-role="focus" fill="#070707" x="28" y="28" width="3" height="38" rx="1.5"/>
+  <text data-fill-role="ink" fill="#070707" x="41" y="47" font-size="22" font-weight="700" dominant-baseline="central">하네스를 이루는 것</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="41" y="81" font-size="14" dominant-baseline="central">에이전트는 가운데서 일하고, 바깥 층이 순서와 검사를 지켜요</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="28" y="108" width="744" height="366" rx="16"/>
+  <text data-fill-role="ink" fill="#070707" x="46" y="128" font-size="15" font-weight="700" dominant-baseline="central">자동 검사</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="196" y="128" font-size="13" dominant-baseline="central">타입 · 린트 · 빌드 · 테스트 · 비밀값 · 배포 전</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#F7F7F7" stroke="#E6E6E6" stroke-width="1" x="42" y="148" width="716" height="312" rx="16"/>
+  <text data-fill-role="ink" fill="#070707" x="60" y="168" font-size="15" font-weight="700" dominant-baseline="central">대조표와 audit</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="210" y="168" font-size="13" dominant-baseline="central">케이스 판정 · 대조표 · 빈칸이 없는지 검사</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="56" y="188" width="688" height="258" rx="16"/>
+  <text data-fill-role="ink" fill="#070707" x="74" y="208" font-size="15" font-weight="700" dominant-baseline="central">역할 나누기</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="224" y="208" font-size="13" dominant-baseline="central">코디네이터 · 수행자 · 리뷰어 · 분석</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#F7F7F7" stroke="#E6E6E6" stroke-width="1" x="70" y="228" width="660" height="204" rx="16"/>
+  <text data-fill-role="ink" fill="#070707" x="88" y="248" font-size="15" font-weight="700" dominant-baseline="central">스킬</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="238" y="248" font-size="13" dominant-baseline="central">prokit-* 스킬과 공식 스킬</text>
+  <rect data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#E6E6E6" stroke-width="1" x="84" y="268" width="632" height="150" rx="16"/>
+  <text data-fill-role="ink" fill="#070707" x="102" y="288" font-size="15" font-weight="700" dominant-baseline="central">규칙 문서</text>
+  <text data-fill-role="muted" fill="#6B6B6B" x="252" y="288" font-size="13" dominant-baseline="central">AGENTS.md · CLAUDE.md · GLOSSARY.md</text>
+  <rect data-fill-role="surface-tint" data-stroke-role="edge-line" fill="#FFF4BE" stroke="#070707" stroke-width="1" x="98" y="308" width="604" height="96" rx="14"/>
+  <text data-fill-role="ink" fill="#070707" x="400" y="344" font-size="20" font-weight="700" text-anchor="middle" dominant-baseline="central">AI 에이전트</text>
+  <text data-fill-role="ink" fill="#070707" x="400" y="372" font-size="14" text-anchor="middle" dominant-baseline="central">Claude Code · Codex 같은 에이전트가 여기서 일해요</text>
+</svg>

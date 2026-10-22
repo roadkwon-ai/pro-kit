@@ -4,7 +4,10 @@
 
 ## 직접 실행할 일은 거의 없어요
 
-새 프로젝트를 만들거나 기존 프로젝트에 들일 때는 에이전트(`prokit-init` 스킬)가 이 설치기를 알아서 실행하고 옵션도 골라요. 이 쪽은 그 명령이 무엇을 하는지 알고 싶거나, 설치기를 직접 실행해야 할 때(팀원이 클론한 뒤, 에러가 났을 때, 옵션을 바꿔 다시 실행할 때) 찾아보는 참고 쪽이에요. 처음이라면 [빠른 시작: 서비스 만들기](../start/quickstart-service.md)부터 따라 하세요. 설치기는 이미 있는 파일을 건드리지 않고 여러 번 실행해도 결과가 같아서, 실행해 보고 틀리면 다시 실행해도 안전해요.
+새 프로젝트를 만들거나 기존 프로젝트에 들일 때는 에이전트(`prokit-init` 스킬)가 이 설치기를 알아서 실행하고 옵션도 골라요. 이 쪽은 그 명령이 무엇을 하는지 알고 싶거나, 설치기를 직접 실행해야 할 때(팀원이 클론한 뒤, 에러가 났을 때, 옵션을 바꿔 다시 실행할 때) 찾아보는 참고 쪽이에요. 처음이라면 [빠른 시작: 서비스 만들기](../start/quickstart-service.md)부터 따라 하세요.
+
+> [!TIP]
+> 설치기는 이미 있는 파일을 건드리지 않고 여러 번 실행해도 결과가 같아서, 실행해 보고 틀리면 다시 실행해도 안전해요.
 
 ## 실행하기
 
@@ -28,9 +31,11 @@ bash <pro-kit>/templates/prokit-next-neon/install.sh my-app       # supabase면 
 
 - `AGENTS.md`, `CLAUDE.md`가 이미 있으면 템플릿 블록을 끝에 한 번만 덧붙여요.
 - 무엇을 고를지는 [두뇌와 선택 스킬](../skills/brains.md)에 있어요. 모르는 이름을 주면 아무것도 쓰지 않고 멈춰요.
-- `--with-global`은 전역 설정과 훅을 바꾸므로 사용자가 전역 도구 설치를 요청할 때만 붙여요. 두뇌 gstack은 bun이 필요하고, 설치하면서 `~/.claude/settings.json`에 전역 훅을 등록해요. Codex Ponytail은 지원하는 CLI에만 설치하고, 이미 비활성화했거나 다른 출처로 설치한 플러그인은 바꾸지 않아요. 설치 성공은 훅 신뢰나 자동 실행을 뜻하지 않아요. `--with-global`은 Supabase CLI를 Homebrew로만 설치해요.
 - `--project-type`, `--legacy`, `--default-branch`는 값을 띄어 써요(`--legacy=경로`처럼 `=`로 이으면 멈춰요). `--adopt`는 `operating`에만, `--legacy`는 `migration`에만 쓸 수 있어요.
 - Windows의 PowerShell이나 Git Bash에서 실행하면 WSL2를 안내하고 멈춰요.
+
+> [!WARNING]
+> `--with-global`은 전역 설정과 훅을 바꾸므로 사용자가 전역 도구 설치를 요청할 때만 붙여요. 두뇌 gstack은 bun이 필요하고, 설치하면서 `~/.claude/settings.json`에 전역 훅을 등록해요. Codex Ponytail은 지원하는 CLI에만 설치하고, 이미 비활성화했거나 다른 출처로 설치한 플러그인은 바꾸지 않아요. 설치 성공은 훅 신뢰나 자동 실행을 뜻하지 않아요. `--with-global`은 Supabase CLI를 Homebrew로만 설치해요.
 
 ## 기존 프로젝트에 설치하기
 
@@ -67,7 +72,21 @@ flowchart TD
 
 위 표의 `.claude/agents`는 에이전트 원본이고, `.codex/agents`와 `.agents/agents`는 설치할 때 `sync-agents`가 이 원본에서 만들어요. 새 프로젝트에서 설치기가 쓰는 파일의 전체 목록은 [설치된 프로젝트의 폴더 구조](../reference/project-structure.md)에 있어요.
 
-`--adopt`는 하네스만 설치해요.
+`--adopt`는 하네스만 설치해요. 설치기 코드(`ADOPT_SKILLS`, `ADOPT_SCRIPTS`, `ADOPT_ONLY`)와 맞춘 파일 모양은 이래요.
+
+```text
+my-next-app/
+├── AGENTS.md, CLAUDE.md          adopt/ 블록
+├── GLOSSARY.md, .dev-cycle.json, skills.manifest.json
+├── .agents/skills/               prokit-dev-cycle, prokit-verify, prokit-web,
+│                                 prokit-ui, prokit-skills-update, prokit-skills-manage
+├── .claude/agents/               에이전트 원본 (.codex/agents, .agents/agents는 sync-agents가 생성)
+├── scripts/                      dev-cycle, delegation, resource-guard,
+│                                 skills-setup, sync-agents, load-keys (.mjs)
+├── docs/                         dev-workflow.md, domain/project.md
+├── tasks/
+└── licenses/
+```
 
 - 하네스 파일(dev-cycle, 두뇌, 리뷰 게이트, 분석 에이전트와 일부 `prokit-*` 스킬)과 `AGENTS.md`·`CLAUDE.md` 블록(템플릿의 `adopt/`)만 복사해요. DB·API·배포 스킬은 설치하지 않아요.
 - 자원 보호 래퍼, Better-T-Stack용 `biome.json`·`turbo.json` 수정, Biome 포맷, `vercel:deploy`·`export:html`·`release` 스크립트, `.gitignore`의 `/html/` 줄은 더하지 않아요.
@@ -78,6 +97,9 @@ flowchart TD
 - 나중에 `--adopt` 없이 다시 실행해도 adopt 상태를 유지해요.
 
 ## 설치한 뒤 할 일
+
+> [!IMPORTANT]
+> 첫 라운드를 열기 전에 설치 결과를 먼저 커밋해요. 이유는 [첫 커밋이 중요한 이유](#첫-커밋이-중요한-이유)에 있어요.
 
 에이전트가 따르는 규칙의 원문은 [AGENTS.md의 "템플릿으로 새 프로젝트 만들기"](../../AGENTS.md#템플릿으로-새-프로젝트-만들기)이고, 명령은 템플릿 README "새 프로젝트 시작"의 "설치한 뒤"([neon](../../templates/prokit-next-neon/README.md#새-프로젝트-시작), [supabase](../../templates/prokit-next-supabase/README.md#새-프로젝트-시작))가 정본이에요.
 
