@@ -12,7 +12,7 @@
 | QA 시나리오 | `<시나리오 번호·이름> → 통과/실패(<관찰>)` | `S3 새로 고침 뒤 테마 유지 → 통과(다크)` |
 | 스크린샷 | `<경로들>` | `tasks/evidence/todo-list/desktop.png, mobile.png` |
 | 리뷰 | `prokit-reviewer(<focus>): <verdict>, max=<등급>, 지적 <n> (반영 <a>, 기각 <b>: 사유)` | `prokit-reviewer(db): approve, max=none, 지적 0` |
-| UI 평가 | `critique <점수>, P0 <n>, P1 <n>` / `audit <점수>/20, 접근성 <점수>/4` | `audit 17/20, 접근성 4/4` |
+| UI 평가 | `critique <점수>/<만점>, P0 <n>, P1 <n>, <기록 파일>` / `audit <점수>/20, 접근성 <점수>/4, <보고서>` | `critique 31/40, P0 0, P1 2, .impeccable/critique/2026-10-22T12-30-00Z__apps-web-src-app-todos.md`, `audit 17/20, 접근성 4/4, tasks/evidence/ui-audit-20261022-1230.md` |
 | 스킬 사용 | `사용: <스킬 또는 내장(단계)> → <산출물>` | `사용: 내장(요구 명확화) → docs/specs/2026-10-01-todo-due.md`, `사용: superpowers:brainstorming → docs/superpowers/specs/2026-10-01-todo-due.md`, `사용: tdd(추가 스킬) → todo.test.ts` |
 | 외부 스킬 | `사용: <스킬>(<적용한 규칙>)` | `사용: vercel-react-best-practices(async-parallel), shadcn` |
 | 대안 사용 | `대안: <스킬·도구> (<1순위> 없음) → <산출물>` | `대안: 내장(계획) (oh-my-claudecode:omc-plan 없음) → docs/plans/todo.md`, `대안: agent-browser (ego-browser 창 표시 불가) → tasks/evidence/todo-list/` |
@@ -25,6 +25,7 @@
 - `✓`, `✔`, `-`, `ok`, `done`, `todo`, `tbd`, `완료`처럼 형식만 채운 값, 또는 공백을 뺀 길이가 4자 미만인 값 (dev-cycle audit이 거부한다)
 - 사유 없는 `N/A`
 - `[confirm]` 행의 `N/A`·`PASS`·`blocked`·`미실행`·`대기` (dev-cycle audit이 거부한다)
+- critique·audit을 실행하지 않고 적은 점수. critique 행은 critique가 남긴 `.impeccable/critique/` 기록 파일, audit 행은 `tasks/evidence/`에 저장한 audit·web-design-guidelines 보고서 경로가 있어야 한다. 그 파일은 이번 라운드에 쓴 것이고 점수가 증거와 같아야 한다 (dev-cycle audit이 거부한다)
 - 실행하지 않은 검사를 다른 검사 결과로 대신한 것 (예: 빌드 통과를 격리 테스트 통과로 적기)
 - `오류 0(…은 제외)`처럼 원인을 추정해 뺀 오류 수 (깨끗한 프로필로 원인을 가르고 고치거나 알려진 문제로 보고한다)
 - `skipped`로 끝난 테스트

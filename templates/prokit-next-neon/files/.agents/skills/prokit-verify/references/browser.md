@@ -4,7 +4,7 @@ ego-browser는 ego lite 앱(macOS)이 설치하는 CLI와 전역 `ego-browser` �
 
 ## 준비
 - `command -v ego-browser`가 없으면 이 문서 대신 `agent-browser`와 `next-dev-loop`의 브라우저 절차를 쓰고, 증거에 `대안: agent-browser (ego-browser 없음)`을 적는다.
-- `pnpm dev`(web 포트 3001)를 먼저 띄운다.
+- `pnpm dev`(web 포트 3001)를 먼저 띄운다. 띄우기 전에 `lsof -nP -iTCP:3001 -sTCP:LISTEN`으로 포트를 본다. 이 프로젝트의 개발 서버(`lsof -a -p <PID> -d cwd -Fn`이 이 프로젝트 안)면 그대로 쓴다. 다른 프로세스면 끄지 않고 사용자에게 알려 정리를 부탁한다. 다른 포트로 피하지 않는다. 인증 주소(`BETTER_AUTH_URL`)가 3001이라 로그인 흐름이 깨진다.
 - ego lite 창이 화면에 보여야 한다. 창이 최소화되었거나 다른 데스크톱에 있으면 스크린샷이 `CDP request timed out: Page.captureScreenshot`으로 끝난다. 그러면 사용자에게 창을 보이게 해 달라고 요청하고, 그럴 수 없으면 agent-browser로 바꾸고 `대안: agent-browser (ego-browser 창 표시 불가)`를 적는다.
 - ego-browser는 사용자의 실제 브라우저 프로필(로그인 세션·쿠키)로 동작한다.
   - `http://localhost:3001`만 연다. 다른 사이트로 이동하지 않는다.
@@ -20,6 +20,20 @@ const task = await taskSpace("<라운드 제목> 검증"); // 다시 찍을 때�
 console.log({ spaceId: task.spaceId });
 const page = task.page("p1");
 const dir = "<프로젝트 절대 경로>/tasks/evidence/<라운드 제목>";
+// ego-browser에는 콘솔 이벤트 API가 없어, 페이지 스크립트보다 먼저 도는 수집기를 심는다.
+const collectErrors = () => {
+  window.__prokitErrors = [];
+  for (const level of ["error", "warn"]) {
+    const original = console[level];
+    console[level] = (...args) => {
+      window.__prokitErrors.push(`${level}: ${args.map(String).join(" ").slice(0, 200)}`);
+      original.apply(console, args);
+    };
+  }
+  addEventListener("error", (e) => window.__prokitErrors.push(`uncaught: ${e.message}`));
+  addEventListener("unhandledrejection", (e) => window.__prokitErrors.push(`unhandled: ${e.reason}`));
+};
+await page.cdp("Page.addScriptToEvaluateOnNewDocument", { source: `(${collectErrors})()` });
 try {
   for (const [name, width, height, mobile] of [["desktop", 1440, 900, false], ["mobile", 390, 844, true]]) {
     await page.cdp("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile });
@@ -32,7 +46,10 @@ try {
       await page.waitForTimeout(1000); // 첫 캡처가 시간 초과되는 경우가 있어 한 번만 다시 찍는다
       await page.screenshot({ path: `${dir}/${name}.png` });
     }
-    console.log(name, await page.evaluate(() => window.innerWidth));
+    const seen = await page.evaluate(() => ({ innerWidth: window.innerWidth, errors: window.__prokitErrors ?? [] }));
+    console.log(name, { innerWidth: seen.innerWidth, errors: seen.errors.length });
+    if (seen.innerWidth > width) console.log(`결함: ${name} 가로 넘침 ${seen.innerWidth} > ${width}`);
+    for (const e of seen.errors) console.log(`결함: ${name} 콘솔 ${e}`);
   }
 } finally {
   await page.cdp("Emulation.clearDeviceMetricsOverride", {});
@@ -40,7 +57,7 @@ try {
 EOF
 ```
 
-출력한 `innerWidth`가 1440과 390인지 확인한다. mobile이 390보다 크면 페이지가 가로로 넘친 것이다(모바일 에뮬레이션은 넘친 내용에 맞춰 화면을 넓힌다). 결함으로 기록한다. 그리고 찍은 PNG를 이미지로 열어 화면이 기대한 상태인지 본다. 파일 경로만 적고 보지 않은 스크린샷은 증거가 아니다.
+출력에 `결함:` 줄이 없어야 한다. 스크립트는 가로 넘침(모바일 에뮬레이션은 넘친 내용에 맞춰 화면을 넓혀 `innerWidth`가 390보다 커진다)과 콘솔 오류·경고, 잡히지 않은 오류를 `결함:`으로 출력한다. 이 수는 오류 예산(`prokit-verify` 본문)에 넣는다. 브라우저가 직접 남기는 `Failed to load resource` 줄은 여기에 잡히지 않으니 `/_next/mcp`의 `get_errors`로 함께 본다. 그리고 찍은 PNG를 이미지로 열어 화면이 기대한 상태인지 본다. 파일 경로만 적고 보지 않은 스크린샷은 증거가 아니다.
 
 ## 흐름 확인 (QA)
 F 라운드의 사용자 흐름 QA도 같은 TaskSpace에서 ego-browser로 한다. 보고만 하고 코드는 고치지 않는다.

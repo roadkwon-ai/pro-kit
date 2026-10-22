@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -8,7 +8,7 @@ import {
   audit, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, parseActive, renderBlock, status, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
 import { captureSnapshot } from "../files/scripts/delegation.mjs";
-import { makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
+import { auditRecord, critiqueRecord, makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
 
 const CLI = join(TEMPLATE_FILES, "scripts/dev-cycle.mjs");
 const run = (root, ...args) => spawnSync(process.execPath, [CLI, ...args], { cwd: root, encoding: "utf8" });
@@ -170,11 +170,73 @@ function fill(root, value = "pnpm check-types → exit 0", confirm = CONFIRMED) 
     if (value === "pnpm check-types → exit 0") {
       if (r.text.startsWith("[design]")) evidence = "기존: docs/dev-workflow.md; 결정: 기존 절차 재사용; 설정: 변경 없음; 검증: 소비자 회귀 검사";
       if (r.text.includes("prokit-reviewer(plan)")) evidence = "prokit-reviewer(plan): approve, max=none, 지적 0";
+      if (r.text.startsWith("[review] impeccable critique")) evidence = critiqueRecord(root);
+      if (r.text.startsWith("[review] impeccable audit")) evidence = auditRecord(root);
     }
     return { ...r, evidence: r.evidence || (r.text.startsWith("[confirm]") ? confirm : evidence) };
   });
   writeFileSync(p, md.slice(0, a.start) + renderBlock({ ...a.meta, title: a.title }, rows) + md.slice(a.end));
 }
+
+test("화면 리뷰 행: critique 기록·audit 보고서가 없거나, 이번 라운드보다 오래됐거나, 점수가 다르면 거부하고 사유 있는 blocked·N/A는 받는다", () => {
+  const { root } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  fill(root);
+  const p = join(root, config.todoPath);
+  const active = parseActive(readFileSync(p, "utf8"));
+  const row = active.rows.findIndex((r) => r.text.startsWith("[review] impeccable critique"));
+  const problemFor = (evidence) => {
+    const rows = active.rows.map((r, i) => (i === row ? { ...r, evidence } : r));
+    writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows));
+    return audit(root, config).problems.find((x) => x.startsWith(`#${row + 1} `)) ?? null;
+  };
+  const file = ".impeccable/critique/2026-10-22T12-30-00Z__apps-web.md";
+  assert.equal(problemFor(active.rows[row].evidence), null);
+  // AG5: critique를 실행하지 않고 적은 점수
+  assert.match(problemFor("Design Health 40/40, P0 0, P1 0"), /기록 파일\(\.impeccable\/critique\//);
+  assert.match(problemFor("Design Health 40/40, .impeccable/critique/2026-10-22T00-00-00Z__none.md"), /기록 파일이 없다/);
+  assert.match(problemFor(`Design Health 40/40, P0 0, ${file}`), /점수가 기록 파일과 다르다: 증거 40\/40/);
+  assert.match(problemFor(`Design Health 31/32, P0 0, ${file}`), /점수가 기록 파일과 다르다/);
+  // 점수 앞에 날짜 같은 다른 N/M이 있어도 파일 점수와 같은 쌍이 있으면 받는다
+  assert.equal(problemFor(`10/22 critique, Design Health 31/40, ${file}`), null);
+  assert.match(problemFor(`10/22 critique, Design Health 40/40, ${file}`), /증거 40\/40/);
+  // 도우미가 출력하는 절대 경로도 프로젝트 안 기록으로 읽는다
+  assert.equal(problemFor(`Design Health 31/40, ${root}/${file}`), null);
+  assert.equal(problemFor("blocked: impeccable 미설치"), null);
+  assert.equal(problemFor("N/A: 화면 변화 없음"), null);
+  // 이전 라운드의 기록을 다시 쓰면 받지 않는다
+  const old = new Date("2020-01-01T00:00:00Z");
+  utimesSync(join(root, file), old, old);
+  assert.match(problemFor(`Design Health 31/40, ${file}`), /이번 라운드보다 오래됐다/);
+  // 연 날 안이어도 base 커밋보다 먼저 쓴 기록(앞 라운드 것)은 받지 않는다
+  const baseAt = Number(spawnSync("git", ["show", "-s", "--format=%ct", active.meta.base], { cwd: root, encoding: "utf8" }).stdout.trim());
+  utimesSync(join(root, file), baseAt - 30, baseAt - 30);
+  assert.match(problemFor(`Design Health 31/40, ${file}`), /이번 라운드보다 오래됐다/);
+  utimesSync(join(root, file), baseAt + 1, baseAt + 1);
+  assert.equal(problemFor(`Design Health 31/40, ${file}`), null);
+  // 점수가 없는 기록 파일, 점수 없는 증거
+  writeFileSync(join(root, ".impeccable/critique/2026-10-22T13-00-00Z__empty.md"), "본문만\n");
+  assert.match(problemFor("Design Health 40/40, .impeccable/critique/2026-10-22T13-00-00Z__empty.md"), /total_score가 없다/);
+  assert.match(problemFor(`critique 실행함, ${file}`), /증거에 critique 점수\(31\/40\)가 없다/);
+  // audit과 web-design-guidelines는 보고서 파일과 총점을 본다
+  const auditRow = active.rows.findIndex((r) => r.text.startsWith("[review] impeccable audit"));
+  const auditProblem = (evidence) => {
+    const rows = active.rows.map((r, i) => (i === auditRow ? { ...r, evidence } : r));
+    writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows));
+    return audit(root, config).problems.find((x) => x.startsWith(`#${auditRow + 1} `)) ?? null;
+  };
+  const report = "tasks/evidence/ui-audit-20261022-1230.md";
+  assert.equal(auditProblem(active.rows[auditRow].evidence), null);
+  assert.match(auditProblem("audit 20/20, 접근성 4/4, web-design-guidelines 위반 0건"), /보고서를 저장한 파일\(tasks\/evidence\/ui-audit-/);
+  assert.match(auditProblem("audit 17/20, tasks/evidence/ui-audit-none.md"), /기록 파일이 없다/);
+  assert.match(auditProblem(`audit 20/20, 접근성 4/4, ${report}`), /보고서에 증거의 총점 20\/20이 없다/);
+  assert.equal(auditProblem(`10/20 기준 audit 17/20, ${report}`), null);
+  assert.match(auditProblem(`audit 실행함, ${report}`), /증거에 audit 총점\(N\/20\)이 없다/);
+  writeFileSync(join(root, report), "| **Total** | | **17**/20 | Good |\n");
+  assert.equal(auditProblem(`audit 17/20, ${report}`), null);
+  assert.equal(auditProblem("blocked: web-design-guidelines 가져오기 실패"), null);
+});
 
 test("증거 판정: 빈 칸·형식만 채운 값·사유 없는 N/A", () => {
   assert.match(evidenceProblem(""), /비어/);

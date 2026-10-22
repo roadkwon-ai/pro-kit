@@ -28,8 +28,8 @@
 - 구현 (prokit-ui, prokit-web, 컴포넌트 조합·추가는 shadcn, 컴포넌트·훅 작성은 vercel-react-best-practices) → 변경 파일 요약, 사용한 스킬
 - [verify] 타입·린트·빌드 → 명령과 결과
 - [verify] next-dev-loop 런타임 확인과 ego-browser(없으면 agent-browser)로 desktop·mobile 스크린샷 → 확인한 경로, 오류 예산(콘솔·개발 오버레이·get_errors·서버 로그, 환경 탓도 빼지 않음) 수, tasks/evidence/ 경로
-- [review] impeccable critique → Design Health 점수, P0/P1 목록
-- [review] impeccable audit과 web-design-guidelines 코드 검사 → 점수(/20), 접근성 점수, web-design-guidelines 위반 수
+- [review] impeccable critique (대상은 화면 경로나 주소) → Design Health 점수, P0/P1 목록, .impeccable/critique/ 기록 파일 경로
+- [review] impeccable audit과 web-design-guidelines 코드 검사 (두 결과를 tasks/evidence/ui-audit-<시각>.md에 저장) → 점수(/20), 접근성 점수, web-design-guidelines 위반 수, 보고서 경로
 - 수정과 impeccable polish를 한 번에 → 반영 내역
 - [verify] 재확인 1회 → 스크린샷 경로와 점수
 - [review] prokit-reviewer(code) → verdict, max_severity, 반영·기각 내역

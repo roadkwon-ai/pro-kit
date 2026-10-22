@@ -28,3 +28,17 @@ export function makeRepo({ branch = "main", commit = true, name = "dc-" } = {}) 
   }
   return { root, git, write };
 }
+
+// impeccable critique가 남기는 기록 파일(.impeccable/critique/<시각>__<대상>.md)을 만들고 그 행의 증거를 돌려준다.
+export function critiqueRecord(root, total = 31, name = "2026-10-22T12-30-00Z__apps-web.md") {
+  mkdirSync(join(root, ".impeccable/critique"), { recursive: true });
+  writeFileSync(join(root, ".impeccable/critique", name), `---\ntotal_score: ${total}\nmax_score: 40\np0_count: 0\n---\n본문\n`);
+  return `Design Health ${total}/40, P0 0, P1 0, .impeccable/critique/${name}`;
+}
+
+// audit·web-design-guidelines 보고서를 tasks/evidence/에 저장하고 그 행의 증거를 돌려준다.
+export function auditRecord(root, total = 17, name = "ui-audit-20261022-1230.md") {
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  writeFileSync(join(root, "tasks/evidence", name), `## Audit Health Score\n| **Total** | | **${total}/20** | Good |\n`);
+  return `audit ${total}/20, 접근성 4/4, web-design-guidelines 위반 0건, tasks/evidence/${name}`;
+}

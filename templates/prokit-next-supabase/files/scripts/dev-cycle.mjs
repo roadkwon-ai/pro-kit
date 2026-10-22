@@ -348,6 +348,10 @@ export function parseActive(md) {
 const PLAN_START_RE = /<!-- dev-cycle:plan(?: (.*?))? -->/;
 const PLAN_END = "<!-- dev-cycle:plan-end -->";
 export const TASK_STATES = ["대기", "진행", "완료", "제외"];
+// 서버·DB를 처음 고치는 라운드의 테스트 러너 준비 행. --upgrade 뒤에도 첫 행에 남는다.
+export const VITEST_ROW = "vitest 도입(최초 1회) → 설정 파일과 실행 결과";
+// 이 케이스의 행이 테스트를 쓰는 패키지. 그 package.json에 test 스크립트가 없으면 table이 VITEST_ROW를 넣는다.
+const TEST_PACKAGE = { D: "packages/api", E: "packages/db", F: "packages/api" };
 // Task 라운드는 그 Task의 세부 계획과 계획 리뷰부터 한다. 케이스 행에 계획 리뷰가 이미 있으면(F) 리뷰 행은 더하지 않는다.
 export const TASK_PLAN_ROW =
 	"[plan] Task 세부 계획 (진행 계획의 이 Task를 다시 설계하고 구체화: 바꿀 파일, 단계, 단계별 검사, 완료 조건. 고른 두뇌의 계획 방법) → 계획 문서 경로(.md). N/A 불가";
@@ -461,11 +465,83 @@ function planConfirmProblem(root, config, evidence, needPlan = false) {
 const isConfirm = (text) => /^\[confirm\]/i.test(text);
 const isPlanRound = (active) =>
 	active.rows.some((r) => r.text === PLAN_DOC_ROW);
+// 화면 리뷰 점수는 실행 기록이 있어야 받는다. critique는 impeccable이 .impeccable/critique/<시각>__<대상>.md를
+// 남기고, audit과 web-design-guidelines는 기록을 남기지 않아 보고서를 tasks/evidence/에 저장해 둔다.
+const N_OF_M = /(\d+)\s*\/\s*(\d+)/g;
+const UI_RECORDS = [
+	{
+		row: "[review] impeccable critique",
+		re: /\.impeccable\/critique\/[\w.-]+\.md/,
+		what: "critique가 남긴 기록 파일(.impeccable/critique/….md)",
+		// 머리의 total_score/max_score와 같은 쌍이 하나라도 있어야 한다(날짜 10/22 같은 다른 N/M은 섞여도 된다).
+		score: (pairs, text) => {
+			const front = text.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? "";
+			const total = front.match(/^total_score:\s*(\d+)/m)?.[1];
+			const max = front.match(/^max_score:\s*(\d+)/m)?.[1];
+			if (!total)
+				return "기록 파일 머리에 total_score가 없다. IMPECCABLE_CRITIQUE_META에 점수를 넣어 다시 저장한다";
+			const shown = pairs.find((p) => p[2] === max) ?? pairs[0];
+			if (!shown) return `증거에 critique 점수(${total}/${max ?? "?"})가 없다`;
+			return pairs.some((p) => p[1] === total && (!max || p[2] === max))
+				? null
+				: `점수가 기록 파일과 다르다: 증거 ${shown[1]}/${shown[2]}, 파일 ${total}/${max ?? "?"}`;
+		},
+	},
+	{
+		row: "[review] impeccable audit",
+		re: /tasks\/evidence\/[\w.-]+\.md/,
+		what: "audit·web-design-guidelines 보고서를 저장한 파일(tasks/evidence/ui-audit-<시각>.md)",
+		// 증거의 총점(N/20)이 보고서에도 있어야 한다. 보고서는 **17/20**처럼 굵게 쓰기도 한다.
+		score: (pairs, text) => {
+			const totals = pairs.filter((p) => p[2] === "20");
+			if (!totals.length) return "증거에 audit 총점(N/20)이 없다";
+			return totals.some((p) =>
+				new RegExp(`(?<!\\d)${p[1]}[*\\s]*/[*\\s]*20(?!\\d)`).test(text),
+			)
+				? null
+				: `보고서에 증거의 총점 ${totals[0][1]}/20이 없다`;
+		},
+	},
+];
+
+// 이번 라운드의 기록인지 본다. 기능 브랜치의 base는 갈라진 지점이라 오래됐을 수 있어, base 커밋 시각과
+// 라운드를 연 날(KST) 가운데 늦은 쪽보다 뒤에 쓴 파일이어야 한다.
+function roundStart(root, meta) {
+	const day = Date.parse(`${meta.opened}T00:00:00+09:00`) || 0;
+	if (!meta.base || !SHA_RE.test(meta.base)) return day;
+	try {
+		const ct = git(root, ["show", "-s", "--format=%ct", meta.base]).trim();
+		return Math.max(day, Number(ct) * 1000 || 0);
+	} catch {
+		return day;
+	}
+}
+
+function uiRecordProblem(root, meta, r) {
+	const kind = UI_RECORDS.find((k) => r.text.startsWith(k.row));
+	if (!kind) return null;
+	const value = bare(r.evidence);
+	if (/^(blocked|미실행|n\/a)\s*:/i.test(value)) return null;
+	const file = value.match(kind.re)?.[0];
+	if (!file)
+		return `증거에 ${kind.what} 경로를 적는다. 실행하지 않은 리뷰의 점수는 받지 않는다`;
+	const path = join(root, file);
+	if (!existsSync(path)) return `기록 파일이 없다: ${file}`;
+	if (statSync(path).mtimeMs < roundStart(root, meta))
+		return `기록 파일이 이번 라운드보다 오래됐다: ${file}. 이번 변경으로 다시 실행한다`;
+	const problem = kind.score(
+		[...value.replace(file, "").matchAll(N_OF_M)],
+		readFileSync(path, "utf8"),
+	);
+	return problem && `${problem} (${file})`;
+}
+
 // audit과 status가 같은 판정을 쓴다. 진행 계획 라운드의 확인 행은 지문까지 본다.
 const roundRowProblem = (root, config, active) => {
 	const planRound = isPlanRound(active);
 	return (r) =>
 		rowProblem(r) ??
+		uiRecordProblem(root, active.meta, r) ??
 		(planRound && isConfirm(r.text)
 			? planConfirmProblem(root, config, r.evidence)
 			: null);
@@ -711,13 +787,28 @@ export function writeTable(
 				return true;
 			})
 			.map((r) => ({ text: r.text, evidence: r.evidence }));
-		const vitest = carried.findIndex(
-			(r) => r.text === "vitest 도입(최초 1회) → 설정 파일과 실행 결과",
-		);
+		const vitest = carried.findIndex((r) => r.text === VITEST_ROW);
 		if (vitest >= 0) rows.unshift(carried.splice(vitest, 1)[0]);
 		const at = rows.findIndex((r) => r.tag === "confirm");
 		rows.splice(at < 0 ? rows.length : at, 0, ...carried);
 	}
+	// 그 package.json이 없는 폴더 구조(도입 프로젝트)와 C는 prokit-dev-cycle 2절대로 직접 넣는다.
+	const testPkg =
+		TEST_PACKAGE[key] && join(root, TEST_PACKAGE[key], "package.json");
+	const hasTest = (file) => {
+		try {
+			return Boolean(JSON.parse(readFileSync(file, "utf8")).scripts?.test);
+		} catch {
+			return true; // 읽을 수 없는 package.json이면 판단하지 않고 넣지 않는다
+		}
+	};
+	if (
+		testPkg &&
+		existsSync(testPkg) &&
+		!rows.some((r) => r.text === VITEST_ROW) &&
+		!hasTest(testPkg)
+	)
+		rows.unshift({ text: VITEST_ROW, evidence: "" });
 	// Task 라운드: 세부 계획·계획 리뷰 행을 맨 앞에 둔다. --upgrade로 옮겨 온 같은 행의 증거는 지킨다.
 	if (task ?? active?.meta.task) {
 		const old = new Map((active?.rows ?? []).map((r) => [r.text, r.evidence]));

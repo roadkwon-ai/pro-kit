@@ -12,7 +12,7 @@ impeccable은 화면마다 모드를 고른다. 앱 화면(대시보드, 목록,
 | 시각 자산 | 서체 받기, comp-led면 `generate-image`로 comp와 plate | `apps/web/src/fonts/`, `apps/web/public/images/<화면>/`, `.impeccable/mocks/` | 아래 "시각 자산"을 따른다 |
 | 개발 | new-work, 필요 시 `layout`, `typeset`, `colorize`, `clarify`, `harden`, `onboard`, `adapt`, `animate`, 밋밋하면 `bolder` | 코드 | 편집 직전에 `reference/craft-floor.md`를 로드한다 |
 | 리뷰 | `critique <대상>` | Design Health 점수, P0~P3 지적, `.impeccable/critique/`에 기록 | 독립 평가자 두 명을 서브에이전트로 띄우므로 메인 세션에서 실행한다 |
-| 리뷰 | `audit <대상>` | 접근성, 성능, 테마, 반응형, 일관성 각 0~4점, 합계 20점 | 권장 후속 명령 목록을 준다 |
+| 리뷰 | `audit <대상>` | 접근성, 성능, 테마, 반응형, 일관성 각 0~4점, 합계 20점 | 권장 후속 명령 목록을 준다. 기록을 남기지 않으므로 보고서 전체와 web-design-guidelines 위반 목록을 `tasks/evidence/ui-audit-<YYYYMMDD-HHmm>.md`에 저장하고 증거에 그 경로를 적는다 |
 | 리뷰 | `web-design-guidelines` 스킬 | Vercel Web Interface Guidelines 위반 목록 (`file:line`) | 규칙을 원격에서 받아 온다. 받지 못하면 그렇다고 적는다 |
 | 마감 | `polish <대상>` | 정리된 코드 | critique 결과를 입력으로 쓴다. 검증은 한 번 모아서 하고 재확인은 1회 |
 | 정본 갱신 | `document` | `DESIGN.md` 갱신 | refresh, overwrite, merge 중 무엇을 할지 사용자에게 묻는다. 카탈로그에서 들여온 파일은 merge만 한다. 쓴 뒤 아래 "DESIGN.md 검사"를 한다 |
@@ -153,8 +153,8 @@ Claude Code에서는 `.agents/skills/impeccable/SKILL.md`를 Read로 읽고 그 
 | 구현 | `apps/web/src/app/todos/*.tsx 3개, packages/ui 토큰 1개, 서체 Pretendard(local)·Hahmlet(google), plate 3장(gpt-image-2.5-flare), 모션 2개(reduced-motion 끔)` |
 | 타입·린트·빌드 | `pnpm check-types → exit 0, pnpm exec biome check . → exit 0, pnpm build → exit 0` |
 | 런타임·스크린샷 | `next-dev-loop /todos → get_errors 0, tasks/evidence/todo-list/desktop.png, mobile.png, agent-browser로 링크 12개·버튼 20개 누름 → 404 0, 반응 없는 버튼 0` |
-| critique | `Design Health 31/40, P0 0, P1 2 (빈 상태 문구, 대비)` |
-| audit | `audit 15/20, 접근성 3/4 → 기준 미달, polish에서 해결` |
+| critique | `Design Health 31/40, P0 0, P1 2 (빈 상태 문구, 대비), .impeccable/critique/2026-10-22T12-30-00Z__apps-web-src-app-todos.md` |
+| audit | `audit 15/20, 접근성 3/4, tasks/evidence/ui-audit-20261022-1230.md → 기준 미달, polish에서 해결` |
 | 수정과 polish | `P1 2건 반영, 대비 토큰 조정` |
 | 재확인 | `audit 17/20, 접근성 4/4, 스크린샷 갱신` |
 | DESIGN.md 갱신 | `document merge → 색 토큰 1개 추가, lint 오류 0, diff removed 없음`(카탈로그에서 들여온 파일) 또는 `N/A: 토큰 변화 없음` |

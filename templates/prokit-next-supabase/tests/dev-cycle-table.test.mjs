@@ -4,7 +4,7 @@ import { readFileSync, truncateSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
-  SECURITY_ROW, audit, buildRows, classify, loadConfig, parseActive, parseWorkflow, readWorkflow, renderBlock, setEvidence, status, writeTable,
+  SECURITY_ROW, VITEST_ROW, audit, buildRows, classify, loadConfig, parseActive, parseWorkflow, readWorkflow, renderBlock, setEvidence, status, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
 import { makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
 
@@ -300,6 +300,34 @@ test("--upgrade 뒤에도 수동 vitest 도입 행은 첫 행을 지킨다", () 
   assert.deepEqual(after.rows.at(-2), { text: "수동 행 → 근거", evidence: "직접 적은 증거" });
   assert.match(after.rows.at(-1).text, /^\[confirm\] 사용자 확인/);
   assert.match(afterMd, /메모: 계속 보존\n<!-- dev-cycle:end -->/);
+});
+
+test("D·E·F 표: 그 계층 패키지에 test 스크립트가 없으면 vitest 도입 행을 맨 앞에 넣고, 있거나 폴더가 없으면 넣지 않는다", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  const rows = (key) => texts(parseActive(writeTable(root, config, key, { title: "러너" }).block).rows);
+  assert.ok(!rows("D").includes(VITEST_ROW), "packages/api가 없는 구조는 직접 넣는다");
+  write("packages/api/package.json", '{ "scripts": { "build": "tsc" } }');
+  write("packages/db/package.json", '{ "scripts": { "test": "vitest run" } }');
+  assert.equal(rows("D")[0], VITEST_ROW);
+  assert.equal(rows("F")[0], VITEST_ROW);
+  assert.ok(!rows("E").includes(VITEST_ROW), "packages/db에는 test 스크립트가 있다");
+  for (const key of ["B", "C", "H"]) assert.ok(!rows(key).includes(VITEST_ROW), key);
+  // 읽을 수 없는 package.json(병합 충돌 등)이어도 표는 열리고 행은 넣지 않는다
+  write("packages/api/package.json", "<<<<<<< HEAD\n{}\n");
+  assert.ok(!rows("D").includes(VITEST_ROW));
+  write("packages/api/package.json", '{ "scripts": { "build": "tsc" } }');
+  // --upgrade해도 채운 증거를 지키고 한 번만 둔다
+  writeTable(root, config, "D", { title: "러너", write: true });
+  const todoPath = join(root, config.todoPath);
+  const md = readFileSync(todoPath, "utf8");
+  const d = parseActive(md);
+  d.rows[0].evidence = "packages/api vitest, pnpm test → pass";
+  writeFileSync(todoPath, md.slice(0, d.start) + renderBlock({ ...d.meta, title: d.title }, d.rows) + md.slice(d.end));
+  writeTable(root, config, "F", { upgrade: true, write: true });
+  const f = parseActive(readFileSync(todoPath, "utf8")).rows;
+  assert.deepEqual(f[0], { text: VITEST_ROW, evidence: "packages/api vitest, pnpm test → pass" });
+  assert.equal(f.filter((r) => r.text === VITEST_ROW).length, 1);
 });
 
 test("writeTable: write 없이 호출하면 파일을 바꾸지 않고 블록만 돌려준다", () => {

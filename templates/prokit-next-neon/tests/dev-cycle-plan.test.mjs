@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { audit, close, loadConfig, PLAN_ANALYSIS_ROW, PLAN_DOC_ROW, PLAN_REVIEW_ROW, parseActive, parsePlan, planCheck, planSig, renderBlock, status, TASK_PLAN_ROW, TASK_REVIEW_ROW, writeTable } from "../files/scripts/dev-cycle.mjs";
-import { makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
+import { auditRecord, critiqueRecord, makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
 
 const CLI = join(TEMPLATE_FILES, "scripts/dev-cycle.mjs");
 const run = (root, ...args) => spawnSync(process.execPath, [CLI, ...args], { cwd: root, encoding: "utf8" });
@@ -44,6 +44,8 @@ function fill(root, value = "pnpm check-types → exit 0") {
     : r.text === PLAN_DOC_ROW ? "docs/plans/p.md, pnpm dev-cycle plan exit 0"
     : r.text.includes("prokit-reviewer(plan)") && !/^(blocked|미실행)/.test(value) ? "prokit-reviewer(plan): approve, max=none, 지적 0"
     : r.text.startsWith("[design]") && !/^(blocked|미실행)/.test(value) ? "기존: 없음; 결정: 새로; 설정: 변경 없음; 검증: 회귀 검사"
+    : r.text.startsWith("[review] impeccable critique") && !/^(blocked|미실행)/.test(value) ? critiqueRecord(root)
+    : r.text.startsWith("[review] impeccable audit") && !/^(blocked|미실행)/.test(value) ? auditRecord(root)
     : value;
   const rows = a.rows.map((r) => ({ ...r, evidence: r.evidence || special(r) }));
   writeFileSync(p, md.slice(0, a.start) + renderBlock({ ...a.meta, title: a.title }, rows) + md.slice(a.end));
