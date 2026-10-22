@@ -1,29 +1,37 @@
 # 두뇌와 선택 스킬
 
-> 한눈에: 프로젝트마다 "어떤 순서로 진행할지"(두뇌)와 "얼마나 작게 만들지"(과설계 방지 스킬)를 하나씩 고르거나 고르지 않을 수 있어요. **아무것도 고르지 않으면 지금 쓰는 에이전트가 프로킷 내장 절차로 진행해요.** 새 프로젝트를 만들 때 `prokit-init` 스킬이 PRD를 먼저 받고, PRD에 맞는 것에 추천 표시를 붙여 물어봐요. PRD가 없으면 init하지 않아요.
+> 한눈에: 프로젝트마다 "어떤 순서로 진행할지"(두뇌)와 "얼마나 작게 만들지"(과설계 방지 스킬)를 고르거나 고르지 않을 수 있어요. **아무것도 고르지 않으면 지금 쓰는 에이전트가 프로킷 내장 절차로 진행해요.** 두뇌는 하나를 권하지만 여럿을 함께 고를 수도 있어요. 프로킷을 처음 들일 때 `prokit-init` 스킬이 PRD(기존 프로젝트면 초기 분석)에 맞는 것에 추천 표시를 붙여 물어보고, 진행 중에는 `prokit-skills-manage`로 바꾸거나 더하거나 빼요.
 
 ## 고르는 다섯 가지
 
 | 구분 | 고르는 수 | 기본 | 고르는 명령 |
 |---|---|---|---|
-| 두뇌 | 0\~1 | 없음(기본 AI) | `pnpm skills:setup --brain <이름>` |
+| 두뇌 | 0개 이상(하나 권장) | 없음(기본 AI) | `pnpm skills:setup --brain <이름>[,<이름>]` |
 | 과설계 방지 스킬 | 0\~1 | 없음(기본 AI) | `pnpm skills:setup --simplicity <이름>` |
-| mattpocock 추가 스킬 | 0개 이상 | 설치 안 함 | `pnpm skills:setup --matt <스킬>` |
+| mattpocock 추가 스킬 | 0개 이상 | 설치 안 함 | `pnpm skills:setup --matt <스킬>`, 지우기 `--drop <스킬>` |
 | 응답 방식(i-have-adhd) | 0\~1 | 설치 안 함 | `pnpm skills:setup --optional i-have-adhd` |
 | 화면 디자인 보조(taste-skill) | 0\~1 | 설치 안 함 | `pnpm skills:setup --optional taste` |
 
-## 새 프로젝트에서 고르는 순서
+## 처음 들일 때 고르는 순서
+
+기존 프로젝트(초기, 운영 중, 전환)를 들일 때는 PRD가 없어도 돼요. 에이전트가 그 프로젝트를 읽기만 하며 초기 분석을 하고, 그 결과를 PRD와 함께 추천 근거로 써요([기존 프로젝트에 도입하기](../start/adopt.md)). 아래는 새 프로젝트의 순서예요.
 
 1. **PRD 주기**: PRD 파일이나 붙여 넣은 글, 요청 속 서비스 설명(누가 쓰는지와 핵심 기능), 프리셋 팩 중 하나가 있어야 해요. pro-kit 폴더에서 에이전트를 열었다면 스킬을 부르면서 줄 수도 있어요(Claude Code는 `/prokit-init <PRD 파일 경로나 내용>`, Codex는 `$prokit-init …`). 없으면 에이전트가 맨 먼저 PRD를 달라고 해요. 그래도 주지 않으면 PRD가 왜 필요한지 알리고 프로젝트를 만들지 않은 채 끝나요. 적을 것은 [PRD 먼저 정하기](../start/prd.md)에 있어요.
-2. **추천 보기**: 에이전트가 PRD로 두뇌 일곱 개(없음 포함) 가운데 하나를 추천하고 근거 문장을 보여 줘요.
-3. **고르기**: 두뇌, 과설계 방지 스킬, 응답 방식, 화면 디자인 보조를 한 번에 골라요. 추천한 선택지에 `(추천)`이 붙어 맨 앞에 있어요. 처음 질문에 없는 두뇌는 `다른 두뇌 보기`로 골라요.
+2. **추천 보기**: 에이전트가 PRD로 두뇌 열 개(없음 포함) 가운데 하나를 추천하고 근거 문장을 보여 줘요.
+3. **고르기**: 두뇌, 과설계 방지 스킬, 응답 방식, 화면 디자인 보조를 한 번에 골라요. 추천한 선택지에 `(추천)`이 붙어 맨 앞에 있어요. 처음 질문에 없는 두뇌를 고르거나 두뇌를 여럿 고르려면 `다른 두뇌 보기·여럿 고르기`를 골라요. 둘 이상 고르면 주 두뇌를 한 번 더 물어요.
 4. **추가 스킬 고르기**: mattpocock 추가 스킬 <!-- v:mattpocock.pool.count -->14<!-- /v -->개를 여러 개 골라요. PRD에 맞는 스킬에 `(추천)`이 붙어 있어요.
 
 이미 정한 항목(예: "두뇌는 superpowers")은 다시 묻지 않고, "알아서 골라줘"처럼 맡긴 항목은 추천대로 설치해요.
 
-## 하나만 고르는 이유
+## 하나를 권하는 이유와 여럿 쓰는 법
 
-두뇌와 과설계 방지 스킬은 둘 이상 함께 두면 지시가 서로 덮어써요. 그래서 하나만 설치하고, 고른 값을 `.dev-cycle.json`의 `brain`·`simplicity`에 적어 둬요. 대조표, 위임 검증, `prokit-reviewer` 최종 리뷰, audit, 사용자 확인, `prokit-deploy` 배포는 무엇을 골라도 그대로예요.
+과설계 방지 스킬은 둘이면 "얼마나 작게 만들지"가 엇갈려 하나만 써요. 두뇌도 하나가 가장 단순해서 하나를 권해요. 다만 스펙을 남기는 두뇌와 디버깅·검증에 강한 두뇌처럼 맡는 단계가 다르면 함께 쓸 수 있어요.
+
+- **주 두뇌**: 고른 목록의 첫 두뇌예요. `.dev-cycle.json`의 `brain`에 하나면 이름이, 여럿이면 목록이 적혀요.
+- **단계 나누기**: 요구 정리, 계획, 구현, 디버깅, 리뷰, QA, 검증, 완료 기록마다 목록 순서에서 그 단계를 맡는 첫 두뇌를 써요. 예를 들어 `--brain openspec,superpowers`면 요구·계획·구현은 openspec, 디버깅·검증은 superpowers가 맡아요.
+- **함께 쓰지 않는 조합**: superpowers, gstack, oh-my는 세션 시작 훅이나 전역 지시로 진행 순서를 강제해요. 이 셋 가운데 둘 이상을 고르면 지시가 서로 덮어써서 설치기가 경고하고, `prokit-init`은 하나만 남기게 다시 물어요.
+
+대조표, 위임 검증, `prokit-reviewer` 최종 리뷰, audit, 사용자 확인, `prokit-deploy` 배포는 무엇을 골라도 그대로예요.
 
 ## 두뇌
 
@@ -36,6 +44,9 @@
 | `oh-my` | 여러 세션에 걸친 큰 작업을 자동·병렬 모드로 돌려요(Claude Code는 OMC, Codex는 OMX) | Claude Code, Codex(전역 OMX CLI 필요) |
 | `pstack` | React 코어팀 poteto의 엄격한 엔지니어링 방식이에요. `poteto-mode`가 일에 맞는 플레이북(기능, 버그, 성능, 리팩터, 시안)을 골라 코드는 적게 쓰고 실행 증거로 검증해요 | Claude Code만 |
 | `mattpocock` | 늘 설치하는 mattpocock 3개에 PRD에 맞는 추가 스킬을 골라 단계마다 기법으로 써요. 개발자가 진행을 쥐고 필요한 기법만 더해요 | Claude Code, Codex, Antigravity, Grok Build |
+| `openspec` | 변경마다 제안·설계·작업 목록을 먼저 합의하고 적용한 뒤 스펙으로 보관해요. 가볍고 이미 있는 프로젝트에 붙이기 좋아요. 전역 CLI(npm)가 필요해요 | Claude Code, Codex, Antigravity, Grok Build |
+| `spec-kit` | 헌법(원칙) → 스펙 → 명확화 → 계획 → 작업 목록 → 구현을 꼼꼼히 밟는 GitHub의 스펙 주도형이에요. 설치할 때 uv가 필요해요 | Claude Code, Codex, Antigravity, Grok Build |
+| `compound-engineering` | 계획과 리뷰에 힘을 싣고, 끝낸 일에서 배운 것을 `docs/solutions/`에 쌓아 다음 작업을 쉽게 만들어요 | Claude Code, Codex, Antigravity, Grok Build |
 
 두뇌를 지원하지 않는 도구로 같은 프로젝트를 열면 그 도구는 내장 절차로 진행해요. 용어와 설계 결정을 묻고 적는 일은 두뇌와 상관없이 `grilling`·`domain-modeling`이 맡아요.
 
@@ -67,21 +78,25 @@
 
 ## 바꾸기
 
-열린 라운드를 닫은 뒤 그 프로젝트의 H 라운드에서 바꿔요.
+진행 중에 "두뇌를 openspec으로 바꿔줘", "superpowers도 같이 쓰고 싶어", "tdd 스킬 빼줘"처럼 말하면 `prokit-skills-manage` 스킬이 받아요. 열린 라운드를 닫은 뒤 H 라운드에서 아래 명령으로 바꾸고, 바뀐 구성을 보여 주고 확인받은 뒤 커밋해요. 바꾼 뒤에는 새 세션을 열어야 플러그인과 훅이 바뀌어요.
 
 ```bash
-pnpm skills:setup --brain superpowers --simplicity ponytail   # 고른 것을 기록하고 설치, 고르지 않은 설치본은 지운다
-pnpm skills:setup --brain none                                 # 두뇌를 빼고 내장 절차로 돌아간다
-pnpm skills:setup --matt tdd,research                          # 추가 스킬을 더한다(기록하지 않는다)
-pnpm skills:check                                              # 고르지 않은 두뇌·과설계 방지 스킬이 남아 있으면 exit 1
+pnpm skills:setup --brain openspec                     # 두뇌를 바꾼다. 고르지 않은 두뇌의 설치본은 지운다
+pnpm skills:setup --brain openspec,superpowers         # 두뇌를 더한다. 남길 목록 전부를 주고 첫 값이 주 두뇌다
+pnpm skills:setup --brain none --simplicity ponytail   # 두뇌를 빼고 내장 절차로 돌아간다
+pnpm skills:setup --matt tdd,research                  # 추가 스킬을 더한다(기록하지 않는다)
+pnpm skills:setup --drop tdd,taste                     # 추가 스킬이나 선택 묶음을 지운다
+pnpm skills:check                                      # 고르지 않은 두뇌·과설계 방지 스킬이 남아 있으면 exit 1
 ```
+
+두뇌를 바꿔도 그 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`)는 지우지 않아요. 새 두뇌가 그 문서를 읽고 이어 가요. 지금 두뇌가 없음(`none`)이면 더할 때도 새 두뇌 이름만 줘요. 이번 세션에서만 잠시 끄는 일(`stop ponytail` 등)은 구성 변경이 아니라서 이 스킬을 쓰지 않아요.
 
 ## 자세히
 
-- **정리 기준**: `--brain`이나 `--simplicity`를 주면 그 항목에서 고르지 않은 설치본을 이름이 아니라 출처로 찾아 지워요. 스킬은 `skills-lock.json`의 출처, 플러그인은 ID, OMX는 `.omx/setup-scope.json`으로 판정해요. 추가 스킬과 선택 묶음은 지우지 않아요.
+- **정리 기준**: `--brain`이나 `--simplicity`를 주면 그 항목에서 고르지 않은 설치본을 이름이 아니라 출처로 찾아 지워요. 스킬은 `skills-lock.json`의 출처, 플러그인은 ID, OMX는 `.omx/setup-scope.json`, OpenSpec·Spec Kit은 그 도구가 만든 파일로 판정해요. 추가 스킬과 선택 묶음은 `--drop`으로 줄 때만 지워요. 필수 3개와 공식 스킬은 지우지 않아요.
 - **전역 설치본**: 이 컴퓨터 전역에 켜진 고르지 않은 플러그인(예: superpowers, ponytail)과 gstack 개인 스킬은 `.claude/settings.local.json`(커밋하지 않는 개인 설정)으로 이 프로젝트에서만 꺼요. impeccable과 같은 일을 하는 `frontend-design` 플러그인도 같아요. 전역 `~/.claude/CLAUDE.md`의 OMC 블록과 Codex 전역 스킬은 끌 수 없어 경고만 해요.
-- **전역 설치가 필요한 두뇌**: gstack과 OMX CLI는 정식 설치가 전역뿐이라 그 두뇌를 고를 때만 설치해요. 다른 두뇌로 바꿔도 전역 설치본은 지우지 않아요.
-- **정본**: 선택지 설명, 추천 기준, 두뇌별 단계 이름은 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/brains/`에 있어요. 고른 과설계 방지 스킬이 맡는 일은 같은 폴더의 `process-routing.md` 규칙 6 역할 표예요.
+- **전역 설치가 필요한 두뇌**: gstack, OMX CLI, OpenSpec CLI는 정식 설치가 전역뿐이라 그 두뇌를 고를 때만 설치해요. 다른 두뇌로 바꿔도 전역 설치본은 지우지 않아요. OpenSpec CLI는 기본으로 사용 통계(명령 이름과 판)를 보내요. 끄려면 셸 설정에 `OPENSPEC_TELEMETRY=0`을 둬요.
+- **정본**: 선택지 설명, 추천 기준, 단계 표, 두뇌별 단계 이름은 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/brains/`에 있어요. 고른 과설계 방지 스킬이 맡는 일은 같은 폴더의 `process-routing.md` 규칙 6 역할 표예요.
 
 ## 관련 문서
 

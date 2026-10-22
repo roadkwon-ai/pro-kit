@@ -8,5 +8,6 @@
 | [dev-cycle 라운드](dev-cycle.md) | 코드를 바꾸는 작업 하나가 거치는 순서와 대조표 |
 | [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md) | 작업 종류에 따라 정해지는 검사와 리뷰 행 |
 | [증거와 audit, 사용자 확인](audit-and-confirm.md) | 증거를 남기는 규칙, 자동 감사, 사용자가 직접 확인하는 행 |
+| [정밀 분석과 진행 계획](project-plan.md) | 큰 일을 Task로 나누고 앞 Task가 끝나야 다음 Task를 여는 게이트, 기존 프로젝트의 정밀 분석 |
 | [위임 에이전트와 리뷰 에이전트](agent-roles.md) | 코디네이터, 수행자, 전문 리뷰, 최종 리뷰의 경계 |
 | [위임과 자원 관리](delegation-and-resources.md) | 공급자 선택 증거와 로컬 자원을 보수적으로 다루는 방법 |

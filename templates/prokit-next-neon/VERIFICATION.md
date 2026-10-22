@@ -4,6 +4,90 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 프로젝트 유형별 도입, 두뇌 확장, Task 게이트 (2026-10-22)
+
+설계와 결정 근거는 [프로젝트 유형별 도입 계획](../../docs/plans/2026-10-22-prokit-project-types-and-brains.md)이다. 측정 산출물(확인용 프로젝트, eval 작업 공간)은 세션 스크래치에 있었으므로 여기에는 결과만 남긴다.
+
+- 테스트: 두 템플릿 `node --test 'templates/<템플릿>/tests/*.test.mjs'` 각 339개 통과(supabase의 `resource-integration` 한 건은 한 번 시간 초과로 실패했고 다시 실행하면 통과했다). 저장소 `node --test scripts/*.test.mjs` 106개 통과.
+- 새 두뇌 실측 판: OpenSpec 1.14.3(`openspec init --tools claude,codex,antigravity`. 스킬 6개와 명령), Spec Kit 1.2.2(`uvx --from specify-cli specify init`, `--integration-options='--events false'`로 `.claude/settings.json`에 훅을 쓰지 않음), Compound Engineering 3.31.0(Claude 플러그인 project scope, 훅·MCP 없음. Codex용 스킬 14개는 skills CLI). OpenSpec CLI는 전역 설치 대신 `npx` 대리 명령으로 실측했다.
+- 두뇌 설치·바꾸기(Better-T-Stack 프로젝트): `--brain openspec,spec-kit,compound-engineering` 설치 → `skills:check` exit 0, `두뇌: openspec(주, 설치됨), spec-kit(설치됨), compound-engineering(설치됨)`. `--brain compound-engineering`으로 바꾸면 OpenSpec·Spec Kit 도구 파일만 지우고 `openspec/`, `specs/`, `.specify/memory/`는 남았다. `--brain none`이면 Compound Engineering 플러그인을 끄고 스킬을 지웠다. `pnpm check`, `pnpm exec biome check .` 통과. OpenSpec과 Spec Kit은 정리한 뒤 다시 설치해도 남긴 설정·스펙·헌법을 덮어쓰지 않았다.
+- adopt: `create-next-app`(Next 16.4.2) 앱에 `--adopt`로 설치. 기존 `AGENTS.md`(Next 규칙)는 그대로 두고 블록을 덧붙였고, 기존 스크립트·설정·코드는 바뀌지 않았다. 스킬 27개(`stack` 항목 제외), `dev-cycle status`·`skills:check`·`agents:check` exit 0, `app/about.tsx`는 B, `lib/price.ts`는 F로 판정.
+- adopt ESLint(같은 날 보강): 운영 중인 `create-next-app` 쇼핑몰(Next 16.4.2, Prisma, ESLint 9 flat config)에 `--adopt`로 설치하니 `pnpm lint`가 설치 전 exit 0에서 exit 1이 됐다. 오류 3개는 taste-skill `scripts/assets.mjs`의 `react-hooks/rules-of-hooks`, 경고 107개는 `.agents/skills`와 하네스 스크립트에서 났다. 설치기가 `eslint.config.*`의 `globalIgnores`에 `.agents/**`와 adopt 하네스 스크립트 6개를 더하게 고쳤다. `--skip-skills`로 다시 실행해 반영한 뒤 `lint`(문제 0개)·`typecheck`·`test`·`skills:check`·`agents:check` exit 0. 두 템플릿 테스트 각 351개 통과(skill-creator `quick_validate`는 PyYAML이 있는 `python3`가 필요하다). 한계: `globalIgnores([`가 없는 flat config와 옛 `.eslintrc`는 경고만 하고 직접 넣게 한다. ESLint 8과 `next lint` 프로젝트는 실측하지 않았다.
+- early 같은 폴더: 기획 자료를 `docs/`, 프로토타입을 `prototype/`으로 옮겨 커밋한 폴더에 `create-better-t-stack --no-git --directory-conflict merge`로 생성. 생성기가 폴더 전체를 포맷해 옮긴 파일의 모양이 바뀌어 `git checkout -- docs prototype`으로 되돌렸다. `--project-type early` 설치 뒤 `pnpm check`, `biome check .` 통과(`prototype/` 제외).
+- operating(Better-T-Stack): `--project-type operating --default-branch prokit/setup` 설치 뒤 도입 브랜치에서 `dev-cycle case`가 A(설치 커밋이 diff에 섞이지 않음). 진행 계획 실사용: `table --task T2`는 T1이 대기라 거부(exit 2), `--task T1`은 세부 계획·계획 리뷰 행을 앞에 두고 열림, `status`가 다음 Task를 보여 줌.
+- migration: `--project-type migration --legacy <경로>`가 `legacy.path`를 프로젝트 기준 상대 경로로 기록하고 `dev-cycle status`가 보여 준다.
+- `prokit-init` eval(skill-creator 방식): 시나리오 21개(새 8개). 11개 시나리오를 새 판과 옛 판으로 22회 실행해 새 판 60/60(100%), 옛 판 51%. 회귀 시나리오(PRD 없음, PRD 파일, 운영 콘솔 PRD)는 같다. 채점 지적(git이 아닌 운영 대상, 질문 4개 제한, adopt 템플릿 질문, 근거 없는 두뇌 추천)을 반영한 2차 실행 2개 통과.
+- 독립 리뷰: T1(두뇌), T2(설치기 adopt), T3(Task 게이트), 계획 리뷰, 문서 리뷰. High 지적 0건, Medium 지적은 반영했다.
+- 남은 한계: OpenSpec CLI는 기본으로 사용 통계를 보낸다(`OPENSPEC_TELEMETRY=0`으로 끈다. 설치기는 전역 설정을 바꾸지 않는다). Spec Kit은 설치할 때 uv가 필요하다. adopt 프로젝트에는 Better-T-Stack 계층 스킬이 없어 정밀 분석 뒤 첫 H Task에서 경로 규칙과 계층 규칙을 맞춰야 한다. 정밀 분석(`prokit-analyzer`)과 진행 계획을 실제 프로젝트 세션에서 끝까지 돈 실측은 아직 없고(같은 날 아래 "검수와 테스트 보완"의 실행 평가로 T1 세부 계획까지 확인했다), 게이트와 행 규칙은 단위 테스트와 CLI 실사용으로만 확인했다. adopt 프로젝트에서 `pnpm dev-cycle secrets`는 루트·`apps/web`·`packages/db`의 로컬 `.env` 값만 대조하고, 복사한 `prokit-dev-cycle` 설명은 Better-T-Stack 문구 그대로다(`adopt/AGENTS.md`가 없는 스킬·파일과 함께 안내한다). 기존 프로젝트 도입은 `--default-branch`를 늘 넘긴다. 빼면 `origin/HEAD`·`main`·`master`가 없는 저장소에서 `prokit/setup`이 기준 브랜치로 적힌다.
+
+## 실제 프로젝트 시험: prokit-init과 정밀 분석·진행 계획 (2026-10-22 추가)
+
+[시험 계획](../../docs/plans/2026-10-22-prokit-init-analyzer-e2e.md)대로 실제 프로젝트를 만들고, 실제 에이전트 세션으로 정밀 분석과 Task 진행까지 이어 갔다.
+
+- 방법:
+  - 지금 작업 트리를 복사한 pro-kit 사본에서 `claude -p` 세션으로 `prokit-init`을 돌렸다. 만든 프로젝트에서는 새 세션으로 이어 갔다. 질문에는 사용자 역할 모델이 답했다(AskUserQuestion이 없어 질문은 대화로 했다).
+  - 픽스처: 기획 문서와 Vite 시안만 있는 폴더(git 아님, `.env`·`node_modules` 포함), create-next-app 쇼핑몰(Prisma, Auth.js, middleware, 배포 워크플로, 커밋 이력), Better-T-Stack 고객 관리 앱(Supabase DB, 배포 워크플로), PHP 예약 서비스 두 개(뼈대만 있는 것, Laravel 구조의 회의실 예약 28개 파일).
+  - 채점은 독립 에이전트가 대화, 도구 호출 기록, git 상태로 했다.
+- 결과: `prokit-init` 12개 시나리오 64/64, 프로젝트 세션 9개 49/53.
+  - `prokit-init`: new(Spec Kit, Supabase와 두뇌 둘), early(같은 폴더, 폴더 이름 변경, 첫 커밋 전 `.gitignore`), early 거절, operating Better-T-Stack(두 번), operating 일반 Next.js(adopt), 커밋 안 한 변경, git 아님, migration(두 번), 이미 프로킷이 있는 프로젝트. 원본 자료와 기존 코드가 그대로인 것을 해시와 git 이력으로 확인했다.
+  - 프로젝트 세션: `prokit-analyzer` 정밀 분석, 진행 계획 라운드, Task 라운드, 두뇌 바꾸기가 실제로 돌았다. operating은 T1을 close까지 하고 T2를 열었다. 두뇌는 OpenSpec, Spec Kit, superpowers와 Compound Engineering을 실제로 썼다.
+  - 실패 4개: 옛 하네스에서 앞 Task를 건너뛰자는 요청에 선택지를 묻지 않고 계획 리뷰 없이 순서를 바꿈(2개), 두뇌 바꾸기에서 대조표 증거를 손으로 고침, 사용자가 계획을 보기 전에 미리 승인했고 리뷰로 바뀐 계획을 다시 보이지 않음. 아래를 고친 뒤 같은 건너뛰기 요청을 다시 해 6/6을 통과했다. 나머지 둘도 고친 판으로 다시 돌려 통과했다(아래 "추가 시험").
+- 고친 결함(코드):
+  - adopt의 ESLint 무시 경로(위 adopt ESLint 항목). Biome을 쓰는 create-next-app 앱(`--biome`)도 adopt 설치만으로 `pnpm lint`(`biome check`)가 exit 0에서 exit 1(오류 232개, 벤더 스킬·하네스 스크립트·설정 JSON)이 됐다. `biome.json`의 `files.includes`에 하네스·벤더 파일 제외만 더하게 고쳤고, 다시 설치해 exit 0을 확인했다.
+  - 진행 계획 라운드: 네 세션이 모두 대조표에 분석·계획·리뷰 행을 손으로 넣었고 한 번은 셀 안의 `|`로 표가 깨졌다. `pnpm dev-cycle table A --write --title "<요약>" --plan`이 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 계획 리뷰 행을 앞에 붙이고, audit이 문서 경로 증거와 `tasks/plan.md`의 진행 계획 블록을 본다. 계획이 없는 기존 프로젝트는 `status`가 이 명령을 알려 준다.
+  - `제외`: 앞 Task가 남아 있으면 뒤쪽 Task를 제외로 적을 수 없었다(`plan`이 문제로 봄). 제외는 하지 않기로 한 결정이라 어디서나 적을 수 있게 했다.
+  - operating 설치: 앱 폴더에 쓰지 않는 `prokit-credit.tsx`를 더했고, "다음 할 일"이 새 프로젝트처럼 첫 마이그레이션과 `pnpm check`를 안내했다. 둘 다 고쳤고 실제 Better-T-Stack 프로젝트에 다시 설치해 확인했다.
+  - `--plan`: 독립 코드 리뷰 지적(High 0, Medium 2)을 반영해 진행 계획 라운드가 아닌 열린 라운드에는 `--plan`을 쓰지 못하게 했고, audit이 계획 행 누락을 잡고, F로 올려도 계획 리뷰 행이 하나만 남게 했다.
+  - 오류 문구: Task 게이트(미루려면 제외나 `--plan` 순서 바꾸기를 묻는다), 프로젝트 밖 증거 파일(`tasks/evidence/`), 계획 리뷰 증거 형식(예시).
+  - 빌드·배포 설정 판정: `apps/web/next.config.*`, `vercel.json`, `turbo.json`, `.github/workflows/`가 경로 규칙에 없어 A(경미)로 지나갔다. 정밀 분석이 매번 짚었고 한 세션은 CI 경로를 H 규칙에 직접 더했다. `.dev-cycle.json`에 H 규칙 "빌드·배포 설정"을 더하고 H 표에 빌드 행(바꿨으면 `pnpm build`)을 넣었다. adopt 프로젝트에도 들어가 루트 `next.config.*`가 F 대신 H로 판정된다.
+  - Task 표 지문: 진행 계획 라운드를 닫으면 Task 구성(번호·제목·순서)의 지문을 계획 블록 머리(`sig=`)에 적는다. 그 뒤 라운드 밖에서 바꾸면 `pnpm dev-cycle plan`·Task 게이트·audit이 잡는다. 상태와 기록 칸은 지문에 넣지 않아 close와 제외 기록은 그대로다. 진행 계획 라운드가 열려 있으면 비교하지 않는다.
+  - 작업공간 설정 판정: 시험 프로젝트 커밋을 보면 기능 의존성은 `apps/web`·`packages/*`의 `package.json`과 `pnpm-lock.yaml`에 들어가고, 루트 `package.json`에는 `dev-cycle`·`skills:*` 명령과 자원 보호를 건 `dev`·`build`가 있다. 그래서 루트 `package.json`, `biome.json`, `tsconfig.json`, `packages/config/`를 H 규칙 "작업공간 설정"으로 판정하고, H 표의 빌드 행을 빌드·검사 행(`pnpm build`와 타입·린트 검사)으로 넓혔다. adopt는 루트 `package.json`이 앱의 의존성 목록이라 이 규칙을 넣지 않는다. `pnpm-workspace.yaml`은 공용 의존성 `catalog:`가 있어 넣지 않았다(리뷰 지적).
+  - 독립 코드 리뷰(High 0, 7건)를 반영했다. 지문이 없는 계획은 Task 게이트가 막고 진행 계획 라운드를 안내한다. Task를 시작한 계획에서 `sig=`가 없거나 비어 있으면 audit이 잡는다. 머리에 `sig=`가 둘이거나 doc 경로에 `sig=`가 들어 있어도 지문을 하나만 남긴다. 다른 라운드가 열려 있으면 그 라운드를 닫을 수 없으므로 먼저 되돌리라고 알린다. 부분 완료로 닫은 진행 계획 라운드도 지문을 적는다(사용자가 그 계획으로 가기로 했다). adopt는 H 규칙을 추정 규칙보다 앞에 둔다(`.agents/skills/x/components/`가 B로 판정됐다). 빌드·배포 규칙에 `next.config.mts`·`.cjs`, `vercel.ts`, `.github/actions/`, `apps/web/turbo.json`을 더했다. `analysis.md`의 "next.config는 A라 D 규칙을 더한다" 안내와 케이스 표의 H 설명을 고쳤다.
+- 고친 결함(문서):
+  - `pnpm create`는 `-C`를 따르지 않아 프로젝트가 pro-kit 안에 생겼다. 루트 `AGENTS.md` 4번에 서브셸 실행을 적었다.
+  - Supabase: create-better-t-stack 3.47.0은 `--manual-db`면 `apps/web/.env`에 `DATABASE_URL`을 넣지 않는다. README "로컬 DB 시작"에 넣는 줄을 더했다.
+  - operating 확인: 설치 전과 뒤의 검사를 비교하고 `pnpm check`는 돌리지 않는다(루트 `AGENTS.md`).
+  - 진행 계획: 계획 전에 결과를 바꾸는 질문부터 묻는다. 세부 계획 전에 그 케이스의 사용자 질문(디자인 방향 등)을 먼저 묻는다. 미리 승인했어도 최종 계획을 보여 주고 확인받는다. 확인 전에는 Task 산출물을 만들지 않는다. 앞 Task를 미루자는 요청은 선택지를 묻는다.
+  - H 표에 하네스 변경 리뷰 행(스크립트·CI·배포 설정·경로 규칙을 바꿨을 때)을 더했다. `prokit-skills-manage`는 증거를 `tasks/evidence/`로 채우고 설치 출력을 자르지 않는다. `resource run`에는 비밀값을 인자로 넘기지 않는다.
+  - `prokit-init`의 평가 자료를 스킬 폴더 밖 `evals/prokit-init/`로 옮겼다. 실행 중인 세션이 기대 동작을 읽었다.
+  - 추가 시험의 채점 지적: `prokit-skills-manage`에 종료 코드를 파이프 없이 `; echo "exit=$?"`로 보라고 적었다(zsh에는 `PIPESTATUS`가 없어 설치기 exit를 확인하지 못했다). `prokit-dev-cycle` 보고에 띄운 로컬 DB·개발 서버의 중지 명령을 넣었고 neon `migration-flow.md`에 `podman compose stop`을 적었다. `prokit-implementer`는 `git stash`·`reset`·`checkout --`로 작업 트리를 되돌리지 않는다(구현 위임이 디버깅 중 stash를 썼다).
+- 추가 시험(같은 날, 고친 판): 세 시나리오 23/23.
+  - S1 다시(7/7): 설치기 출력을 자르지 않았고 대조표 증거를 모두 `pnpm dev-cycle evidence`로 채웠다.
+  - A5 다시(7/7): 계획이 나오기 전에 받은 승인을 옮기지 않고, 리뷰로 바뀐 최종 계획을 다시 보여 주고 답을 받은 뒤 `[confirm]`을 적었다. close 뒤 `sig=`가 적혔고, 그 계획의 T2·T3 순서를 손으로 바꾸자 `plan`·audit이 잡았다.
+  - Supabase DB Task와 새 세션 이어 가기(8/8): 새 Supabase 프로젝트에서 수강권 테이블 E 라운드를 했다. RLS를 켠 테이블과 마이그레이션, 로컬 Supabase(DB만) 적용, `supabase db advisors --local` `No issues found`, `prokit-reviewer(db)` approve까지 갔다. 스키마 행이 채워진 순간 세션을 끊고, 대화 기억이 없는 새 세션에 "하던 작업 이어서 해줘"만 보냈다. 새 세션은 `git status`, `tasks/todo.md`, `pnpm dev-cycle status`로 열린 라운드를 찾아 새로 열지 않고 마쳤고 마이그레이션을 다시 만들지 않았다. 로컬 DB에 앞선 마이그레이션이 없는 것도 찾아 함께 적용했다. 이 라운드는 `turbo.json`을 바꿔 새 규칙으로 H 행과 빌드 행이 붙었다.
+  - 로컬 DB: 설치 단계는 neon 4개(포트 충돌 시 `DB_PORT`)와 Supabase 1개, 프로젝트 세션은 neon(전환 T1)과 Supabase(위)에서 실제로 적용했다.
+- 테스트: 두 템플릿 각 354개, 저장소 106개, 문서 검사 67개, `doc-values --check` 통과.
+- 남은 한계:
+  - 시나리오마다 한 번 돌렸고 답은 사용자 역할 모델이 했다. AskUserQuestion 화면, 원격 저장소, 배포, 운영 DB는 시험하지 않았다. 처음 시험의 일부 세션은 사용량 한도로 끊겨 같은 세션을 이어 갔다. 대화 기억 없이 새 세션으로 이어 가는 것은 추가 시험에서 따로 확인했다.
+  - adopt 프로젝트의 루트 `package.json`·`biome.json`·`tsconfig.json`은 A로 판정된다. 루트 `package.json`이 앱의 의존성 목록이라 H로 두면 의존성을 더할 때마다 H 행이 붙는다. 정밀 분석 뒤 첫 H Task에서 그 프로젝트에 맞춘다.
+  - operating 설치는 루트 `package.json`·`biome.json`을 Biome 형식(탭)으로 다시 써서 공백 diff가 생긴다.
+  - `pnpm-workspace.yaml`은 A로 판정된다. 기능 의존성을 더하는 `catalog:`와 네이티브 빌드 허용(`allowBuilds`)·`overrides`가 한 파일에 있어 경로로는 가를 수 없다. `allowBuilds`·`overrides` 변경은 코드 리뷰에서 본다.
+  - Task 표 지문은 실수와 임의 수정을 막는 장치다. 지문을 직접 다시 계산해 적으면 피할 수 있고, 그 변경은 diff와 리뷰에 드러난다.
+
+## 검수와 테스트 보완 (2026-10-22 추가)
+
+같은 날 도입 변경을 다시 검수했다. 독립 리뷰 세 갈래(단위 테스트 빈틈, 스킬 문서, 수정분)와 템플릿 스킬 실행 평가를 했고, 찾은 결함을 고친 뒤 회귀 테스트를 더했다.
+
+- 고친 결함(코드):
+  - `skills-setup.mjs`가 모르는 인자(`--help`, 오타, 값 없는 이름)를 버리고 기본 설치를 돌렸다. 평가 실행 중 에이전트가 `--help`를 실행해 원격 설치와 `.claude/settings.json` 변경이 실제로 일어났다. 이제 `--help`는 사용법만 보이고, 모르는 인자와 두 번 준 값 옵션은 exit 2다.
+  - `install.mjs`도 모르는 플래그(`--dif`, `--skip-skill`)를 버리고 실제 설치를 했다. 이제 exit 1이다. `.dev-cycle.json`이 이미 있는 프로젝트에 `--adopt`로 설치하면 `adopt`를 기록하지 않았다. 운영 중인 Better-T-Stack 프로젝트의 `dev`·`build`에 resource 래퍼를 씌웠다(배포·CI가 쓰는 명령이라 이제 씌우지 않는다). adopt 인증 경로 패턴이 `auth.config.ts`, `lib/auth-client.ts`, `app/(auth)/` 등을 놓쳤다. 바뀐 것이 없는 다시 실행이 `.dev-cycle.json`을 다시 써 한 줄 배열을 펼쳤다.
+  - `dev-cycle.mjs`: `dev-cycle:plan` 블록이 없는 `tasks/plan.md`(agent-skills 두뇌 `/plan`의 기본 출력 경로)가 모든 라운드의 audit을 막았다. 이제 진행 계획이 아닌 문서로 보고 알리기만 한다. 들여쓴 Task 행은 읽기만 하고 상태를 고치지 못했다. `--task` 없이 라운드를 열 때 끝나지 않은 Task가 있으면 경고하고, 그 Task의 라운드가 열려 있으면 `status`·`plan`이 새로 열지 말고 이어 가라고 알린다.
+- 고친 문서:
+  - 운영 중인 기존 프로젝트는 라운드 끝에 커밋까지만 한다(`prokit-dev-cycle` 5절 5·7번). 기본 브랜치 push가 기존 배포를 부를 수 있어서다.
+  - git이 아니던 폴더는 첫 커밋 전에 `.env*`·`node_modules/`를 `.gitignore`에 넣는다. 이미 프로킷이 있는 프로젝트는 도입 대신 템플릿 갱신 반영으로 안내한다. 운영 Better-T-Stack의 템플릿은 실제 DB로 고르고, Postgres·Drizzle이 아니면 `--adopt`다.
+  - `prokit-ui`는 이어 갈 기존 디자인 근거가 있을 때만 디자인 방향을 묻는다. 전환은 `legacy.path`에서 근거를 모은다.
+  - `prokit-skills-manage`는 지금 두뇌가 `none`이면 새 두뇌만 준다. 세션 끄기(`stop ponytail`)에는 쓰지 않는다. agent-skills `/plan`의 계획은 `docs/plans/`에 쓴다.
+- 재초기화 확인: Spec Kit CLI 1.2.2(`specify init --here --force`)와 OpenSpec 1.14.3(`openspec init --force`)을 기존 헌법·스펙·제안·설정이 있는 폴더에 다시 실행해도 그 파일을 덮어쓰지 않았다.
+- 테스트: 두 템플릿 각 350개 통과(새 테스트 11개, 기존 테스트에도 경우를 더함). 저장소 106개, 문서 검사 67개, `doc-values --check` 통과.
+- 템플릿 스킬 실행 평가(skill-creator 방식):
+  - 이번 판과 HEAD 판의 프로킷 층을 같은 확인용 프로젝트에 덮어써 7개 시나리오를 한 번씩 돌렸다. 시나리오는 운영 중(정밀 분석, 진행 계획, T1), 전환(같은 흐름), 앞 Task 건너뛰기 요청, 두뇌 바꾸기, 두뇌 더하기와 스킬 빼기, 기존 디자인 유지, 리디자인이다.
+  - 검증 항목 통과는 이번 판 41/43, HEAD 판 19/43이다.
+  - 운영 중과 전환 시나리오는 `prokit-analyzer` 분석, 케이스 A 계획 라운드(계획 리뷰 approve, 사용자 확인, close·커밋), `--task T1` 라운드와 세부 계획 문서까지 돌았다. 각각 약 42분, 31분이 걸렸고 계획 리뷰를 3\~5회 받았다.
+  - 앞 Task 건너뛰기 시나리오는 두 판 모두 T2를 열지 않아 구분하지 못했다. 이번 판의 실패 2개는 확인 범위 점검 누락과 위 `--help` 사고다.
+- 평가 세트 보강: `evals/prokit-skills-manage`(동작 5개, 트리거 16개)를 새로 두었다. `prokit-dev-cycle`에는 진행 계획 시나리오 3개(41\~43), `prokit-ui`에는 기존 프로젝트 디자인 방향 시나리오 3개(6\~8)를 더했다. 새 시나리오는 아직 실행하지 않았다.
+- `prokit-init` 재확인: 기준 브랜치 문구를 고친 뒤 early·operating 시나리오 3개를 다시 돌려 모두 통과했다(`--default-branch main`).
+- 남은 한계: 실행 평가는 시나리오마다 한 번이고, 의존성 없는 복사본에서 돌아 타입 검사, 개발 서버, 화면 critique를 건너뛰었다. 경로 규칙에 없는 파일(`apps/web/next.config.ts`, `apps/web/src/lib/` 등)을 A로 판정하는 것은 기존 설계다. 전환의 병행 운영 설정은 첫 H Task에서 규칙을 더하도록 정밀 분석 점검표에 적었다.
+
 ## 선택 묶음 taste: taste-skill 화면 디자인 보조 (2026-10-20)
 
 taste-skill(Leonxlnx/taste-skill의 `design-taste-frontend`, v2.1.3, MIT)을 선택 묶음 `taste`로 더했다. 같은 날 impeccable 대체로는 두지 않기로 했고(아래 "채택하지 않은 것", [두뇌 선택 설계](../../docs/plans/2026-10-20-prokit-brain-selection.md) 11절), 쓰고 싶은 사용자에게 선택권을 주자는 사용자 결정에 따라 보조 묶음으로 넣었다.

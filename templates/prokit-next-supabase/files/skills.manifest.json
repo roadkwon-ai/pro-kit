@@ -45,7 +45,8 @@
 				"better-auth-best-practices",
 				"better-auth-security-best-practices",
 				"email-and-password-best-practices"
-			]
+			],
+			"stack": true
 		},
 		{
 			"agents": ["claude-code", "codex"],
@@ -70,7 +71,8 @@
 		{
 			"agents": ["claude-code", "codex"],
 			"source": "vercel/turborepo",
-			"skills": ["turborepo"]
+			"skills": ["turborepo"],
+			"stack": true
 		},
 		{
 			"agents": ["claude-code", "codex"],
@@ -201,7 +203,8 @@
 				{
 					"path": ".codex/skills/using-superpowers"
 				}
-			]
+			],
+			"forces": true
 		},
 		"agent-skills": {
 			"description": "스펙부터 출시까지 보안·성능·접근성 기준을 단계별 명령으로",
@@ -295,7 +298,8 @@
 				{
 					"path": ".codex/skills/gstack"
 				}
-			]
+			],
+			"forces": true
 		},
 		"oh-my": {
 			"description": "큰 작업을 자동·병렬 모드로(Claude는 OMC, Codex는 OMX)",
@@ -326,7 +330,8 @@
 					"path": ".claude/CLAUDE.md",
 					"contains": "<!-- OMC:START -->"
 				}
-			]
+			],
+			"forces": true
 		},
 		"mattpocock": {
 			"description": "필수 3개에 고른 mattpocock 추가 스킬로 단계마다 기법을 골라 진행",
@@ -334,6 +339,87 @@
 				"claude-code": "full",
 				"codex": "full"
 			}
+		},
+		"openspec": {
+			"description": "변경마다 제안·설계·작업 목록을 먼저 합의하는 가벼운 스펙 주도형. 전역 CLI(npm)",
+			"hosts": {
+				"claude-code": "full",
+				"codex": "full"
+			},
+			"global": [
+				{
+					"name": "OpenSpec CLI",
+					"check": "command -v openspec >/dev/null",
+					"install": "npm install -g @fission-ai/openspec@latest",
+					"hint": "pnpm skills:setup --brain openspec (npm 전역 설치) 또는 https://github.com/Fission-AI/OpenSpec"
+				}
+			],
+			"init": {
+				"run": "openspec init --tools claude,codex,antigravity --force --profile core --no-animation",
+				"env": {
+					"OPENSPEC_TELEMETRY": "0"
+				},
+				"marker": [
+					".claude/skills/openspec-propose/SKILL.md",
+					".agents/skills/openspec-propose/SKILL.md"
+				],
+				"remove": "rm -rf .claude/skills/openspec-* .agents/skills/openspec-* .agents/skills/.openspec-target .claude/commands/opsx .agents/workflows/opsx-*.md",
+				"keep": ["openspec"]
+			}
+		},
+		"spec-kit": {
+			"description": "헌법·스펙·계획·작업 목록을 차례로 쓰는 GitHub의 꼼꼼한 스펙 주도형. 설치에 uv 필요",
+			"hosts": {
+				"claude-code": "full",
+				"codex": "full"
+			},
+			"init": {
+				"run": "command -v uvx >/dev/null || { echo 'spec-kit 설치에는 uv가 필요하다: https://docs.astral.sh/uv/getting-started/installation/'; exit 1; }; uvx --from specify-cli specify init --here --force --non-interactive --integration claude --integration-options='--events false' --script sh --ignore-agent-tools && uvx --from specify-cli specify integration install codex --integration-options='--events false'",
+				"marker": [
+					".claude/skills/speckit-specify/SKILL.md",
+					".agents/skills/speckit-specify/SKILL.md"
+				],
+				"remove": "rm -rf .claude/skills/speckit-* .agents/skills/speckit-* .specify/scripts .specify/templates .specify/workflows .specify/integrations .specify/integration.json .specify/init-options.json .specify/.gitignore",
+				"keep": ["specs", ".specify/memory"]
+			}
+		},
+		"compound-engineering": {
+			"description": "계획·리뷰에 힘을 싣고 배운 것을 docs/solutions에 쌓아 다음 작업을 쉽게 만드는 복리형",
+			"hosts": {
+				"claude-code": "full",
+				"codex": "full"
+			},
+			"claude": {
+				"marketplaces": {
+					"compound-engineering-plugin": {
+						"source": "github",
+						"repo": "EveryInc/compound-engineering-plugin"
+					}
+				},
+				"plugins": ["compound-engineering@compound-engineering-plugin"]
+			},
+			"skills": [
+				{
+					"agents": ["codex"],
+					"source": "EveryInc/compound-engineering-plugin",
+					"skills": [
+						"ce-brainstorm",
+						"ce-plan",
+						"ce-work",
+						"ce-simplify-code",
+						"ce-code-review",
+						"ce-compound",
+						"ce-compound-refresh",
+						"ce-debug",
+						"ce-ideate",
+						"ce-doc-review",
+						"ce-explain",
+						"ce-prototype",
+						"ce-optimize",
+						"ce-handoff"
+					]
+				}
+			]
 		}
 	},
 	"simplicity": {

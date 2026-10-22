@@ -4,7 +4,7 @@
 //          [--brain <이름|none>] [--simplicity <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]]
 import { spawnSync } from "node:child_process";
 import {
-  appendFileSync, copyFileSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, readlinkSync, realpathSync, symlinkSync, writeFileSync,
+  appendFileSync, copyFileSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, readlinkSync, realpathSync, statSync, symlinkSync, writeFileSync,
 } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -21,13 +21,61 @@ const IGNORE = new Set([".DS_Store", ".omc"]);
 const FILLED = new Set([".dev-cycle.json"]);
 // 값을 받는 인자. 그대로 skills-setup.mjs에 넘긴다.
 const VALUE_FLAGS = new Set(["--brain", "--simplicity", "--matt", "--optional"]);
+// 설치기만 쓰는 값 인자. .dev-cycle.json에 기록한다(projectType, legacy.path).
+// --default-branch: 도입 브랜치(prokit/setup)에서 계속 작업할 때 dev-cycle의 기준 브랜치로 기록한다.
+const OWN_VALUE_FLAGS = new Set(["--project-type", "--legacy", "--default-branch"]);
+const BOOL_FLAGS = new Set(["--diff", "--skip-skills", "--with-global", "--adopt"]);
+export const PROJECT_TYPES = ["new", "early", "operating", "migration"];
+// --adopt: Better-T-Stack 구조가 아닌 Next.js 프로젝트에는 하네스만 복사한다. AGENTS.md·CLAUDE.md 블록은 adopt/에서 가져온다.
+const ADOPT_DIR = join(TEMPLATE_DIR, "adopt");
+const ADOPT_SKILLS = ["prokit-dev-cycle", "prokit-verify", "prokit-web", "prokit-ui", "prokit-skills-update", "prokit-skills-manage"];
+const ADOPT_SCRIPTS = ["dev-cycle", "delegation", "resource-guard", "skills-setup", "sync-agents", "load-keys"];
+const ADOPT_ONLY = new Set(["AGENTS.md", "CLAUDE.md", ".dev-cycle.json", "skills.manifest.json", "GLOSSARY.md", "docs/dev-workflow.md", "docs/domain/project.md"]);
+export function adoptFile(rel) {
+  const skill = rel.match(/^\.agents\/skills\/([^/]+)\//)?.[1];
+  if (skill) return ADOPT_SKILLS.includes(skill);
+  const script = rel.match(/^scripts\/([^/]+)\.mjs$/)?.[1];
+  if (script) return ADOPT_SCRIPTS.includes(script);
+  return /^(\.claude\/agents|tasks|licenses)\//.test(rel) || ADOPT_ONLY.has(rel);
+}
+// adopt 프로젝트의 첫 경로 규칙. 흔한 Next.js 배치로 추정하고, 규칙 밖 코드는 무거운 F로 본다.
+// 정밀 분석 뒤 첫 H Task에서 프로젝트 구조에 맞게 고친다. H 규칙은 템플릿 .dev-cycle.json의 것을 그대로 쓴다.
+export const ADOPT_RULES = [
+  { case: "E", match: "(^|/)(prisma|drizzle|migrations)/|(^|/)schema\\.prisma$", why: "DB 스키마·마이그레이션(추정)" },
+  { case: "D", match: "(^|/)(src/)?(app|pages)/api/|(^|/)(server|trpc)/", why: "서버·API(추정)" },
+  { case: "B", match: "(^|/)(src/)?(app|pages|components|styles)/", why: "화면·UI(추정)" },
+];
+export const ADOPT_F = { case: "F", match: "\\.(ts|tsx|js|jsx|mjs|cjs)$", why: "경로 규칙 밖 코드(정밀 분석 뒤 첫 H Task에서 규칙을 맞춘다)" };
+// 하네스 경로가 넓은 추정 규칙(예: components/)에 먼저 걸리지 않게 H를 앞에 둔다. 루트 package.json은 앱의 의존성 목록이라 작업공간 설정 규칙은 뺀다.
+export const adoptRules = (rules) => [...rules.filter((r) => r.case === "H" && r.why !== "작업공간 설정"), ...ADOPT_RULES, ADOPT_F];
+// auth.config.ts·lib/auth-client.ts·lib/next-auth.ts·app/(auth)/·app/(protected)/도 인증 경로다(보안 리뷰 행이 붙는다).
+export const ADOPT_AUTH = "(^|/)(auth|middleware|proxy)(/|\\.[cm]?[jt]sx?$)|(^|/)(next-)?auth([.-][\\w.-]*)?\\.[cm]?[jt]sx?$|(^|/)\\((auth[\\w-]*|protected)\\)/|(^|/)\\.env\\.schema$";
 const OLD_SETUP =
-  "이 프로젝트의 scripts/skills-setup.mjs는 --brain·--simplicity·--matt를 모르는 옛 판이다 → 템플릿의 scripts/skills-setup.mjs와 skills.manifest.json을 먼저 옮긴 뒤 pnpm skills:setup을 다시 실행한다";
-const USAGE = "사용법: install.sh <project-dir> [--diff] [--skip-skills] [--with-global] [--brain <이름|none>] [--simplicity <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]]";
+  "이 프로젝트의 scripts/skills-setup.mjs는 --brain·--simplicity·--matt(또는 두뇌 여러 개)를 모르는 옛 판이다 → 템플릿의 scripts/skills-setup.mjs와 skills.manifest.json을 먼저 옮긴 뒤 pnpm skills:setup을 다시 실행한다";
+const USAGE = "사용법: install.sh <project-dir> [--diff] [--skip-skills] [--with-global] [--brain <이름>[,…]|none] [--simplicity <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]] [--project-type new|early|operating|migration] [--legacy <기존 코드 경로>] [--adopt] [--default-branch <브랜치>]";
 
 const run = (cmd, args, opts = {}) => spawnSync(cmd, args, { encoding: "utf8", ...opts });
 
-export function preflight(target, platform = process.platform, node = process.versions.node) {
+// 루트나 한 단계 아래 작업 공간(apps/*, packages/*)의 package.json에 next가 있으면 그 경로를 돌려준다.
+export function findNext(target) {
+  const nested = ["apps", "packages"].flatMap((d) => {
+    try {
+      return readdirSync(join(target, d)).map((n) => `${d}/${n}/package.json`);
+    } catch {
+      return [];
+    }
+  });
+  return ["package.json", ...nested].find((p) => {
+    try {
+      const j = JSON.parse(readFileSync(join(target, p), "utf8"));
+      return Boolean(j?.dependencies?.next || j?.devDependencies?.next);
+    } catch {
+      return false;
+    }
+  }) ?? null;
+}
+
+export function preflight(target, platform = process.platform, node = process.versions.node, { adopt = false } = {}) {
   const errors = [];
   const warnings = [];
   // 설치기와 스킬은 bash, 심볼릭 링크, Linux·macOS 명령을 전제한다. Windows 셸에서는 pnpm.cmd·npx.cmd부터 띄우지 못한다.
@@ -42,21 +90,25 @@ export function preflight(target, platform = process.platform, node = process.ve
   } catch (e) {
     errors.push(`루트 package.json을 읽을 수 없다: ${e.code === "ENOENT" ? "파일 없음" : e.message}`);
   }
-  const webPkg = join(target, "apps/web/package.json");
-  try {
-    const web = existsSync(webPkg) ? JSON.parse(readFileSync(webPkg, "utf8")) : {};
-    if (!web?.dependencies?.next && !web?.devDependencies?.next) {
-      errors.push("apps/web/package.json에 next 의존성이 없다 (Better-T-Stack --frontend next 프로젝트가 아니다)");
+  if (adopt) {
+    if (!findNext(target)) errors.push("next 의존성을 찾지 못했다(루트, apps/*, packages/*의 package.json) → Next.js가 아닌 프로젝트는 전환(migration)으로 새 폴더에 만든다");
+  } else {
+    const webPkg = join(target, "apps/web/package.json");
+    try {
+      const web = existsSync(webPkg) ? JSON.parse(readFileSync(webPkg, "utf8")) : {};
+      if (!web?.dependencies?.next && !web?.devDependencies?.next) {
+        errors.push(`apps/web/package.json에 next 의존성이 없다 (Better-T-Stack --frontend next 프로젝트가 아니다${findNext(target) ? ". Better-T-Stack 구조가 아닌 Next.js 프로젝트는 --adopt로 하네스만 설치한다" : ""})`);
+      }
+    } catch (e) {
+      errors.push(`apps/web/package.json을 읽을 수 없다: ${e.message}`);
     }
-  } catch (e) {
-    errors.push(`apps/web/package.json을 읽을 수 없다: ${e.message}`);
   }
   // 22.20: skills CLI(engines)가 요구하는 하한. 24: 지금 LTS이고 agent-browser가 engines에 적은 판(22에서도 돈다)
   const [major, minor] = node.split(".").map(Number);
   if (major < 22 || (major === 22 && minor < 20)) errors.push(`Node 22.20 이상이 필요하다 (현재 ${node})`);
   else if (major < 24) warnings.push(`Node 24 이상을 권장한다 (현재 ${node})`);
   if (run("pnpm", ["--version"]).status !== 0) errors.push("pnpm이 없다");
-  for (const p of ["packages/db/drizzle.config.ts", "packages/api", "packages/auth"]) {
+  for (const p of adopt ? [] : ["packages/db/drizzle.config.ts", "packages/api", "packages/auth"]) {
     if (!existsSync(join(target, p))) warnings.push(`${p} 없음 — .dev-cycle.json 경로 규칙을 프로젝트에 맞게 고친다`);
   }
   return { errors, warnings };
@@ -73,10 +125,12 @@ function walk(dir, base = dir) {
   return out.sort();
 }
 
-export function copyFiles(target, { diff = false } = {}) {
+// 운영 중인 프로젝트에는 앱 폴더에 파일을 더하지 않는다(쓰지 않는 제작 표시 컴포넌트).
+const APP_CREDIT = "apps/web/src/components/prokit-credit.tsx";
+export function copyFiles(target, { diff = false, adopt = false, operating = false } = {}) {
   const r = { copied: [], appended: [], same: [], kept: [], filled: [] };
-  for (const rel of walk(FILES_DIR)) {
-    const src = join(FILES_DIR, rel);
+  for (const rel of walk(FILES_DIR).filter((f) => (!adopt || adoptFile(f)) && !(operating && f === APP_CREDIT))) {
+    const src = adopt && MERGE_MD.has(rel) ? join(ADOPT_DIR, rel) : join(FILES_DIR, rel);
     const dest = join(target, rel);
     if (!existsSync(dest)) {
       if (!diff) {
@@ -160,16 +214,25 @@ function defaultBranch(target) {
   return run("git", ["branch", "--show-current"], { cwd: target }).stdout.trim() || null;
 }
 
-export function configureDevCycle(target) {
+export function configureDevCycle(target, { adopt = false } = {}) {
   const p = join(target, ".dev-cycle.json");
   const cfg = JSON.parse(readFileSync(p, "utf8"));
+  if (adopt) {
+    cfg.adopt = true;
+    cfg.rules = adoptRules(cfg.rules);
+    cfg.authPaths = ADOPT_AUTH;
+  }
   const scripts = JSON.parse(readFileSync(join(target, "package.json"), "utf8")).scripts ?? {};
   const found = {};
-  if (scripts["check-types"]) found.typecheck = "pnpm check-types";
-  if (existsSync(join(target, "biome.json")) || existsSync(join(target, "biome.jsonc"))) found.lint = "pnpm exec biome check .";
-  else if (scripts.lint) found.lint = "pnpm lint";
-  if (scripts.build) found.build = "pnpm build";
-  if (scripts.test) found.test = "pnpm test";
+  // adopt 프로젝트는 그 프로젝트의 패키지 관리자와 스크립트 이름을 쓴다. Better-T-Stack은 pnpm이다.
+  const lock = (f) => existsSync(join(target, f));
+  const pm = !adopt || lock("pnpm-lock.yaml") ? "pnpm" : lock("yarn.lock") ? "yarn" : lock("bun.lock") || lock("bun.lockb") ? "bun run" : lock("package-lock.json") ? "npm run" : "pnpm";
+  const typecheck = ["check-types", ...(adopt ? ["typecheck", "type-check"] : [])].find((k) => scripts[k]);
+  if (typecheck) found.typecheck = `${pm} ${typecheck}`;
+  if (existsSync(join(target, "biome.json")) || existsSync(join(target, "biome.jsonc"))) found.lint = `${pm === "pnpm" ? "pnpm exec" : pm === "npm run" ? "npx" : pm === "yarn" ? "yarn" : "bunx"} biome check .`;
+  else if (scripts.lint) found.lint = `${pm} lint`;
+  if (scripts.build) found.build = `${pm} build`;
+  if (scripts.test) found.test = `${pm} test`;
   // Better-T-Stack의 루트 db:* 스크립트는 turbo interactive 태스크라 TTY 없는 에이전트 셸에서 실패한다.
   // `turbo run <s> -F <pkg>` 형태면 그 패키지 스크립트를 pnpm으로 직접 부른다.
   const dbCmd = (s) => {
@@ -182,8 +245,22 @@ export function configureDevCycle(target) {
   cfg.commands = { ...found, ...cfg.commands };
   const branch = defaultBranch(target);
   if (branch) cfg.defaultBranch = branch;
-  writeFileSync(p, `${JSON.stringify(cfg, null, 2)}\n`);
+  writeFileSync(p, `${JSON.stringify(cfg, null, "\t")}\n`);
   return { commands: cfg.commands, defaultBranch: cfg.defaultBranch };
+}
+
+// 프로젝트 유형(projectType), adopt, 전환의 기존 코드 경로(legacy.path), 도입 브랜치(defaultBranch)를 기록한다. 다른 키는 그대로 둔다.
+export function recordProject(target, { projectType, adopt, legacy, defaultBranch }) {
+  const p = join(target, ".dev-cycle.json");
+  const text = readFileSync(p, "utf8");
+  const cfg = JSON.parse(text);
+  if (projectType) cfg.projectType = projectType;
+  // .dev-cycle.json이 이미 있던 프로젝트도 adopt로 기록해야 skills-setup이 Better-T-Stack 전용 스킬을 설치하지 않는다.
+  if (adopt) cfg.adopt = true;
+  if (legacy) cfg.legacy = { path: legacy };
+  if (defaultBranch) cfg.defaultBranch = defaultBranch;
+  // 바뀐 것이 없으면 쓰지 않는다. 다시 쓰면 한 줄 배열(brain)이 펼쳐져 Biome 형식과 달라진다.
+  if (JSON.stringify(cfg) !== JSON.stringify(JSON.parse(text))) writeFileSync(p, `${JSON.stringify(cfg, null, text.match(/^([ \t]+)"/m)?.[1] ?? "\t")}\n`);
 }
 
 const RESOURCE_ORIGINALS = ["dev", "dev:web", "build"];
@@ -198,7 +275,7 @@ export function isFreshBtsInstall(target) {
     !Object.keys(scripts).some((name) => name.startsWith("prokit:"));
 }
 
-export function addScripts(target, { dryRun = false, wrapResources = false } = {}) {
+export function addScripts(target, { dryRun = false, wrapResources = false, adopt = false } = {}) {
   const p = join(target, "package.json");
   const text = readFileSync(p, "utf8");
   const pkg = JSON.parse(text);
@@ -219,6 +296,8 @@ export function addScripts(target, { dryRun = false, wrapResources = false } = {
     "delegation:validate": "node scripts/delegation.mjs validate",
     release: "node scripts/release.mjs",
   };
+  // adopt는 배포·내보내기·릴리스 스크립트를 복사하지 않으므로 그 명령도 더하지 않는다.
+  if (adopt) for (const k of ["vercel:deploy", "export:html", "release"]) delete want[k];
   pkg.scripts ??= {};
   const added = Object.keys(want).filter((k) => !(k in pkg.scripts));
   for (const k of added) pkg.scripts[k] = want[k];
@@ -264,14 +343,15 @@ const GITIGNORE = [
   ["# 환경별 .env (비밀값). 배포 환경변수는 Vercel에 둔다", ".env.*", "!.env.schema", "!.env.example"],
   ["# pnpm export:html 결과(정적 HTML)", "/html/"],
 ];
-export function ensureGitignore(target, { dryRun = false } = {}) {
+export function ensureGitignore(target, { dryRun = false, adopt = false } = {}) {
   const p = join(target, ".gitignore");
   const cur = existsSync(p) ? readFileSync(p, "utf8") : "";
   const norm = (l) => l.trim().replace(/^\/|\/$/g, "");
   const have = new Set(cur.split(/\r?\n/).map(norm));
   const added = [];
   let block = "";
-  for (const [comment, ...lines] of GITIGNORE) {
+  // adopt는 export:html을 설치하지 않는다. 루트 html/이 그 프로젝트의 실제 폴더일 수 있어 무시하지 않는다.
+  for (const [comment, ...lines] of GITIGNORE.filter(([c]) => !adopt || !c.includes("export:html"))) {
     const missing = (l) => !have.has(norm(l));
     // `!` 줄은 앞의 패턴보다 뒤에 있어야 효과가 있으므로, 패턴을 새로 더하면 함께 다시 쓴다
     const grow = lines.some((l) => !l.startsWith("!") && missing(l));
@@ -328,19 +408,23 @@ const BIOME_OVERRIDE = {
   includes: SHADCN_A11Y,
   linter: { rules: { a11y: { noLabelWithoutControl: "off", useKeyWithClickEvents: "off", useSemanticElements: "off" } } },
 };
-export function ensureBiomeConfig(target, { dryRun = false } = {}) {
+export function ensureBiomeConfig(target, { dryRun = false, extra = [], adopt = false } = {}) {
   const p = join(target, "biome.json");
   if (!existsSync(p)) return null;
   const text = readFileSync(p, "utf8");
   const cfg = JSON.parse(text);
+  // adopt: 그 프로젝트의 Biome 설정은 두고 하네스·벤더 파일만 뺀다. files.includes가 없는 Biome 1 설정은 직접 넣게 한다.
+  if (adopt && (cfg.files?.ignore || /schemas\/1\./.test(cfg.$schema ?? ""))) return "manual";
   cfg.files ??= {};
   cfg.files.includes ??= ["**"];
-  const added = BIOME_IGNORES.filter((g) => !cfg.files.includes.includes(g));
+  const added = [...(adopt ? BIOME_ADOPT_IGNORES : BIOME_IGNORES), ...extra].filter((g) => !cfg.files.includes.includes(g));
   cfg.files.includes.push(...added);
-  cfg.overrides ??= [];
-  if (!cfg.overrides.some((o) => o.includes?.some((g) => SHADCN_A11Y.includes(g)))) {
-    cfg.overrides.push(BIOME_OVERRIDE);
-    added.push("overrides(shadcn label.tsx·input-group.tsx a11y 3개 끔)");
+  if (!adopt) {
+    cfg.overrides ??= [];
+    if (!cfg.overrides.some((o) => o.includes?.some((g) => SHADCN_A11Y.includes(g)))) {
+      cfg.overrides.push(BIOME_OVERRIDE);
+      added.push("overrides(shadcn label.tsx·input-group.tsx a11y 3개 끔)");
+    }
   }
   if (added.length && !dryRun) writeFileSync(p, `${JSON.stringify(cfg, null, text.match(/^([ \t]+)"/m)?.[1] ?? "\t")}\n`);
   return added;
@@ -373,6 +457,37 @@ export function ensureTurboAgentGuidance(target, { dryRun = false } = {}) {
 
 const TURBO_MANUAL = 'turbo.json에 "agentGuidance": false를 직접 추가하세요 (turbo가 AGENTS.md에 규칙 블록을 쓰지 않게)';
 
+// adopt: 프로젝트의 ESLint가 벤더 스킬(upstream 원본)과 하네스 스크립트까지 검사하면 설치만으로 `lint`가 실패한다.
+// 고쳐 쓰면 skills-lock.json의 contentHash와 템플릿 원본에서 어긋나므로 globalIgnores로 뺀다.
+// shortcut: create-next-app 16 flat config처럼 `globalIgnores([`가 있을 때만 그 배열 앞에 넣는다. 다른 모양은 "manual"로 알린다.
+// 반환: 더한 패턴(이미 다 있으면 []), 넣을 자리를 못 찾았으면 "manual", ESLint 설정이 없으면 null.
+export const ESLINT_IGNORES = [".agents/**", ...ADOPT_SCRIPTS.map((s) => `scripts/${s}.mjs`)];
+export function ensureEslintIgnores(target, { dryRun = false } = {}) {
+  const name = ["mjs", "js", "cjs", "ts", "mts", "cts"].map((x) => `eslint.config.${x}`).find((f) => existsSync(join(target, f)));
+  if (!name) {
+    const legacy =
+      readdirSync(target).some((f) => /^\.eslintrc(\.|$)/.test(f)) ||
+      "eslintConfig" in JSON.parse(readFileSync(join(target, "package.json"), "utf8"));
+    return legacy ? "manual" : null;
+  }
+  const p = join(target, name);
+  const text = readFileSync(p, "utf8");
+  const added = ESLINT_IGNORES.filter((g) => !text.includes(`"${g}"`) && !text.includes(`'${g}'`));
+  if (!added.length) return [];
+  const m = text.match(/globalIgnores\(\s*\[(\r?\n[ \t]*)?/);
+  if (!m) return "manual";
+  const sep = m[1] ?? " ";
+  if (!dryRun) writeFileSync(p, text.replace(m[0], `${m[0]}${added.map((g) => `"${g}",${sep}`).join("")}`));
+  return added;
+}
+const ESLINT_MANUAL = `ESLint 설정에 무시 경로(${ESLINT_IGNORES.join(", ")})를 직접 추가하세요 (벤더 스킬과 하네스 스크립트를 검사하면 lint가 실패한다)`;
+
+// adopt에서 프로젝트 Biome이 검사하지 않게 할 하네스·벤더 파일(설치기가 복사하고 Biome 형식이 그 프로젝트와 다를 수 있다).
+const BIOME_ADOPT_IGNORES = ["!.agents", "!.claude", "!.codex", "!skills-lock.json", "!skills.manifest.json", "!.dev-cycle.json", ...ADOPT_SCRIPTS.map((s) => `!scripts/${s}.mjs`)];
+const adoptBiomeWarning = (target, biome) =>
+  biome === "manual" || (biome === null && existsSync(join(target, "biome.jsonc")))
+    ? [`경고: Biome 설정의 검사 대상에서 하네스·벤더 파일(${BIOME_ADOPT_IGNORES.map((g) => g.slice(1)).join(", ")})을 직접 빼세요 (그대로 두면 설치만으로 lint가 실패한다)`]
+    : [];
 const jsoncWarning = (target, biome) =>
   biome === null && existsSync(join(target, "biome.jsonc"))
     ? [`경고: biome.jsonc에 files.includes(${BIOME_IGNORES.join(", ")})와 overrides(${SHADCN_A11Y.join(", ")}: a11y 3개 끔)를 직접 추가하세요`]
@@ -390,13 +505,49 @@ export function main(argv) {
   const flags = new Set();
   const args = [];
   const pass = [];
+  const own = {};
   for (let i = 0; i < argv.length; i++) {
     if (VALUE_FLAGS.has(argv[i])) pass.push(argv[i], argv[++i] ?? "");
+    else if (OWN_VALUE_FLAGS.has(argv[i])) own[argv[i].slice(2)] = argv[++i] ?? "";
     else if (argv[i].startsWith("--")) flags.add(argv[i]);
     else args.push(argv[i]);
   }
+  if (flags.has("--help")) {
+    console.log(USAGE);
+    return 0;
+  }
+  // 모르는 플래그를 버리면 오타(--dif, --skip-skill)가 실제 설치가 된다. 값 플래그의 = 형식은 아래에서 따로 알린다.
+  const unknown = [...flags].filter((f) => !BOOL_FLAGS.has(f) && !/^--(brain|simplicity|matt|optional|project-type|legacy|default-branch)=/.test(f));
+  if (unknown.length) {
+    console.error(`모르는 옵션: ${unknown.join(" ")}\n${USAGE}`);
+    return 1;
+  }
   if (args.length !== 1) {
     console.error(USAGE);
+    return 1;
+  }
+  // 유형과 적용 방식: --adopt는 운영 중인 Next.js(operating)에만, --legacy는 전환(migration)에만 쓴다.
+  // 이미 adopt로 설치한 프로젝트는 --adopt 없이 다시 실행해도 adopt로 본다(Better-T-Stack 파일이 섞이지 않게).
+  let adopted = false;
+  let recordedType;
+  try {
+    const cfg = JSON.parse(readFileSync(join(resolve(args[0]), ".dev-cycle.json"), "utf8"));
+    adopted = cfg.adopt === true;
+    recordedType = cfg.projectType;
+  } catch {}
+  const adopt = flags.has("--adopt") || adopted;
+  const projectType = own["project-type"] ?? (adopt ? "operating" : undefined);
+  const ownError = [...flags].some((f) => /^--(project-type|legacy|default-branch)=/.test(f))
+    ? "사용법: --project-type <유형>, --legacy <경로>처럼 = 없이 띄어 쓴다"
+    : projectType !== undefined && !PROJECT_TYPES.includes(projectType)
+      ? `사용법: --project-type ${PROJECT_TYPES.join("|")}`
+      : adopt && projectType !== "operating"
+        ? "--adopt는 운영 중인 Next.js 프로젝트(--project-type operating)에만 쓴다"
+        : "legacy" in own && projectType !== "migration"
+          ? "--legacy는 전환(--project-type migration)에서만 쓴다"
+          : null;
+  if (ownError) {
+    console.error(ownError);
     return 1;
   }
   // 고르는 값은 복사하기 전에 템플릿 매니페스트로 확인한다.
@@ -406,7 +557,7 @@ export function main(argv) {
     console.error(picked.error);
     return 1;
   }
-  const choices = ["brain", "simplicity"].filter((k) => k in picked).map((k) => `${k} ${picked[k]}`);
+  const choices = ["brain", "simplicity"].filter((k) => k in picked).map((k) => `${k} ${[].concat(picked[k]).join(",")}`);
   // realpath: 대상이 심볼릭 링크로 연결된 경로(예: macOS의 /tmp)면 node가 하위 프로세스로 실행하는
   // 스크립트의 import.meta.url과 argv 경로가 달라져 CLI 진입점 판별이 어긋난다. 실재 경로로 고정한다.
   const abs = resolve(args[0]);
@@ -414,65 +565,98 @@ export function main(argv) {
   try {
     target = realpathSync(abs);
   } catch {}
-  const pre = preflight(target);
+  const pre = preflight(target, process.platform, process.versions.node, { adopt });
+  // 기존 코드 경로는 프로젝트 기준 상대 경로로 기록한다(폴더를 함께 옮겨도 맞게). 안내용이고 스크립트가 쓰지 않는다.
+  let legacy;
+  if ("legacy" in own) {
+    const from = resolve(own.legacy);
+    if (!own.legacy || !existsSync(from) || !statSync(from).isDirectory()) pre.errors.push(`--legacy 경로가 폴더가 아니다: ${own.legacy}`);
+    else if (realpathSync(from) === target) pre.errors.push("--legacy는 새 프로젝트가 아닌 기존 코드 폴더다");
+    else legacy = relative(target, realpathSync(from));
+  }
+  const defaultBranch = own["default-branch"];
+  if (defaultBranch !== undefined && run("git", ["rev-parse", "--verify", "--quiet", `refs/heads/${defaultBranch}`], { cwd: target }).status !== 0)
+    pre.errors.push(`--default-branch 브랜치가 없다: ${defaultBranch} (커밋이 있는 로컬 브랜치여야 한다)`);
   for (const w of pre.warnings) console.log(`경고: ${w}`);
   if (pre.errors.length) {
     for (const e of pre.errors) console.error(`오류: ${e}`);
     return 1;
   }
+  const project = [
+    ...(projectType ? [`projectType ${projectType}`] : []),
+    ...(adopt ? ["adopt"] : []),
+    ...(legacy ? [`legacy.path ${legacy}`] : []),
+    ...(defaultBranch ? [`defaultBranch ${defaultBranch}`] : []),
+  ];
   const diff = flags.has("--diff");
-  const freshBts = isFreshBtsInstall(target);
-  const files = copyFiles(target, { diff });
+  // adopt는 Better-T-Stack 명령이 없으므로 resource 래퍼, biome·turbo 설정, Biome 포맷을 하지 않는다.
+  // 운영 중인 프로젝트(operating)는 dev·build가 배포와 CI에 쓰이므로 래퍼를 씌우지 않는다(H 라운드에서 증거와 함께 바꾼다).
+  const freshBts = !adopt && projectType !== "operating" && isFreshBtsInstall(target);
+  const operating = (projectType ?? recordedType) === "operating";
+  const files = copyFiles(target, { diff, adopt, operating });
+  // early: 옮겨 둔 프로토타입(prototype/)은 참고 자료라 Biome 검사에서 뺀다.
+  const biomeExtra = projectType === "early" ? ["!prototype"] : [];
   const kept = files.kept.map((k) => k.rel).join(", ") || "없음";
   // 템플릿 파일은 덮어쓰지 않으므로, 옛 판 skills-setup.mjs가 남으면 --brain 등을 조용히 무시한다.
+  // 두뇌를 여럿 고르면 배열로 기록하는데, 그 전 판(multi: true가 없는 판)은 배열을 모르는 이름으로 본다.
+  const setupText = files.kept.some((k) => k.rel === "scripts/skills-setup.mjs")
+    ? readFileSync(join(target, "scripts/skills-setup.mjs"), "utf8")
+    : null;
   const oldSetup =
-    (choices.length > 0 || picked.matt.length > 0) &&
-    files.kept.some((k) => k.rel === "scripts/skills-setup.mjs") &&
-    !readFileSync(join(target, "scripts/skills-setup.mjs"), "utf8").includes('"--brain"')
+    setupText !== null &&
+    (((choices.length > 0 || picked.matt.length > 0) && !setupText.includes('"--brain"')) ||
+      (Array.isArray(picked.brain) && !setupText.includes("multi: true")))
       ? [`경고: ${OLD_SETUP}`]
       : [];
   if (diff) {
     // 미리 보기: 파일을 쓰지 않고 차이와 더할 항목만 보여 준다. 반영은 그 프로젝트의 dev-cycle 라운드에서 한다.
-    const biome = ensureBiomeConfig(target, { dryRun: true });
-    const turbo = ensureTurboAgentGuidance(target, { dryRun: true });
+    const biome = ensureBiomeConfig(target, { dryRun: true, extra: adopt ? [] : biomeExtra, adopt });
+    const turbo = adopt ? null : ensureTurboAgentGuidance(target, { dryRun: true });
+    const eslint = adopt ? ensureEslintIgnores(target, { dryRun: true }) : null;
     const hook = ensureClaudeHook(target, { dryRun: true });
     console.log([
       `파일: 복사 예정 ${files.copied.join(", ") || "없음"}, 덧붙임 예정 ${files.appended.join(", ") || "없음"}, 동일 ${files.same.length}, 유지(템플릿과 다름) ${kept}`,
       ...files.kept.map((k) => k.diff),
       ...files.filled.map((f) => `${f}: 설치기가 채움, 유지`),
       (() => {
-        const scripts = addScripts(target, { dryRun: true, wrapResources: freshBts });
+        const scripts = addScripts(target, { dryRun: true, wrapResources: freshBts, adopt });
         return `package.json scripts 추가 예정: ${scripts.added.join(", ") || "없음"}${scripts.wrapped.length ? `, resource 래퍼 ${scripts.wrapped.join(", ")}` : ""}`;
       })(),
-      `.gitignore 추가 예정: ${ensureGitignore(target, { dryRun: true }).join(", ") || "없음"}`,
-      `biome.json 추가 예정: ${biome?.join(", ") || "없음"}`,
-      ...jsoncWarning(target, biome),
+      `.gitignore 추가 예정: ${ensureGitignore(target, { dryRun: true, adopt }).join(", ") || "없음"}`,
+      `biome.json 추가 예정: ${Array.isArray(biome) ? biome.join(", ") || "없음" : "없음"}`,
+      ...(adopt ? adoptBiomeWarning(target, biome) : jsoncWarning(target, biome)),
       `turbo.json 추가 예정: ${turbo === "added" ? '"agentGuidance": false' : "없음"}`,
+      ...(Array.isArray(eslint) ? [`ESLint 무시 추가 예정: ${eslint.join(", ") || "없음"}`] : []),
+      ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
       `.claude/settings.json 추가 예정: ${hook ? "SessionStart 훅(scripts/load-keys.mjs)" : "없음"}`,
       ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
       ...(turbo === "manual" ? [`경고: ${TURBO_MANUAL}`] : []),
       ...legacyWarning(target),
       ...(choices.length ? [`.dev-cycle.json 기록 예정: ${choices.join(", ")} (고르지 않은 설치본 정리는 반영할 때 skills-setup이 한다)`] : []),
+      ...(project.length ? [`.dev-cycle.json 기록 예정: ${project.join(", ")}`] : []),
       ...oldSetup,
       "미리 보기라 파일을 쓰지 않았다. 없는 파일과 항목은 --diff 없이 다시 실행해 더하고(--skip-skills. 템플릿 파일은 덮어쓰지 않고 설정 파일에는 항목만 더한다), 유지(템플릿과 다름) 파일은 직접 옮긴다",
     ].join("\n"));
     return 0;
   }
   const links = linkSkills(target);
-  const dc = files.copied.includes(".dev-cycle.json") ? configureDevCycle(target) : null;
+  const dc = files.copied.includes(".dev-cycle.json") ? configureDevCycle(target, { adopt }) : null;
+  // 유형·기존 코드 경로는 다시 실행해도 기록한다. adopt 경로 규칙은 새로 복사한 .dev-cycle.json에만 넣는다.
+  if (project.length) recordProject(target, { projectType, adopt, legacy, defaultBranch });
   // --skip-skills여도 선택값은 기록한다. 나중에 pnpm skills:setup이 그 값을 설치한다.
   if (choices.length) recordChoices(target, picked);
-  const scripts = addScripts(target, { wrapResources: freshBts });
-  const gitignore = ensureGitignore(target);
-  const biomeConfig = ensureBiomeConfig(target);
-  const turbo = ensureTurboAgentGuidance(target);
+  const scripts = addScripts(target, { wrapResources: freshBts, adopt });
+  const gitignore = ensureGitignore(target, { adopt });
+  const biomeConfig = ensureBiomeConfig(target, { extra: adopt ? [] : biomeExtra, adopt });
+  const turbo = adopt ? null : ensureTurboAgentGuidance(target);
+  const eslint = adopt ? ensureEslintIgnores(target) : null;
   const hook = ensureClaudeHook(target);
   const toFormat = [
     ...files.copied.filter((f) => /\.(mjs|js|json)$/.test(f)),
     ...(scripts.added.length || scripts.wrapped.length ? ["package.json"] : []),
-    ...(biomeConfig?.length ? ["biome.json"] : []),
+    ...(Array.isArray(biomeConfig) && biomeConfig.length && !adopt ? ["biome.json"] : []),
   ];
-  const biome = formatWithBiome(target, toFormat);
+  const biome = adopt ? "건너뜀 (adopt: 프로젝트의 포맷 도구를 따른다)" : formatWithBiome(target, toFormat);
   const agents = run(process.execPath, [join(target, "scripts/sync-agents.mjs")], { cwd: target });
   // 스킬·플러그인·OMX 설치와 전역 도구 안내는 프로젝트에 복사한 스크립트가 한다. 팀원도 pnpm skills:setup으로 같은 것을 한다.
   const skipSkills = flags.has("--skip-skills") ? "--skip-skills" : null;
@@ -489,14 +673,22 @@ export function main(argv) {
     `스킬 링크: 생성 ${links.created.join(", ") || "없음"}${links.conflicts.length ? `, 충돌 ${links.conflicts.join(", ")} (직접 확인)` : ""}`,
     ...(dc ? [`.dev-cycle.json: 기본 브랜치 ${dc.defaultBranch}, commands ${Object.keys(dc.commands).join(", ") || "없음"}`] : []),
     ...(choices.length ? [`.dev-cycle.json 기록: ${choices.join(", ")}`] : []),
+    ...(project.length ? [`.dev-cycle.json 기록: ${project.join(", ")}`] : []),
+    ...(adopt && !dc && !adopted
+      ? ["경고: .dev-cycle.json이 이미 있어 adopt 경로 규칙을 넣지 않았다 → 정밀 분석 뒤 첫 H Task에서 rules를 맞춘다"]
+      : []),
     ...oldSetup,
     `package.json scripts 추가: ${scripts.added.join(", ") || "없음"}${scripts.wrapped.length ? `, resource 래퍼 ${scripts.wrapped.join(", ")}` : ""}`,
-    ...(!freshBts ? ["기존 설치본: resource 래퍼 전환은 H 라운드에서 원본 명령과 증거를 확인한 뒤 한다"] : []),
+    ...(!freshBts && !adopt
+      ? [projectType === "operating" ? "운영 중인 프로젝트: dev·build에 resource 래퍼를 씌우지 않았다(배포·CI가 쓰는 명령). 바꾸려면 H 라운드에서 원본 명령과 증거를 확인한 뒤 한다" : "기존 설치본: resource 래퍼 전환은 H 라운드에서 원본 명령과 증거를 확인한 뒤 한다"]
+      : []),
     ...(gitignore.length ? [`.gitignore: ${gitignore.join(", ")} 추가`] : []),
-    ...(biomeConfig?.length ? [`biome.json 추가: ${biomeConfig.join(", ")}`] : []),
-    ...jsoncWarning(target, biomeConfig),
+    ...(Array.isArray(biomeConfig) && biomeConfig.length ? [`biome.json 추가: ${biomeConfig.join(", ")}`] : []),
+    ...(adopt ? adoptBiomeWarning(target, biomeConfig) : jsoncWarning(target, biomeConfig)),
     ...(turbo === "added" ? ['turbo.json: "agentGuidance": false 추가 (turbo가 AGENTS.md에 규칙 블록을 쓰지 않게)'] : []),
     ...(turbo === "manual" ? [`경고: ${TURBO_MANUAL}`] : []),
+    ...(Array.isArray(eslint) && eslint.length ? [`ESLint 무시 추가: ${eslint.join(", ")} (벤더 스킬과 하네스 스크립트는 프로젝트 lint에서 뺀다)`] : []),
+    ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
     ...(hook ? [".claude/settings.json: SessionStart 훅(scripts/load-keys.mjs) 추가 (.env의 이미지 키와 배포 토큰을 세션에 불러온다)"] : []),
     ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
     ...legacyWarning(target),
@@ -506,11 +698,22 @@ export function main(argv) {
       ? `스킬·플러그인: 건너뜀 (${skipSkills}) → 나중에 pnpm skills:setup`
       : `스킬·플러그인: ${skills.status === 0 ? "위 skills-setup 결과 참고" : `실패 (exit ${skills.status}) → 위 출력을 보고 pnpm skills:setup으로 다시 실행`}`,
     "다음 할 일:",
-    "  1. 첫 마이그레이션(README 설치한 뒤 1번)까지 마치고, pnpm check로 Better-T-Stack이 만든 코드의 포맷을 한 번 정리해 pnpm exec biome check .가 exit 0인지 본 뒤 기본 브랜치에 커밋한다 (커밋 전에 연 dev-cycle 라운드는 설치 파일이 diff에 섞여 audit이 F 상향을 요구한다)",
-    "  2. 새 에이전트 세션을 열어 스킬과 에이전트를 불러온다 (Claude는 프로젝트를 신뢰해야 project 플러그인을 켜고, Codex는 신뢰해야 .codex/agents를 읽는다. Antigravity는 .agents/agents와 .agents/skills를 읽는다. Grok Build는 폴더를 신뢰해야 AGENTS.md와 프로젝트 스킬을 읽는다: 처음 열 때 신뢰하거나 grok --trust)",
-    "  3. 개발자마다 한 번 프로젝트 루트에서 .agents/skills/impeccable/scripts/impeccable hooks on (스킬 호출로 켜지 않는다. Codex는 /hooks에서 신뢰 확인. Antigravity에서는 돌지 않고 Grok Build에서 도는지는 확인하지 않았다)",
-    "  4. GLOSSARY.md와 docs/domain/project.md에 서비스 이름과 요약을 채운다",
-    "  5. 첫 UI 라운드에서 impeccable init으로 PRODUCT.md를 만든다",
+    ...(operating
+      ? [
+          "  1. 설치 결과를 지금 브랜치에 커밋한다(기존 코드는 바꾸지 않았다). push와 병합은 사용자가 정한다",
+          ...(adopt ? [] : ["     pnpm check는 앱 코드의 포맷을 바꾸므로 돌리지 않는다. 기존 코드의 지적은 정밀 분석 뒤 H Task에서 다룬다"]),
+          "  2. 새 에이전트 세션을 열어 prokit-analyzer로 정밀 분석부터 한다 (docs/first-request.md)",
+          ...(adopt
+            ? ["  3. 정밀 분석 뒤 첫 H Task에서 .dev-cycle.json의 rules·authPaths와 docs/dev-workflow.md를 프로젝트 구조에 맞춘다. 그 전에는 규칙 밖 코드를 F로 본다"]
+            : []),
+        ]
+      : [
+          "  1. 첫 마이그레이션(README 설치한 뒤 1번)까지 마치고, pnpm check로 Better-T-Stack이 만든 코드의 포맷을 한 번 정리해 pnpm exec biome check .가 exit 0인지 본 뒤 기본 브랜치에 커밋한다 (커밋 전에 연 dev-cycle 라운드는 설치 파일이 diff에 섞여 audit이 F 상향을 요구한다)",
+          "  2. 새 에이전트 세션을 열어 스킬과 에이전트를 불러온다 (Claude는 프로젝트를 신뢰해야 project 플러그인을 켜고, Codex는 신뢰해야 .codex/agents를 읽는다. Antigravity는 .agents/agents와 .agents/skills를 읽는다. Grok Build는 폴더를 신뢰해야 AGENTS.md와 프로젝트 스킬을 읽는다: 처음 열 때 신뢰하거나 grok --trust)",
+          "  3. 개발자마다 한 번 프로젝트 루트에서 .agents/skills/impeccable/scripts/impeccable hooks on (스킬 호출로 켜지 않는다. Codex는 /hooks에서 신뢰 확인. Antigravity에서는 돌지 않고 Grok Build에서 도는지는 확인하지 않았다)",
+          "  4. GLOSSARY.md와 docs/domain/project.md에 서비스 이름과 요약을 채운다",
+          "  5. 첫 UI 라운드에서 impeccable init으로 PRODUCT.md를 만든다",
+        ]),
     ...(picked.simplicity === "caveman" ? ["  - caveman 응답 압축은 /caveman(Codex $caveman)으로 켜고 \"stop caveman\"으로 끈다. 대화 응답에만 쓴다"] : []),
     ...(picked.optional.includes("i-have-adhd") ? ["  - i-have-adhd는 /i-have-adhd(Codex $i-have-adhd)로 켜고 \"stop adhd mode\"로 끈다. 대화 응답에만 쓴다"] : []),
     ...(picked.optional.includes("taste") ? ["  - taste(design-taste-frontend)는 화면 작업에서 사용자가 고른 화면에만 쓴다(prokit-ui references/taste.md). 검사에는 Chrome·Edge·Chromium이 필요하다"] : []),

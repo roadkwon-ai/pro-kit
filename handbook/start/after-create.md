@@ -16,6 +16,8 @@ claude                                                   # 신뢰 질문에 동�
 
 도구마다 신뢰 질문이 켜는 것은 [지원하는 에이전트](supported-agents.md#신뢰-질문)에 있어요.
 
+기존 프로젝트에 프로킷을 들였다면 새 세션이 `docs/first-request.md`의 요청대로 정밀 분석부터 이어 가요([기존 프로젝트에 도입하기](adopt.md)).
+
 ## 이렇게 요청해요
 
 처음에는 어떤 서비스인지부터 알려 주세요.
@@ -37,11 +39,12 @@ claude                                                   # 신뢰 질문에 동�
 | 배포 준비 (처음 한 번) | Vercel 배포 준비해줘 |
 | 배포 | 운영에 배포해줘 · develop에 배포해줘 |
 
-스킬 이름을 몰라도 돼요. 요청에 맞는 스킬을 에이전트가 스스로 불러요([prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개](../skills/prokit-skills.md)).
+스킬 이름을 몰라도 돼요. 요청에 맞는 스킬을 에이전트가 스스로 불러요([prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md)).
 
 ## 자세히
 
 - **만들기 전에 확인받아요**: 에이전트는 만들기 전에 스펙과 화면 설계(브리프)를 보여 주고 확인을 받아요. 첫 화면은 디자인 카탈로그가 추천하는 스타일 1~3위 중에서 골라요([UI/UX 흐름](../design/ui-flow.md)).
+- **큰 일은 진행 계획으로 나눠요**: 한 라운드로 끝나지 않는 큰 일은 Task로 나눈 진행 계획을 세우고 Task 하나씩 끝내요. 앞 Task가 끝나야 다음 Task를 열 수 있어요([정밀 분석과 진행 계획](../concepts/project-plan.md)).
 - **끝나면 직접 확인해요**: 기능이 끝나면 직접 써 보고 확인해 달라고 해요. 확인하면 운영 배포까지 할지 물어요(기본은 릴리스 후 배포, 원하면 건너뛰어요). 그다음 커밋과 push를 해요. 배포 준비가 안 됐으면 묻지 않고 커밋과 push까지만 해요([사용자 확인](../concepts/audit-and-confirm.md)).
 - **스킬 업데이트는 하루 한 번 확인해요**: 작업을 시작할 때 하루 한 번 외부 스킬에 새 버전이 있는지 확인해요. 있으면 업데이트할지 물어요(지금, 항상 자동, 나중에, 다시 묻지 않기)([설치와 업데이트 구조](../skills/install-and-update.md)).
 - **과설계 방지 스킬은 전문 작업을 보강해요**: 공식 스킬과 전문 수행자가 구현·검토를 맡고, 프로킷은 범위·증거·재지시와 최종 `prokit-reviewer` 게이트를 관리해요. ponytail을 고르고 Codex 네이티브 플러그인을 선택 설치했더라도 `$ponytail:ponytail-review`와 프로젝트 스킬 대체 경로를 같은 검토에 함께 쓰지 않아요([공식 스킬과 연결](../skills/official-skills.md)).
@@ -53,6 +56,8 @@ claude                                                   # 신뢰 질문에 동�
 ## 관련 문서
 
 - [dev-cycle 라운드](../concepts/dev-cycle.md)
+- [정밀 분석과 진행 계획](../concepts/project-plan.md)
+- [기존 프로젝트에 도입하기](adopt.md)
 - [증거와 audit, 사용자 확인](../concepts/audit-and-confirm.md)
 - [UI/UX 흐름](../design/ui-flow.md)
 - [명령 모음](../reference/commands.md)

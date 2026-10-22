@@ -2,7 +2,7 @@
 @AGENTS.md
 
 ## Claude Code 전용
-- 에이전트는 Agent 도구로 부른다: `subagent_type`은 `prokit-implementer`, `prokit-reviewer`, provider에 내장 리뷰가 없을 때만 `specialist-reviewer`다. provider를 고르면 먼저 `prokit-dev-cycle`의 위임 프로토콜로 실제 내용·hash·scope를 검증한다. 리뷰 프롬프트에는 focus, 기준 SHA(`tasks/todo.md` 마커의 base), 파일 목록, evidence packet hash를 넣는다.
+- 에이전트는 Agent 도구로 부른다: `subagent_type`은 `prokit-analyzer`(정밀 분석), `prokit-implementer`, `prokit-reviewer`, provider에 내장 리뷰가 없을 때만 `specialist-reviewer`다. provider를 고르면 먼저 `prokit-dev-cycle`의 위임 프로토콜로 실제 내용·hash·scope를 검증한다. 리뷰 프롬프트에는 focus, 기준 SHA(`tasks/todo.md` 마커의 base), 파일 목록, evidence packet hash를 넣는다.
 - impeccable `critique`처럼 서브에이전트를 스스로 띄우는 스킬은 메인 세션에서 실행한다.
 - 고른 두뇌(`.dev-cycle.json`의 `brain`)의 스킬 이름은 `.agents/skills/prokit-dev-cycle/references/brains/<이름>.md`를 따른다(예: superpowers는 `superpowers:brainstorming`, OMC는 `oh-my-claudecode:<이름>`). 고르지 않은 두뇌의 스킬은 전역에 있어도 부르지 않는다.
 - `prokit-*`가 읽으라고 하는 외부 스킬(`impeccable`, `shadcn`, `vercel-react-best-practices`, `supabase-postgres-best-practices`, `next-dev-loop` 등)은 Skill 도구로 부르지 말고 Read로 `.agents/skills/<이름>/SKILL.md`를 읽는다. Skill 도구는 같은 이름의 개인 스킬(`~/.claude/skills`)이 있으면 그것을 먼저 불러온다(출력의 `Base directory`가 프로젝트 밖). `shadcn`은 로드할 때 루트에서 `npx shadcn@latest info`를 실행하는데 모노레포 루트라 실패해 아예 불러오지 못한다. `prokit-*`와 플러그인 스킬(고른 두뇌·과설계 방지 스킬의 플러그인)은 Skill 도구로 부른다.

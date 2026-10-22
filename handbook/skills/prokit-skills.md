@@ -1,8 +1,8 @@
-# prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개
+# prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개
 
-> 한눈에: 프로킷 전용 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개는 이 프로젝트에서 일하는 방법을 에이전트에게 알려 주는 작업 설명서예요. 스킬 이름을 몰라도 돼요. "할 일에 마감일 붙여줘"처럼 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러와요.
+> 한눈에: 프로킷 전용 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개는 이 프로젝트에서 일하는 방법을 에이전트에게 알려 주는 작업 설명서예요. 스킬 이름을 몰라도 돼요. "할 일에 마감일 붙여줘"처럼 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러와요.
 
-## <!-- v:prokit.skills.count -->9<!-- /v -->개의 스킬
+## <!-- v:prokit.skills.count -->10<!-- /v -->개의 스킬
 
 | 스킬 | 맡는 일 | 이런 요청에 쓰여요 | 지키게 하는 것 |
 |---|---|---|---|
@@ -14,7 +14,8 @@
 | `prokit-db` | 테이블과 마이그레이션 | 컬럼 추가, 테이블 만들기, 쿼리가 느려요 | 마이그레이션 파일로만 변경, 로컬 → 병합 전(기본 브랜치에 합치기 전) → 운영 순서, 데이터를 잃을 수 있는 변경은 두 단계. Supabase는 모든 테이블에 RLS(행 단위 접근 제한) |
 | `prokit-verify` | 영향 검사 선택, 담당자·재사용 조건 확인과 증거 기록 | 검증해줘, 테스트 돌려, 끝났어? | 실행하지 않은 검사는 통과로 적지 않고, 전문 증거 재사용과 새 최종 검수를 구분 |
 | `prokit-deploy` | Vercel 배포(develop, production)와 되돌리기 | develop에 올려줘, 운영에 배포해줘, 롤백해줘 | 요청하거나 라운드 끝에서 고를 때만 배포, DB 먼저 적용, 로컬 `.env`는 올리지 않고 배포 값은 Vercel 환경변수에만, 운영은 기본 브랜치에서만 |
-| `prokit-skills-update` | 에이전트가 쓰는 외부 스킬 업데이트 | 스킬 업데이트해줘, 스킬 최신이야? | 작업을 시작할 때 하루 한 번 새 버전 확인, 업데이트는 물어보고 한 라운드로 커밋, 원격에서 없어진 스킬은 지우지 않고 알림 |
+| `prokit-skills-update` | 에이전트가 쓰는 이미 고른 외부 스킬을 최신으로 업데이트 | 스킬 업데이트해줘, 스킬 최신이야? | 작업을 시작할 때 하루 한 번 새 버전 확인, 업데이트는 물어보고 한 라운드로 커밋, 원격에서 없어진 스킬은 지우지 않고 알림 |
+| `prokit-skills-manage` | 두뇌, 과설계 방지 스킬, mattpocock 추가 스킬, 선택 묶음을 진행 중에 바꾸기·더하기·빼기 | 두뇌를 openspec으로 바꿔줘, tdd 스킬 빼줘, 선택 스킬 묶음 더해줘 | 열린 라운드를 닫은 뒤 H 라운드로 처리, 바뀐 구성을 보여 주고 확인받은 뒤 커밋, 필수 mattpocock 3개와 공식 스킬은 지우지 않음 ([두뇌와 선택 스킬](brains.md#바꾸기)) |
 
 프로킷 스킬은 프로젝트 계약과 진행 관리를 맡아요. 일반 기술 지식과 전문 구현·설계·리뷰는 작업에 맞는 외부 스킬에 연결하고, 실제 결과를 확인해 재지시하거나 최종 수용해요. 스킬 선택과 증거 경계는 [위임과 자원 관리](../concepts/delegation-and-resources.md)에 있어요.
 
@@ -27,11 +28,13 @@
 - **개발 자원을 함께 봐요**: `prokit-dev-cycle`은 관리하는 개발·빌드·설치·검증 작업에서 자원 상태를 확인해요. 명령은 [명령 모음](../reference/commands.md#위임과-자원)에 있어요.
 - **배포는 따로**: 배포 요청은 코드를 바꾸지 않으므로 라운드 없이 `prokit-deploy`가 메인 세션에서 맡아요.
 
-완성팩 작업은 `prokit-pack-use`가 다운로드·무결성 확인·복원 계획 검사·실제 복원을 거쳐 개인화와 실전 개발로 연결해요. 화면과 모션은 완성 프리셋을 기준으로 비교해요. 원본 사이트 조사와 COPY 제작은 별도 비공개 저장소 `pro-kit-preset-skills`가 맡아요([담당 구분](../design/preset-publication.md#담당-구분)). `prokit-skills-update`는 프로젝트 스킬 갱신과 네이티브 플러그인·훅 상태를 [설치와 업데이트 구조](install-and-update.md)대로 따로 확인해요.
+완성팩 작업은 `prokit-pack-use`가 다운로드·무결성 확인·복원 계획 검사·실제 복원을 거쳐 개인화와 실전 개발로 연결해요. 화면과 모션은 완성 프리셋을 기준으로 비교해요. 원본 사이트 조사와 COPY 제작은 별도 비공개 저장소 `pro-kit-preset-skills`가 맡아요([담당 구분](../design/preset-publication.md#담당-구분)). `prokit-skills-update`는 이미 고른 스킬을 최신으로 올리는 일만 맡고, 고른 구성을 바꾸는 일은 `prokit-skills-manage`가 맡아요. `prokit-skills-update`는 프로젝트 스킬 갱신과 네이티브 플러그인·훅 상태를 [설치와 업데이트 구조](install-and-update.md)대로 따로 확인해요.
 
 ## 자세히
 
 - **위치**: 설치된 프로젝트의 `.agents/skills/prokit-*/SKILL.md`예요. Claude Code는 `.claude/skills/`의 링크로 같은 파일을 읽어요.
+- **기존 프로젝트에 도입할 때**: `install.sh --adopt`는 Better-T-Stack이 아닌 Next.js 프로젝트에 `prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`만 복사해요. Better-T-Stack 전용 스킬은 건너뛰어요([기존 프로젝트에 도입하기](../start/adopt.md)).
+- **에이전트**: 스킬과 별개로 읽기 전용 정밀 분석을 맡는 `prokit-analyzer`를 포함해 프로젝트 에이전트가 <!-- v:prokit.agents.count -->4<!-- /v -->개예요([에이전트 역할](../concepts/agent-roles.md)).
 - **Next.js는 설치된 판의 문서부터**: `node_modules/next/dist/docs`를 먼저 읽게 해요. 에이전트가 학습한 옛 API를 그대로 쓰는 일을 줄이려는 거예요.
 - **효과**: 같은 요청을 스킬이 있을 때와 없을 때로 나눠 체크 항목으로 채점했어요. 스킬이 있을 때 `prokit-dev-cycle` <!-- v:eval.dev-cycle.with -->93<!-- /v -->%(없을 때 <!-- v:eval.dev-cycle.without -->27<!-- /v -->%), `prokit-ui` <!-- v:eval.ui.with -->100<!-- /v -->%(<!-- v:eval.ui.without -->12<!-- /v -->%)였어요. 스킬별 수치는 [검증 결과](../reference/verification.md)에 있어요.
 - **스킬을 고치는 일**: `prokit-*` 스킬을 바꾸는 작업은 케이스 H 라운드로 하고, 스킬 본문을 바꿨으면 skill-creator eval을 다시 돌려요([케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](../concepts/cases.md)).

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// dev-cycle 경량 러너: case | table | status | audit | close | archive | secrets
+// dev-cycle 경량 러너: case | table | status | audit | close | archive | plan | secrets
 // 절차 정본은 docs/dev-workflow.md, 판정 규칙은 .dev-cycle.json이다.
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
@@ -26,6 +26,7 @@ import { isDeepStrictEqual } from "node:util";
 const DEFAULTS = {
 	todoPath: "tasks/todo.md",
 	archiveDir: "tasks/archive",
+	planPath: "tasks/plan.md",
 	workflowDoc: "docs/dev-workflow.md",
 	defaultBranch: "main",
 	rules: [],
@@ -177,12 +178,15 @@ export function classify(files, config) {
 	const evidence = [];
 	let harness = false;
 	let auth = false;
+	// case F 규칙: 계층을 알 수 없는 코드(adopt 프로젝트의 규칙 밖 코드)는 무거운 F로 본다.
+	let wide = false;
 	for (const file of files) {
 		const rule = rules.find((r) => r.re.test(file));
 		const isAuth = authRe ? authRe.test(file) : false;
 		if (isAuth) auth = true;
 		if (!rule && !isAuth) continue;
 		if (rule?.case === "H") harness = true;
+		else if (rule?.case === "F") wide = true;
 		else if (rule) layers.add(rule.case);
 		evidence.push({
 			file,
@@ -193,13 +197,13 @@ export function classify(files, config) {
 	}
 	const list = LAYERS.filter((c) => layers.has(c));
 	const pathCase =
-		list.length === 0
-			? harness
-				? "H"
-				: "A"
+		wide || list.length > 1
+			? "F"
 			: list.length === 1
 				? list[0]
-				: "F";
+				: harness
+					? "H"
+					: "A";
 	return { pathCase, layers: list, harness, auth, evidence };
 }
 
@@ -281,7 +285,7 @@ const esc = (s) => String(s ?? "").replace(/\|/g, "\\|");
 
 export function renderBlock(meta, rows, extra = []) {
 	const lines = [
-		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened} -->`,
+		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened}${meta.task ? ` task=${meta.task}` : ""} -->`,
 		`## 활성 라운드: ${meta.case} — ${meta.title}`,
 		"| # | 단계 | 증거 |",
 		"|---|---|---|",
@@ -340,6 +344,206 @@ export function parseActive(md) {
 	return { meta, title, rows, extra, start, end };
 }
 
+// 진행 계획(tasks/plan.md): Task 하나가 라운드 하나다. 앞 Task가 모두 완료·제외여야 다음 Task 라운드를 연다.
+const PLAN_START_RE = /<!-- dev-cycle:plan(?: (.*?))? -->/;
+const PLAN_END = "<!-- dev-cycle:plan-end -->";
+export const TASK_STATES = ["대기", "진행", "완료", "제외"];
+// Task 라운드는 그 Task의 세부 계획과 계획 리뷰부터 한다. 케이스 행에 계획 리뷰가 이미 있으면(F) 리뷰 행은 더하지 않는다.
+export const TASK_PLAN_ROW =
+	"[plan] Task 세부 계획 (진행 계획의 이 Task를 다시 설계하고 구체화: 바꿀 파일, 단계, 단계별 검사, 완료 조건. 고른 두뇌의 계획 방법) → 계획 문서 경로(.md). N/A 불가";
+export const TASK_REVIEW_ROW =
+	"[review] prokit-reviewer(plan) Task 세부 계획 리뷰 → prokit-reviewer(plan): approve, max=none|low|medium, 반영·기각 내역. N/A 불가";
+const taskRows = (rows) => [
+	TASK_PLAN_ROW,
+	...(rows.some(
+		(r) =>
+			r.text !== TASK_REVIEW_ROW && r.text.includes("prokit-reviewer(plan)"),
+	)
+		? []
+		: [TASK_REVIEW_ROW]),
+];
+const TASK_ID_RE = /^T\d+$/;
+// 진행 계획 라운드(케이스 A, --plan): 정밀 분석(기존 프로젝트), 계획 문서와 Task 표, 계획 리뷰 행을 맨 앞에 둔다.
+export const PLAN_ANALYSIS_ROW =
+	"[analysis] 정밀 분석 (prokit-analyzer, 읽기 전용. 보고서를 docs/prokit/analysis.md에 쓴다) → 보고서 경로(.md). N/A 불가";
+export const PLAN_DOC_ROW =
+	"[plan] 진행 계획 문서와 Task 표 (고른 두뇌의 계획 방법, project-plan.md 형식) → 계획 문서 경로(.md)와 pnpm dev-cycle plan 결과. N/A 불가";
+export const PLAN_REVIEW_ROW =
+	"[review] prokit-reviewer(plan) 진행 계획 리뷰 → prokit-reviewer(plan): approve, max=none|low|medium, 반영·기각 내역. N/A 불가";
+const EXISTING_TYPES = ["early", "operating", "migration"];
+// 케이스 행에 계획 리뷰가 이미 있으면(F로 올림) 계획 리뷰 행은 더하지 않는다.
+const planRows = (config, rows) => [
+	...(EXISTING_TYPES.includes(config.projectType) ? [PLAN_ANALYSIS_ROW] : []),
+	PLAN_DOC_ROW,
+	...(rows.some(
+		(r) =>
+			r.text !== PLAN_REVIEW_ROW && r.text.includes("prokit-reviewer(plan)"),
+	)
+		? []
+		: [PLAN_REVIEW_ROW]),
+];
+
+export function parsePlan(md) {
+	const start = md.search(PLAN_START_RE);
+	if (start < 0) return null;
+	const endAt = md.indexOf(PLAN_END, start);
+	if (endAt < 0)
+		throw new UsageError(
+			"dev-cycle:plan-end 마커가 없다. 진행 계획 파일을 확인한다",
+		);
+	const block = md.slice(start, endAt);
+	const attrs = block.match(PLAN_START_RE)[1] ?? "";
+	const doc = attrs.match(/(?:^|\s)doc=(\S+)/)?.[1] ?? null;
+	const sig = attrs.match(/(?:^|\s)sig=(\S+)/)?.[1] ?? null;
+	const title = block.match(/^## 진행 계획: (.*)$/m)?.[1] ?? "";
+	const tasks = [];
+	for (const line of block.split(/\r?\n/)) {
+		const cells = line
+			.trim()
+			.match(/^\|(.*)\|$/)?.[1]
+			.split("|")
+			.map((c) => c.trim());
+		if (!cells || !TASK_ID_RE.test(cells[0] ?? "")) continue;
+		tasks.push({
+			id: cells[0],
+			title: cells[1] ?? "",
+			state: cells[2] ?? "",
+			record: cells.slice(3).join("|"),
+		});
+	}
+	return { doc, sig, title, tasks, start, end: endAt + PLAN_END.length };
+}
+
+// 진행 계획 라운드를 닫을 때 Task 구성(번호·제목·순서)의 지문을 계획 블록 머리에 적는다. 상태와 기록 칸은 넣지 않는다(close와 제외가 바꾼다).
+// 부분 완료로 닫아도 적는다(사용자가 그 계획으로 가자고 한 것이다). Task 게이트는 지문이 있는 계획에서만 연다.
+export const planSig = (tasks) =>
+	createHash("sha256")
+		.update(tasks.map((t) => `${t.id}\t${t.title}`).join("\n"))
+		.digest("hex")
+		.slice(0, 12);
+function signPlan(md) {
+	const plan = parsePlan(md);
+	if (!plan) return null;
+	const head = md.slice(plan.start).match(PLAN_START_RE);
+	const attrs = (head[1] ?? "").replace(/(^|\s)sig=\S*/g, "").trim();
+	return `${md.slice(0, plan.start)}<!-- dev-cycle:plan ${[attrs, `sig=${planSig(plan.tasks)}`].filter(Boolean).join(" ")} -->${md.slice(plan.start + head[0].length)}`;
+}
+
+const readPlan = (root, config) => {
+	const p = join(root, config.planPath);
+	return existsSync(p) ? readFileSync(p, "utf8") : null;
+};
+
+// 완료의 증거는 기록 칸의 마지막 보관 파일이다. 보관 마커가 그 Task이고 partial이 아니어야 한다.
+function recordProblem(root, config, t) {
+	const last = t.record
+		.split(/[,\s]+/)
+		.filter(Boolean)
+		.at(-1);
+	if (!last) return "기록 칸에 보관 파일이 없다";
+	const abs = resolve(root, last);
+	const dir = resolve(root, config.archiveDir);
+	if (!abs.startsWith(`${dir}${sep}`) || !existsSync(abs))
+		return `기록 ${last}이 ${config.archiveDir} 아래의 파일이 아니다`;
+	const marker =
+		readFileSync(abs, "utf8").match(/<!-- dev-cycle:archived (.*?) -->/)?.[1] ??
+		"";
+	if (!new RegExp(`(^| )task=${t.id}( |$)`).test(marker))
+		return `기록 ${last}은 ${t.id}의 라운드가 아니다`;
+	if (/(^| )partial=true( |$)/.test(marker))
+		return `기록 ${last}은 부분 완료(close --partial)다. 같은 Task를 다시 열어 끝낸다`;
+	return null;
+}
+
+export function planCheck(root, config) {
+	const md = readPlan(root, config);
+	if (md === null) return null;
+	const plan = parsePlan(md);
+	// 다른 도구가 쓴 계획 문서(agent-skills /plan의 기본 경로가 tasks/plan.md다)는 진행 계획으로 보지 않는다. 라운드를 막지 않고 알린다.
+	if (!plan)
+		return {
+			plan: null,
+			problems: [],
+			next: null,
+			note: `${config.planPath}에 dev-cycle:plan 블록이 없다(진행 계획이 아닌 문서로 본다)`,
+		};
+	const problems = [];
+	const seen = new Set();
+	let open = false;
+	for (const t of plan.tasks) {
+		const at = `${t.id} "${t.title}"`;
+		if (seen.has(t.id)) problems.push(`${t.id}가 두 번 있다`);
+		seen.add(t.id);
+		if (!TASK_STATES.includes(t.state)) {
+			problems.push(
+				`${at}: 상태는 ${TASK_STATES.join("·")} 중 하나다 (지금 "${t.state}")`,
+			);
+			continue;
+		}
+		const done = t.state === "완료" || t.state === "제외";
+		// 제외는 하지 않기로 한 결정이라 앞 Task가 남아 있어도 적을 수 있다.
+		if ((t.state === "완료" || t.state === "진행") && open)
+			problems.push(`${at}: 앞 Task가 끝나지 않았는데 ${t.state}이다`);
+		if (!done) open = true;
+		if (t.state === "완료") {
+			const p = recordProblem(root, config, t);
+			if (p) problems.push(`${at}: 완료인데 ${p}`);
+		}
+		if (t.state === "제외" && !/^제외\s*:/.test(t.record))
+			problems.push(
+				`${at}: 제외는 기록 칸에 "제외: 사유 (사용자, 날짜)"를 적는다`,
+			);
+	}
+	// 진행 계획 라운드가 열려 있으면 고치는 중이다. 지문이 없는 계획은 Task 게이트가 막고, Task를 시작했는데 없으면 지운 것이다.
+	const planRound = () =>
+		parseActive(readTodo(root, config) ?? "")?.rows.some(
+			(r) => r.text === PLAN_DOC_ROW,
+		);
+	const diff = `git diff ${config.planPath}`;
+	if (plan.sig && plan.sig !== planSig(plan.tasks) && !planRound())
+		problems.push(
+			`Task 구성(번호·제목·순서)이 마지막 진행 계획 라운드 뒤에 바뀌었다. 먼저 손으로 고친 것을 되돌린다(${diff}). 계획을 바꿔야 하면 열린 라운드를 닫은 뒤 진행 계획 라운드(pnpm dev-cycle table A --write --title "진행 계획 고치기" --plan)에서 고친다. 제외는 상태와 기록 칸만 바꾼다`,
+		);
+	if (
+		!plan.sig &&
+		plan.tasks.some((t) => t.state === "진행" || t.state === "완료") &&
+		!planRound()
+	)
+		problems.push(
+			`Task를 시작한 진행 계획에 지문(sig=)이 없다. 지웠으면 되돌린다(${diff}). 처음부터 없었으면 열린 라운드를 닫은 뒤 진행 계획 라운드로 확정한다(pnpm dev-cycle table A --write --title "진행 계획" --plan)`,
+		);
+	if (plan.tasks.filter((t) => t.state === "진행").length > 1)
+		problems.push("진행 중인 Task가 둘 이상이다. Task는 하나씩 끝낸다");
+	if (!plan.tasks.length)
+		problems.push("Task 행이 없다 (| T1 | 제목 | 대기 | |)");
+	const next =
+		plan.tasks.find((t) => t.state === "대기" || t.state === "진행") ?? null;
+	return { plan, problems, next };
+}
+
+// Task 행의 상태와 기록만 바꾼 진행 계획 글을 돌려준다. 계획 블록 밖의 줄(예시 표 등)은 그대로 둔다.
+function taskText(md, config, id, { state, record }) {
+	const plan = parsePlan(md);
+	const cur = plan?.tasks.find((t) => t.id === id);
+	if (!cur)
+		throw new UsageError(`${config.planPath}에서 ${id} 행을 찾지 못했다`);
+	const re = new RegExp(
+		`^(\\s*\\|\\s*${id}\\s*\\|[^|\\r\\n]*\\|)[^|\\r\\n]*\\|[^\\r\\n]*$`,
+		"m",
+	);
+	const rec = record
+		? [cur.record, record].filter(Boolean).join(", ")
+		: cur.record;
+	const block = md
+		.slice(plan.start, plan.end)
+		.replace(re, `$1 ${state} |${rec ? ` ${rec} ` : " "}|`);
+	return md.slice(0, plan.start) + block + md.slice(plan.end);
+}
+function writeTask(root, config, id, change) {
+	const p = join(root, config.planPath);
+	writeFileSync(p, taskText(readFileSync(p, "utf8"), config, id, change));
+}
+
 export function readWorkflow(root, config) {
 	return parseWorkflow(readFileSync(join(root, config.workflowDoc), "utf8"));
 }
@@ -353,22 +557,78 @@ export function writeTable(
 	root,
 	config,
 	caseKey,
-	{ upgrade = false, title, write = false, now = new Date() } = {},
+	{
+		upgrade = false,
+		title,
+		write = false,
+		now = new Date(),
+		task,
+		plan = false,
+	} = {},
 ) {
 	const md = readTodo(root, config) ?? "# 작업\n";
 	const active = parseActive(md);
+	if (plan && task !== undefined)
+		throw new UsageError(
+			"--plan과 --task는 함께 쓰지 않는다. 진행 계획 라운드는 --plan, Task 라운드는 --task로 연다",
+		);
+	if (plan && active && !active.rows.some((r) => r.text === PLAN_DOC_ROW))
+		throw new UsageError(
+			"--plan은 진행 계획 라운드에만 쓴다. 열린 라운드를 close로 닫은 뒤 새로 연다",
+		);
 	if (write && active && !upgrade)
 		throw new UsageError(
 			"활성 라운드가 이미 있다. close로 닫거나 --upgrade를 쓴다",
 		);
 	if (upgrade && !active)
 		throw new UsageError("--upgrade할 활성 라운드가 없다");
+	if (task !== undefined) {
+		if (upgrade)
+			throw new UsageError(
+				"--upgrade는 지금 라운드의 Task를 그대로 쓴다. --task를 빼고 실행한다",
+			);
+		const chk = planCheck(root, config);
+		if (!chk?.plan)
+			throw new UsageError(
+				`--task를 쓰려면 진행 계획(${config.planPath})이 있어야 한다${chk?.note ? `: ${chk.note}` : ""}`,
+			);
+		const at = chk.plan.tasks.findIndex((t) => t.id === task);
+		if (at < 0) throw new UsageError(`진행 계획에 ${task}가 없다`);
+		if (chk.problems.length)
+			throw new UsageError(
+				`진행 계획에 문제가 있다 → pnpm dev-cycle plan: ${chk.problems.join("; ")}`,
+			);
+		if (!chk.plan.sig)
+			throw new UsageError(`진행 계획에 지문(sig=)이 없다. ${PLAN_UNSIGNED}`);
+		const waiting = chk.plan.tasks
+			.slice(0, at)
+			.filter((t) => t.state !== "완료" && t.state !== "제외");
+		if (waiting.length)
+			throw new UsageError(
+				`앞 Task가 끝나지 않았다: ${waiting.map((t) => `${t.id}(${t.state})`).join(", ")} → 그 Task를 먼저 끝낸다. 사용자가 미루자고 하면 제외할지, 진행 계획 라운드(--plan)에서 순서를 바꿀지 묻는다`,
+			);
+		if (!["대기", "진행"].includes(chk.plan.tasks[at].state))
+			throw new UsageError(`${task}는 이미 ${chk.plan.tasks[at].state}이다`);
+	}
+	// Task 게이트는 --task로 열 때만 본다. Task 일을 --task 없이 여는 실수는 알린다(버그 수정·하네스 변경은 --task 없이 연다).
+	const pending =
+		task === undefined && !upgrade && !plan
+			? planCheck(root, config)?.next
+			: null;
+	const warning =
+		pending && active?.meta.task !== pending.id
+			? `경고: 진행 계획에 끝나지 않은 Task가 있다(${pending.id} ${pending.state}). 이 라운드가 그 Task의 일이면 ${active ? "열린 라운드를 닫은 뒤 " : ""}--task ${pending.id}로 연다. 버그 수정·하네스 변경이면 그대로 진행한다`
+			: null;
 	const base = active ? active.meta.base : resolveBase(root, config);
 	const cls = classify(changedFiles(root, base), config);
 	const key = caseKey ?? cls.pathCase;
 	if (!CASES.includes(key))
 		throw new UsageError(
 			`알 수 없는 케이스: ${key} (가능: ${CASES.join(", ")})`,
+		);
+	if (plan && !upgrade && key !== "A")
+		throw new UsageError(
+			`--plan은 케이스 A(계획 문서만 바꾸는 라운드)로 연다. 지금 diff 판정은 ${cls.pathCase}다`,
 		);
 	const rows = buildRows(readWorkflow(root, config), key, cls).map((r) => ({
 		...r,
@@ -402,15 +662,44 @@ export function writeTable(
 		const at = rows.findIndex((r) => r.tag === "confirm");
 		rows.splice(at < 0 ? rows.length : at, 0, ...carried);
 	}
+	// Task 라운드: 세부 계획·계획 리뷰 행을 맨 앞에 둔다. --upgrade로 옮겨 온 같은 행의 증거는 지킨다.
+	if (task ?? active?.meta.task) {
+		const old = new Map((active?.rows ?? []).map((r) => [r.text, r.evidence]));
+		for (let i = rows.length - 1; i >= 0; i--)
+			if ([TASK_PLAN_ROW, TASK_REVIEW_ROW].includes(rows[i].text))
+				rows.splice(i, 1);
+		rows.unshift(
+			...taskRows(rows).map((text) => ({
+				text,
+				evidence: old.get(text) ?? "",
+			})),
+		);
+	}
+	if (plan || active?.rows.some((r) => r.text === PLAN_DOC_ROW)) {
+		const old = new Map((active?.rows ?? []).map((r) => [r.text, r.evidence]));
+		const fixed = planRows(config, rows);
+		for (let i = rows.length - 1; i >= 0; i--)
+			if (
+				[PLAN_ANALYSIS_ROW, PLAN_DOC_ROW, PLAN_REVIEW_ROW].includes(
+					rows[i].text,
+				)
+			)
+				rows.splice(i, 1);
+		rows.unshift(
+			...fixed.map((text) => ({ text, evidence: old.get(text) ?? "" })),
+		);
+	}
 	const meta = {
 		case: key,
 		base,
 		auth: cls.auth || Boolean(active?.meta.auth),
 		opened: active?.meta.opened ?? archiveDay(now),
 		title: title ?? active?.title ?? "제목 없음",
+		task: task ?? active?.meta.task,
 	};
 	const block = renderBlock(meta, rows, upgrade ? extra : []);
 	if (write) {
+		if (task !== undefined) writeTask(root, config, task, { state: "진행" });
 		const next = active
 			? md.slice(0, active.start) + block + md.slice(active.end)
 			: `${md.replace(/\s*$/, "")}\n\n${block}\n`;
@@ -418,7 +707,14 @@ export function writeTable(
 		mkdirSync(dirname(p), { recursive: true });
 		writeFileSync(p, next);
 	}
-	return { case: key, base, rows: rows.length, auth: meta.auth, block };
+	return {
+		case: key,
+		base,
+		rows: rows.length,
+		auth: meta.auth,
+		block,
+		...(warning ? { warning } : {}),
+	};
 }
 
 const EVIDENCE_MAX_BYTES = 64 * 1024;
@@ -492,7 +788,9 @@ export function setEvidence(root, config, row, evidenceFile) {
 		throw new UsageError(`증거 파일을 읽을 수 없다: ${error.message}`);
 	}
 	if (!file.startsWith(`${base}${sep}`))
-		throw new UsageError("증거 파일은 프로젝트 밖을 가리킬 수 없다");
+		throw new UsageError(
+			"증거 파일은 프로젝트 밖을 가리킬 수 없다. tasks/evidence/에 두고 다시 실행한다",
+		);
 	let stat;
 	try {
 		stat = statSync(file);
@@ -573,7 +871,14 @@ const rowProblem = (r) => {
 			value,
 		)
 	)
-		return "계획 리뷰 증거는 prokit-reviewer(plan): approve, max=none|low|medium 결과여야 한다 (N/A 불가)";
+		return "계획 리뷰 증거는 prokit-reviewer(plan): approve, max=none|low|medium 결과여야 한다 (N/A 불가). 예: prokit-reviewer(plan): approve, max=low, 반영 3건";
+	if (r.text === TASK_PLAN_ROW && !/\S+\.md\b/.test(value))
+		return "Task 세부 계획 증거는 계획 문서 경로(.md)다 (N/A 불가)";
+	if (
+		[PLAN_ANALYSIS_ROW, PLAN_DOC_ROW].includes(r.text) &&
+		!/\S+\.md\b/.test(value)
+	)
+		return "정밀 분석·진행 계획 증거는 문서 경로(.md)다 (N/A 불가)";
 	if (
 		r.text.startsWith("[design]") &&
 		!["기존", "결정", "설정", "검증"].every((field) =>
@@ -617,6 +922,35 @@ export function audit(
 					`필수 행 누락: ${r.text} → pnpm dev-cycle table ${X} --write --upgrade`,
 				);
 		}
+	}
+	const plan = planCheck(root, config);
+	if (plan) for (const p of plan.problems) problems.push(`진행 계획: ${p}`);
+	if (active.rows.some((r) => r.text === PLAN_DOC_ROW)) {
+		if (!plan?.plan)
+			problems.push(
+				`진행 계획 라운드인데 ${config.planPath}에 진행 계획 블록이 없다${plan?.note ? ` (${plan.note})` : ""}`,
+			);
+		for (const text of planRows(config, active.rows))
+			if (!active.rows.some((r) => r.text === text))
+				problems.push(
+					`필수 행 누락: ${text} → pnpm dev-cycle table ${active.meta.case} --write --upgrade --plan`,
+				);
+	}
+	if (active.meta.task) {
+		for (const text of taskRows(active.rows))
+			if (!active.rows.some((r) => r.text === text))
+				problems.push(
+					`필수 행 누락: ${text} → pnpm dev-cycle table ${active.meta.case} --write --upgrade`,
+				);
+		const t = plan?.plan?.tasks.find((x) => x.id === active.meta.task);
+		if (!t)
+			problems.push(
+				`진행 계획에 이 라운드의 Task ${active.meta.task}가 없다${plan?.note ? ` (${plan.note})` : ""}`,
+			);
+		else if (t.state !== "진행")
+			problems.push(
+				`이 라운드의 Task ${t.id}가 진행 상태가 아니다(지금 ${t.state})`,
+			);
 	}
 	if (existsSync(join(root, ".claude/agents"))) {
 		const r = spawnSync(
@@ -669,7 +1003,45 @@ export function delegationCompletionProblem(result, runtime) {
 	return null;
 }
 
+// 다음 Task를 여는 명령. 그 Task의 라운드가 열려 있으면 이어 가고, 다른 라운드가 열려 있으면 먼저 닫는다.
+// open: 열린 라운드가 없으면 null, 있으면 { task }. 지문이 없는 계획은 진행 계획 라운드로 먼저 확정한다.
+const PLAN_UNSIGNED =
+	'Task는 진행 계획 라운드를 닫아 확정한 계획에서만 연다 → pnpm dev-cycle table A --write --title "진행 계획" --plan';
+const nextCmd = (t, open, sig) =>
+	open?.task === t.id
+		? "열린 라운드에서 이어 간다"
+		: !open && !sig
+			? `지문(sig=) 없음. ${PLAN_UNSIGNED}`
+			: `${open ? "열린 라운드를 닫은 뒤 " : ""}pnpm dev-cycle table <케이스> --write --title "${t.id} …" --task ${t.id}`;
+
+// 진행 계획과 전환의 기존 코드 경로를 status 끝에 한 줄씩 붙인다.
+function planLines(root, config, open) {
+	const chk = planCheck(root, config);
+	const lines = [];
+	if (chk?.plan) {
+		const done = chk.plan.tasks.filter(
+			(t) => t.state === "완료" || t.state === "제외",
+		).length;
+		lines.push(
+			`진행 계획: ${done}/${chk.plan.tasks.length} 끝남 — ${chk.next ? `다음 ${chk.next.id} "${chk.next.title}"(${chk.next.state}) → ${nextCmd(chk.next, open, chk.plan.sig)}` : "모든 Task가 끝났다"}${chk.problems.length ? ` — 문제 ${chk.problems.length}건(pnpm dev-cycle plan)` : ""}`,
+		);
+	} else if (chk) lines.push(`진행 계획: ${chk.note}`);
+	else if (!open && EXISTING_TYPES.includes(config.projectType))
+		lines.push(
+			'진행 계획: 아직 없다 → 정밀 분석과 진행 계획부터: pnpm dev-cycle table A --write --title "정밀 분석과 진행 계획" --plan',
+		);
+	if (config.legacy?.path)
+		lines.push(`기존 코드(읽기 전용 참조): ${config.legacy.path}`);
+	return lines;
+}
+
 export function status(root, config) {
+	const s = statusOfRound(root, config);
+	const extra = planLines(root, config, s.active ? { task: s.task } : null);
+	return { ...s, planLines: extra, line: [s.line, ...extra].join("\n") };
+}
+
+function statusOfRound(root, config) {
 	const md = readTodo(root, config);
 	const active = md && parseActive(md);
 	if (!active) {
@@ -680,10 +1052,11 @@ export function status(root, config) {
 	}
 	const filled = active.rows.filter((r) => !rowProblem(r)).length;
 	const next = active.rows.find(rowProblem)?.text ?? null;
-	const line = `라운드 ${active.meta.case} "${active.title}" — ${filled}/${active.rows.length}칸 — 다음: ${next ?? "audit 후 close"}`;
+	const line = `라운드 ${active.meta.case}${active.meta.task ? `(${active.meta.task})` : ""} "${active.title}" — ${filled}/${active.rows.length}칸 — 다음: ${next ?? "audit 후 close"}`;
 	return {
 		active: true,
 		case: active.meta.case,
+		task: active.meta.task,
 		filled,
 		total: active.rows.length,
 		next,
@@ -1010,13 +1383,28 @@ export function close(
 	const archivePath = archiveFile(root, config, day, active.title);
 	const archived = md
 		.slice(active.start, active.end)
-		.replace("<!-- dev-cycle:start ", `<!-- dev-cycle:archived closed=${day} `)
+		.replace(
+			"<!-- dev-cycle:start ",
+			`<!-- dev-cycle:archived closed=${day} ${partial && (blocked || skipped) ? "partial=true " : ""}`,
+		)
 		.replace("## 활성 라운드: ", "## 라운드: ")
 		.replace(END_TAG, "<!-- dev-cycle:archived-end -->");
 	const before = md.slice(0, active.start).replace(/\s*$/, "");
 	const after = md.slice(active.end).replace(/^\s*/, "");
 	const remaining = `${[before, after].filter(Boolean).join("\n\n").replace(/\s*$/, "")}\n`;
 	const completed = completedOutsideRound(remaining);
+	// 진행 계획의 Task 라운드면 보관 파일을 기록하고, 부분 완료가 아니면 그 Task를 끝낸다.
+	// 계획 글은 보관하기 전에 만든다. 만들지 못하면(행을 못 찾음) 라운드를 닫지 않는다.
+	const task = active.meta.task;
+	const planFile = join(root, config.planPath);
+	const planNext = task
+		? taskText(readFileSync(planFile, "utf8"), config, task, {
+				state: partial && (blocked || skipped) ? "진행" : "완료",
+				record: relative(root, archivePath).split(sep).join("/"),
+			})
+		: active.rows.some((r) => r.text === PLAN_DOC_ROW) && existsSync(planFile)
+			? signPlan(readFileSync(planFile, "utf8"))
+			: null;
 	archiveTodo(
 		root,
 		config,
@@ -1024,7 +1412,8 @@ export function close(
 		archivePath,
 		`# ${active.title}\n\n${archived}\n${archiveLinks(completed.archived, todoPath, archivePath)}`,
 	);
-	return { ok: true, archivePath };
+	if (planNext !== null) writeFileSync(planFile, planNext);
+	return { ok: true, archivePath, task };
 }
 
 // 커밋 전 검사: 스테이징한 변경에 로컬 .env의 비밀값이나 흔한 키 형식이 들어 있는지 본다. 값은 출력하지 않는다.
@@ -1121,7 +1510,7 @@ export function stagedSecrets(root) {
 }
 
 const USAGE =
-	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--title 제목] | evidence <행 번호> --file <증거 파일> | status | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|diff|resolve|validate|accept> | close [--partial] | secrets> [--json]";
+	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--title 제목] [--task T번호 | --plan] | evidence <행 번호> --file <증거 파일> | status | plan | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|diff|resolve|validate|accept> | close [--partial] | archive | secrets> [--json]";
 
 function readDelegationJson(root, path, flag) {
 	if (!path || path.startsWith("--"))
@@ -1923,8 +2312,12 @@ export function main(argv, root = process.cwd()) {
 	const json = rest.includes("--json");
 	const titleAt = rest.indexOf("--title");
 	const title = titleAt >= 0 ? rest[titleAt + 1] : undefined;
+	const taskAt = rest.indexOf("--task");
 	const positional = rest.filter(
-		(a, i) => !a.startsWith("--") && (titleAt < 0 || i !== titleAt + 1),
+		(a, i) =>
+			!a.startsWith("--") &&
+			(titleAt < 0 || i !== titleAt + 1) &&
+			(taskAt < 0 || i !== taskAt + 1),
 	);
 	const config = loadConfig(root);
 	const print = (obj, text) =>
@@ -1944,17 +2337,22 @@ export function main(argv, root = process.cwd()) {
 			return 0;
 		}
 		case "table": {
+			const task = taskAt >= 0 ? rest[taskAt + 1] : undefined;
+			if (taskAt >= 0 && !TASK_ID_RE.test(task ?? ""))
+				throw new UsageError(
+					'사용법: dev-cycle table <케이스> --write --title "<요약>" --task T<번호>',
+				);
 			const r = writeTable(root, config, positional[0], {
 				upgrade: rest.includes("--upgrade"),
 				title,
 				write: rest.includes("--write"),
+				task,
+				plan: rest.includes("--plan"),
 			});
-			print(
-				r,
-				rest.includes("--write")
-					? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다`
-					: r.block,
-			);
+			const text = rest.includes("--write")
+				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다`
+				: r.block;
+			print(r, r.warning ? `${text}\n${r.warning}` : text);
 			return 0;
 		}
 		case "evidence": {
@@ -2102,10 +2500,43 @@ export function main(argv, root = process.cwd()) {
 			print(
 				r,
 				r.ok
-					? `라운드를 닫았다 → ${r.archivePath}`
+					? `라운드를 닫았다 → ${r.archivePath}${r.task ? ` (진행 계획 ${r.task} 갱신)` : ""}`
 					: ["close 거부:", ...r.problems.map((p) => `  ❌ ${p}`)].join("\n"),
 			);
 			return r.ok ? 0 : 1;
+		}
+		case "plan": {
+			if (rest.some((a) => a !== "--json"))
+				throw new UsageError("사용법: dev-cycle plan [--json]");
+			const chk = planCheck(root, config);
+			if (!chk) {
+				print({ plan: null }, `진행 계획 없음 (${config.planPath})`);
+				return 0;
+			}
+			// 파일이 없으면 진행 계획을 쓰지 않는 프로젝트다(0). 있는데 블록이 없으면 형식을 잘못 쓴 것이다(1).
+			if (!chk.plan) {
+				print(chk, `진행 계획 없음: ${chk.note}`);
+				return 1;
+			}
+			const todo = readTodo(root, config);
+			const active = todo && parseActive(todo);
+			const open = active ? { task: active.meta.task } : null;
+			const rows = (chk.plan?.tasks ?? []).map(
+				(t) =>
+					`  ${t.id} ${t.state} ${t.title}${t.record ? ` — ${t.record}` : ""}`,
+			);
+			print(
+				chk,
+				[
+					`진행 계획: ${chk.plan?.title ?? ""}${chk.plan?.doc ? ` (${chk.plan.doc})` : ""}`,
+					...rows,
+					chk.next
+						? `다음: ${chk.next.id} "${chk.next.title}" → ${nextCmd(chk.next, open, chk.plan.sig)}`
+						: "모든 Task가 끝났다",
+					...chk.problems.map((p) => `  ❌ ${p}`),
+				].join("\n"),
+			);
+			return chk.problems.length ? 1 : 0;
 		}
 		case "secrets": {
 			let hits;

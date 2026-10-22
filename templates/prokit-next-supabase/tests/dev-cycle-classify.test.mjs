@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { changedFiles, classify, loadConfig, resolveBase } from "../files/scripts/dev-cycle.mjs";
+import { ADOPT_AUTH, adoptRules } from "../install.mjs";
 import { makeRepo } from "./helpers.mjs";
 
 const cfg = () => loadConfig(makeRepo().root);
@@ -19,11 +20,51 @@ test("경로별 케이스: 첫 일치 규칙 하나만 적용한다", () => {
   for (const f of ["skills.manifest.json", ".claude/settings.json", ".codex/skills/plan/SKILL.md", ".codex/prompts/x.md", ".agents/agents/prokit-reviewer.md", "scripts/skills-setup.mjs"]) {
     assert.equal(classify([f], c).pathCase, "H", f);
   }
-  for (const f of ["scripts/resource-guard.mjs", "scripts/delegation.mjs", "scripts/export-html.mjs"]) {
+  for (const f of ["scripts/resource-guard.mjs", "scripts/delegation.mjs", "scripts/export-html.mjs", "scripts/load-keys.mjs"]) {
     assert.equal(classify([f], c).pathCase, "H", f);
   }
+  for (const f of ["apps/web/next.config.ts", "apps/web/next.config.mts", "vercel.json", "apps/web/vercel.ts", ".github/workflows/ci.yml", ".github/actions/setup/action.yml", "turbo.json", "apps/web/turbo.json"]) {
+    const r = classify([f], c);
+    assert.equal(r.pathCase, "H", `빌드·배포 설정은 A로 지나가지 않는다: ${f}`);
+    assert.equal(r.evidence[0].why, "빌드·배포 설정", f);
+  }
+  // 루트 package.json에는 dev-cycle·skills 명령과 자원 보호를 건 dev·build가 있다. 기능 의존성은 apps/web·packages/*의 package.json과 pnpm-workspace.yaml의 catalog에 들어간다.
+  for (const f of ["package.json", "biome.json", "tsconfig.json", "packages/config/tsconfig.base.json"]) {
+    const r = classify([f], c);
+    assert.equal(r.pathCase, "H", `작업공간 설정은 A로 지나가지 않는다: ${f}`);
+    assert.equal(r.evidence[0].why, "작업공간 설정", f);
+  }
+  for (const f of ["apps/web/package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"]) assert.equal(classify([f], c).pathCase, "A", `의존성 추가는 A다: ${f}`);
+  assert.equal(classify(["packages/db/package.json", "packages/db/src/schema/pass.ts"], c).pathCase, "E");
+  assert.equal(classify(["apps/web/src/app/page.tsx", "apps/web/next.config.ts"], c).harness, true, "화면과 함께 바꾸면 H 행이 붙는다");
   assert.equal(classify(["README.md"], c).pathCase, "A");
   assert.equal(classify([], c).pathCase, "A");
+});
+
+test("adopt 경로 규칙: 흔한 Next.js 배치를 추정하고, 규칙 밖 코드는 F(case F 규칙), 하네스와 문서는 그대로다", () => {
+  const base = cfg();
+  const c = { ...base, rules: adoptRules(base.rules), authPaths: ADOPT_AUTH };
+  assert.equal(classify(["app/page.tsx"], c).pathCase, "B");
+  assert.equal(classify(["src/components/cart.tsx"], c).pathCase, "B");
+  assert.equal(classify(["app/api/orders/route.ts"], c).pathCase, "D");
+  assert.equal(classify(["prisma/schema.prisma"], c).pathCase, "E");
+  assert.equal(classify(["lib/price.ts"], c).pathCase, "F", "계층을 모르는 코드는 무거운 쪽으로 본다");
+  assert.equal(classify(["lib/price.ts"], c).layers.length, 0);
+  assert.equal(classify(["scripts/dev-cycle.mjs"], c).pathCase, "H", "하네스 스크립트는 F 규칙보다 먼저 H다");
+  assert.equal(classify(["next.config.ts"], c).pathCase, "H", "루트 next.config도 F 규칙보다 먼저 빌드·배포 설정 H다");
+  assert.equal(classify([".github/workflows/deploy.yml"], c).pathCase, "H");
+  assert.equal(classify([".agents/skills/x/components/a.ts"], c).pathCase, "H", "하네스 경로는 넓은 추정 규칙보다 먼저 H다");
+  assert.equal(classify(["package.json"], c).pathCase, "A", "adopt의 루트 package.json은 앱의 의존성 목록이다");
+  assert.equal(classify(["README.md"], c).pathCase, "A");
+  assert.equal(classify(["app/page.tsx", "docs/dev-workflow.md"], c).pathCase, "B");
+});
+
+test("adopt 인증 경로: 흔한 인증 파일과 (auth) 라우트 묶음은 보안 리뷰 대상이고, 일반 화면은 아니다", () => {
+  const base = cfg();
+  const c = { ...base, rules: adoptRules(base.rules), authPaths: ADOPT_AUTH };
+  for (const f of ["middleware.ts", "src/proxy.ts", "auth.ts", "auth.config.ts", "src/lib/auth-client.ts", "lib/auth/session.ts", "app/api/auth/[...nextauth]/route.ts", "app/(auth)/login/page.tsx", "apps/web/.env.schema", "lib/next-auth.ts", "middleware.mjs", "app/(authenticated)/me/page.tsx", "app/(protected)/admin/page.tsx"])
+    assert.equal(classify([f], c).auth, true, f);
+  for (const f of ["app/page.tsx", "components/author-card.tsx", "lib/oauth-scopes.md", "app/(marketing)/page.tsx"]) assert.equal(classify([f], c).auth, false, f);
 });
 
 test("자원 정책 기본값은 명시 등록 root 없이 표준 프로젝트 경로를 측정한다", () => {

@@ -1,0 +1,80 @@
+{
+  "skill_name": "prokit-skills-manage",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "두뇌를 superpowers에서 openspec으로 바꾸고 싶어. superpowers로 쓴 계획은 이어서 쓸 수 있게 해줘.\n설계·읽기 전용 평가다. 첨부 superpowers-project.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 코드와 설치 상태는 지어내지 않는다. 구현·설치·원격 호출·대조표 쓰기는 하지 않는다. 읽은 스킬과 에이전트, 실행할 명령 순서, 사용자에게 할 질문을 보고한다.",
+      "expected_output": "지금 구성을 보여 주고, 열린 라운드가 없으니 H 라운드에서 pnpm skills:setup --brain openspec으로 바꾼다. OpenSpec 전역 CLI 설치를 알리고 동의받으며, docs/superpowers/plans/를 지우지 않고 인계로 남긴다.",
+      "files": [
+        "evals/prokit-skills-manage/fixtures/superpowers-project.json"
+      ],
+      "expectations": [
+        "지금 구성(두뇌 superpowers, 과설계 방지 ponytail)을 확인해 보여 준다",
+        "열린 라운드가 없음을 확인하고 H 라운드(dev-cycle table H --write)에서 바꾼다",
+        "명령을 pnpm skills:setup --brain openspec으로 정하고 npx skills·claude plugin을 직접 실행하지 않는다",
+        "OpenSpec 전역 CLI(npm) 설치를 알리고 동의를 받는다",
+        "docs/superpowers/plans/ 문서를 지우지 않고 대조표 메모와 tasks/todo.md에 인계로 남긴다"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "compound-engineering도 같이 쓰고 싶어. 그리고 taste는 이제 필요 없어서 지워줘. grilling도 안 쓰니까 빼고.\n설계·읽기 전용 평가다. 첨부 superpowers-project.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 코드와 설치 상태는 지어내지 않는다. 구현·설치·원격 호출·대조표 쓰기는 하지 않는다. 읽은 스킬과 에이전트, 실행할 명령 순서, 사용자에게 할 질문을 보고한다.",
+      "expected_output": "한 H 라운드에서 pnpm skills:setup --brain superpowers,compound-engineering --drop taste를 실행한다. grilling은 필수 스킬이라 빼지 않는다고 알리고, 바뀐 구성의 전과 후를 보여 주며 확인받는다.",
+      "files": [
+        "evals/prokit-skills-manage/fixtures/superpowers-project.json"
+      ],
+      "expectations": [
+        "--brain superpowers,compound-engineering처럼 지금 주 두뇌를 앞에 두고 더한다",
+        "taste는 --drop taste로 지운다(스킬 폴더를 손으로 지우지 않는다)",
+        "grilling은 필수 스킬이라 빼지 않는다고 이유와 함께 알리고 --drop에 넣지 않는다",
+        "한 H 라운드에서 skills:setup 한 번으로 적용하고 출력의 정리·남김·제거·경고·실패 줄을 보여 준다",
+        "바뀐 구성의 전과 후를 보여 주고 [confirm] 확인을 요청한다"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "openspec 두뇌를 써 보고 싶어.\n설계·읽기 전용 평가다. 첨부 none-project.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 코드와 설치 상태는 지어내지 않는다. 구현·설치·원격 호출·대조표 쓰기는 하지 않는다. 읽은 스킬과 에이전트, 실행할 명령 순서, 사용자에게 할 질문을 보고한다.",
+      "expected_output": "지금 두뇌가 none이므로 --brain openspec으로 더한다(none을 섞지 않는다). 전역 CLI 설치를 알리고, H 라운드에서 적용한 뒤 skills:check와 새 세션을 안내한다.",
+      "files": [
+        "evals/prokit-skills-manage/fixtures/none-project.json"
+      ],
+      "expectations": [
+        "지금 두뇌가 none(기본 AI)임을 확인한다",
+        "명령은 pnpm skills:setup --brain openspec이다(--brain none,openspec처럼 none을 섞지 않는다)",
+        "OpenSpec 전역 CLI 설치를 알리고 동의를 받는다",
+        "확인 범위에 openspec init이 만드는 파일(openspec/, .claude/skills/openspec-*)을 넣고 앱 코드가 바뀌지 않았는지 본다",
+        "H 라운드에서 적용하고 skills:check와 새 세션을 열어야 적용된다는 안내를 한다"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "지금 바로 과설계 방지를 caveman으로 바꿔줘.\n설계·읽기 전용 평가다. 첨부 open-round.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 코드와 설치 상태는 지어내지 않는다. 구현·설치·원격 호출·대조표 쓰기는 하지 않는다. 읽은 스킬과 에이전트, 실행할 명령 순서, 사용자에게 할 질문을 보고한다.",
+      "expected_output": "열린 D 라운드가 있으니 라운드 중간에는 바꾸지 않는다. 그 라운드를 끝내거나 사용자 동의로 close --partial한 뒤 H 라운드에서 pnpm skills:setup --simplicity caveman으로 바꾸자고 묻는다.",
+      "files": [
+        "evals/prokit-skills-manage/fixtures/open-round.json"
+      ],
+      "expectations": [
+        "열린 D 라운드(3/9칸)가 있음을 확인하고 라운드 중간에는 바꾸지 않는다",
+        "그 라운드를 끝내거나 사용자 동의로 close --partial한 뒤 바꾸자고 묻는다",
+        "--upgrade로 열린 D 라운드를 H로 바꾸지 않는다",
+        "바꿀 때의 명령은 pnpm skills:setup --simplicity caveman이다",
+        "열린 대조표를 지우거나 덮어쓰지 않는다"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "next-forge 스킬도 추가해줘.\n설계·읽기 전용 평가다. 첨부 superpowers-project.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 코드와 설치 상태는 지어내지 않는다. 구현·설치·원격 호출·대조표 쓰기는 하지 않는다. 읽은 스킬과 에이전트, 실행할 명령 순서, 사용자에게 할 질문을 보고한다.",
+      "expected_output": "next-forge는 매니페스트의 추가 스킬·선택 묶음에 없어 --matt나 --optional로 고를 수 없다고 알린다. npx skills add로 직접 설치하지 않고, 계속 쓸 스킬이면 출처를 확인해 H 라운드에서 skills.manifest.json에 더한 뒤 설치하자고 묻는다.",
+      "files": [
+        "evals/prokit-skills-manage/fixtures/superpowers-project.json"
+      ],
+      "expectations": [
+        "next-forge가 매니페스트(mattpocock pool, optional)에 없어 --matt나 --optional로 고를 수 없음을 알린다",
+        "npx skills add나 claude plugin install로 직접 설치하지 않는다",
+        "원본 저장소(출처)를 지어내지 않고 확인하거나 사용자에게 묻는다",
+        "계속 쓸 스킬이면 H 라운드에서 skills.manifest.json에 더한 뒤 설치하는 방법을 제안하고 묻는다",
+        "사용자 답을 받기 전에 매니페스트나 설치본을 바꾸지 않는다"
+      ]
+    }
+  ]
+}

@@ -7,15 +7,15 @@
 | 핵심 | 설명 |
 |---|---|
 | 하네스 | 에이전트가 정해진 순서와 검사를 지키며 일하게 만드는 규칙, 스킬, 자동 검사의 묶음이에요. [하네스 엔지니어링](concepts/harness.md) |
-| 전용 스킬 | `prokit-*` 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개가 프로젝트 계약을 지키며 공식·사용자 지정 전문 스킬에 맡기고 결과를 확인해요. [prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개](skills/prokit-skills.md) |
+| 전용 스킬 | `prokit-*` 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개가 프로젝트 계약을 지키며 공식·사용자 지정 전문 스킬에 맡기고 결과를 확인해요. [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](skills/prokit-skills.md) |
 | 디자인부터 배포까지 | 스타일 추천과 `DESIGN.md`로 디자인을 정하고, HTML 내보내기나 Vercel 배포까지 이어져요. [UI/UX 흐름](design/ui-flow.md) |
 
 ## 문서 둘러보기
 
 | 묶음 | 내용 |
 |---|---|
-| [시작하기](start/README.md) | 프로킷이 무엇인지, 어떤 분께 추천하는지, 준비물, 지원하는 에이전트, 먼저 정할 PRD, 화면만 만들기와 서비스 만들기의 빠른 시작, 만든 뒤 개발하기 |
-| [핵심 개념](concepts/README.md) | 하네스, dev-cycle 라운드, 케이스와 대조표, 증거와 확인, 위임·리뷰 에이전트, 자원 관리 |
+| [시작하기](start/README.md) | 프로킷이 무엇인지, 어떤 분께 추천하는지, 준비물, 지원하는 에이전트, 먼저 정할 PRD, 기존 프로젝트에 도입하기, 화면만 만들기와 서비스 만들기의 빠른 시작, 만든 뒤 개발하기 |
+| [핵심 개념](concepts/README.md) | 하네스, dev-cycle 라운드, 케이스와 대조표, 증거와 확인, 정밀 분석과 진행 계획, 위임·리뷰 에이전트, 자원 관리 |
 | [템플릿](templates/README.md) | neon과 supabase 고르기, 템플릿이 더하는 것, 앱 구조, 설치기, 갱신 반영 |
 | [스킬과 에이전트](skills/README.md) | prokit 스킬, 공식 스킬과 연결, 선택 스킬 묶음, 설치와 업데이트 |
 | [디자인](design/README.md) | 스타일 추천과 브리프, `DESIGN.md`, 화면만 프로젝트와 HTML 내보내기 |

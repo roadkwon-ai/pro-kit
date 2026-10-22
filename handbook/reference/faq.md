@@ -26,6 +26,10 @@
 
 네. 두 도구도 Codex처럼 프로킷의 규칙과 스킬을 읽어요. Antigravity는 <!-- v:agent.agy.open -->agy -i "<요청>"<!-- /v -->, Grok Build는 <!-- v:agent.grok.open -->grok --trust "<요청>"<!-- /v -->로 열어요. Grok Build는 폴더를 신뢰해야 규칙과 스킬을 읽어요. Antigravity로는 구현부터 리뷰까지 한 라운드를 사용자 확인 직전까지 돌려 봤고, Grok Build는 무료 사용량 한도 때문에 대조표를 여는 데까지만 확인했어요. Grok Build는 Claude 설정도 함께 읽어서, 전역에 설치한 Claude 플러그인이 같이 보일 수 있어요. 긴 작업에는 유료 요금제가 필요할 수 있어요. 도구마다 읽는 파일과 확인한 범위는 [지원하는 에이전트](../start/supported-agents.md)에 있어요.
 
+### 이미 진행하던 프로젝트에도 쓸 수 있나요?
+
+네. 초기 프로젝트(기획 자료와 프로토타입만 있음), 운영 중인 Next.js, 다른 스택에서 Next.js로 전환하는 프로젝트, 이렇게 세 유형을 지원해요. 새 프로젝트까지 합쳐 네 유형이고, 기존 프로젝트는 PRD가 없어도 돼요. 에이전트가 먼저 읽기만 하며 분석하고 설정을 추천하고, **동의하기 전에는 프로젝트를 하나도 바꾸지 않아요**([기존 프로젝트에 도입하기](../start/adopt.md)).
+
 ### 비용은 얼마나 드나요?
 
 Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Grok Build도 각자의 요금제를 따라요. 요금제마다 사용량 한도가 있고, 화면 디자인과 모든 페이지 만들기는 사용량이 많은 작업이에요. 이미지를 OpenAI API 키로 그리면 그 비용은 따로 나가요. 요금제와 시간·비용을 읽는 법은 [비용과 키](../../tutorials/reference/costs-and-keys.md)에 있어요. 만드는 순서와 단계마다 실제로 걸린 시간은 [만드는 과정과 걸리는 시간](../../tutorials/reference/process-and-time.md)에 있어요.
@@ -52,9 +56,17 @@ WSL2의 Ubuntu 안에서만 돼요. PowerShell이나 Git Bash에서는 설치가
 
 아니요. 에이전트가 PRD를 보고 두뇌와 스킬을 추천하고 개발 환경을 맞추므로 새 프로젝트에는 PRD가 꼭 필요해요. 길게 쓰지 않아도 돼요. 누가 쓰는지와 핵심 기능 몇 줄, PRD 파일 경로, 프리셋 팩 중 하나면 돼요. 요청에 빠지면 에이전트가 먼저 달라고 하고, 끝내 주지 않으면 아무것도 만들지 않고 끝나요([PRD 먼저 정하기](../start/prd.md), [두뇌와 선택 스킬](../skills/brains.md)).
 
+### 두뇌를 여러 개 쓸 수 있나요?
+
+네. `--brain openspec,superpowers`처럼 쉼표로 이으면 첫 번째가 주 두뇌예요. 다만 진행 순서를 강제하는 두뇌(superpowers, gstack, oh-my)를 둘 이상 고르지는 마세요. 맡는 단계가 덜 겹치는 조합을 권해요([두뇌와 선택 스킬](../skills/brains.md)).
+
+### 진행 중에 두뇌를 바꿀 수 있나요?
+
+네. "두뇌 바꿔줘", "openspec도 같이 쓰고 싶어"처럼 요청하면 `prokit-skills-manage` 스킬이 `pnpm skills:setup --brain …`으로 바꿔요. 고르지 않은 두뇌의 도구 파일은 지우지만 `openspec/`, `specs/`, `.specify/memory/` 같은 명세 문서는 남겨요([두뇌와 선택 스킬](../skills/brains.md)).
+
 ### 스킬을 직접 불러야 하나요?
 
-아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개](../skills/prokit-skills.md)).
+아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md)).
 
 ### 프리셋과 같은 프롬프트로 만들면 똑같이 나오나요?
 

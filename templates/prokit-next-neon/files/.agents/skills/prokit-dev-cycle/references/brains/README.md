@@ -4,7 +4,7 @@
 
 | 구분 | 고르는 수 | 기록 | 기본 | 바꾸는 명령 |
 |---|---|---|---|---|
-| 두뇌 | 0~1 | `.dev-cycle.json`의 `brain` | `none`(기본 AI) | `pnpm skills:setup --brain <이름\|none>` |
+| 두뇌 | 0개 이상(하나 추천) | `.dev-cycle.json`의 `brain`(여럿이면 배열, 첫 값이 주 두뇌) | `none`(기본 AI) | `pnpm skills:setup --brain <이름>[,<이름>]` 또는 `--brain none` |
 | 과설계 방지 스킬 | 0~1 | `.dev-cycle.json`의 `simplicity` | `none`(기본 AI) | `pnpm skills:setup --simplicity <이름\|none>` |
 | mattpocock 추가 스킬 | 0개 이상 | 설치본(`skills-lock.json`) | 없음 | `pnpm skills:setup --matt <스킬>[,<스킬>]` |
 | 응답 방식 스킬 | 0~1 | 설치본 | 없음 | `pnpm skills:setup --optional i-have-adhd` |
@@ -15,14 +15,16 @@
 - 고른 스킬의 규칙이 `AGENTS.md`, `prokit-*`, 대조표, 보고 형식과 부딪히면 뒤의 것이 우선한다.
 
 ## 바꾸는 법
+진행 중에 두뇌나 과설계 방지 스킬을 바꾸거나 더하거나 빼는 요청은 `prokit-skills-manage` 스킬이 받는다. 절차의 정본은 아래다.
+
 1. 열린 라운드가 있으면 먼저 닫는다. 라운드 중간에는 바꾸지 않는다.
-2. H 라운드를 열고 `pnpm skills:setup --brain <이름|none>`이나 `--simplicity <이름|none>`을 실행한다. 그 항목에서 고르지 않은 설치본(스킬은 `skills-lock.json` 출처, 플러그인은 ID, OMX는 `.omx/setup-scope.json`)을 지우고 고른 것을 설치한다. 기록값과 같은 값을 줘도 남은 설치본을 정리한다. 추가 스킬과 선택 묶음은 지우지 않는다.
+2. H 라운드를 열고 `pnpm skills:setup --brain <이름>[,<이름>]`(또는 `--brain none`)이나 `--simplicity <이름|none>`을 실행한다. `--brain`에는 남길 두뇌 전부를 준다. 더할 때는 지금 목록 뒤에 새 두뇌를 붙이고(지금이 `none`이면 새 두뇌만), 뺄 때는 남길 것만 준다. 그 항목에서 고르지 않은 설치본(스킬은 `skills-lock.json` 출처, 플러그인은 ID, OMX는 `.omx/setup-scope.json`, OpenSpec·Spec Kit은 그 도구가 만든 파일)을 지우고 고른 것을 설치한다. 기록값과 같은 값을 줘도 남은 설치본을 정리한다. 추가 스킬과 선택 묶음은 두뇌를 바꿔도 남는다. 지우려면 `--drop <스킬이나 묶음>`을 준다. 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`)도 지우지 않는다.
 3. 이 기기 전역에 켜진 고르지 않은 플러그인과 gstack 개인 스킬은 `.claude/settings.local.json`으로 이 프로젝트에서만 끈다. 고른 것을 끄던 항목은 지운다. 전역 파일은 쓰지 않는다.
 4. 두뇌를 바꾸면 이전 두뇌가 만든 산출물(확정한 요구, 설계, 계획 경로, 남은 일)을 대조표 메모와 `tasks/todo.md`로 넘겨 새 두뇌가 인터뷰·계획을 처음부터 반복하지 않게 한다.
 5. `pnpm skills:check` exit 0, `pnpm agents:check`를 확인하고 새 세션을 연다.
 
 ## 두뇌
-두뇌는 요구 정리, 계획, 구현 진행, 디버깅, 완료 확인의 순서와 방법을 스스로 주도한다. 둘 이상이면 지시가 서로 덮어써서 하나만 쓴다. 단계별 스킬 이름과 금지는 각 파일에 있다.
+두뇌는 요구 정리, 계획, 구현 진행, 디버깅, 완료 확인의 순서와 방법을 스스로 주도한다. 하나를 추천한다. 여럿을 고를 수도 있다. 그때는 첫 두뇌가 주 두뇌이고, 단계마다 목록 순서에서 그 단계를 맡는 첫 두뇌를 쓴다(아래 "단계 표"). 진행 순서를 강제하는 두뇌(superpowers, gstack, oh-my. 세션 시작 훅이나 전역 지시를 쓴다)를 둘 이상 고르면 지시가 서로 덮어써서 설치기가 경고한다. 단계별 스킬 이름과 금지는 각 파일에 있다.
 
 | 이름 | 선택지 설명(한 줄) | 맡는 단계 | Claude Code | Codex | Antigravity·Grok Build | 파일 |
 |---|---|---|---|---|---|---|
@@ -33,9 +35,31 @@
 | `oh-my` | 여러 세션에 걸친 큰 작업을 자동·병렬 모드로 돌려요(Claude는 OMC, Codex는 OMX). Codex는 전역 CLI가 필요해요 | 요구, 계획, 구현(병렬), 디버깅, 리뷰 관점, 검증 | OMC 플러그인 | 전역 OMX CLI + 프로젝트 `omx setup` | 지원 안 함(기본 AI) | [oh-my.md](oh-my.md) |
 | `pstack` | React 코어팀 poteto의 방식으로, 일에 맞는 플레이북을 골라 코드는 적게 쓰고 실행 증거로 검증해요. Claude Code만 지원해요 | 계획(데이터 모양·타입 먼저), 구현 방법, 디버깅·성능, 리뷰 관점 | 플러그인 | 지원 안 함(기본 AI) | 지원 안 함(기본 AI) | [pstack.md](pstack.md) |
 | `mattpocock` | 필수 3개(용어·설계 질문과 기록)에 프로젝트에 맞는 mattpocock 추가 스킬을 골라 단계마다 기법으로 써요. 개발자가 진행을 쥐고 필요한 기법만 더해요 | 요구(인터뷰), 고른 추가 스킬이 맡는 단계(계획, 구현, 디버깅, 리뷰 관점, 인계) | `.claude/skills` | `.agents/skills` | `.agents/skills` | [mattpocock.md](mattpocock.md) |
+| `openspec` | 변경마다 제안·설계·작업 목록을 먼저 합의하고 적용한 뒤 스펙으로 보관해요. 가볍고 이미 있는 프로젝트에 붙이기 좋아요. 전역 CLI(npm)가 필요해요 | 요구(변경 제안), 계획(설계·작업 목록), 구현(작업 적용), 완료 기록(스펙 보관) | 스킬과 명령 `/opsx:*` | `.agents/skills`(`$openspec-*`) | `.agents/skills`(Antigravity는 명령 `/opsx-*`도) | [openspec.md](openspec.md) |
+| `spec-kit` | 헌법 → 스펙 → 명확화 → 계획 → 작업 목록 → 구현을 꼼꼼히 밟는 GitHub의 스펙 주도형이에요. 설치할 때 uv가 필요해요 | 요구(스펙·명확화), 계획(계획·작업 목록·일관성 분석), 구현, 남은 일 확인 | 스킬 `/speckit-*` | `.agents/skills`(`$speckit-*`) | `.agents/skills` | [spec-kit.md](spec-kit.md) |
+| `compound-engineering` | 계획과 리뷰에 힘을 싣고, 끝낸 일에서 배운 것을 `docs/solutions/`에 쌓아 다음 작업을 쉽게 만들어요 | 요구(브레인스토밍), 계획, 구현, 디버깅, 리뷰 관점, 배운 것 기록 | 플러그인 | `.agents/skills`(핵심 스킬 14개) | `.agents/skills` | [compound-engineering.md](compound-engineering.md) |
 
 - 지원하지 않는 도구로 같은 프로젝트를 열면 그 도구는 기본 칸으로 진행한다(`pnpm skills:check`의 두뇌 줄에 `codex는 기본 AI`처럼 보인다).
-- gstack과 OMX CLI만 전역 설치를 허용한다. 그 두뇌를 고르고 `--brain`을 명시했거나 `--with-global`일 때만 설치한다. 다른 두뇌로 바꿔도 전역 설치본은 지우지 않는다(다른 프로젝트가 쓸 수 있다).
+- 전역 설치는 gstack, OMX CLI, OpenSpec CLI만 허용한다. 그 두뇌를 고르고 `--brain`을 명시했거나 `--with-global`일 때만 설치한다. 다른 두뇌로 바꿔도 전역 설치본은 지우지 않는다(다른 프로젝트가 쓸 수 있다).
+- OpenSpec과 Spec Kit은 그 도구가 프로젝트에 스킬과 도구 파일을 만든다(`openspec init`, `specify init`). 설치기는 그 파일로 설치 여부를 보고, 다른 두뇌로 바꾸면 도구 파일만 지우고 두뇌가 만든 문서는 남긴다.
+
+### 단계 표
+두뇌를 여럿 골랐을 때 단계마다 어느 두뇌를 쓸지 정하는 정본이다. ●는 그 두뇌가 맡는 단계, 빈칸은 맡지 않는 단계다. 목록 순서(첫 값이 주 두뇌)에서 ●인 첫 두뇌를 쓰고, 아무도 맡지 않으면 [process-routing.md](../process-routing.md)의 기본 칸이다. `mattpocock`은 고른 추가 스킬이 맡는 단계만 ●로 본다.
+
+| 두뇌 | 요구 명확화 | 계획 | 구현 | 디버깅 | 리뷰 추가 관점 | QA | 검증 | 완료 기록 |
+|---|---|---|---|---|---|---|---|---|
+| `superpowers` | ● | ● | ● | ● | ●(지적 처리) | | ● | |
+| `agent-skills` | ● | ● | ● | ● | ● | ●(보조) | | |
+| `gstack` | ●(제품 판단) | ●(리뷰 보강) | | ● | ● | ● | | |
+| `oh-my` | ● | ● | ● | ● | ● | | ● | |
+| `pstack` | ●(요구 확인) | ● | ● | ● | ● | | | |
+| `mattpocock` | ● | 추가 스킬 | 추가 스킬 | 추가 스킬 | 추가 스킬 | | | |
+| `openspec` | ● | ● | ● | | | | | ●(스펙 보관) |
+| `spec-kit` | ● | ● | ● | | | | | ●(남은 일 확인) |
+| `compound-engineering` | ● | ● | ● | ● | ● | | | ●(배운 것) |
+
+- 잘 맞는 조합: 스펙을 남기는 두뇌(openspec, spec-kit)를 주 두뇌로 두고, 그 두뇌가 맡지 않는 디버깅·리뷰를 다른 두뇌로 채운다. 예: `--brain openspec,superpowers`이면 요구·계획·구현은 openspec, 디버깅·검증은 superpowers다.
+- 두 두뇌가 같은 단계를 맡으면 뒤의 두뇌는 그 단계에서 쓰지 않는다. 사용자가 그 두뇌의 스킬을 직접 부르면 그 요청을 따른다.
 - mattpocock 두뇌는 따로 설치하는 것이 없다. 필수 3개와 `--matt`로 고른 추가 스킬이 두뇌 역할을 하므로 고를 때 추가 스킬을 함께 고른다. 다른 두뇌로 바꿔도 추가 스킬은 지우지 않는다.
 
 ## 과설계 방지 스킬
@@ -103,7 +127,7 @@ impeccable을 대신하지 않는다. 화면 작업 순서, `DESIGN.md`, critiqu
 `code-review`, `prototype`, `research`는 Claude Code 같은 하네스의 내장 명령과 이름이 겹친다(원본 저자도 인정). 어느 쪽이 불리는지 증거에 이름을 적는다. 표에 없는 새 스킬은 H 라운드에서 이 표와 매니페스트 `mattpocock.pool`을 고친 뒤 설치한다.
 
 ## 추천 기준
-추천은 PRD로 만든다. 새 프로젝트는 PRD가 먼저 있어야 한다. PRD는 사용자가 준 PRD·스펙 파일, 붙여 넣은 글, 요청이나 `docs/first-request.md`의 서비스 설명(누가 쓰는지와 핵심 기능), 요청에 적힌 프리셋 팩이다. 기존 프로젝트면 `docs/prd.md`나 `docs/first-request.md`(만들 때 받은 PRD)·`docs/domain/project.md`·`docs/specs/`·`GLOSSARY.md`다. 두뇌 판단 기준은 "하네스가 이미 맡지 않는 가장 큰 부족함 하나"다. 하네스가 맡는 것(행별 테스트, `prokit-reviewer` 게이트, QA 행, `prokit-deploy` 배포, `GLOSSARY.md`·ADR과 용어·설계 질문, 간결성 규칙)은 추천 근거로 세지 않는다.
+추천은 PRD로 만든다. 새 프로젝트는 PRD가 먼저 있어야 한다. PRD는 사용자가 준 PRD·스펙 파일, 붙여 넣은 글, 요청이나 `docs/first-request.md`의 서비스 설명(누가 쓰는지와 핵심 기능), 요청에 적힌 프리셋 팩이다. 이미 만든 프로젝트면 `docs/prd.md`나 `docs/first-request.md`(만들 때 받은 PRD)·`docs/domain/project.md`·`docs/specs/`·`GLOSSARY.md`다. 기존 프로젝트를 들일 때(초기, 운영 중, 전환)는 PRD가 없어도 된다. `prokit-init`의 초기 분석(대상 폴더의 코드, 문서, 화면 정의서, 디자인 시스템, 프로토타입)이나 `docs/prokit/intake.md`·`docs/prokit/analysis.md`를 PRD와 함께 신호로 본다. 두뇌 판단 기준은 "하네스가 이미 맡지 않는 가장 큰 부족함 하나"다. 하네스가 맡는 것(행별 테스트, `prokit-reviewer` 게이트, QA 행, `prokit-deploy` 배포, `GLOSSARY.md`·ADR과 용어·설계 질문, 간결성 규칙)은 추천 근거로 세지 않는다.
 
 | PRD·스펙에서 보이는 신호 | 가장 큰 부족함 | 두뇌 추천 |
 |---|---|---|
@@ -114,8 +138,12 @@ impeccable을 대신하지 않는다. 화면 작업 순서, `DESIGN.md`, critiqu
 | 무엇을 만들지(사용자 문제, 가치, 범위)부터 검토해야 하고 디자인·실사용 QA가 핵심 | 제품 판단·사용 경험 | `gstack` |
 | 정확성·성능이 핵심인 기술적 깊이(복잡한 상태·동시성, 성능 목표, 재현이 어려운 버그)가 있고 코드를 적게 쓰고 실행 증거로 검증하길 원함. 가져온 기존 코드의 구조를 먼저 이해해야 할 때도 | 기술적 깊이·엄밀함 | `pstack` |
 | 여러 세션에 걸친 큰 범위, 병렬 작업자, 장기 목표와 상태 추적 | 장기 실행 관리 | `oh-my` |
+| 이미 있는 프로젝트(운영 중, 초기)에 변경 단위로 합의와 기록을 남기며 붙이고 싶음. 변경 제안을 사람이 먼저 확인해야 함 | 변경 합의·기록 | `openspec` |
+| 요구가 크고 엄격해(규제, 계약, 대규모 전환) 원칙·스펙·계획·작업 목록을 단계마다 문서로 남겨야 함 | 스펙 문서화 | `spec-kit` |
+| 오래 운영할 제품이고, 반복되는 문제와 결정을 기록해 다음 작업에 재사용하고 싶음. 리뷰를 여러 관점으로 깊게 받고 싶음 | 학습 축적 | `compound-engineering` |
 
 - 신호가 약하거나 두 줄 이상이 비슷하게 맞으면 `none`을 추천한다.
+- 두뇌는 하나를 추천한다. 사용자가 여럿을 원하면 단계 표에서 맡는 단계가 덜 겹치는 조합을 주 두뇌부터 제안하고, 진행 순서를 강제하는 두뇌(superpowers, gstack, oh-my)를 둘 이상 넣지 않는다.
 - 지금 쓰는 도구가 그 두뇌를 지원하지 않으면 추천하지 않는다(위 두뇌 표).
 - 추천 순서: ① 위 표로 두뇌 하나를 고른다. ② 추가 스킬의 신호를 PRD에 하나씩 대 보고 맞는 것을 모두 고르되, 고른 두뇌와 겹치는 것은 뺀다(두뇌가 `mattpocock`이면 빼지 않는다). 맞는 것이 없으면 추천 없음이다. ③ 과설계 방지 스킬, 응답 방식, 화면 디자인 보조를 아래로 고른다. ④ "두뇌 + 과설계 방지 스킬 + 추가 스킬(스킬마다 근거 신호 한 줄) + 응답 방식 + 화면 디자인 보조 + 설치하지 않는 스킬과 이유"를 한 번에 보여 준다.
 - 과설계 방지 스킬은 선택지를 ponytail(추천), caveman, andrej-karpathy-skills, SKIP(기본 AI) 순서로 낸다. caveman은 토큰·비용 절감이나 짧은 답을 함께 원하거나 늘 켜지는 훅을 원하지 않을 때, karpathy는 이 지침을 이미 알고 선호하거나 짧은 지침 하나만 원할 때, SKIP은 외부 스킬을 줄이고 싶을 때 추천한다.

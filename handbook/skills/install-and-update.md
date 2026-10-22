@@ -9,9 +9,10 @@ flowchart TD
   M["skills.manifest.json"] --> S["scripts/skills-setup.mjs<br/>install.sh와 pnpm skills:setup이 실행"]
   S --> P1["공식 도메인 스킬<br/>.agents/skills + .claude/skills 링크"]
   S --> P2["Claude 플러그인<br/>.claude/settings.json<br/>skill-creator"]
-  S -.->|"고른 두뇌·과설계 방지 스킬만<br/>(.dev-cycle.json brain · simplicity)"| SEL["두뇌: superpowers · agent-skills(addyosmani) · gstack · oh-my · pstack · mattpocock 중 하나<br/>과설계 방지: ponytail · caveman · karpathy 중 하나<br/>플러그인 또는 .agents/skills"]
+  S -.->|"고른 두뇌·과설계 방지 스킬만<br/>(.dev-cycle.json brain · simplicity)"| SEL["두뇌: superpowers · agent-skills(addyosmani) · gstack · oh-my · pstack · mattpocock · openspec · spec-kit · compound-engineering 중 하나 이상(첫 값이 주 두뇌)<br/>과설계 방지: ponytail · caveman · karpathy 중 하나<br/>플러그인 또는 .agents/skills"]
   S -.->|"두뇌가 oh-my이고 omx CLI가 있을 때"| P4["OMX 프로젝트 설정<br/>.codex/skills · agents · prompts"]
   S -.->|"--matt 스킬일 때만"| MATT["mattpocock 추가 스킬<br/>.agents/skills + .claude/skills 링크"]
+  S -.->|"--drop일 때만"| DROP["추가 스킬·선택 묶음 삭제<br/>skills-lock.json 출처가 맞는 설치본만"]
   S -.->|"--optional 묶음일 때만"| OPT["선택 스킬 묶음<br/>ops · motion · mobile · i-have-adhd · taste<br/>.agents/skills + .claude/skills 링크"]
   S -->|"없거나 최신판보다 낮으면"| AB["agent-browser CLI<br/>(전역)"]
   S -.->|"--with-global일 때만"| G["나머지 전역 도구<br/>Vercel CLI<br/>Neon CLI 또는 Supabase CLI"]
@@ -26,6 +27,9 @@ flowchart TD
 - **프로젝트 설치와 Codex 선택 설치는 달라요**: 프로젝트 스킬과 Claude 플러그인은 프로젝트 범위(project scope)에 들어가요. Codex 네이티브 Ponytail은 `--with-global`일 때만 사용자 설정에 공식 marketplace와 플러그인을 등록하는 선택 항목이에요. 기본 설치와 `pnpm skills:check`는 그 설정을 바꾸지 않아요.
 - **전역 도구는 둘로 나뉘어요**: <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지 전역 도구는 `--with-global`을 줄 때만 설치해요.
 
+- **openspec과 spec-kit은 자기 init 명령으로 설치해요**: OpenSpec은 전역 npm CLI(고를 때만 설치), Spec Kit은 설치할 때만 uv가 필요해요. 지울 때는 도구 파일만 지우고 `openspec/`, `specs/`, `.specify/memory/` 문서는 남겨요. Compound Engineering은 Claude 프로젝트 플러그인과 skills CLI로 받는 Codex 스킬이에요([두뇌와 선택 스킬](brains.md)).
+- **기존 프로젝트 도입(`--adopt`)**: `install.sh --adopt`는 하네스만 넣어요. `prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`만 복사하고, 매니페스트에서 `stack: true`인 Better-T-Stack 전용 스킬(better-auth, neon, turborepo)은 건너뛰어요([기존 프로젝트에 도입하기](../start/adopt.md)).
+
 ## 설치 목록과 실제 선택은 달라요
 
 매니페스트는 프로킷이 관리해 설치할 스킬 목록이에요. 현재 쓸 수 있는 외부 스킬을 한 번 선택했다고 이 목록을 바꾸지는 않아요. 반복해서 관리할 스킬만 출처·권한·지원 환경·행동 평가를 확인해 등록해요.
@@ -34,13 +38,18 @@ flowchart TD
 
 ## 업데이트
 
+`pnpm skills:update`는 이미 고른 스킬만 최신으로 올려요. 두뇌나 추가 스킬을 바꾸고 더하고 빼는 일은 `prokit-skills-manage`가 받아요([두뇌와 선택 스킬](brains.md#바꾸기)).
+
 설치한 외부 스킬은 프로젝트에 복사되어 커밋돼요. 그래서 원격 저장소가 바뀌어도 저절로 따라가지 않아요.
 
 ```bash
 pnpm skills:update --check     # 설치한 외부 스킬을 GitHub 원본과 비교해 새 버전만 알려 준다
 pnpm skills:update             # 바뀐 스킬과 빠진 스킬만 다시 설치한다
 pnpm skills:update <이름>...   # 지정한 스킬만 다시 설치한다
+pnpm skills:setup --drop <스킬|묶음>[,…]   # 추가 스킬이나 선택 묶음을 지운다
 ```
+
+`--drop`은 `skills-lock.json`의 출처가 맞는 설치본만 지워요. 필수 mattpocock 3개와 공식 스킬은 지울 수 없고, `--check`와 함께 쓸 수 없어요.
 
 - **하루 한 번 확인**: 진행 중인 라운드가 없을 때 `pnpm dev-cycle status`가 하루 한 번 새 버전을 확인해요(GitHub API를 저장소마다 한 번 호출). 새 버전이 있으면 `prokit-skills-update`가 업데이트할지 물어요(지금, 항상 자동, 나중에, 다시 묻지 않기).
 - **케이스 H로 커밋**: 업데이트는 하네스를 바꾸는 일이라 케이스 H 라운드로 커밋해요.
@@ -86,6 +95,8 @@ review는 한 번의 검토일 뿐 세션을 영구 review 모드로 바꾸지 �
 ## 관련 문서
 
 - [공식 스킬과 연결](official-skills.md)
+- [두뇌와 선택 스킬](brains.md)
 - [선택 스킬 묶음](optional-bundles.md)
+- [기존 프로젝트에 도입하기](../start/adopt.md)
 - [설치기와 옵션](../templates/installer.md)
 - [만든 뒤 개발하기](../start/after-create.md)

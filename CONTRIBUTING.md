@@ -21,7 +21,7 @@ pro-kit/
 └── packs/                      받은 프리셋 팩 (scripts/pack.mjs. git에 넣지 않음)
 ```
 
-문서 원본 `handbook/`은 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->37<!-- /v -->개입니다. 템플릿 하나의 안쪽은 이렇습니다. 설치된 프로젝트의 구조는 [폴더 구조](handbook/reference/project-structure.md)에 있습니다.
+문서 원본 `handbook/`은 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->39<!-- /v -->개입니다. 템플릿 하나의 안쪽은 이렇습니다. 설치된 프로젝트의 구조는 [폴더 구조](handbook/reference/project-structure.md)에 있습니다.
 
 ```text
 templates/prokit-next-supabase/
@@ -29,6 +29,7 @@ templates/prokit-next-supabase/
 ├── README.md                   템플릿 사용 설명 (명령의 정본)
 ├── VERIFICATION.md             검증 결과와 한계
 ├── files/                      설치 대상 프로젝트에 복사되는 파일 (스킬, 에이전트, scripts, 문서 골격, skills.manifest.json)
+├── adopt/                      하네스만 설치(--adopt)할 때 쓰는 AGENTS.md·CLAUDE.md 블록 (두 템플릿에서 같다)
 ├── evals/                      스킬 eval 입력 (skill-creator 형식)
 └── tests/                      node --test 테스트
 ```

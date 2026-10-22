@@ -1,7 +1,8 @@
 <!-- 두 템플릿 README "설치된 프로젝트에서 자주 쓰는 명령" 표의 공통 행(표 머리는 빼고). 표 중간이라 묶음 표시를 달면 표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다. 뒤의 행은 템플릿마다 달라 따로 두고, 같은 마지막 행은 `tpl-readme-commands-plugin`이다 -->
 | `pnpm dev-cycle case` | 현재 diff의 케이스 판정 |
-| `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기 |
+| `pnpm dev-cycle table <케이스> --write --title "<요약>" [--task T<번호>] [--plan]` | 대조표 열기. `--task`는 진행 계획(`tasks/plan.md`)의 그 Task 라운드로 열고, 앞 Task가 끝나지 않았으면 열지 않는다. `--plan`은 진행 계획을 세우거나 고치는 케이스 A 라운드로 열고, 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서, 계획 리뷰 행을 둔다 |
 | `pnpm dev-cycle status`, `audit`, `close` | 진행 확인, 빈 칸 검사, 라운드 닫기 (`blocked`·`미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial`) |
+| `pnpm dev-cycle plan` | 진행 계획(`tasks/plan.md`)의 Task 표, 다음에 열 Task, 문제(손으로 고친 완료 등)를 보여 준다. 문제가 있으면 exit 1 |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일(끝 줄바꿈 하나는 허용)로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
 | `pnpm dev-cycle secrets` | 라운드 끝 커밋 전에 스테이징한 변경에서 로컬 `.env*`(루트, `apps/web`, `packages/db`. `.env.schema`·`.env.example` 제외)의 비밀값과 흔한 키 형식(개인 키, `sk-`, GitHub 토큰 등)을 찾는다. 값은 출력하지 않는다. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
@@ -11,7 +12,7 @@
 | `pnpm dev-cycle delegation capture`, `pnpm dev-cycle delegation diff <기준 파일> [--scope <글롭>]`, `pnpm dev-cycle delegation validate <패킷>` | 위임 전 기준 스냅샷을 남기고, 끝난 뒤 배정 밖 변경·커밋을 대조(있으면 exit 1)하고, 완료 패킷의 실제 변경·증거·허용 범위를 검사 |
 | `pnpm dev-cycle delegation accept` | 명시한 변경 영향 검사와 Codex 읽기 전용 리뷰를 직접 실행해 현재 로컬 기술 인수를 검증. 사용자 확인·close는 별도 |
 | `pnpm agents:sync`, `pnpm agents:check` | `.claude/agents`에서 `.codex/agents`(Codex)·`.agents/agents`(Antigravity) 생성, 차이 검사 |
-| `pnpm skills:setup` | `skills.manifest.json`과 `.dev-cycle.json`의 선택대로 빠진 스킬·플러그인·OMX 설정과 agent-browser CLI를 설치 (`--with-global`이면 나머지 전역 도구도). `--brain`·`--simplicity`를 주면 기록하고 고르지 않은 설치본을 정리하며, `--matt`·`--optional`로 추가 스킬과 묶음을 설치한다 |
+| `pnpm skills:setup` | `skills.manifest.json`과 `.dev-cycle.json`의 선택대로 빠진 스킬·플러그인·OMX 설정과 agent-browser CLI를 설치 (`--with-global`이면 나머지 전역 도구도). `--brain`(여럿이면 쉼표로 잇고 첫 값이 주 두뇌)·`--simplicity`를 주면 기록하고 고르지 않은 설치본을 정리하며, `--matt`·`--optional`로 추가 스킬과 묶음을 설치하고 `--drop`으로 지운다(구성 바꾸기 절차는 `prokit-skills-manage`) |
 | `pnpm skills:check` | 설치하지 않고 상태만 확인. 프로젝트 scope 항목이 빠졌거나 고르지 않은 두뇌·과설계 방지 스킬이 남아 있으면 exit 1. 선택 묶음과 추가 스킬은 상태만 보여 준다 |
 | `pnpm skills:update` | 설치한 외부 스킬을 GitHub 원본과 파일 단위로 비교해 바뀐 스킬과 빠진 스킬만 다시 설치한다. `--check`는 확인만 하고, 스크립트나 설정 파일이 바뀐 스킬은 그 파일을 보여 준다(설치 전에 원격 내용을 읽는다). `pnpm skills:update <이름>...`은 그 스킬만 설치한다. 스크립트가 바뀐 스킬은 `--check`로 검토한 뒤 이름을 지정해야 설치되고, 그사이 원격이 바뀌면 설치하지 않는다. 진행 중인 라운드가 없을 때 `pnpm dev-cycle status`가 `--if-due`로 하루 한 번 확인하고, 새 버전이 있으면 업데이트할지 묻는다(`prokit-skills-update`). 업데이트는 케이스 H 라운드로 커밋한다 |
 | `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음({{v:optional.namesCode}})을 설치. 여러 개는 쉼표로 잇는다(`ops,motion`) |

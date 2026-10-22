@@ -1,0 +1,66 @@
+[
+  {
+    "query": "두뇌를 superpowers에서 openspec으로 바꾸고 싶어. 지금까지 쓴 계획 문서는 남겨줘",
+    "should_trigger": true
+  },
+  {
+    "query": "spec-kit도 같이 써 보고 싶은데 지금 두뇌는 유지하고 추가만 해줘",
+    "should_trigger": true
+  },
+  {
+    "query": "과설계 방지 스킬을 ponytail 말고 caveman으로 바꿔줘",
+    "should_trigger": true
+  },
+  {
+    "query": "taste 스킬 이제 안 써서 프로젝트에서 지워줘",
+    "should_trigger": true
+  },
+  {
+    "query": "mattpocock tdd랑 research 스킬 추가해줘",
+    "should_trigger": true
+  },
+  {
+    "query": "gstack 두뇌 빼고 그냥 기본 AI로 돌아가고 싶어",
+    "should_trigger": true
+  },
+  {
+    "query": "지금 스킬 구성 어떻게 되어 있는지 보여 주고 compound-engineering 넣어줘",
+    "should_trigger": true
+  },
+  {
+    "query": "운영 점검 좀 하려고. ops 묶음 설치해줘",
+    "should_trigger": true
+  },
+  {
+    "query": "에이전트 스킬들 최신 버전인지 확인하고 새 버전 있으면 업데이트해 줘",
+    "should_trigger": false
+  },
+  {
+    "query": "stop ponytail",
+    "should_trigger": false
+  },
+  {
+    "query": "이번 대화에서는 caveman 모드로 짧게만 대답해줘",
+    "should_trigger": false
+  },
+  {
+    "query": "이 PRD로 새 프로젝트 만들어줘. 두뇌는 openspec으로",
+    "should_trigger": false
+  },
+  {
+    "query": "openspec으로 고객 메모 기능 변경 제안서 써줘",
+    "should_trigger": false
+  },
+  {
+    "query": "superpowers brainstorming으로 결제 기능 설계부터 하자",
+    "should_trigger": false
+  },
+  {
+    "query": "prokit-ui 스킬 문서에 오타가 있어. 고쳐줘",
+    "should_trigger": false
+  },
+  {
+    "query": "skills-lock.json은 뭐 하는 파일이야?",
+    "should_trigger": false
+  }
+]

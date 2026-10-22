@@ -1,0 +1,1 @@
+<?php // create bookings table

@@ -7,7 +7,7 @@ import { test } from "node:test";
 import { TEMPLATE, TEMPLATE_FILES } from "./helpers.mjs";
 
 const SKILLS_DIR = join(TEMPLATE_FILES, ".agents/skills");
-const EXPECTED = ["prokit-dev-cycle", "prokit-web", "prokit-api", "prokit-db", "prokit-ui", "prokit-verify", "prokit-deploy", "prokit-skills-update", "prokit-pack-use"];
+const EXPECTED = ["prokit-dev-cycle", "prokit-web", "prokit-api", "prokit-db", "prokit-ui", "prokit-verify", "prokit-deploy", "prokit-skills-update", "prokit-skills-manage", "prokit-pack-use"];
 
 function resolveSkillCreator() {
   if (process.env.SKILL_CREATOR_DIR) {
@@ -86,9 +86,9 @@ test("팩 활용 스킬은 실제 복원 도구와 비교 기준을 연결한다
   assert.match(load("prokit-ui").body, /prokit-pack-use/);
 });
 
-test("prokit-dev-cycle 위임·과설계 방지 평가는 40개 시나리오와 각 5개 검증 항목을 가진다", () => {
+test("prokit-dev-cycle 평가는 43개 시나리오와 각 5개 검증 항목을 가진다", () => {
   const evals = JSON.parse(readFileSync(join(TEMPLATE, "evals/prokit-dev-cycle/evals.json"), "utf8")).evals;
-  assert.equal(evals.length, 40);
+  assert.equal(evals.length, 43);
   for (const scenario of evals) {
     assert.match(scenario.name, /^[a-z0-9-]+$/, `eval ${scenario.id}: name`);
     assert.ok(["neon", "supabase"].includes(scenario.template), `eval ${scenario.id}: template`);
@@ -103,7 +103,7 @@ test("prokit-dev-cycle 위임·과설계 방지 평가는 40개 시나리오와 
     const fixture = JSON.parse(readFileSync(join(TEMPLATE, scenario.files[0]), "utf8"));
     assert.deepEqual(fixture.metadata, { nonExecution: true, template: scenario.template, risk: scenario.risk });
   }
-  assert.deepEqual(evals.filter((scenario) => scenario.risk === "high").map((scenario) => scenario.id), [2, 8, 11, 12, 13, 14, 16, 21, 22, 23, 24, 26, 27, 36, 38]);
+  assert.deepEqual(evals.filter((scenario) => scenario.risk === "high").map((scenario) => scenario.id), [2, 8, 11, 12, 13, 14, 16, 21, 22, 23, 24, 26, 27, 36, 38, 42]);
 });
 
 test("고위험 DB·소유권 평가는 실제 스키마·SQL·소비자 입력을 제공한다", () => {

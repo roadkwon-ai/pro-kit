@@ -62,6 +62,10 @@ flowchart LR
 
 `close`는 audit과 사용자 확인을 모두 통과한 뒤 대조표와 완료한 일반 할 일·백로그를 같은 방식으로 보관해요. 파일 이름이 같으면 `-2`, `-3`을 붙여 기존 파일을 보존하고, 기존 월별 기록도 그대로 둬요. `tasks/archive/README.md`에서 기록을 찾아보고 `tasks/todo.md`에는 남은 항목과 그 색인 링크 하나만 남겨요.
 
+### Task 라운드
+
+큰 일을 진행 계획의 Task로 나눴다면 `pnpm dev-cycle table <케이스> --write --title "T1 …" --task T1`로 Task 하나를 라운드로 열어요. 대조표 맨 앞에 두 행이 붙어요. 그 Task의 세부 계획(바꿀 파일, 단계, 단계별 검사, 완료 조건)과 그 계획의 리뷰예요(계획 리뷰 행이 이미 있는 케이스 F는 세부 계획 행만 붙어요). 앞 Task가 완료나 제외가 아니면 다음 Task 라운드는 열리지 않아요. 자세한 내용은 [정밀 분석과 진행 계획](project-plan.md)에 있어요.
+
 ### 라운드를 여는 때
 
 - 고치거나 만들어 달라는 요청이면, 이번에는 원인 분석이나 스펙·계획까지만 하라고 해도 라운드를 열어요. 분석 결과는 대조표 블록 안 메모나 `tasks/evidence/`에 남기고, 행의 증거 칸은 그 행을 실제로 끝냈을 때만 채워요.
@@ -86,6 +90,8 @@ flowchart LR
 6. 커밋 전에 `pnpm dev-cycle secrets`를 실행하고, 이 라운드에서 바꾼 파일과 `tasks/`만 커밋해요. 제목은 Conventional Commits 접두어(`feat:`, `fix:`, `docs:` …)로 써요. 릴리스 노트의 절이 여기서 정해지고, `!`는 깨지는 변경으로 버전을 올려요. 이어서 push해요.
 7. 릴리스와 production 배포를 골랐다면 `prokit-deploy`의 배포 순서를 따라요([Vercel 배포와 되돌리기](../deploy/vercel.md)).
 
+[기존 프로젝트에 도입한](../start/adopt.md) 프로젝트(하네스만 설치한 `adopt`)는 배포 스크립트가 없어서 배포 확인과 릴리스를 하지 않아요. 묻지 않고 커밋까지 하고, 대조표에 `배포 PASS: adopt(기존 배포 절차)`를 적어요. 배포는 그 프로젝트의 기존 절차를 따르고, push는 요청할 때만 해요.
+
 Vercel 프로젝트의 Git 연결이 push마다 배포를 만드는 경우(`Git 자동 배포`)에는 push가 곧 운영 배포라서 커밋만 하고 push하지 않아요. 연결을 끊거나 이 기기에서 확인할 수 있게 한 뒤 push하라고 안내해요.
 
 라운드 끝이 아니면 커밋, push, 릴리스, 배포는 사용자가 요청할 때만 해요.
@@ -93,6 +99,7 @@ Vercel 프로젝트의 Git 연결이 push마다 배포를 만드는 경우(`Git 
 ## 관련 문서
 
 - [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)
+- [정밀 분석과 진행 계획](project-plan.md)
 - [증거와 audit, 사용자 확인](audit-and-confirm.md)
 - [위임 에이전트와 리뷰 에이전트](agent-roles.md)
 - [위임과 자원 관리](delegation-and-resources.md)

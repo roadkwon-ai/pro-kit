@@ -355,3 +355,14 @@ test("위임: provider는 매니페스트가 아니라 실제 계약을 검증�
   assert.match(specialist, /일반 코드 리뷰를 반복하지/);
   for (const name of ["prokit-api", "prokit-db", "prokit-deploy", "prokit-ui", "prokit-verify", "prokit-web", "prokit-skills-update"]) assert.match(read(`.agents/skills/${name}/SKILL.md`), /위임과 전문 스킬 프로토콜/);
 });
+
+test("기존 프로젝트 디자인: prokit-ui가 디자인 방향을 한 번 묻고, 유지면 기존 디자인으로 DESIGN.md 명세를 만든다", () => {
+  const ui = read(".agents/skills/prokit-ui/SKILL.md");
+  for (const k of ["`projectType`이 `early`·`operating`·`migration`", "docs/prokit/intake.md", "`기존 디자인 유지 (추천)`", "`리디자인`", "`projectType`이 없거나 `new`면 이 질문을 하지 않는다"]) assert.ok(ui.includes(k), k);
+  const map = read(".agents/skills/prokit-ui/references/impeccable-map.md");
+  const sec = map.split("## 기존 디자인으로 DESIGN.md 만들기\n")[1]?.split("\n## ")[0] ?? "";
+  assert.ok(sec, "impeccable-map에 절이 있다");
+  assert.match(sec, /`## Overview`, `## Colors`, `## Typography`, `## Layout`, `## Elevation & Depth`, `## Shapes`, `## Components`, `## Do's and Don'ts`/, "DESIGN.md 명세의 절 순서");
+  assert.match(sec, /지어내지 않는다/);
+  assert.match(sec, /DESIGN\.md 검사/);
+});

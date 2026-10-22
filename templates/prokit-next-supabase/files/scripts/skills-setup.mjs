@@ -6,11 +6,13 @@
 //                  고르지 않은 두뇌·과설계 방지 스킬이 남아 있으면 exit 1.
 //   --with-global  check가 실패한 전역 도구(manifest.global, 고른 두뇌의 global)를 먼저 설치한다.
 //                  auto: true인 전역 도구는 이 플래그 없이도 없으면 설치한다(실패는 경고로만 알린다).
-//   --brain, --simplicity  하나만 고르는 항목(manifest.brains, manifest.simplicity)을 .dev-cycle.json에 기록하고,
-//                  그 항목에서 고르지 않은 설치본을 skills-lock.json 출처·플러그인 ID·OMX 기록으로 찾아 지운 뒤 고른 것을 설치한다.
+//   --brain, --simplicity  고르는 항목(manifest.brains, manifest.simplicity)을 .dev-cycle.json에 기록하고,
+//                  그 항목에서 고르지 않은 설치본을 skills-lock.json 출처·플러그인 ID·OMX 기록·init marker로 찾아 지운 뒤 고른 것을 설치한다.
+//                  두뇌만 여럿을 쉼표로 받는다(--brain openspec,superpowers. 첫 값이 주 두뇌). 하나면 문자열, 여럿이면 배열로 기록한다.
 //                  인자가 없으면 기록된 값(없으면 none)을 설치하고 다른 것은 알리기만 한다. 고른 두뇌의 전역 도구는 --brain을 줄 때 설치한다.
 //   --matt         mattpocock 추가 스킬(manifest.mattpocock.pool)을 설치한다. 기록하지 않는다(설치본이 선택이다).
 //   --optional     기본으로 설치하지 않는 선택 스킬 묶음(manifest.optional)도 설치한다. --check와 쓰면 그 묶음도 검사한다.
+//   --drop         mattpocock 추가 스킬이나 선택 묶음을 지운다(--drop tdd,taste). skills-lock.json 출처가 맞는 설치본만 지운다.
 //   이 기기 전역에 켜진 고르지 않은 플러그인과 gstack 개인 스킬은 .claude/settings.local.json으로 이 프로젝트에서만 끈다.
 // exit: 0 정상, 1 --check 누락이나 충돌, 2 설치 실패나 모르는 이름
 //
@@ -49,9 +51,16 @@ const OMX_MARK = ".omx/setup-scope.json";
 // omx uninstall은 --scope도 기록도 없으면 user 범위(전역 ~/.codex)를 지운다. 범위를 늘 명시한다.
 // --purge는 .omx/ 전체(plans, notepad, 기억)를 지워 쓰지 않는다. 없으면 기록(setup-scope.json)만 지운다.
 const OMX_REMOVE = ["uninstall", "--scope", "project"];
-// 하나만 고르는 항목. 고르지 않으면 none(기본 AI)이다. 카탈로그 항목은 같은 모양이라 같은 코드로 다룬다.
+// 고르는 항목. 고르지 않으면 none(기본 AI)이다. 카탈로그 항목은 같은 모양이라 같은 코드로 다룬다.
+// multi: 여럿을 고를 수 있다(두뇌). 과설계 방지 스킬은 규칙이 엇갈려 하나만 쓴다.
 const SLOTS = [
-	{ catalog: "brains", key: "brain", flag: "--brain", label: "두뇌" },
+	{
+		catalog: "brains",
+		key: "brain",
+		flag: "--brain",
+		label: "두뇌",
+		multi: true,
+	},
 	{
 		catalog: "simplicity",
 		key: "simplicity",
@@ -60,6 +69,17 @@ const SLOTS = [
 	},
 ];
 const GUIDE = ".agents/skills/prokit-dev-cycle/references/brains/README.md";
+const SETUP_FLAGS = ["--check", "--with-global"];
+const SETUP_VALUE_FLAGS = [
+	"--brain",
+	"--simplicity",
+	"--matt",
+	"--optional",
+	"--drop",
+];
+const SETUP_USAGE = `사용법: pnpm skills:setup [--check] [--with-global] [--brain <이름>[,<이름>]|none] [--simplicity <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]] [--drop <스킬|묶음>[,…]]
+       pnpm skills:update [<이름>...] [--check | --if-due | --snooze | --mode ask|auto|off]
+고르는 기준: ${GUIDE}`;
 
 const argValue = (argv, flag) => {
 	const at = argv.indexOf(flag);
@@ -81,22 +101,37 @@ const sameSource = (a, b) =>
 const described = (entries) =>
 	entries.map(([k, v]) => `${k}(${v.description})`).join(", ");
 
-// --brain·--simplicity·--matt·--optional 값을 읽는다. 잘못된 값이면 error에 사용법을 담는다.
+// --brain·--simplicity·--matt·--optional·--drop 값을 읽는다. 잘못된 값이면 error에 사용법을 담는다.
 export function readChoices(argv, manifest) {
-	const picked = { matt: [], optional: [] };
+	const picked = { matt: [], optional: [], drop: [] };
 	// --brain=x는 아래에서 보지 못해 조용히 무시된다.
-	const eq = argv.find((a) => /^--(brain|simplicity|matt|optional)=/.test(a));
+	const eq = argv.find((a) =>
+		/^--(brain|simplicity|matt|optional|drop)=/.test(a),
+	);
 	if (eq)
 		return { error: `사용법: ${eq.replace("=", " ")}처럼 = 없이 띄어 쓴다` };
+	// 두 번 주면 첫 값만 읽혀 나머지가 조용히 빠진다.
+	const twice = [
+		"--brain",
+		"--simplicity",
+		"--matt",
+		"--optional",
+		"--drop",
+	].find((f) => argv.filter((a) => a === f).length > 1);
+	if (twice)
+		return { error: `사용법: ${twice}는 한 번만 쓰고 여러 값은 쉼표로 잇는다` };
 	for (const s of SLOTS) {
 		const v = argValue(argv, s.flag);
 		if (v === undefined) continue;
 		const catalog = manifest[s.catalog] ?? {};
-		if (v !== "none" && !Object.hasOwn(catalog, v))
+		const names = [...new Set(s.multi ? v.split(",") : [v])];
+		const ok = (n) => n === "none" || Object.hasOwn(catalog, n);
+		// none은 혼자만 쓴다. 빈 이름(쉼표만)도 받지 않는다.
+		if (!names.every(ok) || (names.length > 1 && names.includes("none")))
 			return {
-				error: `사용법: ${s.flag} <이름>. ${s.label}: ${described([["none", { description: "기본 AI" }], ...Object.entries(catalog)])} (설명: ${GUIDE})`,
+				error: `사용법: ${s.flag} <이름>${s.multi ? "[,<이름>]" : ""}. ${s.label}: ${described([["none", { description: "기본 AI" }], ...Object.entries(catalog)])} (설명: ${GUIDE})`,
 			};
-		picked[s.key] = v;
+		picked[s.key] = names.length === 1 ? names[0] : names;
 	}
 	const pool = manifest.mattpocock?.pool ?? [];
 	const optional = manifest.optional ?? {};
@@ -113,6 +148,12 @@ export function readChoices(argv, manifest) {
 			(x) => Object.hasOwn(optional, x),
 			`사용법: --optional <묶음>[,<묶음>]. 묶음: ${described(Object.entries(optional)) || "없음"}`,
 		],
+		[
+			"--drop",
+			"drop",
+			(x) => pool.includes(x) || Object.hasOwn(optional, x),
+			`사용법: --drop <추가 스킬|선택 묶음>[,…]. 추가 스킬: ${pool.join(", ") || "없음"}. 묶음: ${Object.keys(optional).join(", ") || "없음"}. 필수 스킬과 공식 스킬은 지우지 않는다`,
+		],
 	]) {
 		const v = argValue(argv, flag);
 		if (v === undefined) continue;
@@ -120,6 +161,11 @@ export function readChoices(argv, manifest) {
 		if (!list.length || !list.every(ok)) return { error: usage };
 		picked[key] = list;
 	}
+	const both = picked.drop.filter(
+		(x) => picked.matt.includes(x) || picked.optional.includes(x),
+	);
+	if (both.length)
+		return { error: `사용법: ${both.join(", ")}를 더하면서 지울 수 없다` };
 	return picked;
 }
 
@@ -132,10 +178,14 @@ export function recordChoices(root, picked) {
 		const v = picked[key];
 		if (v === undefined) continue;
 		const before = JSON.parse(text);
-		const re = new RegExp(`"${key}":\\s*"[^"]*"`);
+		// 두뇌를 여럿 고르면 배열이다. 한 줄로 쓴다(Biome 형식).
+		const value = Array.isArray(v)
+			? `[${v.map((x) => `"${x}"`).join(", ")}]`
+			: `"${v}"`;
+		const re = new RegExp(`"${key}":\\s*(?:"[^"]*"|\\[[^\\]]*\\])`);
 		text = re.test(text)
-			? text.replace(re, `"${key}": "${v}"`)
-			: text.replace(/^\{\n/, `{\n\t"${key}": "${v}",\n`);
+			? text.replace(re, `"${key}": ${value}`)
+			: text.replace(/^\{\n/, `{\n\t"${key}": ${value},\n`);
 		// 그 키 말고 다른 값(같은 이름의 하위 키 등)이 바뀌었으면 쓰지 않는다.
 		const want =
 			key in before ? { ...before, [key]: v } : { [key]: v, ...before };
@@ -145,12 +195,17 @@ export function recordChoices(root, picked) {
 	writeFileSync(p, text);
 }
 
+// init 설치본(openspec, spec-kit)은 그 도구가 만든 파일(marker)로 판정한다.
+const initDone = (root, init, every = true) =>
+	init.marker[every ? "every" : "some"]((p) => existsSync(join(root, p)));
+
 // 항목에서 고르지 않은 후보가 이 프로젝트에 남긴 설치본. 스킬은 이름이 아니라 skills-lock.json 출처로 판정한다.
 function leftovers(root, slot, lock, enabled) {
 	return Object.entries(slot.catalog)
-		.filter(([name]) => name !== slot.name)
+		.filter(([name]) => !slot.names.includes(name))
 		.map(([name, item]) => ({
 			name,
+			item,
 			plugins: (item.claude?.plugins ?? []).filter((p) => enabled[p] === true),
 			skills: (item.skills ?? [])
 				.map((e) => ({
@@ -161,8 +216,9 @@ function leftovers(root, slot, lock, enabled) {
 				}))
 				.filter((x) => x.names.length),
 			omx: Boolean(item.omx) && existsSync(join(root, OMX_MARK)),
+			init: Boolean(item.init) && initDone(root, item.init, false),
 		}))
-		.filter((f) => f.plugins.length || f.skills.length || f.omx);
+		.filter((f) => f.plugins.length || f.skills.length || f.omx || f.init);
 }
 const describe = (f) =>
 	`${f.name}(${[
@@ -171,10 +227,25 @@ const describe = (f) =>
 			? [`스킬 ${f.skills.flatMap((x) => x.names).join(", ")}`]
 			: []),
 		...(f.omx ? ["OMX 설정"] : []),
+		...(f.init ? ["도구 파일"] : []),
 	].join(", ")})`;
 
-function cleanup(root, cli, found, failures) {
+// 두뇌가 만든 문서(openspec/, specs/ 등)는 지우지 않는다. 다른 두뇌로 넘길 때 인계 자료다.
+function cleanup(root, cli, found, failures, out) {
 	for (const f of found) {
+		if (f.init) {
+			const r = sh(f.item.init.remove, { cwd: root });
+			const still = f.item.init.marker.filter((p) => existsSync(join(root, p)));
+			if (r.status !== 0 || still.length)
+				failures.push(
+					`정리 ${f.name}${still.length ? ` (남음: ${still.join(", ")})` : `: ${firstLine(r)}`}`,
+				);
+			const kept = (f.item.init.keep ?? []).filter((p) =>
+				existsSync(join(root, p)),
+			);
+			if (kept.length)
+				out.push(`남김: ${f.name}의 문서 ${kept.join(", ")} (인계 자료)`);
+		}
 		for (const { e, names } of f.skills) {
 			const r = run("npx", ["-y", cli, "remove", "--skill", ...names, "-y"], {
 				cwd: root,
@@ -232,10 +303,10 @@ function personalOff(root, manifest, chosen, home, write) {
 		readJson(join(home, ".claude/settings.json"), {}).enabledPlugins ?? {};
 	const others = chosen.flatMap((c) =>
 		Object.entries(c.catalog)
-			.filter(([n]) => n !== c.name)
+			.filter(([n]) => !c.names.includes(n))
 			.map(([, i]) => i),
 	);
-	const mine = chosen.map((c) => c.item).filter(Boolean);
+	const mine = chosen.flatMap((c) => c.items);
 	const pluginsOf = (items) => items.flatMap((i) => i.claude?.plugins ?? []);
 	const skillsOf = (items) =>
 		items.flatMap((i) => (i.userSkills ? userSkills(home, i.userSkills) : []));
@@ -286,7 +357,7 @@ function personalOff(root, manifest, chosen, home, write) {
 	// 프로젝트 설정으로 끌 수 없는 전역 흔적(전역 CLAUDE.md 블록, Codex 전역 스킬)은 알리기만 한다.
 	const traces = chosen.flatMap((c) =>
 		Object.entries(c.catalog)
-			.filter(([n]) => n !== c.name)
+			.filter(([n]) => !c.names.includes(n))
 			.flatMap(([n, i]) =>
 				(i.userTraces ?? [])
 					.filter((t) => {
@@ -531,6 +602,10 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		console.error("Windows에서는 WSL2(Ubuntu) 안에서 실행한다");
 		return 2;
 	}
+	if (argv.includes("--help") || argv.includes("-h")) {
+		console.log(SETUP_USAGE);
+		return 0;
+	}
 	const check = argv.includes("--check");
 	const withGlobal = argv.includes("--with-global");
 	const manifest = JSON.parse(
@@ -539,6 +614,22 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 	const picked = readChoices(argv, manifest);
 	if (picked.error) {
 		console.error(picked.error);
+		return 2;
+	}
+	// 모르는 인자(오타, 값 없는 이름)를 버리면 고른 것 없이 기본 설치가 그대로 돈다.
+	const unknown = argv.filter(
+		(a, i) =>
+			a !== "--" &&
+			!SETUP_FLAGS.includes(a) &&
+			!SETUP_VALUE_FLAGS.includes(a) &&
+			!SETUP_VALUE_FLAGS.includes(argv[i - 1]),
+	);
+	if (unknown.length) {
+		console.error(`모르는 인자: ${unknown.join(" ")}\n${SETUP_USAGE}`);
+		return 2;
+	}
+	if (check && picked.drop.length) {
+		console.error("사용법: --drop은 --check와 함께 쓰지 않는다");
 		return 2;
 	}
 	const cfgPath = join(root, ".dev-cycle.json");
@@ -557,21 +648,29 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		return 2;
 	}
 	// 기록이 없는 기존 프로젝트는 none으로 읽는다. 인자로 준 항목만 정리한다(clean).
+	// 기록은 하나면 문자열, 여럿(두뇌)이면 배열이다. names는 고른 순서(첫 값이 주 두뇌)다.
 	const chosen = SLOTS.map((s) => {
 		const catalog = manifest[s.catalog] ?? {};
-		const name = picked[s.key] ?? cfg[s.key] ?? "none";
-		const item = Object.hasOwn(catalog, name) ? catalog[name] : undefined;
-		return { ...s, catalog, name, item, clean: s.key in picked };
+		// 손으로 고친 기록의 중복은 한 번만 센다. 빈 배열은 none이다.
+		const names = [
+			...new Set([].concat(picked[s.key] ?? cfg[s.key] ?? "none")),
+		];
+		if (!names.length) names.push("none");
+		const items = names
+			.filter((n) => Object.hasOwn(catalog, n))
+			.map((n) => catalog[n]);
+		return { ...s, catalog, names, items, clean: s.key in picked };
 	});
 	const optional = manifest.optional ?? {};
 	const matt = manifest.mattpocock;
+	// adopt(하네스만 설치한 기존 Next.js 프로젝트)는 Better-T-Stack 전용 스킬(stack)을 받지 않는다.
 	const entries = [
-		...manifest.skills,
+		...manifest.skills.filter((e) => !(cfg.adopt === true && e.stack)),
 		...picked.optional.flatMap((g) => optional[g].skills),
 		...(picked.matt.length
 			? [{ source: matt.source, agents: matt.agents, skills: picked.matt }]
 			: []),
-		...chosen.flatMap((c) => c.item?.skills ?? []),
+		...chosen.flatMap((c) => c.items.flatMap((i) => i.skills ?? [])),
 	];
 	const failures = [];
 	const warnings = [];
@@ -594,15 +693,48 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 	const cleaning = chosen.filter((c) => c.clean && c.found.length);
 	if (!check) {
 		if (record) recordChoices(root, picked);
+		if (cleaning.length)
+			out.push(
+				`정리: ${cleaning.flatMap((c) => c.found.map(describe)).join(", ")}`,
+			);
 		cleanup(
 			root,
 			manifest.skillsCli,
 			cleaning.flatMap((c) => c.found),
 			failures,
+			out,
 		);
-		if (cleaning.length)
+		// --drop: 추가 스킬과 선택 묶음. 같은 이름이라도 다른 출처에서 받은 스킬은 지우지 않는다.
+		const dropEntries = picked.drop.map((name) => ({
+			name,
+			entries: manifest.mattpocock?.pool?.includes(name)
+				? [{ ...manifest.mattpocock, skills: [name] }]
+				: optional[name].skills,
+		}));
+		const dropping = dropEntries
+			.map(({ name, entries: es }) => ({
+				name,
+				plugins: [],
+				skills: es
+					.map((e) => ({
+						e,
+						names: e.skills.filter(
+							(x) => hasSkill(root, x) && sameSource(lock[x]?.source, e.source),
+						),
+					}))
+					.filter((x) => x.names.length),
+			}))
+			.filter((d) => d.skills.length);
+		const absentDrop = picked.drop.filter(
+			(n) => !dropping.some((d) => d.name === n),
+		);
+		if (dropping.length) {
+			out.push(`제거: ${dropping.map(describe).join(", ")}`);
+			cleanup(root, manifest.skillsCli, dropping, failures, out);
+		}
+		if (absentDrop.length)
 			out.push(
-				`정리: ${cleaning.flatMap((c) => c.found.map(describe)).join(", ")}`,
+				`제거할 것 없음: ${absentDrop.join(", ")} (설치되지 않았거나 다른 출처)`,
 			);
 	}
 
@@ -614,7 +746,9 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 	);
 	// 고른 두뇌의 전역 도구(gstack, OMX CLI)는 --brain을 줬거나 --with-global일 때만 설치한다.
 	const slotGlobal = chosen.flatMap((c) =>
-		(c.item?.global ?? []).map((g) => ({ ...g, clean: c.clean })),
+		c.items.flatMap((i) =>
+			(i.global ?? []).map((g) => ({ ...g, clean: c.clean })),
+		),
 	);
 	const absent = [];
 	const slotGlobals = installGlobal(
@@ -640,7 +774,40 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 				`${e.source}${still.length ? ` (없음: ${still.join(", ")})` : ""}`,
 			);
 	}
+	// 프로젝트를 init하는 두뇌(openspec, spec-kit). 그 두뇌의 전역 도구가 없으면 실행하지 않고 안내한다.
+	const initLines = [];
+	for (const c of chosen)
+		for (const [i, item] of c.items.entries()) {
+			const init = item.init;
+			if (!init || initDone(root, init)) continue;
+			const name = c.names.filter((n) => Object.hasOwn(c.catalog, n))[i];
+			if (check) {
+				missing.push(
+					`${c.label} ${name} 프로젝트 파일(${init.marker.join(", ")})`,
+				);
+				continue;
+			}
+			const need = (item.global ?? []).filter((g) =>
+				absent.some((a) => a.name === g.name),
+			);
+			if (need.length) {
+				initLines.push(
+					`${name} 프로젝트 설정: ${need.map((g) => g.name).join(", ")} 없음 → ${need[0].hint ?? need[0].install}`,
+				);
+				continue;
+			}
+			console.log(`프로젝트 설정: ${name} → ${init.run}`);
+			const r = sh(init.run, {
+				cwd: root,
+				stdio: "inherit",
+				env: { ...process.env, ...init.env },
+			});
+			const ok = r.status === 0 && initDone(root, init);
+			if (!ok) failures.push(`${name} 프로젝트 설정`);
+			initLines.push(`${name} 프로젝트 설정: ${ok ? "완료" : "실패"}`);
+		}
 	const total = entries.reduce((n, e) => n + e.skills.length, 0);
+	out.push(...initLines);
 	out.push(
 		check
 			? `스킬(프로젝트): ${total}개 중 ${missing.length ? `누락 — ${missing.join("; ")}` : "모두 있음"}`
@@ -665,7 +832,7 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		);
 
 	// 기본 플러그인에 고른 항목의 마켓플레이스를 더한다. 고르지 않은 후보만 쓰던 마켓플레이스는 정리할 때 뺀다.
-	const mine = chosen.map((c) => c.item).filter(Boolean);
+	const mine = chosen.flatMap((c) => c.items);
 	const claude = {
 		marketplaces: Object.assign(
 			{},
@@ -679,7 +846,7 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		.filter((c) => c.clean)
 		.flatMap((c) =>
 			Object.entries(c.catalog)
-				.filter(([n]) => n !== c.name)
+				.filter(([n]) => !c.names.includes(n))
 				.flatMap(([, i]) => Object.keys(i.claude?.marketplaces ?? {})),
 		)
 		.filter((m) => !(m in claude.marketplaces));
@@ -788,38 +955,48 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		now =
 			readJson(join(root, ".claude/settings.json"), {}).enabledPlugins ?? {};
 	} catch {}
+	const state = (item) => {
+		const parts = [
+			...(item.skills ?? []).flatMap((e) =>
+				e.skills.map((s) => !missingSkills(root, { ...e, skills: [s] }).length),
+			),
+			...(item.claude?.plugins ?? []).map((p) => now[p] === true),
+			...(item.omx && onPath("omx") ? [existsSync(join(root, OMX_MARK))] : []),
+			...(item.global ?? [])
+				.filter((g) => !g.tool || onPath(g.tool))
+				.map((g) => !absent.some((a) => a.name === g.name)),
+			...(item.init ? [initDone(root, item.init)] : []),
+		];
+		const have = parts.filter(Boolean).length;
+		const none = Object.entries(item.hosts ?? {})
+			.filter(([, v]) => v === "none")
+			.map(([h]) => h);
+		return `${have === parts.length ? "설치됨" : have ? "일부" : "없음"}${none.length ? `, ${none.join("·")}는 기본 AI` : ""}`;
+	};
 	for (const c of chosen) {
+		const unknown = c.names.filter(
+			(n) => n !== "none" && !Object.hasOwn(c.catalog, n),
+		);
 		let line = `${c.label}: 없음(기본 AI)`;
-		if (c.name !== "none" && !c.item) {
-			line = `${c.label}: ${c.name}(매니페스트에 없음) → pnpm skills:setup ${c.flag} <이름>`;
-			(check ? missing : failures).push(`${c.label} ${c.name}`);
-		} else if (c.item) {
-			const parts = [
-				...(c.item.skills ?? []).flatMap((e) =>
-					e.skills.map(
-						(s) => !missingSkills(root, { ...e, skills: [s] }).length,
-					),
-				),
-				...(c.item.claude?.plugins ?? []).map((p) => now[p] === true),
-				...(c.item.omx && onPath("omx")
-					? [existsSync(join(root, OMX_MARK))]
-					: []),
-				...(c.item.global ?? [])
-					.filter((g) => !g.tool || onPath(g.tool))
-					.map((g) => !absent.some((a) => a.name === g.name)),
-			];
-			const have = parts.filter(Boolean).length;
-			const none = Object.entries(c.item.hosts ?? {})
-				.filter(([, v]) => v === "none")
-				.map(([h]) => h);
-			line = `${c.label}: ${c.name}(${have === parts.length ? "설치됨" : have ? "일부" : "없음"}${none.length ? `, ${none.join("·")}는 기본 AI` : ""})`;
+		if (unknown.length) {
+			line = `${c.label}: ${unknown.join(", ")}(매니페스트에 없음) → pnpm skills:setup ${c.flag} <이름>`;
+			(check ? missing : failures).push(`${c.label} ${unknown.join(", ")}`);
+		} else if (c.items.length) {
+			const main = c.names.length > 1 ? "주, " : "";
+			line = `${c.label}: ${c.names.map((n, i) => `${n}(${i ? "" : main}${state(c.catalog[n])})`).join(", ")}`;
 		}
 		const left = c.clean && !check ? [] : c.found;
 		if (left.length) {
-			line += `, 고르지 않은 설치본: ${left.map(describe).join(", ")} → pnpm skills:setup ${c.flag} <이름|none>으로 고르면 정리된다(기록: ${c.name})`;
+			line += `, 고르지 않은 설치본: ${left.map(describe).join(", ")} → pnpm skills:setup ${c.flag} <이름|none>으로 고르면 정리된다(기록: ${c.names.join(",")})`;
 			if (check) missing.push(`${c.label} 충돌`);
 		}
 		out.push(line);
+		// 세션 시작 훅이나 전역 지시로 진행 순서를 강제하는 두뇌가 둘 이상이면 지시가 서로 덮어쓴다.
+		const forcing = c.names.filter((n) => c.catalog[n]?.forces);
+		if (forcing.length > 1)
+			out.push(
+				`경고: 진행 순서를 강제하는 두뇌 ${forcing.join(", ")}를 함께 골랐다. 지시가 서로 덮어쓸 수 있어 주 두뇌(${c.names[0]})를 따르고 나머지 두뇌의 강제 지시는 따르지 않는다 (${GUIDE})`,
+			);
 	}
 	// 개인 설정 파일이 깨졌으면 쓰지 않고 알리기만 한다(설치 결과 요약은 그대로 보인다).
 	try {
@@ -993,7 +1170,10 @@ export async function findUpdates(root, manifest, { fetch, token }) {
 			(s) => hasSkill(root, s) && sameSource(lock[s]?.source, e.source),
 		),
 	}));
-	const entries = [...manifest.skills, ...extra].filter((e) => e.skills.length);
+	// adopt 프로젝트는 Better-T-Stack 전용 스킬(stack)을 설치하지 않으므로 빠짐으로 알리지 않는다.
+	const adopt = readJson(join(root, ".dev-cycle.json"), {}).adopt === true;
+	const base = manifest.skills.filter((e) => !(adopt && e.stack));
+	const entries = [...base, ...extra].filter((e) => e.skills.length);
 	const trees = new Map();
 	for (const e of entries)
 		if (!trees.has(e.source))

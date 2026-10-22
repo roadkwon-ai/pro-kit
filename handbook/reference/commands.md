@@ -8,9 +8,12 @@
 
 | 명령 | 하는 일 |
 |---|---|
-| `pnpm dev-cycle status` | 진행 중인 라운드의 케이스, 채운 칸 수, 다음 행 확인. 라운드가 없으면 여는 법을 알려 주고, 외부 스킬 새 버전도 하루 한 번 확인 |
+| `pnpm dev-cycle status` | 진행 중인 라운드의 케이스, 채운 칸 수, 다음 행과 진행 계획의 다음 Task 확인. 전환 프로젝트는 기존 코드 경로도 보여 줘요. 라운드가 없으면 여는 법을 알려 주고, 외부 스킬 새 버전도 하루 한 번 확인 |
 | `pnpm dev-cycle case` | 현재 diff의 케이스 판정 |
 | `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기. `--upgrade`는 더 무거운 케이스로 올리기 |
+| `pnpm dev-cycle table <케이스> --write --title "T1 …" --task T1` | 진행 계획의 Task 라운드 열기. 앞 Task가 완료·제외가 아니면 열리지 않고, 대조표 맨 앞에 세부 계획과 계획 리뷰 행이 붙어요(케이스 F는 세부 계획 행만) |
+| `pnpm dev-cycle table A --write --title "정밀 분석과 진행 계획" --plan` | 진행 계획을 세우거나 고치는 라운드 열기. 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 계획 리뷰 행이 붙고, audit은 `tasks/plan.md`에 진행 계획 블록이 있는지 봐요 |
+| `pnpm dev-cycle plan [--json]` | `tasks/plan.md`의 Task 표, 다음에 열 Task, 문제를 보기. 문제가 있으면 exit 1 |
 | `pnpm dev-cycle audit` | 빈 칸, 건너뛸 수 없는 칸, 케이스 상향 검사 |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관. 미완료 항목과 코드 예시는 남기고, 끝난 하위 항목은 부모 문맥과 함께 기록 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일의 내용으로 바꿔요(끝 줄바꿈 하나는 허용해요). 표의 헤더·stage와 다른 행, 메모, 코드 블록은 그대로 둬요 |
@@ -25,7 +28,9 @@
 
 | 명령 | 하는 일 |
 |---|---|
-| `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬, 플러그인, OMX 설정과 agent-browser CLI 설치. `--with-global`이면 나머지 전역 도구도 |
+| `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬, 플러그인, OMX 설정과 agent-browser CLI 설치. `--with-global`이면 나머지 전역 도구도. 모르는 인자(오타 등)를 주면 설치하지 않고 exit 2로 멈추고, `--help`는 사용법만 보여 줘요 |
+| `pnpm skills:setup --brain <이름>[,…]` | 두뇌를 고르거나 바꿔요. 여러 개는 쉼표로 잇고 첫 번째가 주 두뇌예요. 고르지 않은 설치본은 정리해요(openspec·spec-kit의 도구 파일은 지우지만 `openspec/`, `specs/`, `.specify/memory/` 문서는 남겨요) |
+| `pnpm skills:setup --drop <스킬 또는 묶음>[,…]` | mattpocock 추가 스킬이나 선택 묶음 지우기 |
 | `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`<!-- /v -->) 설치. 여러 개는 쉼표로(`ops,motion`) |
 | `pnpm skills:check` | 설치하지 않고 상태만 확인. 프로젝트 범위 항목이 빠졌으면 exit 1 |
 | `pnpm skills:update --check` | 설치한 외부 스킬을 GitHub 원본과 비교해 새 버전만 알려 주기 |
@@ -77,7 +82,7 @@
 | 명령 | 하는 일 |
 |---|---|
 | `/prokit-init <PRD 파일 경로나 내용>` | 새 프로젝트 만들기. PRD로 두뇌와 스킬을 추천해 고르게 한 뒤 아래 설치까지 해요. PRD가 없으면 먼저 받고, 끝내 없으면 만들지 않아요. Claude Code 기준이고 Codex는 `$prokit-init`이에요. pro-kit 폴더에서 연 세션에서만 불러요([두뇌와 선택 스킬](../skills/brains.md)) |
-| `bash templates/<템플릿>/install.sh <프로젝트>` | 템플릿 설치. `--brain`, `--simplicity`, `--matt`, `--optional`, `--diff`, `--skip-skills`, `--with-global`([설치기와 옵션](../templates/installer.md)) |
+| `bash templates/<템플릿>/install.sh <프로젝트>` | 템플릿 설치. `--brain`, `--simplicity`, `--matt`, `--optional`, `--diff`, `--skip-skills`, `--with-global`, 기존 프로젝트용 `--project-type`, `--legacy`, `--adopt`, `--default-branch`([설치기와 옵션](../templates/installer.md)) |
 | `node scripts/pack.mjs <이름>` | 프리셋 팩을 받아 sha256을 확인한 뒤 `packs/<이름>/`에 풀기 |
 | `node scripts/pack.mjs <이름> --zip <경로>` | 미리 받아 둔 팩 zip을 같은 확인을 거쳐 `packs/<이름>/`에 풀기 |
 
@@ -87,8 +92,11 @@
 - DB 명령은 패키지에서 실행해요. 예: `pnpm --filter @my-app/db db:generate`, `pnpm --filter @my-app/db db:migrate`.
 - 명령 표의 정본은 템플릿 README의 "설치된 프로젝트에서 자주 쓰는 명령"([neon](../../templates/prokit-next-neon/README.md#설치된-프로젝트에서-자주-쓰는-명령) · [supabase](../../templates/prokit-next-supabase/README.md#설치된-프로젝트에서-자주-쓰는-명령))이에요. supabase는 `supabase start`, `stop`, `status`와 `supabase db advisors` 같은 DB 명령이 더 있어요.
 
+- 기존 프로젝트에 도입하는 흐름은 [기존 프로젝트에 도입하기](../start/adopt.md), Task와 진행 계획은 [정밀 분석과 진행 계획](../concepts/project-plan.md)에 있어요.
+
 ## 관련 문서
 
 - [dev-cycle 라운드](../concepts/dev-cycle.md)
+- [정밀 분석과 진행 계획](../concepts/project-plan.md)
 - [설치와 업데이트 구조](../skills/install-and-update.md)
 - [설치된 프로젝트의 폴더 구조](project-structure.md)

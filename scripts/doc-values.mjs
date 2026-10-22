@@ -451,8 +451,8 @@ export function loadValues(root = ROOT) {
   add("templates.count.ko", ko(vals.get("templates.count").value), "templates/prokit-next-* 수", "템플릿 수의 한글 수 관형사");
   same("prokit.skills.count", (t) => readdirSync(tpl(t, "files", ".agents", "skills")).filter((n) => n.startsWith("prokit-")).length, "templates/*/files/.agents/skills/prokit-* 수", "프로젝트 스킬(prokit-*) 수");
   add("prokit.skills.count.ko", ko(vals.get("prokit.skills.count").value), "templates/*/files/.agents/skills/prokit-* 수", "프로젝트 스킬 수의 한글 수 관형사");
-  same("prokit.agents.count", (t) => readdirSync(tpl(t, "files", ".claude", "agents")).filter((n) => n.endsWith(".md")).length, "templates/*/files/.claude/agents/*.md 수", "구현 수행·전문 리뷰·최종 리뷰 에이전트 수");
-  add("prokit.agents.count.ko", ko(vals.get("prokit.agents.count").value), "templates/*/files/.claude/agents/*.md 수", "구현 수행·전문 리뷰·최종 리뷰 에이전트 수의 한글 수 관형사");
+  same("prokit.agents.count", (t) => readdirSync(tpl(t, "files", ".claude", "agents")).filter((n) => n.endsWith(".md")).length, "templates/*/files/.claude/agents/*.md 수", "구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수");
+  add("prokit.agents.count.ko", ko(vals.get("prokit.agents.count").value), "templates/*/files/.claude/agents/*.md 수", "구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수의 한글 수 관형사");
   const cases = (t) => JSON.parse(readFileSync(tpl(t, "files", "scripts", "dev-cycle.mjs"), "utf8").match(/export const CASES = (\[[^\]]*\])/)[1]);
   same("devCycle.cases.count", (t) => cases(t).length, "templates/*/files/scripts/dev-cycle.mjs CASES", "dev-cycle 케이스 수");
   add("devCycle.cases.count.ko", ko(vals.get("devCycle.cases.count").value), "templates/*/files/scripts/dev-cycle.mjs CASES", "dev-cycle 케이스 수의 한글 수 관형사");
@@ -475,7 +475,7 @@ export function loadValues(root = ROOT) {
   const count = (list) => list.reduce((n, s) => n + s.skills.length, 0);
   for (const t of T)
     add(`skills.official.${t}`, count(manifest(t).filter((s) => s.agents.includes("claude-code"))), `templates/prokit-next-${t}/files/skills.manifest.json`, `${t} 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치)`);
-  // 두뇌·과설계 방지 스킬은 하나만 골라 설치하는 카탈로그(brains, simplicity)에 있다
+  // 두뇌(여럿 고를 수 있다)와 과설계 방지 스킬(하나)은 고르는 카탈로그(brains, simplicity)에 있다
   const full = (t) => JSON.parse(readFileSync(tpl(t, "files", "skills.manifest.json"), "utf8"));
   same("skills.codex.superpowers", (t) => count(full(t).brains.superpowers.skills), "templates/*/files/skills.manifest.json brains.superpowers", "superpowers를 두뇌로 고르면 Codex에 설치하는 스킬 수");
   same("skills.codex.ponytail", (t) => count(full(t).simplicity.ponytail.skills), "templates/*/files/skills.manifest.json simplicity.ponytail", "ponytail을 고르면 프로젝트에 설치하는 Ponytail 프로세스 스킬 수");

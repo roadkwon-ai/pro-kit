@@ -16,7 +16,7 @@ flowchart LR
   subgraph TPL["템플릿이 설치"]
     direction TB
     T1["규칙 문서<br/>AGENTS.md · CLAUDE.md · GLOSSARY.md"]
-    T2["프로젝트 스킬 prokit-* 9개<br/>에이전트 3개"]
+    T2["프로젝트 스킬 prokit-* 10개<br/>에이전트 4개"]
     T3["dev-cycle<br/>케이스 판정 · 대조표 · audit"]
     T4["내부 스킬 자동 설치<br/>skills.manifest.json<br/>선택 묶음은 --optional"]
     T5["Vercel 배포와 릴리스<br/>pnpm vercel:deploy · pnpm release"]
@@ -28,9 +28,10 @@ flowchart LR
 
 | 구성 | 내용 |
 |---|---|
-| 프로젝트 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개 | `prokit-dev-cycle`(작업 진행), `prokit-web`(라우팅·RSC·캐시), `prokit-ui`(화면·UX), `prokit-api`(oRPC·인증·데이터 주인 확인), `prokit-db`(스키마·마이그레이션), `prokit-verify`(검사·증거), `prokit-deploy`(Vercel 배포·릴리스), `prokit-skills-update`(외부 스킬 업데이트) |
-| 에이전트 <!-- v:prokit.agents.count -->3<!-- /v -->개 | `prokit-implementer`(범위를 받은 수행), `specialist-reviewer`(부족한 전문 계약만 읽기 전용 검토), `prokit-reviewer`(증거·통합 수용을 보는 최종 읽기 전용 게이트). Prokit은 외부 전문 수행자에게 일을 맡기고 범위·증거·재지시를 관리해요. `.claude/agents`가 원본이고, `.codex/agents`(Codex)와 `.agents/agents`(Antigravity)는 이 원본에서 자동으로 만들어요 |
+| 프로젝트 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개 | `prokit-dev-cycle`(작업 진행), `prokit-web`(라우팅·RSC·캐시), `prokit-ui`(화면·UX), `prokit-api`(oRPC·인증·데이터 주인 확인), `prokit-db`(스키마·마이그레이션), `prokit-verify`(검사·증거), `prokit-deploy`(Vercel 배포·릴리스), `prokit-pack-use`(완성팩 활용), `prokit-skills-update`(외부 스킬 업데이트), `prokit-skills-manage`(진행 중 두뇌·스킬 구성 바꾸기) |
+| 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | `prokit-analyzer`(기존 프로젝트를 읽기만 하며 정밀 분석), `prokit-implementer`(범위를 받은 수행), `specialist-reviewer`(부족한 전문 계약만 읽기 전용 검토), `prokit-reviewer`(증거·통합 수용을 보는 최종 읽기 전용 게이트). Prokit은 외부 전문 수행자에게 일을 맡기고 범위·증거·재지시를 관리해요. `.claude/agents`가 원본이고, `.codex/agents`(Codex)와 `.agents/agents`(Antigravity)는 이 원본에서 자동으로 만들어요 |
 | dev-cycle | 작업을 케이스(<!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->)로 나눠요. 케이스별 대조표의 모든 행에 증거를 채워야 라운드가 끝나요(`pnpm dev-cycle …`) |
+| 기존 프로젝트 도입 | 이미 있는 프로젝트에도 설치할 수 있어요. 유형(`--project-type`)에 따라 같은 폴더, 새 브랜치, 새 폴더로 적용하고 `docs/prokit/intake.md`(도입 기록), `docs/prokit/analysis.md`(정밀 분석), `tasks/plan.md`(진행 계획)를 남겨요([기존 프로젝트에 도입하기](../start/adopt.md), [정밀 분석과 진행 계획](../concepts/project-plan.md)) |
 | 문서 골격 | `AGENTS.md`(맨 앞에 개발 원칙: 계획, 서브에이전트, 교훈 기록, 완료 전 확인. 이어서 공통 규칙), `CLAUDE.md`(`@AGENTS.md`로 같은 지침을 읽어요), `GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md`, `docs/dev-workflow.md` |
 | 내부 스킬 (이 프로젝트에만, 자동 설치) | 공식 도메인 스킬(Next.js, React, Better Auth, shadcn, impeccable, turborepo, DB 스킬, Vercel 배포 스킬 등), mattpocock 필수 3개, skill-creator(Claude 플러그인과 Codex 스킬). 두뇌와 과설계 방지 스킬은 고른 것만 설치해요(기본은 없음. [두뇌와 선택 스킬](../skills/brains.md)). ponytail을 고르면 Codex 스킬 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->종도 받고, Codex 네이티브 Ponytail은 `--with-global`일 때만 선택 설치해요 |
 | 외부 스킬 위임 | 설치 목록 밖에서도 현재 접근 가능한 사용자 지정·프로젝트별 전문 스킬을 확인해 연결해요. 출처와 부작용을 확인하고 결과와 증거를 받아 최종 검수해요 |
@@ -70,5 +71,6 @@ DB 옵션만 템플릿마다 달라요(neon은 `--db-setup docker`, supabase는 
 - [템플릿 고르기](choose.md)
 - [앱 구조](app-structure.md)
 - [설치기와 옵션](installer.md)
-- [prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개](../skills/prokit-skills.md)
+- [기존 프로젝트에 도입하기](../start/adopt.md)
+- [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md)
 - [하네스 엔지니어링](../concepts/harness.md)

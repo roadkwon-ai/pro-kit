@@ -1,0 +1,8 @@
+{
+  ".dev-cycle.json": "{ \"projectType\": \"early\", \"brain\": \"none\", \"simplicity\": \"none\" }",
+  "PRODUCT.md": "# Product\n\n동네 꽃집의 꽃다발을 온라인으로 주문하는 서비스. 주 사용자는 근처 주민, 모바일 위주.",
+  "docs/prokit/intake.md": "# 도입 기록\n\n- 유형: early\n\n## 디자인 방향\n(첫 화면 작업에서 prokit-ui가 묻고 적는다)\n",
+  "docs/design-system.md": "# 디자인 시스템\n\n| 이름 | 값 |\n|---|---|\n| primary | #2f6b4f |\n| background | #fbf8f3 |\n| text | #1f2421 |\n\n- 서체: Pretendard. 제목 24px/700, 본문 16px/400\n- 모서리: 카드 12px, 버튼 8px\n- 간격: 4px 단위",
+  "prototype/src/styles.css": ":root { --primary: #2f6b4f; --bg: #fbf8f3; --radius-card: 12px; --radius-btn: 8px; }",
+  "apps/web/src/app/page.tsx": "// Better-T-Stack 기본 화면"
+}

@@ -379,10 +379,10 @@
 | `process.olgot.work` | 7시간 35분 | 올곧 라운드 합에서 백그라운드 기다림을 뺀 일한 시간(5분 단위) | 계산: process.olgot.total − doc-values.json process.olgot.wait | `doc-values.json`을 고친다 | 1 |
 | `templates.count` | 2 | 템플릿 수 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 15 |
-| `prokit.skills.count` | 9 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 28 |
-| `prokit.skills.count.ko` | 아홉 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `prokit.agents.count` | 3 | 구현 수행·전문 리뷰·최종 리뷰 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 8 |
-| `prokit.agents.count.ko` | 세 | 구현 수행·전문 리뷰·최종 리뷰 에이전트 수의 한글 수 관형사 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 28 |
+| `prokit.skills.count.ko` | 열 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `prokit.agents.count` | 4 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |
+| `prokit.agents.count.ko` | 네 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수의 한글 수 관형사 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.count` | 7 | dev-cycle 케이스 수 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.count.ko` | 일곱 | dev-cycle 케이스 수의 한글 수 관형사 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.list` | A, B, C, D, E, F, H | dev-cycle 케이스 목록 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
@@ -393,8 +393,8 @@
 | `skills.official.supabase` | 25 | supabase 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치) | templates/prokit-next-supabase/files/skills.manifest.json | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
 | `skills.codex.superpowers` | 15 | superpowers를 두뇌로 고르면 Codex에 설치하는 스킬 수 | templates/*/files/skills.manifest.json brains.superpowers | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `skills.codex.ponytail` | 6 | ponytail을 고르면 프로젝트에 설치하는 Ponytail 프로세스 스킬 수 | templates/*/files/skills.manifest.json simplicity.ponytail | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
-| `brains.names` | superpowers, agent-skills, pstack, gstack, oh-my, mattpocock | 고를 수 있는 두뇌 이름(기본은 none) | templates/*/files/skills.manifest.json brains | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `brains.namesCode` | `superpowers`, `agent-skills`, `pstack`, `gstack`, `oh-my`, `mattpocock` | 두뇌 이름의 코드 꼴 | templates/*/files/skills.manifest.json brains | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `brains.names` | superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering | 고를 수 있는 두뇌 이름(기본은 none) | templates/*/files/skills.manifest.json brains | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `brains.namesCode` | `superpowers`, `agent-skills`, `pstack`, `gstack`, `oh-my`, `mattpocock`, `openspec`, `spec-kit`, `compound-engineering` | 두뇌 이름의 코드 꼴 | templates/*/files/skills.manifest.json brains | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `simplicity.names` | ponytail, caveman, karpathy | 고를 수 있는 과설계 방지 스킬 이름(기본은 none) | templates/*/files/skills.manifest.json simplicity | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `simplicity.namesCode` | `ponytail`, `caveman`, `karpathy` | 과설계 방지 스킬 이름의 코드 꼴 | templates/*/files/skills.manifest.json simplicity | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `mattpocock.pool.count` | 14 | --matt로 고를 수 있는 mattpocock 추가 스킬 수 | templates/*/files/skills.manifest.json mattpocock.pool | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
@@ -447,7 +447,7 @@
 | `eval.designMd.secondScreen.without` | 97 | 브랜드 이름과 대표 색만 줬을 때 두 번째 화면이 첫 화면 색을 따른 비율(%는 값 밖) | 계산: templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `eval.designMd.palette.offTarget` | 29 | 브랜드 이름과 대표 색만 줬을 때 화면에 쓴 색 가운데 목표 밖 색의 비율(%는 값 밖) | 계산: 100 − templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표의 B 팔레트 일치율(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `handbook.sections.count` | 7 | 문서(handbook) 묶음 수 | handbook/README.md 묶음 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `handbook.pages.count` | 37 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `handbook.pages.count` | 39 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `b:agent-order-line` | (글 묶음) | 새 프로젝트를 만들 때 "에이전트는 이런 순서로 일해요" 도입 문장(옵션 없이 열었을 때 허락을 묻는다고 알린다). clone-create-prompt 묶음이 품는다 | docs/blocks/agent-order-line.md | 묶음 원본을 고친다 | 3 |
 | `b:clone-auth-feature-note` | (글 묶음) | 클론 튜토리얼 5장의 첫 NOTE(5장부터 기능을 하나씩 만든다) | docs/blocks/clone-auth-feature-note.md | 묶음 원본을 고친다 | 2 |
 | `b:clone-auth-open` | (글 묶음) | 클론 튜토리얼 5장의 1단계 첫 문단(4장 대화창을 그대로 써도 된다) | docs/blocks/clone-auth-open.md | 묶음 원본을 고친다 | 2 |

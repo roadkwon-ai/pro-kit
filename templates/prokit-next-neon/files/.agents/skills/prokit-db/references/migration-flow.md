@@ -6,6 +6,7 @@
 - 시작: `packages/db`에서 `podman compose up -d`. Docker를 쓰면 `pnpm --filter @<프로젝트>/db db:start`(스크립트가 `docker compose`를 부른다). Linux·WSL의 Podman이 `short-name "postgres:18" did not resolve`로 멈추면 사용자에게 `~/.config/containers/registries.conf`에 `unqualified-search-registries = ["docker.io"]`를 넣어 달라고 요청한다(사용자 설정 파일이라 에이전트가 바꾸지 않는다).
 - 포트: compose의 `ports` 왼쪽 값이 호스트 포트다. 같은 포트를 쓰는 Postgres(Homebrew 등)가 이미 있으면 컨테이너는 오류 없이 뜨지만 `localhost` 접속은 기존 서버로 간다. `lsof -nP -iTCP:<포트> -sTCP:LISTEN`에 `postgres` 프로세스가 보이면 README의 `DB_PORT` 방식(compose `"${DB_PORT:-5432}:5432"` + `packages/db/.env`)으로 포트를 바꾸고 `apps/web/.env`의 `DATABASE_URL`도 맞춘다.
 - 테스트 DB: 같은 컨테이너에 따로 만든다. `podman exec <컨테이너> createdb -U postgres <이름>_test` → URL은 `postgresql://postgres:<compose 비밀번호>@localhost:<호스트 포트>/<이름>_test`
+- 중지: `packages/db`에서 `podman compose stop`(데이터 유지. Docker면 `db:stop`).
 - 초기화: `podman compose down -v`는 볼륨까지 지운다. 사용자가 요청할 때만 쓴다.
 
 ## 순서

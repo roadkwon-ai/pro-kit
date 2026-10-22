@@ -86,4 +86,4 @@ GitHub에서는 HTML 원문이 그대로 보이니 내려받아 브라우저로 
 
 - [공식 스킬과 연결](../skills/official-skills.md)
 - [DESIGN.md](../design/design-md.md)
-- [prokit 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개](../skills/prokit-skills.md)
+- [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md)

@@ -2,6 +2,8 @@
 
 > 한눈에: 템플릿이 바뀌어도 이미 만든 프로젝트는 그대로예요. 바뀐 내용을 옮기려면 차이를 미리 보고 옮길 것을 정리한 뒤, 그 프로젝트에서 새로 연 대화에서 작업 한 번(라운드)으로 반영해요. 그 프로젝트가 스스로 고친 내용은 덮어쓰지 않아요.
 
+프로킷이 없는 프로젝트에 처음 들이는 일은 "도입"이라 [기존 프로젝트에 도입하기](../start/adopt.md)가 맡아요. 이 쪽은 이미 프로킷이 설치된 프로젝트를 더 새 템플릿에 맞추는 "갱신 반영"만 다뤄요.
+
 ## 순서
 
 pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 요청하면 에이전트가 1~3번을 하고, 4번과 5번은 그 프로젝트에서 연 세션에서 하도록 안내해요([AGENTS.md](../../AGENTS.md) "기존 프로젝트에 템플릿 갱신 반영").
@@ -35,8 +37,11 @@ pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 
 
 화면 디자인 보조 선택 묶음 `taste`(2026-10-20)를 쓰려면 H 라운드에서 템플릿의 `skills.manifest.json`과 `prokit-ui`(`SKILL.md`, `references/taste.md`)를 옮긴 뒤 `pnpm skills:setup --optional taste`로 설치해요. `install.sh --skip-skills`가 `.gitignore`에 `/.taste-skill/`을 더해요([화면 디자인 보조](../skills/brains.md#화면-디자인-보조)).
 
+도입 브랜치에서 `--adopt`로 설치한 프로젝트(`.dev-cycle.json`의 `adopt: true`)는 `--adopt` 없이 `install.sh`를 다시 실행해도 adopt로 보고, 하네스 파일만 비교해요. 두뇌를 여러 개로 늘리거나 바꾸는 일은 갱신이 아니라 구성 변경이라 `prokit-skills-manage` 스킬로 해요([두뇌와 선택 스킬](../skills/brains.md)).
+
 ## 관련 문서
 
+- [기존 프로젝트에 도입하기](../start/adopt.md)
 - [설치기와 옵션](installer.md)
 - [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](../concepts/cases.md)
 - [설치와 업데이트 구조](../skills/install-and-update.md)

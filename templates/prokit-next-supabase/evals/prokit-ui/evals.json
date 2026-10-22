@@ -61,6 +61,51 @@
         "이미 주어진 시각 방향을 카탈로그 선택으로 다시 바꾸지 않는다",
         "현재 프로젝트의 코드·설치·원격 설정을 수정하지 않는다"
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "T2 상품 목록 화면 진행해줘. 디자인 방향을 물으면 '기존 디자인 유지'를 고른다고 가정한다.\n설계·읽기 전용 평가다. 첨부 early-design-system.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 디자인 값은 지어내지 않는다. 화면 코드와 파일 쓰기, 설치, 원격 호출은 하지 않는다. 사용자에게 할 질문과 그 답에 따라 만들거나 고칠 문서(DESIGN.md 초안 포함)를 보고한다.",
+      "expected_output": "기존 디자인 근거(디자인 시스템 문서, 프로토타입)가 있으므로 스타일 후보 전에 유지/리디자인을 한 번 묻는다. 유지면 카탈로그 후보 없이 근거 값으로 DESIGN.md를 명세 형식으로 만들고 토큰 출처를 보여 확인받는다. 답과 날짜는 intake의 디자인 방향 절에 적는다.",
+      "files": [
+        "evals/prokit-ui/fixtures/early-design-system.json"
+      ],
+      "expectations": [
+        "스타일 후보를 내기 전에 '기존 디자인 유지 (추천)'와 '리디자인' 질문을 한 번 한다",
+        "유지면 디자인 카탈로그 스타일 후보를 내지 않는다",
+        "DESIGN.md 초안 토큰이 근거 값(#2f6b4f, #fbf8f3, Pretendard, 12px)이고 근거에 없는 값을 지어내지 않는다",
+        "본문 절이 DESIGN.md 명세 순서(Overview, Colors, Typography, Layout …)이고 토큰마다 출처 파일을 적어 확인을 요청한다",
+        "답과 날짜를 docs/prokit/intake.md의 디자인 방향 절에 적는다고 한다"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "첫 화면(코트 목록) 만들어줘.\n설계·읽기 전용 평가다. 첨부 early-prd-only.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 디자인 값은 지어내지 않는다. 화면 코드와 파일 쓰기, 설치, 원격 호출은 하지 않는다. 사용자에게 할 질문과 그 답에 따라 만들거나 고칠 문서(DESIGN.md 초안 포함)를 보고한다.",
+      "expected_output": "이어 갈 기존 디자인 근거가 없으므로 디자인 방향 질문을 하지 않고, intake에 '이어 갈 기존 디자인 없음'과 날짜를 적은 뒤 디자인 카탈로그 스타일 1~3개와 직접 정하기를 내놓는다. 브리프 확인 전에는 화면 코드를 쓰지 않는다.",
+      "files": [
+        "evals/prokit-ui/fixtures/early-prd-only.json"
+      ],
+      "expectations": [
+        "이어 갈 기존 디자인 근거(토큰, 디자인 시스템 문서, 프로토타입, 운영 화면)가 없음을 확인한다",
+        "디자인 방향(유지·리디자인) 질문을 하지 않는다",
+        "디자인 방향 절에 '이어 갈 기존 디자인 없음'과 날짜를 적는다고 한다",
+        "디자인 카탈로그 스타일 1~3개와 직접 정하기 선택지를 낸다",
+        "브리프 확인 전에 화면 코드를 쓰지 않는다"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "예약 화면 옮기자. 디자인은 지금 서비스 그대로 유지해줘.\n설계·읽기 전용 평가다. 첨부 migration-legacy-css.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 디자인 값은 지어내지 않는다. 화면 코드와 파일 쓰기, 설치, 원격 호출은 하지 않는다. 사용자에게 할 질문과 그 답에 따라 만들거나 고칠 문서(DESIGN.md 초안 포함)를 보고한다.",
+      "expected_output": "사용자가 유지를 정했으므로 다시 묻지 않고 기록한다. 근거는 legacy.path의 CSS와 템플릿이며, 이 프로젝트의 Better-T-Stack 기본 토큰은 기존 디자인이 아니다. impeccable document를 지금 화면에 돌리지 않고 근거 값으로 DESIGN.md를 쓰고, 첫 구현 행에서 shadcn 변수로 옮긴다.",
+      "files": [
+        "evals/prokit-ui/fixtures/migration-legacy-css.json"
+      ],
+      "expectations": [
+        "디자인 근거를 legacy.path(../legacy-php의 CSS와 템플릿)에서 모은다",
+        "이 프로젝트의 Better-T-Stack 기본 화면과 globals.css 기본 토큰을 기존 디자인으로 보지 않는다",
+        "impeccable document를 지금 화면에 돌리지 않고 근거 값(#1d4ed8, #f8fafc, Noto Sans KR, 6px)으로 DESIGN.md를 쓴다",
+        "기존 코드(legacy.path)를 고치지 않는다",
+        "첫 구현 행에서 토큰을 packages/ui/src/styles/globals.css의 shadcn 변수로 옮긴다고 계획한다"
+      ]
     }
   ]
 }

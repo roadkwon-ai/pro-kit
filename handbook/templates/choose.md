@@ -31,7 +31,7 @@ flowchart LR
 | 공식 도메인 스킬 | <!-- v:skills.official.neon -->28<!-- /v -->개 (neon 4개, Vercel 배포 3개 포함) | <!-- v:skills.official.supabase -->25<!-- /v -->개 (`supabase`, `supabase-postgres-best-practices`, Vercel 배포 3개 포함) |
 | 선택 스킬 (`--optional`) | `ops` <!-- v:optional.ops.count.neon -->4<!-- /v -->개(`vercel-optimize`, Neon 함수·파일 저장·LLM 게이트웨이), `motion`, `mobile`, `i-have-adhd`, `taste` | `ops` <!-- v:optional.ops.count.supabase -->1<!-- /v -->개(<!-- v:optional.ops.skillsCode.supabase -->`vercel-optimize`<!-- /v -->), `motion`, `mobile`, `i-have-adhd`, `taste` |
 
-프로세스 스킬과 에이전트 구성은 두 템플릿이 같아요. 두뇌와 과설계 방지 스킬은 템플릿과 상관없이 프로젝트마다 하나씩 고르거나 고르지 않아요([두뇌와 선택 스킬](../skills/brains.md)). ponytail을 고르면 Ponytail 프로젝트 스킬 <!-- v:skills.codex.ponytail -->6<!-- /v -->종도 받고, Codex 네이티브 플러그인은 `--with-global`에서만 선택 설치해요([설치와 업데이트 구조](../skills/install-and-update.md)).
+프로세스 스킬과 에이전트 구성은 두 템플릿이 같아요. 두뇌와 과설계 방지 스킬은 템플릿과 상관없이 프로젝트마다 골라요. 고르지 않아도 돼요. 과설계 방지 스킬은 하나만, 두뇌는 하나를 권하지만 여럿도 고를 수 있어요([두뇌와 선택 스킬](../skills/brains.md)). ponytail을 고르면 Ponytail 프로젝트 스킬 <!-- v:skills.codex.ponytail -->6<!-- /v -->종도 받고, Codex 네이티브 플러그인은 `--with-global`에서만 선택 설치해요([설치와 업데이트 구조](../skills/install-and-update.md)).
 
 ## 무엇으로 고르나요
 

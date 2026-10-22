@@ -11,15 +11,15 @@ Better-T-Stack으로 만든 Next.js 풀스택 프로젝트(oRPC, Drizzle, Better
 |---|---|---|
 | 공식 스킬 <!-- v:skills.official.neon -->28<!-- /v -->개 | `.agents/skills/`, `.claude/skills/`(링크), `skills-lock.json` | Next.js, React, Neon, Better Auth, shadcn, impeccable, ChatGPT 요금제 이미지(`gpt-image`), 디자인 카탈로그(`use-design-md`), turborepo, Postgres 규칙, domain-modeling, Vercel 배포(`deploy-to-vercel`, `vercel-cli-with-tokens`, `access-protected-vercel-deployment`) |
 | 프로세스 스킬 (늘 설치) | `.claude/settings.json`의 skill-creator 플러그인, `.agents/skills/`(mattpocock domain-modeling·grilling·grill-with-docs, Codex용 skill-creator) | 용어·설계 질문과 기록, 스킬 만들기. mattpocock 추가 스킬(tdd, research 등)은 `--matt <스킬>`로 골라 설치한다 |
-| 두뇌 (선택) | 고른 것만. Claude 플러그인(`.claude/settings.json`), Codex 스킬(`.agents/skills/`), OMX(`.codex/`) | 기본은 없음(기본 AI). `--brain <이름>`으로 하나만 고른다: superpowers, agent-skills(addyosmani), pstack, gstack, oh-my(OMC·OMX), mattpocock(필수 3개 + `--matt` 추가 스킬). 고르는 기준은 `.agents/skills/prokit-dev-cycle/references/brains/README.md` |
+| 두뇌 (선택) | 고른 것만. Claude 플러그인(`.claude/settings.json`), Codex 스킬(`.agents/skills/`), OMX(`.codex/`), OpenSpec·Spec Kit이 만든 스킬과 도구 파일 | 기본은 없음(기본 AI). `--brain <이름>`으로 고른다. 하나를 권하고, 여럿이면 쉼표로 잇는다(첫 값이 주 두뇌): superpowers, agent-skills(addyosmani), pstack, gstack, oh-my(OMC·OMX), mattpocock(필수 3개 + `--matt` 추가 스킬), openspec(전역 CLI와 `openspec init`), spec-kit(`specify init`, 설치에 uv), compound-engineering. 고르는 기준은 `.agents/skills/prokit-dev-cycle/references/brains/README.md` |
 | 과설계 방지 스킬 (선택) | 고른 것만. ponytail은 Claude 플러그인과 Codex 스킬 6개(ponytail·ponytail-review·ponytail-audit·ponytail-debt·ponytail-help·ponytail-gain), caveman·karpathy는 `.agents/skills/` | 기본은 없음(하네스 간결성 규칙). `--simplicity <이름>`으로 하나만 고른다: ponytail(추천), caveman, karpathy. ponytail을 고르고 `--with-global`이면 지원할 때만 Codex 네이티브 플러그인도 설치한다 |
 | 스킬 설치 목록과 스크립트 | `skills.manifest.json`, `scripts/skills-setup.mjs` | 위 스킬 전체를 프로젝트에 설치·확인·업데이트. 팀원도 `pnpm skills:setup`으로 같은 상태를 만든다 |
 | 선택 스킬 (기본 설치 안 함) | `skills.manifest.json`의 `optional` | 필요할 때 `pnpm skills:setup --optional <묶음>`으로 설치한다. `ops`(운영): `vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway`. `motion`(화면 전환): <!-- v:optional.motion.skillsCode -->`vercel-react-view-transitions`<!-- /v -->. `mobile`(React Native·Expo 앱을 따로 만들 때): <!-- v:optional.mobile.skillsCode -->`vercel-react-native-skills`<!-- /v -->. `i-have-adhd`(짧은 행동 중심 응답, `/i-have-adhd`로 켠다): `i-have-adhd`. `taste`(화면 디자인 보조, 사용자가 고른 화면에만 쓴다): <!-- v:optional.taste.skillsCode -->`design-taste-frontend`<!-- /v --> |
-| 프로젝트 스킬 <!-- v:prokit.skills.count -->9<!-- /v -->개 | `.agents/skills/prokit-*` | dev-cycle 지휘, web, api, db, ui, verify, deploy, 외부 스킬 업데이트(skills-update) |
+| 프로젝트 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개 | `.agents/skills/prokit-*` | dev-cycle 지휘, web, api, db, ui, verify, deploy, 완성팩 활용, 외부 스킬 업데이트(skills-update), 스킬 구성 바꾸기(skills-manage) |
 | 화면만 프로젝트 | `scripts/export-html.mjs`, `scripts/load-keys.mjs`, `.claude/settings.json`의 SessionStart 훅 | DB 없이 만든 화면을 정적 HTML로 내보내기(`pnpm export:html`), 프로젝트나 작업 폴더 `.env`의 `OPENAI_API_KEY`를 Claude Code 세션 셸 환경에 불러오기, 배포 토큰(`GH_TOKEN`·`VERCEL_TOKEN`)은 배포 명령에만 넣기(`node scripts/load-keys.mjs -- <명령>`) |
 | Vercel 배포와 릴리스 | `scripts/vercel-deploy.mjs`, `scripts/release.mjs`, `.vercelignore` | develop·production 배포 전 검사와 배포, production 배포 전 릴리스(버전 태그, `release/` 노트, GitHub Release), 로컬 `.env` 업로드 차단 |
-| 에이전트 <!-- v:prokit.agents.count -->3<!-- /v -->개 | `.claude/agents/`(정본), `.codex/agents/`·`.agents/agents/`(생성물) | 구현 수행, 전문 읽기 전용 리뷰, 최종 읽기 전용 리뷰 |
-| dev-cycle | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 케이스 판정, 대조표, audit |
+| 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | `.claude/agents/`(정본), `.codex/agents/`·`.agents/agents/`(생성물) | 구현 수행, 전문 읽기 전용 리뷰, 최종 읽기 전용 리뷰, 읽기 전용 정밀 분석(analyzer) |
+| dev-cycle | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 케이스 판정, 대조표, audit, 진행 계획의 Task 게이트(`tasks/plan.md`) |
 | 문서 골격 | `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md` | 개발 원칙과 공통 규칙(`CLAUDE.md`는 `@AGENTS.md`로 읽음), 용어, 결정, 개관 |
 
 ## 준비물
@@ -139,12 +139,16 @@ production은 릴리스한 커밋만 배포한다. `pnpm release`가 마지막 `
 <!-- b:tpl-readme-options cli="Neon" -->
 - `--diff`: 미리 보기. 템플릿과 다른 기존 파일의 차이, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 주고 파일은 쓰지 않는다. 스킬·플러그인 설치도 하지 않는다.
 - `--skip-skills`: 스킬·플러그인·OMX 설치와 agent-browser CLI 자동 설치(`scripts/skills-setup.mjs`)를 건너뛴다. `--brain`·`--simplicity` 값은 `.dev-cycle.json`에 기록만 하고 나중에 `pnpm skills:setup`이 그 값을 설치한다. `--matt`·`--optional`은 기록하지 않으므로 나중에 `pnpm skills:setup`에 다시 준다.
-- `--brain <이름|none>`: 두뇌를 하나 고른다(superpowers, agent-skills, pstack, gstack, oh-my, mattpocock). 기본은 `none`(기본 AI)이다. mattpocock은 따로 설치하는 것이 없고 `--matt`로 고른 추가 스킬과 함께 쓴다.
+- `--brain <이름>[,<이름>]|none`: 두뇌를 고른다(superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering). 하나를 권하고, 여럿이면 쉼표로 잇는다(첫 값이 주 두뇌. `.dev-cycle.json`에 배열로 기록한다). 기본은 `none`(기본 AI)이다. mattpocock은 따로 설치하는 것이 없고 `--matt`로 고른 추가 스킬과 함께 쓴다. openspec은 고를 때 OpenSpec CLI를 전역에 설치하고, spec-kit은 설치할 때 uv가 필요하다.
 - `--simplicity <이름|none>`: 과설계 방지 스킬을 하나 고른다(ponytail, caveman, karpathy). 기본은 `none`(하네스 간결성 규칙)이다.
 - `--matt <스킬>[,<스킬>]`: mattpocock 추가 스킬을 설치한다(tdd, research 등).
 - `--optional <묶음>[,<묶음>]`: 선택 스킬 묶음을 설치한다(ops, motion, mobile, i-have-adhd, taste).
 - 고르는 기준과 선택지 설명은 `.agents/skills/prokit-dev-cycle/references/brains/README.md`에 있다. 모르는 값이면 아무것도 쓰지 않고 exit 1로 멈춘다.
-- `--with-global`: 없는 전역 도구(agent-browser CLI, Vercel CLI, Neon CLI, 고른 두뇌의 gstack·OMX CLI)를 전역에 설치한 뒤 프로젝트 설치를 한다. ponytail을 골랐고 Codex plugin CLI가 Ponytail 원본 GitHub marketplace 설치를 지원할 때만 Ponytail 네이티브 플러그인도 설치한다. 이 설치는 Codex 사용자 설정과 캐시를 바꾼다. 이미 설치된 플러그인은 다시 설치하거나 자동으로 올리지 않는다. 훅 신뢰는 별도다.
+- `--project-type <new|early|operating|migration>`: 프로젝트 유형을 `.dev-cycle.json`의 `projectType`에 기록한다. 기존 프로젝트 도입 절차(pro-kit 저장소 `AGENTS.md`의 "기존 프로젝트에 도입하기")가 쓴다. early면 `biome.json`에서 `prototype/`을 뺀다.
+- `--legacy <경로>`: 전환(`migration`)에서 기존 코드 경로를 `.dev-cycle.json`의 `legacy.path`에 기록한다. 안내용이고 `pnpm dev-cycle status`가 보여 준다.
+- `--adopt`: Better-T-Stack 구조가 아닌 운영 중인 Next.js 프로젝트에 하네스만 설치한다(dev-cycle, 에이전트, `prokit-dev-cycle`·`prokit-verify`·`prokit-web`·`prokit-ui`·`prokit-skills-update`·`prokit-skills-manage`). 기존 스택·폴더·스크립트는 바꾸지 않고 Better-T-Stack 전용 스킬과 배포·내보내기·릴리스 스크립트는 넣지 않는다. ESLint flat config(`eslint.config.*`)가 있으면 `globalIgnores`에 벤더 스킬(`.agents/**`)과 하네스 스크립트만 더한다. Biome 2 `biome.json`이 있으면 `files.includes`에 하네스·벤더 파일(`.agents`, `.claude`, `.codex`, 하네스 스크립트와 설정) 제외만 더한다. 그대로 두면 설치만으로 `lint`가 실패해서다. 넣을 자리를 찾지 못하면(옛 `.eslintrc`, Biome 1, `biome.jsonc`) 직접 넣으라고 경고한다. 계층 경로 규칙은 정밀 분석 뒤 첫 H Task에서 맞춘다.
+- `--default-branch <브랜치>`: dev-cycle의 기준 브랜치를 기록한다. 기존 프로젝트 도입처럼 `prokit/setup` 브랜치에서 설치할 때 쓴다(병합할 기본 브랜치, 또는 도입 브랜치에서 계속하면 `prokit/setup`). 빼면 `origin/HEAD`, `main`, `master`, 지금 브랜치 순으로 정한다.
+- `--with-global`: 없는 전역 도구(agent-browser CLI, Vercel CLI, Neon CLI, 고른 두뇌의 gstack·OMX CLI·OpenSpec CLI)를 전역에 설치한 뒤 프로젝트 설치를 한다. ponytail을 골랐고 Codex plugin CLI가 Ponytail 원본 GitHub marketplace 설치를 지원할 때만 Ponytail 네이티브 플러그인도 설치한다. 이 설치는 Codex 사용자 설정과 캐시를 바꾼다. 이미 설치된 플러그인은 다시 설치하거나 자동으로 올리지 않는다. 훅 신뢰는 별도다.
 
 설치기는 기존 파일을 덮어쓰지 않는다. `AGENTS.md`, `CLAUDE.md`가 이미 있으면 템플릿 블록을 끝에 한 번만 덧붙인다. 여러 번 실행해도 결과가 같다.
 <!-- /b -->
@@ -153,8 +157,9 @@ production은 릴리스한 커밋만 배포한다. `pnpm release`가 마지막 `
 | 명령 | 하는 일 |
 |---|---|
 | `pnpm dev-cycle case` | 현재 diff의 케이스 판정 |
-| `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기 |
+| `pnpm dev-cycle table <케이스> --write --title "<요약>" [--task T<번호>] [--plan]` | 대조표 열기. `--task`는 진행 계획(`tasks/plan.md`)의 그 Task 라운드로 열고, 앞 Task가 끝나지 않았으면 열지 않는다. `--plan`은 진행 계획을 세우거나 고치는 케이스 A 라운드로 열고, 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서, 계획 리뷰 행을 둔다 |
 | `pnpm dev-cycle status`, `audit`, `close` | 진행 확인, 빈 칸 검사, 라운드 닫기 (`blocked`·`미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial`) |
+| `pnpm dev-cycle plan` | 진행 계획(`tasks/plan.md`)의 Task 표, 다음에 열 Task, 문제(손으로 고친 완료 등)를 보여 준다. 문제가 있으면 exit 1 |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일(끝 줄바꿈 하나는 허용)로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
 | `pnpm dev-cycle secrets` | 라운드 끝 커밋 전에 스테이징한 변경에서 로컬 `.env*`(루트, `apps/web`, `packages/db`. `.env.schema`·`.env.example` 제외)의 비밀값과 흔한 키 형식(개인 키, `sk-`, GitHub 토큰 등)을 찾는다. 값은 출력하지 않는다. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
@@ -164,7 +169,7 @@ production은 릴리스한 커밋만 배포한다. `pnpm release`가 마지막 `
 | `pnpm dev-cycle delegation capture`, `pnpm dev-cycle delegation diff <기준 파일> [--scope <글롭>]`, `pnpm dev-cycle delegation validate <패킷>` | 위임 전 기준 스냅샷을 남기고, 끝난 뒤 배정 밖 변경·커밋을 대조(있으면 exit 1)하고, 완료 패킷의 실제 변경·증거·허용 범위를 검사 |
 | `pnpm dev-cycle delegation accept` | 명시한 변경 영향 검사와 Codex 읽기 전용 리뷰를 직접 실행해 현재 로컬 기술 인수를 검증. 사용자 확인·close는 별도 |
 | `pnpm agents:sync`, `pnpm agents:check` | `.claude/agents`에서 `.codex/agents`(Codex)·`.agents/agents`(Antigravity) 생성, 차이 검사 |
-| `pnpm skills:setup` | `skills.manifest.json`과 `.dev-cycle.json`의 선택대로 빠진 스킬·플러그인·OMX 설정과 agent-browser CLI를 설치 (`--with-global`이면 나머지 전역 도구도). `--brain`·`--simplicity`를 주면 기록하고 고르지 않은 설치본을 정리하며, `--matt`·`--optional`로 추가 스킬과 묶음을 설치한다 |
+| `pnpm skills:setup` | `skills.manifest.json`과 `.dev-cycle.json`의 선택대로 빠진 스킬·플러그인·OMX 설정과 agent-browser CLI를 설치 (`--with-global`이면 나머지 전역 도구도). `--brain`(여럿이면 쉼표로 잇고 첫 값이 주 두뇌)·`--simplicity`를 주면 기록하고 고르지 않은 설치본을 정리하며, `--matt`·`--optional`로 추가 스킬과 묶음을 설치하고 `--drop`으로 지운다(구성 바꾸기 절차는 `prokit-skills-manage`) |
 | `pnpm skills:check` | 설치하지 않고 상태만 확인. 프로젝트 scope 항목이 빠졌거나 고르지 않은 두뇌·과설계 방지 스킬이 남아 있으면 exit 1. 선택 묶음과 추가 스킬은 상태만 보여 준다 |
 | `pnpm skills:update` | 설치한 외부 스킬을 GitHub 원본과 파일 단위로 비교해 바뀐 스킬과 빠진 스킬만 다시 설치한다. `--check`는 확인만 하고, 스크립트나 설정 파일이 바뀐 스킬은 그 파일을 보여 준다(설치 전에 원격 내용을 읽는다). `pnpm skills:update <이름>...`은 그 스킬만 설치한다. 스크립트가 바뀐 스킬은 `--check`로 검토한 뒤 이름을 지정해야 설치되고, 그사이 원격이 바뀌면 설치하지 않는다. 진행 중인 라운드가 없을 때 `pnpm dev-cycle status`가 `--if-due`로 하루 한 번 확인하고, 새 버전이 있으면 업데이트할지 묻는다(`prokit-skills-update`). 업데이트는 케이스 H 라운드로 커밋한다 |
 | `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`<!-- /v -->)을 설치. 여러 개는 쉼표로 잇는다(`ops,motion`) |

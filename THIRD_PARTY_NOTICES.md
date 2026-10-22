@@ -1,10 +1,10 @@
 # 제3자 구성 요소와 원본 조건
 
-확인일: 2026-10-08. 프로킷 자체 코드·스킬·문서에는 [MIT License](LICENSE)를 적용한다. 이 안내는 원본 출처와 적용 범위를 구분하며, 외부 원본의 이용허락을 새로 부여하거나 원래 조건을 바꾸지 않는다.
+확인일: 2026-10-08(두뇌 OpenSpec, Spec Kit, Compound Engineering은 2026-10-22). 프로킷 자체 코드·스킬·문서에는 [MIT License](LICENSE)를 적용한다. 이 안내는 원본 출처와 적용 범위를 구분하며, 외부 원본의 이용허락을 새로 부여하거나 원래 조건을 바꾸지 않는다.
 
 ## 설치 목록으로 받는 외부 스킬
 
-템플릿의 외부 스킬·플러그인은 `skills.manifest.json`을 기준으로 사용자 프로젝트에 원본 출처에서 직접 설치한다. 기본 스킬은 `npx -y skills@latest add <source> --skill …` 경로를 사용한다. 프로킷이 그 원본을 자기 패키지에 동봉하거나 자체 미러에서 배포하는 방식과 구분한다. 이미 설치된 스킬의 갱신은 별도 업데이트 흐름이므로 설치기 실행 때마다 모두 다시 받는다는 뜻은 아니다.
+템플릿의 외부 스킬·플러그인은 `skills.manifest.json`을 기준으로 사용자 프로젝트에 원본 출처에서 직접 설치한다. 기본 스킬은 `npx -y skills@latest add <source> --skill …` 경로를 사용한다. 두뇌 OpenSpec과 Spec Kit은 사용자가 고를 때만 그 도구의 init 명령(`openspec init`, `specify init`)이 프로젝트에 스킬과 도구 파일을 만든다. 프로킷이 그 원본을 자기 패키지에 동봉하거나 자체 미러에서 배포하는 방식과 구분한다. 이미 설치된 스킬의 갱신은 별도 업데이트 흐름이므로 설치기 실행 때마다 모두 다시 받는다는 뜻은 아니다.
 
 - 적용 목록의 정본은 [Neon 템플릿 manifest](templates/prokit-next-neon/files/skills.manifest.json)와 [Supabase 템플릿 manifest](templates/prokit-next-supabase/files/skills.manifest.json)다.
 - 외부 원문은 그 출처의 실제 설치 판과 라이선스·고지에 따른다. 프로킷의 MIT는 외부 원본의 이용권을 축소하지 않는다.
@@ -45,6 +45,9 @@
 | andrej-karpathy-skills(과설계 방지 karpathy) | 저장소에 LICENSE 파일이 없다. README·`plugin.json`·`SKILL.md`에 MIT 표기만 있다. 표준 라이선스로 확정하지 않는다 | [확인 판 plugin.json](https://github.com/multica-ai/andrej-karpathy-skills/blob/2c606141936f1eeef17fa3043a72095b4765b9c2/.claude-plugin/plugin.json) |
 | i-have-adhd(선택 묶음) | MIT | [확인 판 LICENSE](https://github.com/ayghri/i-have-adhd/blob/1ecea1993b7fce257ffbd686c070948b5e07eda6/LICENSE) |
 | taste-skill(선택 묶음 taste) | MIT | [확인 판 LICENSE](https://github.com/Leonxlnx/taste-skill/blob/63aba5f43b5056758b15bbe7d683da8c86a7a7ad/LICENSE) |
+| OpenSpec(두뇌 openspec, 전역 CLI와 프로젝트 init) | MIT | [확인 판 LICENSE](https://github.com/Fission-AI/OpenSpec/blob/c04f30e57817422c1a107ea00a682c1d29a423ca/LICENSE) |
+| Spec Kit(두뇌 spec-kit, 프로젝트 init) | MIT | [확인 판 LICENSE](https://github.com/github/spec-kit/blob/dc2cec4f568d0f6e2cdfb8571c69116bc55c1aaf/LICENSE) |
+| Compound Engineering(두뇌 compound-engineering) | MIT | [확인 판 LICENSE](https://github.com/EveryInc/compound-engineering-plugin/blob/cee312784134a05ac1c1c0c6648000afe7dd60e9/LICENSE) |
 
 ### 매니페스트의 외부 source 목록
 
@@ -52,6 +55,7 @@
 
 - [CaesiumY/ko-design-md](https://github.com/CaesiumY/ko-design-md)
 - [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin)
 - [GENEXIS-AI/gpt-image-skill](https://github.com/GENEXIS-AI/gpt-image-skill)
 - [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman)
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)

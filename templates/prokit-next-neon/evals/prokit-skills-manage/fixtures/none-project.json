@@ -1,0 +1,5 @@
+{
+  ".dev-cycle.json": "{ \"brain\": \"none\", \"simplicity\": \"ponytail\", \"defaultBranch\": \"main\" }",
+  "tasks/evidence/skills-check.txt": "두뇌: none(기본 AI)\n과설계 방지: ponytail(설치됨)\nmattpocock 추가: tdd\n선택 스킬: taste(설치됨), i-have-adhd(설치 안 함), ops(설치 안 함), motion(설치 안 함), mobile(설치 안 함)",
+  "tasks/evidence/dev-cycle-status.txt": "활성 라운드 없음 — pnpm dev-cycle case로 판정한 뒤 …"
+}

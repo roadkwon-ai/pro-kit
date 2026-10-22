@@ -1,6 +1,6 @@
 {
   "skill_name": "prokit-init",
-  "note": "읽기 전용 계획 평가다. 실제 프로젝트를 만들지 않는다. 실행 결과는 묻는 질문(AskUserQuestion 내용), 고른 값, 실행할 install.sh 명령, 보고 초안을 outputs/plan.md에 적는다. 사용자 답이 필요한 곳에서는 질문까지만 적고 멈춘다.",
+  "note": "읽기 전용 계획 평가다. 실제 프로젝트를 만들지 않는다. 실행 결과는 묻는 질문(AskUserQuestion 내용), 고른 값, 실행할 install.sh 명령, 보고 초안을 outputs/plan.md에 적는다. 사용자 답이 필요한 곳에서는 질문까지만 적고 멈춘다. 기존 프로젝트 시나리오(14~21)는 files/fixtures의 폴더를 작업 폴더에 복사하고 프롬프트의 {work}를 그 경로로 바꿔 실행한다. 대상 폴더에 쓰지 않는다.",
   "evals": [
     {
       "id": 1,
@@ -133,10 +133,10 @@
     {
       "id": 10,
       "name": "prd-file-argument",
-      "prompt": "/prokit-init .agents/skills/prokit-init/evals/files/study-planner-prd.md",
+      "prompt": "/prokit-init evals/prokit-init/files/study-planner-prd.md",
       "expected_output": "인자로 받은 파일을 PRD로 읽고 PRD를 다시 요청하지 않는다. PRD에 DB와 이름이 정해져 있지 않으므로 템플릿·이름·위치를 한 번에 묻고 답을 기다린다.",
       "files": [
-        ".agents/skills/prokit-init/evals/files/study-planner-prd.md"
+        "evals/prokit-init/files/study-planner-prd.md"
       ],
       "expectations": [
         "인자의 파일을 읽어 PRD로 쓰고 PRD를 다시 요청하지 않는다",
@@ -148,7 +148,7 @@
     {
       "id": 11,
       "name": "prd-missing-after-ask-ends",
-      "prompt": "/prokit-init .agents/skills/prokit-init/evals/files/없는-prd.md\n\n(이어진 대화) 에이전트가 PRD를 요청하자 사용자가 답했다: \"PRD는 없어. 알아서 기본으로 만들어줘.\"",
+      "prompt": "/prokit-init evals/prokit-init/files/없는-prd.md\n\n(이어진 대화) 에이전트가 PRD를 요청하자 사용자가 답했다: \"PRD는 없어. 알아서 기본으로 만들어줘.\"",
       "expected_output": "첫 응답은 읽지 못한 파일 경로를 알리고 PRD를 요청한다. 사용자 답에도 PRD가 없으므로 PRD 입력이 필수인 이유를 알리고 다시 시작하는 방법을 적은 뒤 init을 끝낸다.",
       "files": [],
       "expectations": [
@@ -183,6 +183,139 @@
         "화면 디자인 첫 선택지가 taste-skill (추천)이고 공개 소개 페이지·AI 티 요구를 근거로 든다",
         "설치 명령에 선택지 이름이 아닌 --optional taste를 쓴다(i-have-adhd와 함께면 --optional i-have-adhd,taste)",
         "taste-skill은 고른 화면에만 쓰고 impeccable 흐름은 그대로라는 점을 안내한다"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "early-consent-yes",
+      "prompt": "{work}/early-flower 에 기획 자료랑 프로토타입만 있어. 아직 개발 환경은 없어. 이 프로젝트에 프로킷을 적용해서 개발을 시작하고 싶어.\n\n(이어진 대화) 에이전트가 묻는 질문에 사용자는 모두 추천대로 답했고, 동의 질문에는 '시작'이라고 답했다.",
+      "expected_output": "유형을 early로 정하고, 대상 폴더를 읽기만 하며 초기 분석 요약(기획 자료 3개, 프로토타입, 디자인 시스템 값)을 보여 준다. PRD가 있으니 그것과 분석으로 스킬 구성을 추천한다. early 동의 문구로 묻고, 동의 뒤 안전 점검, prokit/setup 브랜치, 기획 자료는 docs/로 프로토타입은 prototype/으로 git mv, 상위 폴더에서 Better-T-Stack을 --no-git --directory-conflict merge로 같은 폴더에 만들고 git checkout -- docs prototype, install.sh --project-type early, 새 프로젝트 절차 6~9, 기본 브랜치로 fast-forward 병합, docs/prokit/intake.md와 docs/first-request.md, 새 세션 한 줄을 계획한다.",
+      "files": [
+        "files/fixtures/early-flower"
+      ],
+      "expectations": [
+        "유형을 early로 정하거나 추천해 묻는다",
+        "동의 전에는 대상 폴더에 쓰지 않는다(초기 분석은 읽기 전용)",
+        "초기 분석 요약에 기획 자료와 프로토타입, 디자인 시스템이 나온다",
+        "early 동의 질문을 한다",
+        "기획 자료를 docs/, 프로토타입을 prototype/으로 옮기는 단계가 있다",
+        "--directory-conflict merge와 --no-git으로 같은 폴더에 만든다",
+        "git checkout -- docs prototype으로 원본을 되돌린다",
+        "install.sh에 --project-type early를 붙인다",
+        "docs/prokit/intake.md와 docs/first-request.md를 만든다",
+        "새 세션에서 prokit-analyzer 정밀 분석부터 이어 간다고 안내한다"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "early-consent-no",
+      "prompt": "{work}/early-flower 프로젝트에 프로킷 적용해줘. 기획서랑 시안만 있는 상태야.\n\n(이어진 대화) 에이전트가 묻는 질문에 사용자는 추천대로 답했지만, 동의 질문에는 '지금은 하지 않음'이라고 답했다.",
+      "expected_output": "초기 분석과 맞춤 제안까지 하고, 동의를 거절하자 아무것도 바꾸지 않고 초기 분석 요약과 고른 설정만 보고한 뒤 끝낸다. 브랜치·파일 생성·설치 명령을 실행 계획에 넣지 않는다.",
+      "files": [
+        "files/fixtures/early-flower"
+      ],
+      "expectations": [
+        "유형을 early로 본다",
+        "동의 질문을 한다",
+        "거절 뒤 브랜치, git mv, Better-T-Stack 생성, install.sh를 실행하지 않는다",
+        "초기 분석 요약과 고른 설정을 보고한다",
+        "나중에 같은 요청으로 다시 시작하면 된다고 알린다"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "operating-plain-next-adopt",
+      "prompt": "우리 회사 쇼핑몰은 Next.js로 만들어서 운영 중이야({work}/shop-next). 여기에 프로킷을 도입하고 싶어. 두뇌는 알아서 추천해줘.\n\n(이어진 대화) 에이전트가 묻는 질문에 사용자는 모두 추천대로 답했고, 동의 질문에는 '시작'이라고 답했다.",
+      "expected_output": "유형 operating. 초기 분석으로 Next.js이지만 Better-T-Stack 구조가 아님(Prisma, next-auth, app/ 단일 앱)을 알아내 하네스 먼저(--adopt)를 제안한다. operating 동의 문구(정밀 분석부터, 앱 코드는 바꾸지 않음)로 묻고, 안전 점검, prokit/setup 브랜치, install.sh --adopt --default-branch <기준 브랜치>, intake와 first-request, 병합 여부, 새 세션 한 줄을 계획한다. 운영 중이라 변경 기록을 남기는 두뇌(openspec 등)나 none을 근거와 함께 추천한다.",
+      "files": [
+        "files/fixtures/shop-next"
+      ],
+      "expectations": [
+        "유형을 operating으로 본다",
+        "Better-T-Stack 구조가 아니라고 판단해 --adopt를 쓴다",
+        "operating 동의 질문(정밀 분석부터, 앱 코드는 바꾸지 않음)을 한다",
+        "prokit/setup 브랜치에서 적용한다",
+        "기본 브랜치 병합(추천)과 도입 브랜치에서 계속을 구분하고, 고른 쪽 브랜치를 --default-branch로 넘긴다",
+        "두뇌 추천에 초기 분석 근거를 붙인다",
+        "docs/prokit/intake.md와 docs/first-request.md를 만든다",
+        "push나 배포를 하지 않는다",
+        "대상이 git 저장소가 아니므로 지금 상태를 첫 커밋으로 남기고 시작할지 묻는다(동의 전에 git init하지 않는다)",
+        "두뇌 추천이 유형만이 아니라 요청이나 분석의 구체 신호를 근거로 든다(신호가 약하면 none)",
+        "adopt라 템플릿을 묻지 않는다"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "operating-bts",
+      "prompt": "{work}/bts-crm 은 Better-T-Stack으로 만든 사내 CRM이고 운영 중이야. 프로킷을 도입해줘.\n\n(이어진 대화) 에이전트가 묻는 질문에 사용자는 모두 추천대로 답했고, 동의 질문에는 '시작'이라고 답했다.",
+      "expected_output": "유형 operating, Better-T-Stack 구조(apps/web의 next, packages/api·auth·db, bts.jsonc)를 확인해 --adopt 없이 install.sh --project-type operating으로 설치한다. operating 동의, 안전 점검, prokit/setup 브랜치, intake·first-request, 새 세션 안내.",
+      "files": [
+        "files/fixtures/bts-crm"
+      ],
+      "expectations": [
+        "Better-T-Stack 구조를 확인한다",
+        "install.sh에 --project-type operating을 붙이고 --adopt는 붙이지 않는다",
+        "operating 동의 질문을 한다",
+        "prokit/setup 브랜치에서 적용한다",
+        "docs/prokit/intake.md를 만든다",
+        "대상이 git 저장소가 아니므로 지금 상태를 첫 커밋으로 남기고 시작할지 묻는다(동의 전에 git init하지 않는다)"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "migration-php",
+      "prompt": "{work}/legacy-php 의 Laravel(PHP) 예약 서비스를 Next.js로 옮기고 싶어. 지금 서비스는 계속 운영해야 해.\n\n(이어진 대화) 에이전트가 묻는 질문에 사용자는 모두 추천대로 답했고(새 프로젝트 이름은 booking-next), 동의 질문에는 '시작'이라고 답했다.",
+      "expected_output": "유형 migration. 초기 분석으로 Laravel 11, 마이그레이션, 배포 스크립트를 확인한다. 새 폴더(../booking-next)에 Better-T-Stack을 만들고 install.sh --project-type migration --legacy <기존 경로>로 설치하며 기존 코드·배포는 건드리지 않는다. migration 동의 문구로 묻고, 큰 전환이라 spec-kit이나 openspec 같은 스펙 주도 두뇌를 근거와 함께 추천할 수 있다. intake·first-request(정밀 분석 → 단계 전환 계획 → Task별 진행), 새 세션 안내.",
+      "files": [
+        "files/fixtures/legacy-php"
+      ],
+      "expectations": [
+        "유형을 migration으로 본다",
+        "새 폴더에 만들고 기존 코드와 배포를 건드리지 않는다",
+        "install.sh에 --project-type migration과 --legacy <기존 코드 경로>를 붙인다",
+        "migration 동의 질문(정밀 분석부터)을 한다",
+        "first-request에 정밀 분석과 단계 전환 계획, Task별 진행이 들어간다",
+        "기존 서비스를 켜 둔 채 옮기는 병행 운영을 언급한다"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "type-mismatch-php-as-operating",
+      "prompt": "운영 중인 Next.js 프로젝트({work}/legacy-php)에 프로킷 적용해줘.",
+      "expected_output": "사용자는 operating이라고 했지만 초기 분석에서 next 의존성이 없고 Laravel(PHP)임을 찾아, 적용하기 전에 근거와 함께 migration을 권하고 유형을 다시 묻는다. 그 전에는 아무것도 쓰지 않는다.",
+      "files": [
+        "files/fixtures/legacy-php"
+      ],
+      "expectations": [
+        "초기 분석으로 Next.js가 아님(PHP/Laravel)을 찾는다",
+        "migration을 근거와 함께 권하고 다시 묻는다",
+        "답을 받기 전에 설치나 파일 쓰기를 하지 않는다"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "multi-brain-openspec-superpowers",
+      "prompt": "neon으로 ../ledger 만들어줘. PRD: 소규모 가게 사장님이 매출과 지출을 적고 월말 정산표를 받는 장부 서비스야. 금액 계산이 정확해야 하고 기능을 바꿀 때마다 무엇을 왜 바꾸는지 기록이 남았으면 해. 두뇌는 openspec이랑 superpowers를 같이 쓰고 싶어. 나머지는 알아서 골라줘.",
+      "expected_output": "새 프로젝트. 사용자가 두뇌 두 개를 정했으므로 다시 묻지 않고 주 두뇌를 openspec(먼저 말한 것)으로 해 --brain openspec,superpowers로 설치한다. 두 두뇌의 단계 나눔(요구·계획·구현은 openspec, 디버깅·검증은 superpowers)을 알리고, OpenSpec CLI가 전역에 설치된다고 알린다. 나머지는 추천대로.",
+      "files": [],
+      "expectations": [
+        "두뇌를 다시 묻지 않는다",
+        "--brain openspec,superpowers(주 두뇌 openspec이 앞)로 설치한다",
+        "주 두뇌와 단계 나눔을 알린다",
+        "OpenSpec CLI 전역 설치를 알린다",
+        "PRD를 docs/prd.md에 남긴다"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "multi-brain-forcing-conflict",
+      "prompt": "neon으로 ../planner 만들어줘. PRD: 팀원들이 주간 목표를 적고 진행률을 공유하는 서비스야. 두뇌는 superpowers랑 oh-my 둘 다 넣어줘.",
+      "expected_output": "superpowers와 oh-my는 둘 다 진행 순서를 강제하는 두뇌라 함께 쓰면 지시가 서로 덮어쓴다고 알리고, 하나만 남기도록(또는 강제하지 않는 두뇌와 조합하도록) 다시 묻는다. 답을 받기 전에는 설치하지 않는다.",
+      "files": [],
+      "expectations": [
+        "superpowers와 oh-my가 진행 순서를 강제하는 두뇌라 함께 쓰면 부딪힌다고 알린다",
+        "하나만 남기도록 다시 묻는다",
+        "답 전에는 --brain superpowers,oh-my로 설치하지 않는다"
       ]
     }
   ]

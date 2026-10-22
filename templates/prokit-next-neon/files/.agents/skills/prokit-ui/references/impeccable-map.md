@@ -7,7 +7,7 @@ impeccable은 화면마다 모드를 고른다. 앱 화면(대시보드, 목록,
 | 단계 | 명령 | 산출물 | 주의 |
 |---|---|---|---|
 | 기획 | `init` (별칭 `teach`) | `PRODUCT.md` (Platform, Stack, Users, Purpose, Positioning, Brand Commitments, Principles, Accessibility) | 프로젝트당 1회. 이미 있으면 다시 만들지 않는다 |
-| 시각 방향 | 카탈로그: `use-design-md` → new-work. 직접: new-work → 마감에서 `document` | `DESIGN.md` (토큰 frontmatter + 섹션) | 카탈로그에서 고르면 받은 파일이 시각 세계다. impeccable은 이미 있는 `DESIGN.md`를 정해진 세계로 보고 세계를 다시 고르지 않는다(new-work 2·3절). 아래 "디자인 카탈로그에서 고르기"를 따른다. 직접 정하는 새 세계는 만든 뒤 마감에서 기록한다(new-work 5절). Better-T-Stack은 기본 화면이 있으므로 seed 모드를 쓰지 않는다. 기존 화면을 넓히는 작업이면 `DESIGN.md`가 없어도 막지 않는다. 기존 `DESIGN.md`를 조용히 덮어쓰지 않는다 |
+| 시각 방향 | 카탈로그: `use-design-md` → new-work. 직접: new-work → 마감에서 `document`. 기존 디자인 유지: 아래 "기존 디자인으로 DESIGN.md 만들기" | `DESIGN.md` (토큰 frontmatter + 섹션) | 카탈로그에서 고르면 받은 파일이 시각 세계다. impeccable은 이미 있는 `DESIGN.md`를 정해진 세계로 보고 세계를 다시 고르지 않는다(new-work 2·3절). 아래 "디자인 카탈로그에서 고르기"를 따른다. 직접 정하는 새 세계는 만든 뒤 마감에서 기록한다(new-work 5절). Better-T-Stack은 기본 화면이 있으므로 seed 모드를 쓰지 않는다. 기존 화면을 넓히는 작업이면 `DESIGN.md`가 없어도 막지 않는다. 기존 `DESIGN.md`를 조용히 덮어쓰지 않는다 |
 | 설계 | `shape <기능>` | 사이트맵 `docs/briefs/site-map.md`와 확정된 브리프 `docs/briefs/<화면>.md` (코드 없음) | 사용자 확인 또는 한 번의 수정 뒤 멈춘다. 아래 "사이트맵과 상호작용"을 따른다 |
 | 시각 자산 | 서체 받기, comp-led면 `generate-image`로 comp와 plate | `apps/web/src/fonts/`, `apps/web/public/images/<화면>/`, `.impeccable/mocks/` | 아래 "시각 자산"을 따른다 |
 | 개발 | new-work, 필요 시 `layout`, `typeset`, `colorize`, `clarify`, `harden`, `onboard`, `adapt`, `animate`, 밋밋하면 `bolder` | 코드 | 편집 직전에 `reference/craft-floor.md`를 로드한다 |
@@ -55,9 +55,20 @@ Claude Code에서는 `.agents/skills/impeccable/SKILL.md`를 Read로 읽고 그 
    - 저장한 뒤 아래 "DESIGN.md 검사"의 lint를 실행한다.
 5. **적용**: 첫 구현 행에서 토큰을 `packages/ui/src/styles/globals.css`의 shadcn 변수로 옮긴다(apply-guide 1~3절). 글자 크기 토큰은 새 이름(`--text-body-md`)을 만들지 않고 Tailwind 기본 이름(`--text-sm` 등)의 값을 바꾼다. `cn()`은 모르는 `text-<이름>`을 글자색으로 보고, 같은 요소의 색 클래스와 겹치면 지운다(`cn("text-body-md text-muted-foreground")` → `text-muted-foreground`). 이후 impeccable은 이 파일을 정해진 세계로 보고 shape와 구현을 이어 간다. 마감의 `document`는 파일을 덮어쓰지 않고 merge로 프로젝트가 바꾼 토큰만 더한다.
 
+## 기존 디자인으로 DESIGN.md 만들기
+기존 프로젝트(`projectType`이 `early`·`operating`·`migration`)에서 사용자가 디자인 방향을 "기존 디자인 유지"로 정했고 `DESIGN.md`가 없을 때 쓴다. 새 스타일을 고르지 않고 지금 있는 디자인을 [DESIGN.md 명세](https://github.com/google-labs-code/design.md) 형식으로 옮긴다.
+1. **근거 모으기**: 운영 화면 코드(전역 CSS 변수, Tailwind 설정이나 `@theme`, 테마 파일, 컴포넌트 라이브러리), 디자인 시스템 문서(예: `docs/design-system.md`), 프로토타입(`prototype/`), 정밀 분석의 "디자인 자산" 절을 읽는다. migration은 `.dev-cycle.json`의 `legacy.path`(기존 서비스의 CSS, 테마, 템플릿)에서 모은다. 이 폴더의 화면은 Better-T-Stack 기본 화면이라 근거가 아니다. 토큰마다 어느 파일에서 왔는지 적어 둔다.
+2. **만들기**: 이 프로젝트에 실제 운영 화면 코드가 있으면(operating) impeccable `document`로 지금 화면에서 만들고, 아래 형식과 다르면 맞춘다. 이 프로젝트의 화면이 Better-T-Stack 기본 화면뿐이면(early, migration) 1번 근거 파일의 값으로 직접 쓴다.
+   - frontmatter 토큰: `name`, `colors`, `typography`, `rounded`, `spacing`, `components`(있는 것만)
+   - 본문 절 순서: `## Overview`, `## Colors`, `## Typography`, `## Layout`, `## Elevation & Depth`, `## Shapes`, `## Components`, `## Do's and Don'ts`(근거가 없는 절은 빼고 `omitted`에 적는다)
+   - 근거에 없는 값은 지어내지 않는다. 화면에서 실제로 쓰는 값만 옮기고, 쓰지 않는 문서 값은 "Do's and Don'ts"에 메모한다.
+3. **검사**: 아래 "DESIGN.md 검사"의 lint를 실행한다.
+4. **확인**: 색, 서체, 간격·반경, 주요 컴포넌트 요약과 토큰별 출처를 보여 주고 사용자 확인을 받는다.
+5. **적용**: early와 migration은 첫 구현 행에서 토큰을 `packages/ui/src/styles/globals.css`의 shadcn 변수로 옮긴다("디자인 카탈로그에서 고르기" 5번과 같다). operating(adopt)은 기존 토큰 파일이 정본이라 코드를 바꾸지 않고, `DESIGN.md`는 그 기록이다. 이후 impeccable은 이 파일을 정해진 세계로 보고 shape와 구현을 이어 간다.
+
 ## 리디자인
 시각 세계를 바꾸는 요청이다. impeccable은 리디자인에서 제품 사실, 문구, 기능은 지키고 옛 모양은 반례로 본다("Redesign replaces").
-1. **지금 화면 진단**: 개발 서버에서 데스크톱(1440×900)과 모바일(390×844) 스크린샷을 찍고 `critique`한다. 스크린샷은 `tasks/evidence/<화면>/before-*.png`에 둔다.
+1. **지금 화면 진단**: 개발 서버에서 데스크톱(1440×900)과 모바일(390×844) 스크린샷을 찍고 `critique`한다. 스크린샷은 `tasks/evidence/<화면>/before-*.png`에 둔다. 개발 서버를 띄울 수 없으면(의존성 미설치 등) 그 이유를 사용자에게 알리고 스타일 고르기를 먼저 해도 되지만, 진단은 브리프 확정 전에 끝낸다. "버릴 것"은 진단 결과로 쓴다.
 2. **새 세계 고르기**: 위 "디자인 카탈로그에서 고르기"로 1~3위를 낸다. 옛 모양과 같은 계열만 내지 않는다.
 3. **브리프**: `shape`의 브리프에 "버릴 것"(critique 약점, 옛 모양의 특징)과 "지킬 것"(제품 사실, 문구, 기능, 접근성)을 적고, 아래 "시각 자산" 계획을 더한다.
 4. **구현과 확인**: 시각 자산을 준비하고 구현한 뒤 critique, polish, 재확인을 한다. 보고에는 전후 스크린샷을 나란히 두고 critique 점수 변화를 적는다. 카탈로그에서 새로 받은 `DESIGN.md`는 옛 파일을 대신한다.

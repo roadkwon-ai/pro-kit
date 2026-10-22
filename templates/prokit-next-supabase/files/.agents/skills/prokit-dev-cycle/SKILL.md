@@ -16,9 +16,10 @@ description: >-
 
 ## 0. 시작
 1. `pnpm dev-cycle status`로 진행 중인 라운드가 있는지 본다. 있으면 그 라운드를 이어서 진행한다. 없으면 status가 외부 스킬의 새 버전도 확인한다(원격은 하루에 한 번). `UPDATE_AVAILABLE`, `UPSTREAM_GONE`, `CHECK_FAILED` 줄이 붙어 나오면 라운드를 열기 전에 `prokit-skills-update`의 1절을 따른다.
-2. `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`, `tasks/lessons.md`(있으면)를 읽는다. `.dev-cycle.json`의 `brain`·`simplicity`로 이 프로젝트의 두뇌와 과설계 방지 스킬을 확인한다(키가 없으면 `none`). 진행 방법은 [references/process-routing.md](references/process-routing.md)의 기본 칸과 고른 두뇌의 [두뇌 파일](references/brains)(`<이름>.md`, 고르는 기준은 `README.md`), 설치된 추가 스킬(`pnpm skills:check`의 `mattpocock 추가` 줄)을 따른다.
+2. `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`, `tasks/lessons.md`(있으면)를 읽는다. `.dev-cycle.json`의 `brain`·`simplicity`로 이 프로젝트의 두뇌와 과설계 방지 스킬을 확인한다(키가 없으면 `none`. `brain`이 배열이면 두뇌가 여럿이고 첫 값이 주 두뇌다). 진행 방법은 [references/process-routing.md](references/process-routing.md)의 기본 칸과 고른 두뇌의 [두뇌 파일](references/brains)(`<이름>.md`, 고르는 기준과 두뇌가 여럿일 때의 단계 표는 `README.md`), 설치된 추가 스킬(`pnpm skills:check`의 `mattpocock 추가` 줄)을 따른다. 구성을 바꾸는 요청은 `prokit-skills-manage`를 따른다.
 3. 요청을 한 문장으로 다시 쓰고, 결과를 바꾸는 모호함이 있으면 구현 전에 묻는다.
-4. 수행자를 배정하기 전에 `pnpm dev-cycle resource check`로 현재 루트를 확인한다. 설치·새 Node 또는 Python 환경·수동 검증은 선택한 수행자가 `pnpm dev-cycle resource run --kind <install|pythonVenv|verify> -- <명령>`으로 실행한다. 새 무거운 작업에서 측정이 unknown이거나 차단되면 `blocked`다. dev·build·export의 기존 보호 경로는 다시 감싸지 않는다. 활성 환경은 크기만으로 지우지 않으며, 관리 임시는 실제 handle·전후 측정·결과 참조가 확인될 때만 정리한다.
+4. 진행 계획(`tasks/plan.md`)이 있으면 `status`가 다음 Task를 함께 보여 준다. 진행 계획의 일은 6절을 따른다. 기존 프로젝트(`.dev-cycle.json`의 `projectType`이 `early`·`operating`·`migration`)인데 `docs/prokit/analysis.md`가 없으면 정밀 분석부터 한다(6절).
+5. 수행자를 배정하기 전에 `pnpm dev-cycle resource check`로 현재 루트를 확인한다. 설치·새 Node 또는 Python 환경·수동 검증은 선택한 수행자가 `pnpm dev-cycle resource run --kind <install|pythonVenv|verify> -- <명령>`으로 실행한다. 명령 인자는 출력과 증거에 남으므로 비밀값(비밀번호, 토큰)은 인자로 넘기지 않고 환경 변수나 git이 무시하는 파일로 넘긴다. 새 무거운 작업에서 측정이 unknown이거나 차단되면 `blocked`다. dev·build·export의 기존 보호 경로는 다시 감싸지 않는다. 활성 환경은 크기만으로 지우지 않으며, 관리 임시는 실제 handle·전후 측정·결과 참조가 확인될 때만 정리한다.
 
 ## 1. 케이스 판정
 `pnpm dev-cycle case`는 현재 diff로 판정한다. 아직 파일을 바꾸지 않았다면 요청을 보고 고른다.
@@ -31,7 +32,7 @@ description: >-
 | D | 서버와 API (`packages/api`, `apps/web/src/app/api`) |
 | E | DB 스키마와 마이그레이션 (`packages/db`) |
 | F | 두 계층 이상에 걸친 신규 기능, 또는 새 기능으로 선언한 작업 |
-| H | 스킬, 에이전트, dev-cycle 자체 변경 |
+| H | 스킬, 에이전트, dev-cycle 자체 변경. 빌드·배포 설정(`next.config.*`, `vercel.json`, `turbo.json`, `.github/workflows/`)과 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`, `packages/config`)도 H다 |
 
 - 새 기능 요청은 F, 버그 제보는 C로 선언한다. 애매하면 더 무거운 케이스를 고른다.
 - 고치거나 만들어 달라는 요청이면, 이번에는 원인 분석이나 스펙·계획까지만 하라고 해도 라운드를 연다. 분석 결과와 재현 계획은 블록 안 메모나 `tasks/evidence/`에 남기고, 행의 증거 칸은 그 행을 실제로 끝냈을 때만 채운다. 다음 세션이 `pnpm dev-cycle status`로 이어받는다. 코드를 바꾸지 않는 질문이나 설명 요청에만 라운드를 열지 않는다.
@@ -69,6 +70,7 @@ pnpm dev-cycle table <케이스> --write --title "<요청 요약>"
 - 구현을 위임할 때는 `prokit-implementer`에 정확한 파일 목록, 선택한 전문 스킬의 검증 결과, 재사용·설정 결정 위치, 완료 조건을 준다. 병렬로 위임할 때는 파일이 겹치지 않게 나눈다. `AGENTS.md`, `.dev-cycle.json`, `package.json`, 루트 설정은 메인이 맡는다. 메인이 파일을 명시해 배정한 경우만 수행자가 그 루트 설정을 고칠 수 있다.
 - 위임한 쪽의 보고만 믿지 않는다. 수행자·리뷰어·QA를 부르기 전과 끝난 뒤 `pnpm dev-cycle delegation capture`·`diff`로 작업 트리를 대조하고, 배정 밖 변경이나 커밋이 나오면(exit 1) 그 결과를 통합하지 않고 재지시한다. 명령과 병렬 위임의 대조 방법은 위임 프로토콜의 "관측과 수행 범위"를 따른다.
 - impeccable `critique`처럼 서브에이전트를 스스로 띄우는 스킬은 메인 세션에서 실행한다.
+- 정밀 분석은 읽기 전용 `prokit-analyzer`에 맡긴다. 도입 기록, 유형, 기존 코드 경로, 초점을 주고 돌려받은 보고서를 메인이 `docs/prokit/analysis.md`에 쓴다(6절).
 
 ## 5. 종료
 라운드는 사용자 확인 → audit·close → 커밋·push → (사용자가 고르면) 릴리스와 production 배포 순서로 마무리한다. `[confirm]`과 audit은 건너뛰지 않는다.
@@ -77,11 +79,19 @@ pnpm dev-cycle table <케이스> --write --title "<요청 요약>"
 2. 고른 두뇌의 검증 스킬(superpowers `verification-before-completion` 등)을 불러(두뇌가 없거나 검증 스킬이 없으면 `prokit-verify` 원칙만) `pnpm dev-cycle audit`으로 남은 문제가 표 끝의 `[confirm]` 행뿐인지 본다. 다른 행이 남았거나 케이스 상향이 나오면 먼저 끝낸다. 사용자가 확인할 것은 마지막 결과다.
 3. **사용자 확인** (`[confirm]` 행): 결과를 보여 주고(화면이면 주소와 스크린샷, 기능이면 써 볼 순서) 사용자의 답을 기다린다. 화면이 있으면 개발 서버를 백그라운드로 띄워 주소가 응답하는지 확인한 뒤 요청하고, 사용자가 답할 때까지 끄지 않는다. 테스트 순서(F는 스펙의 테스트 시나리오)와 알려진 문제(남은 오류, 미룬 지적)를 함께 준다. 사용자가 직접 보거나 써 보고 확인하면 확인한 내용과 날짜를 적는다. 고칠 것이 나오면 고치고 해당 행을 다시 채운 뒤 다시 확인받는다. 이 행은 N/A·PASS·blocked·미실행·대기로 채울 수 없다(audit이 거부하고 `close --partial`로도 닫히지 않는다). 에이전트가 스스로 넘기지 않는다. 사용자가 결과를 보지 않고 닫자고 하면 그 말과 날짜를 그대로 적는다(예: `사용자: 확인 없이 닫는다(2026-10-01)`).
 4. `pnpm dev-cycle audit`이 통과해야 한다. 실패 항목이 남아 있으면 완료라고 말하지 않는다. audit은 `blocked: 사유`와 `미실행: 사유`를 채운 칸으로 본다. 아직 하지 않은 작업을 그렇게 적어 audit을 넘기지 않는다(`blocked`·`미실행`의 뜻은 `prokit-verify` 원칙을 따른다). 그런 행이 있으면 "부분 완료(blocked N건, 미실행 M건)"로 보고하고, 사용자가 그대로 닫자고 할 때만 `pnpm dev-cycle close --partial`로 닫는다.
-5. **마무리 선택**: 먼저 배포할 수 있는지 본다. `pnpm vercel:deploy production --check`는 아래 조건과 상관없이 항상 실행한다(push해도 되는지가 여기서 정해진다). 기본 브랜치에 있고, GitHub `origin`이 있고, `gh auth status`가 통과하고, `pnpm vercel:deploy production --check`에서 커밋하지 않은 변경과 릴리스 말고는 모두 통과해야 한다(Vercel 연결 포함). 하나라도 안 되면 묻지 않고 커밋·push까지만 하고, 대조표 블록 안(표 아래)에 `배포 PASS: 준비 안 됨(<항목>)`을 적는다. 모두 되면 한 번 묻는다(Claude Code는 AskUserQuestion). 선택지는 "릴리스하고 production 배포 (기본)"와 "커밋·push만 (배포 PASS)"다. PASS면 `배포 PASS: 사용자 선택`을 적는다. 릴리스하지 않은 변경은 다음 릴리스에 함께 담긴다.
+5. **마무리 선택**: `.dev-cycle.json`의 `adopt`가 true면(하네스만 설치한 기존 프로젝트) 이 프로젝트에 배포 스크립트가 없으므로 배포 확인과 릴리스를 하지 않는다. 묻지 않고 커밋까지 하고 push는 사용자가 요청할 때만 하며, 대조표 블록 안에 `배포 PASS: adopt(기존 배포 절차)`를 적는다. `projectType`이 `operating`인 Better-T-Stack 프로젝트도 기본 브랜치 push가 기존 CI·배포를 부를 수 있으므로, 정밀 분석 뒤 H Task에서 배포 방법을 `prokit-deploy`에 맞췄다고 `docs/adr/`에 기록하기 전까지는 같게 한다(`배포 PASS: 운영 중(기존 배포 절차)`). 그 밖에는 먼저 배포할 수 있는지 본다. `pnpm vercel:deploy production --check`는 아래 조건과 상관없이 항상 실행한다(push해도 되는지가 여기서 정해진다). 기본 브랜치에 있고, GitHub `origin`이 있고, `gh auth status`가 통과하고, `pnpm vercel:deploy production --check`에서 커밋하지 않은 변경과 릴리스 말고는 모두 통과해야 한다(Vercel 연결 포함). 하나라도 안 되면 묻지 않고 커밋·push까지만 하고, 대조표 블록 안(표 아래)에 `배포 PASS: 준비 안 됨(<항목>)`을 적는다. 모두 되면 한 번 묻는다(Claude Code는 AskUserQuestion). 선택지는 "릴리스하고 production 배포 (기본)"와 "커밋·push만 (배포 PASS)"다. PASS면 `배포 PASS: 사용자 선택`을 적는다. 릴리스하지 않은 변경은 다음 릴리스에 함께 담긴다.
    - `production --check` 출력에 `Git 자동 배포`가 있거나(Vercel 프로젝트의 Git 연결이 push마다 배포를 만든다. 이 기기에서 확인하지 못한 경우 포함) `docs/adr/`에 자동 배포를 켠 기록(`prokit-deploy` 되돌리기 절)이 있으면, 기본 브랜치 push가 곧 production 배포라 검사와 "DB 먼저"를 건너뛴다. 준비 안 됨으로 보고 묻지 않는다. 커밋만 하고 push하지 않으며 `배포 PASS: 준비 안 됨(Git 자동 배포)`을 적는다. 스크립트가 알려 준 대로 연결을 끊거나(`vercel git disconnect --yes`), 이 기기에서 Vercel 연결과 로그인을 해 확인할 수 있게 한 뒤 push하라고 안내한다.
 6. 닫기 전에 이 라운드에서 미룬 지적(보류·후속)을 `tasks/todo.md`의 dev-cycle 블록 밖 백로그에 한 줄씩 옮긴다. 닫은 대조표에만 남은 지적은 다시 찾지 않는다. 재발 가능 원인이 확인됐으면 `tasks/lessons.md`, 정본 규칙·eval, 백로그 중 해당 위치에 반영했는지도 확인한다. 그다음 이 라운드의 파일 목록을 적어 둔다: `git diff --name-only <대조표 마커의 base>`와 `git ls-files --others --exclude-standard`. 이어서 `pnpm dev-cycle close`로 대조표와 완료한 일반 할 일·백로그를 함께 보관한다. audit과 실제 사용자 확인 규칙을 모두 지킨 뒤에만 닫을 수 있다. 파일 이름은 KST 날짜와 정규화한 라운드 제목으로 만든 `YYYY-MM-DD-제목.md`이며, 같은 이름이 있으면 `-2`, `-3`을 붙여 기존 기록을 보존한다. 기존 월별 기록은 바꾸지 않는다.
-7. **커밋·push**: 6번 목록 가운데 이 라운드에서 바꾼 파일과 `tasks/`만 스테이징해 커밋한다. 커밋 전에 `pnpm dev-cycle secrets`를 실행한다. exit 1이면 커밋·push하지 않는다. 걸린 값을 지우거나 그 파일을 스테이징에서 빼고, 다시 실행해 통과하면 커밋한다. 걸린 파일과 변수 이름만 보고한다(값은 옮겨 적지 않는다). exit 2는 검사를 실행하지 못한 것이다(비밀값 발견 아님). 커밋하지 말고 출력을 보고한다. 라운드와 관계없는 변경은 커밋하지 않고 보고한다. 제목은 Conventional Commits 접두어(`feat:`, `fix:`, `docs:` …)로, 변경 요약은 본문 `- ` 항목으로 쓴다. 릴리스 노트의 절이 여기서 정해지고, 제목에 느낌표를 붙이면(`feat!:`) 깨지는 변경으로 버전을 올린다. 이어서 push한다(5번에서 `Git 자동 배포`가 나왔으면 하지 않는다). `origin`이 없으면 커밋만 한다.
+7. **커밋·push**: 6번 목록 가운데 이 라운드에서 바꾼 파일과 `tasks/`만 스테이징해 커밋한다. 커밋 전에 `pnpm dev-cycle secrets`를 실행한다. exit 1이면 커밋·push하지 않는다. 걸린 값을 지우거나 그 파일을 스테이징에서 빼고, 다시 실행해 통과하면 커밋한다. 걸린 파일과 변수 이름만 보고한다(값은 옮겨 적지 않는다). exit 2는 검사를 실행하지 못한 것이다(비밀값 발견 아님). 커밋하지 말고 출력을 보고한다. 라운드와 관계없는 변경은 커밋하지 않고 보고한다. 제목은 Conventional Commits 접두어(`feat:`, `fix:`, `docs:` …)로, 변경 요약은 본문 `- ` 항목으로 쓴다. 릴리스 노트의 절이 여기서 정해지고, 제목에 느낌표를 붙이면(`feat!:`) 깨지는 변경으로 버전을 올린다. 이어서 push한다(5번에서 `Git 자동 배포`가 나왔거나, adopt나 운영 중이라 `배포 PASS: adopt(기존 배포 절차)`·`배포 PASS: 운영 중(기존 배포 절차)`를 적었으면 하지 않는다. 그때 push는 사용자가 요청할 때만 한다). `origin`이 없으면 커밋만 한다.
 8. **릴리스와 production 배포** (고른 경우만): `prokit-deploy`의 "배포 순서"를 따른다. `--check`에서 릴리스 항목만 남으면 "릴리스" 절(노트 작성 → 검수 → 버전과 노트를 보여 주고 발행 동의 → `--publish`)로 릴리스하고 다시 `--check`한다. 운영 DB에 적용할 마이그레이션은 목록을 보여 주고 따로 동의를 받는다. 배포한 뒤 `/api/auth/get-session`을 확인한다.
-9. 사용자에게 결과, 실행한 검사, 실행하지 못한 검사와 이유, 커밋과 push, 릴리스와 배포 결과(또는 배포 PASS와 이유)를 보고한다.
+9. 사용자에게 결과, 실행한 검사, 실행하지 못한 검사와 이유, 커밋과 push, 릴리스와 배포 결과(또는 배포 PASS와 이유)를 보고한다. 이 라운드에서 띄운 로컬 DB·개발 서버가 남아 있으면 주소와 중지 명령(`prokit-db`의 `references/migration-flow.md` "로컬 DB")도 알린다.
 
 라운드 끝이 아닐 때 커밋, push, 릴리스, 배포는 사용자가 요청할 때만 한다.
+
+## 6. 진행 계획과 Task
+여러 라운드에 걸친 일(기존 프로젝트 도입, 전환, 큰 기능 묶음)은 진행 계획을 세워 Task로 나눈다. 절차의 정본은 [references/project-plan.md](references/project-plan.md), 정밀 분석 점검표는 [references/analysis.md](references/analysis.md)다.
+1. 진행 계획 라운드를 `pnpm dev-cycle table A --write --title "<요약>" --plan`으로 연다. 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 계획 리뷰 행이 붙는다. 계획을 고칠 때도 이 명령으로 연다.
+2. 기존 프로젝트면 `prokit-analyzer`로 정밀 분석을 하고 `docs/prokit/analysis.md`에 쓴다.
+3. 주 두뇌(없으면 기본 AI)가 진행 계획 문서(`docs/plans/`)와 Task 표(`tasks/plan.md`)를 쓰고, `prokit-reviewer(plan)` 리뷰와 사용자 확인을 받는다.
+4. Task마다 `pnpm dev-cycle table <케이스> --write --title "T<n> <요약>" --task T<n>`으로 연다. 맨 앞의 Task 세부 계획 행과 계획 리뷰 행(F는 케이스의 계획 리뷰 행)을 먼저 끝낸 뒤 구현·검수·테스트·보완을 한다. 앞 Task가 끝나지 않으면 다음 Task는 열리지 않는다.
+5. `close`가 Task를 `완료`로 기록한다. `pnpm dev-cycle plan`으로 상태와 문제를 본다.

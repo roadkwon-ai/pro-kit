@@ -1,0 +1,8 @@
+{
+  ".dev-cycle.json": "{ \"projectType\": \"early\", \"brain\": \"none\", \"simplicity\": \"none\" }",
+  "PRODUCT.md": "# Product\n\n지역 테니스 코트 예약 서비스. 주 사용자는 동호회 총무, 모바일 위주.",
+  "docs/prokit/intake.md": "# 도입 기록\n\n- 유형: early. PRD만 있다\n\n## 디자인 방향\n(첫 화면 작업에서 prokit-ui가 묻고 적는다)\n",
+  "docs/prd.md": "# PRD\n\n코트 목록, 시간대 예약, 내 예약 화면.",
+  "docs/prokit/analysis.md": "# 정밀 분석\n\n## 6. 디자인 자산과 DESIGN.md 근거\n- 디자인 시스템 문서, 토큰, 프로토타입 없음. 화면은 Better-T-Stack 기본 화면뿐이다.",
+  "apps/web/src/app/page.tsx": "// Better-T-Stack 기본 화면"
+}

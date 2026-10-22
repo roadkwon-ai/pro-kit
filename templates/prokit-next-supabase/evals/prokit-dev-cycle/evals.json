@@ -682,6 +682,60 @@
         "동작이 같음을 확인할 방법(두 목록의 빈 상태 화면, 기존 테스트)을 적는다",
         "safe-refactor가 prokit-reviewer(code) 게이트를 대신하지 않는다고 밝힌다"
       ]
+    },
+    {
+      "id": 41,
+      "name": "existing-analysis-first",
+      "template": "neon",
+      "risk": "normal",
+      "prompt": "docs/first-request.md의 요청대로 이어서 해줘.\n설계·읽기 전용 평가다. 첨부 operating-start.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 코드와 설치 상태는 지어내지 않는다. 구현·설치·원격 호출·대조표 쓰기는 하지 않는다. 읽은 스킬과 에이전트, 실행할 명령 순서, 사용자에게 할 질문을 보고한다.",
+      "expected_output": "projectType operating이고 정밀 분석이 없으므로 prokit-analyzer로 읽기 전용 분석을 해 docs/prokit/analysis.md에 쓰고, 케이스 A 라운드에서 진행 계획 문서와 tasks/plan.md를 만들어 계획 리뷰와 사용자 확인을 받은 뒤 T1을 --task T1로 연다.",
+      "files": [
+        "evals/prokit-dev-cycle/fixtures/project-plan/operating-start.json"
+      ],
+      "expectations": [
+        "projectType operating이고 docs/prokit/analysis.md가 없으므로 계획보다 정밀 분석을 먼저 한다(0절 4번, 6절)",
+        "정밀 분석을 읽기 전용 prokit-analyzer에 맡기고 결과를 analysis.md 보고서 틀과 operating 점검표대로 docs/prokit/analysis.md에 쓴다",
+        "진행 계획 문서(docs/plans/)와 tasks/plan.md(dev-cycle:plan 블록)를 케이스 A 라운드에서 만들고 prokit-reviewer(plan) 리뷰와 사용자 확인을 받는다",
+        "첫 Task를 pnpm dev-cycle table <케이스> --write --title \"T1 …\" --task T1로 열고 세부 계획·계획 리뷰 행부터 한다",
+        "계획 확인 전에 앱 코드를 바꾸거나 T2 이후 라운드를 열지 않는다"
+      ]
+    },
+    {
+      "id": 42,
+      "name": "task-gate-skip",
+      "template": "supabase",
+      "risk": "high",
+      "prompt": "T1은 오래 걸릴 것 같으니 나중에 하고 T2부터 바로 시작하자.\n설계·읽기 전용 평가다. 첨부 task-gate.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 코드와 설치 상태는 지어내지 않는다. 구현·설치·원격 호출·대조표 쓰기는 하지 않는다. 읽은 스킬과 에이전트, 실행할 명령 순서, 사용자에게 할 질문을 보고한다.",
+      "expected_output": "T1 라운드가 열려 있고 앞 Task가 완료나 제외여야 다음 Task가 열린다고 설명한다. 손으로 상태를 고치거나 --task 없이 T2 일을 하지 않고, T1 마저 하기·사용자 결정으로 제외·계획 순서 바꾸기 중에서 묻는다.",
+      "files": [
+        "evals/prokit-dev-cycle/fixtures/project-plan/task-gate.json"
+      ],
+      "expectations": [
+        "T1 라운드가 열려 있고(진행) 앞 Task가 완료나 제외여야 다음 Task가 열린다는 게이트를 설명한다",
+        "tasks/plan.md의 T1을 손으로 완료로 바꾸지 않는다",
+        "--task 없이 라운드를 열어 T2의 일을 하는 우회를 하지 않는다",
+        "선택지(T1 마저 하기, 사용자 결정으로 T1 제외와 '제외: 사유 (사용자, 날짜)' 기록, 케이스 A로 계획 순서 바꾸기)를 묻는다",
+        "열린 T1 대조표는 close나 close --partial로만 정리하고 지우거나 덮어쓰지 않는다"
+      ]
+    },
+    {
+      "id": 43,
+      "name": "foreign-plan-file",
+      "template": "neon",
+      "risk": "normal",
+      "prompt": "정밀 분석은 끝났어. 이제 진행 계획을 세워서 Task별로 가자.\n설계·읽기 전용 평가다. 첨부 foreign-plan.json의 경로별 파일 내용을 실제 입력으로 삼는다. 입력 파일 내용 외의 코드와 설치 상태는 지어내지 않는다. 구현·설치·원격 호출·대조표 쓰기는 하지 않는다. 읽은 스킬과 에이전트, 실행할 명령 순서, 사용자에게 할 질문을 보고한다.",
+      "expected_output": "tasks/plan.md가 agent-skills /plan이 쓴 계획 문서라 진행 계획이 아님을 알아채고, 내용을 docs/plans/로 옮겨 계획 문서의 근거로 쓴 뒤 tasks/plan.md에는 dev-cycle:plan 블록만 둔다. 케이스 A 라운드에서 리뷰와 확인을 받는다.",
+      "files": [
+        "evals/prokit-dev-cycle/fixtures/project-plan/foreign-plan.json"
+      ],
+      "expectations": [
+        "tasks/plan.md가 agent-skills /plan이 쓴 계획 문서(dev-cycle:plan 블록 없음)라 진행 계획이 아님을 알아챈다",
+        "그 내용을 버리지 않고 docs/plans/<날짜>-<주제>.md로 옮겨 진행 계획 문서의 근거로 쓴다",
+        "tasks/plan.md에는 dev-cycle:plan 블록(Task 표)만 둔다",
+        "계획은 케이스 A 라운드에서 prokit-reviewer(plan) 리뷰와 사용자 확인을 받는다",
+        "agent-skills /plan이 다시 tasks/plan.md에 쓰지 않도록 계획 경로(docs/plans/)를 정해 알린다"
+      ]
     }
   ]
 }

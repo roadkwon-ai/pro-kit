@@ -1,0 +1,9 @@
+{
+  ".dev-cycle.json": "{ \"projectType\": \"migration\", \"brain\": \"none\", \"simplicity\": \"none\", \"legacy\": { \"path\": \"../legacy-php\" } }",
+  "PRODUCT.md": "# Product\n\n병원 진료 예약. 기존 PHP 서비스를 Next.js로 옮긴다.",
+  "docs/prokit/intake.md": "# 도입 기록\n\n- 유형: migration\n\n## 디자인 방향\n(첫 화면 작업에서 prokit-ui가 묻고 적는다)\n",
+  "../legacy-php/public/css/app.css": ":root { --brand: #1d4ed8; --bg: #f8fafc; --ink: #0f172a; --radius: 6px; } body { font-family: 'Noto Sans KR', sans-serif; }",
+  "../legacy-php/resources/views/booking.blade.php": "<div class=\"card\" style=\"border-radius: var(--radius)\">예약</div>",
+  "packages/ui/src/styles/globals.css": ":root { --primary: oklch(0.205 0 0); --radius: 0.625rem; } /* Better-T-Stack 기본 shadcn 토큰 */",
+  "apps/web/src/app/page.tsx": "// Better-T-Stack 기본 화면"
+}

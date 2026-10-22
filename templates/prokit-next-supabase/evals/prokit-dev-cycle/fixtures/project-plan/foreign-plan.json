@@ -1,0 +1,6 @@
+{
+  ".dev-cycle.json": "{ \"projectType\": \"operating\", \"brain\": \"agent-skills\", \"simplicity\": \"ponytail\", \"defaultBranch\": \"main\" }",
+  "docs/prokit/analysis.md": "# 정밀 분석\n\n## 1. 요약\n- 테스트가 없다. 권하는 첫 Task: H(경로 규칙과 테스트 러너)\n\n## 8. 진행 계획 후보\nT1 하네스 맞추기, T2 고객 검색, T3 고객 메모\n",
+  "tasks/plan.md": "# Implementation Plan: 고객 관리 개선\n\n## Task List\n- [ ] Task 1: 테스트 러너 도입\n- [ ] Task 2: 고객 검색 API\n- [ ] Task 3: 고객 메모\n",
+  "tasks/evidence/dev-cycle-status.txt": "활성 라운드 없음 — pnpm dev-cycle case로 판정한 뒤 …\n진행 계획: tasks/plan.md에 dev-cycle:plan 블록이 없다(진행 계획이 아닌 문서로 본다)"
+}

@@ -1,0 +1,7 @@
+{
+  ".dev-cycle.json": "{ \"brain\": \"superpowers\", \"simplicity\": \"ponytail\", \"defaultBranch\": \"main\" }",
+  "tasks/evidence/skills-check.txt": "두뇌: superpowers(설치됨)\n과설계 방지: ponytail(설치됨)\nmattpocock 추가: tdd\n선택 스킬: taste(설치됨), i-have-adhd(설치 안 함), ops(설치 안 함), motion(설치 안 함), mobile(설치 안 함)",
+  "tasks/evidence/dev-cycle-status.txt": "활성 라운드 없음 — pnpm dev-cycle case로 판정한 뒤 …",
+  "docs/superpowers/plans/2026-10-20-customer-notes.md": "# 고객 메모 설계\n\n- 메모는 고객당 여러 개, 작성자와 시각을 남긴다.\n",
+  "skills.manifest.json (요약)": "{ \"brains\": [\"superpowers\", \"agent-skills\", \"pstack\", \"gstack\", \"oh-my\", \"mattpocock\", \"openspec\", \"spec-kit\", \"compound-engineering\"], \"simplicity\": [\"ponytail\", \"caveman\", \"karpathy\"], \"mattpocock.pool\": [\"tdd\", \"research\", \"triage\", \"prototype\"], \"optional\": [\"ops\", \"motion\", \"mobile\", \"i-have-adhd\", \"taste\"] }"
+}

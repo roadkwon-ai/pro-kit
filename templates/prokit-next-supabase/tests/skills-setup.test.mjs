@@ -578,6 +578,109 @@ test("바꾸기: 그 항목에서 고르지 않은 설치본을 skills-lock.json
   assert.equal(exec(["--check"]).status, 0);
 });
 
+// 프로젝트를 init하는 두뇌(openspec·spec-kit 모양). 도구 파일은 marker로 판정하고, 문서(keep)는 정리해도 남긴다.
+const INIT_BRAINS = {
+  ...SLOTS.brains,
+  sp: { ...SLOTS.brains.sp, forces: true },
+  om: { ...SLOTS.brains.om, forces: true },
+  os: {
+    description: "스펙",
+    init: {
+      run: "mkdir -p .agents/skills/os-propose specs && echo \"$OS_FLAG\" > .agents/skills/os-propose/SKILL.md && echo doc > specs/a.md",
+      env: { OS_FLAG: "on" },
+      marker: [".agents/skills/os-propose/SKILL.md"],
+      remove: "rm -rf .agents/skills/os-*",
+      keep: ["specs"],
+    },
+  },
+  cli: {
+    description: "CLI가 필요한 스펙",
+    global: [{ name: "cli 도구", check: 'test -f "$HOME/cli"', install: "false", hint: "cli 설치 안내" }],
+    init: { run: "mkdir -p cli && touch cli/m", marker: ["cli/m"], remove: "rm -rf cli" },
+  },
+};
+const initProject = () => setup({ manifest: { ...MANIFEST, ...SLOTS, brains: INIT_BRAINS }, devCycle: {} });
+
+test("두뇌 여럿: 쉼표로 고르면 배열로 기록하고 모두 설치하며, 상태 줄에 첫 값을 주 두뇌로 보인다", () => {
+  const { root, exec, calls } = initProject();
+  const r = exec(["--brain", "os,sp"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(readFileSync(join(root, ".dev-cycle.json"), "utf8"), /^\t"brain": \["os", "sp"\],$/m, "여럿이면 한 줄 배열로 쓴다");
+  assert.equal(readFileSync(join(root, ".agents/skills/os-propose/SKILL.md"), "utf8"), "on\n", "init은 매니페스트의 env로 실행한다");
+  assert.ok(existsSync(join(root, ".agents/skills/sp-a/SKILL.md")));
+  assert.ok(calls().includes("claude plugin install sp@mk --scope project"));
+  assert.match(r.stdout, /^os 프로젝트 설정: 완료$/m);
+  assert.match(r.stdout, /^두뇌: os\(주, 설치됨\), sp\(설치됨\)$/m);
+  const check = exec(["--check"]);
+  assert.equal(check.status, 0, check.stdout);
+  assert.match(check.stdout, /^두뇌: os\(주, 설치됨\), sp\(설치됨\)$/m, "배열 기록을 읽는다");
+  assert.equal(exec().stdout.includes("os 프로젝트 설정"), false, "marker가 있으면 init을 다시 실행하지 않는다");
+  rmSync(join(root, ".agents/skills/os-propose"), { recursive: true });
+  const miss = exec(["--check"]);
+  assert.equal(miss.status, 1, "고른 init 두뇌의 도구 파일이 없으면 누락이다");
+  assert.match(miss.stdout, /두뇌 os 프로젝트 파일\(\.agents\/skills\/os-propose\/SKILL\.md\)/);
+});
+
+test("두뇌 빼기: 목록에서 뺀 init 두뇌는 도구 파일만 지우고 문서는 남기며, 하나가 남으면 문자열로 기록한다", () => {
+  const { root, exec } = initProject();
+  assert.equal(exec(["--brain", "os,sp"]).status, 0);
+  const r = exec(["--brain", "sp"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.equal(existsSync(join(root, ".agents/skills/os-propose")), false);
+  assert.equal(readFileSync(join(root, "specs/a.md"), "utf8"), "doc\n", "두뇌가 만든 문서는 인계 자료로 남긴다");
+  assert.match(r.stdout, /^정리: os\(도구 파일\)$/m);
+  assert.match(r.stdout, /^남김: os의 문서 specs \(인계 자료\)$/m);
+  assert.match(readFileSync(join(root, ".dev-cycle.json"), "utf8"), /^\t"brain": "sp",$/m);
+  assert.equal(exec(["--check"]).status, 0);
+  // 고르지 않은 init 두뇌의 도구 파일이 남아 있으면 --check가 충돌로 알린다.
+  mkdirSync(join(root, ".agents/skills/os-propose"), { recursive: true });
+  writeFileSync(join(root, ".agents/skills/os-propose/SKILL.md"), "#\n");
+  const check = exec(["--check"]);
+  assert.equal(check.status, 1);
+  assert.match(check.stdout, /고르지 않은 설치본: os\(도구 파일\)/);
+});
+
+test("두뇌 여럿: none을 섞거나 빈 이름이면 exit 2, 진행 순서를 강제하는 두뇌가 둘이면 경고한다", () => {
+  const { root, exec } = initProject();
+  for (const v of ["none,sp", "sp,", ",", "sp,xx"]) {
+    const r = exec(["--brain", v]);
+    assert.equal(r.status, 2, `${v}: ${r.stdout}`);
+    assert.match(r.stderr, /사용법: --brain <이름>\[,<이름>\]/);
+  }
+  assert.equal(readFileSync(join(root, ".dev-cycle.json"), "utf8"), devCycleText({}), "잘못된 인자는 기록하지 않는다");
+  const r = exec(["--brain", "sp,om"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /^경고: 진행 순서를 강제하는 두뇌 sp, om를 함께 골랐다/m);
+  assert.doesNotMatch(exec(["--brain", "os,sp"]).stdout, /경고: 진행 순서/, "강제하는 두뇌가 하나면 경고하지 않는다");
+});
+
+test("init 두뇌: 필요한 전역 도구를 설치하지 못하면 init을 실행하지 않고 안내하며, init이 실패하면 exit 2", () => {
+  const { root, exec } = initProject();
+  const r = exec(["--brain", "cli"]);
+  assert.equal(r.status, 2, "고른 두뇌의 전역 도구 설치 실패는 실패다");
+  assert.match(r.stdout, /^cli 프로젝트 설정: cli 도구 없음 → cli 설치 안내$/m);
+  assert.equal(existsSync(join(root, "cli")), false);
+  const manifest = { ...MANIFEST, ...SLOTS, brains: { ...INIT_BRAINS, os: { ...INIT_BRAINS.os, init: { ...INIT_BRAINS.os.init, run: "exit 3" } } } };
+  writeFileSync(join(root, "skills.manifest.json"), JSON.stringify(manifest));
+  const f = exec(["--brain", "os"]);
+  assert.equal(f.status, 2);
+  assert.match(f.stdout, /^os 프로젝트 설정: 실패$/m);
+  assert.match(f.stdout, /^실패: .*os 프로젝트 설정/m);
+});
+
+test("init 두뇌 정리: remove가 성공해도 marker가 남으면 실패로 알리고, 손으로 고친 중복 기록은 한 번만 센다", () => {
+  const { root, exec } = initProject();
+  assert.equal(exec(["--brain", "os"]).status, 0);
+  const manifest = { ...MANIFEST, ...SLOTS, brains: { ...INIT_BRAINS, os: { ...INIT_BRAINS.os, init: { ...INIT_BRAINS.os.init, remove: "true" } } } };
+  writeFileSync(join(root, "skills.manifest.json"), JSON.stringify(manifest));
+  const r = exec(["--brain", "none"]);
+  assert.equal(r.status, 2, r.stdout);
+  assert.match(r.stdout, /^실패: [^\n]*정리 os \(남음: \.agents\/skills\/os-propose\/SKILL\.md\)/m);
+  writeFileSync(join(root, ".dev-cycle.json"), devCycleText({}).replace("{\n", '{\n\t"brain": ["os", "os"],\n'));
+  const check = exec(["--check"]);
+  assert.match(check.stdout, /^두뇌: os\(설치됨\)$/m, "중복은 한 번만 보이고 주 두뇌 표시도 없다");
+});
+
 test("옛 구성: 기록이 없는 프로젝트의 남은 설치본은 --check가 충돌(exit 1)로 알리고, 인자로 같은 값을 줘도 정리한다", () => {
   const settings = { enabledPlugins: { "p1@mk": true, "p2@mk": true, "sp@mk": true, "om@om": true, "pt@pt": true }, extraKnownMarketplaces: { om: { source: { source: "git", url: "https://example.com/om.git" } } } };
   const { root, exec, calls } = slotProject({ settings });
@@ -661,6 +764,45 @@ test("전역 설치본: 이 프로젝트에서 고르지 않은 user 플러그�
   assert.equal(l.enabledPlugins["sp@mk"], false, "다시 고르지 않은 것이 되면 끈다");
 });
 
+test("adopt: 하네스만 설치한 프로젝트는 Better-T-Stack 전용 스킬(stack)을 받지 않고 --check도 빠짐으로 보지 않는다", () => {
+  const manifest = { ...MANIFEST, skills: [...MANIFEST.skills, { agents: ["claude-code", "codex"], source: "org/bts", skills: ["bts-auth"], stack: true }] };
+  const { root, exec, calls } = setup({ manifest });
+  writeFileSync(join(root, ".dev-cycle.json"), '{\n\t"adopt": true,\n\t"todoPath": "tasks/todo.md"\n}\n');
+  const r = exec();
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.ok(!calls().some((l) => l.includes("org/bts")), calls().join("\n"));
+  assert.equal(existsSync(join(root, ".agents/skills/bts-auth")), false);
+  assert.equal(exec(["--check"]).status, 0);
+  writeFileSync(join(root, ".dev-cycle.json"), '{\n\t"todoPath": "tasks/todo.md"\n}\n');
+  assert.equal(exec(["--check"]).status, 1, "adopt가 아니면 stack 스킬도 기본 설치다");
+});
+
+test("--drop: 추가 스킬과 선택 묶음을 출처가 맞는 설치본만 지우고, 필수·기본 스킬과 모르는 이름은 받지 않는다", () => {
+  const manifest = { ...MANIFEST, ...SLOTS, optional: { look: { description: "보조", skills: [{ agents: ["claude-code", "codex"], source: "org/look", skills: ["look-a"] }] } } };
+  const { root, exec, calls } = setup({ manifest, devCycle: {} });
+  assert.equal(exec(["--matt", "m-a,m-b", "--optional", "look"]).status, 0);
+  // m-b는 다른 출처에서 받은 같은 이름이라 지우지 않는다.
+  const lock = readJson(join(root, "skills-lock.json"));
+  lock.skills["m-b"].source = "org/other";
+  writeFileSync(join(root, "skills-lock.json"), JSON.stringify(lock));
+  const before = calls().length;
+  const r = exec(["--drop", "m-a,m-b,look"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const c = calls().slice(before);
+  assert.ok(c.includes("npx -y skills@1.7.0 remove --skill m-a -y"), c.join("\n"));
+  assert.ok(c.includes("npx -y skills@1.7.0 remove --skill look-a -y"), c.join("\n"));
+  assert.equal(existsSync(join(root, ".agents/skills/m-a")), false);
+  assert.ok(existsSync(join(root, ".agents/skills/m-b/SKILL.md")), "출처가 다르면 지우지 않는다");
+  assert.match(r.stdout, /^제거: m-a\(스킬 m-a\), look\(스킬 look-a\)$/m);
+  assert.match(r.stdout, /^제거할 것 없음: m-b /m);
+  assert.match(r.stdout, /^mattpocock 추가: m-b /m);
+  for (const bad of ["dom-a", "nope", "m-a --matt m-a"]) {
+    const x = exec(["--drop", ...bad.split(" ")]);
+    assert.equal(x.status, 2, bad);
+  }
+  assert.match(exec(["--drop", "m-b", "--check"]).stderr, /--drop은 --check와 함께 쓰지 않는다/);
+});
+
 test("--matt: pool에서 고른 추가 스킬만 설치하고 상태 줄에 보이며, 모르는 스킬은 exit 2", () => {
   const { root, exec, calls } = slotProject();
   const r = exec(["--matt", "m-a"]);
@@ -692,6 +834,24 @@ test("모르는 두뇌·과설계 방지 이름이나 기록할 .dev-cycle.json�
   assert.match(missing.stderr, /\.dev-cycle\.json/);
   assert.deepEqual(calls(), []);
   assert.equal(existsSync(join(root, ".claude/settings.json")), false);
+});
+
+test("모르는 인자: --help는 사용법만 보이고, 오타나 값 없는 이름은 exit 2로 멈춰 기본 설치를 돌리지 않는다", () => {
+  const { root, exec, calls } = slotProject();
+  const help = exec(["--help"]);
+  assert.equal(help.status, 0, help.stderr);
+  assert.match(help.stdout, /^사용법: pnpm skills:setup \[--check\]/m);
+  const twice = exec(["--optional", "ops", "--optional", "motion"]);
+  assert.equal(twice.status, 2);
+  assert.match(twice.stderr, /--optional는 한 번만 쓰고 여러 값은 쉼표로 잇는다/);
+  for (const bad of [["--chek"], ["openspec"], ["--brain", "sp", "--force"], ["-y"]]) {
+    const r = exec(bad);
+    assert.equal(r.status, 2, bad.join(" "));
+    assert.match(r.stderr, /^모르는 인자: /m, bad.join(" "));
+  }
+  assert.deepEqual(calls(), [], "아무것도 설치하지 않는다");
+  assert.equal(existsSync(join(root, ".claude/settings.json")), false);
+  assert.equal(exec(["--", "--check"]).status === 2, false, "pnpm이 넘긴 --는 받는다");
 });
 
 test("잘못된 인자와 깨진 파일: --brain=값은 exit 2, 깨진 개인 설정은 덮어쓰지 않고 건너뛰며, 깨진 skills-lock.json은 알린다", () => {
@@ -781,9 +941,34 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
   for (const [k, o] of Object.entries(m.optional)) assert.ok(/^[a-z][a-z-]*$/.test(k) && o.description && o.skills.length, k);
   assert.deepEqual(Object.keys(m.optional), ["ops", "motion", "mobile", "i-have-adhd", "taste"]);
   // 하나만 고르는 두 항목. 기본 설치(skills, claude)에는 두뇌와 과설계 방지 스킬을 두지 않는다(기본은 none).
-  assert.deepEqual(Object.keys(m.brains), ["superpowers", "agent-skills", "pstack", "gstack", "oh-my", "mattpocock"]);
+  assert.deepEqual(Object.keys(m.brains), ["superpowers", "agent-skills", "pstack", "gstack", "oh-my", "mattpocock", "openspec", "spec-kit", "compound-engineering"]);
   assert.deepEqual(Object.keys(m.simplicity), ["ponytail", "caveman", "karpathy"]);
-  for (const i of slotItems) assert.ok(i.description && (i.skills || i.claude || i.global || i === m.brains.mattpocock), JSON.stringify(i));
+  for (const i of slotItems) assert.ok(i.description && (i.skills || i.claude || i.global || i.init || i === m.brains.mattpocock), JSON.stringify(i));
+  // 세션 시작 훅·전역 지시로 진행 순서를 강제하는 두뇌. 둘 이상 고르면 설치기가 경고한다.
+  assert.deepEqual(Object.keys(m.brains).filter((n) => m.brains[n].forces), ["superpowers", "gstack", "oh-my"]);
+  // init 두뇌: 도구 파일(marker)만 지우고 두뇌가 만든 문서(keep)는 남긴다. remove는 프로젝트 안의 그 두뇌 이름 파일만 지운다.
+  // 지우는 경로는 이 목록 그대로다(그 도구가 만든 이름만). 넓히려면 실제 생성 파일을 확인하고 여기도 고친다.
+  const REMOVE = {
+    openspec: [".claude/skills/openspec-*", ".agents/skills/openspec-*", ".agents/skills/.openspec-target", ".claude/commands/opsx", ".agents/workflows/opsx-*.md"],
+    "spec-kit": [".claude/skills/speckit-*", ".agents/skills/speckit-*", ".specify/scripts", ".specify/templates", ".specify/workflows", ".specify/integrations", ".specify/integration.json", ".specify/init-options.json", ".specify/.gitignore"],
+  };
+  for (const n of ["openspec", "spec-kit"]) {
+    const { init } = m.brains[n];
+    assert.ok(init.run && init.marker.length && init.keep.length, n);
+    for (const p of [...init.marker, ...init.keep]) assert.ok(!p.startsWith("/") && !p.includes(".."), `${n}: ${p}`);
+    assert.equal(init.remove, `rm -rf ${REMOVE[n].join(" ")}`, n);
+    for (const k of init.keep) assert.ok(!REMOVE[n].some((p) => p === k || p.startsWith(`${k}/`)), `${n}: ${k}는 지우지 않는다`);
+    for (const p of init.marker) assert.ok(REMOVE[n].some((r) => new RegExp(`^${r.replace(/[.]/g, "\\.").replace(/\*/g, "[^/]*")}(/|$)`).test(p)), `${n}: 정리하면 marker ${p}도 지워져야 한다`);
+  }
+  // OpenSpec 스킬은 실행 중에 openspec CLI를 부른다. 그 두뇌를 고를 때만 전역에 설치하고 사용 통계는 끈다.
+  assert.deepEqual(m.brains.openspec.global.map((g) => g.name), ["OpenSpec CLI"]);
+  assert.equal(m.brains.openspec.init.env.OPENSPEC_TELEMETRY, "0");
+  assert.match(m.brains["spec-kit"].init.run, /--integration-options='--events false'.*integration install codex --integration-options='--events false'/, "Spec Kit이 .claude/settings.json에 훅을 쓰지 않게 한다");
+  // Compound Engineering: Claude는 project 플러그인, Codex는 skills CLI(전역 플러그인을 쓰지 않는다). 커밋·PR·자동 실행 스킬은 받지 않는다.
+  const ce = m.brains["compound-engineering"];
+  assert.deepEqual(ce.claude.plugins, ["compound-engineering@compound-engineering-plugin"]);
+  assert.equal(ce.codex, undefined);
+  for (const s of ["ce-commit", "ce-commit-push-pr", "ce-babysit-pr", "ce-resolve-pr-feedback", "ce-worktree", "ce-setup", "lfg"]) assert.ok(!ce.skills[0].skills.includes(s), s);
   // mattpocock 두뇌는 따로 설치하는 것이 없다(필수 3개 + --matt 추가 스킬). 다른 두뇌로 바꿔도 추가 스킬을 지우지 않는다.
   assert.deepEqual(Object.keys(m.brains.mattpocock), ["description", "hosts"]);
   for (const s of ["brainstorming", "test-driven-development", "ponytail", "ponytail-review"]) assert.ok(!names.includes(s), `${s}는 기본 설치가 아니다`);
@@ -836,6 +1021,13 @@ test("recordChoices: 최상위 키만 바꾸고, 다른 값(같은 이름의 하
   writeFileSync(p, nested);
   assert.throws(() => recordChoices(root, { brain: "sp" }), /brain/);
   assert.equal(readFileSync(p, "utf8"), nested);
+  // 두뇌 여럿은 배열이다. 배열 기록도 다시 문자열이나 다른 배열로 바꿀 수 있어야 한다(키가 두 번 생기지 않게).
+  writeFileSync(p, devCycleText({ brain: "sp", simplicity: "pt" }));
+  recordChoices(root, { brain: ["os", "sp"] });
+  assert.match(readFileSync(p, "utf8"), /^\{\n\t"brain": \["os", "sp"\],\n\t"simplicity": "pt",/);
+  recordChoices(root, { brain: ["sp", "om", "gs"] });
+  recordChoices(root, { brain: "os" });
+  assert.equal(readFileSync(p, "utf8"), devCycleText({ brain: "os", simplicity: "pt" }));
 });
 
 test("업데이트 판정: 원격 스킬 폴더와 설치본을 파일 단위로 비교해 바뀐 파일을 돌려준다", () => {
