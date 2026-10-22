@@ -163,9 +163,9 @@ production은 릴리스한 커밋만 배포한다. `pnpm release`가 마지막 `
 | 명령 | 하는 일 |
 |---|---|
 | `pnpm dev-cycle case` | 현재 diff의 케이스 판정 |
-| `pnpm dev-cycle table <케이스> --write --title "<요약>" [--task T<번호>] [--plan]` | 대조표 열기. `--task`는 진행 계획(`tasks/plan.md`)의 그 Task 라운드로 열고, 앞 Task가 끝나지 않았으면 열지 않는다. `--plan`은 진행 계획을 세우거나 고치는 케이스 A 라운드로 열고, 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서, 계획 리뷰 행을 둔다 |
+| `pnpm dev-cycle table <케이스> --write --title "<요약>" [--task T<번호>] [--plan] [--no-task]` | 대조표 열기. `--task`는 진행 계획(`tasks/plan.md`)의 그 Task 라운드로 열고, 앞 Task가 끝나지 않았으면 열지 않는다. `--plan`은 진행 계획을 세우거나 고치는 케이스 A 라운드로 열고, 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서, 계획 리뷰 행을 둔다. 기존 프로젝트는 진행 계획을 확정하기 전에 다른 라운드를 열지 않는다. 사용자가 그 전에 하라고 한 급한 버그 수정, 템플릿 갱신 반영, 스킬 구성 변경만 `--no-task`로 연다 |
 | `pnpm dev-cycle status`, `audit`, `close` | 진행 확인, 빈 칸 검사, 라운드 닫기 (`blocked`·`미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial`) |
-| `pnpm dev-cycle plan` | 진행 계획(`tasks/plan.md`)의 Task 표, 다음에 열 Task, 문제(손으로 고친 완료 등)를 보여 준다. 문제가 있으면 exit 1 |
+| `pnpm dev-cycle plan` | 진행 계획(`tasks/plan.md`)의 Task 표, 다음에 열 Task, 문제(손으로 고친 완료 등)를 보여 준다. 진행 계획 라운드 중에는 사용자 확인에 적을 Task 구성의 지문(`sig=`)도 보여 준다. 문제가 있으면 exit 1 |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일(끝 줄바꿈 하나는 허용)로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
 | `pnpm dev-cycle secrets` | 라운드 끝 커밋 전에 스테이징한 변경에서 로컬 `.env*`(루트, `apps/web`, `packages/db`. `.env.schema`·`.env.example` 제외)의 비밀값과 흔한 키 형식(개인 키, `sk-`, GitHub 토큰 등)을 찾는다. 값은 출력하지 않는다. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |

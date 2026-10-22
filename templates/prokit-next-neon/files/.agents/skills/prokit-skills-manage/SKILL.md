@@ -34,7 +34,7 @@ description: >-
 
 ## 3. 적용(H 라운드)
 1. 열린 라운드가 있으면 먼저 닫는다. 라운드 중간에는 바꾸지 않는다. 진행 계획의 Task 라운드였다면 그 Task를 끝내거나 사용자 동의로 `close --partial`한다.
-2. `pnpm dev-cycle table H --write --title "스킬 구성 변경: <요약>"`
+2. `pnpm dev-cycle table H --write --title "스킬 구성 변경: <요약>" --no-task`
 3. 준비물을 알린다. 고른 두뇌에 전역 도구가 있으면 `--brain`을 줄 때 설치기가 전역에 설치한다(gstack은 Bun, OpenSpec은 npm 전역 CLI, oh-my는 Codex를 쓸 때 OMX CLI). 설치 전에 그 사실을 알리고 동의를 받는다. Spec Kit은 설치할 때 uv가 필요하다. 없으면 설치 안내를 주고 멈춘다.
 4. 2절의 명령을 실행하고 출력의 `정리:`, `남김:`, `제거:`, `경고:`, `실패:` 줄을 그대로 보여 준다. 출력을 `tail` 등으로 자르지 않는다(앞쪽에 경고가 있을 수 있다). 종료 코드는 파이프 없이 `<명령> 2>&1; echo "exit=$?"`로 본다(zsh에는 `PIPESTATUS`가 없어 빈 값이 나온다). exit 2면 출력을 보고하고 멈춘다.
 5. 두뇌를 바꾸거나 뺐으면 인계를 남긴다. 이전 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`, `docs/superpowers/` 등)와 진행 중인 계획·남은 일의 경로를 대조표 메모와 `tasks/todo.md`에 적는다. 새 두뇌는 그 문서를 읽고 이어 가며 인터뷰·계획을 처음부터 되풀이하지 않는다. 설치기는 이 문서들을 지우지 않는다.

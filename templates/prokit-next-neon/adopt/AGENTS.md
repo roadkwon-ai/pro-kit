@@ -64,7 +64,7 @@
 4. 완료는 검증 가능한 동작으로 말한다. 실행하지 않은 검사를 통과라고 하지 않는다.
 
 ## 코드 변경 절차
-코드나 설정을 바꾸는 작업은 `prokit-dev-cycle` 스킬로 시작한다. `pnpm dev-cycle case`로 판정하고, `pnpm dev-cycle table <케이스> --write --title "<요약>"`로 대조표를 열고, 행을 실행한 뒤 `pnpm dev-cycle audit`과 `close`로 닫는다. 진행 계획의 Task는 `--task <Task>`로 열고, 앞 Task가 끝나야 다음 Task를 열 수 있다. 표 끝의 `[confirm]` 행은 사용자가 결과를 확인해야 채운다. 절차 정본은 `docs/dev-workflow.md`다.
+코드나 설정을 바꾸는 작업은 `prokit-dev-cycle` 스킬(`.agents/skills/prokit-dev-cycle/SKILL.md`)로 시작한다. 먼저 `pnpm dev-cycle status`로 열린 라운드와 진행 계획을 본다. `pnpm dev-cycle case`로 판정하고, `pnpm dev-cycle table <케이스> --write --title "<요약>"`로 대조표를 열고, 행을 실행한 뒤 `pnpm dev-cycle audit`과 `close`로 닫는다. 정밀 분석과 진행 계획(`docs/plans/`, `tasks/plan.md`)은 문서만 바꿔도 진행 계획 라운드(`--plan`)로 세우고, 그 Task는 `--task <Task>`로 연다. 앞 Task가 끝나야 다음 Task를 열 수 있다. 진행 계획을 확정하기 전에는 `--task` 없는 라운드도 열리지 않는다(사용자가 계획 전에 하라고 한 급한 버그 수정, 템플릿 갱신 반영, 스킬 구성 변경만 `--no-task`로 연다). 표 끝의 `[confirm]` 행은 사용자가 결과를 확인해야 채운다. 절차 정본은 `docs/dev-workflow.md`다.
 
 정밀 분석 뒤 첫 Task(케이스 H)에서 `.dev-cycle.json`의 경로 규칙(`rules`, `authPaths`)과 `docs/dev-workflow.md`의 행을 이 프로젝트 구조에 맞춘다. 그 전에는 규칙 밖 코드 변경을 무거운 케이스(F)로 본다.
 

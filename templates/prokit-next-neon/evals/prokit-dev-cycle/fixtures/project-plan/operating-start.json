@@ -1,7 +1,7 @@
 {
   ".dev-cycle.json": "{ \"projectType\": \"operating\", \"brain\": \"none\", \"simplicity\": \"none\", \"defaultBranch\": \"main\" }",
   "docs/prokit/intake.md": "# 도입 기록\n\n- 유형: operating. Better-T-Stack 구조의 사내 CRM\n\n## 초기 분석 요약\n- 고객 테이블과 기본 화면이 있다. 테스트는 없다. Vercel 수동 배포\n\n## 디자인 방향\n(첫 화면 작업에서 prokit-ui가 묻고 적는다)\n",
-  "docs/first-request.md": "prokit-analyzer로 이 프로젝트를 정밀 분석해 docs/prokit/analysis.md에 남기고, 그 결과로 진행 계획(docs/plans/, tasks/plan.md)을 세워 확인받은 뒤 Task별로 진행해줘. 목표: 프로킷 적용과 구조 맞추기.\n",
+  "docs/first-request.md": "prokit-dev-cycle 6절대로 진행해줘. 정밀 분석과 진행 계획 라운드(pnpm dev-cycle status가 알려 주는 --plan 명령)를 열고, prokit-analyzer로 이 프로젝트를 정밀 분석해 docs/prokit/analysis.md에 남긴 뒤, 그 결과로 진행 계획(docs/plans/, tasks/plan.md)을 세워 확인받아. 그다음 Task 라운드를 하나씩(--task T<n>) 열어 진행해줘. 목표: 프로킷 적용과 구조 맞추기.\n",
   "tasks/todo.md": "# 작업\n\n[완료 기록](archive/README.md)\n",
   "tasks/evidence/dev-cycle-status.txt": "활성 라운드 없음 — pnpm dev-cycle case로 판정한 뒤 pnpm dev-cycle table <케이스> --write --title \"<요약>\"으로 연다",
   "packages/db/src/schema/customer.ts": "export const customer = pgTable(\"customer\", { id: text(\"id\").primaryKey(), name: text(\"name\").notNull() });"

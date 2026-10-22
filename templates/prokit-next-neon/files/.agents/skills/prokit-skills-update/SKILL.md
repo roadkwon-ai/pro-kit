@@ -53,7 +53,7 @@ description: >-
 ## 2. 업데이트 라운드
 스킬 파일과 `skills-lock.json`이 바뀌므로 케이스 H 라운드 하나로 한다. 진행 중인 라운드가 있으면 그 라운드를 먼저 닫는다. 다른 작업과 diff가 섞이면 audit이 더 무거운 케이스를 요구하고 리뷰 범위도 흐려진다. 확인 결과 바꿀 스킬이 없으면(원격에서 없어진 스킬만 있으면) 라운드를 열지 않는다.
 
-1. `pnpm dev-cycle table H --write --title "외부 스킬 업데이트"`
+1. `pnpm dev-cycle table H --write --title "외부 스킬 업데이트" --no-task`
 2. **설치 전 확인**: `pnpm skills:update --check`를 실행한다. `스크립트 변경` 줄에 나온 파일은 설치하기 전에 원격 내용을 읽는다. impeccable처럼 훅이 스킬 폴더의 스크립트를 바로 실행하는 스킬은 설치되는 즉시 새 스크립트가 돌기 때문이다. 이 실행이 보여 준 판이 검토 고정값으로 기록된다.
    - `blob <sha>`: `gh api "repos/<저장소>/git/blobs/<sha>" --jq .content | base64 -d | diff .agents/skills/<이름>/<파일> -` (새 파일이면 diff 없이 읽는다)
    - `원격에서 지움`: 로컬 파일이 무엇이었는지만 본다. `링크`: `gh api "repos/<저장소>/contents/<폴더>/<파일>"`로 대상 경로를 보고 그 파일을 읽는다.

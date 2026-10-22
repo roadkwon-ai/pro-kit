@@ -47,7 +47,7 @@ description: >-
 팩을 복원하거나 개인화·실전 기능을 연결한 작업은 [references/pack-baseline.md](references/pack-baseline.md)를 읽는다. 비교 대상은 완성 프리셋이며 원본 URL 연구·COPY 판정은 `pro-kit-preset-skills`의 `prokit-preset-verify`가 맡는다. 파일 무결성·기능·접근성·시각 보존을 각각 보고한다.
 
 ## 테스트 러너
-- 테스트 러너가 없으면 첫 D·E 라운드나 서버·DB 코드를 고치는 C 라운드에서 vitest를 도입한다. 대조표에 `vitest 도입(최초 1회)` 행을 추가하고, 루트 `test` 스크립트와 `.dev-cycle.json`의 `commands.test`를 함께 등록한다. 절차는 `.agents/skills/prokit-api/references/ownership-test.md`에 있다.
+- 테스트 러너가 없으면 첫 D·E 라운드나 서버·DB 코드를 고치는 C 라운드에서 vitest를 도입한다. 대조표에 `vitest 도입(최초 1회)` 행을 추가하고, 루트 `test` 스크립트와 `.dev-cycle.json`의 `commands.test`를 함께 등록한다. 절차는 `.agents/skills/prokit-api/references/ownership-test.md`에 있다. 첫 D·E 라운드가 E만 고치면 같은 방법으로 `packages/db`에 도입해(`pnpm --filter @<프로젝트>/db add -D vitest`, 그 패키지의 `test` 스크립트) 케이스를 E로 두고, `packages/api` 설정은 첫 D 라운드에서 더한다.
 - 격리 테스트는 개발·운영 DB가 아닌 전용 테스트 DB(`TEST_DATABASE_URL`: 로컬 DB의 `<이름>_test`. 만드는 법은 `prokit-api`의 `references/ownership-test.md`)에서 돈다. `skipped`로 끝난 테스트는 통과가 아니다. 프로시저를 거치지 않고 SQL로 같은 조건을 흉내 낸 수동 확인도 격리 테스트를 대신하지 못한다. 격리 테스트는 프로시저를 두 계정의 세션으로 호출한다.
 
 ## 증거 적는 법

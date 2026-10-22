@@ -63,7 +63,7 @@
 4. 완료는 검증 가능한 동작으로 말한다. 실행하지 않은 검사를 통과라고 하지 않는다.
 
 ## 코드 변경 절차
-코드나 설정을 바꾸는 작업은 `prokit-dev-cycle` 스킬로 시작한다. `pnpm dev-cycle case`로 판정하고, `pnpm dev-cycle table <케이스> --write --title "<요약>"`로 대조표를 열고(케이스는 요청 기준으로 고른다. 아직 diff가 없으면 `case`는 A로 나온다), 행을 실행한 뒤 `pnpm dev-cycle audit`과 `close`로 닫는다. 표 끝의 `[confirm]` 행은 사용자가 결과를 확인해야 채운다(N/A·blocked 같은 건너뛰기 불가). 닫은 뒤의 커밋·push, 릴리스, 배포는 `prokit-dev-cycle`의 "5. 종료"를 따른다. 절차 정본은 `docs/dev-workflow.md`다. 위임은 `references/delegation.md`의 provider 검증과 packet 계약을 따른다.
+코드나 설정을 바꾸는 작업은 `prokit-dev-cycle` 스킬(`.agents/skills/prokit-dev-cycle/SKILL.md`)로 시작한다. 먼저 `pnpm dev-cycle status`로 열린 라운드와 진행 계획을 본다. `pnpm dev-cycle case`로 판정하고, `pnpm dev-cycle table <케이스> --write --title "<요약>"`로 대조표를 열고(케이스는 요청 기준으로 고른다. 아직 diff가 없으면 `case`는 A로 나온다), 행을 실행한 뒤 `pnpm dev-cycle audit`과 `close`로 닫는다. 표 끝의 `[confirm]` 행은 사용자가 결과를 확인해야 채운다(N/A·blocked 같은 건너뛰기 불가). 닫은 뒤의 커밋·push, 릴리스, 배포는 `prokit-dev-cycle`의 "5. 종료"를 따른다. 절차 정본은 `docs/dev-workflow.md`다. 위임은 `references/delegation.md`의 provider 검증과 packet 계약을 따른다. 정밀 분석과 진행 계획(`docs/plans/`, `tasks/plan.md`)은 문서만 바꿔도 진행 계획 라운드(`--plan`)로 세우고, 그 Task는 `--task <Task>`로 연다(`prokit-dev-cycle` 6절). 기존 프로젝트는 진행 계획을 확정하기 전에는 `--task` 없는 라운드도 열리지 않는다(사용자가 계획 전에 하라고 한 급한 버그 수정, 템플릿 갱신 반영, 스킬 구성 변경만 `--no-task`로 연다).
 
 ## 계층별 스킬
 | 작업 | 스킬 |

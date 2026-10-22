@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { audit, close, loadConfig, PLAN_ANALYSIS_ROW, PLAN_DOC_ROW, PLAN_REVIEW_ROW, parseActive, parsePlan, planCheck, planSig, renderBlock, status, TASK_PLAN_ROW, TASK_REVIEW_ROW, writeTable } from "../files/scripts/dev-cycle.mjs";
@@ -29,14 +29,16 @@ const commit = (root) => {
   spawnSync("git", ["commit", "-qm", "round", "--allow-empty"], { cwd: root });
 };
 
-// 활성 라운드의 빈 칸을 채운다. 사용자 확인 행만 다른 값이다.
+// 활성 라운드의 빈 칸을 채운다. 사용자 확인 행만 다른 값이다(진행 계획 라운드는 사용자가 본 Task 구성의 지문을 함께 적는다).
 function fill(root, value = "pnpm check-types → exit 0") {
   const config = loadConfig(root);
   const p = join(root, config.todoPath);
   const md = readFileSync(p, "utf8");
   const a = parseActive(md);
+  const planPath = join(root, config.planPath);
+  const tasks = a.rows.some((r) => r.text === PLAN_DOC_ROW) && existsSync(planPath) && parsePlan(readFileSync(planPath, "utf8"))?.tasks;
   const special = (r) =>
-    r.text.startsWith("[confirm]") ? CONFIRMED
+    r.text.startsWith("[confirm]") ? (tasks ? `${CONFIRMED} sig=${planSig(tasks)}` : CONFIRMED)
     : r.text === TASK_PLAN_ROW && !/^(blocked|미실행)/.test(value) ? "docs/plans/2026-10-23-task.md"
     : r.text === PLAN_ANALYSIS_ROW ? "docs/prokit/analysis.md"
     : r.text === PLAN_DOC_ROW ? "docs/plans/p.md, pnpm dev-cycle plan exit 0"
@@ -278,13 +280,62 @@ test("다음 Task 안내: --task 없이 열면 끝나지 않은 Task를 알리�
   assert.equal(writeTable(root, config, "A", { title: "미리 보기" }).warning, undefined, "그 Task의 라운드가 열려 있으면 알리지 않는다");
 });
 
+test("기존 프로젝트: 확정한 진행 계획이 없으면 --task 없이 여는 라운드를 막고(--no-task로 연다), status·plan이 진행 계획 라운드 명령을 알린다. 새 프로젝트는 막지 않는다", () => {
+  const repo = makeRepo({ name: "dc-plan-none-" });
+  assert.equal(writeTable(repo.root, loadConfig(repo.root), "H", { title: "새 프로젝트" }).warning, undefined);
+  const cfgPath = join(repo.root, ".dev-cycle.json");
+  writeFileSync(cfgPath, JSON.stringify({ ...JSON.parse(readFileSync(cfgPath, "utf8")), projectType: "migration" }, null, "\t"));
+  repo.git("commit", "-qam", "migration");
+  const config = loadConfig(repo.root);
+  const gate = /확정한 진행 계획이 없다\(tasks\/plan\.md의 dev-cycle:plan 블록과 지문\)\. 기존 프로젝트는 .*--plan\. .*--no-task를 붙여 연다/;
+  assert.throws(() => writeTable(repo.root, config, "H", { write: true, title: "계획 없음" }), gate);
+  assert.match(writeTable(repo.root, config, "H", { title: "미리 보기" }).warning, gate, "미리 보기는 알리기만 한다");
+  assert.throws(() => writeTable(repo.root, config, "H", { title: "x", noTask: true, plan: true }), /--no-task는 --plan·--task와 함께 쓰지 않는다/);
+  // 다른 형식으로 쓴 계획 문서(AG1: Antigravity가 쓴 표)도 확정한 계획이 아니다
+  mkdirSync(join(repo.root, "tasks"), { recursive: true });
+  writeFileSync(join(repo.root, "tasks/plan.md"), "| Task | 제목 | 상태 |\n|---|---|---|\n| Task 1 | 하네스 | 대기 |\n");
+  const r = run(repo.root, "table", "H", "--write", "--title", "Task 1: 하네스");
+  assert.equal(r.status, 2, "사용법 오류(exit 2)로 막는다");
+  assert.match(r.stderr, gate);
+  assert.match(status(repo.root, config).line, /^진행 계획: .*블록이 없다.* → 진행 계획 라운드에서 project-plan\.md 형식으로 다시 쓴다: .*--plan$/m);
+  assert.match(run(repo.root, "plan").stdout, /^진행 계획 없음: .*블록이 없다.* → pnpm dev-cycle table A --write --title "정밀 분석과 진행 계획" --plan$/m);
+  // 지문 없는 계획 블록, 손으로 적은 가짜 지문도 막는다
+  writeFileSync(join(repo.root, "tasks/plan.md"), planText([["T1", "a", "대기"]], false));
+  assert.throws(() => writeTable(repo.root, config, "H", { write: true, title: "버그" }), gate);
+  writeFileSync(join(repo.root, "tasks/plan.md"), planText([["T1", "a", "대기"]], "deadbeef0000"));
+  assert.throws(() => writeTable(repo.root, config, "H", { write: true, title: "버그" }), gate);
+  const ok = run(repo.root, "table", "H", "--write", "--title", "급한 버그", "--no-task");
+  assert.equal(ok.status, 0, ok.stderr);
+  assert.match(ok.stdout, /^경고: 진행 계획에 끝나지 않은 Task가 있다\(T1 대기\)/m, "--no-task도 남은 Task는 알린다");
+  assert.match(readFileSync(join(repo.root, config.todoPath), "utf8"), /<!-- dev-cycle:start case=H .* notask=true -->/);
+  assert.match(status(repo.root, config).line, /^라운드 H\(--no-task\) "급한 버그"/);
+  assert.equal(writeTable(repo.root, config, "H", { title: "미리 보기", upgrade: true }).warning, undefined, "--upgrade는 막지 않는다");
+  assert.match(readFileSync(join(repo.root, config.todoPath), "utf8"), /notask=true/, "--upgrade 미리 보기는 표를 바꾸지 않는다");
+  // 진행 계획 라운드가 열려 있으면 그 라운드에서 이어 가므로 진행 계획 라운드부터 열라고 하지 않는다
+  writeFileSync(join(repo.root, config.todoPath), "# 작업\n");
+  writeTable(repo.root, config, "A", { write: true, title: "정밀 분석과 진행 계획", plan: true });
+  assert.equal(writeTable(repo.root, config, "A", { title: "미리 보기" }).warning, undefined);
+  assert.doesNotMatch(status(repo.root, config).line, /--plan$/m);
+  // 확인 행만 남으면 status가 계획을 보기 전의 승인은 확인이 아니라고 알린다
+  fill(repo.root);
+  const p = join(repo.root, config.todoPath);
+  const md = readFileSync(p, "utf8");
+  const a = parseActive(md);
+  writeFileSync(p, md.slice(0, a.start) + renderBlock({ ...a.meta, title: a.title }, a.rows.map((r) => (r.text.startsWith("[confirm]") ? { ...r, evidence: "" } : r))) + md.slice(a.end));
+  assert.match(status(repo.root, config).line, /다음: \[confirm\].* — 진행 계획 라운드: 리뷰를 반영한 최종 계획 요약.*"진행해"는 확인이 아니다$/m);
+  assert.ok(audit(repo.root, config).problems.some((x) => /^#\d+ \[confirm\].* — 진행 계획 라운드: .*"진행해"는 확인이 아니다$/.test(x)), "audit도 같은 안내를 붙인다");
+  writeFileSync(join(repo.root, "tasks/plan.md"), planText([["T1", "a", "제외"]]));
+  writeFileSync(join(repo.root, config.todoPath), "# 작업\n");
+  assert.equal(writeTable(repo.root, config, "H", { write: true, title: "확정한 계획 뒤 버그" }).warning, undefined, "확정한 계획이 있고 남은 Task가 없으면 막지 않는다");
+});
+
 test("진행 계획 라운드(--plan): 기존 프로젝트는 정밀 분석·계획 문서·계획 리뷰 행을 맨 앞에 두고 문서 경로 증거와 계획 블록을 audit이 보며, 새 프로젝트는 정밀 분석 행 없이 연다", () => {
   const repo = makeRepo({ name: "dc-plan-round-" });
   const cfgPath = join(repo.root, ".dev-cycle.json");
   writeFileSync(cfgPath, JSON.stringify({ ...JSON.parse(readFileSync(cfgPath, "utf8")), projectType: "operating" }, null, "\t"));
   repo.git("commit", "-qam", "operating");
   const config = loadConfig(repo.root);
-  assert.match(status(repo.root, config).line, /^진행 계획: 아직 없다 → .*--plan$/m);
+  assert.match(status(repo.root, config).line, /^진행 계획: 아직 없다 → .*--plan\. .*--no-task를 붙여 연다$/m);
   assert.throws(() => writeTable(repo.root, config, "A", { write: true, plan: true, task: "T1" }), /--plan과 --task는 함께 쓰지 않는다/);
   assert.throws(() => writeTable(repo.root, config, "F", { write: true, plan: true }), /--plan은 케이스 A/);
   const w = run(repo.root, "table", "A", "--write", "--title", "정밀 분석과 진행 계획", "--plan");
@@ -295,6 +346,38 @@ test("진행 계획 라운드(--plan): 기존 프로젝트는 정밀 분석·계
   assert.ok(a.rows.at(-1).text.startsWith("[confirm]"));
   fill(repo.root);
   assert.ok(audit(repo.root, config).problems.some((x) => x.startsWith("진행 계획 라운드인데 tasks/plan.md에 진행 계획 블록이 없다")), "계획 블록 없이 닫지 않는다");
+  // 확인 행은 사용자가 본 Task 구성의 지문과 함께 쓴다. 계획 블록이 없거나 지문이 없으면(계획을 보기 전의 "진행해") evidence가 거절하고 audit·status가 잡는다.
+  mkdirSync(join(repo.root, "tasks/evidence"), { recursive: true });
+  const confirmAt = String(a.rows.length);
+  const confirmWith = (text) => {
+    writeFileSync(join(repo.root, "tasks/evidence/c.txt"), `${text}\n`);
+    return run(repo.root, "evidence", confirmAt, "--file", "tasks/evidence/c.txt");
+  };
+  let ev = confirmWith(CONFIRMED);
+  assert.equal(ev.status, 2);
+  assert.match(ev.stderr, /확인할 진행 계획 블록이 tasks\/plan\.md에 아직 없다/);
+  writeFileSync(join(repo.root, "tasks/plan.md"), planText([["T1", "a", "대기"]]));
+  const sig = planSig(plan(repo.root));
+  assert.match(run(repo.root, "plan").stdout, new RegExp(`^  지문: sig=${sig} — 진행 계획 라운드의 \\[confirm\\]`, "m"));
+  assert.equal(JSON.parse(run(repo.root, "plan", "--json").stdout).confirmSig, sig);
+  assert.ok(audit(repo.root, config).problems.some((x) => x.includes("Task 구성의 지문") && x.includes("계획을 보기 전에 받은")), "지문 없는 확인");
+  assert.match(status(repo.root, config).line, /다음: \[confirm\].* — 진행 계획 라운드: .*지문 sig=/);
+  for (const text of [CONFIRMED, `${CONFIRMED} xsig=${sig}`, `${CONFIRMED} sig=${sig}0`]) {
+    ev = confirmWith(text);
+    assert.equal(ev.status, 2, text);
+    assert.match(ev.stderr, /진행 계획 라운드의 확인 행: 증거에 사용자가 본 Task 구성의 지문.* — 진행 계획 라운드: 리뷰를 반영한 최종 계획 요약/);
+  }
+  // 계획 리뷰가 끝나기 전의 확인도 거절한다.
+  a = parseActive(readFileSync(p, "utf8"));
+  writeFileSync(p, renderBlock({ ...a.meta, title: a.title }, a.rows.map((r) => (r.text === PLAN_REVIEW_ROW ? { ...r, evidence: "" } : r))));
+  assert.match(confirmWith(`${CONFIRMED} sig=${sig}`).stderr, /\[review\] 행이 아직 끝나지 않았다/);
+  writeFileSync(p, renderBlock({ ...a.meta, title: a.title }, a.rows));
+  ev = confirmWith(`${CONFIRMED} (sig=${sig})`);
+  assert.equal(ev.status, 0, ev.stderr);
+  assert.deepEqual(audit(repo.root, config).problems, []);
+  // 확인 뒤 Task 구성이 바뀌면 다시 확인받는다.
+  writeFileSync(join(repo.root, "tasks/plan.md"), planText([["T1", "b", "대기"]]));
+  assert.ok(audit(repo.root, config).problems.some((x) => x.includes("지금 구성과 다르다")));
   writeFileSync(join(repo.root, "tasks/plan.md"), planText([["T1", "a", "대기"]]));
   assert.deepEqual(audit(repo.root, config).problems, []);
   a = parseActive(readFileSync(p, "utf8"));
@@ -323,6 +406,10 @@ test("진행 계획 라운드(--plan): 기존 프로젝트는 정밀 분석·계
   commit(repo.root);
   writeTable(repo.root, config, "A", { write: true, title: "T1 a", task: "T1" });
   assert.throws(() => writeTable(repo.root, config, "A", { write: true, upgrade: true, plan: true }), /--plan은 진행 계획 라운드에만 쓴다/);
+  // 진행 계획 라운드가 아닌 라운드의 확인에는 지문이 필요 없다.
+  writeFileSync(join(repo.root, "tasks/evidence/c.txt"), `${CONFIRMED}\n`);
+  ev = run(repo.root, "evidence", String(parseActive(readFileSync(p, "utf8")).rows.length), "--file", "tasks/evidence/c.txt");
+  assert.equal(ev.status, 0, ev.stderr);
   const fresh = makeRepo({ name: "dc-plan-new-" });
   const c2 = loadConfig(fresh.root);
   const r2 = writeTable(fresh.root, c2, "A", { title: "진행 계획", plan: true });

@@ -106,7 +106,7 @@
 `docs/first-request.md`(다음 세션이 이어 갈 요청. 사용자가 처음 보낸 요청은 아래에 그대로 붙인다):
 
 ```text
-prokit-analyzer로 이 프로젝트를 정밀 분석해 docs/prokit/analysis.md에 남기고, 그 결과로 진행 계획(docs/plans/, tasks/plan.md)을 세워 확인받은 뒤 Task별로 진행해줘. 목표: <early: 프로토타입을 프로킷 개발 환경으로 옮겨 구현 | operating: 프로킷 적용과 구조 맞추기 | migration: <기존 스택>에서 Next.js로 단계 전환>.
+prokit-dev-cycle 6절대로 진행해줘. 정밀 분석과 진행 계획 라운드(pnpm dev-cycle status가 알려 주는 --plan 명령)를 열고, prokit-analyzer로 이 프로젝트를 정밀 분석해 docs/prokit/analysis.md에 남긴 뒤, 그 결과로 진행 계획(docs/plans/, tasks/plan.md)을 세워 확인받아. 그다음 Task 라운드를 하나씩(--task T<n>) 열어 진행해줘. 목표: <early: 프로토타입을 프로킷 개발 환경으로 옮겨 구현 | operating: 프로킷 적용과 구조 맞추기 | migration: <기존 스택>에서 Next.js로 단계 전환>.
 
 원래 요청:
 <사용자의 처음 요청 그대로>

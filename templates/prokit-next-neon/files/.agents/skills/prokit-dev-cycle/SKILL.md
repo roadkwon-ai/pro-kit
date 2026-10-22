@@ -92,6 +92,6 @@ pnpm dev-cycle table <케이스> --write --title "<요청 요약>"
 여러 라운드에 걸친 일(기존 프로젝트 도입, 전환, 큰 기능 묶음)은 진행 계획을 세워 Task로 나눈다. 절차의 정본은 [references/project-plan.md](references/project-plan.md), 정밀 분석 점검표는 [references/analysis.md](references/analysis.md)다.
 1. 진행 계획 라운드를 `pnpm dev-cycle table A --write --title "<요약>" --plan`으로 연다. 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 계획 리뷰 행이 붙는다. 계획을 고칠 때도 이 명령으로 연다.
 2. 기존 프로젝트면 `prokit-analyzer`로 정밀 분석을 하고 `docs/prokit/analysis.md`에 쓴다.
-3. 주 두뇌(없으면 기본 AI)가 진행 계획 문서(`docs/plans/`)와 Task 표(`tasks/plan.md`)를 쓰고, `prokit-reviewer(plan)` 리뷰와 사용자 확인을 받는다.
-4. Task마다 `pnpm dev-cycle table <케이스> --write --title "T<n> <요약>" --task T<n>`으로 연다. 맨 앞의 Task 세부 계획 행과 계획 리뷰 행(F는 케이스의 계획 리뷰 행)을 먼저 끝낸 뒤 구현·검수·테스트·보완을 한다. 앞 Task가 끝나지 않으면 다음 Task는 열리지 않는다.
+3. 주 두뇌(없으면 기본 AI)가 진행 계획 문서(`docs/plans/`)와 Task 표(`tasks/plan.md`)를 쓰고, `prokit-reviewer(plan)` 리뷰와 사용자 확인을 받는다. 확인은 최종 계획 요약(Task 목록과 지문 `sig=`)을 보여 주고 그 턴을 끝낸 뒤 받는다(`references/project-plan.md` 4).
+4. Task마다 `pnpm dev-cycle table <케이스> --write --title "T<n> <요약>" --task T<n>`으로 연다. 맨 앞의 Task 세부 계획 행과 계획 리뷰 행(F는 케이스의 계획 리뷰 행)을 먼저 끝낸 뒤 구현·검수·테스트·보완을 한다. 앞 Task가 끝나지 않으면 다음 Task는 열리지 않는다. 기존 프로젝트는 계획을 확정(진행 계획 라운드를 닫아 `sig=`)하기 전에는 `--task` 없는 라운드도 열리지 않는다. 사용자가 계획 전에 하라고 한, 계획에 없는 일(급한 버그 수정, 템플릿 갱신 반영, 스킬 구성 변경)만 `--no-task`를 붙여 연다. 경로 규칙·하네스 맞추기와 기능 일은 진행 계획의 Task로 한다.
 5. `close`가 Task를 `완료`로 기록한다. `pnpm dev-cycle plan`으로 상태와 문제를 본다.

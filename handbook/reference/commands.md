@@ -13,7 +13,8 @@
 | `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표 열기. `--upgrade`는 더 무거운 케이스로 올리기 |
 | `pnpm dev-cycle table <케이스> --write --title "T1 …" --task T1` | 진행 계획의 Task 라운드 열기. 앞 Task가 완료·제외가 아니면 열리지 않고, 대조표 맨 앞에 세부 계획과 계획 리뷰 행이 붙어요(케이스 F는 세부 계획 행만) |
 | `pnpm dev-cycle table A --write --title "정밀 분석과 진행 계획" --plan` | 진행 계획을 세우거나 고치는 라운드 열기. 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 계획 리뷰 행이 붙고, audit은 `tasks/plan.md`에 진행 계획 블록이 있는지 봐요 |
-| `pnpm dev-cycle plan [--json]` | `tasks/plan.md`의 Task 표, 다음에 열 Task, 문제를 보기. 문제가 있으면 exit 1 |
+| `pnpm dev-cycle table <케이스> --write --title "<요약>" --no-task` | 진행 계획을 확정하기 전인 기존 프로젝트에서, 사용자가 먼저 하라고 한 급한 버그 수정·템플릿 갱신 반영·스킬 구성 변경 라운드 열기. 그 밖의 라운드는 진행 계획을 확정해야 열려요 |
+| `pnpm dev-cycle plan [--json]` | `tasks/plan.md`의 Task 표, 다음에 열 Task, 문제를 보기. 진행 계획 라운드 중에는 사용자 확인에 적을 Task 구성의 지문(`sig=`)도 보여요. 문제가 있으면 exit 1 |
 | `pnpm dev-cycle audit` | 빈 칸, 건너뛸 수 없는 칸, 케이스 상향 검사 |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관. 미완료 항목과 코드 예시는 남기고, 끝난 하위 항목은 부모 문맥과 함께 기록 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일의 내용으로 바꿔요(끝 줄바꿈 하나는 허용해요). 표의 헤더·stage와 다른 행, 메모, 코드 블록은 그대로 둬요 |

@@ -285,7 +285,7 @@ const esc = (s) => String(s ?? "").replace(/\|/g, "\\|");
 
 export function renderBlock(meta, rows, extra = []) {
 	const lines = [
-		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened}${meta.task ? ` task=${meta.task}` : ""} -->`,
+		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened}${meta.task ? ` task=${meta.task}` : ""}${meta.notask ? " notask=true" : ""} -->`,
 		`## 활성 라운드: ${meta.case} — ${meta.title}`,
 		"| # | 단계 | 증거 |",
 		"|---|---|---|",
@@ -371,6 +371,13 @@ export const PLAN_DOC_ROW =
 export const PLAN_REVIEW_ROW =
 	"[review] prokit-reviewer(plan) 진행 계획 리뷰 → prokit-reviewer(plan): approve, max=none|low|medium, 반영·기각 내역. N/A 불가";
 const EXISTING_TYPES = ["early", "operating", "migration"];
+// 진행 계획 라운드의 확인은 계획을 보기 전에 받은 승인으로 채우기 쉽다(AG2). 그 행을 채울 차례에 status가 알린다.
+const PLAN_CONFIRM_NOTE =
+	'진행 계획 라운드: 리뷰를 반영한 최종 계획 요약(Task 목록, 만들지 않는 것, 리뷰로 바뀐 사용자 결정, pnpm dev-cycle plan이 보여 주는 지문 sig=)을 보여 주고 그 턴을 끝낸 뒤 받은 답과 그 지문으로 채운다. 계획을 보기 전에 받은 "진행해"는 확인이 아니다';
+const PLAN_ROUND_CMD =
+	'pnpm dev-cycle table A --write --title "정밀 분석과 진행 계획" --plan';
+const NO_TASK_NOTE =
+	"진행 계획에 없는 일을 사용자가 계획 전에 하라고 했을 때만(급한 버그 수정, 템플릿 갱신 반영, 스킬 구성 변경) --no-task를 붙여 연다";
 // 케이스 행에 계획 리뷰가 이미 있으면(F로 올림) 계획 리뷰 행은 더하지 않는다.
 const planRows = (config, rows) => [
 	...(EXISTING_TYPES.includes(config.projectType) ? [PLAN_ANALYSIS_ROW] : []),
@@ -432,6 +439,36 @@ function signPlan(md) {
 const readPlan = (root, config) => {
 	const p = join(root, config.planPath);
 	return existsSync(p) ? readFileSync(p, "utf8") : null;
+};
+
+// 진행 계획 라운드의 확인은 사용자가 본 Task 구성에 묶는다. 지금 구성의 지문이 증거에 없으면 계획을 보기 전의 승인이거나 확인 뒤 계획이 바뀐 것이다(AG2·AG4).
+function planConfirmProblem(root, config, evidence, needPlan = false) {
+	const plan = parsePlan(readPlan(root, config) ?? "");
+	// audit은 계획 블록이 없으면 따로 알린다. evidence는 확인할 계획이 없으니 거절한다.
+	if (!plan)
+		return needPlan
+			? `확인할 진행 계획 블록이 ${config.planPath}에 아직 없다. 계획 문서와 Task 표, 계획 리뷰를 먼저 끝낸다`
+			: null;
+	const sig = planSig(plan.tasks);
+	if (
+		new RegExp(`(?:^|[^0-9A-Za-z_])sig=${sig}(?![0-9A-Za-z])`).test(
+			String(evidence ?? ""),
+		)
+	)
+		return null;
+	return "증거에 사용자가 본 Task 구성의 지문(pnpm dev-cycle plan의 sig=)이 없거나 지금 구성과 다르다. 확인 뒤 계획이 바뀌었으면 바뀐 요약을 보여 주고 다시 확인받는다";
+}
+const isConfirm = (text) => /^\[confirm\]/i.test(text);
+const isPlanRound = (active) =>
+	active.rows.some((r) => r.text === PLAN_DOC_ROW);
+// audit과 status가 같은 판정을 쓴다. 진행 계획 라운드의 확인 행은 지문까지 본다.
+const roundRowProblem = (root, config, active) => {
+	const planRound = isPlanRound(active);
+	return (r) =>
+		rowProblem(r) ??
+		(planRound && isConfirm(r.text)
+			? planConfirmProblem(root, config, r.evidence)
+			: null);
 };
 
 // 완료의 증거는 기록 칸의 마지막 보관 파일이다. 보관 마커가 그 Task이고 partial이 아니어야 한다.
@@ -564,6 +601,7 @@ export function writeTable(
 		now = new Date(),
 		task,
 		plan = false,
+		noTask = false,
 	} = {},
 ) {
 	const md = readTodo(root, config) ?? "# 작업\n";
@@ -572,6 +610,8 @@ export function writeTable(
 		throw new UsageError(
 			"--plan과 --task는 함께 쓰지 않는다. 진행 계획 라운드는 --plan, Task 라운드는 --task로 연다",
 		);
+	if (noTask && (plan || task !== undefined))
+		throw new UsageError("--no-task는 --plan·--task와 함께 쓰지 않는다");
 	if (plan && active && !active.rows.some((r) => r.text === PLAN_DOC_ROW))
 		throw new UsageError(
 			"--plan은 진행 계획 라운드에만 쓴다. 열린 라운드를 close로 닫은 뒤 새로 연다",
@@ -619,14 +659,22 @@ export function writeTable(
 			);
 	}
 	// Task 게이트는 --task로 열 때만 본다. Task 일을 --task 없이 여는 실수는 알린다(버그 수정·하네스 변경은 --task 없이 연다).
-	const pending =
-		task === undefined && !upgrade && !plan
-			? planCheck(root, config)?.next
+	// 진행 계획 라운드가 열려 있으면 그 라운드에서 이어 가므로 알리지 않는다.
+	const planOpen = active?.rows.some((r) => r.text === PLAN_DOC_ROW);
+	const plain = task === undefined && !upgrade && !plan && !planOpen;
+	const chk = plain ? planCheck(root, config) : null;
+	const pending = chk?.next;
+	// 기존 프로젝트는 진행 계획을 확정하기 전에 일을 그냥 라운드로 열지 못하게 한다. 계획에 없는 일을 사용자가 먼저 하라고 했으면 --no-task로 연다.
+	const signed = chk?.plan?.sig && chk.plan.sig === planSig(chk.plan.tasks);
+	const unplanned =
+		plain && !noTask && !signed && EXISTING_TYPES.includes(config.projectType)
+			? `확정한 진행 계획이 없다(${config.planPath}의 dev-cycle:plan 블록과 지문). 기존 프로젝트는 정밀 분석과 진행 계획 라운드부터 연다 → ${PLAN_ROUND_CMD}. 경로 규칙·하네스 맞추기와 기능 일은 진행 계획의 Task로 한다. ${NO_TASK_NOTE}`
 			: null;
+	if (write && unplanned) throw new UsageError(unplanned);
 	const warning =
 		pending && active?.meta.task !== pending.id
 			? `경고: 진행 계획에 끝나지 않은 Task가 있다(${pending.id} ${pending.state}). 이 라운드가 그 Task의 일이면 ${active ? "열린 라운드를 닫은 뒤 " : ""}--task ${pending.id}로 연다. 버그 수정·하네스 변경이면 그대로 진행한다`
-			: null;
+			: unplanned && `경고: ${unplanned}`;
 	const base = active ? active.meta.base : resolveBase(root, config);
 	const cls = classify(changedFiles(root, base), config);
 	const key = caseKey ?? cls.pathCase;
@@ -704,6 +752,7 @@ export function writeTable(
 		opened: active?.meta.opened ?? archiveDay(now),
 		title: title ?? active?.title ?? "제목 없음",
 		task: task ?? active?.meta.task,
+		notask: noTask || active?.meta.notask === "true",
 	};
 	const block = renderBlock(meta, rows, upgrade ? extra : []);
 	if (write) {
@@ -825,6 +874,27 @@ export function setEvidence(root, config, row, evidenceFile) {
 	const marks = [...line.matchAll(/(?<!\\)\|/g)].map((match) => match.index);
 	if (marks.length < 4)
 		throw new UsageError(`행 번호 ${row}의 표 형식이 올바르지 않다`);
+	if (
+		isPlanRound(active) &&
+		isConfirm(line.slice(marks[1] + 1, marks[2]).trim())
+	) {
+		// 분석·계획·계획 리뷰가 끝나기 전의 확인은 최종 계획을 본 확인이 아니다.
+		const early = active.rows.find(
+			(r) =>
+				([PLAN_ANALYSIS_ROW, PLAN_DOC_ROW].includes(r.text) ||
+					r.text.includes("prokit-reviewer(plan)")) &&
+				rowProblem(r),
+		);
+		const p =
+			confirmProblem({ text: "[confirm]", evidence }) ??
+			(early
+				? `${early.text.split(" ")[0]} 행이 아직 끝나지 않았다. 정밀 분석·계획 문서·계획 리뷰를 끝낸 뒤 최종 요약을 보여 준다`
+				: planConfirmProblem(root, config, evidence, true));
+		if (p)
+			throw new UsageError(
+				`진행 계획 라운드의 확인 행: ${p} — ${PLAN_CONFIRM_NOTE}`,
+			);
+	}
 	const replaced = `${line.slice(0, marks[2] + 1)} ${esc(evidence)} ${line.slice(marks.at(-1))}`;
 	const replaceAt = active.start + lineOffset;
 	writeFileSync(
@@ -912,9 +982,14 @@ export function audit(
 			],
 		};
 	const problems = [];
+	const planRound = isPlanRound(active);
+	const problemOf = roundRowProblem(root, config, active);
 	active.rows.forEach((r, i) => {
-		const p = rowProblem(r);
-		if (p) problems.push(`#${i + 1} ${r.text}: ${p}`);
+		const p = problemOf(r);
+		if (p)
+			problems.push(
+				`#${i + 1} ${r.text}: ${p}${planRound && isConfirm(r.text) ? ` — ${PLAN_CONFIRM_NOTE}` : ""}`,
+			);
 	});
 	const X = active.meta.case;
 	const cls = classify(changedFiles(root, active.meta.base), config);
@@ -1033,10 +1108,13 @@ function planLines(root, config, open) {
 		lines.push(
 			`진행 계획: ${done}/${chk.plan.tasks.length} 끝남 — ${chk.next ? `다음 ${chk.next.id} "${chk.next.title}"(${chk.next.state}) → ${nextCmd(chk.next, open, chk.plan.sig)}` : "모든 Task가 끝났다"}${chk.problems.length ? ` — 문제 ${chk.problems.length}건(pnpm dev-cycle plan)` : ""}`,
 		);
-	} else if (chk) lines.push(`진행 계획: ${chk.note}`);
+	} else if (chk)
+		lines.push(
+			`진행 계획: ${chk.note}${!open && EXISTING_TYPES.includes(config.projectType) ? ` → 진행 계획 라운드에서 project-plan.md 형식으로 다시 쓴다: ${PLAN_ROUND_CMD}` : ""}`,
+		);
 	else if (!open && EXISTING_TYPES.includes(config.projectType))
 		lines.push(
-			'진행 계획: 아직 없다 → 정밀 분석과 진행 계획부터: pnpm dev-cycle table A --write --title "정밀 분석과 진행 계획" --plan',
+			`진행 계획: 아직 없다 → 정밀 분석과 진행 계획부터: ${PLAN_ROUND_CMD}. ${NO_TASK_NOTE}`,
 		);
 	if (config.legacy?.path)
 		lines.push(`기존 코드(읽기 전용 참조): ${config.legacy.path}`);
@@ -1058,9 +1136,10 @@ function statusOfRound(root, config) {
 			line: '활성 라운드 없음 — pnpm dev-cycle case로 판정한 뒤 pnpm dev-cycle table <케이스> --write --title "<요약>"으로 연다 (케이스는 요청 기준, 아직 diff가 없으면 판정은 A)',
 		};
 	}
-	const filled = active.rows.filter((r) => !rowProblem(r)).length;
-	const next = active.rows.find(rowProblem)?.text ?? null;
-	const line = `라운드 ${active.meta.case}${active.meta.task ? `(${active.meta.task})` : ""} "${active.title}" — ${filled}/${active.rows.length}칸 — 다음: ${next ?? "audit 후 close"}`;
+	const problemOf = roundRowProblem(root, config, active);
+	const filled = active.rows.filter((r) => !problemOf(r)).length;
+	const next = active.rows.find(problemOf)?.text ?? null;
+	const line = `라운드 ${active.meta.case}${active.meta.task ? `(${active.meta.task})` : active.meta.notask === "true" ? "(--no-task)" : ""} "${active.title}" — ${filled}/${active.rows.length}칸 — 다음: ${next ?? "audit 후 close"}${next && isConfirm(next) && isPlanRound(active) ? ` — ${PLAN_CONFIRM_NOTE}` : ""}`;
 	return {
 		active: true,
 		case: active.meta.case,
@@ -1518,7 +1597,7 @@ export function stagedSecrets(root) {
 }
 
 const USAGE =
-	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--title 제목] [--task T번호 | --plan] | evidence <행 번호> --file <증거 파일> | status | plan | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|diff|resolve|validate|accept> | close [--partial] | archive | secrets> [--json]";
+	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--title 제목] [--task T번호 | --plan | --no-task] | evidence <행 번호> --file <증거 파일> | status | plan | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|diff|resolve|validate|accept> | close [--partial] | archive | secrets> [--json]";
 
 function readDelegationJson(root, path, flag) {
 	if (!path || path.startsWith("--"))
@@ -2356,6 +2435,7 @@ export function main(argv, root = process.cwd()) {
 				write: rest.includes("--write"),
 				task,
 				plan: rest.includes("--plan"),
+				noTask: rest.includes("--no-task"),
 			});
 			const text = rest.includes("--write")
 				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다`
@@ -2518,12 +2598,18 @@ export function main(argv, root = process.cwd()) {
 				throw new UsageError("사용법: dev-cycle plan [--json]");
 			const chk = planCheck(root, config);
 			if (!chk) {
-				print({ plan: null }, `진행 계획 없음 (${config.planPath})`);
+				print(
+					{ plan: null },
+					`진행 계획 없음 (${config.planPath})${EXISTING_TYPES.includes(config.projectType) ? ` → ${PLAN_ROUND_CMD}` : ""}`,
+				);
 				return 0;
 			}
 			// 파일이 없으면 진행 계획을 쓰지 않는 프로젝트다(0). 있는데 블록이 없으면 형식을 잘못 쓴 것이다(1).
 			if (!chk.plan) {
-				print(chk, `진행 계획 없음: ${chk.note}`);
+				print(
+					chk,
+					`진행 계획 없음: ${chk.note}${EXISTING_TYPES.includes(config.projectType) ? ` → ${PLAN_ROUND_CMD}` : ""}`,
+				);
 				return 1;
 			}
 			const todo = readTodo(root, config);
@@ -2533,8 +2619,14 @@ export function main(argv, root = process.cwd()) {
 				(t) =>
 					`  ${t.id} ${t.state} ${t.title}${t.record ? ` — ${t.record}` : ""}`,
 			);
+			const confirmSig =
+				active && isPlanRound(active) ? planSig(chk.plan.tasks) : null;
+			if (confirmSig)
+				rows.push(
+					`  지문: sig=${confirmSig} — 진행 계획 라운드의 [confirm]은 이 Task 목록과 지문을 사용자에게 보여 주고 받은 답에 지문을 함께 적는다`,
+				);
 			print(
-				chk,
+				confirmSig ? { ...chk, confirmSig } : chk,
 				[
 					`진행 계획: ${chk.plan?.title ?? ""}${chk.plan?.doc ? ` (${chk.plan.doc})` : ""}`,
 					...rows,
