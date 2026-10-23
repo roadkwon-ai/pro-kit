@@ -6,6 +6,8 @@
 
 에이전트(대화로 부탁하면 코드를 쓰고 명령을 실행해 주는 AI, [용어](../../tutorials/reference/glossary.md#도구))는 **하나만 있으면 돼요.** 프로킷은 네 도구에 같은 규칙과 스킬을 설치하므로, 이미 쓰는 요금제에 맞춰 고르면 돼요.
 
+![처음이면 Claude Code나 Codex, ChatGPT 요금제가 있으면 Codex, Claude 요금제가 있으면 Claude Code를 골라요. Antigravity나 Grok Build를 쓰고 있다면 그대로 써도 돼요.](assets/agent-choice.webp)
+
 | 상황 | 권하는 선택 |
 |---|---|
 | 처음이고 어떤 것을 쓸지 모르겠어요 | Claude Code나 Codex. 튜토리얼을 이 두 도구로 확인했고 질문에 답하는 법, 멈추는 법, 이어 하는 법이 [에이전트별 차이](../../tutorials/reference/claude-code-and-codex.md)에 표로 있어요 |
@@ -44,9 +46,8 @@
 
 ### 쓰지 않는 것과 대신하는 것
 
-Antigravity는 Claude 플러그인 훅, Claude Code·Codex 전용 두뇌(OMC, OMX, gstack, pstack), impeccable 편집 훅을 쓰지 않아요. 그 자리는 Codex와 같은 대체 절차(설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`)가 맡고, 화면을 고친 뒤에는 critique의 detector로 확인해요.
-
-Grok Build는 Claude 호환이 기본으로 켜져 있어 사용자 전역의 Claude 플러그인과 훅, `~/.claude/CLAUDE.md`, `~/.claude/skills`도 함께 불러와요. 신뢰한 폴더에서는 프로젝트 `.claude/settings.json`과 `settings.local.json`의 훅도 읽어요. 이 훅이 실제로 도는지는 확인하지 않았으므로, Grok Build에서도 화면을 고친 뒤 critique의 detector로 확인해요.
+- **Antigravity**는 Claude 플러그인 훅, Claude Code·Codex 전용 두뇌(OMC, OMX, gstack, pstack), impeccable 편집 훅을 쓰지 않아요. 그 자리는 Codex와 같은 대체 절차(설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`)가 맡고, 화면을 고친 뒤에는 critique의 detector로 확인해요.
+- **Grok Build**는 Claude 호환이 기본으로 켜져 있어 사용자 전역의 Claude 플러그인과 훅, `~/.claude/CLAUDE.md`, `~/.claude/skills`도 함께 불러와요. 신뢰한 폴더에서는 프로젝트 `.claude/settings.json`과 `settings.local.json`의 훅도 읽어요. 이 훅이 실제로 도는지는 확인하지 않았으므로, Grok Build에서도 화면을 고친 뒤 critique의 detector로 확인해요.
 
 ### 확인한 범위
 
@@ -59,7 +60,11 @@ Grok Build는 Claude 호환이 기본으로 켜져 있어 사용자 전역의 Cl
 | Antigravity | CLI 1.4.5(Gemini 3.8 Flash), 2026-10-22 | 전환 프로젝트의 정밀 분석부터 첫 Task 세부 계획까지, 진행 계획 라운드, 계획 리뷰, 사용자 확인, 커밋, Task 라운드를 거쳤어요 |
 | Codex | CLI 0.163, 2026-10-22 | 같은 전환 시나리오를 했어요. 분석과 리뷰는 Codex 하위 에이전트로 떴고 기존 코드는 읽기만 했어요 |
 
-2026-10-22 시험은 전환 시나리오 하나만 했고, Grok Build는 이 시나리오를 시험하지 않았어요. 새 외부 위임·자원 관리 경로는 위의 기존 확인과 별도로 검증했어요. Codex는 실제 네이티브 수행자의 실행 기록을 확인했고, 다른 도구의 새 경로는 로그인·명령 권한·실행 기록 문제로 완료를 확인하지 못했어요. 지원 파일이 있다는 사실을 실제 실행 통과로 세지 않아요([최종 증분 인수와 한계](../../docs/reports/2026-10-09-orchestration-resources/README.md#한계)).
+표 밖의 한계는 이래요.
+
+- 2026-10-22 시험은 전환 시나리오 하나만 했고, Grok Build는 이 시나리오를 시험하지 않았어요.
+- 새 외부 위임·자원 관리 경로는 위의 기존 확인과 별도로 검증했어요. Codex는 실제 네이티브 수행자의 실행 기록을 확인했고, 다른 도구의 새 경로는 로그인·명령 권한·실행 기록 문제로 완료를 확인하지 못했어요.
+- 지원 파일이 있다는 사실을 실제 실행 통과로 세지 않아요([최종 증분 인수와 한계](../../docs/reports/2026-10-09-orchestration-resources/README.md#한계)).).
 
 기록 위치: [neon VERIFICATION](../../templates/prokit-next-neon/VERIFICATION.md#실제-프로젝트-시험-prokit-init과-정밀-분석진행-계획-2026-10-22-추가) · [neon Antigravity·Grok Build](../../templates/prokit-next-neon/VERIFICATION.md#antigravitygrok-build-2026-10-08-추가) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#antigravitygrok-build-2026-10-08-추가)
 

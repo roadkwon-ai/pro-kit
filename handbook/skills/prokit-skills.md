@@ -55,6 +55,9 @@
 
 스킬 폴더에는 `SKILL.md` 말고도 필요할 때만 여는 참고 자료(`references/`)가 있어요. 에이전트가 해당 상황에서 알아서 읽어서, **처음에는 직접 읽지 않아도 돼요.** 어떤 규칙이 어디에 적혀 있는지 궁금할 때만 찾아보세요. 위치는 설치된 프로젝트의 `.agents/skills/<스킬>/references/`예요.
 
+<details>
+<summary>참고 자료 목록 보기</summary>
+
 | 스킬 | 참고 자료 | 무슨 내용이에요 |
 |---|---|---|
 | `prokit-dev-cycle` | `analysis.md` | 기존 프로젝트를 읽기 전용으로 정밀 분석하는 점검표와 보고서 틀 |
@@ -73,6 +76,8 @@
 | `prokit-verify` | `evidence.md` | 대조표 증거 칸에 적는 형식 |
 | | `browser.md` | 브라우저로 화면을 확인하고 스크린샷 증거를 남기는 절차 |
 | | `pack-baseline.md` | 완성 프리셋과 복원한 앱을 비교하는 기준 |
+
+</details>
 
 `prokit-web`, `prokit-deploy`, `prokit-pack-use`, `prokit-skills-update`, `prokit-skills-manage`는 `SKILL.md` 하나로 되어 있어요. 이 목록은 neon과 supabase 템플릿이 같아요.
 

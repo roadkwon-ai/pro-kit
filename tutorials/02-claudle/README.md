@@ -6,7 +6,12 @@
 Claude를 본떠 AI 대화 서비스 **Claudle**을 만들어요. 이름은 마음대로 바꿔도 돼요. 코드를 몰라도 프롬프트를 복사해 [에이전트](../reference/glossary.md#도구)(<!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나)에 붙여 넣으며 따라가면 돼요.
 
 > [!WARNING]
-> **토큰을 많이 쓰는 튜토리얼이에요.** 화면까지(1\~4장)는 <!-- v:preset.claudle.screens.time.text -->한 번에 완성하면 약 2시간 25분\~4시간 50분(여러 번 고쳐 달라고 하면 약 7시간 15분까지)<!-- /v --> 걸리고 최소 약 <!-- v:preset.claudle.screens.tokens -->300만<!-- /v --> 토큰(캐시 포함 약 <!-- v:preset.claudle.screens.cached -->1.5억<!-- /v -->)이 들어요. 끝까지(1\~12장)는 <!-- v:preset.claudle.full.time.text -->한 번에 완성하면 약 5시간\~10시간(여러 번 고쳐 달라고 하면 약 15시간까지)<!-- /v --> 걸리고 최소 약 <!-- v:preset.claudle.full.tokens -->610만<!-- /v --> 토큰(캐시 포함 약 <!-- v:preset.claudle.full.cached -->3억<!-- /v -->)이 들어요. 자세한 내용은 [시간과 비용](#시간과-비용)에 있어요.
+> **토큰을 많이 쓰는 튜토리얼이에요.**
+>
+> - 화면까지(1\~4장): <!-- v:preset.claudle.screens.time.text -->한 번에 완성하면 약 2시간 25분\~4시간 50분(여러 번 고쳐 달라고 하면 약 7시간 15분까지)<!-- /v --> 걸리고 최소 약 <!-- v:preset.claudle.screens.tokens -->300만<!-- /v --> 토큰(캐시 포함 약 <!-- v:preset.claudle.screens.cached -->1.5억<!-- /v -->)이 들어요.
+> - 끝까지(1\~12장): <!-- v:preset.claudle.full.time.text -->한 번에 완성하면 약 5시간\~10시간(여러 번 고쳐 달라고 하면 약 15시간까지)<!-- /v --> 걸리고 최소 약 <!-- v:preset.claudle.full.tokens -->610만<!-- /v --> 토큰(캐시 포함 약 <!-- v:preset.claudle.full.cached -->3억<!-- /v -->)이 들어요.
+>
+> 자세한 내용은 [시간과 비용](#시간과-비용)에 있어요.
 
 ## 무엇을 만드나요
 
@@ -210,6 +215,11 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 
 장마다 쓰는 프로킷 기능이에요. 기능 라운드가 어떤 모양인지는 [Nextflix의 같은 절](../01-nextflix/README.md#이-과정에서-배우는-프로킷-기능)에서 먼저 설명했고, 여기서는 Claudle에서 새로 만나는 것을 중심으로 정리했어요.
 
+처음 따라 할 때는 읽지 않아도 돼요. 만들다가 "왜 이렇게 하지?" 싶을 때 펼쳐 보세요.
+
+<details>
+<summary>장별 프로킷 기능 표 보기</summary>
+
 | 장 | 쓰는 프로킷 기능 | 이 장에서 눈여겨볼 것 | 더 알아보기 |
 |---|---|---|---|
 | 1\~2 | PRD, 스킬 구성, 기획 문서 | 프리셋 팩이 PRD 역할을 해요. 문서만 채우는 2장은 코드를 바꾸지 않아요 | [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md), [두뇌와 선택 스킬](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/skills/brains.md) |
@@ -222,9 +232,11 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 | 11 | 전체 검증, 디자인 리뷰 | 타입, 린트, 빌드, 테스트와 모든 페이지 화면 검사, P0\~P3 문제 목록 | [증거와 audit, 사용자 확인](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/audit-and-confirm.md) |
 | 12 | 배포와 릴리스 | develop과 운영을 나눠 올리고, 릴리스와 운영 DB 적용은 내 동의를 받아요 | [처음 배포하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/first-deploy.md), [릴리스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/release.md) |
 
+</details>
+
 ## 시간과 비용
 
-이 프롬프트와 프리셋 팩으로 만들 때의 값이에요.
+이 프롬프트와 프리셋 팩으로 만들 때의 값이에요. 먼저 아래 표의 두 줄(화면까지, 끝까지)만 보면 돼요. 장마다 얼마나 드는지는 표 밑의 접기에 있어요.
 
 | 어디까지 | 시간 | 최소 토큰 | <!-- v:limit.pro5h.plans -->Claude Pro · ChatGPT Plus(Codex)<!-- /v --> |
 |---|---|---|---|

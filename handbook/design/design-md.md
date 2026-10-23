@@ -93,6 +93,9 @@ DESIGN.md
 
 ### 근거 자료
 
+<details>
+<summary>근거 자료 목록 보기</summary>
+
 | 자료 | 내용 |
 |---|---|
 | [DESIGN.md 스펙](https://github.com/google-labs-code/design.md), [PHILOSOPHY](https://github.com/google-labs-code/design.md/blob/main/PHILOSOPHY.md) (Google Labs, 스펙 `alpha`) | 토큰은 정확한 값이고, 글은 그 값의 이유예요. "형용사는 영역을, 구체적인 레퍼런스는 한 점을 가리킨다" |
@@ -101,6 +104,8 @@ DESIGN.md
 | [Measuring the value of design systems](https://www.figma.com/blog/measuring-the-value-of-design-systems/) (Figma) | 디자인 시스템이 있을 때 사람 디자이너가 작업을 34% 빨리 끝냈어요. Figma는 이 값을 실제 환경의 최대치로 봐요 |
 | [The Value of Design Systems Study](https://sparkbox.com/foundry/design_system_roi_impact_of_design_systems_business_value_carbon_design_system) (Sparkbox) | 개발자 8명이 IBM Carbon으로 폼 페이지를 47% 빨리 만들었고, 8명 중 5명의 시각 일관성이 나아졌어요 |
 | [neon 검증 기록](../../templates/prokit-next-neon/VERIFICATION.md#google-designmd-명세-검토-2026-09-30-추가) | 스펙 검토, 카탈로그 lint 통계(getdesign.kr 22개, getdesign.md 76개), lint·diff를 넣은 이유 |
+
+</details>
 
 ## 효과
 

@@ -18,6 +18,10 @@
 
 기본으로 neon은 <!-- v:skills.official.neon -->28<!-- /v -->개, supabase는 <!-- v:skills.official.supabase -->25<!-- /v -->개를 설치해요(`--adopt` 설치는 이보다 적어요). 기준 목록은 각 템플릿의 `files/skills.manifest.json`이에요. 용어 정리에 쓰는 `domain-modeling`처럼 널리 쓰이는 외부 스킬도 같은 방식으로 설치해요.
 
+### 화면과 Next.js
+
+B·F 라운드의 화면·런타임 행에서 읽는 스킬이에요. 먼저 이 묶음부터 보면 돼요.
+
 | 분야 | 스킬 | 출처 | 읽는 곳 |
 |---|---|---|---|
 | Next.js 동작·성능 | `next-dev-loop`, `next-cache-components-adoption`, `next-cache-components-optimizer`, `next-partial-prefetching-adoption`, `next-partial-prefetching-optimizer` | vercel/next.js | `prokit-web`, `prokit-verify`. `next-dev-loop`는 B·F 런타임 확인 행 |
@@ -27,10 +31,22 @@
 | 이미지 그리기 (ChatGPT 요금제) | `gpt-image` | GENEXIS-AI/gpt-image-skill | `prokit-ui`. Claude Code에서 `OPENAI_API_KEY`가 없고 Codex CLI가 ChatGPT로 로그인되어 있을 때 comp와 plate 이미지를 그려요 |
 | 디자인 스타일 카탈로그 | `use-design-md` | CaesiumY/ko-design-md | `prokit-ui`. B 첫 행에서 고른 스타일(getdesign.kr, awesome-design-md, Refero Styles)의 DESIGN.md를 받아 적용해요. 받은 파일은 Google 스펙 CLI(`@google/design.md`)로 lint해요. 기존 디자인을 이어 가기로 한 프로젝트는 쓰지 않아요 |
 | 브라우저 확인 | `agent-browser` | vercel-labs/agent-browser | `prokit-verify`. B·F 런타임 확인 행(macOS는 ego lite를 먼저 써요). 견본이 콘솔 오류와 가로 넘침을 모아 `결함:` 줄로 출력하고, 이 줄은 오류 예산에 들어가요. 띄우기 전에 3001 포트를 `lsof`로 보고, 다른 프로세스가 쓰면 끄지 않고 알려요 |
+
+### 데이터베이스와 인증
+
+E·D 라운드에서 읽는 스킬이에요.
+
+| 분야 | 스킬 | 출처 | 읽는 곳 |
+|---|---|---|---|
 | 인증 | `better-auth-best-practices`, `better-auth-security-best-practices`, `email-and-password-best-practices` | better-auth/skills | `prokit-api`, `prokit-reviewer`(security). D 구현 행 |
 | Postgres 스키마 | `supabase-postgres-best-practices` | supabase/agent-skills | `prokit-db`, `prokit-reviewer`(db). E 스키마 행 |
 | Neon (neon만) | `neon`, `neon-postgres`, `neon-postgres-branches`, `neon-postgres-egress-optimizer` | neondatabase/agent-skills | `prokit-db`. `neon-postgres-branches`는 E 병합 전 행 |
 | Supabase (supabase만) | `supabase` | supabase/agent-skills | `prokit-db`, `prokit-reviewer`(db). E advisors 행의 보안 체크리스트 |
+
+### 모노레포, 질문, 배포
+
+| 분야 | 스킬 | 출처 | 읽는 곳 |
+|---|---|---|---|
 | 모노레포 | `turborepo` | vercel/turborepo | `prokit-web`, `prokit-dev-cycle`. 태스크·패키지 의존·환경 변수 캐시 입력을 설계하고 `turbo.json`을 바꿀 때 |
 | 용어·설계 질문 | `domain-modeling`, `grill-with-docs`, `grilling` | mattpocock/skills | `prokit-dev-cycle`, `prokit-db`. F 스펙 행과 공통 문서 행. 진행 계획 라운드에서는 계획 전에 결과를 바꾸는 질문을 물을 때도 써요 |
 | Vercel 배포 | `deploy-to-vercel`, `vercel-cli-with-tokens`, `access-protected-vercel-deployment` | vercel-labs/agent-skills, vercel/vercel-plugin | `prokit-deploy` |
@@ -102,7 +118,10 @@ xychart-beta
   bar [69, 36, 70, 89]
 ```
 
-before에서도 대조표 행에 이름이 있던 스킬은 거의 매번 불렸어요. 분야별 스킬의 연결 표에만 있던 공식 스킬은 대부분 건너뛰었어요. after는 그 단계의 행에 스킬 이름을 넣었어요. 공식 스킬별 결과는 다음과 같아요(두 번 실행한 평균).
+before에서도 대조표 행에 이름이 있던 스킬은 거의 매번 불렸어요. 분야별 스킬의 연결 표에만 있던 공식 스킬은 대부분 건너뛰었어요. after는 그 단계의 행에 스킬 이름을 넣었어요. 공식 스킬별 결과는 아래 표에 있어요(두 번 실행한 평균). 대부분은 위 그래프만 보면 돼요.
+
+<details>
+<summary>공식 스킬별 호출률 표 보기</summary>
 
 | 공식 스킬 | before | after | 기대한 요청 |
 |---|---|---|---|
@@ -116,6 +135,8 @@ before에서도 대조표 행에 이름이 있던 스킬은 거의 매번 불렸
 | `next-dev-loop` | 50% | 100% | 화면, 성능 분석 |
 | `domain-modeling` | 50% | 100% | 스펙·계획, DB |
 | `impeccable`, `web-design-guidelines`, `better-auth-security-best-practices`, 브라우저 확인(`ego-browser` 또는 `agent-browser`) | 100% | 100% | 화면, 인증 설정 |
+
+</details>
 
 활용도는 두 가지로 봤어요. 설치한 공식 스킬이 하네스의 어디에 연결되어 있는지, 그리고 측정에서 실제로 읽혔는지예요.
 

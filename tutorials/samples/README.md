@@ -33,11 +33,27 @@
 
 만들고 싶은 서비스가 따로 있으면 [가장 쉬운 방법](#가장-쉬운-방법)의 프롬프트에 내 컨셉을 넣어 보내세요.
 
-공개 프리셋 쪽마다 프롬프트 세 가지를 모았어요. 팩으로 만들어 보기, 팩을 바탕으로 이름·색·페이지·주제를 바꿔 나만의 서비스 만들기, 팩 없이 그 컨셉으로 처음부터 만들기예요. 실제로 거친 과정과 실제 서비스로 만들 때 필요한 것도 함께 있어요. <!-- v:presets.screen.count -->11<!-- /v -->개 모두 기획 문서를 미리 쓰고 결과를 보며 여러 번 다시 요청해서 만들었어요. 평가 기록이 있는 프리셋 쪽의 디자인 리뷰 점수는 화면이 쓰기 편한지 10가지 기준으로 매긴 40점 만점 점수예요([처음 보는 용어](../reference/glossary.md)).
+### 프리셋 쪽에 있는 것
 
-프롬프트는 새 프로젝트에 시스템·라이트·다크와 한국어·영어 전환을 요구해요. 이는 팩의 기존 스크린샷을 다시 쓰거나 공개 프리셋의 기능을 자동으로 갱신하는 작업이 아니에요. 새 프로젝트에서 두 언어 사전, 전환 뒤 상태 유지, HTML 결과를 확인해야 해요. 공개 프리셋의 지원 표시는 실제 전환·전체 페이지 검증·배포가 끝난 뒤에만 바뀌어요.
+공개 프리셋 쪽마다 프롬프트 세 가지를 모았어요. 팩으로 만들어 보기, 팩을 바탕으로 이름·색·페이지·주제를 바꿔 나만의 서비스 만들기, 팩 없이 그 컨셉으로 처음부터 만들기예요. 실제로 거친 과정과 실제 서비스로 만들 때 필요한 것도 함께 있어요.
 
-**프리셋 팩**은 공개 프리셋마다 zip 파일 하나예요. 공개 프리셋 쪽마다 있는 "프리셋 팩 받기" 상자에서 바로 받을 수 있고, 모아 보려면 [팩 릴리스](https://github.com/roadkwon-ai/pro-kit-packs/releases)와 [프리미엄 팩 릴리스](https://github.com/roadkwon-ai/pro-kit-premium-packs/releases)를 보세요. 프롬프트에 `packs/<이름> 프리셋 팩`이 있으면 에이전트가 pro-kit의 `AGENTS.md`대로 `node scripts/pack.mjs <이름>`으로 그 팩만 받아요. 받은 zip이 목록(`tutorials/packs.json`)에 적힌 sha256과 같은지 확인한 뒤 `pro-kit/packs/<이름>/`에 풀어요. zip을 미리 받아 두었다면 프롬프트 끝에 `프리셋 팩 zip은 [받은 zip 경로]에 받아 뒀어.` 한 줄을 더하세요. 에이전트가 `node scripts/pack.mjs <이름> --zip <경로>`로 같은 sha256 확인을 거쳐 풀고, 옛 판이면 새로 받아요. 팩은 팩에 함께 든 이용 조건을 따라요. pro-kit 자체의 조건은 [LICENSE](https://github.com/roadkwon-ai/pro-kit/blob/main/LICENSE), 팩과 외부 원본의 조건은 [제3자 안내의 프리셋 팩 절](https://github.com/roadkwon-ai/pro-kit/blob/main/THIRD_PARTY_NOTICES.md#사용자-작성-코드와-프리셋-팩)에 있어요.
+- <!-- v:presets.screen.count -->11<!-- /v -->개 모두 기획 문서를 미리 쓰고 결과를 보며 여러 번 다시 요청해서 만들었어요.
+- 평가 기록이 있는 프리셋 쪽의 디자인 리뷰 점수는 화면이 쓰기 편한지 10가지 기준으로 매긴 40점 만점 점수예요([처음 보는 용어](../reference/glossary.md)).
+
+### 라이트·다크와 두 언어
+
+프롬프트는 새 프로젝트에 시스템·라이트·다크와 한국어·영어 전환을 요구해요. 이는 팩의 기존 스크린샷을 다시 쓰거나 공개 프리셋의 기능을 자동으로 갱신하는 작업이 아니에요.
+
+- 새 프로젝트에서 두 언어 사전, 전환 뒤 상태 유지, HTML 결과를 확인해야 해요.
+- 공개 프리셋의 지원 표시는 실제 전환·전체 페이지 검증·배포가 끝난 뒤에만 바뀌어요.
+
+### 프리셋 팩 받기
+
+**프리셋 팩**은 공개 프리셋마다 zip 파일 하나예요. 공개 프리셋 쪽마다 있는 "프리셋 팩 받기" 상자에서 바로 받을 수 있고, 모아 보려면 [팩 릴리스](https://github.com/roadkwon-ai/pro-kit-packs/releases)와 [프리미엄 팩 릴리스](https://github.com/roadkwon-ai/pro-kit-premium-packs/releases)를 보세요.
+
+- 프롬프트에 `packs/<이름> 프리셋 팩`이 있으면 에이전트가 pro-kit의 `AGENTS.md`대로 `node scripts/pack.mjs <이름>`으로 그 팩만 받아요. 받은 zip이 목록(`tutorials/packs.json`)에 적힌 sha256과 같은지 확인한 뒤 `pro-kit/packs/<이름>/`에 풀어요.
+- zip을 미리 받아 두었다면 프롬프트 끝에 `프리셋 팩 zip은 [받은 zip 경로]에 받아 뒀어.` 한 줄을 더하세요. 에이전트가 `node scripts/pack.mjs <이름> --zip <경로>`로 같은 sha256 확인을 거쳐 풀고, 옛 판이면 새로 받아요.
+- 팩은 팩에 함께 든 이용 조건을 따라요. pro-kit 자체의 조건은 [LICENSE](https://github.com/roadkwon-ai/pro-kit/blob/main/LICENSE), 팩과 외부 원본의 조건은 [제3자 안내의 프리셋 팩 절](https://github.com/roadkwon-ai/pro-kit/blob/main/THIRD_PARTY_NOTICES.md#사용자-작성-코드와-프리셋-팩)에 있어요.
 
 ## 가장 쉬운 방법
 
@@ -199,6 +215,8 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 ## 장별로 자세히
 
 가장 쉬운 방법을 일곱 장으로 나눴어요. pro-kit을 직접 받아 둔 상태에서 시작하고, 장마다 결과를 보고 고르면서 가요.
+
+![화면 만들기는 프로젝트 만들기, 컨셉 알려 주기, 디자인 고르기, 화면 설계 확인, 화면 만들기, 검사하고 다듬기, HTML로 내보내기의 일곱 장으로 이어져요.](assets/samples-chapter-map.webp)
 
 1. [화면만 만드는 프로젝트 만들기](01-project.md)
 2. [컨셉 알려 주기](02-concept.md)

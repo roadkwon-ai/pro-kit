@@ -109,6 +109,8 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 
 ## 5. 검증하고 배포하기
 
+### 계정 준비
+
 인터넷에 올리려면 계정이 필요해요. 모두 무료 요금제로 시작할 수 있어요.
 
 | 계정 | 쓰는 곳 |
@@ -116,6 +118,8 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 | GitHub | 코드 저장, 운영 배포 전 버전 기록(릴리스) |
 | Vercel | 웹사이트 올리기 |
 | Neon 또는 Supabase | 인터넷의 DB(운영 DB) |
+
+### 검증과 운영 DB
 
 ```prompt
 지금까지 만든 거 검증해줘
@@ -126,6 +130,8 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 ```prompt
 운영 DB를 만들고 이 프로젝트에 연결해줘. 내가 직접 할 일이 있으면 먼저 알려줘.
 ```
+
+### Vercel 준비와 배포
 
 ```prompt
 Vercel 배포 준비해줘. 필요한 계정과 내가 직접 할 일을 먼저 알려줘.

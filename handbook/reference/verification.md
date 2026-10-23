@@ -4,7 +4,9 @@
 
 ## 무엇으로 검증했나요
 
-전체 기록은 템플릿마다 `VERIFICATION.md`에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md)).
+전체 기록은 템플릿마다 `VERIFICATION.md`에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md)). 표는 세 묶음으로 나눴어요. 처음에는 "기본 검증"의 앞쪽 몇 줄만 봐도 어떤 식으로 확인했는지 알 수 있어요.
+
+### 기본 검증
 
 | 검증 | 무엇을 봤나요 | 기록 |
 |---|---|---|
@@ -16,14 +18,24 @@
 | 실제 DB에서 라운드 | 실제 Neon DB에서 케이스 F 라운드(마이그레이션, 2계정 격리 테스트)를 끝까지 진행. supabase는 로컬 Supabase DB와 RLS | [neon](../../templates/prokit-next-neon/VERIFICATION.md#실제-neon-db-e2e-task-14) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#로컬-supabase-db와-rls-podman) |
 | Codex 스모크 | Codex에서 스킬과 에이전트가 로드되는지. 에이전트는 신뢰한 프로젝트에서만 로드돼요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#codex-스모크) |
 | 스킬 연결 점검 | 단계마다 읽어야 할 공식 스킬을 실제로 읽는지(호출률). [결과](../skills/official-skills.md#호출률과-활용도) | [neon](../../templates/prokit-next-neon/VERIFICATION.md#스킬-연결-점검과-보강-2026-09-30-추가) |
+
+### 위임, 자원, 실행
+
+| 검증 | 무엇을 봤나요 | 기록 |
+|---|---|---|
 | 외부 위임과 자원 안전성 | 사용자 지정 스킬 선택, 수행·리뷰 분리, 실제 변경과 원시 증거, 자원 분류·차단·정리 경계를 확인했어요. 최종 증분 인수와 미검증 범위는 별도 기록이에요 | [위임·자원 검증 기록](../../docs/reports/2026-10-09-orchestration-resources/README.md#증분-최종-인수-2026-10-10) |
 | 병렬 실행과 검사 재사용 | 독립 작업 배정, 상태 격리, 실패·누락·flaky 보존을 검사하고 같은 범위의 직렬·병렬 실행을 비교했어요 | [실제 배치 시간과 검증 범위](../../docs/reports/2026-10-10-parallel-verification/README.md#실제-비교) |
 | 스킬·에이전트 실행 준비 | 작업 범위, 검사 담당자, 리뷰 문맥과 평가의 일치를 확인해요. 읽기 전용 비교는 실제 개발 시간 측정과 구분해요 | [추가 개선 기록](../../docs/reports/2026-10-10-skill-agent-efficiency/README.md) |
 | Ponytail 통합 | 프로젝트 스킬과 선택 플러그인의 설치 회귀, 격리한 실제 Better-T-Stack 설치와 모드 처리를 확인했어요. 직접 훅 스크립트를 실행한 결과와 호스트의 자동 훅 실행은 구분해요 | [통합 결과와 미검증 범위](../../docs/reports/2026-10-10-ponytail-5-integration/README.md) |
+| 기존 프로젝트 이행 | 지정한 프로젝트의 H 라운드에서 차이·검사·리뷰를 확인했어요. 다른 프로젝트에 일괄 적용한 결과는 아니에요 | [H 이행 기록](../../docs/reports/2026-10-10-h-migration/README.md) |
+
+### 두뇌, 프로젝트 유형, 디자인
+
+| 검증 | 무엇을 봤나요 | 기록 |
+|---|---|---|
 | 두뇌 선택과 PRD로 시작하기 | 고른 두뇌·과설계 방지 스킬만 설치하고, 바꾸면 이전 설치본을 지우는지 실제 프로젝트에서 확인했어요. `prokit-init`은 평가와 실제 Claude Code 세션으로 PRD 없이 끝나는 흐름과 PRD를 받아 커밋까지 만드는 흐름을 확인했어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#두뇌과설계-방지-스킬-선택-설치-2026-10-20) · [보고서](../../docs/reports/2026-10-20-brain-selection/README.md) |
 | 프로젝트 유형별 도입과 Task 게이트 | 새·초기·운영 중·전환 유형 설치, `--adopt`, 두뇌 3종 추가, 진행 계획과 Task 게이트를 실제 프로젝트에서 확인했어요. Codex 실제 세션은 CX1 9/10, 고친 뒤 CX2 10/10이고, Antigravity(Gemini 3.8 Flash)는 AG1\~AG9를 돌렸어요. 화면 리뷰 기록 대조 같은 채점 지적 보완은 실제 세션으로 다시 시험하지 않았어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#프로젝트-유형별-도입-두뇌-확장-task-게이트-2026-10-22) |
 | 화면 디자인 보조 taste | 선택 묶음 `taste`로 taste-skill을 설치하고, 기록이 프로젝트 안에만 남는지와 브라우저 검사가 도는지 실제 프로젝트에서 확인했어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#선택-묶음-taste-taste-skill-화면-디자인-보조-2026-10-20) |
-| 기존 프로젝트 이행 | 지정한 프로젝트의 H 라운드에서 차이·검사·리뷰를 확인했어요. 다른 프로젝트에 일괄 적용한 결과는 아니에요 | [H 이행 기록](../../docs/reports/2026-10-10-h-migration/README.md) |
 | DESIGN.md 효과 | `DESIGN.md`가 있을 때와 브랜드 이름과 대표 색만 줬을 때의 디자인 일치율 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#designmd-효과-측정-2026-09-30-추가) |
 
 아직 확인하지 못한 항목은 각 기록의 "미검증 항목" 절에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md#미검증-항목) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#미검증-항목)).

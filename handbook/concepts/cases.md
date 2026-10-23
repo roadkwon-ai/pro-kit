@@ -21,6 +21,8 @@
 
 케이스는 에이전트가 정하니 외울 필요는 없어요. 요청을 이렇게 말하면 이 케이스가 되는구나 하고 감만 잡으세요. 예시는 모두 가상의 요청이에요.
 
+![오타는 A, 버튼 색은 B 화면, 저장 오류는 C 버그, 목록 API는 D 서버와 API, 컬럼 추가는 E DB예요. 애매하면 더 무거운 쪽으로 가요.](assets/case-by-request.webp)
+
 | 케이스 | 이런 요청이면 | 에이전트가 더 챙기는 것 |
 |---|---|---|
 | A | "README 오타 고쳐줘", "문서 문장 다듬어줘" | 타입·린트 검사 정도예요 |
@@ -52,6 +54,8 @@ flowchart TD
 - **판정**: `pnpm dev-cycle case`는 지금 바뀐 파일을 `.dev-cycle.json`의 경로 규칙(`rules`)에 맞춰 판정해요. 아직 파일을 바꾸기 전이면 판정이 A로 나오므로 요청을 보고 케이스를 골라 `table`에 적어요.
 - **하네스만 설치한 기존 프로젝트(`--adopt`)의 처음 경로 규칙**: 설치기가 흔한 Next.js 배치로 추정한 규칙을 `.dev-cycle.json`에 적어요. `prisma/`·`drizzle/`·`migrations/`는 E, `app/api/`·`pages/api/`·`server/`·`trpc/`는 D, `app/`·`pages/`·`components/`·`styles/`는 B로 보고, 규칙 밖의 `.ts`·`.tsx`·`.js`·`.jsx`·`.mjs`·`.cjs` 파일은 무거운 F로 봐요. 이 규칙은 추정이라서 정밀 분석 뒤 첫 H Task에서 그 프로젝트의 구조에 맞게 고쳐요([기존 프로젝트에 도입하기](../start/adopt.md), [정밀 분석과 진행 계획](project-plan.md)). 앱의 루트 `package.json` 같은 작업공간 설정은 H 규칙에서 빠져요.
 - **선언**: 새 기능 요청은 F, 버그 제보는 C로 선언해요. 애매하면 더 무거운 케이스를 골라요.
+### 상향과 자동으로 붙는 행
+
 - **상향**: 작업 중 다른 계층을 건드리면 `pnpm dev-cycle audit`이 케이스를 올리라고 알려 줘요. `pnpm dev-cycle table <새 케이스> --write --upgrade`를 실행하면 이미 채운 증거, 직접 추가한 행, 메모를 그대로 두고 새 케이스의 행을 더해요.
 - **보안 리뷰 자동 추가**: 로그인과 관련된 경로(`packages/auth`, `apps/web/src/app/api/auth/` 등, `.dev-cycle.json`의 `authPaths`)를 건드리면 `[review] prokit-reviewer(security)` 행이 자동으로 붙어요. 아직 파일을 바꾸기 전이라도 로그인, 세션, 권한 문제라면 대조표를 연 직후 이 행을 직접 더해요.
 - **자동으로 붙는 행**: D·E·F 표에는 그 계층 패키지에 `test` 스크립트가 없으면 `vitest 도입` 행이, `--task`로 열면 Task 세부 계획 행과 Task 세부 계획 리뷰 행(F는 세부 계획 행만)이, `--plan`으로 열면 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 진행 계획 리뷰 행이 맨 앞에 붙어요([정밀 분석과 진행 계획](project-plan.md)).

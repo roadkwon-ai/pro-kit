@@ -209,6 +209,11 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 
 장마다 프로킷의 다른 기능을 써요. 이 표는 "이 장에서 무엇을 하면 프로킷의 어떤 부분이 움직이는지"를 보여 줘요. 따라 하면서 용어가 낯설면 [처음 보는 용어](../reference/glossary.md)를 찾아보세요.
 
+**따라 하는 데는 이 표가 꼭 필요하지 않아요.** 장마다 어떤 기능이 움직이는지 궁금할 때만 펼치세요.
+
+<details>
+<summary>장마다 쓰는 프로킷 기능 표</summary>
+
 | 장 | 쓰는 프로킷 기능 | 이 장의 라운드에서 일어나는 일 | 더 알아보기 |
 |---|---|---|---|
 | 1 | PRD, 스킬 구성 고르기, 로컬 DB | 프리셋 팩을 PRD로 읽고 두뇌와 과설계 방지 스킬을 추천해 물어요. 프로젝트를 만들어 로컬 DB와 첫 마이그레이션까지 해요 | [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md), [두뇌와 선택 스킬](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/skills/brains.md) |
@@ -220,6 +225,8 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 | 7\~10 | 기능 라운드(케이스 F): 스펙, 계획 리뷰, 구현, 사용자 흐름 QA | 기능마다 스펙을 보여 주고 확인받은 뒤 만들어요. 프로필 격리 테스트와 어린이 프로필 등급 상한을 매번 다시 검사해요 | [개발 사이클](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/dev-cycle.md) |
 | 11 | 전체 검증, 디자인 리뷰 | 타입, 린트, 빌드, 테스트와 모든 페이지의 화면 검사, 점수와 P0\~P3 문제 목록 | [증거와 audit, 사용자 확인](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/audit-and-confirm.md) |
 | 12 | 배포와 릴리스 | develop과 운영을 나눠 올려요. 릴리스 노트와 운영 DB 마이그레이션은 내 동의를 받고, 되돌리는 명령도 보고돼요 | [처음 배포하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/first-deploy.md), [릴리스](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/release.md), [Vercel](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/deploy/vercel.md) |
+
+</details>
 
 장마다 라운드(작업 묶음 하나)가 열리고 닫혀요. 라운드는 스펙이나 화면 설계, 구현, 테스트, 리뷰, 내 확인 순서로 흐르고, 에이전트가 단계마다 증거를 대조표에 적어요. 한 라운드가 실제로 어떻게 흘러가는지는 [라운드 한 번 따라가 보기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/round-example.md)에서 예시로 볼 수 있어요.
 

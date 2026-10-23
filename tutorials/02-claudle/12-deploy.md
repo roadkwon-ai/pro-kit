@@ -17,6 +17,10 @@ Claudle을 [배포](../reference/glossary.md#올리기)(인터넷에 올려 누�
 
 AI 답은 [7장](07-ai-reply.md)에서 넣은 `KILO_API_KEY`를 운영에도 넣으면 실제 답이고, 넣지 않으면 모의 응답으로 공개돼요. 둘 다 돈이 들지 않아요.
 
+이 장의 순서예요.
+
+![배포는 계정과 도구, GitHub에 올리기, 운영 DB, Vercel 연결, 첫 배포, 다시 올리기의 여섯 단계로 이어져요.](assets/deploy-six-steps.webp)
+
 | 누가 | 할 일 |
 |---|---|
 | 나(브라우저) | GitHub, Vercel, Neon 가입. 로그인 명령이 연 창에서 로그인하고 허락 |

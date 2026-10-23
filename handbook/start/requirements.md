@@ -31,6 +31,8 @@
 
 ## 각 준비물이 왜 필요한가요
 
+![AI 에이전트는 요청을 받아 일하고, Node와 pnpm은 앱과 명령을 실행해요. git은 바뀐 기록을 남기고, 컨테이너 엔진은 내 컴퓨터에 개발용 DB를 띄우고, 브라우저 확인 도구는 화면을 열어 오류를 봐요.](assets/requirements-tools.webp)
+
 | 준비물 | 무엇인가요 | 왜 필요한가요 |
 |---|---|---|
 | AI 에이전트 | 대화로 부탁하면 코드를 쓰고 명령을 실행해 주는 AI | 내 요청을 받아 일하는 주인공이에요([용어](../../tutorials/reference/glossary.md#도구)) |
@@ -68,7 +70,9 @@ Supabase CLI는 없어요. supabase 템플릿을 쓸 때만 필요해요.
 
 - **빠진 것이 있으면 설치 명령을 알려 주고 멈춰요.** 전역 설치는 사용자가 요청할 때만 해요.
 - 화면만 만들 때는 컨테이너 엔진을 확인하지 않아요. 요청에 "없는 준비물은 설치해줘"가 있으면 빠진 Node <!-- v:node.min -->22.20<!-- /v --> 이상, pnpm, git을 에이전트가 설치해요. 비밀번호가 필요한 명령은 실행하지 않고 사용자에게 알려 줘요.
-- Node는 <!-- v:node.min -->22.20<!-- /v --> 이상이면 돼요. 이보다 낮으면 설치기가 멈춰요(새 프로젝트를 만들고 스킬을 받는 도구가 요구하는 하한이에요). 새로 설치한다면 지금 LTS인 <!-- v:node.recommended -->24<!-- /v -->를 받으세요. <!-- v:node.recommended -->24<!-- /v --> 미만이면 설치기가 권장 경고만 내요. Node 20은 <!-- v:node.eol -->2026-04-30<!-- /v -->에 지원이 끝났어요. Vercel에 배포할 때는 프로젝트의 Node.js를 <!-- v:vercel.node -->24.x<!-- /v -->로 둬요.
+- Node는 <!-- v:node.min -->22.20<!-- /v --> 이상이면 돼요. 이보다 낮으면 설치기가 멈춰요(새 프로젝트를 만들고 스킬을 받는 도구가 요구하는 하한이에요).
+- 새로 설치한다면 지금 LTS인 <!-- v:node.recommended -->24<!-- /v -->를 받으세요. <!-- v:node.recommended -->24<!-- /v --> 미만이면 설치기가 권장 경고만 내요.
+- Node 20은 <!-- v:node.eol -->2026-04-30<!-- /v -->에 지원이 끝났어요. Vercel에 배포할 때는 프로젝트의 Node.js를 <!-- v:vercel.node -->24.x<!-- /v -->로 둬요.
 
 ### 컨테이너 엔진
 
@@ -83,7 +87,12 @@ Supabase CLI는 없어요. supabase 템플릿을 쓸 때만 필요해요.
 
 ### 전역에만 설치되는 도구
 
-agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, ego lite는 **프로젝트가 아니라 컴퓨터 전체에 설치돼요.** 두뇌 gstack, OMX CLI(`oh-my-codex`), OpenSpec CLI도 전역이지만 그 두뇌를 고를 때만 설치해요. <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지는 기본 실행에서 없는 것과 설치 명령만 알려 주고, `--with-global`을 주면 ego lite를 뺀 나머지 중 없는 것만 설치해요([설치기와 옵션](../templates/installer.md)). 모두 없어도 dev-cycle은 진행돼요.
+agent-browser CLI, Vercel CLI, Neon CLI 또는 Supabase CLI, ego lite는 **프로젝트가 아니라 컴퓨터 전체에 설치돼요.**
+
+- 두뇌 gstack, OMX CLI(`oh-my-codex`), OpenSpec CLI도 전역이지만 그 두뇌를 고를 때만 설치해요.
+- <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->.
+- 나머지는 기본 실행에서 없는 것과 설치 명령만 알려 주고, `--with-global`을 주면 ego lite를 뺀 나머지 중 없는 것만 설치해요([설치기와 옵션](../templates/installer.md)).
+- 모두 없어도 dev-cycle은 진행돼요.
 
 ### Windows
 
