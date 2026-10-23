@@ -527,8 +527,17 @@ export function formatWithBiome(target, rels) {
   const bin = join(target, "node_modules/.bin/biome");
   const hasConfig = existsSync(join(target, "biome.json")) || existsSync(join(target, "biome.jsonc"));
   if (!hasConfig || !existsSync(bin) || rels.length === 0) return "건너뜀";
-  const r = run(bin, ["check", "--write", "--no-errors-on-unmatched", ...rels], { cwd: target });
-  return r.status === 0 ? "적용" : `경고 — biome check 실패: ${`${r.stdout}${r.stderr}`.trim().split("\n")[0]}`;
+  const check = () => run(bin, ["check", "--write", "--no-errors-on-unmatched", ...rels], { cwd: target });
+  let r = check();
+  // 생성기의 biome.json이 설치된 Biome보다 옛 규칙 이름을 쓰면 설정을 읽지 못한다(예: Better-T-Stack 3.47.0의
+  // nursery.useSortedClasses, Biome 2.6.2에서 useTailwindSortedClasses). 생성기는 고치지 않고 Biome 공식 migrate로 설정만 맞춘다.
+  let migrated = false;
+  if (r.status !== 0 && /biome\.jsonc?:\d+:\d+ deserialize/.test(`${r.stdout}${r.stderr}`)) {
+    migrated = run(bin, ["migrate", "--write"], { cwd: target }).status === 0;
+    if (migrated) r = check();
+  }
+  if (r.status === 0) return migrated ? "적용 (biome migrate로 biome.json을 설치된 Biome 판에 맞춤)" : "적용";
+  return `경고 — biome check 실패: ${`${r.stdout}${r.stderr}`.trim().split("\n")[0]}`;
 }
 
 export function main(argv) {

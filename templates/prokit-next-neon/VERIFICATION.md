@@ -4,6 +4,15 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 생성기의 옛 Biome 설정 맞추기: biome migrate (2026-10-24)
+
+Better-T-Stack 3.47.0이 만든 `biome.json`은 `linter.rules.nursery.useSortedClasses`를 쓰는데, 함께 설치되는 Biome 2.6.2는 이 규칙 이름을 `useTailwindSortedClasses`로 바꿔 설정을 읽지 못한다(`Found an unknown key useSortedClasses`). 그래서 설치기의 Biome 포맷이 경고로 끝나고 새 프로젝트의 `pnpm check`도 실패했다(guard 실측 중 발견).
+
+- 생성기 출력과 공식 스킬은 고치지 않는다. 설치기 `formatWithBiome`이 `biome check`에서 설정 읽기 오류(`biome.json:<줄>:<칸> deserialize`)를 만났을 때만 Biome 공식 명령 `biome migrate --write`로 `biome.json`을 설치된 Biome 판에 맞추고 다시 검사한다. 이 판에서는 규칙 이름을 바꾸고 `options.functions`를 최상위 `tailwind`(`mergeFunctions`, `variantFunctions`)로 옮긴다. 설정이 맞으면 migrate를 부르지 않아, 생성기가 고쳐지면 아무 일도 하지 않는다.
+- 단위 테스트: `tests/install.test.mjs`에 가짜 Biome로 migrate 뒤 다시 검사하는 경우와 설정 오류가 아니면 migrate를 부르지 않는 경우를 더했다.
+- 실측(Better-T-Stack 3.47.0, Biome 2.6.2, neon 생성 명령 그대로, `--brain none --simplicity none`): 설치 출력이 `biome 포맷: 적용 (biome migrate로 biome.json을 설치된 Biome 판에 맞춤)`이었고, 이어서 `pnpm check`(101개 파일, 75개 정리)와 `pnpm exec biome check .`가 exit 0이었다. 확인용 project scope 플러그인(skill-creator)은 지웠다.
+- 한계: 운영 중인 프로젝트를 하네스만 들이는 `--adopt`는 Biome 포맷을 건너뛰므로 migrate도 하지 않는다. 옛 판으로 만든 기존 프로젝트는 `pnpm exec biome migrate --write`를 그 프로젝트의 H 라운드에서 실행한다.
+
 ## 라운드 없는 커밋·릴리스 막기: dev-cycle guard (2026-10-23)
 
 프로킷을 설치한 저장소의 코드를 그 프로젝트 밖 세션이 dev-cycle 라운드 없이 고치고 커밋한 일이 있었다(pro-kit-web, 2026-10-20\~23). 규칙 문서만으로는 다른 폴더에서 연 세션이 이를 읽지 않으므로, 어느 세션·도구가 커밋해도 도는 검사를 더했다.

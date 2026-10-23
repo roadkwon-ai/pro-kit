@@ -5,7 +5,7 @@ import { chmodSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, 
 import { tmpdir } from "node:os";
 import { basename, dirname, join, relative } from "node:path";
 import { test } from "node:test";
-import { ADOPT_AUTH, ESLINT_IGNORES, ensureBiomeConfig, ensureClaudeHook, ensureEslintIgnores, ensureGitignore, ensureTurboAgentGuidance, preflight } from "../install.mjs";
+import { ADOPT_AUTH, ESLINT_IGNORES, ensureBiomeConfig, ensureClaudeHook, ensureEslintIgnores, ensureGitignore, ensureTurboAgentGuidance, formatWithBiome, preflight } from "../install.mjs";
 import { TEMPLATE, TEMPLATE_FILES } from "./helpers.mjs";
 
 function fakeBts(prefix = "prokit-") {
@@ -777,4 +777,23 @@ test("--default-branch: 다시 실행해도 기록한 기준 브랜치를 지키
   const r = install(merge, "--adopt", "--default-branch", "main");
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.equal(JSON.parse(readFileSync(join(merge, ".dev-cycle.json"), "utf8")).defaultBranch, "main", "지금 브랜치가 prokit/setup이어도 병합할 브랜치를 기록한다");
+});
+
+test("formatWithBiome: 생성기의 biome.json이 설치된 Biome보다 옛 판이면 biome migrate로 맞춘 뒤 다시 검사한다", () => {
+  const root = mkdtempSync(join(tmpdir(), "biome-migrate-"));
+  writeFileSync(join(root, "biome.json"), "{}\n");
+  mkdirSync(join(root, "node_modules/.bin"), { recursive: true });
+  const bin = join(root, "node_modules/.bin/biome");
+  // 가짜 Biome: migrate --write 전에는 설정을 못 읽고(deserialize), 뒤에는 통과한다
+  writeFileSync(bin, `#!/bin/sh\nif [ "$1" = migrate ]; then touch migrated; exit 0; fi\n[ -f migrated ] && exit 0\necho "$PWD/biome.json:65:9 deserialize"; exit 1\n`);
+  chmodSync(bin, 0o755);
+  try {
+    assert.equal(formatWithBiome(root, ["package.json"]), "적용 (biome migrate로 biome.json을 설치된 Biome 판에 맞춤)");
+    rmSync(join(root, "migrated"));
+    writeFileSync(bin, `#!/bin/sh\n[ "$1" = migrate ] && touch migrated\necho "lint error"; exit 1\n`);
+    assert.match(formatWithBiome(root, ["package.json"]), /^경고 — biome check 실패: lint error/);
+    assert.ok(!existsSync(join(root, "migrated")), "설정 오류가 아니면 migrate를 부르지 않는다");
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
