@@ -27,7 +27,7 @@
 | tmux | 두뇌 oh-my의 OMX `team`(Codex)을 돌릴 때. 없어도 진행은 멈추지 않고 에이전트가 보고에 적어요 |
 | OpenSpec CLI (npm) | 두뇌 OpenSpec을 고를 때. 설치기가 전역에 설치해요 |
 
-앱 스택, CLI 도구, 외부 서비스 전체는 [쓰는 기술과 도구](../reference/tech-stack.md)에 모았어요. 에이전트 설치와 로그인은 튜토리얼 [시작하기](../../tutorials/start/README.md)에 있어요. 요금제는 [비용과 키](../../tutorials/reference/costs-and-keys.md)를 보세요.
+앱에 들어가는 기술, CLI 도구, 외부 서비스는 [프로킷이 쓰는 기술과 도구](../reference/tech-stack.md)에 모았어요. 에이전트 설치와 로그인은 튜토리얼 [시작하기](../../tutorials/start/README.md)에 있어요. 요금제는 [비용과 키](../../tutorials/reference/costs-and-keys.md)를 보세요.
 
 ## 각 준비물이 왜 필요한가요
 

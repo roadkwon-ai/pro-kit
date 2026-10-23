@@ -25,7 +25,7 @@
 |---|---|---|
 | 외부 위임과 자원 안전성 | 사용자 지정 스킬 선택, 수행·리뷰 분리, 실제 변경과 원시 증거, 자원 분류·차단·정리 경계를 확인했어요. 최종 증분 인수와 미검증 범위는 별도 기록이에요 | [위임·자원 검증 기록](../../docs/reports/2026-10-09-orchestration-resources/README.md#증분-최종-인수-2026-10-10) |
 | 병렬 실행과 검사 재사용 | 독립 작업 배정, 상태 격리, 실패·누락·flaky 보존을 검사하고 같은 범위의 직렬·병렬 실행을 비교했어요 | [실제 배치 시간과 검증 범위](../../docs/reports/2026-10-10-parallel-verification/README.md#실제-비교) |
-| 스킬·에이전트 실행 준비 | 작업 범위, 검사 담당자, 리뷰 문맥과 평가의 일치를 확인해요. 읽기 전용 비교는 실제 개발 시간 측정과 구분해요 | [추가 개선 기록](../../docs/reports/2026-10-10-skill-agent-efficiency/README.md) |
+| 스킬·에이전트 실행 준비 | 작업 범위, 검사 담당자, 리뷰 문맥과 평가가 맞는지 확인했어요. 읽기 전용 비교는 실제 개발 시간 측정과 구분해요 | [추가 개선 기록](../../docs/reports/2026-10-10-skill-agent-efficiency/README.md) |
 | Ponytail 통합 | 프로젝트 스킬과 선택 플러그인의 설치 회귀, 격리한 실제 Better-T-Stack 설치와 모드 처리를 확인했어요. 직접 훅 스크립트를 실행한 결과와 호스트의 자동 훅 실행은 구분해요 | [통합 결과와 미검증 범위](../../docs/reports/2026-10-10-ponytail-5-integration/README.md) |
 | 기존 프로젝트 이행 | 지정한 프로젝트의 H 라운드에서 차이·검사·리뷰를 확인했어요. 다른 프로젝트에 일괄 적용한 결과는 아니에요 | [H 이행 기록](../../docs/reports/2026-10-10-h-migration/README.md) |
 
@@ -41,7 +41,7 @@
 아직 확인하지 못한 항목은 각 기록의 "미검증 항목" 절에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md#미검증-항목) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#미검증-항목)).
 
 > [!IMPORTANT]
-> 최근 기록의 로컬 구현·검증은 공개 사이트 배포나 프리셋 팩 재발행과 구분해요. 기존 스킬 유무 비교와 제작 시간 수치를 새 기능의 효과로 내세우지 않아요. Ponytail의 `gain`도 원본 쪽에서 잰 벤치마크예요. 현재 지원 범위와 남은 검사는 위 표의 각 기록에서 확인하세요.
+> 최근 기록은 내 컴퓨터에서 구현하고 검증한 결과예요. 공개 사이트 배포나 프리셋 팩 재발행과는 따로예요. 앞서 잰 스킬 유무 비교와 제작 시간 수치를 새 기능의 효과로 내세우지 않아요. Ponytail의 `gain`도 Ponytail 원본 쪽에서 잰 벤치마크예요. 현재 지원 범위와 남은 검사는 위 표의 각 기록에서 확인하세요.
 
 ## 스킬이 있을 때와 없을 때
 
@@ -73,7 +73,7 @@ xychart-beta
 > [!NOTE]
 > 체크 항목은 프로킷의 규칙(증거, 데이터 주인 확인, 마이그레이션 순서, 설계 확인)을 지켰는지 봐요. 일반적인 코드 품질 점수가 아니에요.
 
-이후 체크 항목은 늘렸고, 측정 방법과 실패 사례는 [neon 검증 기록](../../templates/prokit-next-neon/VERIFICATION.md#스킬-동작-eval-skill-creator-표준-절차)에 있어요.
+그 뒤 체크 항목을 늘렸어요. 측정 방법과 실패 사례는 [neon 검증 기록](../../templates/prokit-next-neon/VERIFICATION.md#스킬-동작-eval-skill-creator-표준-절차)에 있어요.
 
 supabase 템플릿의 `prokit-db`도 같은 방식으로 쟀어요. `prokit-db`를 뺀 프로젝트에서도 `AGENTS.md`의 보안 규칙(RLS, `db:push` 금지)이 지켜져서 체크 항목 점수는 스킬이 없을 때가 오히려 높았어요(수정 전 기준 있음 73%, 없음 87%). **차이는 점수 밖에서 났어요.** 스킬이 없으면 세 번 모두 대조표 없이 진행했고, 에이전트 셸에서 실패하는 루트 turbo 명령부터 썼어요. 한 번은 drizzle 스냅샷을 손으로 고쳤어요.
 
@@ -126,7 +126,6 @@ Codex와 Antigravity 시험에서 찾아 고친 것은 이래요.
 ### 측정 보고서
 
 - [실제 CLI 기술 인수와 생성 이미지 보완](../../docs/reports/2026-10-10-cli-acceptance-images/README.md): 연결·차단 검사와 실제 Codex 리뷰, 이미지 생성·선택적 재검수를 기록했어요.
-
 - [스킬 연결 점검 보고서](../../docs/reports/2026-09-30-skill-wiring-check.html)
 - [Codex 검수 보고서](../../docs/reports/2026-09-30-codex-skill-wiring-check.html)
 - [DESIGN.md 효과 측정 보고서](../../docs/reports/2026-09-30-design-md-effect.html)

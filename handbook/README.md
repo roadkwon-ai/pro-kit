@@ -20,6 +20,6 @@
 | [핵심 개념](concepts/README.md) | 하네스, dev-cycle 라운드, 라운드 한 번 따라가 보기, 케이스와 대조표, 증거와 확인, 정밀 분석과 진행 계획, 위임·리뷰 에이전트, 자원 관리 |
 | [템플릿](templates/README.md) | neon과 supabase 고르기, 템플릿이 더하는 것, 앱 구조, 설치기, 갱신 반영 |
 | [스킬과 에이전트](skills/README.md) | prokit 스킬, 공식 스킬과 연결, 선택 스킬 묶음, 설치와 업데이트 |
-| [디자인](design/README.md) | 스타일 추천과 화면 설계, `DESIGN.md`, 화면만 프로젝트와 HTML 내보내기, 완성팩 활용, UI 스킬셋 |
+| [디자인](design/README.md) | UI 스킬셋, 스타일 추천과 화면 설계, `DESIGN.md`, 화면만 프로젝트와 HTML 내보내기, 완성팩 활용 |
 | [배포와 릴리스](deploy/README.md) | 처음 배포하기, Vercel 배포와 되돌리기, GitHub Pages, 버전과 릴리스, 비밀값 지키기 |
-| [레퍼런스](reference/README.md) | 쓰는 기술과 도구, 명령 모음, 폴더 구조, 고쳐도 되는 파일, `.dev-cycle.json` 설정 읽기, 검증 결과, 자주 묻는 질문 |
+| [레퍼런스](reference/README.md) | 프로킷이 쓰는 기술과 도구, 명령 모음, 폴더 구조, 고쳐도 되는 파일, `.dev-cycle.json` 설정 읽기, 검증 결과, 자주 묻는 질문 |

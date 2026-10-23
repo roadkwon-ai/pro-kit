@@ -18,7 +18,7 @@
 
 | 키 | 뜻 | 예시 | 채우는 쪽 |
 |---|---|---|---|
-| `brain` | 두뇌(요구 정리, 계획, 구현을 이끄는 스킬 묶음). 하나면 글자, 여럿이면 배열이고 첫 값이 주 두뇌예요 | `"none"`, `["openspec", "superpowers"]` | 설치기(`--brain`), 나중에는 `pnpm skills:setup --brain` |
+| `brain` | 두뇌(요구 정리, 계획, 구현을 이끄는 스킬 묶음). 하나면 문자열, 여럿이면 배열이고 첫 값이 주 두뇌예요 | `"none"`, `["openspec", "superpowers"]` | 설치기(`--brain`), 나중에는 `pnpm skills:setup --brain` |
 | `simplicity` | 과설계 방지 스킬 하나 | `"none"`, `"ponytail"` | 설치기(`--simplicity`), 나중에는 `pnpm skills:setup --simplicity` |
 | `todoPath` | 진행 중인 대조표와 할 일 파일 | `"tasks/todo.md"` | 템플릿 |
 | `archiveDir` | 닫은 라운드와 완료 기록을 보관하는 폴더 | `"tasks/archive"` | 템플릿 |
@@ -39,7 +39,7 @@
 
 ## 케이스를 정하는 `rules`
 
-`rules`는 "이 경로의 파일이 바뀌면 이 케이스로 봐요"라는 규칙 목록이에요. 각 규칙은 `case`(케이스 글자), `match`(경로를 맞춰 보는 정규식), `why`(이유)로 이뤄져요. **바뀐 파일마다 위에서부터 처음 맞는 규칙 하나가 쓰여요.**
+`rules`는 "이 경로의 파일이 바뀌면 이 케이스로 봐요"라는 규칙 목록이에요. 각 규칙은 `case`(케이스 글자), `match`(경로를 맞춰 보는 정규식), `why`(이유)로 이뤄져요. **바뀐 파일마다 위에서부터 보다가 처음 맞는 규칙 하나만 써요.**
 
 ```json
 { "case": "E", "match": "^packages/db/", "why": "DB 스키마·마이그레이션·연결" }
@@ -58,7 +58,7 @@
 - 계층 파일은 없고 하네스 파일(H 규칙)만 바뀌면 H예요. 계층과 함께 바뀌면 케이스는 그 계층 그대로이고 H 행이 더 붙어요(`(+H)` 표시).
 - 어느 규칙에도 맞지 않으면 A(경미한 변경)예요.
 
-그러니 같은 줄 수를 고쳐도 `README` 한 줄은 A, `packages/db/` 안의 파일은 E가 돼요. 계층의 케이스 설명은 [케이스와 대조표](../concepts/cases.md)에 있어요. 하네스(H) 규칙에는 다음 경로가 들어 있어요.
+그래서 똑같이 한 줄을 고쳐도 `README`는 A, `packages/db/` 안의 파일은 E가 돼요. 계층의 케이스 설명은 [케이스와 대조표](../concepts/cases.md)에 있어요. 하네스(H) 규칙에는 다음 경로가 들어 있어요.
 
 - 스킬과 에이전트 폴더
 - `.dev-cycle.json` 자신
@@ -68,13 +68,13 @@
 `--adopt` 프로젝트는 설치기가 이 규칙을 그 프로젝트에 맞게 바꾸고, 규칙 밖의 코드는 계층을 알 수 없어서 무거운 F로 봐요.
 
 > [!WARNING]
-> 규칙을 맞추지 않고 `rules`만 바꿔서 케이스를 낮추는 것은 허용하지 않아요. 리뷰어가 이를 지적해요.
+> 케이스를 낮추려고 `rules`를 고치는 것은 허용하지 않아요. 리뷰어가 지적해요.
 
 케이스를 높이고 싶으면 `pnpm dev-cycle table <케이스> --upgrade`를 써요.
 
 ## `authPaths`: 인증에 닿는 경로
 
-`authPaths`도 정규식 하나예요. 바뀐 파일이 맞으면 케이스는 그대로 두고 대조표에 보안 리뷰 행이 하나 더 붙어요(`case`가 `(+auth: security 리뷰 행 추가)`로 표시돼요). 템플릿 기본값은 `packages/auth/`, `apps/web/src/app/api/auth/`, 로그인 클라이언트, 미들웨어, `.env.schema` 같은 경로예요.
+`authPaths`도 정규식 하나예요. 바뀐 파일이 이 경로에 맞으면 케이스는 그대로 두고 대조표에 보안 리뷰 행이 하나 더 붙어요(`case`가 `(+auth: security 리뷰 행 추가)`로 표시돼요). 템플릿 기본값은 `packages/auth/`, `apps/web/src/app/api/auth/`, 로그인 클라이언트, 미들웨어, `.env.schema` 같은 경로예요.
 
 ## `ui`: 화면 점수 기준
 
@@ -82,7 +82,7 @@
 
 ## `commands`: 검사 명령
 
-에이전트가 검사 행을 채울 때 쓰는 명령 이름표예요. 설치기가 프로젝트의 `package.json`을 보고 찾을 수 있는 것을 적어요.
+에이전트가 검사 행을 채울 때 쓰는 명령 목록이에요. 설치기가 프로젝트의 `package.json`을 보고 찾을 수 있는 것을 적어요.
 
 | 키 | 하는 일 | 예 |
 |---|---|---|
@@ -97,14 +97,14 @@
 
 ## `resources`: 자원 감시
 
-`resources.roots`에 경로를 적으면 캐시와 임시 폴더의 크기를 감시해요. 적은 경로는 "감시 대상"일 뿐 자동 삭제 권한이 아니에요. 항목은 `path`, `kind`, `lifetime`을 적고, 비어 있으면 기본 정책을 써요. 한도와 정리 조건은 [위임과 자원 관리](../concepts/delegation-and-resources.md)에 있어요.
+`resources.roots`에 경로를 적으면 캐시와 임시 폴더의 크기를 감시해요. 적은 경로는 감시만 할 뿐, 자동으로 지워도 된다는 뜻은 아니에요. 항목마다 `path`, `kind`, `lifetime`을 적고, 비어 있으면 기본 정책을 써요. 한도와 정리 조건은 [위임과 자원 관리](../concepts/delegation-and-resources.md)에 있어요.
 
 ## 자세히
 
 ### 설치기가 파일을 어떻게 다루나요
 
 - `.dev-cycle.json`은 설치기가 첫 복사 뒤 프로젝트 값으로 채우는 파일이라서 "템플릿과 다름"으로 보이지 않고 `--diff`에도 나오지 않아요. 템플릿의 새 판을 반영할 때는 템플릿의 `files/.dev-cycle.json`과 직접 비교해요([기존 프로젝트에 갱신 반영](../templates/update-existing.md)).
-- 이미 `.dev-cycle.json`이 있는 프로젝트에 다시 설치해도 이 파일은 새로 복사하지 않고, 경로 규칙과 `commands`는 그대로 둬요. 다시 실행해도 기록하는 것은 `projectType`, `adopt`, `legacy.path`, `defaultBranch`(`--default-branch`를 줬을 때), 그리고 고른 `brain`, `simplicity`뿐이에요.
+- 이미 `.dev-cycle.json`이 있는 프로젝트에 다시 설치해도 이 파일은 새로 복사하지 않고, 경로 규칙과 `commands`는 그대로 둬요. 다시 실행할 때 새로 기록하는 것은 `projectType`, `adopt`, `legacy.path`, `defaultBranch`(`--default-branch`를 줬을 때), 그리고 고른 `brain`, `simplicity`뿐이에요.
 - `defaultBranch`는 설치기가 `origin/HEAD`, `main`, `master`, 지금 브랜치 순으로 찾아요. 도입 브랜치(`prokit/setup`)에서 계속 작업할 때는 `--default-branch`로 기준 브랜치를 정하고, 나중에 기본 브랜치에 병합하면 H 라운드에서 되돌려요([기존 프로젝트에 도입하기](../start/adopt.md)).
 
 ### 이 파일을 바꾸는 흔한 이유

@@ -1,6 +1,6 @@
 # 비밀값 지키기
 
-> 한눈에: 비밀값은 남이 알면 안 되는 값이에요. DB 비밀번호, API 키, 토큰이 대표적이고 `.env` 파일에 들어 있어요. 이 값은 저장소와 배포 파일에 남기지 않아요. 내 컴퓨터의 값은 GitHub에 올라가지 않는 파일에, 인터넷에 올린 서비스의 값은 Vercel 설정에만 둬요. 저장(커밋)하기 전과 올리기 전에 한 번 더 검사해요.
+> 한눈에: 비밀값은 남이 알면 안 되는 값이에요. DB 비밀번호, API 키, 토큰이 대표적이고 `.env` 파일에 들어 있어요. 이 값은 저장소와 배포 파일에 남기지 않아요. 내 컴퓨터에서 쓰는 값은 GitHub에 올라가지 않는 파일에, 배포한 서비스의 값은 Vercel 설정에만 둬요. 저장(커밋)하기 전과 배포하기 전에 에이전트가 한 번 더 검사해요.
 
 ## 사용자가 지킬 것
 
@@ -25,9 +25,9 @@
 | production | Vercel Production 환경변수 |
 
 > [!WARNING]
-> 배포 값을 `.env.development`나 `.env.production`에 두지 않아요. 이 파일은 `.vercelignore`에 걸려 배포에 올라가지 않고, Vercel은 Preview도 `NODE_ENV=production`으로 빌드해서 파일로는 develop과 운영을 나눌 수도 없어요. 쓰이지 않는 비밀값 사본만 남고, 에이전트가 그 파일을 읽으면 값이 대화 기록에 남아요.
+> 배포 값을 `.env.development`나 `.env.production`에 두지 않아요. 이 파일은 `.vercelignore`에 걸려 배포에 올라가지 않아요. 또 Vercel은 Preview도 `NODE_ENV=production`으로 빌드해서, 파일로는 develop과 운영을 나눌 수도 없어요. 결국 쓰이지 않는 비밀값 사본만 남고, 에이전트가 그 파일을 읽으면 값이 대화 기록에 남아요.
 
-값마다 어디에 두는지는 이 표로 봐요.
+값마다 두는 곳은 이래요.
 
 | 값 | 두는 곳 |
 |---|---|
@@ -43,7 +43,7 @@
 | `.gitignore`의 `.env.*` | 루트와 `packages/*`의 `.env.*`를 git이 무시해요(`.env.schema`는 커밋해요) |
 | `.vercelignore` | `vercel deploy`는 `.gitignore`를 따르지 않고 작업 폴더를 그대로 올려요. 설치기가 넣는 `.vercelignore`가 로컬 `.env`, `.neon`, `.codex`, `supabase/.temp`, `*.pem`, `*.local`, `*.local.*` 등을 빼요 |
 | `pnpm dev-cycle secrets` | 커밋 전에 스테이징한 변경에서 로컬 `.env*`의 비밀값과 흔한 키 형식(개인 키, `sk-`, GitHub 토큰 등)을 찾아요. 값은 출력하지 않아요. 걸리면 exit 1이라 커밋하지 않아요 |
-| `pnpm vercel:deploy … --check` | 빠진 환경변수까지 배포 준비를 검사하고 걸리면 배포하지 않아요 |
+| `pnpm vercel:deploy … --check` | 빠진 환경변수를 포함해 배포 준비 상태를 검사하고, 걸리면 배포하지 않아요 |
 | `pnpm export:html` | 화면만 프로젝트에서 서버 전용 `.env` 값이 결과물에 들어가면 exit 2로 멈춰요 |
 
 ## 자세히

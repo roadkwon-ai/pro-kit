@@ -59,11 +59,11 @@ my-app/
 | `skills.manifest.json`, `skills-lock.json` | 설치할 스킬 목록과 설치한 판 | [설치와 업데이트 구조](../skills/install-and-update.md) |
 | `.claude/agents/`, `.codex/agents/`, `.agents/agents/` | 구현 수행자, 전문 리뷰어, 최종 리뷰어, 정밀 분석(`prokit-analyzer`)의 정본과 생성물(Codex용, Antigravity용) | [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
 | `scripts/delegation.mjs`, `scripts/resource-guard.mjs`, `.prokit/` | 위임 패킷의 실제 변경 검증과 자원 보호. `.prokit/` 실행 상태는 Git과 Biome에서 제외해요 | [위임과 자원 관리](../concepts/delegation-and-resources.md) |
-| `licenses/` | `PROKIT-SCOPE.md`는 템플릿이 전달한 파일(스킬, 스크립트, 문서)과 외부 구성 요소를 구분하는 안내, `PROKIT-LICENSE.txt`는 프로킷 자체 코드·스킬·문서의 MIT 사본이에요. 내 앱 전체의 라이선스를 정하지 않고, 내가 쓴 코드의 권리를 프로킷에 넘기지도 않아요. 지우지 않고 그대로 둬요 | [프로킷의 사용 조건](../../README.md) |
+| `licenses/` | `PROKIT-SCOPE.md`는 템플릿이 전달한 파일(스킬, 스크립트, 문서)과 외부 구성 요소를 구분하는 안내예요. `PROKIT-LICENSE.txt`는 프로킷 자체 코드·스킬·문서의 MIT 라이선스 사본이에요. 이 파일들이 내 앱 전체의 라이선스를 정하지는 않고, 내가 쓴 코드의 권리를 프로킷에 넘기지도 않아요. 지우지 않고 그대로 둬요 | [프로킷의 사용 조건](../../README.md) |
 | `.vercelignore` | 배포에서 비밀값 파일을 빼요 | [비밀값 지키기](../deploy/secrets.md) |
 | `release/` | 릴리스 노트 | [버전과 릴리스](../deploy/release.md) |
 
-### 스킬과 에이전트 폴더 안
+### 스킬과 에이전트 폴더의 내용
 
 `prokit-*` 스킬과 에이전트는 템플릿이 설치해요. 스킬은 `.agents/skills/`에, 에이전트의 정본은 `.claude/agents/`에 있어요.
 
@@ -94,16 +94,16 @@ my-app/
 |---|---|
 | `PRODUCT.md` | 제품 맥락(impeccable `init` 인터뷰 결과) |
 | `DESIGN.md` | 디자인 값(토큰)과 이유 |
-| `docs/preset-design.json` | 프리셋에서 받은 디자인 설정이나 요청한 변경의 선택 기록. 서체 파일·굵기·라이선스, 모드별 토큰과 초기 언어·모드를 `DESIGN.md`와 맞춰요 |
+| `docs/preset-design.json` | 프리셋에서 받은 디자인 설정이나 요청한 변경을 기록해요. 서체 파일·굵기·라이선스, 모드별 토큰, 처음 언어와 모드를 `DESIGN.md`와 맞춰요 |
 | `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 사이트맵과 화면 설계 |
 | `apps/web/src/fonts/`, `apps/web/public/images/` | 자체 호스팅 서체와 이미지 |
 | `html/` | `pnpm export:html` 결과(git이 무시해요) |
 
 화면만 프로젝트는 루트 `AGENTS.md` 맨 위에 "화면만 프로젝트" 한 줄이 있고, 작업 폴더에서 시작했다면 `docs/first-request.md`에 첫 요청이 있어요([화면만 프로젝트와 HTML 내보내기](../design/screen-only.md)).
 
-Codex 네이티브 Ponytail 플러그인은 `--with-global`에서만 사용자 환경에 설치해요. 이 프로젝트의 `.codex/` 생성물과 플러그인 설치·훅 허용 상태는 따로 확인해요([설치와 업데이트 구조](../skills/install-and-update.md)).
+Codex 네이티브 Ponytail 플러그인은 `--with-global`을 줄 때만 사용자 환경에 설치해요. 이 프로젝트의 `.codex/` 생성물과 플러그인 설치·훅 허용 상태는 따로 확인해요([설치와 업데이트 구조](../skills/install-and-update.md)).
 
-완성팩을 적용하는 작업은 `.agents/skills/prokit-pack-use/`가 맡아요. `preset-manifest.json`이 있으면 지원 환경·수정 범위·비교 자료를 읽고, 소스 무결성 목록과 실제 파일을 대조해요. 공식 프리셋의 원본 조사·COPY 역할은 일반 사용자 템플릿에 포함하지 않아요([담당 구분](../design/preset-publication.md#담당-구분)).
+완성팩을 적용하는 작업은 `.agents/skills/prokit-pack-use/`가 맡아요. `preset-manifest.json`이 있으면 지원 환경·수정 범위·비교 자료를 읽고, 소스 무결성 목록과 실제 파일을 대조해요. 공식 프리셋의 원본 조사·COPY 작업은 일반 사용자 템플릿에 들어 있지 않아요([담당 구분](../design/preset-publication.md#담당-구분)).
 
 > [!IMPORTANT]
 > 하네스만 설치한 기존 Next.js 프로젝트(`--adopt`)에는 이 구조 가운데 하네스 파일만 들어가요. `packages/` 계층, `scripts/`의 배포·내보내기·릴리스 도구, `release/`는 없어요([설치기와 옵션](../templates/installer.md#기존-프로젝트에-설치하기)).

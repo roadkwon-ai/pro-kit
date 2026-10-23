@@ -1,26 +1,26 @@
-# 쓰는 기술과 도구
+# 프로킷이 쓰는 기술과 도구
 
-> 한눈에: 프로킷으로 만든 프로젝트가 쓰는 기술을 한곳에 모았어요. 앱을 이루는 기술, 에이전트와 스킬, 개발·검사·배포에 쓰는 명령줄 도구(CLI), 연결하는 외부 서비스로 나눴어요. **전역 도구가 없어도 dev-cycle은 끝까지 진행되고, 빠진 도구는 대안 절차로 대신해요.**
+> 한눈에: 프로킷으로 만든 프로젝트에 쓰는 기술을 한곳에 모았어요. 앱에 들어가는 기술, 에이전트와 스킬, 개발·검사·배포에 쓰는 명령줄 도구(CLI), 연결할 외부 서비스로 나눴어요. **전역 도구가 없어도 dev-cycle은 끝까지 진행돼요. 빠진 도구는 다른 방법으로 대신해요.**
 
-용어는 [처음 보는 용어](../../tutorials/reference/glossary.md#도구)에 있어요. 표의 한 줄 요약은 이래요.
+용어는 [처음 보는 용어](../../tutorials/reference/glossary.md#도구)에 있어요. 네 묶음을 한 줄씩 요약하면 이래요.
 
-- 앱을 이루는 기술: 만들어지는 서비스의 부품이에요. 화면, 서버, 로그인, DB가 여기에 들어요.
-- 에이전트와 스킬: 코딩하는 AI와, AI가 일하는 법을 적은 설명서예요.
+- 앱에 들어가는 기술: 만들 서비스의 부품이에요. 화면, 서버, 로그인, DB가 여기에 들어요.
+- 에이전트와 스킬: 코딩하는 AI, 그리고 AI가 일하는 법을 적은 설명서예요.
 - 명령줄 도구(CLI): 터미널에서 치는 명령 프로그램이에요. 대부분 에이전트가 대신 실행해요.
-- 외부 서비스: 배포(Vercel)나 DB(Neon, Supabase)처럼 계정이 필요한 곳이에요.
+- 외부 서비스: 배포(Vercel)나 DB(Neon, Supabase)처럼 계정을 만들어 쓰는 곳이에요.
 
 > [!TIP]
-> 처음이라면 이 쪽을 다 읽지 않아도 돼요. 설치기와 에이전트가 이 도구들을 알아서 설치하고 써요. "내 컴퓨터에 무엇이 깔리나", "어떤 서비스 계정이 필요한가"가 궁금할 때 표에서 해당 줄만 찾아보세요.
+> 처음이라면 이 쪽을 다 읽지 않아도 돼요. 설치기와 에이전트가 이 도구를 알아서 설치하고 써요. "내 컴퓨터에 무엇이 깔리나", "어떤 서비스 계정이 필요한가"가 궁금할 때 표에서 해당 줄만 찾아보세요.
 
-## 앱을 이루는 기술
+## 앱에 들어가는 기술
 
-**프로젝트는 Better-T-Stack이 아래 구성으로 만들어 줘요.** 판은 만드는 날의 최신판이고, 표의 판은 2026-10-07에 만든 프로젝트에서 확인한 값이에요.
+**프로젝트는 Better-T-Stack이 아래 구성으로 만들어요.** 판은 만드는 날의 최신판을 받아요. 표에 적은 판은 2026-10-07에 만든 프로젝트에서 확인한 값이에요.
 
-![앱은 화면과 서버(Next.js), API(oRPC와 Zod), 인증(이메일 로그인과 세션), DB(PostgreSQL과 Drizzle), 화면 부품(Tailwind CSS와 shadcn/ui), 배포(Vercel)로 이뤄져요.](assets/tech-stack-layers.webp)
+![앱에 들어가는 기술은 화면과 서버(Next.js), API(oRPC와 Zod), 인증(이메일 로그인과 세션), DB(PostgreSQL과 Drizzle), 화면 부품(Tailwind CSS와 shadcn/ui), 배포(Vercel)예요.](assets/tech-stack-layers.webp)
 
 | 분야 | 기술 | 쓰는 곳 |
 |---|---|---|
-| 화면과 서버 | Next.js 16(App Router), React 19 | `apps/web`. 별도 서버 없이 Next.js 라우트 핸들러가 API를 받아요 |
+| 화면과 서버 | Next.js 16(App Router), React 19 | `apps/web`. 별도 서버 없이 Next.js 라우트 핸들러가 API 요청을 받아요 |
 | 언어 | TypeScript 6 | 모든 패키지 |
 | API | oRPC 1.15, TanStack Query 5, Zod 4 | `packages/api`. 입력 검사는 Zod로 해요 |
 | 인증 | Better Auth 1.7 | `packages/auth`. 이메일 로그인과 세션 |
@@ -30,11 +30,11 @@
 | 모노레포와 형식 | pnpm 워크스페이스, Turborepo 2, Biome 2 | 프로젝트 루트. `pnpm check`가 형식과 lint를 맞춰요 |
 | 테스트 | Vitest | 처음에는 없어요. 첫 API·DB 라운드(케이스 D·E)나 서버 코드를 고치는 라운드(C)에서 들여와요 |
 | 운영 DB | Neon(neon 템플릿) 또는 Supabase(supabase 템플릿) | 개발 중에는 내 컴퓨터의 DB를 써요. neon은 compose로 띄운 Postgres, supabase는 Supabase 로컬 스택이에요 |
-| 배포 | Vercel | develop과 운영 두 환경이에요. 화면만 만든 프로젝트는 GitHub Pages나 Vercel에 정적 HTML로 올려요 |
+| 배포 | Vercel | develop과 운영, 두 환경에 올려요. 화면만 만든 프로젝트는 GitHub Pages나 Vercel에 정적 HTML로 올려요 |
 
 ## 에이전트와 스킬
 
-**prokit 스킬과 에이전트는 템플릿이 설치하고, 두뇌와 과설계 방지 스킬은 고른 것만 설치돼요.**
+**prokit 스킬과 에이전트는 템플릿이 늘 설치해요. 두뇌와 과설계 방지 스킬은 고른 것만 설치해요.**
 
 | 무엇 | 내용 | 자세히 |
 |---|---|---|
@@ -46,10 +46,10 @@
 
 ## 명령줄 도구(CLI)
 
-**표의 "설치" 칸에 따로 설치할 것이 적혀 있어요.**
+**따로 설치해야 하는 도구는 "설치" 칸에 "전역"으로 적혀 있어요.**
 
 > [!NOTE]
-> 설치 칸의 "프로젝트"는 프로젝트의 의존성으로 함께 들어와서 따로 설치하지 않아도 된다는 뜻이에요. "전역"은 컴퓨터 전체에 한 번 설치해요. `--with-global`은 설치기와 `pnpm skills:setup`에 붙이는 옵션이에요([설치기와 옵션](../templates/installer.md)).
+> 설치 칸의 "프로젝트"는 프로젝트를 설치할 때 함께 들어와서 따로 설치할 필요가 없다는 뜻이에요. "전역"은 컴퓨터에 한 번 설치하면 모든 프로젝트에서 써요. `--with-global`은 설치기와 `pnpm skills:setup`에 붙이는 옵션이에요([설치기와 옵션](../templates/installer.md)).
 
 ### 기본 준비물과 설치 도구
 
@@ -88,7 +88,7 @@
 
 | 도구 | 설치 | 언제 쓰나 | 쓰는 명령 |
 |---|---|---|---|
-| agent-browser CLI | 전역. <!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v --> | 화면을 확인할 때. ego lite를 쓸 수 없을 때 써요 | `agent-browser …` |
+| agent-browser CLI | 전역. <!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v --> | ego lite를 쓸 수 없는 환경에서 화면을 확인할 때 | `agent-browser …` |
 | ego lite (`ego-browser`) | 전역(macOS 앱, 직접 설치) | 실제 브라우저 창으로 화면을 확인할 때(1순위) | `ego-browser …` |
 | serve | 받을 필요 없음(`pnpm dlx`) | 화면만 프로젝트에서 내보낸 HTML을 내 컴퓨터에서 볼 때 | `pnpm dlx serve html` |
 
@@ -112,14 +112,14 @@
 
 ## 외부 서비스와 계정
 
-**계정은 그 일을 할 때 준비하면 돼요.**
+**계정은 처음부터 다 만들지 않아도 돼요. 그 일을 할 때 준비하세요.**
 
 | 서비스 | 언제 필요한가 | 준비할 것 |
 |---|---|---|
 | GitHub | 원격 저장소, 운영 릴리스(GitHub Release), 화면만 프로젝트의 GitHub Pages | 계정, `gh auth login`. GitHub Pages는 `GH_TOKEN`(classic, `repo` 권한) |
 | Vercel | develop·운영 배포. 화면만 프로젝트의 Vercel 배포 | 계정(Hobby는 무료, 개인 비상업 용도), `vercel login` 또는 `VERCEL_TOKEN` |
 | Neon | neon 템플릿의 병합 전 검증 DB(브랜치)와 운영 DB | 계정과 프로젝트 |
-| Supabase | supabase 템플릿의 스테이징·운영 DB | 원격 프로젝트 두 개 |
+| Supabase | supabase 템플릿의 스테이징·운영 DB | 계정과 원격 프로젝트 두 개(스테이징, 운영) |
 | OpenAI 또는 ChatGPT | 시안과 그림을 그릴 때(선택) | `OPENAI_API_KEY` 또는 ChatGPT 유료 요금제로 로그인한 Codex CLI |
 | 디자인 카탈로그 | 스타일을 골라 `DESIGN.md`를 받을 때 | 계정 없음(getdesign.kr, awesome-design-md, Refero Styles) |
 

@@ -1,6 +1,6 @@
 # Vercel 배포와 되돌리기
 
-> 한눈에: 서비스 프로젝트는 내 컴퓨터의 Vercel CLI로 확인용(develop)과 운영(production)에 배포해요. 배포 전에 검사를 통과해야 하고, 새 DB 변경이 있으면 DB에 먼저 적용해요. 문제가 생기면 이전 배포로 되돌리는 명령을 알려 줘요.
+> 한눈에: 서비스 프로젝트는 내 컴퓨터의 Vercel CLI로 확인용(develop)과 운영(production)에 배포해요. 배포 전에 검사를 통과해야 하고, 새 DB 변경이 있으면 DB에 먼저 적용해요. 보고에는 이전 배포로 되돌리는 명령도 들어 있어요.
 
 처음 올린다면 [처음 배포하기](first-deploy.md)를 먼저 보세요. 이 쪽의 낯선 말(Preview, alias, pooler, expand → contract)은 맨 아래 "용어 풀이"에 있어요.
 
@@ -14,7 +14,9 @@
 > [!IMPORTANT]
 > production은 기본 브랜치에서 `pnpm release`로 릴리스한 커밋만 배포해요. 릴리스하지 않은 커밋은 스크립트가 막아요.
 
-새 프로젝트 세션에서 "develop에 배포해줘", "운영에 배포해줘"처럼 요청하면 `prokit-deploy` 스킬이 준비 확인부터 배포 뒤 확인까지 진행해요. 배포는 두 경우에만 해요. 사용자가 요청할 때, 그리고 기능 라운드를 마친 뒤 사용자가 "릴리스하고 production 배포"를 고를 때예요. [기존 프로젝트에 들였다면](../start/adopt.md) 두 경우는 라운드를 마칠 때 이 선택을 묻지 않고 커밋까지만 해요. 하나는 하네스만 설치한 `--adopt` 프로젝트로, `vercel:deploy` 스크립트 자체가 없어요. 다른 하나는 배포 방법을 아직 프로킷에 맞추지 않은 운영 중 프로젝트예요.
+프로젝트에서 연 세션에 "develop에 배포해줘", "운영에 배포해줘"처럼 요청하면 `prokit-deploy` 스킬이 준비 확인부터 배포 뒤 확인까지 해요. 배포는 사용자가 요청했을 때, 그리고 기능 라운드를 마치고 사용자가 "릴리스하고 production 배포"를 골랐을 때만 해요.
+
+[기존 프로젝트에 들였다면](../start/adopt.md) 라운드를 마칠 때 이 선택을 묻지 않고 커밋까지만 하는 경우가 있어요. 하네스만 설치해 `vercel:deploy` 스크립트가 없는 `--adopt` 프로젝트, 그리고 배포 방법을 아직 프로킷에 맞추지 않은 운영 중 프로젝트예요.
 
 ```mermaid
 flowchart LR
@@ -50,9 +52,9 @@ flowchart LR
 | production | 스크립트가 출력한 `vercel rollback <이전 배포 URL>`. Hobby 요금제는 직전 production 배포로만 되돌릴 수 있어요 |
 | develop | `vercel alias set <이전 배포 URL> <고정 주소>` |
 
-- 되돌린 뒤에는 새 production 배포가 운영 주소를 자동으로 가져가지 않으므로 고친 배포를 `vercel promote <배포 URL>`로 올려요.
+- 되돌린 뒤에는 새 production 배포가 운영 주소에 자동으로 연결되지 않아요. 고친 배포는 `vercel promote <배포 URL>`로 운영 주소에 올려요.
 - production을 되돌린 뒤 고친 코드는 새 patch 릴리스로 배포해요.
-- 앱만 되돌려도 동작하도록 데이터를 잃을 수 있는 변경은 두 번(expand → contract)에 나눠요.
+- 데이터를 잃을 수 있는 DB 변경은 두 번(expand → contract)에 나눠 해요. 그래야 앱만 되돌려도 서비스가 동작해요.
 - 되돌리기도 배포라서 사용자가 요청할 때만 해요.
 
 > [!WARNING]
@@ -64,14 +66,16 @@ flowchart LR
 
 Vercel 계정, 원격 DB, GitHub 저장소가 필요해요. "Vercel 배포 준비해줘"라고 하면 에이전트가 순서를 안내해요. 사용자가 직접 할 일은 Vercel CLI 설치와 `vercel login`, `gh auth login`, GitHub 원격 저장소 만들기예요. 연결 명령과 환경변수(`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`)를 값이 출력되지 않게 넣는 법은 템플릿 README의 "Vercel 배포"([neon](../../templates/prokit-next-neon/README.md#vercel-배포) · [supabase](../../templates/prokit-next-supabase/README.md#vercel-배포))에 있어요.
 
-인증이 실패하면 재로그인을 요청하기 전에 현재 프로젝트와 사용자가 신뢰한 키 설정의 로딩 경로·우선순위를 확인해요. `prokit-deploy`가 `scripts/load-keys.mjs`와 공식 `vercel-cli-with-tokens` 스킬을 연결해요. 키가 있는지와 지금 세션과 다른지만 확인하고 값은 출력하지 않아요. 설정을 적용한 뒤에도 실제 권한 확인이 통과해야 배포를 진행해요.
+인증이 실패해도 에이전트는 바로 다시 로그인하라고 하지 않아요. 먼저 이 프로젝트와 사용자가 믿고 쓰는 키 설정을 어디서, 어떤 순서로 불러오는지 확인해요. 이 일은 `prokit-deploy`가 `scripts/load-keys.mjs`와 공식 `vercel-cli-with-tokens` 스킬로 해요.
+
+키가 있는지, 지금 세션의 키와 다른지만 보고 값은 출력하지 않아요. 키를 불러온 뒤에도 실제 권한 확인을 통과해야 배포해요.
 
 - Vercel은 프로젝트의 첫 배포를 production으로 만들어서 production부터 배포해요. 스크립트는 production 배포가 없으면 develop을 막아요.
-- `vercel link`가 GitHub 저장소를 연결하면 기본 브랜치 push가 곧 production 배포가 돼서 릴리스 검사를 거치지 않아요. 그래서 새 프로젝트를 만들며 연결됐을 때는 연결을 끊어요(`vercel git disconnect --yes`). push마다 자동 배포하는 방식은 사용자가 요청할 때만 쓰고, 결정은 `docs/adr/`에 남겨요.
+- `vercel link`가 GitHub 저장소까지 연결하면 기본 브랜치에 push하는 순간 production에 배포돼서 릴리스 검사를 거치지 않아요. 그래서 새 Vercel 프로젝트를 만들며 저장소가 연결됐으면 연결을 끊어요(`vercel git disconnect --yes`). push마다 자동 배포하는 방식은 사용자가 요청할 때만 쓰고, 결정은 `docs/adr/`에 남겨요.
 
 ### develop 주소로 보기
 
-Better Auth는 `BETTER_AUTH_URL`만 기준으로 삼아서 배포마다 생기는 고유 URL에서는 로그인이 실패해요. develop은 고정 주소로 열어요. Preview에는 Vercel 배포 보호가 걸려 있어 Vercel에 로그인한 브라우저로 보거나 `vercel curl https://<고정 주소>/…`로 확인해요.
+Better Auth는 `BETTER_AUTH_URL`만 기준으로 삼아서 배포마다 생기는 고유 URL에서는 로그인이 실패해요. develop은 고정 주소로 열어요. Preview에는 Vercel 배포 보호가 걸려 있어서 Vercel에 로그인한 브라우저로 보거나 `vercel curl https://<고정 주소>/…`로 확인해요.
 
 ### 쓰지 않는 도구
 

@@ -1,6 +1,6 @@
 # GitHub Pages 배포
 
-> 한눈에: 화면만 만든 프로젝트는 HTML 파일로 내보내 GitHub Pages나 Vercel에 무료로 올릴 수 있어요. "GitHub Pages에 배포해줘"라고 하면 에이전트가 저장소가 없으면 만들어 올리고 주소를 알려 줘요. 필요한 토큰만 미리 작업 폴더의 `.env`에 넣어 두면 돼요.
+> 한눈에: 화면만 만든 프로젝트는 HTML 파일로 내보내 GitHub Pages나 Vercel에 무료로 올릴 수 있어요. "GitHub Pages에 배포해줘"라고 하면 에이전트가 올리고 주소를 알려 줘요. 저장소가 없으면 저장소도 만들어요. 사용자는 필요한 토큰만 작업 폴더의 `.env`에 미리 넣어 두면 돼요.
 
 ## 이렇게 요청해요
 
@@ -19,14 +19,14 @@
 | GitHub Pages | `GH_TOKEN` (GitHub classic 토큰, `repo` 권한) | 작업 폴더나 프로젝트의 `.env` |
 | Vercel | `VERCEL_TOKEN` | 작업 폴더나 프로젝트의 `.env` |
 
-토큰을 만들고 넣는 법은 튜토리얼 [배포하기](../../tutorials/reference/deploy.md)에 있어요. `gh`나 `vercel` 명령이 없으면 에이전트가 설치해요(배포 요청에 이 설치가 들어 있다고 봐요). 비밀번호가 필요한 명령(sudo)은 실행하지 않고 사용자에게 알려 줘요.
+토큰을 만들고 넣는 법은 튜토리얼 [배포하기](../../tutorials/reference/deploy.md)에 있어요. `gh`나 `vercel` 명령이 없으면 에이전트가 설치해요(배포를 요청하면 설치까지 요청한 것으로 봐요). 비밀번호가 필요한 명령(sudo)은 실행하지 않고 사용자에게 알려 줘요.
 
 > [!WARNING]
 > 토큰은 대화창에 붙여 넣지 않아요. 에이전트도 값을 출력하거나 다른 파일에 쓰지 않아요([비밀값 지키기](secrets.md)).
 
 ## GitHub Pages에 올리는 순서
 
-1. 저장소 이름은 프로젝트 폴더 이름, 계정은 토큰의 계정이에요.
+1. 저장소 이름은 프로젝트 폴더 이름으로, 계정은 토큰의 계정으로 정해요.
 2. `pnpm export:html --base /<저장소>`로 하위 경로에 맞춘 HTML을 만들어요.
 3. `origin`이 없으면 `gh repo create <저장소> --public`으로 공개 저장소를 만들어요.
 4. 기본 브랜치를 push해요.
@@ -46,7 +46,7 @@
 
 ### Vercel에 올릴 때
 
-`pnpm export:html`(하위 경로 없이)로 만든 HTML을 프로젝트 이름의 폴더로 올려요(`vercel deploy … --prod --yes`). 보고하는 주소는 `https://<프로젝트 이름>.vercel.app`이에요. Hobby 요금제는 무료이고 개인 비상업 용도예요. 서비스 프로젝트의 풀스택 배포(`pnpm vercel:deploy`)와는 다른 길이에요([Vercel 배포와 되돌리기](vercel.md)).
+`pnpm export:html`(하위 경로 없이)로 만든 HTML을 프로젝트 이름의 폴더로 올려요(`vercel deploy … --prod --yes`). 보고하는 주소는 `https://<프로젝트 이름>.vercel.app`이에요. Hobby 요금제는 무료이고 개인 비상업 용도예요. 서비스 프로젝트의 풀스택 배포(`pnpm vercel:deploy`)와는 다른 방법이에요([Vercel 배포와 되돌리기](vercel.md)).
 
 ### 토큰을 다루는 방법
 
