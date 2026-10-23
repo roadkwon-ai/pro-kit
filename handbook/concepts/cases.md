@@ -85,7 +85,7 @@ flowchart TD
 <summary>케이스별 행 전체 보기</summary>
 
 - **A. 경미**: 타입·린트 검사.
-- **B. UI**: impeccable context와 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 impeccable init, `DESIGN.md`가 없고 Better-T-Stack 기본 화면뿐이면 스타일 1\~3위와 직접 정하기 중 사용자 선택) → impeccable shape로 화면 설계 확정 → `[design]` 재사용·설정 설계 점검 → 구현 → 타입·린트·빌드 → 런타임 확인과 desktop·mobile 스크린샷(오류 예산) → impeccable critique → impeccable audit과 web-design-guidelines 검사 → 수정과 polish → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
+- **B. UI**: impeccable context와 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 impeccable init, `DESIGN.md`가 없고 Better-T-Stack 기본 화면뿐이면 스타일 1\~3위와 직접 정하기 중 사용자 선택) → impeccable shape로 화면 설계 확정 → `[design]` 재사용·설정 설계 점검 → 구현 → 타입·린트·빌드 → 런타임 확인과 desktop·mobile 스크린샷(오류 예산) → 휴대폰 스크롤 측정(스크롤 모션이나 긴 쪽을 바꿨을 때) → impeccable critique → impeccable audit과 web-design-guidelines 검사 → 수정과 polish → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
   - 기존 프로젝트(`early`·`operating`·`migration`)는 첫 화면 작업에서 스타일을 고르기 전에 디자인 방향을 먼저 물어요(`기존 디자인 유지 (추천)` 또는 `리디자인`).
   - critique 행의 증거에는 impeccable이 남긴 `.impeccable/critique/<시각>__<대상>.md` 경로와 그 파일 머리의 점수를 적어요. audit 행(web-design-guidelines 검사 포함)은 보고서를 `tasks/evidence/ui-audit-<시각>.md`로 저장하고 그 경로와 총점(N/20)을 적어요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요([증거와 audit, 사용자 확인](audit-and-confirm.md)).
 - **C. 버그**: 재현 테스트 작성과 실패 확인 → 수정 → 재현 테스트 통과 → 판정된 케이스의 검사·리뷰 행. 화면 문구·모양 버그는 테스트 파일 대신 고치기 전과 뒤의 화면 스크린샷으로 재현과 통과를 보여요.

@@ -130,6 +130,9 @@ Claude Code에서는 `.agents/skills/impeccable/SKILL.md`를 Read로 읽고 그 
 - Persuade 화면: 첫 화면 등장(1초 안), 스크롤에 따른 섹션 등장, 제품이 하는 일을 보여 주는 연출 하나(파형, 숫자, 전후 비교)를 `animate`로 만든다. Operate 화면: 상태 변화와 피드백에만 150~250ms로 쓴다.
 - 페이지가 여럿이면 목록의 순차 등장, 숫자 올라가기, 탭·필터 전환, 모달·드로어 열림, 완료 상태, 페이지 사이 전환도 계획한다. 페이지 전환은 React `<ViewTransition>`으로 만든다(`SKILL.md` 개발 행).
 - CSS(`@keyframes`, `animation-timeline: view()`)와 IntersectionObserver를 먼저 쓰고, 애니메이션 라이브러리는 CSS로 안 되는 연출에만 더한다. `transform`과 `opacity`만 움직인다.
+- 스크롤 타임라인(`animation-timeline: view()`, `scroll()`)은 요소마다 합성 레이어를 하나씩 만든다. 첫 화면 연출처럼 몇 개에만 쓰고 `@media (hover: hover) and (pointer: fine)` 안에 둔다(휴대폰은 처음부터 최종 상태). 섹션마다 들어오는 등장처럼 많은 요소에는 IntersectionObserver로 화면에 들어올 때 한 번만 도는 시간 모션을 쓴다. Safari는 26.4 전 판에서 스크롤 타임라인을 메인 스레드에서 계산해 긴 쪽이 끊긴다.
+- 타이핑 효과, 자동 넘김, 반복 애니메이션은 IntersectionObserver로 화면 밖에서 멈춘다.
+- 스크롤 모션, 긴 쪽, 반복해서 다시 그리는 요소를 더하거나 바꾸면 B 라운드의 휴대폰 스크롤 측정 행(`prokit-verify` [browser.md](../../prokit-verify/references/browser.md) "휴대폰 스크롤 측정")을 채운다.
 - `prefers-reduced-motion: reduce`에서는 움직임을 끄고 최종 상태를 보여 준다.
 
 ## DESIGN.md 검사

@@ -59,6 +59,60 @@ EOF
 
 출력에 `결함:` 줄이 없어야 한다. 스크립트는 가로 넘침(모바일 에뮬레이션은 넘친 내용에 맞춰 화면을 넓혀 `innerWidth`가 390보다 커진다)과 콘솔 오류·경고, 잡히지 않은 오류를 `결함:`으로 출력한다. 이 수는 오류 예산(`prokit-verify` 본문)에 넣는다. 브라우저가 직접 남기는 `Failed to load resource` 줄은 여기에 잡히지 않으니 `/_next/mcp`의 `get_errors`로 함께 본다. 그리고 찍은 PNG를 이미지로 열어 화면이 기대한 상태인지 본다. 파일 경로만 적고 보지 않은 스크린샷은 증거가 아니다.
 
+## 휴대폰 스크롤 측정
+B 라운드가 스크롤 모션(`animation-timeline`, 스크롤 이벤트), 긴 쪽, 반복해서 다시 그리는 요소(타이핑 효과, 자동 넘김)를 더하거나 바꿨을 때 한다. 그 밖의 라운드는 행에 `N/A: 스크롤 모션·긴 쪽 변경 없음`을 적는다. 데스크톱에서 매끄러워도 휴대폰에서는 끊길 수 있어 스크린샷으로는 보이지 않는다.
+
+같은 TaskSpace에서 390px 터치 화면, CPU 6배 늦춤으로 손가락 스크롤을 흉내 낸다. 고치기 전(기본 브랜치나 운영 주소)과 고친 뒤를 같은 조건으로 재서 비교한다.
+
+```bash
+ego-browser nodejs <<'EOF'
+const task = await taskSpace(<spaceId>);
+const page = task.page("p1");
+await page.cdp("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 3, mobile: true });
+await page.cdp("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+try {
+  await page.goto("http://localhost:3001/<경로>");
+  await page.waitForLoadState("load");
+  await page.waitForTimeout(2500);
+  await page.cdp("Emulation.setCPUThrottlingRate", { rate: 6 });
+  await page.evaluate(() => {
+    const m = (window.__scroll = { frames: [], on: true });
+    const tick = (t) => { m.frames.push(t); if (m.on) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  });
+  await page.cdp("Input.synthesizeScrollGesture", { x: 195, y: 600, yDistance: -12000, speed: 2500, gestureSourceType: "touch", preventFling: true }, { timeout: 60000 });
+  await page.cdp("Emulation.setCPUThrottlingRate", { rate: 1 });
+  console.log(await page.evaluate(() => {
+    const m = window.__scroll; m.on = false;
+    const gaps = m.frames.slice(1).map((t, i) => t - m.frames[i]);
+    return {
+      over50: gaps.filter((g) => g > 50).length,
+      max: Math.round(Math.max(...gaps)),
+      scrollMotions: document.getAnimations().filter((a) => !(a.timeline instanceof DocumentTimeline)).length,
+      scrollY: Math.round(scrollY),
+    };
+  }));
+  await page.events(); // 앞선 이벤트를 비운다
+  await page.cdp("LayerTree.enable");
+  await page.evaluate(() => scrollBy(0, 100));
+  await page.waitForTimeout(1200);
+  const tree = (await page.events()).filter((e) => e.method === "LayerTree.layerTreeDidChange" && e.params?.layers).at(-1);
+  console.log({ layers: tree?.params.layers.length ?? "측정 못 함" });
+  await page.cdp("LayerTree.disable");
+} finally {
+  await page.cdp("Emulation.setCPUThrottlingRate", { rate: 1 });
+  await page.cdp("Emulation.setTouchEmulationEnabled", { enabled: false });
+  await page.cdp("Emulation.clearDeviceMetricsOverride", {});
+}
+EOF
+```
+
+- `over50`은 50ms 넘는 프레임 수, `scrollMotions`는 스크롤에 묶인 애니메이션 수, `layers`는 합성 레이어 수다. 세 값을 고치기 전과 함께 행에 적는다.
+- 고친 뒤 값이 늘었으면 원인을 찾아 고치거나 사유를 적는다. 휴대폰에서 `scrollMotions`가 0이 아니면 `prokit-ui`의 모션 규칙(스크롤 타임라인은 마우스 기기에서만)을 어긴 것이다.
+- 쪽이 12,000px보다 짧으면 `scrollY`가 쪽 끝에서 멈춘다. 그대로 적는다.
+- Chromium 흉내라 iPhone Safari의 메인 스레드 계산은 재현하지 못한다. 보고의 한계에 적는다.
+- ego-browser가 없으면 agent-browser로 같은 너비에서 스크롤하며 `scrollMotions`만 재고, CPU 늦춤과 레이어 수는 `측정 못 함(agent-browser)`으로 적는다.
+
 ## 흐름 확인 (QA)
 F 라운드의 사용자 흐름 QA도 같은 TaskSpace에서 ego-browser로 한다. 보고만 하고 코드는 고치지 않는다.
 1. 스펙의 테스트 시나리오(F)를 모두 돈다. 시나리오가 없는 라운드는 이번 변경이 닿는 흐름을 고른다. 예: 가입 → 로그인 → 목록 → 추가·수정·삭제 → 로그아웃, 비로그인 접근. 너비(1440·1024·390·320), 라이트·다크, 키보드만 쓰는 흐름, 새로 고침, 없는 주소도 시나리오에 넣는다.
