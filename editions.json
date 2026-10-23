@@ -1,0 +1,37 @@
+{
+	"ui": {
+		"link": "repoUi",
+		"overlay": "editions/ui",
+		"include": [
+			"LICENSE",
+			"THIRD_PARTY_NOTICES.md",
+			"site-links.json",
+			"scripts/pack.mjs",
+			"scripts/apply-pack.mjs",
+			"tutorials/packs.json",
+			".agents/skills/prokit-init",
+			".claude/skills/prokit-init",
+			"templates/prokit-next-neon"
+		],
+		"exclude": [
+			".agents/skills/prokit-init/references/existing-project.md",
+			"templates/prokit-next-neon/README.md",
+			"templates/prokit-next-neon/VERIFICATION.md",
+			"templates/prokit-next-neon/adopt",
+			"templates/prokit-next-neon/evals",
+			"templates/prokit-next-neon/tests",
+			"templates/prokit-next-neon/files/.agents/skills/prokit-api",
+			"templates/prokit-next-neon/files/.agents/skills/prokit-db",
+			"templates/prokit-next-neon/files/.agents/skills/prokit-deploy",
+			"templates/prokit-next-neon/files/.agents/skills/prokit-web"
+		],
+		"missing": [
+			"prokit-api",
+			"prokit-db",
+			"prokit-deploy",
+			"prokit-web",
+			"prokit-next-supabase",
+			"existing-project.md"
+		]
+	}
+}

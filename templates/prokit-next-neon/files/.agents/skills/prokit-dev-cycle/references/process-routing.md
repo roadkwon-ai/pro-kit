@@ -23,7 +23,7 @@
 
 ## 설치 위치
 - 프로젝트 scope(설치기와 `pnpm skills:setup`이 설치): skill-creator(Claude 플러그인, Codex는 `.agents/skills`), 공식 도메인 스킬, mattpocock `domain-modeling`·`grilling`·`grill-with-docs`. 두뇌와 과설계 방지 스킬은 고른 것만 설치한다(`pnpm skills:setup --brain <이름|none> --simplicity <이름|none>`). 추가 스킬은 `--matt <스킬>`, 응답 방식 i-have-adhd는 `--optional i-have-adhd`로 설치한다.
-- 전역: ego-browser, agent-browser CLI, Vercel CLI(배포, `prokit-deploy`). 두뇌 gstack(Claude `~/.claude/skills/gstack`, Codex `~/.codex/skills/gstack`)과 OMX CLI는 그 두뇌를 고를 때만 설치한다. ponytail을 고르고 `--with-global`이면 지원할 때만 Ponytail 원본 GitHub marketplace와 Codex 네이티브 ponytail 플러그인을 설치한다. CLI가 없거나 명령을 지원하지 않으면 프로젝트 스킬로 계속하고, 실제 설치 명령이 실패하면 exit 2로 멈춘다. agent-browser CLI는 없거나 npm 최신판보다 낮으면 `--with-global` 없이도 최신판을 설치한다.
+- 전역: ego-browser, agent-browser CLI, Vercel CLI(배포<!-- edition:pro -->, `prokit-deploy`<!-- /edition -->). 두뇌 gstack(Claude `~/.claude/skills/gstack`, Codex `~/.codex/skills/gstack`)과 OMX CLI는 그 두뇌를 고를 때만 설치한다. ponytail을 고르고 `--with-global`이면 지원할 때만 Ponytail 원본 GitHub marketplace와 Codex 네이티브 ponytail 플러그인을 설치한다. CLI가 없거나 명령을 지원하지 않으면 프로젝트 스킬로 계속하고, 실제 설치 명령이 실패하면 exit 2로 멈춘다. agent-browser CLI는 없거나 npm 최신판보다 낮으면 `--with-global` 없이도 최신판을 설치한다.
 - 이 기기 전역에 켜진 고르지 않은 플러그인과 gstack 개인 스킬은 `pnpm skills:setup`이 `.claude/settings.local.json`(커밋하지 않는 개인 설정)으로 이 프로젝트에서만 끈다. 전역 `~/.claude/CLAUDE.md` 블록과 Codex 전역 스킬은 끌 수 없어 경고만 한다.
 - 표의 스킬이 보이지 않으면 `pnpm skills:check`로 무엇이 빠졌는지 확인한다. 설치와 선택 변경은 사용자가 요청할 때 H 라운드에서 한다.
 
@@ -39,7 +39,7 @@ provider 선택·검증·packet 필드는 [delegation.md](delegation.md)가 정�
 ## 규칙
 1. 대조표의 리뷰 행 증거는 `prokit-reviewer`만 채울 수 있다. 과설계 방지 스킬의 검토(`ponytail-review`, `caveman-review`), 두뇌의 리뷰 스킬, Claude Code 내장 `/code-review`, 추가 스킬 `code-review`는 추가 관점이다.
 2. 두뇌의 실행 모드(OMC `ralph`, OMX `team` 등)는 실행 수단이다. 모드의 완료 보고는 증거가 아니며, 완료 판정은 `pnpm dev-cycle audit`만 한다. 모드가 커밋, push, 배포를 하게 두지 않고, 라운드를 닫을 때 모드를 취소한다.
-3. 두뇌의 스킬 가운데 코드를 고치거나 커밋·배포하는 것(gstack `qa`, `ship` 등)은 사용자가 요청할 때만 쓴다. 배포는 `prokit-deploy` 절차(`pnpm vercel:deploy`)로 하고 두뇌의 배포·출시 명령으로 하지 않는다.
+3. 두뇌의 스킬 가운데 코드를 고치거나 커밋·배포하는 것(gstack `qa`, `ship` 등)은 사용자가 요청할 때만 쓴다. 배포는 <!-- edition:pro -->`prokit-deploy` 절차(`pnpm vercel:deploy`)로 하고 <!-- /edition -->두뇌의 배포·출시 명령으로 하지 않는다.
 4. 두뇌의 구현 스킬이 끝에서 브랜치 마무리(병합·push·PR 선택지)를 부르더라도 라운드 끝이 아니다. 그 선택지를 따르지 않고 대조표의 다음 행으로 간다.
 5. 전역 스킬이 없어도 프로젝트·로컬·플러그인·리소스 제공자를 실제로 검증해 쓴다. 검증한 수행자가 없으면 해당 행은 `blocked`이며 Main이 대신 구현하지 않는다.
 6. 간결성. 아래 하네스 규칙은 무엇을 골라도 지킨다. 과설계 방지 스킬이 없다는 이유로 리뷰 행을 `blocked`로 두지 않는다.

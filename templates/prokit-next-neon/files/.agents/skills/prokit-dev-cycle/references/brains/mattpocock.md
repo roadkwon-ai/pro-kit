@@ -12,7 +12,7 @@ mattpocock/skills를 두뇌로 쓴다. 따로 설치하는 플러그인이나 �
 | 디버깅 (C) | `diagnosing-bugs` |
 | 리뷰 추가 관점 | `code-review`(스펙 축). `prokit-reviewer` 게이트를 대신하지 않는다 |
 | F 공통화 | `/improve-codebase-architecture`로 구조 개선 후보를 제안한다 |
-| 외부 설정 | `wizard`(사람이 할 외부 설정 단계 안내). 배포는 `prokit-deploy`다 |
+| 외부 설정 | `wizard`(사람이 할 외부 설정 단계 안내)<!-- edition:pro -->. 배포는 `prokit-deploy`다<!-- /edition --> |
 | H(규칙·스킬 수정) | `writing-for-agents` |
 | 마무리·인계 | `/handoff`(세션을 넘길 때), `pr`(팀이 PR로 병합할 때만. 기본은 커밋·push) |
 | 설명 | `/teach`, `/wait-what` |

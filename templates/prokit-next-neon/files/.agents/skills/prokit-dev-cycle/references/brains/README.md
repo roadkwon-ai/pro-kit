@@ -11,7 +11,7 @@
 | 화면 디자인 보조 | 0~1 | 설치본 | 없음 | `pnpm skills:setup --optional taste` |
 
 - 하네스(`prokit-*` 스킬과 에이전트, dev-cycle 스크립트, 대조표·audit·`[confirm]`, 공식 도메인 스킬, skill-creator, mattpocock `domain-modeling`·`grilling`·`grill-with-docs`, 간결성 규칙)는 무엇을 골라도 그대로 설치하고 지킨다.
-- 두뇌와 과설계 방지 스킬은 "어떻게 생각하고 진행하나", "얼마나 작게 만드나"만 바꾼다. 대조표 행, 위임 검증, `prokit-reviewer` 최종 게이트, `prokit-verify`, audit, `[confirm]`, `prokit-deploy` 배포 경로는 그대로다.
+- 두뇌와 과설계 방지 스킬은 "어떻게 생각하고 진행하나", "얼마나 작게 만드나"만 바꾼다. 대조표 행, 위임 검증, `prokit-reviewer` 최종 게이트, `prokit-verify`, <!-- edition:pro -->`prokit-deploy` 배포 경로, <!-- /edition -->audit, `[confirm]`은 그대로다.
 - 고른 스킬의 규칙이 `AGENTS.md`, `prokit-*`, 대조표, 보고 형식과 부딪히면 뒤의 것이 우선한다.
 
 ## 바꾸는 법
@@ -74,7 +74,7 @@
 
 - 모호할 때: karpathy는 멈추고 묻는다. ponytail은 가장 작은 판을 만든다. caveman은 공개 범위·보안·데이터·과금·되돌리기 어려운 선택만 묻는다. 프로킷에서는 작업 원칙 1(결과를 바꾸는 모호함은 구현 전에 묻는다)이 우선한다.
 - 수정 범위: karpathy는 요청한 곳만 고친다. ponytail은 깨지는 호출자·테스트까지 고친다. caveman `lean-build`는 맡은 계층까지 넓힌다. 프로킷에서는 이번 변경이 깨뜨린 호출자는 고친다(규칙 6 지적 처리).
-- caveman에서 설치하지 않는 스킬: `ultracave`·`megacave`(더 센 압축, `megacave`는 한문), `caveman-compress`(`CLAUDE.md`·`AGENTS.md`를 다시 쓰고 내용을 모델 제공자에게 보낸다), `caveman-commit`(커밋 규칙과 부딪힌다), `investigate-first`(디버깅 단계와 겹친다), `verify-and-stop`(`prokit-verify`와 겹친다), `migration`(`prokit-db`와 겹친다), `cavecrew`(자체 서브에이전트), 클라우드·프록시·도움말 스킬(CLI·훅 전제). `caveman`이 `/caveman ultra`를 `ultracave`로 넘기라고 해도 설치하지 않았으니 쓰지 않는다.
+- caveman에서 설치하지 않는 스킬: `ultracave`·`megacave`(더 센 압축, `megacave`는 한문), `caveman-compress`(`CLAUDE.md`·`AGENTS.md`를 다시 쓰고 내용을 모델 제공자에게 보낸다), `caveman-commit`(커밋 규칙과 부딪힌다), `investigate-first`(디버깅 단계와 겹친다), `verify-and-stop`(`prokit-verify`와 겹친다), `migration`(DB 마이그레이션 스킬과 겹친다), `cavecrew`(자체 서브에이전트), 클라우드·프록시·도움말 스킬(CLI·훅 전제). `caveman`이 `/caveman ultra`를 `ultracave`로 넘기라고 해도 설치하지 않았으니 쓰지 않는다.
 - "normal mode" 한마디는 ponytail, caveman, i-have-adhd를 함께 끈다. 하나만 끄려면 "stop ponytail", "stop caveman", "stop adhd mode"를 쓴다.
 
 ## 응답 방식 스킬
@@ -107,7 +107,7 @@ impeccable을 대신하지 않는다. 화면 작업 순서, `DESIGN.md`, critiqu
 | `prototype` | 모델 | 추가 | 버리는 시안으로 상태 모델·화면을 먼저 확인해요(B·F) | 화면·상호작용·상태 흐름이 새롭거나 PRD가 "느낌을 보고 정하자"는 수준 | oh-my(OMC), pstack |
 | `research` | 모델 | 추가 | 외부 API·SDK·규정 조사 결과를 저장소 문서로 남겨요 | 외부 서비스·결제·지도·AI API 연동, 낯선 도메인 규칙이나 법규 | |
 | `improve-codebase-architecture` | 사용자 | 추가 | 구조 개선 후보를 보고서로 뽑아요(F 공통화 행에서 제안) | 가져온 기존 코드가 있거나 대규모 리팩터가 범위에 있음(새 프로젝트는 보통 해당 없음) | oh-my(OMC) |
-| `wizard` | 모델 | 추가 | 사람이 해야 하는 외부 설정 단계를 안내해요. 배포 자체는 `prokit-deploy`가 맡는다 | OAuth 앱 등록, 결제 키, DNS, 외부 대시보드 설정이 여러 개 | |
+| `wizard` | 모델 | 추가 | 사람이 해야 하는 외부 설정 단계를 안내해요<!-- edition:pro -->. 배포 자체는 `prokit-deploy`가 맡아요<!-- /edition --> | OAuth 앱 등록, 결제 키, DNS, 외부 대시보드 설정이 여러 개 | |
 | `to-questionnaire` | 사용자 | 추가 | 결정권자가 따로 있는 질문을 질문지로 만들어요 | 고객·기획자·법무 등 사용자 밖의 결정권자가 PRD에 있음 | |
 | `handoff` | 사용자 | 추가 | 세션이나 두뇌를 넘길 때 인계 문서를 만들어요 | 여러 세션에 걸친 큰 범위, 여러 사람이 이어 받음 | |
 | `teach` | 사용자 | 추가 | 배우면서 만드는 흐름으로 설명해요 | 학습 목적, 입문자, 튜토리얼 | pstack |
@@ -127,7 +127,7 @@ impeccable을 대신하지 않는다. 화면 작업 순서, `DESIGN.md`, critiqu
 `code-review`, `prototype`, `research`는 Claude Code 같은 하네스의 내장 명령과 이름이 겹친다(원본 저자도 인정). 어느 쪽이 불리는지 증거에 이름을 적는다. 표에 없는 새 스킬은 H 라운드에서 이 표와 매니페스트 `mattpocock.pool`을 고친 뒤 설치한다.
 
 ## 추천 기준
-추천은 PRD로 만든다. 새 프로젝트는 PRD가 먼저 있어야 한다. PRD는 사용자가 준 PRD·스펙 파일, 붙여 넣은 글, 요청이나 `docs/first-request.md`의 서비스 설명(누가 쓰는지와 핵심 기능), 요청에 적힌 프리셋 팩이다. 이미 만든 프로젝트면 `docs/prd.md`나 `docs/first-request.md`(만들 때 받은 PRD)·`docs/domain/project.md`·`docs/specs/`·`GLOSSARY.md`다. 기존 프로젝트를 들일 때(초기, 운영 중, 전환)는 PRD가 없어도 된다. `prokit-init`의 초기 분석(대상 폴더의 코드, 문서, 화면 정의서, 디자인 시스템, 프로토타입)이나 `docs/prokit/intake.md`·`docs/prokit/analysis.md`를 PRD와 함께 신호로 본다. 두뇌 판단 기준은 "하네스가 이미 맡지 않는 가장 큰 부족함 하나"다. 하네스가 맡는 것(행별 테스트, `prokit-reviewer` 게이트, QA 행, `prokit-deploy` 배포, `GLOSSARY.md`·ADR과 용어·설계 질문, 간결성 규칙)은 추천 근거로 세지 않는다.
+추천은 PRD로 만든다. 새 프로젝트는 PRD가 먼저 있어야 한다. PRD는 사용자가 준 PRD·스펙 파일, 붙여 넣은 글, 요청이나 `docs/first-request.md`의 서비스 설명(누가 쓰는지와 핵심 기능), 요청에 적힌 프리셋 팩이다. 이미 만든 프로젝트면 `docs/prd.md`나 `docs/first-request.md`(만들 때 받은 PRD)·`docs/domain/project.md`·`docs/specs/`·`GLOSSARY.md`다. 기존 프로젝트를 들일 때(초기, 운영 중, 전환)는 PRD가 없어도 된다. `prokit-init`의 초기 분석(대상 폴더의 코드, 문서, 화면 정의서, 디자인 시스템, 프로토타입)이나 `docs/prokit/intake.md`·`docs/prokit/analysis.md`를 PRD와 함께 신호로 본다. 두뇌 판단 기준은 "하네스가 이미 맡지 않는 가장 큰 부족함 하나"다. 하네스가 맡는 것(행별 테스트, `prokit-reviewer` 게이트, QA 행<!-- edition:pro -->, `prokit-deploy` 배포<!-- /edition -->, `GLOSSARY.md`·ADR과 용어·설계 질문, 간결성 규칙)은 추천 근거로 세지 않는다.
 
 | PRD·스펙에서 보이는 신호 | 가장 큰 부족함 | 두뇌 추천 |
 |---|---|---|

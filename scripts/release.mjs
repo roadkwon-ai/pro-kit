@@ -3,12 +3,13 @@
 // 1. node scripts/release.mjs [--title "<영어 제목>"] [--minor]
 //    마지막 v* 태그 이후 커밋으로 다음 버전을 정하고(기본 patch, --minor면 minor) release/<YYYYMMDD-HHmm>-<영어 제목>.md를 쓴다. 커밋하지 않는다.
 // 2. node scripts/release.mjs --publish <노트 파일>
-//    main에서 노트 커밋, 태그, main과 태그 push, GitHub Release 생성까지 한다.
+//    main에서 노트 커밋, 태그, main과 태그 push, GitHub Release 생성, 판 저장소(editions.json) 내보내기까지 한다.
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+import { editions, preflight, publish as publishEdition } from "./edition.mjs";
 
 const git = (...args) => execFileSync("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
 const run = (cmd, ...args) => execFileSync(cmd, args, { stdio: "inherit" });
@@ -147,6 +148,11 @@ function publish(file, prevTag, commits) {
   if (commits.length === 0 || ![false, true].some((minor) => tag === `v${nextVersion(prevTag, commits, { minor })}`) || commits.some((c) => !note.includes(c.sha.slice(0, 7)))) {
     return fail("노트가 마지막 태그 이후 커밋과 맞지 않는다. 노트를 지우고 다시 만든다");
   }
+  // 판 저장소(editions.json, UI 스킬셋의 pro-kit-ui)는 pro-kit 뒤에 내보낸다. 판이 깨졌거나 저장소에 닿지 않으면 커밋·태그 전에 멈춘다.
+  const root = git("rev-parse", "--show-toplevel");
+  const names = existsSync(join(root, "editions.json")) ? Object.keys(editions(root)) : [];
+  const blocked = names.flatMap((name) => preflight(name, { root }).map((p) => `${name}: ${p}`));
+  if (blocked.length) return fail(`판 사전 검사 실패. 고친 뒤 다시 --publish 한다:\n${blocked.join("\n")}`);
   git("add", file);
   git("commit", "-q", "-m", `chore(release): ${tag}`);
   git("tag", "-a", tag, "-m", `${tag} — ${title}`);
@@ -164,7 +170,17 @@ function publish(file, prevTag, commits) {
     input: releaseBody(note),
   });
   console.log(`${tag} — ${title} 릴리스 완료`);
-  return 0;
+  // 판 저장소도 같은 태그로 내보낸다. pro-kit은 이미 나갔으므로 실패하면 다시 할 명령만 알린다.
+  let code = 0;
+  for (const name of names) {
+    try {
+      publishEdition(name, { tag, root });
+    } catch (e) {
+      console.error(`${name} 판 내보내기 실패: ${e.message}\n고친 뒤 다시: node scripts/edition.mjs ${name} --publish --tag ${tag}`);
+      code = 1;
+    }
+  }
+  return code;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

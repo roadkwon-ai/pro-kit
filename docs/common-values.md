@@ -37,19 +37,20 @@
 <!-- doc-values:list -->
 | 키 | 값 | 뜻 | 정본 | 바꾸는 법 | 쓰는 곳 |
 |---|---|---|---|---|---|
-| `link.home` | https://prokit-web.vercel.app | 홈페이지(프로킷 사이트) 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json home | `node scripts/site-links.mjs set <키> <주소>` | 0 |
+| `link.home` | https://prokit-web.vercel.app | 홈페이지(프로킷 사이트) 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json home | `node scripts/site-links.mjs set <키> <주소>` | 1 |
 | `link.pages` | https://roadkwon-ai.github.io/pro-kit | 프리셋 사이트(GitHub Pages) 주소. 뒤에 /<이름>/을 붙인다. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json pages | `node scripts/site-links.mjs set <키> <주소>` | 0 |
-| `link.repo` | https://github.com/roadkwon-ai/pro-kit | pro-kit 저장소 주소 | site-links.json repo | `node scripts/site-links.mjs set <키> <주소>` | 36 |
+| `link.repo` | https://github.com/roadkwon-ai/pro-kit | pro-kit 저장소 주소 | site-links.json repo | `node scripts/site-links.mjs set <키> <주소>` | 38 |
+| `link.repoUi` | https://github.com/roadkwon-ai/pro-kit-ui | pro-kit-ui 저장소 주소(UI 스킬셋. scripts/edition.mjs가 pro-kit에서 만드는 읽기 전용 사본) | site-links.json repoUi | `node scripts/site-links.mjs set <키> <주소>` | 2 |
 | `link.packs` | https://github.com/roadkwon-ai/pro-kit-packs | 프리셋 팩 저장소 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json packs | `node scripts/site-links.mjs set <키> <주소>` | 0 |
 | `link.premiumPacks` | https://github.com/roadkwon-ai/pro-kit-premium-packs | 프리미엄 프리셋 팩 저장소 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json premiumPacks | `node scripts/site-links.mjs set <키> <주소>` | 0 |
 | `link.aiService` | https://prokit-ai-relay-puce.vercel.app | aiService 주소 | site-links.json aiService | `node scripts/site-links.mjs set <키> <주소>` | 0 |
 | `link.packsReleases` | https://github.com/roadkwon-ai/pro-kit-packs/releases | 프리셋 팩 릴리스 목록 주소 | site-links.json packs + /releases | `node scripts/site-links.mjs set <키> <주소>` | 0 |
-| `node.min` | 22.20 | 준비물 Node 최소 판(설치기가 이보다 낮으면 멈춘다) | doc-values.json node.min | `doc-values.json`을 고친다 | 20 |
-| `node.recommended` | 24 | 권장 Node 판(지금 LTS. 이보다 낮으면 설치기가 경고한다) | doc-values.json node.recommended | `doc-values.json`을 고친다 | 15 |
+| `node.min` | 22.20 | 준비물 Node 최소 판(설치기가 이보다 낮으면 멈춘다) | doc-values.json node.min | `doc-values.json`을 고친다 | 23 |
+| `node.recommended` | 24 | 권장 Node 판(지금 LTS. 이보다 낮으면 설치기가 경고한다) | doc-values.json node.recommended | `doc-values.json`을 고친다 | 18 |
 | `node.eol` | 2026-04-30 | Node 20 지원 종료일 | doc-values.json node.eol | `doc-values.json`을 고친다 | 5 |
 | `vercel.node` | 24.x | Vercel 프로젝트 Settings의 Node.js Version으로 고르는 판 | doc-values.json vercel.node | `doc-values.json`을 고친다 | 10 |
 | `vercel.node20Stop` | 2026-10-01 | Vercel이 Node.js 20.x 새 배포를 막는 날 | doc-values.json vercel.node20Stop | `doc-values.json`을 고친다 | 5 |
-| `policy.agentBrowser.da` | agent-browser CLI가 없거나 npm 최신판보다 낮으면 전역에 최신판을 설치한다 | agent-browser CLI 설치 정책 문장(~다체. 에이전트·템플릿 README용). 기본 실행도 이 정책을 따른다 | doc-values.json policy.agentBrowser.da | `doc-values.json`을 고친다 | 11 |
+| `policy.agentBrowser.da` | agent-browser CLI가 없거나 npm 최신판보다 낮으면 전역에 최신판을 설치한다 | agent-browser CLI 설치 정책 문장(~다체. 에이전트·템플릿 README용). 기본 실행도 이 정책을 따른다 | doc-values.json policy.agentBrowser.da | `doc-values.json`을 고친다 | 12 |
 | `policy.agentBrowser.yo` | agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요 | agent-browser CLI 설치 정책 문장(~요체. handbook용) | doc-values.json policy.agentBrowser.yo | `doc-values.json`을 고친다 | 5 |
 | `policy.agentBrowser.cell` | 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치 | 같은 정책의 표 칸 꼴(주어와 끝맺음 없이 "…설치"). 행 이름이 agent-browser CLI인 칸, "agent-browser CLI는" 뒤, "agent-browser CLI(" 괄호 안에 쓴다 | doc-values.json policy.agentBrowser.cell | `doc-values.json`을 고친다 | 4 |
 | `policy.resource.environmentWarn` | 10GiB | 영구 활성 환경 하나의 정보 경고 한계. 정리·차단하지 않는다 | templates/*/files/scripts/resource-guard.mjs DEFAULT_RESOURCE_POLICY + .dev-cycle.json resources | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
@@ -133,13 +134,13 @@
 | `agent.<이름>.openCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 표 칸처럼 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.open | `doc-values.json`을 고친다 | 6 |
 | `agent.<이름>.startCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 표 칸처럼 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.start | `doc-values.json`을 고친다 | 6 |
 | `agent.<이름>.yolo` | 4개(`--list`) | 에이전트를 묻지 않고 진행하게 여는 명령 | doc-values.json agents.<이름>.yolo | `doc-values.json`을 고친다 | 29 |
-| `agent.<이름>.yoloCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.yolo | `doc-values.json`을 고친다 | 24 |
+| `agent.<이름>.yoloCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.yolo | `doc-values.json`을 고친다 | 28 |
 | `agent.<이름>.install` | 2개(`--list`) | 에이전트 설치 명령 | doc-values.json agents.<이름>.install | `doc-values.json`을 고친다 | 3 |
 | `agent.<이름>.installCell` | 2개(`--list`) | 같은 명령의 표 칸 안 코드 꼴(백틱 포함, 파이프는 \\|) | doc-values.json agents.<이름>.install | `doc-values.json`을 고친다 | 2 |
 | `agents.count` | 4 | 지원 에이전트 수 | doc-values.json agents 수 | `doc-values.json`을 고친다 | 3 |
 | `agents.count.ko` | 네 | 지원 에이전트 수의 한글 수 관형사 | doc-values.json agents 수 | `doc-values.json`을 고친다 | 1 |
 | `agents.list` | Claude Code, Codex, Antigravity, Grok Build | 지원 에이전트 목록 | doc-values.json agents 이름 | `doc-values.json`을 고친다 | 15 |
-| `agents.imageTools` | Codex, Antigravity, Grok Build | 자체 이미지 도구가 있어 준비 없이 그리는 에이전트 목록 | doc-values.json agents imageTool | `doc-values.json`을 고친다 | 14 |
+| `agents.imageTools` | Codex, Antigravity, Grok Build | 자체 이미지 도구가 있어 준비 없이 그리는 에이전트 목록 | doc-values.json agents imageTool | `doc-values.json`을 고친다 | 15 |
 | `catalogs.<이름>.name` | 3개(`--list`) | 디자인 카탈로그 이름 | doc-values.json catalogs.<이름>.name | `doc-values.json`을 고친다 | 11 |
 | `catalogs.<이름>.url` | 3개(`--list`) | 디자인 카탈로그 이름 링크의 주소(주소 안에는 표시를 달 수 없어 테스트가 같은지 본다) | doc-values.json catalogs.<이름>.url | `doc-values.json`을 고친다 | 0 |
 | `catalogs.<이름>.count` | 3개(`--list`) | 카탈로그가 싣는 스타일 수(개). 센 날은 date | doc-values.json catalogs.<이름>.count | `doc-values.json`을 고친다 | 6 |

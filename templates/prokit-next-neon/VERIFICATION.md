@@ -4,6 +4,16 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## UI 스킬셋 판(pro-kit-ui) 생성과 설치 확인 (2026-10-24)
+
+UI 스킬셋 저장소 `pro-kit-ui`는 pro-kit에서 생성하는 읽기 전용 사본이다(`editions.json`, `scripts/edition.mjs`, 판에만 있는 루트 문서는 `editions/ui/`). 판 경계는 handbook "프로킷 UI 스킬셋" 쪽을 따른다: prokit 스킬 6개(`prokit-dev-cycle`, `prokit-ui`, `prokit-verify`, `prokit-pack-use`, `prokit-skills-manage`, `prokit-skills-update`)와 저장소 스킬 `prokit-init`을 넣고, `prokit-web`·`prokit-api`·`prokit-db`·`prokit-deploy`, supabase 템플릿, 이 템플릿의 README·VERIFICATION·tests·evals·adopt는 넣지 않는다.
+
+- Pro 전용 글은 neon 템플릿과 `prokit-init` 문서에 `<!-- edition:pro -->` 표시 67곳으로 감쌌다. 생성기는 표시를 지운 뒤 남은 표시, 판에 없는 이름, 판 안에서 끊긴 상대 링크를 검사한다(`scripts/edition.test.mjs`).
+- `docs/dev-workflow.md`의 행 글은 대조표로 옮겨지므로 `parseWorkflow`가 행 글의 HTML 주석을 뺀다. Pro 대조표 행은 전과 같고, UI 판의 B 행은 `구현 (prokit-ui, 컴포넌트 …)`이 된다.
+- 화면만 프로젝트의 라운드 끝(`prokit-dev-cycle` 5절)은 배포 준비가 되어도 릴리스와 production 배포를 묻지 않고 `배포 PASS: 화면만`을 적는다. 화면 배포는 `prokit-ui`의 `references/screen-only.md` 절차다. Pro의 화면만 프로젝트에도 같다(그 문서가 풀스택 배포를 쓰지 않는다고 한 것과 맞췄다).
+- 실측(Better-T-Stack 3.47.0, Biome 2.6.2): 생성한 UI 판의 `AGENTS.md` 4번 명령 그대로 만들고 `install.sh --brain none --simplicity none`을 실행했다. exit 0, 스킬 링크는 prokit 6개였다. 이어서 8번 확인(`pnpm check`, `skills:check`, `agents:check`, `check-types`, `biome check .`)이 모두 exit 0이었다(아래 `.agents/agents` 수정 뒤). `dev-cycle table B` 행에 빠진 스킬 이름과 주석이 없었다. 확인용 project scope 플러그인(skill-creator)은 지웠다.
+- 한계: 코드 파일의 안내 문구(`scripts/vercel-deploy.mjs`, `scripts/release.mjs`가 출력하는 `prokit-deploy 스킬` 안내)는 검사하지 않는다. `skills.manifest.json`의 서버용 공식 스킬(better-auth, neon 등)은 UI 판에서도 설치된다. 스킬 이름 없이 Pro 절차를 설명하는 문단은 검사가 잡지 못하므로 표시를 직접 단다. UI 판에는 `adopt/`가 없어 `--adopt`를 쓰지 않는다.
+
 ## Antigravity 에이전트 생성물을 Biome 검사에서 빼기 (2026-10-24)
 
 UI 판 실측에서 `pnpm check`(`biome check --write .`) 뒤 `pnpm agents:check`가 `.agents/agents/*.md` 4개 불일치로 실패했다. Biome 2.6.2가 `agents:sync`가 만든 Antigravity 에이전트 파일의 YAML 머리(목록 들여쓰기, 빈 줄)를 다시 맞추기 때문이다. 판과 관계없이 두 템플릿에 같은 결함이었다.

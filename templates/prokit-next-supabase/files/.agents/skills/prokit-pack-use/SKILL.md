@@ -24,7 +24,7 @@ description: >-
 
 팩의 가상 콘텐츠와 비어 있는 URL은 개인화용 기본값이다. 사용자가 제공한 URL만 해당 설정 필드에 넣고, 외부 판매·영상 링크의 목적과 열림 방식을 유지한다. URL이 없으면 비대화형 카드와 미설정 표시를 유지하며 원본 인물의 URL·임의 링크·설명 모달로 채우지 않는다. 설정된 외부 링크는 허용된 http(s) 주소인지 확인하고 실제 이동을 검수한다.
 
-설정 변경은 [팩 설정 적용](../prokit-ui/references/preset-settings.md), 라우팅·데이터는 `prokit-web`, 서버·소유권은 `prokit-api`, 스키마는 `prokit-db`를 따른다. 실전 데이터가 들어온 뒤 loading·empty·error·비인가·긴 내용·목록 증감에도 배치와 모션이 유지되는지 검사한다. 제작용 팔레트나 관리 미리보기 기능을 사용자 서비스에 새로 넣지 않는다.
+설정 변경은 [팩 설정 적용](../prokit-ui/references/preset-settings.md)을 따른다.<!-- edition:pro --> 라우팅·데이터는 `prokit-web`, 서버·소유권은 `prokit-api`, 스키마는 `prokit-db`를 따른다.<!-- /edition --> 실전 데이터가 들어온 뒤 loading·empty·error·비인가·긴 내용·목록 증감에도 배치와 모션이 유지되는지 검사한다. 제작용 팔레트나 관리 미리보기 기능을 사용자 서비스에 새로 넣지 않는다.
 
 ## 인수
 

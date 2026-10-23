@@ -13,7 +13,7 @@ addyosmani/agent-skills. 스펙부터 출시까지 보안·성능·접근성 기
 | 마무리 | `shipping-and-launch`(`/ship`)는 출시 점검 목록으로만 쓴다 | 같은 이름 |
 
 - 맡지 않는 단계(검증)는 기본 칸이다. 용어·설계 질문은 `grilling`·`domain-modeling`이다.
-- `/ship`·`shipping-and-launch`가 배포·커밋을 안내해도 배포는 `prokit-deploy`, 커밋·push는 `prokit-dev-cycle` 5절로 한다.
+- `/ship`·`shipping-and-launch`가 배포·커밋을 안내해도 <!-- edition:pro -->배포는 `prokit-deploy`, <!-- /edition -->커밋·push는 `prokit-dev-cycle` 5절로 한다.
 - `git-workflow-and-versioning`의 커밋 규칙, `documentation-and-adrs`의 ADR 형식이 프로킷 규칙(Conventional Commits 접두어, `domain-modeling` 형식)과 다르면 프로킷 규칙을 따른다.
 - `code-simplification`(`/code-simplify`)은 간결성 보완 검토와 겹친다. 과설계 방지 스킬을 골랐으면 규칙 6 역할 표의 검토를 먼저 쓴다.
 - `/plan`(`planning-and-task-breakdown`)은 기본으로 `tasks/plan.md`와 `tasks/todo.md`에 쓴다. 프로킷에서 두 파일은 dev-cycle의 진행 계획 Task 표와 대조표다. 계획 문서는 `docs/plans/<날짜>-<주제>.md`에, 할 일은 그 문서의 Task 목록에 쓰게 한다(그 스킬은 프로젝트 규칙이 정한 위치를 따른다). 이미 썼다면 내용을 `docs/plans/`로 옮기고 `tasks/plan.md`는 진행 계획 블록만 남긴다.

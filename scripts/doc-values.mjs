@@ -77,7 +77,7 @@ export function loadValues(root = ROOT) {
   const json = (f) => JSON.parse(readFileSync(join(root, f), "utf8"));
 
   const links = json("site-links.json");
-  const linkDesc = { home: "홈페이지(프로킷 사이트) 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다", pages: "프리셋 사이트(GitHub Pages) 주소. 뒤에 /<이름>/을 붙인다. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다", repo: "pro-kit 저장소 주소", packs: "프리셋 팩 저장소 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다", premiumPacks: "프리미엄 프리셋 팩 저장소 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다" };
+  const linkDesc = { home: "홈페이지(프로킷 사이트) 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다", pages: "프리셋 사이트(GitHub Pages) 주소. 뒤에 /<이름>/을 붙인다. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다", repo: "pro-kit 저장소 주소", repoUi: "pro-kit-ui 저장소 주소(UI 스킬셋. scripts/edition.mjs가 pro-kit에서 만드는 읽기 전용 사본)", packs: "프리셋 팩 저장소 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다", premiumPacks: "프리미엄 프리셋 팩 저장소 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다" };
   for (const [k, v] of Object.entries(links)) add(`link.${k}`, v, `site-links.json ${k}`, linkDesc[k] ?? `${k} 주소`);
   add("link.packsReleases", `${links.packs}/releases`, "site-links.json packs + /releases", "프리셋 팩 릴리스 목록 주소");
 

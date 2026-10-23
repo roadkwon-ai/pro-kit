@@ -68,12 +68,12 @@
 ## 계층별 스킬
 | 작업 | 스킬 |
 |---|---|
-| 라우팅, RSC 경계, 데이터 패칭, 캐시, 성능 | `prokit-web` |
+| 라우팅, RSC 경계, 데이터 패칭, 캐시, 성능 | `prokit-web` | <!-- edition:pro -->
 | 화면 모양, UX, 디자인 스타일과 `DESIGN.md`, 디자인 리뷰 (impeccable) | `prokit-ui` |
-| oRPC 프로시저, Better Auth, 권한과 소유권 | `prokit-api` |
-| Drizzle 스키마, 마이그레이션, 로컬 DB, Neon | `prokit-db` |
+| oRPC 프로시저, Better Auth, 권한과 소유권 | `prokit-api` | <!-- edition:pro -->
+| Drizzle 스키마, 마이그레이션, 로컬 DB, Neon | `prokit-db` | <!-- edition:pro -->
 | 검사 선택, 증거 기록, 런타임 확인 | `prokit-verify` |
-| Vercel 배포(develop, production), production 릴리스(버전, 노트, GitHub Release), 배포 환경변수, 되돌리기 | `prokit-deploy` |
+| Vercel 배포(develop, production), production 릴리스(버전, 노트, GitHub Release), 배포 환경변수, 되돌리기 | `prokit-deploy` | <!-- edition:pro -->
 
 전역이나 이 프로젝트에 같은 분야 스킬(예: `nextjs`, `supabase`, 배포의 `deploy-to-vercel`)이 있어도 이 프로젝트에서는 위 `prokit-*`를 먼저 따른다. `prokit-*`가 읽으라고 하는 외부 스킬(공식 스킬 연결 표, `impeccable` 등)은 그 상황이 오면 실제로 읽고, 이 프로젝트에 설치된 판(`.agents/skills/<이름>/SKILL.md`)을 읽는다. 읽은 스킬은 그 행의 증거에 적는다. 설계, 계획, 디버깅, 리뷰, QA에 쓸 프로세스 스킬은 `prokit-dev-cycle`의 라우팅 표를 따른다.
 
@@ -81,8 +81,8 @@
 
 | 묶음 | 분야 | 스킬 | 관련 prokit 스킬 |
 |---|---|---|---|
-| `ops` | 배포한 서비스의 비용·성능 점검 | `vercel-optimize` | `prokit-deploy` |
-| `ops` | Neon의 오래 도는 함수, 파일 저장, LLM 호출. 새 서비스 의존이라 도입 전에 묻고 `docs/adr/`에 남긴다 | `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | `prokit-db` |
+| `ops` | 배포한 서비스의 비용·성능 점검 | `vercel-optimize` | `prokit-deploy` | <!-- edition:pro -->
+| `ops` | Neon의 오래 도는 함수, 파일 저장, LLM 호출. 새 서비스 의존이라 도입 전에 묻고 `docs/adr/`에 남긴다 | `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | `prokit-db` | <!-- edition:pro -->
 | `motion` | 화면 전환, 공유 요소 애니메이션 | `vercel-react-view-transitions` | `prokit-ui` |
 | `mobile` | React Native·Expo 모바일 앱. 이 프로젝트는 웹 앱만 있으므로 앱을 더하는 결정은 먼저 묻고 `docs/adr/`에 남긴다 | `vercel-react-native-skills` | `prokit-dev-cycle` |
 | `i-have-adhd` | 행동 중심 짧은 응답(다음 행동 먼저, 번호 단계, 다음 할 일 하나). 사용자가 `/i-have-adhd`로 켤 때만 쓰고 대화 응답에만 적용한다 | `i-have-adhd` | `prokit-dev-cycle` |
@@ -93,9 +93,9 @@
 
 ## 보안 불변식
 - 사용자 데이터를 다루는 프로시저는 `protectedProcedure`를 쓰고, 소유자 id는 세션에서만 가져와 where 조건에 넣는다.
-- 비밀값과 서버 전용 모듈은 클라이언트 번들로 보내지 않는다. 배포 환경의 값은 Vercel 환경변수에만 두고 `.env.production` 같은 파일, 출력, 커밋에 남기지 않는다. 새 변수는 `apps/web/.env.schema`에 선언하고 배포 환경 값은 `prokit-deploy`로 넣는다. 커밋 전에는 `pnpm dev-cycle secrets`로 스테이징한 변경을 검사하고, exit 1이면 커밋하지 않는다.
+- 비밀값과 서버 전용 모듈은 클라이언트 번들로 보내지 않는다. 배포 환경의 값은 Vercel 환경변수에만 두고 `.env.production` 같은 파일, 출력, 커밋에 남기지 않는다. 새 변수는 `apps/web/.env.schema`에 선언한다.<!-- edition:pro --> 배포 환경 값은 `prokit-deploy`로 넣는다.<!-- /edition --> 커밋 전에는 `pnpm dev-cycle secrets`로 스테이징한 변경을 검사하고, exit 1이면 커밋하지 않는다.
 - 스키마 변경은 `db:generate`로 만든 마이그레이션으로만 한다. 공유 DB 브랜치에는 `db:push`를 쓰지 않는다.
-- 운영 DB와 실사용자 데이터는 사용자가 요청할 때만 다룬다(라운드 끝 배포에서 적용할 마이그레이션 목록을 보고 동의할 때 포함). 커밋, push, 릴리스, 배포는 사용자가 요청할 때와 라운드 끝(`prokit-dev-cycle` 5절: 사용자 확인 → audit·close → 커밋·push → 사용자가 고르면 릴리스와 production 배포. 운영 중인 기존 프로젝트는 커밋까지)에만 한다. production은 릴리스(`pnpm release`: 버전 태그, `release/` 노트, GitHub Release)한 커밋만 배포한다(`prokit-deploy`).
+- 운영 DB와 실사용자 데이터는 사용자가 요청할 때만 다룬다(라운드 끝 배포에서 적용할 마이그레이션 목록을 보고 동의할 때 포함). 커밋, push, 릴리스, 배포는 사용자가 요청할 때와 라운드 끝(`prokit-dev-cycle` 5절: 사용자 확인 → audit·close → 커밋·push → 사용자가 고르면 릴리스와 production 배포. 운영 중인 기존 프로젝트는 커밋까지)에만 한다.<!-- edition:pro --> production은 릴리스(`pnpm release`: 버전 태그, `release/` 노트, GitHub Release)한 커밋만 배포한다(`prokit-deploy`).<!-- /edition -->
 
 ## 에이전트
 - `prokit-analyzer`: 읽기 전용 정밀 분석. 기존 프로젝트를 들일 때와 진행 계획을 세우기 전에 쓴다.

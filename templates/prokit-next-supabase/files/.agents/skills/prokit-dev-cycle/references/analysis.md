@@ -26,7 +26,7 @@
 ### operating
 - 프로킷 규칙과의 차이: dev-cycle 경로 규칙 후보(화면·API·DB·인증 경로), 테스트 러너, 린트·포맷 도구, 커밋·브랜치·배포 방식
 - 위험 순위: 테스트 없는 핵심 흐름, 운영 데이터에 닿는 코드, 배포 자동화
-- 첫 H Task 후보: `.dev-cycle.json`의 `rules`(위에서 처음 맞는 규칙을 쓴다)·`authPaths`, `docs/dev-workflow.md`의 행, 계층 규칙을 이 프로젝트에 맞추기. 기본 브랜치 push가 배포를 부르는지(CI, Vercel Git 연결)와 배포를 `prokit-deploy`에 맞출지도 적는다. 맞추기 전까지 라운드 끝은 커밋까지만 한다(`prokit-dev-cycle` 5절). `pnpm dev-cycle secrets`는 루트·`apps/web`·`packages/db`의 로컬 `.env` 값만 대조하므로, 다른 폴더에 `.env`가 있으면 패턴 검사만 받는다고 위험에 적는다
+- 첫 H Task 후보: `.dev-cycle.json`의 `rules`(위에서 처음 맞는 규칙을 쓴다)·`authPaths`, `docs/dev-workflow.md`의 행, 계층 규칙을 이 프로젝트에 맞추기. 기본 브랜치 push가 배포를 부르는지(CI, Vercel Git 연결)<!-- edition:pro -->와 배포를 `prokit-deploy`에 맞출지<!-- /edition -->도 적는다. 맞추기 전까지 라운드 끝은 커밋까지만 한다(`prokit-dev-cycle` 5절). `pnpm dev-cycle secrets`는 루트·`apps/web`·`packages/db`의 로컬 `.env` 값만 대조하므로, 다른 폴더에 `.env`가 있으면 패턴 검사만 받는다고 위험에 적는다
 - Better-T-Stack 구조로 옮길지는 제안만 한다. 운영 중인 구조를 바꾸는 Task는 이득과 위험을 함께 적는다
 
 ### migration

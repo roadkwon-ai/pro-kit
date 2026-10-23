@@ -227,6 +227,11 @@ test("auth 플래그는 security 행을 한 번만, 하네스는 H 행을 붙인
   assert.ok(rows.includes("[verify] pnpm skills:check → 출력"));
 });
 
+test("행 글의 HTML 주석(판 표시)은 대조표로 옮기지 않는다", () => {
+  const w = parseWorkflow("### B. UI\n- 구현 (a<!-- edition:pro -->, b<!-- /edition -->, c) → x\n");
+  assert.deepEqual(w.B.map((r) => r.text), ["구현 (a, b, c) → x"]);
+});
+
 test("@include 순환과 없는 케이스는 오류", () => {
   const bad = parseWorkflow("## 케이스\n### A. x\n- @include B\n### B. y\n- @include A\n### 공통\n- c → d\n");
   assert.throws(() => buildRows(bad, "A", cls()), /순환/);

@@ -226,7 +226,8 @@ export function parseWorkflow(md) {
 		}
 		const m = key && line.match(/^-\s+(.*\S)\s*$/);
 		if (!m) continue;
-		const text = m[1];
+		// 판(edition) 표시 같은 HTML 주석은 대조표 행 글에 옮기지 않는다.
+		const text = m[1].replace(/<!--.*?-->/g, "");
 		const inc = text.match(/^@include\s+(.+)$/);
 		const inh = text.match(/^@inherit\s+(.+)$/);
 		if (inc) blocks[key].push({ include: inc[1].trim().split(/\s+/) });

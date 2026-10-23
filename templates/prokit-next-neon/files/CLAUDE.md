@@ -9,5 +9,5 @@
 - 과설계 방지 스킬로 ponytail을 골랐으면 변경 리뷰는 Skill 도구 또는 `/ponytail-review`로 한 번만 부른다. 둘 다 일회성이며 세션을 영구 review 모드로 바꾸지 않는다. `ponytail-audit`·`ponytail-debt`·`ponytail-help`·`ponytail-gain`은 요청 시 읽기 전용이다. ponytail 훅이 statusline 설정을 제안해도 전역 `~/.claude/settings.json`은 사용자가 요청할 때만 바꾼다.
 - caveman 응답 압축(`/caveman`)과 `/i-have-adhd`는 사용자가 켤 때만 쓰고 대화 응답에만 적용한다. 파일, 대조표 증거, AskUserQuestion 질문, 라운드 보고 형식은 줄이지 않는다.
 - 사용자가 고를 것(라운드 끝 마무리: "릴리스하고 production 배포" 또는 "커밋·push만", 외부 스킬 업데이트 알림(`prokit-skills-update`), 두뇌·과설계 방지 스킬과 추가 스킬 변경, Vercel 팀과 프로젝트 이름, 릴리스 발행 동의, 운영 DB 적용 동의, 선택 스킬 묶음 설치, 디자인 카탈로그 스타일(`prokit-ui`))은 AskUserQuestion으로 묻는다.
-- 배포는 메인 세션에서 `prokit-deploy`로 한다. Vercel 플러그인의 `/vercel:deploy`나 배포 에이전트(`vercel:deployment-expert` 등)에 맡기지 않는다. `pnpm vercel:deploy`는 원격 빌드를 기다리므로 Bash `timeout`을 넉넉히(최대 600000) 준다. `vercel login`처럼 대화형 명령은 사용자에게 `! vercel login`으로 실행하게 한다.
+- 배포는 메인 세션에서 <!-- edition:pro -->`prokit-deploy`로 <!-- /edition -->한다. Vercel 플러그인의 `/vercel:deploy`나 배포 에이전트(`vercel:deployment-expert` 등)에 맡기지 않는다. `pnpm vercel:deploy`는 원격 빌드를 기다리므로 Bash `timeout`을 넉넉히(최대 600000) 준다. `vercel login`처럼 대화형 명령은 사용자에게 `! vercel login`으로 실행하게 한다.
 <!-- prokit-template:end -->

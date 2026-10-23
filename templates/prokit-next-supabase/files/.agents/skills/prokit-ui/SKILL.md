@@ -7,7 +7,7 @@ description: >-
   접근성, 디자인 리뷰와 폴리시, 디자인 토큰과 DESIGN.md, 디자인 스타일 고르기를 다룬다. 화면 만들어줘, 디자인,
   예쁘게, UI 개선, UX, 디자인 리뷰, 접근성 점검, polish, 토스처럼·당근 스타일로, taste로 같은 요청에 사용하며
   impeccable을 주력으로 쓴다. 데이터
-  패칭, 라우팅, 렌더링 경계 같은 동작 문제는 prokit-web이 맡는다.
+  패칭, 라우팅, 렌더링 경계 같은 동작 문제는 다루지 않는다.
 ---
 
 # UI/UX: impeccable 중심
@@ -43,7 +43,7 @@ description: >-
 
 ## 컴포넌트와 토큰 재사용
 
-브리프의 구현 경계를 정할 때 [재사용과 설정 설계](../prokit-dev-cycle/references/reuse-design.md)를 읽는다. 기존 `packages/ui` 프리미티브·토큰과 앱 컴포넌트의 실제 소비자를 확인하고 재사용·조합·분리 결정을 브리프나 계획에 남긴다. 겉모양이 비슷해도 책임·디자인·변경 이유가 다르면 합치지 않는다. 합성 API가 필요하면 `prokit-web`의 `vercel-composition-patterns` 연결을 따르고, 프리미티브 추가는 아래 shadcn 절차를 유지한다.
+브리프의 구현 경계를 정할 때 [재사용과 설정 설계](../prokit-dev-cycle/references/reuse-design.md)를 읽는다. 기존 `packages/ui` 프리미티브·토큰과 앱 컴포넌트의 실제 소비자를 확인하고 재사용·조합·분리 결정을 브리프나 계획에 남긴다. 겉모양이 비슷해도 책임·디자인·변경 이유가 다르면 합치지 않는다. 합성 API가 필요하면 `vercel-composition-patterns` 규칙을 따르고<!-- edition:pro -->(`prokit-web`의 연결)<!-- /edition -->, 프리미티브 추가는 아래 shadcn 절차를 유지한다.
 
 ## 단계
 | 단계 | 할 일 | impeccable |
@@ -73,7 +73,7 @@ description: >-
 - 팩 기반 작업은 완성 프리셋과 같은 뷰포트·설정·스크롤·hover 상태에서 비교한다. 개인화 밖 영역의 자산·서체·레이아웃·모션을 유지하며 기능 QA 통과로 시각 비교를 대신하지 않는다. 검증은 `prokit-verify`의 팩 기준 비교를 따른다.
 - 키: Claude Code는 세션을 열 때 훅(`scripts/load-keys.mjs`)이 프로젝트 `.env`, 작업 폴더(프로젝트의 상위 폴더) `.env` 순서로 `OPENAI_API_KEY`를 셸 환경에 넣는다. 셸에 없는데 `.env`에 있으면(Codex·Antigravity·Grok Build, 세션을 연 뒤 넣은 키) `node scripts/load-keys.mjs -- <명령>`으로 그 명령에만 넣는다. 배포 토큰(`GH_TOKEN`, `VERCEL_TOKEN`)은 늘 이 방법으로 배포 명령에만 넣는다. 키 값은 출력(`printenv`, `echo`, `cat .env` 포함), 다른 파일, 커밋에 남기지 않고 대화창에 붙여 넣으라고 하지 않는다. 있는지만 볼 때는 `node scripts/load-keys.mjs -- sh -c 'test -n "$GH_TOKEN"'`처럼 exit로 본다.
 - taste-skill(선택 묶음 `taste`)은 사용자가 고른 화면에만 쓴다. 고르지 않은 화면에서 불려도 이 흐름대로 하고, 고른 화면은 [references/taste.md](references/taste.md)의 단계 대응을 따른다. 순서, `DESIGN.md`, 토큰 규칙, critique·audit 통과 기준은 그대로다.
-- 데이터 상태(loading, empty, error, 비인가)의 모양과 문구는 `prokit-web`과 함께 설계한다.
+- 데이터 상태(loading, empty, error, 비인가)의 모양과 문구를 설계한다<!-- edition:pro -->(동작은 `prokit-web`과 함께)<!-- /edition -->.
 - 제작 표시(선택): 출처를 알리고 싶으면 하단에 `apps/web/src/components/prokit-credit.tsx`의 `<ProkitCredit />`를 사용한다. 프로킷 심볼, 홈페이지로 가는 "이 사이트도 프로킷으로 만들었어요" 링크, GitHub 링크를 제공한다. MIT는 사이트에 이 홍보 표시를 유지할 의무를 부과하지 않는다. 사용자가 표시를 제외하거나 문구·모양을 조정하도록 요청하면 따른다. 표시를 쓰는 경우 위치·크기·간격은 사이트 디자인과 접근성에 맞춰 조정한다. 프로킷 주소는 이 파일의 `PROKIT_LINKS`에 있다. MIT의 저작권·허가문 보존 조건은 홍보 표시와 별도로 지킨다.
 
 ## 완성팩 설정 적용

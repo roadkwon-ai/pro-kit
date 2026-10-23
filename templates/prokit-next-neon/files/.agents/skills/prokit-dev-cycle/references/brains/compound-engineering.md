@@ -16,7 +16,7 @@ EveryInc/compound-engineering-plugin. "일 하나가 다음 일을 더 쉽게 �
 | 배운 것 기록 | 라운드를 닫기 전에 `/ce-compound`로 이번 일에서 배운 것을 `docs/solutions/`에 남긴다. 오래된 기록 정리는 `/ce-compound-refresh` | `ce-compound`, `ce-compound-refresh` |
 
 - 맡지 않는 단계(QA, 검증)는 기본 칸이다. 용어·설계 질문은 `grilling`·`domain-modeling`이다. `tasks/lessons.md`에는 사용자 지적에서 나온 규칙만, `docs/solutions/`에는 해결 기록을 둔다.
-- Claude 플러그인에는 커밋·push·PR·worktree 스킬(`ce-commit`, `ce-commit-push-pr`, `ce-babysit-pr`, `ce-resolve-pr-feedback`, `ce-worktree`)과 자동 실행 `lfg`가 들어 있다. 쓰지 않는다. 커밋·push는 `prokit-dev-cycle` 5절, 배포는 `prokit-deploy`다(라우팅 규칙 3).
+- Claude 플러그인에는 커밋·push·PR·worktree 스킬(`ce-commit`, `ce-commit-push-pr`, `ce-babysit-pr`, `ce-resolve-pr-feedback`, `ce-worktree`)과 자동 실행 `lfg`가 들어 있다. 쓰지 않는다. 커밋·push는 `prokit-dev-cycle` 5절로 한다<!-- edition:pro -->. 배포는 `prokit-deploy`로 한다<!-- /edition -->(라우팅 규칙 3).
 - `/ce-setup`은 실행하지 않는다. 승인을 받아 `AGENTS.md`·`CLAUDE.md`·`.gitignore`를 고친다. 설정이 필요하면 H 라운드에서 `.compound-engineering/config.yaml`만 직접 둔다.
 - 간결화(`ce-simplify-code`)는 과설계 방지 스킬의 검토와 겹친다. 과설계 방지 스킬을 골랐으면 규칙 6 역할 표의 검토를 먼저 쓴다.
 - `/ce-plan`의 계획과 진행 계획 문서가 같은 `docs/plans/`에 생긴다. 진행 계획의 정본은 `tasks/plan.md`의 `doc=`가 가리키는 파일이고, Task 세부 계획 증거에는 `/ce-plan`이 만든 파일 경로를 적는다.

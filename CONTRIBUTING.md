@@ -13,9 +13,10 @@ pro-kit/
 │   └── prokit-next-supabase/   Supabase 템플릿
 ├── handbook/                   문서 원본 (프로킷 사이트 /docs의 원본)
 ├── tutorials/                  비개발자용 튜토리얼 (사이트 /tutorials/의 원본). packs.json: 프리셋 팩 목록
-├── scripts/                    release.mjs, pack.mjs, apply-pack.mjs, site-links.mjs, doc-values.mjs, ai-service-config.mjs, preset-*.mjs와 테스트
+├── scripts/                    release.mjs, edition.mjs, pack.mjs, apply-pack.mjs, site-links.mjs, doc-values.mjs, ai-service-config.mjs, preset-*.mjs와 테스트
 ├── evals/                      저장소 자체 스킬의 eval 입력 (prokit-init)
 ├── site-links.json, doc-values.json   공개 주소와 공통 값의 정본
+├── editions.json, editions/   UI 스킬셋 저장소(pro-kit-ui)의 판 목록과 판에만 있는 루트 문서
 ├── docs/                       assets/(README 이미지), blocks/(공통 글 묶음), common-values.md(공통 값 목록), plans/(설계 결정), prompts/(시험 프롬프트), research/(조사 기록), reports/(측정 보고서), superpowers/(설계 스펙과 계획)
 ├── release/                    릴리스 노트 (릴리스마다 추가)
 ├── .env.example                작업 폴더 .env 예시 (이미지 키, 배포 토큰)
@@ -46,7 +47,7 @@ templates/prokit-next-supabase/
 ```bash
 node --test 'templates/prokit-next-neon/tests/*.test.mjs'
 node --test 'templates/prokit-next-supabase/tests/*.test.mjs'
-node --test scripts/*.test.mjs        # release, pack, apply-pack, site-links, doc-values, ai-service-config, preset-*, handbook(README와 CONTRIBUTING.md 링크 포함)
+node --test scripts/*.test.mjs        # release, edition, pack, apply-pack, site-links, doc-values, ai-service-config, preset-*, handbook(README와 CONTRIBUTING.md 링크 포함)
 ```
 
 ## 템플릿 수정 흐름
@@ -84,9 +85,18 @@ node --test scripts/*.test.mjs        # release, pack, apply-pack, site-links, d
 
 1. **노트 작성**: `node scripts/release.mjs --title "<짧은 영어 제목>"`. 큰 묶음이면 사용자가 정해 `--minor`를 줍니다. 커밋하지 않습니다.
 2. **한국어 검수**: [korean-skills](https://github.com/DaleSeo/korean-skills)의 `humanizer` → `style-guide` → `grammar-checker` 순서로 노트를 고칩니다.
-3. **발행**: `node scripts/release.mjs --publish <노트 파일>`. 노트 커밋, 태그와 `main` push, GitHub Release까지 합니다.
+3. **발행**: `node scripts/release.mjs --publish <노트 파일>`. 노트 커밋, 태그와 `main` push, GitHub Release, UI 스킬셋 저장소 내보내기까지 합니다.
 
 로그인한 `gh`, `origin` 원격, korean-skills가 필요합니다. `main`이 아니거나 커밋하지 않은 변경이 있거나 노트를 쓴 뒤 커밋이 늘면 `--publish`가 멈춥니다. 이때는 노트를 지우고 1단계부터 다시 합니다. push가 실패하면 릴리스 커밋과 태그를 되돌리고 검수한 노트는 남기므로 `git pull` 뒤 다시 `--publish`합니다. `scripts/release.mjs`를 고치면 `node --test scripts/release.test.mjs`를 실행하고 이 절을 맞춥니다. 설치된 프로젝트의 릴리스는 [버전과 릴리스](handbook/deploy/release.md)입니다.
+
+## UI 스킬셋 판
+
+UI 스킬셋 저장소 [pro-kit-ui](<!-- v:link.repoUi -->https://github.com/roadkwon-ai/pro-kit-ui<!-- /v -->)는 이 저장소에서 만드는 읽기 전용 사본입니다. 그 저장소를 직접 고치지 않고 여기서 고칩니다. 규칙의 원문은 [AGENTS.md "템플릿 수정 규칙"](AGENTS.md#템플릿-수정-규칙)입니다.
+
+- 넣을 파일과 뺄 파일은 `editions.json`에, 판에만 있는 `README.md`·`AGENTS.md`·`CLAUDE.md`는 `editions/ui/`에 둡니다.
+- neon 템플릿과 `prokit-init` 문서에서 UI 판에 없는 내용(화면 동작·API·DB·배포 스킬, 기존 프로젝트 도입, Supabase)은 `<!-- edition:pro -->` 표시로 감쌉니다. 판을 만들 때 그 부분을 지웁니다.
+- 판을 만들어 보려면 `node scripts/edition.mjs ui <출력 폴더>`, 검사는 `node --test scripts/edition.test.mjs`입니다.
+- 내보내기는 릴리스 3단계가 같은 태그로 합니다. 실패했을 때만 `node scripts/edition.mjs ui --publish --tag vX.Y.Z`로 다시 합니다.
 
 ## 프리셋 팩 인덱스
 

@@ -439,7 +439,7 @@ test("설치본 AGENTS.md의 선택 스킬 묶음 표가 skills.manifest.json op
   for (const t of ["neon", "supabase"]) {
     const dir = `templates/prokit-next-${t}/files`;
     const optional = JSON.parse(read(`${dir}/skills.manifest.json`)).optional;
-    const rows = [...read(`${dir}/AGENTS.md`).matchAll(/^\| `([\w-]+)` \| [^|]* \| ([^|]*) \| `prokit-[\w-]+` \|$/gm)].map((m) => [m[1], m[2].match(/`([\w-]+)`/g).map((s) => s.slice(1, -1))]);
+    const rows = [...read(`${dir}/AGENTS.md`).matchAll(/^\| `([\w-]+)` \| [^|]* \| ([^|]*) \| `prokit-[\w-]+` \|(?: <!-- edition:pro -->)?$/gm)].map((m) => [m[1], m[2].match(/`([\w-]+)`/g).map((s) => s.slice(1, -1))]);
     assert.deepEqual([...new Set(rows.map(([b]) => b))], Object.keys(optional), `${t} 묶음 이름`);
     for (const [b, def] of Object.entries(optional)) {
       const want = def.skills.flatMap((s) => s.skills);

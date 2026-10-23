@@ -24,7 +24,7 @@
 - GitHub Pages처럼 하위 경로에 올릴 때는 `pnpm export:html --base /<저장소>`.
 
 ## 배포 (GitHub Pages, Vercel)
-사용자가 요청할 때만 한다("GitHub Pages에 배포해줘", "Vercel에 배포해줘", `docs/first-request.md` 끝의 같은 말). 이 요청은 원격 저장소나 Vercel 프로젝트를 만들어도 된다는 뜻이다. 화면 라운드가 닫힌 뒤(`[confirm]` 뒤) 메인 세션에서 한다. 풀스택 배포(`prokit-deploy`, `pnpm vercel:deploy`)는 쓰지 않는다.
+사용자가 요청할 때만 한다("GitHub Pages에 배포해줘", "Vercel에 배포해줘", `docs/first-request.md` 끝의 같은 말). 이 요청은 원격 저장소나 Vercel 프로젝트를 만들어도 된다는 뜻이다. 화면 라운드가 닫힌 뒤(`[confirm]` 뒤) 메인 세션에서 한다. 풀스택 배포(<!-- edition:pro -->`prokit-deploy`, <!-- /edition -->`pnpm vercel:deploy`)는 쓰지 않는다.
 
 준비
 - 토큰: GitHub Pages는 `GH_TOKEN`(GitHub classic 토큰, `repo` 권한), Vercel은 `VERCEL_TOKEN`. 프로젝트 `.env`나 작업 폴더 `.env`에 있는 토큰을 세션 환경에 넣지 않고, 아래의 `gh`, `git push`, `vercel` 명령마다 앞에 `node scripts/load-keys.mjs -- `를 붙여 그 명령에만 넣는다(여러 명령이면 `-- bash -c '…'`). `gh`와 `vercel`은 이 변수를 스스로 읽는다. 있는지는 `node scripts/load-keys.mjs -- sh -c 'test -n "$GH_TOKEN"'`의 exit로 본다. 없으면 멈추고, 토큰을 만들어 작업 폴더 `.env`에 넣은 뒤 다시 요청하라고 안내한다([배포하기](https://github.com/roadkwon-ai/pro-kit/blob/main/tutorials/reference/deploy.md)). 토큰을 대화창에 붙여 넣으라고 하지 않고, 값을 출력(`printenv`, `echo`, `cat .env` 포함)하거나 다른 파일에 쓰지 않는다.
@@ -51,9 +51,12 @@ Vercel
 - Vercel: `vercel project rm <프로젝트 이름>`.
 
 ## 실제 서비스로 바꾸기
-"실제 서비스로 바꿀 거야"처럼 요청하면 이 순서로 한다.
+"실제 서비스로 바꿀 거야"처럼 요청하면 먼저 이 프로젝트 `.agents/skills/`에 서버 스킬(API, DB, 배포)이 있는지 본다. 없으면(UI 스킬셋으로 만든 프로젝트) 바꾸지 않고, Pro 스킬셋(`pro-kit`)이 필요하다고 알린 뒤 멈춘다.
+<!-- edition:pro -->
+서버 스킬이 있으면 이 순서로 한다.
 1. 컨테이너 엔진(Podman 또는 Docker)이 있는지 본다. 없으면 설치를 안내하고 멈춘다.
 2. `prokit-db`를 따라 로컬 DB를 띄우고, 인증 테이블의 첫 마이그레이션을 만들어 적용한다.
 3. 루트 `AGENTS.md` 맨 위의 "화면만 프로젝트" 표시를 지운다.
 4. 기본 브랜치에 커밋한다. 첫 마이그레이션이 다음 라운드 diff에 섞이면 audit이 더 무거운 케이스를 요구한다.
 5. 로그인, 저장 같은 기능과 예시 데이터를 DB에서 읽게 바꾸는 일은 dev-cycle 라운드로 하고 `prokit-web`, `prokit-api`, `prokit-db`를 따른다.
+<!-- /edition -->

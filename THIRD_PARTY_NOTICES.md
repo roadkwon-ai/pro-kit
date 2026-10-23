@@ -6,7 +6,7 @@
 
 템플릿의 외부 스킬·플러그인은 `skills.manifest.json`을 기준으로 사용자 프로젝트에 원본 출처에서 직접 설치한다. 기본 스킬은 `npx -y skills@latest add <source> --skill …` 경로를 사용한다. 두뇌 OpenSpec과 Spec Kit은 사용자가 고를 때만 그 도구의 init 명령(`openspec init`, `specify init`)이 프로젝트에 스킬과 도구 파일을 만든다. 프로킷이 그 원본을 자기 패키지에 동봉하거나 자체 미러에서 배포하는 방식과 구분한다. 이미 설치된 스킬의 갱신은 별도 업데이트 흐름이므로 설치기 실행 때마다 모두 다시 받는다는 뜻은 아니다.
 
-- 적용 목록의 정본은 [Neon 템플릿 manifest](templates/prokit-next-neon/files/skills.manifest.json)와 [Supabase 템플릿 manifest](templates/prokit-next-supabase/files/skills.manifest.json)다.
+- 적용 목록의 정본은 [Neon 템플릿 manifest](templates/prokit-next-neon/files/skills.manifest.json)<!-- edition:pro -->와 [Supabase 템플릿 manifest](templates/prokit-next-supabase/files/skills.manifest.json)<!-- /edition -->다.
 - 외부 원문은 그 출처의 실제 설치 판과 라이선스·고지에 따른다. 프로킷의 MIT는 외부 원본의 이용권을 축소하지 않는다.
 - 프로킷 자체 LICENSE가 외부 원본의 상업 이용·수정·재배포 권리를 대신 부여하지도 않는다. 해당 라이선스가 이미 허용하는 이용은 그 조건을 지키면 별도 개별 허락이 필요하지 않다.
 - 원본의 저작권·LICENSE·해당 NOTICE·변경 고지를 유지한다. 생성 프로젝트에 설치된 외부 원문을 포함해 소스를 전달하거나 공개할 때에는 실제 원본 조건을 확인한다.

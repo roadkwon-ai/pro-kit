@@ -27,8 +27,8 @@ description: >-
 |---|---|
 | 모든 코드 | `commands.typecheck`, `commands.lint` |
 | 화면과 라우트 | 모든 코드 검사 + `commands.build`, 런타임 확인, desktop과 mobile 스크린샷 |
-| 프로시저와 인증 | 모든 코드 검사 + `commands.test`, **2계정 격리 테스트** |
-| 스키마 | 모든 코드 검사 + 로컬 개발 DB에 `commands.dbMigrate` 적용 출력, 병합 전 대상(Neon 개발 브랜치 또는 Supabase 스테이징)에도 적용한 출력. Supabase는 `supabase db advisors` 보안 검사(`No issues found`)도. 대상과 명령은 `prokit-db`의 `references/migration-flow.md`. 사용자 소유 테이블이면 그 테이블을 쓰는 프로시저의 2계정 격리 테스트도(D 행) |
+| 프로시저와 인증 | 모든 코드 검사 + `commands.test`, **2계정 격리 테스트** | <!-- edition:pro -->
+| 스키마 | 모든 코드 검사 + 로컬 개발 DB에 `commands.dbMigrate` 적용 출력, 병합 전 대상(Neon 개발 브랜치 또는 Supabase 스테이징)에도 적용한 출력. Supabase는 `supabase db advisors` 보안 검사(`No issues found`)도. 대상과 명령은 `prokit-db`의 `references/migration-flow.md`. 사용자 소유 테이블이면 그 테이블을 쓰는 프로시저의 2계정 격리 테스트도(D 행) | <!-- edition:pro -->
 | 스킬, 에이전트, dev-cycle | `pnpm agents:check`, `pnpm skills:check`, `pnpm dev-cycle case`, `pnpm dev-cycle status`. 스킬 본문을 바꿨으면 skill-creator eval 재실행 |
 
 여러 행에 해당하면 해당하는 행의 검사를 모두 한다.
@@ -47,8 +47,8 @@ description: >-
 팩을 복원하거나 개인화·실전 기능을 연결한 작업은 [references/pack-baseline.md](references/pack-baseline.md)를 읽는다. 비교 대상은 완성 프리셋이며 원본 URL 연구·COPY 판정은 `pro-kit-preset-skills`의 `prokit-preset-verify`가 맡는다. 파일 무결성·기능·접근성·시각 보존을 각각 보고한다.
 
 ## 테스트 러너
-- 테스트 러너가 없으면 첫 D·E 라운드나 서버·DB 코드를 고치는 C 라운드에서 vitest를 도입한다. 대조표의 `vitest 도입(최초 1회)` 행(D·E·F 표는 `table`이 넣는다)에서 루트 `test` 스크립트와 `.dev-cycle.json`의 `commands.test`를 함께 등록한다. 절차는 `.agents/skills/prokit-api/references/ownership-test.md`에 있다. 루트 `package.json`·`turbo.json`·`.dev-cycle.json`은 H 경로라 이 라운드에는 H 행이 붙는다(`case`의 `(+H)`). 첫 D·E 라운드가 E만 고치면 `packages/db`에만 도입한다(`pnpm --filter @<프로젝트>/db add -D vitest`, 그 패키지의 `test` 스크립트). 루트는 건드리지 않아 케이스가 E로 남고, 루트 등록과 `packages/api` 설정은 첫 D 라운드에서 한다.
-- 격리 테스트는 개발·운영 DB가 아닌 전용 테스트 DB(`TEST_DATABASE_URL`: 로컬 DB의 `<이름>_test`. 만드는 법은 `prokit-api`의 `references/ownership-test.md`)에서 돈다. `skipped`로 끝난 테스트는 통과가 아니다. 프로시저를 거치지 않고 SQL로 같은 조건을 흉내 낸 수동 확인도 격리 테스트를 대신하지 못한다. 격리 테스트는 프로시저를 두 계정의 세션으로 호출한다.
+- 테스트 러너가 없으면 첫 D·E 라운드나 서버·DB 코드를 고치는 C 라운드에서 vitest를 도입한다. 대조표의 `vitest 도입(최초 1회)` 행(D·E·F 표는 `table`이 넣는다)에서 루트 `test` 스크립트와 `.dev-cycle.json`의 `commands.test`를 함께 등록한다. <!-- edition:pro -->절차는 `.agents/skills/prokit-api/references/ownership-test.md`에 있다. <!-- /edition -->루트 `package.json`·`turbo.json`·`.dev-cycle.json`은 H 경로라 이 라운드에는 H 행이 붙는다(`case`의 `(+H)`). 첫 D·E 라운드가 E만 고치면 `packages/db`에만 도입한다(`pnpm --filter @<프로젝트>/db add -D vitest`, 그 패키지의 `test` 스크립트). 루트는 건드리지 않아 케이스가 E로 남고, 루트 등록과 `packages/api` 설정은 첫 D 라운드에서 한다.
+- 격리 테스트는 개발·운영 DB가 아닌 전용 테스트 DB(`TEST_DATABASE_URL`: 로컬 DB의 `<이름>_test`. 만드는 법은 `prokit-api`의 `references/ownership-test.md`)에서 돈다. `skipped`로 끝난 테스트는 통과가 아니다. 프로시저를 거치지 않고 SQL로 같은 조건을 흉내 낸 수동 확인도 격리 테스트를 대신하지 못한다. 격리 테스트는 프로시저를 두 계정의 세션으로 호출한다. <!-- edition:pro -->
 
 ## 증거 적는 법
 형식은 [references/evidence.md](references/evidence.md). 요약하면 다음과 같다.
