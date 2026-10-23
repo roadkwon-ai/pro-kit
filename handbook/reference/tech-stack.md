@@ -4,7 +4,7 @@
 
 용어는 [처음 보는 용어](../../tutorials/reference/glossary.md#도구)에 있어요. 표의 한 줄 요약은 이래요.
 
-- 앱을 이루는 기술: 만들어지는 서비스의 부품(화면, 서버, 로그인, DB)이에요.
+- 앱을 이루는 기술: 만들어지는 서비스의 부품이에요. 화면, 서버, 로그인, DB가 여기에 들어요.
 - 에이전트와 스킬: 코딩하는 AI와, AI가 일하는 법을 적은 설명서예요.
 - 명령줄 도구(CLI): 터미널에서 치는 명령 프로그램이에요. 대부분 에이전트가 대신 실행해요.
 - 외부 서비스: 배포(Vercel)나 DB(Neon, Supabase)처럼 계정이 필요한 곳이에요.
@@ -14,7 +14,7 @@
 
 ## 앱을 이루는 기술
 
-프로젝트를 만들 때 **Better-T-Stack이 아래 구성으로 만들어요.** 판은 만드는 날의 최신판이고, 표의 판은 2026-10-07에 만든 프로젝트에서 확인한 값이에요.
+**프로젝트는 Better-T-Stack이 아래 구성으로 만들어 줘요.** 판은 만드는 날의 최신판이고, 표의 판은 2026-10-07에 만든 프로젝트에서 확인한 값이에요.
 
 ![앱은 화면과 서버(Next.js), API(oRPC와 Zod), 인증(이메일 로그인과 세션), DB(PostgreSQL과 Drizzle), 화면 부품(Tailwind CSS와 shadcn/ui), 배포(Vercel)로 이뤄져요.](assets/tech-stack-layers.webp)
 
@@ -27,7 +27,7 @@
 | DB | PostgreSQL, Drizzle ORM 1.0 rc, drizzle-kit | `packages/db`. 스키마는 마이그레이션 파일로만 바꿔요 |
 | 화면 부품 | Tailwind CSS 4, shadcn/ui, lucide-react, next-themes, sonner | `packages/ui`와 `apps/web` |
 | 환경 변수 | Varlock(`.env.schema`) | 앱마다 변수 목록을 적고 `src/env.ts`를 만들어요 |
-| 모노레포와 형식 | pnpm 워크스페이스, Turborepo 2, Biome 2 | 루트. `pnpm check`가 형식과 lint를 맞춰요 |
+| 모노레포와 형식 | pnpm 워크스페이스, Turborepo 2, Biome 2 | 프로젝트 루트. `pnpm check`가 형식과 lint를 맞춰요 |
 | 테스트 | Vitest | 처음에는 없어요. 첫 API·DB 라운드(케이스 D·E)나 서버 코드를 고치는 라운드(C)에서 들여와요 |
 | 운영 DB | Neon(neon 템플릿) 또는 Supabase(supabase 템플릿) | 개발 중에는 내 컴퓨터의 DB를 써요. neon은 compose로 띄운 Postgres, supabase는 Supabase 로컬 스택이에요 |
 | 배포 | Vercel | develop과 운영 두 환경이에요. 화면만 만든 프로젝트는 GitHub Pages나 Vercel에 정적 HTML로 올려요 |
@@ -39,17 +39,17 @@
 | 무엇 | 내용 | 자세히 |
 |---|---|---|
 | AI 에이전트 | <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나 | [지원하는 에이전트](../start/supported-agents.md) |
-| prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개와 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | 분야마다 일하는 법, 기존 프로젝트 정밀 분석(읽기 전용), 구현 수행자, 전문·최종 읽기 전용 리뷰 에이전트 | [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md), [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
+| prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개와 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | 분야별로 일하는 법을 적은 스킬, 기존 프로젝트를 읽기 전용으로 정밀 분석하는 에이전트, 구현을 맡는 에이전트, 전문 리뷰와 최종 리뷰를 맡는 읽기 전용 에이전트 | [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md), [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
 | 공식 도메인 스킬 | Next.js, React, Better Auth, shadcn, impeccable, DB, Vercel 배포 등 | [공식 스킬과 연결](../skills/official-skills.md) |
 | 프로세스 스킬 | skill-creator, mattpocock 필수 3개(늘 설치), 고른 두뇌(하나 이상, 첫 번째가 주 두뇌. <!-- v:brains.names -->superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering<!-- /v --> 중에서), 고른 과설계 방지 스킬(ponytail, caveman, karpathy 중 하나) | [프로세스 스킬과 전역 도구](../skills/official-skills.md#프로세스-스킬과-전역-도구) |
 | 선택 스킬 묶음 | <!-- v:optional.names -->ops, motion, mobile, i-have-adhd, taste<!-- /v --> | [선택 스킬 묶음](../skills/optional-bundles.md) |
 
 ## 명령줄 도구(CLI)
 
-**표의 "설치" 칸을 보면 따로 설치할 것이 무엇인지 알 수 있어요.**
+**표의 "설치" 칸에 따로 설치할 것이 적혀 있어요.**
 
 > [!NOTE]
-> 설치 칸의 "프로젝트"는 그 프로젝트의 의존성으로 들어와 따로 설치하지 않는다는 뜻이에요. "전역"은 컴퓨터 전체에 한 번 설치해요. `--with-global`은 설치기와 `pnpm skills:setup`에 붙이는 옵션이에요([설치기와 옵션](../templates/installer.md)).
+> 설치 칸의 "프로젝트"는 프로젝트의 의존성으로 함께 들어와서 따로 설치하지 않아도 된다는 뜻이에요. "전역"은 컴퓨터 전체에 한 번 설치해요. `--with-global`은 설치기와 `pnpm skills:setup`에 붙이는 옵션이에요([설치기와 옵션](../templates/installer.md)).
 
 ### 기본 준비물과 설치 도구
 
@@ -88,8 +88,8 @@
 
 | 도구 | 설치 | 언제 쓰나 | 쓰는 명령 |
 |---|---|---|---|
-| agent-browser CLI | 전역. <!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v --> | ego lite를 쓸 수 없을 때 화면 확인 | `agent-browser …` |
-| ego lite (`ego-browser`) | 전역(macOS 앱, 직접 설치) | 실제 브라우저 창으로 화면 확인(1순위) | `ego-browser …` |
+| agent-browser CLI | 전역. <!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v --> | 화면을 확인할 때. ego lite를 쓸 수 없을 때 써요 | `agent-browser …` |
+| ego lite (`ego-browser`) | 전역(macOS 앱, 직접 설치) | 실제 브라우저 창으로 화면을 확인할 때(1순위) | `ego-browser …` |
 | serve | 받을 필요 없음(`pnpm dlx`) | 화면만 프로젝트에서 내보낸 HTML을 내 컴퓨터에서 볼 때 | `pnpm dlx serve html` |
 
 ### 두뇌에 딸린 도구
@@ -107,12 +107,12 @@
 |---|---|---|---|
 | impeccable CLI | 프로젝트(`impeccable` 스킬에 들어 있음) | 디자인 규칙 검사 훅을 켤 때(개발자마다 한 번) | `.agents/skills/impeccable/scripts/impeccable hooks on` |
 | DESIGN.md 검사기 | 받을 필요 없음(`pnpm dlx`) | 디자인 규칙 파일을 받거나 고쳤을 때 | `pnpm dlx @google/design.md lint DESIGN.md` |
-| Biome | 프로젝트 | 형식과 lint | `pnpm check`, `pnpm exec biome check .` |
-| Turborepo | 프로젝트 | 여러 패키지의 빌드·타입 검사를 한 번에 | `pnpm build`, `pnpm check-types` |
+| Biome | 프로젝트 | 형식과 lint를 검사할 때 | `pnpm check`, `pnpm exec biome check .` |
+| Turborepo | 프로젝트 | 여러 패키지의 빌드·타입 검사를 한 번에 돌릴 때 | `pnpm build`, `pnpm check-types` |
 
 ## 외부 서비스와 계정
 
-**계정은 해당 일을 할 때 준비하면 돼요.**
+**계정은 그 일을 할 때 준비하면 돼요.**
 
 | 서비스 | 언제 필요한가 | 준비할 것 |
 |---|---|---|
@@ -131,7 +131,7 @@
 > DB 연결 문자열, Vercel·GitHub 토큰은 파일과 출력에 남기지 않아요. Neon 연결 문자열은 `neon cs`로 명령마다 받고, 토큰은 그 명령에만 넣어요.
 
 - **최신판을 받아요**: Better-T-Stack, skills CLI, 공식 스킬, Claude 플러그인, agent-browser CLI는 템플릿에 판을 고정하지 않고 설치할 때 최신판을 받아요. 새 판 때문에 생성이나 설치가 깨지면 템플릿을 고치고 확인한 판을 검증 기록에 남겨요([검증 결과](verification.md)).
-- **배포 명령은 정해진 길로만 써요**: 서비스 배포는 `prokit-deploy`의 `pnpm vercel:deploy`로 하고, 운영에는 `pnpm release`로 만든 커밋만 올려요. 두뇌 gstack의 `ship`이나 Vercel 플러그인의 배포 명령은 쓰지 않아요([Vercel 배포](../deploy/vercel.md)).
+- **배포는 정해진 명령으로만 해요**: 서비스 배포는 `prokit-deploy`의 `pnpm vercel:deploy`로 하고, 운영에는 `pnpm release`로 만든 커밋만 올려요. 두뇌 gstack의 `ship`이나 Vercel 플러그인의 배포 명령은 쓰지 않아요([Vercel 배포](../deploy/vercel.md)).
 
 ## 관련 문서
 

@@ -33,7 +33,7 @@ flowchart LR
 | 구성 | 내용 |
 |---|---|
 | 프로젝트 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개 | `prokit-dev-cycle`(작업 진행), `prokit-web`(라우팅·RSC·캐시), `prokit-ui`(화면·UX), `prokit-api`(oRPC·인증·데이터 주인 확인), `prokit-db`(스키마·마이그레이션), `prokit-verify`(검사·증거), `prokit-deploy`(Vercel 배포·릴리스), `prokit-pack-use`(완성팩 활용), `prokit-skills-update`(외부 스킬 업데이트), `prokit-skills-manage`(진행 중 두뇌·스킬 구성 바꾸기) |
-| 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | `prokit-analyzer`(기존 프로젝트를 읽기만 하며 정밀 분석), `prokit-implementer`(범위를 받은 수행), `specialist-reviewer`(부족한 전문 계약만 읽기 전용 검토), `prokit-reviewer`(증거·통합 수용을 보는 최종 읽기 전용 게이트). Prokit은 외부 전문 수행자에게 일을 맡기고 범위·증거·재지시를 관리해요. `.claude/agents`가 원본이고, `.codex/agents`(Codex)와 `.agents/agents`(Antigravity)는 이 원본에서 자동으로 만들어요 |
+| 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | `prokit-analyzer`(기존 프로젝트를 읽기만 하며 정밀 분석), `prokit-implementer`(범위를 받은 수행), `specialist-reviewer`(부족한 전문 계약만 읽기 전용 검토), `prokit-reviewer`(증거·통합 수용을 보는 최종 읽기 전용 게이트). 프로킷은 외부 전문 수행자에게 일을 맡기고 범위·증거·재지시를 관리해요. `.claude/agents`가 원본이고, `.codex/agents`(Codex)와 `.agents/agents`(Antigravity)는 이 원본에서 자동으로 만들어요 |
 | 내부 스킬 (이 프로젝트에만, 자동 설치) | 공식 도메인 스킬(Next.js, React, Better Auth, shadcn, impeccable, turborepo, DB 스킬, Vercel 배포 스킬 등), mattpocock 필수 3개, skill-creator(Claude 플러그인과 Codex 스킬). 두뇌와 과설계 방지 스킬은 고른 것만 설치해요(기본은 없음. [두뇌와 선택 스킬](../skills/brains.md)). ponytail을 고르면 Codex 스킬 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->종도 받고, Codex 네이티브 Ponytail은 `--with-global`일 때만 선택 설치해요 |
 | 외부 스킬 위임 | 설치 목록 밖에서도 현재 접근 가능한 사용자 지정·프로젝트별 전문 스킬을 확인해 연결해요. 출처와 부작용을 확인하고 결과와 증거를 받아 최종 검수해요 |
 | 선택 스킬 묶음 (기본 설치 안 함) | `ops`(배포한 서비스의 비용·성능 점검. neon은 Neon 함수·파일 저장·LLM 게이트웨이 포함), `motion`(화면 전환 애니메이션), `mobile`(React Native·Expo 앱), `i-have-adhd`(짧은 행동 중심 응답), `taste`(화면 디자인 보조 taste-skill) |
@@ -56,7 +56,7 @@ flowchart LR
 | 전역 도구 | <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 두뇌 gstack, OMX CLI, OpenSpec CLI는 그 두뇌를 고를 때만 설치해요. ego lite(macOS)는 직접 설치해요 |
 
 > [!WARNING]
-> Vercel CLI, Neon CLI 또는 Supabase CLI와 지원하는 Codex의 네이티브 Ponytail(ponytail을 고른 경우)은 `--with-global`을 줄 때만 설치해요. 이 옵션은 전역 설정을 바꿔요.
+> Vercel CLI, Neon CLI 또는 Supabase CLI, 그리고 네이티브 플러그인을 지원하는 Codex의 Ponytail(ponytail을 고른 경우)은 `--with-global`을 줄 때만 설치해요. 이 옵션은 전역 설정을 바꿔요.
 
 ## 설치한 뒤 폴더에 생기는 것
 
@@ -84,7 +84,7 @@ flowchart LR
 
 ## Better-T-Stack이란
 
-[Better-T-Stack](https://www.better-t-stack.dev/)은 TypeScript 프로젝트의 뼈대를 만들어 주는 오픈 소스(MIT) 명령줄 도구예요([GitHub](https://github.com/AmanVarshney01/create-better-t-stack)). 화면부터 DB까지 타입이 처음부터 이어져 있어서 코드가 서로 어긋나지 않아요. 프런트엔드, 백엔드, 런타임, DB, ORM(DB를 코드로 다루는 도구), API, 인증, 결제, 애드온(덧붙이는 기능)을 고른 뒤 `pnpm create better-t-stack` 한 번으로 모노레포를 만들어요. 웹의 [Stack Builder](https://www.better-t-stack.dev/new)에서 조합을 고르면 같은 명령을 만들어 줘요. 만든 프로젝트의 `bts.jsonc`에는 고른 조합과 다시 만들 때 쓰는 명령이 남아요.
+[Better-T-Stack](https://www.better-t-stack.dev/)은 TypeScript 프로젝트의 뼈대를 만들어 주는 오픈 소스(MIT) 명령줄 도구예요([GitHub](https://github.com/AmanVarshney01/create-better-t-stack)). 화면부터 DB까지 타입이 처음부터 이어져 있어서 코드가 서로 어긋나지 않아요. 프런트엔드, 백엔드, 런타임, DB, ORM(DB를 코드로 다루는 도구), API, 인증, 결제, 애드온(덧붙이는 기능)을 고른 뒤 `pnpm create better-t-stack` 한 번으로 모노레포(앱과 패키지를 한 저장소에 담은 구조)를 만들어요. 웹의 [Stack Builder](https://www.better-t-stack.dev/new)에서 조합을 고르면 같은 명령을 만들어 줘요. 만든 프로젝트의 `bts.jsonc`에는 고른 조합과 다시 만들 때 쓰는 명령이 남아요.
 
 템플릿은 그중 한 조합을 고정해서 써요.
 

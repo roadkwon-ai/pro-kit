@@ -447,7 +447,7 @@
 | `eval.designMd.secondScreen.without` | 97 | 브랜드 이름과 대표 색만 줬을 때 두 번째 화면이 첫 화면 색을 따른 비율(%는 값 밖) | 계산: templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `eval.designMd.palette.offTarget` | 29 | 브랜드 이름과 대표 색만 줬을 때 화면에 쓴 색 가운데 목표 밖 색의 비율(%는 값 밖) | 계산: 100 − templates/prokit-next-neon/VERIFICATION.md DESIGN.md 효과 측정 결과 표의 B 팔레트 일치율(반올림) | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `handbook.sections.count` | 7 | 문서(handbook) 묶음 수 | handbook/README.md 묶음 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `handbook.pages.count` | 46 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `handbook.pages.count` | 47 | 문서 쪽 수(묶음 소개 쪽 빼고) | handbook 묶음 README의 쪽 표 | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `b:agent-order-line` | (글 묶음) | 새 프로젝트를 만들 때 "에이전트는 이런 순서로 일해요" 도입 문장(옵션 없이 열었을 때 허락을 묻는다고 알린다). clone-create-prompt 묶음이 품는다 | docs/blocks/agent-order-line.md | 묶음 원본을 고친다 | 3 |
 | `b:clone-auth-feature-note` | (글 묶음) | 클론 튜토리얼 5장의 첫 NOTE(5장부터 기능을 하나씩 만든다) | docs/blocks/clone-auth-feature-note.md | 묶음 원본을 고친다 | 2 |
 | `b:clone-auth-open` | (글 묶음) | 클론 튜토리얼 5장의 1단계 첫 문단(4장 대화창을 그대로 써도 된다) | docs/blocks/clone-auth-open.md | 묶음 원본을 고친다 | 2 |

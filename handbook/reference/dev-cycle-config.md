@@ -58,10 +58,17 @@
 - 계층 파일은 없고 하네스 파일(H 규칙)만 바뀌면 H예요. 계층과 함께 바뀌면 케이스는 그 계층 그대로이고 H 행이 더 붙어요(`(+H)` 표시).
 - 어느 규칙에도 맞지 않으면 A(경미한 변경)예요.
 
-그러니 같은 줄 수를 고쳐도 `README` 한 줄은 A, `packages/db/` 안의 파일은 E가 돼요. 계층의 케이스 설명은 [케이스와 대조표](../concepts/cases.md)에 있어요. 하네스(H) 규칙에는 스킬과 에이전트 폴더, `.dev-cycle.json` 자신, 빌드·배포 설정(`next.config`, `vercel.json`, `.github/workflows/`, `turbo.json`), 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`)이 들어 있어요. `--adopt` 프로젝트는 설치기가 이 규칙을 그 프로젝트에 맞게 바꾸고, 규칙 밖의 코드는 계층을 알 수 없어서 무거운 F로 봐요.
+그러니 같은 줄 수를 고쳐도 `README` 한 줄은 A, `packages/db/` 안의 파일은 E가 돼요. 계층의 케이스 설명은 [케이스와 대조표](../concepts/cases.md)에 있어요. 하네스(H) 규칙에는 다음 경로가 들어 있어요.
+
+- 스킬과 에이전트 폴더
+- `.dev-cycle.json` 자신
+- 빌드·배포 설정(`next.config`, `vercel.json`, `.github/workflows/`, `turbo.json`)
+- 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`)
+
+`--adopt` 프로젝트는 설치기가 이 규칙을 그 프로젝트에 맞게 바꾸고, 규칙 밖의 코드는 계층을 알 수 없어서 무거운 F로 봐요.
 
 > [!WARNING]
-> 규칙을 맞추지 않고 `rules`만 바꿔서 케이스를 낮추는 것은 허용하지 않아요. 리뷰어가 이를 지적하도록 되어 있어요.
+> 규칙을 맞추지 않고 `rules`만 바꿔서 케이스를 낮추는 것은 허용하지 않아요. 리뷰어가 이를 지적해요.
 
 케이스를 높이고 싶으면 `pnpm dev-cycle table <케이스> --upgrade`를 써요.
 

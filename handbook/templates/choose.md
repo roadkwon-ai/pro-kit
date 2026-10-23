@@ -2,7 +2,7 @@
 
 > 한눈에: 템플릿은 운영 DB를 어디에 둘지로 골라요. 기능을 바꿀 때마다 DB의 테스트용 복사본을 만들어 확인하고 싶으면 Neon, 이미 Supabase를 쓰고 있으면 Supabase예요. 앱 코드 구성은 <!-- v:templates.count.ko -->두<!-- /v --> 템플릿이 같아요.
 
-**처음이고 정하기 어렵다면** 템플릿을 미리 고르지 않아도 돼요. 만들 서비스만 설명하면 DB 종류가 드러나지 않을 때 에이전트가 이 쪽의 비교표로 차이를 설명하고 물어봐요. 프로킷이 정해 둔 기본 템플릿은 없어요. 다만 DB 없이 화면만 만들 때는 묻지 않고 neon으로 만들어요. 이미 Supabase를 쓰고 있다면 supabase를, 그 밖에는 아래 "무엇으로 고르나요"의 두 줄이 기준이에요. Neon과 Supabase는 둘 다 인터넷에 두는 DB 서비스예요([용어](../../tutorials/reference/glossary.md#계정과-비용)).
+**처음이고 정하기 어렵다면** 템플릿을 미리 고르지 않아도 돼요. 만들 서비스만 설명해도 돼요. 설명에 DB 종류가 드러나지 않으면 에이전트가 이 쪽의 비교표로 차이를 설명하고 물어봐요. 프로킷이 정해 둔 기본 템플릿은 없어요. 다만 DB 없이 화면만 만들 때는 묻지 않고 neon으로 만들어요. 이미 Supabase를 쓰고 있다면 supabase를, 그 밖에는 아래 "무엇으로 고르나요"의 두 줄이 기준이에요. Neon과 Supabase는 둘 다 인터넷에 두는 DB 서비스예요([용어](../../tutorials/reference/glossary.md#계정과-비용)).
 
 ## <!-- v:templates.count.ko -->두<!-- /v --> 템플릿 한눈에 보기
 
@@ -58,9 +58,11 @@ flowchart TD
 
 ## 자세히
 
-- **같은 앱 구조**: <!-- v:templates.count.ko -->두<!-- /v --> 템플릿 모두 Next.js + oRPC + Better Auth + Drizzle 모노레포에 설치돼요([앱 구조](app-structure.md)). 둘 다 일반 Postgres 드라이버(`pg`)를 써서 로컬 DB와 원격 DB에 같은 코드로 붙어요.
+- **같은 앱 구조**: <!-- v:templates.count.ko -->두<!-- /v --> 템플릿 모두 Next.js + oRPC + Better Auth + Drizzle 모노레포(앱과 패키지를 한 저장소에 담은 구조)에 설치돼요([앱 구조](app-structure.md)). 둘 다 일반 Postgres 드라이버(`pg`)를 써서 로컬 DB와 원격 DB에 같은 코드로 붙어요.
 - **neon이 `--db-setup neon`을 쓰지 않는 이유**: `--db-setup neon`은 Neon 전용 HTTP 드라이버를 만들어 로컬 Postgres에 붙지 않아요. 그래서 `--db-setup docker`로 만들어요.
-- **supabase의 RLS**: 앱은 Supabase를 Postgres로만 쓰고, `public`의 모든 테이블에 정책 없는 RLS를 켜서 Data API로 들어오는 접근(`anon`, `authenticated`)을 막아요. 앱은 테이블 소유자 역할로 접속하므로 영향이 없고, 사용자별 데이터 격리는 RLS가 아니라 API의 소유권 검사가 해요. 첫 마이그레이션에 `enable_rls_auth`를 더하고 `supabase db advisors`로 확인해요.
+- **supabase의 RLS**: 앱은 Supabase를 Postgres로만 쓰고, `public`의 모든 테이블에 정책 없는 RLS를 켜서 Data API로 들어오는 접근(`anon`, `authenticated`)을 막아요. 앱은 테이블 소유자 역할로 접속하므로 영향이 없어요.
+  - 사용자별 데이터 격리는 RLS가 아니라 API의 소유권 검사가 해요.
+  - 첫 마이그레이션에 `enable_rls_auth`를 더하고 `supabase db advisors`로 확인해요.
 - **검증 기록**: [neon](../../templates/prokit-next-neon/VERIFICATION.md) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md)
 
 ## 관련 문서

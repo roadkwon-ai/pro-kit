@@ -54,11 +54,15 @@ flowchart TD
 - **판정**: `pnpm dev-cycle case`는 지금 바뀐 파일을 `.dev-cycle.json`의 경로 규칙(`rules`)에 맞춰 판정해요. 아직 파일을 바꾸기 전이면 판정이 A로 나오므로 요청을 보고 케이스를 골라 `table`에 적어요.
 - **하네스만 설치한 기존 프로젝트(`--adopt`)의 처음 경로 규칙**: 설치기가 흔한 Next.js 배치로 추정한 규칙을 `.dev-cycle.json`에 적어요. `prisma/`·`drizzle/`·`migrations/`는 E, `app/api/`·`pages/api/`·`server/`·`trpc/`는 D, `app/`·`pages/`·`components/`·`styles/`는 B로 보고, 규칙 밖의 `.ts`·`.tsx`·`.js`·`.jsx`·`.mjs`·`.cjs` 파일은 무거운 F로 봐요. 이 규칙은 추정이라서 정밀 분석 뒤 첫 H Task에서 그 프로젝트의 구조에 맞게 고쳐요([기존 프로젝트에 도입하기](../start/adopt.md), [정밀 분석과 진행 계획](project-plan.md)). 앱의 루트 `package.json` 같은 작업공간 설정은 H 규칙에서 빠져요.
 - **선언**: 새 기능 요청은 F, 버그 제보는 C로 선언해요. 애매하면 더 무거운 케이스를 골라요.
+
 ### 상향과 자동으로 붙는 행
 
 - **상향**: 작업 중 다른 계층을 건드리면 `pnpm dev-cycle audit`이 케이스를 올리라고 알려 줘요. `pnpm dev-cycle table <새 케이스> --write --upgrade`를 실행하면 이미 채운 증거, 직접 추가한 행, 메모를 그대로 두고 새 케이스의 행을 더해요.
 - **보안 리뷰 자동 추가**: 로그인과 관련된 경로(`packages/auth`, `apps/web/src/app/api/auth/` 등, `.dev-cycle.json`의 `authPaths`)를 건드리면 `[review] prokit-reviewer(security)` 행이 자동으로 붙어요. 아직 파일을 바꾸기 전이라도 로그인, 세션, 권한 문제라면 대조표를 연 직후 이 행을 직접 더해요.
-- **자동으로 붙는 행**: D·E·F 표에는 그 계층 패키지에 `test` 스크립트가 없으면 `vitest 도입` 행이, `--task`로 열면 Task 세부 계획 행과 Task 세부 계획 리뷰 행(F는 세부 계획 행만)이, `--plan`으로 열면 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 진행 계획 리뷰 행이 맨 앞에 붙어요([정밀 분석과 진행 계획](project-plan.md)).
+- **자동으로 붙는 행**: 조건에 따라 대조표 맨 앞에 행이 붙어요([정밀 분석과 진행 계획](project-plan.md)).
+  - D·E·F 표에서 그 계층 패키지에 `test` 스크립트가 없으면 `vitest 도입` 행이 붙어요.
+  - `--task`로 열면 Task 세부 계획 행과 Task 세부 계획 리뷰 행이 붙어요(F는 세부 계획 행만).
+  - `--plan`으로 열면 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 진행 계획 리뷰 행이 붙어요.
 - **테스트 러너 먼저**: D·E 행이 있는 대조표(F 포함)나 서버·DB 코드를 고치는 C에서 테스트 러너가 없으면 첫 행 앞에 `vitest 도입(최초 1회)` 행이 들어가요. D·E·F 표는 그 계층 패키지에 `test` 스크립트가 없을 때 `table`이 넣고, C는 에이전트가 더해요. 격리 테스트 행을 채울 방법이 이것뿐이라서 요청 범위를 넓히는 일로 보지 않아요.
 
 ## 자세히
@@ -86,9 +90,9 @@ flowchart TD
   - critique 행의 증거에는 impeccable이 남긴 `.impeccable/critique/<시각>__<대상>.md` 경로와 그 파일 머리의 점수를 적어요. audit 행(web-design-guidelines 검사 포함)은 보고서를 `tasks/evidence/ui-audit-<시각>.md`로 저장하고 그 경로와 총점(N/20)을 적어요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요([증거와 audit, 사용자 확인](audit-and-confirm.md)).
 - **C. 버그**: 재현 테스트 작성과 실패 확인 → 수정 → 재현 테스트 통과 → 판정된 케이스의 검사·리뷰 행. 화면 문구·모양 버그는 테스트 파일 대신 고치기 전과 뒤의 화면 스크린샷으로 재현과 통과를 보여요.
 - **D. 서버·API**: `[design]` 재사용·설정 설계 점검 → zod 입출력 계약 → 구현(격리 테스트부터) → 2계정 격리 테스트 → 타입·린트·테스트 → `prokit-reviewer(code)`.
-- **E. DB**: `[design]` 재사용·설정 설계 점검 → 스키마 수정과 생성 SQL 검토 → 타입·린트 → 로컬 개발 DB에 적용 → 병합 전 원격 DB에 적용(neon은 Neon 개발 브랜치) → 파괴적 변경 판단(없음 또는 2단계 계획) → `prokit-reviewer(db)`. supabase는 새 테이블의 RLS 확인, 로컬 `supabase db advisors` 보안 검사, 병합 전 Supabase 스테이징 적용과 advisors가 더 붙어요.
+- **E. DB**: `[design]` 재사용·설정 설계 점검 → 스키마 수정과 생성 SQL 검토 → 타입·린트 → 로컬 개발 DB에 적용 → 병합 전 원격 DB에 적용(neon은 Neon 개발 브랜치) → 파괴적 변경 판단(없음 또는 2단계 계획) → `prokit-reviewer(db)`. supabase는 새 테이블의 RLS 확인, 로컬 `supabase db advisors` 보안 검사, 병합 전 Supabase 스테이징 적용과 advisors 검사가 더 붙어요.
 - **F. 새 기능**: 스펙(만들지 않는 것, 인수 조건, 테스트 시나리오) → 구현 계획 → `[design]` 재사용·설정 설계 점검 → 계획 리뷰 → 구현 방식 → E·D·B 행 → 통합 런타임 확인 → 공통화·리팩토링·최적화 점검 → 전체 diff 최종 리뷰 → 사용자 흐름 QA → QA 발견 수정과 재QA.
-- **H. 하네스**: `[design]` 재사용·설정 설계 점검 → `pnpm agents:check` → `pnpm skills:check` → `pnpm dev-cycle case`·`status` 실행 확인 → 빌드·배포 설정이나 작업공간 설정을 바꿨으면 `pnpm build`와 타입·린트 검사 → 스크립트·CI·배포·작업공간 설정을 바꿨으면 `prokit-reviewer(code)` → 스킬을 바꿨으면 skill-creator eval 재실행. 스킬, 에이전트, dev-cycle 파일과 함께 빌드·배포 설정(`next.config.*`, `vercel.json`, `turbo.json`, `.github/workflows/`)과 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`, `packages/config/`)을 바꿔도 H로 판정돼요. [기존 프로젝트에 하네스만 설치한](../start/adopt.md) `adopt`는 앱의 루트 `package.json`, `biome.json`, `tsconfig.json`이 그 프로젝트의 것이라 H가 아니라 A로 봐요. 기능 의존성이 들어가는 `apps/web`·`packages/*`의 `package.json`, `pnpm-workspace.yaml`의 `catalog:`, `pnpm-lock.yaml`은 해당하지 않아요.
+- **H. 하네스**: `[design]` 재사용·설정 설계 점검 → `pnpm agents:check` → `pnpm skills:check` → `pnpm dev-cycle case`·`status` 실행 확인 → 빌드·배포 설정이나 작업공간 설정을 바꿨으면 `pnpm build`와 타입·린트 검사 → 스크립트·CI·배포·작업공간 설정을 바꿨으면 `prokit-reviewer(code)` → 스킬을 바꿨으면 skill-creator eval 재실행. 스킬, 에이전트, dev-cycle 파일과 함께 빌드·배포 설정(`next.config.*`, `vercel.json`, `turbo.json`, `.github/workflows/`)과 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`, `packages/config/`)을 바꿔도 H로 판정돼요. [기존 프로젝트에 하네스만 설치한](../start/adopt.md) `adopt`는 앱의 루트 `package.json`, `biome.json`, `tsconfig.json`이 그 프로젝트의 것이라 H가 아니라 A로 봐요. 기능 의존성이 들어가는 `apps/web`·`packages/*`의 `package.json`, `pnpm-workspace.yaml`의 `catalog:`, `pnpm-lock.yaml`은 H로 보지 않아요.
 
 </details>
 

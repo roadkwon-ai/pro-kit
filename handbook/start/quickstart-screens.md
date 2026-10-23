@@ -67,7 +67,7 @@ https://github.com/roadkwon-ai/pro-kit 을 이 폴더에 받고, 그 안의 AGEN
 cd <프로젝트 절대 경로> && claude "docs/first-request.md의 요청대로 이어서 해줘"
 ```
 
-다른 에이전트로 열었다면 `claude "…"` 대신 그 에이전트를 여는 명령이에요(Codex는 <!-- v:agent.codex.open -->codex<!-- /v -->, Antigravity는 <!-- v:agent.agy.open -->agy -i "<요청>"<!-- /v -->, Grok Build는 <!-- v:agent.grok.open -->grok --trust "<요청>"<!-- /v -->. [지원하는 에이전트](supported-agents.md)). 묻지 않고 진행하는 모드로 열었다면 같은 옵션(<!-- v:agent.claude.yoloCode -->`claude --dangerously-skip-permissions`<!-- /v -->, <!-- v:agent.codex.yoloCode -->`codex --yolo`<!-- /v -->, <!-- v:agent.agy.yoloCode -->`agy --dangerously-skip-permissions`<!-- /v -->, <!-- v:agent.grok.yoloCode -->`grok --permission-mode bypassPermissions`<!-- /v -->)이 붙어요([묻지 않고 진행하게 열기](../../tutorials/reference/claude-code-and-codex.md#묻지-않고-진행하게-열기)).
+다른 에이전트로 열었다면 `claude "…"` 자리에 그 에이전트를 여는 명령을 써요(Codex는 <!-- v:agent.codex.open -->codex<!-- /v -->, Antigravity는 <!-- v:agent.agy.open -->agy -i "<요청>"<!-- /v -->, Grok Build는 <!-- v:agent.grok.open -->grok --trust "<요청>"<!-- /v -->. [지원하는 에이전트](supported-agents.md)). 묻지 않고 진행하는 모드로 열었다면 같은 옵션(<!-- v:agent.claude.yoloCode -->`claude --dangerously-skip-permissions`<!-- /v -->, <!-- v:agent.codex.yoloCode -->`codex --yolo`<!-- /v -->, <!-- v:agent.agy.yoloCode -->`agy --dangerously-skip-permissions`<!-- /v -->, <!-- v:agent.grok.yoloCode -->`grok --permission-mode bypassPermissions`<!-- /v -->)이 붙어요([묻지 않고 진행하게 열기](../../tutorials/reference/claude-code-and-codex.md#묻지-않고-진행하게-열기)).
 
 ### 이렇게도 요청할 수 있어요
 

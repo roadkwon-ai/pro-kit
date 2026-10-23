@@ -56,7 +56,7 @@
 증거 파일은 이렇게 다뤄요.
 
 - 프로젝트 안의 일반 파일이고 비어 있지 않은 한 줄이어야 해요. FIFO, 심볼릭 링크, 헤더가 섞인 입력과 프로젝트 밖 경로는 받지 않아요.
-- `tasks/evidence/`에는 실행 전후 산출물, 환경·자원 helper의 실제 결과를 각각 한 번만 남겨요.
+- `tasks/evidence/`에는 실행 전후 산출물과 환경·자원 helper가 낸 실제 결과를 각각 한 번만 남겨요.
 - private guard token이나 owner receipt의 내용은 파일·명령 출력·증거 칸에 직접 넣지 않아요.
 
 ### 스킬과 에이전트
@@ -75,7 +75,7 @@
 | `pnpm agents:sync` | `.claude/agents`에서 `.codex/agents`(Codex)와 `.agents/agents`(Antigravity) 만들기 |
 | `pnpm agents:check` | 정본과 생성물이 맞는지 검사 |
 | `claude plugin update <플러그인> --scope project` | Claude 플러그인 업데이트(`skills:update`는 플러그인을 올리지 않아요) |
-| `codex plugin marketplace upgrade ponytail` | 과설계 방지 스킬로 ponytail을 골랐을 때 Ponytail 원본 GitHub marketplace snapshot을 새로고침해요. 이 명령만으로 플러그인 갱신 완료를 판정하지 않아요. 사용자가 원하고 비활성화 상태가 아니면 hooks와 코드를 먼저 검토한 뒤 `codex plugin add ponytail@ponytail`을 실행하고 `codex plugin list --json`으로 설치판을 확인해요. 훅 신뢰와 새 세션은 별도예요 |
+| `codex plugin marketplace upgrade ponytail` | 과설계 방지 스킬로 ponytail을 골랐을 때 Ponytail 원본 GitHub marketplace의 사본(snapshot)을 새로 받아요. 이 명령만으로는 플러그인이 갱신됐다고 보지 않아요. 사용자가 원하고 비활성화 상태가 아니면 hooks와 코드를 먼저 검토한 뒤 `codex plugin add ponytail@ponytail`을 실행하고 `codex plugin list --json`으로 설치판을 확인해요. 훅 신뢰와 새 세션은 따로 챙겨야 해요 |
 
 `pnpm skills:setup --with-global`에서만 Codex 네이티브 Ponytail 설치를 시도해요. 기본 실행과 `--check`는 Codex 사용자 설정을 바꾸지 않고, 네이티브 플러그인이 없어도 선택 기능의 상태로 알려 줘요. 프로젝트 스킬의 필수 누락과 플러그인·훅 상태를 구분하는 방법은 [설치와 업데이트 구조](../skills/install-and-update.md)에 있어요.
 

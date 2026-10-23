@@ -51,7 +51,7 @@ flowchart LR
 > [!WARNING]
 > 데이터를 잃을 수 있는 변경(컬럼 삭제, 이름 변경)은 두 번에 나눠요.
 
-용어 풀이: oRPC는 화면이 서버 기능을 함수처럼 부르게 하는 도구, Better Auth는 로그인 도구, Drizzle은 DB를 코드로 다루는 도구예요([용어](../../tutorials/reference/glossary.md#만들기)). 서버 컴포넌트(RSC)는 화면 일부를 서버에서 그려 보내는 Next.js 방식이에요.
+용어 풀이: oRPC는 화면이 서버 기능을 함수처럼 부르게 하는 도구, Better Auth는 로그인 도구, Drizzle은 DB를 코드로 다루는 도구예요. 프로시저는 서버에 만들어 두고 화면이 부르는 기능 하나예요([용어](../../tutorials/reference/glossary.md#만들기)). 서버 컴포넌트(RSC)는 화면 일부를 서버에서 그려 보내는 Next.js 방식이에요.
 
 ## 자세히
 

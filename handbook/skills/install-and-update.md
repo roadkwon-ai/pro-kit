@@ -18,7 +18,7 @@
 
 ## status가 알려 주는 것
 
-작업을 시작하려고 `pnpm dev-cycle status`를 실행하면(열린 라운드가 없을 때만) 상태 줄 아래에 스킬 업데이트 알림이 붙을 수 있어요. 아래는 알림 이름과 뜻, 할 일이에요. 에이전트는 이 줄을 보면 `prokit-skills-update` 1절대로 처리해서 대부분 직접 할 일은 없어요.
+작업을 시작하려고 `pnpm dev-cycle status`를 실행하면(열린 라운드가 없을 때만) 상태 줄 아래에 스킬 업데이트 알림이 붙을 수 있어요. 아래는 알림 이름과 뜻, 할 일이에요. 에이전트는 이 줄을 보면 `prokit-skills-update` 1절의 순서대로 처리해서 대부분 직접 할 일은 없어요.
 
 | 알림 | 뜻 | 할 일 |
 |---|---|---|
@@ -76,11 +76,11 @@ flowchart TD
 - **프로젝트 설치와 Codex 선택 설치는 달라요**: 프로젝트 스킬과 Claude 플러그인은 프로젝트 범위(project scope)에 들어가요. Codex 네이티브 Ponytail은 `--with-global`일 때만 사용자 설정에 공식 marketplace와 플러그인을 등록하는 선택 항목이에요. 기본 설치와 `pnpm skills:check`는 그 설정을 바꾸지 않아요.
 - **전역 도구는 둘로 나뉘어요**: <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지 전역 도구는 `--with-global`을 줄 때만 설치해요.
 - **openspec과 spec-kit은 자기 init 명령으로 설치해요**: OpenSpec은 전역 npm CLI(고를 때만 설치), Spec Kit은 설치할 때만 uv가 필요해요. 지울 때는 도구 파일만 지우고 `openspec/`, `specs/`, `.specify/memory/` 문서는 남겨요. Compound Engineering은 Claude 프로젝트 플러그인과 skills CLI로 받는 Codex 스킬이에요([두뇌와 선택 스킬](brains.md)).
-- **기존 프로젝트 도입(`--adopt`)**: `install.sh --adopt`는 하네스만 넣어요. `prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`만 복사하고, 매니페스트에서 `stack: true`인 Better-T-Stack 전용 스킬(neon 템플릿은 better-auth, neon, turborepo, supabase 템플릿은 better-auth, turborepo)은 건너뛰어요([기존 프로젝트에 도입하기](../start/adopt.md)).
+- **기존 프로젝트 도입(`--adopt`)**: `install.sh --adopt`는 하네스만 넣어요. `prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`만 복사하고, 매니페스트에서 `stack: true`인 Better-T-Stack 전용 스킬은 건너뛰어요. 이 스킬은 neon 템플릿에서는 better-auth, neon, turborepo이고, supabase 템플릿에서는 better-auth, turborepo예요([기존 프로젝트에 도입하기](../start/adopt.md)).
 
 ## 설치 목록과 실제 선택은 달라요
 
-매니페스트는 프로킷이 관리해 설치할 스킬 목록이에요. 현재 쓸 수 있는 외부 스킬을 한 번 선택했다고 이 목록을 바꾸지는 않아요. 반복해서 관리할 스킬만 출처·권한·지원 환경·행동 평가를 확인해 등록해요.
+매니페스트는 프로킷이 관리하고 설치하는 스킬 목록이에요. 현재 쓸 수 있는 외부 스킬을 한 번 선택했다고 이 목록을 바꾸지는 않아요. 반복해서 관리할 스킬만 출처·권한·지원 환경·행동 평가를 확인해 등록해요.
 
 새 외부 스킬을 만드는 작업은 `skill-creator`를 적용하는 전문 수행자에게 맡겨요. 기본 선택과 결과 검수는 [위임과 자원 관리](../concepts/delegation-and-resources.md)를 따라요.
 
@@ -88,7 +88,7 @@ flowchart TD
 
 `pnpm skills:update`는 이미 고른 스킬만 최신으로 올려요. 두뇌나 추가 스킬을 바꾸고 더하고 빼는 일은 `prokit-skills-manage`가 받아요([두뇌와 선택 스킬](brains.md#바꾸기)).
 
-설치한 외부 스킬은 프로젝트에 복사되어 커밋돼요. 그래서 원격 저장소가 바뀌어도 저절로 따라가지 않아요.
+설치한 외부 스킬은 프로젝트에 복사해 커밋하는 파일이에요. 그래서 원격 저장소가 바뀌어도 저절로 따라가지 않아요.
 
 ```bash
 pnpm skills:update --check     # 설치한 외부 스킬을 GitHub 원본과 비교해 새 버전만 알려 준다
@@ -124,15 +124,13 @@ claude plugin update <플러그인> --scope project   # 세션을 다시 열어�
 
 ### Ponytail 훅과 Codex 네이티브 플러그인
 
-과설계 방지 스킬로 ponytail을 고르면 Claude 플러그인이 훅 3개(SessionStart, SubagentStart, UserPromptSubmit)로 세션과 서브에이전트에 과설계를 막는 규칙을 넣어요. 상태는 `CLAUDE_CONFIG_DIR` 또는 `~/.claude` 아래에 두며, `CLAUDE_PROJECT_DIR`이 있으면 프로젝트 hash별 모드와 공유 플래그를 써요.
-
-없으면 shared 상태를 써요. 같은 저장소의 세션은 모드를 함께 쓰므로 `stop ponytail`도 함께 적용돼요. 전역 helper 파일을 쓸 수 있지만 statusline 설정은 사용자가 원할 때만 바꿔요.
+과설계 방지 스킬로 ponytail을 고르면 Claude 플러그인이 훅 3개(SessionStart, SubagentStart, UserPromptSubmit)로 세션과 서브에이전트에 과설계를 막는 규칙을 넣어요. 상태는 `CLAUDE_CONFIG_DIR` 또는 `~/.claude` 아래에 두고, `CLAUDE_PROJECT_DIR`이 있으면 프로젝트 hash별 모드와 공유 플래그를 써요. 이 변수가 없으면 shared 상태를 써요. 같은 저장소의 세션은 모드를 함께 쓰므로 `stop ponytail`도 함께 적용돼요. 전역 helper 파일을 쓸 수 있지만 statusline 설정은 사용자가 원할 때만 바꿔요.
 
 고르지 않았는데 전역에 켜져 있으면 설치기가 `.claude/settings.local.json`의 `enabledPlugins`에 `"ponytail@ponytail": false`를 넣어 이 프로젝트에서만 꺼요([두뇌와 선택 스킬](brains.md)).
 
 시작 훅의 대략적 코드 지도는 재사용 후보를 찾는 참고 자료예요. 지도에 나온 항목은 실제 코드·호출자·테스트·설정·내보내기를 읽고 확인해요.
 
-ponytail을 고르면 Codex는 프로젝트에 `ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-help`, `ponytail-gain` <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬을 받아요. 지원하는 CLI에서 `--with-global`을 주면 공식 원본 marketplace와 네이티브 플러그인을 추가할 수 있어요. 설치된 플러그인의 출처와 비활성화 선택은 보존하며, 설치기가 다시 설치하거나 자동으로 올리지 않아요.
+ponytail을 고르면 Codex는 프로젝트에 `ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-help`, `ponytail-gain` <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬을 받아요. 지원하는 CLI에서 `--with-global`을 주면 공식 원본 marketplace와 네이티브 플러그인을 추가할 수 있어요. 설치한 플러그인의 출처와 비활성화 선택은 그대로 두고, 설치기는 다시 설치하거나 자동으로 올리지도 않아요.
 
 플러그인 설치와 훅 신뢰는 별개예요. Codex에서 `/hooks`로 현재 플러그인을 신뢰하고 새 세션을 연 뒤에만 자동 훅 실행을 기대할 수 있어요. 신뢰 기록을 대신 쓰거나 우회하지 않아요.
 
@@ -142,7 +140,7 @@ review는 한 번의 검토일 뿐 세션을 영구 review 모드로 바꾸지 �
 
 ### 상태 확인
 
-`pnpm skills:check`는 설치하지 않고 상태만 봐요. 프로젝트 범위 항목이 빠졌으면 exit 1이에요. 선택 묶음과 Codex 네이티브 Ponytail은 상태만 보여 주며, 없어도 누락으로 세지 않아요. `omx`가 없는 기기도 OMX를 누락으로 세지 않아요.
+`pnpm skills:check`는 설치하지 않고 상태만 봐요. 프로젝트 범위 항목이 빠졌으면 exit 1이에요. 선택 묶음과 Codex 네이티브 Ponytail은 상태만 보여 주고, 없어도 누락으로 세지 않아요. `omx`가 없는 기기도 OMX를 누락으로 세지 않아요.
 
 ## 관련 문서
 

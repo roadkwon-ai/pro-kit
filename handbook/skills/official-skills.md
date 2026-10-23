@@ -28,7 +28,7 @@ B·F 라운드의 화면·런타임 행에서 읽는 스킬이에요. 먼저 이
 | React·화면 규칙 | `vercel-react-best-practices`, `vercel-composition-patterns`, `web-design-guidelines` | vercel-labs/agent-skills | `prokit-web`(앞의 둘), `prokit-reviewer`(컴포넌트·훅은 react-best-practices, 합성 결정은 composition-patterns), `prokit-ui`(web-design-guidelines). B·F 설계 점검(재사용 API·합성), B 구현 행(react-best-practices), audit 행(web-design-guidelines). audit 행은 위반 목록을 impeccable audit 보고서와 함께 `tasks/evidence/ui-audit-<시각>.md`에 저장하고, `dev-cycle audit`이 그 파일을 확인해요 |
 | 컴포넌트 | `shadcn` | shadcn/ui | `prokit-ui`. B 구현 행 |
 | 화면 디자인 | `impeccable` | pbakaus/impeccable | `prokit-ui`. B·F 화면 설계, critique, audit 행. critique는 `.impeccable/critique/<시각>__<대상>.md` 기록을 남겨야 하고 그 점수가 증거와 같아야 해요. audit의 N/20은 저장한 보고서에 있어야 해요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요. 기존 디자인을 이어 가는 프로젝트는 지금 화면에서 `DESIGN.md`를 만들어요 |
-| 이미지 그리기 (ChatGPT 요금제) | `gpt-image` | GENEXIS-AI/gpt-image-skill | `prokit-ui`. Claude Code에서 `OPENAI_API_KEY`가 없고 Codex CLI가 ChatGPT로 로그인되어 있을 때 comp와 plate 이미지를 그려요 |
+| 이미지 그리기 (ChatGPT 요금제) | `gpt-image` | GENEXIS-AI/gpt-image-skill | `prokit-ui`. Claude Code에서 `OPENAI_API_KEY`가 없고 Codex CLI에 ChatGPT로 로그인했을 때 comp와 plate 이미지를 그려요 |
 | 디자인 스타일 카탈로그 | `use-design-md` | CaesiumY/ko-design-md | `prokit-ui`. B 첫 행에서 고른 스타일(getdesign.kr, awesome-design-md, Refero Styles)의 DESIGN.md를 받아 적용해요. 받은 파일은 Google 스펙 CLI(`@google/design.md`)로 lint해요. 기존 디자인을 이어 가기로 한 프로젝트는 쓰지 않아요 |
 | 브라우저 확인 | `agent-browser` | vercel-labs/agent-browser | `prokit-verify`. B·F 런타임 확인 행(macOS는 ego lite를 먼저 써요). 견본이 콘솔 오류와 가로 넘침을 모아 `결함:` 줄로 출력하고, 이 줄은 오류 예산에 들어가요. 띄우기 전에 3001 포트를 `lsof`로 보고, 다른 프로세스가 쓰면 끄지 않고 알려요 |
 
@@ -62,7 +62,7 @@ E·D 라운드에서 읽는 스킬이에요.
 
 위 표의 공식 도메인 스킬은 무엇으로 만드는지(Next.js, DB, 인증)를 다뤄요. 아래 도구는 어떤 순서로 일하는지(설계, 계획, 구현, 리뷰, 확인)를 다뤄요. 단계마다 무엇을 먼저 쓰고, 없으면 무엇으로 대신하는지는 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`가 정본이에요. Vercel CLI, Neon CLI, Supabase CLI, GitHub CLI처럼 DB와 배포에 쓰는 명령줄 도구는 [쓰는 기술과 도구](../reference/tech-stack.md)에 모았어요.
 
-리뷰에서는 바뀐 계층과 실제 계약에 맞는 스킬을 읽어요. 전문 제공자의 내장 리뷰가 확인한 관점은 재사용하고, 부족한 관점만 보완해요. 최종 `prokit-reviewer` 검수는 매번 진행해요. 작업 범위와 검사 담당자를 나누는 기준은 [위임과 자원 관리](../concepts/delegation-and-resources.md#독립-작업을-나눠서-확인하기)에 있어요.
+리뷰에서는 바뀐 계층과 실제 계약에 맞는 스킬을 읽어요. 전문 제공자의 내장 리뷰가 확인한 관점은 재사용하고, 부족한 관점만 보완해요. 최종 `prokit-reviewer` 검수는 매번 해요. 작업 범위와 검사 담당자를 나누는 기준은 [위임과 자원 관리](../concepts/delegation-and-resources.md#독립-작업을-나눠서-확인하기)에 있어요.
 
 | 이름 | 무엇인가 | 설치 | 프로킷에서 맡는 일 |
 |---|---|---|---|
@@ -79,8 +79,8 @@ E·D 라운드에서 읽는 스킬이에요.
 
 - Codex는 사용 가능한 `$ponytail:ponytail-review`를 먼저 쓰고, 없을 때만 프로젝트의 `SKILL.md`를 읽어요. 두 경로로 같은 리뷰를 반복하지 않고, `off` 상태를 대체 경로로 되살리지 않아요.
 - `ponytail-review`는 한 번의 검토라 세션을 영구 review 모드로 바꾸지 않아요. 통합 리뷰 행은 `prokit-reviewer`의 판정으로 채워요. Ponytail은 전문 리뷰가 비운 계약만 보완하고 최종 게이트를 대신하지 않아요.
-- `ponytail-audit`은 저장소 전체를 검토해 달라는 요청에, `ponytail-debt`는 미뤄 둔 한계를 확인할 때 써요. debt는 새 `shortcut:` 주석과 기존 `ponytail:` 주석을 함께 모아 보여 주며, 장부 저장·백로그 수정은 요청한 경우에만 해요.
-- `ponytail-gain`은 upstream benchmark를 보여 줄 뿐 프로킷의 시간·비용 절감값을 뜻하지 않아요. audit·debt·help·gain은 매 라운드 의무 작업이나 자동 장부·백로그 갱신이 아니에요.
+- `ponytail-audit`은 저장소 전체를 검토해 달라는 요청에, `ponytail-debt`는 미뤄 둔 한계를 확인할 때 써요. debt는 새 `shortcut:` 주석과 기존 `ponytail:` 주석을 함께 모아 보여 주고, 장부(미뤄 둔 한계를 적은 기록) 저장이나 백로그 수정은 요청할 때만 해요.
+- `ponytail-gain`은 Ponytail 원본 저장소의 벤치마크를 보여 줄 뿐 프로킷의 시간·비용 절감값을 뜻하지 않아요. audit·debt·help·gain은 매 라운드 의무 작업이나 자동 장부·백로그 갱신이 아니에요.
 
 ### 공통 운영 경계
 
@@ -106,7 +106,7 @@ E·D 라운드에서 읽는 스킬이에요.
 
 ### 호출률과 활용도
 
-새 세션에서 사용자가 할 법한 요청 7개(스펙·계획, 화면, API, DB, 인증 설정, 성능 분석, 배포 준비)를 두 판으로 두 번씩 실행하고 각 단계에서 읽어야 할 스킬을 실제로 읽었는지 로그로 셌어요. 두 판은 공개 전 이력의 v0.6.1(before)과 공식 스킬 연결을 보강한 판(after)이에요(neon 템플릿, `claude -p`, Opus 5.5, 2026-09-30). 무엇을 읽어야 하는지는 보강하기 전에 미리 정했어요.
+새 세션에서 사용자가 할 법한 요청 7개(스펙·계획, 화면, API, DB, 인증 설정, 성능 분석, 배포 준비)를 두 판으로 두 번씩 실행했어요. 각 단계에서 읽어야 할 스킬을 실제로 읽었는지는 로그로 셌어요. 두 판은 공개 전 이력의 v0.6.1(before)과 공식 스킬 연결을 보강한 판(after)이에요(neon 템플릿, `claude -p`, Opus 5.5, 2026-09-30). 무엇을 읽어야 하는지는 보강하기 전에 미리 정했어요.
 
 ```mermaid
 %%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2a78d6, #8c929b"}}}}%%
@@ -138,7 +138,7 @@ before에서도 대조표 행에 이름이 있던 스킬은 거의 매번 불렸
 
 </details>
 
-활용도는 두 가지로 봤어요. 설치한 공식 스킬이 하네스의 어디에 연결되어 있는지, 그리고 측정에서 실제로 읽혔는지예요.
+활용도는 두 가지로 봤어요. 설치한 공식 스킬이 하네스의 어디에 연결돼 있는지, 그리고 측정에서 실제로 읽혔는지예요.
 
 ```mermaid
 %%{init: {"themeVariables": {"pie1": "#6aa5ea", "pie2": "#b9d4f3", "pie3": "#dde1e6", "pieSectionTextColor": "#111418", "pieStrokeColor": "#ffffff"}}}%%
@@ -154,7 +154,7 @@ pie showData title 측정 때 neon 공식 도메인 스킬 26개가 연결된 �
 | 측정 14번 실행에서 한 번 이상 읽힌 공식 도메인 스킬 (neon) | 7/26 | 15/26 |
 | 프로젝트에 설치된 외부 스킬을 그 판에서 읽은 비율 | 42% (8/19) | 100% (60/60) |
 
-- after에서도 읽히지 않은 11개는 측정 요청에 그 상황이 없었기 때문이에요. 해당하는 스킬은 원격 Neon 브랜치(`neon` 4종), 실제 배포(Vercel 배포 3종), 컴포넌트 조합 설계(`vercel-composition-patterns`), 설계 질문(`grill-with-docs`, `grilling`. 요청이 질문을 모아 두라고 했어요)이에요. `agent-browser`는 macOS에서 ego lite를 먼저 써서 읽히지 않았어요.
+- after에서도 읽히지 않은 11개는 측정 요청에 그 상황이 없었기 때문이에요. 해당하는 스킬은 원격 Neon 브랜치(`neon` 4종), 실제 배포(Vercel 배포 3종), 컴포넌트 조합 설계(`vercel-composition-patterns`), 설계 질문(`grill-with-docs`, `grilling`)이에요. 이 둘은 요청이 질문을 모아 두라고 해서 쓰이지 않았어요. `agent-browser`는 macOS에서 ego lite를 먼저 써서 읽히지 않았어요.
 - 같은 이름의 개인 스킬(`~/.claude/skills`)이 있으면 Claude Code의 Skill 도구가 그 스킬을 먼저 불러와요. 그래서 before에서는 프로젝트에 설치한 판 대신 전역 판을 읽는 일이 많았어요. after는 `.agents/skills/<이름>/SKILL.md`를 Read로 읽게 했어요.
 - 측정할 때 공식 도메인 스킬은 neon 26개, supabase 23개였어요. 그 뒤 `use-design-md`와 `gpt-image`가 더해져 지금은 neon <!-- v:skills.official.neon -->28<!-- /v -->개, supabase <!-- v:skills.official.supabase -->25<!-- /v -->개예요.
 - 한계: 설정마다 두 번만 실행했고, neon 템플릿과 전역 스킬이 많은 기기 하나에서만 쟀어요. 스킬을 읽었는지만 셌고, 읽은 내용을 제대로 적용했는지는 채점하지 않았어요.

@@ -41,7 +41,7 @@
 아직 확인하지 못한 항목은 각 기록의 "미검증 항목" 절에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md#미검증-항목) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#미검증-항목)).
 
 > [!IMPORTANT]
-> 최근 기록의 로컬 구현·검증은 공개 사이트 배포나 프리셋 팩 재발행과 구분해요. 기존 스킬 유무 비교와 제작 시간 수치를 새 기능의 효과로 바꾸지 않으며, Ponytail의 `gain`도 원본 벤치마크예요. 현재 지원 범위와 남은 검사는 위 표의 각 기록에서 확인하세요.
+> 최근 기록의 로컬 구현·검증은 공개 사이트 배포나 프리셋 팩 재발행과 구분해요. 기존 스킬 유무 비교와 제작 시간 수치를 새 기능의 효과로 내세우지 않아요. Ponytail의 `gain`도 원본 쪽에서 잰 벤치마크예요. 현재 지원 범위와 남은 검사는 위 표의 각 기록에서 확인하세요.
 
 ## 스킬이 있을 때와 없을 때
 
@@ -81,7 +81,7 @@ supabase 템플릿의 `prokit-db`도 같은 방식으로 쟀어요. `prokit-db`�
 
 ## 위임·자원 변경의 최종 인수 범위 (2026-10-10)
 
-최종 인수에서는 **이미 통과한 실행 증거를 보존하고 실패한 항목만 보완했어요.** 독립 검수는 고정한 후보와 입력, 작업 범위, 실제 실행 기록에 한정해 통과를 확인했어요. 기존 스킬 유무 비교의 점수를 새 결과로 바꾸지는 않았어요.
+최종 인수(마지막으로 받아들여도 되는지 확인하는 단계)에서는 **이미 통과한 실행 증거를 보존하고 실패한 항목만 보완했어요.** 독립 검수는 고정한 후보와 입력, 작업 범위, 실제 실행 기록에 한정해 통과를 확인했어요. 기존 스킬 유무 비교의 점수를 새 결과로 바꾸지는 않았어요.
 
 반복 비교와 다른 환경에서의 재현성은 이번 인수에 포함하지 않았어요. 새 위임 경로의 실제 실행은 Codex에서 확인했고, 다른 에이전트의 실행 제한은 [검증 기록](../../docs/reports/2026-10-09-orchestration-resources/README.md#한계)에 남겼어요.
 
@@ -101,7 +101,7 @@ Codex와 Antigravity 시험에서 찾아 고친 것은 이래요.
 
 - CX1은 진행 계획 라운드를 커밋하지 않은 채 T1을 열었어요. 그래서 `tasks/plan.md`에 커밋하지 않은 변경이 있으면 Task를 열지 않게 했어요. CX2는 커밋을 마친 뒤 T1을 열었어요.
 - Codex의 하위 에이전트는 기본값이 메인 대화를 모두 넘겼어요. 분석·리뷰 에이전트는 대화를 넘기지 않는 `fork_turns: "none"`으로 띄우라고 `AGENTS.md`에 적었고, CX2의 하위 에이전트 세 개가 따랐어요.
-- AG1은 스킬을 읽지 않고 `AGENTS.md`만 따라서 Task 게이트를 거치지 않았어요. 이후 계획을 보기 전에 받은 "진행해"로 확인 칸을 채우는 문제는 최종 계획을 보여 주고 턴을 끝낸 뒤 받은 답으로 채우게 해서, AG8에서 막혔어요.
+- AG1은 스킬을 읽지 않고 `AGENTS.md`만 따라서 Task 게이트를 거치지 않았어요. 그 뒤에는 계획을 보기 전에 받은 "진행해"로 확인 칸을 채우는 문제가 남았어요. 최종 계획을 보여 주고 턴을 끝낸 뒤 받은 답으로만 채우게 바꿔 AG8에서 막았어요.
 - 화면 리뷰 기록 대조 같은 채점 지적 보완은 실제 세션으로 다시 시험하지 않았어요. AG9는 독립 채점 없이 직접 확인했어요.
 - 한계: critique 기록이나 audit 보고서를 지어내 저장하면 `audit`이 통과시켜요(파일이 남아 리뷰어가 볼 수 있어요). Grok Build는 무료 사용량 한도 때문에 대조표를 여는 데까지만 확인했어요([지원하는 에이전트](../start/supported-agents.md)).
 
@@ -109,15 +109,15 @@ Codex와 Antigravity 시험에서 찾아 고친 것은 이래요.
 
 ### 화면 프리셋
 
-화면 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->6<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개)의 화면을 확인했어요. 슬라이드랩과 스피커 포트폴리오의 전체 제작 시간·비용·critique 점수는 미측정이며, 아래 추천·comp·비용 기록은 두 프리셋을 제외한 기존 프리셋의 기록이에요. 자세한 범위는 [슬라이드랩 제작 기록](../../tutorials/samples/slidelab.md#시간과-비용)과 [스피커 포트폴리오 제작 기록](../../tutorials/samples/speaker-portfolio.md#시간과-비용)을 확인하세요. 클론 코딩 프리셋 <!-- v:presets.clone.count -->2<!-- /v -->개는 이 측정 밖이에요.
+화면 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->6<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개)의 화면을 확인했어요. 슬라이드랩과 스피커 포트폴리오의 전체 제작 시간·비용·critique 점수는 미측정이에요. 아래 추천·comp·비용 기록은 두 프리셋을 제외한 기존 프리셋의 기록이에요. 자세한 범위는 [슬라이드랩 제작 기록](../../tutorials/samples/slidelab.md#시간과-비용)과 [스피커 포트폴리오 제작 기록](../../tutorials/samples/speaker-portfolio.md#시간과-비용)을 확인하세요. 클론 코딩 프리셋 <!-- v:presets.clone.count -->2<!-- /v -->개는 이 측정 밖이에요.
 
 | 항목 | 결과 |
 |---|---|
-| 페이지 | 프리셋당 <!-- v:presets.screen.pages.range -->1\~22<!-- /v -->개, 올곧은 <!-- v:preset.olgot.pages -->203<!-- /v -->개(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종), 모두 <!-- v:presets.screen.pages -->344<!-- /v -->개. 링크와 버튼은 모두 실제 페이지나 동작으로 이어지고, 404나 "준비 중" 페이지는 없어요 |
+| 페이지 | 프리셋당 <!-- v:presets.screen.pages.range -->1\~22<!-- /v -->개, 올곧 프리셋은 <!-- v:preset.olgot.pages -->203<!-- /v -->개(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종), 모두 <!-- v:presets.screen.pages -->344<!-- /v -->개. 링크와 버튼은 모두 실제 페이지나 동작으로 이어지고, 404나 "준비 중" 페이지는 없어요 |
 | 확인 | GitHub Pages와 같은 하위 경로로 정적 HTML을 띄우고 모든 페이지의 링크와 버튼을 눌렀어요. 404 0, 콘솔 오류 0, 반응 없는 버튼 0 |
 | critique (40점 만점) | <!-- v:presets.design.critique.list -->제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 스피커 포트폴리오 29, 핏슬롯 28, Uptrail 28, 슬라이드랩 28<!-- /v -->. P0·P1은 모두 고쳤어요 |
-| 추천 | 1위는 <!-- v:presets.design.first.summary -->Refero Styles 6개, awesome-design-md 2개<!-- /v -->예요. 이전 판과 같은 계열(토스, Sequel 등)은 에이전트가 먼저 후보에서 뺐어요. 올곧은 추천 없이 입시학원 사이트 한 곳을 실측해 만든 `DESIGN.md`를 썼어요 |
-| comp | gpt-image-2.5-flare로 그렸어요. 첫 화면은 방향 comp 3장 중에서 골랐고, 나머지 페이지는 고른 comp를 참고로 페이지마다 한 장씩 그렸어요. 올곧은 첫 화면 comp 3장만 ChatGPT로 로그인한 Codex(`gpt-image` 스킬)로 그렸어요 |
+| 추천 | 1위는 <!-- v:presets.design.first.summary -->Refero Styles 6개, awesome-design-md 2개<!-- /v -->예요. 이전 판과 같은 계열(토스, Sequel 등)은 에이전트가 먼저 후보에서 뺐어요. 올곧 프리셋은 추천 없이 입시학원 사이트 한 곳을 실측해 만든 `DESIGN.md`를 썼어요 |
+| comp | gpt-image-2.5-flare로 그렸어요. 첫 화면은 방향 comp 3장 중에서 골랐고, 나머지 페이지는 고른 comp를 참고로 페이지마다 한 장씩 그렸어요. 올곧 프리셋은 첫 화면 comp 3장만 ChatGPT로 로그인한 Codex(`gpt-image` 스킬)로 그렸어요 |
 | 시각 자산 | 서체는 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개 모두 파일로 받아 프로젝트에 직접 넣었어요(자체 호스팅: Pretendard, Wanted Sans, SUIT, JetBrains Mono, Black Han Sans, Hahmlet, Paperlogy, Outfit, Noto Sans KR). 사진과 일러스트는 AI로 만들었고, 아이콘은 lucide예요. 사람이 나오는 사진은 원본 크기로 팔다리와 손을 확인해 이상한 사진을 다시 만들었어요. 모션은 모두 reduced-motion(움직임 줄이기) 설정에서 꺼져요 |
 | 비용 (추천부터 모든 페이지 확인까지) | 에이전트 비용은 프리셋당 $68\~$181, 모두 약 $1,090예요(중간에 작업공간을 기록으로 되살린 세션 포함). OpenAI 이미지 비용은 따로 청구돼요 |
 

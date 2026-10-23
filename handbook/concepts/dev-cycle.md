@@ -13,7 +13,7 @@
 
 라운드는 `tasks/todo.md`에 붙는 대조표 하나예요. 모든 행의 증거 칸을 채우고 `pnpm dev-cycle audit`을 통과해야 닫혀요.
 
-![라운드는 요청, 케이스 판정, 대조표 열기, 행마다 증거, 내 확인, audit과 커밋 순서로 한 바퀴 돌아요. 마스코트가 옆에서 지켜봐요.](assets/round-cycle.webp)
+![라운드는 요청, 케이스 판정, 대조표 열기, 행마다 증거, 내 확인, audit과 close를 거쳐 커밋하는 순서로 한 바퀴 돌아요. 마스코트가 옆에서 지켜봐요.](assets/round-cycle.webp)
 
 **요청** → **케이스 판정** → **대조표 열기** → **행마다 증거** → **내 확인** → **audit** → **close**
 
@@ -91,7 +91,7 @@ flowchart LR
 
 ### Task 라운드
 
-큰 일을 진행 계획의 Task로 나눴다면 `pnpm dev-cycle table <케이스> --write --title "T1 …" --task T1`로 Task 하나를 라운드로 열어요. 대조표 맨 앞에 두 행이 붙어요. 그 Task의 세부 계획(바꿀 파일, 단계, 단계별 검사, 완료 조건)과 그 계획의 리뷰예요(계획 리뷰 행이 이미 있는 케이스 F는 세부 계획 행만 붙어요). 앞 Task가 완료나 제외가 아니면 다음 Task 라운드는 열리지 않아요. 자세한 내용은 [정밀 분석과 진행 계획](project-plan.md)에 있어요.
+큰 일을 진행 계획의 Task로 나눴다면 `pnpm dev-cycle table <케이스> --write --title "T1 …" --task T1`로 Task 하나를 라운드로 열어요. 대조표 맨 앞에 행 두 개가 붙어요. 하나는 그 Task의 세부 계획(바꿀 파일, 단계, 단계별 검사, 완료 조건)이고, 다른 하나는 그 계획의 리뷰예요. 계획 리뷰 행이 이미 있는 케이스 F는 세부 계획 행만 붙어요. 앞 Task가 완료나 제외가 아니면 다음 Task 라운드는 열리지 않아요. 자세한 내용은 [정밀 분석과 진행 계획](project-plan.md)에 있어요.
 
 ### 라운드를 여는 때
 
@@ -113,7 +113,7 @@ flowchart LR
 1. audit으로 남은 문제가 표 끝의 `[confirm]` 행뿐인지 봐요. 다른 행이 남았으면 먼저 끝내요.
 2. 사용자 확인을 받아요.
 3. audit이 통과해야 해요. `blocked`나 `미실행` 칸이 있으면 "부분 완료"로 보고하고, 사용자가 그대로 닫자고 할 때만 `close --partial`로 닫아요.
-4. 배포할 수 있는지 봐요. `pnpm vercel:deploy production --check`는 항상 실행해요. 기본 브랜치, GitHub `origin`, `gh auth status`, 배포 검사(커밋하지 않은 변경과 릴리스 말고)가 모두 갖춰지면 한 번 물어요. 선택지는 "릴리스하고 production 배포 (기본)"와 "커밋·push만 (배포 PASS)"예요. 하나라도 빠지면 묻지 않고 커밋·push까지만 해요.
+4. 배포할 수 있는지 봐요. `pnpm vercel:deploy production --check`는 항상 실행해요. 기본 브랜치, GitHub `origin`, `gh auth status`, 배포 검사(커밋하지 않은 변경과 릴리스 항목은 제외)가 모두 통과하면 한 번 물어요. 선택지는 "릴리스하고 production 배포 (기본)"와 "커밋·push만 (배포 PASS)"예요. 하나라도 빠지면 묻지 않고 커밋·push까지만 해요.
 5. 이 라운드에서 미룬 지적을 `tasks/todo.md`의 백로그로 옮겨요. 재발 원인이 확인됐으면 `tasks/lessons.md`, 해당 규칙·평가 입력이나 백로그에 반영했는지도 확인하고 `pnpm dev-cycle close`로 닫아요. 이때 대조표와 완료한 일반 할 일·백로그도 함께 보관해요.
 6. 커밋 전에 `pnpm dev-cycle secrets`를 실행하고, 이 라운드에서 바꾼 파일과 `tasks/`만 커밋해요. 제목은 Conventional Commits 접두어(`feat:`, `fix:`, `docs:` …)로 써요. 릴리스 노트의 절이 여기서 정해지고, `!`는 깨지는 변경으로 버전을 올려요. 이어서 push해요.
 7. 릴리스와 production 배포를 골랐다면 `prokit-deploy`의 배포 순서를 따라요([Vercel 배포와 되돌리기](../deploy/vercel.md)).
@@ -128,7 +128,7 @@ flowchart LR
 
 </details>
 
-라운드 끝이 아니면 커밋, push, 릴리스, 배포는 사용자가 요청할 때만 해요.
+라운드를 마무리하는 단계가 아니면 커밋, push, 릴리스, 배포는 사용자가 요청할 때만 해요.
 
 ## 관련 문서
 

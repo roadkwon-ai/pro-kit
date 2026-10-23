@@ -41,7 +41,9 @@
 > 새 프로젝트를 처음 열면 도구가 이 폴더를 믿을지 물어요. 동의해야 프로젝트 설정이 켜져요.
 
 - Claude Code: 프로젝트 플러그인(skill-creator와 고른 두뇌·과설계 방지 스킬의 플러그인)
-- Codex: `.codex/agents`의 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트와 프로젝트 스킬을 써요. ponytail을 고르고 `--with-global`로 Ponytail 네이티브 플러그인을 설치한 경우에는 `/hooks`에서 별도로 신뢰하고 새 세션을 열어야 훅이 자동으로 돌아요. 설치만으로 신뢰를 대신하지 않으며, 플러그인이 없어도 프로젝트의 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬은 보여요. 두뇌는 고른 것에 따라 쓰는 도구가 달라요([두뇌와 선택 스킬](../skills/brains.md))
+- Codex: `.codex/agents`의 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트와 프로젝트 스킬을 써요.
+  - ponytail을 고르고 `--with-global`로 Ponytail 네이티브 플러그인을 설치한 경우에는 `/hooks`에서 별도로 신뢰하고 새 세션을 열어야 훅이 자동으로 돌아요. 설치만으로 신뢰를 대신하지 않으며, 플러그인이 없어도 프로젝트의 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬은 보여요.
+  - 두뇌는 고른 것에 따라 쓰는 도구가 달라요([두뇌와 선택 스킬](../skills/brains.md))
 - Grok Build: 규칙과 스킬. 신뢰하지 않은 폴더에서는 에이전트만 보여요. `grok --trust`로 열면 묻지 않고 신뢰해요
 
 ### 쓰지 않는 것과 대신하는 것
@@ -63,8 +65,8 @@
 표 밖의 한계는 이래요.
 
 - 2026-10-22 시험은 전환 시나리오 하나만 했고, Grok Build는 이 시나리오를 시험하지 않았어요.
-- 새 외부 위임·자원 관리 경로는 위의 기존 확인과 별도로 검증했어요. Codex는 실제 네이티브 수행자의 실행 기록을 확인했고, 다른 도구의 새 경로는 로그인·명령 권한·실행 기록 문제로 완료를 확인하지 못했어요.
-- 지원 파일이 있다는 사실을 실제 실행 통과로 세지 않아요([최종 증분 인수와 한계](../../docs/reports/2026-10-09-orchestration-resources/README.md#한계)).).
+- 외부 위임과 자원 관리는 위 표와 따로 확인했어요. Codex는 실제 네이티브 수행자의 실행 기록을 확인했어요. 다른 도구는 로그인, 명령 권한, 실행 기록 문제로 완료를 확인하지 못했어요.
+- 지원 파일이 있다는 사실을 실제 실행 통과로 세지 않아요([최종 증분 인수와 한계](../../docs/reports/2026-10-09-orchestration-resources/README.md#한계)).
 
 기록 위치: [neon VERIFICATION](../../templates/prokit-next-neon/VERIFICATION.md#실제-프로젝트-시험-prokit-init과-정밀-분석진행-계획-2026-10-22-추가) · [neon Antigravity·Grok Build](../../templates/prokit-next-neon/VERIFICATION.md#antigravitygrok-build-2026-10-08-추가) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#antigravitygrok-build-2026-10-08-추가)
 
