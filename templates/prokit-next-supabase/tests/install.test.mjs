@@ -193,7 +193,7 @@ test("도메인 스킬(Claude·Codex 공용): 템플릿 문서가 모두 언급�
 
 test("biome.json: 벤더 스킬, 도구 상태 파일, 생성물을 빼고 shadcn 두 파일에만 a11y 3개를 끈다 (한 번만)", () => {
   const ignores = [
-    "!.agents/skills", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!.claude", "!.codex",
+    "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!.claude", "!.codex",
     "!tasks/evidence",
     "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
     "!html",

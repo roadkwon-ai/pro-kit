@@ -4,6 +4,14 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## Antigravity 에이전트 생성물을 Biome 검사에서 빼기 (2026-10-24)
+
+UI 판 실측에서 `pnpm check`(`biome check --write .`) 뒤 `pnpm agents:check`가 `.agents/agents/*.md` 4개 불일치로 실패했다. Biome 2.6.2가 `agents:sync`가 만든 Antigravity 에이전트 파일의 YAML 머리(목록 들여쓰기, 빈 줄)를 다시 맞추기 때문이다. 판과 관계없이 두 템플릿에 같은 결함이었다.
+
+- 설치기의 `biome.json` 제외 목록에 `!.agents/agents`를 더했다(`.codex/`와 같은 생성물). `tests/install.test.mjs`의 기대값도 맞췄다.
+- 실측: 위 UI 판 시험에서 `pnpm check` 뒤 `pnpm agents:check`가 exit 0이었다.
+- 이미 설치한 프로젝트는 `install.sh <프로젝트> --skip-skills`가 `biome.json`에 항목만 더한다. 이미 바뀐 파일은 `pnpm agents:sync`로 다시 만든다.
+
 ## 생성기의 옛 Biome 설정 맞추기: biome migrate (2026-10-24)
 
 Better-T-Stack 3.47.0이 만든 `biome.json`은 `linter.rules.nursery.useSortedClasses`를 쓰는데, 함께 설치되는 Biome 2.6.2는 이 규칙 이름을 `useTailwindSortedClasses`로 바꿔 설정을 읽지 못한다(`Found an unknown key useSortedClasses`). 그래서 설치기의 Biome 포맷이 경고로 끝나고 새 프로젝트의 `pnpm check`도 실패했다(guard 실측 중 발견).
