@@ -42,6 +42,8 @@
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 진행 중인 대조표에서 지정한 행의 증거 칸을 증거 파일(프로젝트 안의 한 줄짜리 일반 파일) 내용으로 바꿔요(끝 줄바꿈 하나는 허용해요). 표 머리, stage, 다른 행, 메모, 코드 블록은 그대로 둬요 |
 | `pnpm dev-cycle close` | audit과 실제 사용자 확인을 마친 뒤 라운드를 닫아요. 대조표와 끝낸 일반 할 일·백로그는 KST 날짜 파일로 보관해요. `blocked`나 `미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial`로 닫아요 |
 | `pnpm dev-cycle secrets` | 커밋 전에 스테이징한 변경에서 비밀값을 찾아요. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2예요 |
+| `pnpm dev-cycle guard --staged` | 커밋할 때 설치기가 건 git pre-commit 훅이 불러요. 코드나 하네스를 바꿨는데 진행 중인 라운드도, 함께 커밋하는 닫은 라운드 기록(`tasks/archive/`)도 없으면 커밋을 막아요(exit 1). 프로킷 설치 커밋은 통과해요 |
+| `pnpm dev-cycle guard --since <커밋>` | 그 커밋 뒤의 코드·하네스 변경에 닫은 라운드 기록이 있는지 봐요. 없으면 exit 1이에요. `pnpm release`가 불러요 |
 
 `table`과 `evidence`의 옵션에는 이런 제한이 있어요.
 
@@ -146,7 +148,7 @@ Codex 네이티브 Ponytail은 `pnpm skills:setup --with-global`을 실행할 �
 |---|---|
 | `/prokit-init <PRD 파일 경로나 내용>`, `/prokit-init [프로젝트 경로]` | 새 프로젝트를 만들거나 기존 프로젝트에 프로킷을 들여요(기존 프로젝트는 PRD가 없어도 돼요). 새 프로젝트는 PRD를 보고 두뇌와 스킬을 추천해 고르게 한 뒤 아래 설치까지 해요. PRD가 없으면 먼저 받고, 끝내 없으면 만들지 않아요. Claude Code 기준이고, Codex에서는 `$prokit-init`이에요. pro-kit 폴더에서 연 세션에서만 불러요([두뇌와 선택 스킬](../skills/brains.md)) |
 | `bash templates/<템플릿>/install.sh <프로젝트>` | 템플릿을 설치해요. 옵션은 `--brain`, `--simplicity`, `--matt`, `--optional`, `--diff`, `--skip-skills`, `--with-global`, 기존 프로젝트용 `--project-type`, `--legacy`, `--adopt`, `--default-branch`예요([설치기와 옵션](../templates/installer.md)) |
-| `node scripts/pack.mjs <이름>` | 프리셋 팩을 받아 sha256을 확인한 뒤 `packs/<이름>/`에 풀기 |
+| `node scripts/pack.mjs <이름> --zip <경로>` | 크레딧으로 받은 프리셋 팩 zip의 sha256을 확인한 뒤 `packs/<이름>/`에 풀기 |
 | `node scripts/pack.mjs <이름> --zip <경로>` | 미리 받아 둔 팩 zip을 같은 확인을 거쳐 `packs/<이름>/`에 풀기 |
 
 ## 자세히

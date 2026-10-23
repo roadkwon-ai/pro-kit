@@ -100,6 +100,7 @@ export const SHARED = [
   "tests/helpers.mjs",
   "tests/dev-cycle-audit.test.mjs",
   "tests/dev-cycle-classify.test.mjs",
+  "tests/dev-cycle-guard.test.mjs",
   "tests/dev-cycle-plan.test.mjs",
   "tests/dev-cycle-table.test.mjs",
   "tests/install.test.mjs",

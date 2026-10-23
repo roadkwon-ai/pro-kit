@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -200,4 +200,31 @@ test("push가 실패하면 릴리스 커밋, 태그, version을 되돌리고 노
 	assert.equal(noRelease.status, 2);
 	assert.match(noRelease.stderr, /태그 v0\.1\.0는 push됨.*tail -n \+2 release\/\S+ \| gh release create v0\.1\.0 -R o\/r --verify-tag --title 'v0\.1\.0 — First cut' --notes-file -/);
 	assert.equal(s.remote("tag", "-l"), "v0.1.0");
+});
+
+test("지난 태그(없으면 설치 커밋) 뒤 코드·하네스 변경에 닫은 라운드 기록이 없으면 노트도 발행도 멈춘다. 릴리스 커밋은 pre-commit 훅을 거치지 않는다", () => {
+	const s = setup();
+	mkdirSync(join(s.root, "scripts"));
+	copyFileSync(join(TEMPLATE_FILES, "scripts/dev-cycle.mjs"), join(s.root, "scripts/dev-cycle.mjs"));
+	s.git("add", "-A");
+	s.git("commit", "-qm", "chore: dev-cycle");
+	const blocked = s.run([]);
+	assert.equal(blocked.status, 1);
+	assert.match(blocked.stdout, /닫은 라운드 기록\(tasks\/archive\/\)이 없다/);
+	assert.match(blocked.stderr, /릴리스를 멈췄다/);
+	assert.equal(s.git("status", "--porcelain"), "", "노트를 쓰지 않는다");
+	s.write("tasks/archive/2026-10-23-a.md", "# a\n\n<!-- dev-cycle:archived closed=2026-10-23 case=H -->\n");
+	s.git("add", "-A");
+	s.git("commit", "-qm", "chore: 라운드 기록");
+	writeFileSync(join(s.root, ".git/hooks/pre-commit"), "#!/bin/sh\nexec node scripts/dev-cycle.mjs guard --staged\n", { mode: 0o755 });
+	const first = s.note("--title", "First cut");
+	assert.equal(s.run(["--publish", first]).status, 0, "package.json version 커밋이 훅에 막히지 않는다");
+	s.write("apps/web/src/app/page.tsx");
+	s.git("add", "-A");
+	s.git("commit", "-q", "--no-verify", "-m", "feat: 화면");
+	const head = s.git("rev-parse", "HEAD");
+	const r = s.run(["--publish", first]);
+	assert.equal(r.status, 1);
+	assert.match(r.stdout, /v0\.1\.0 뒤의 코드·하네스 변경\(케이스 B\)/);
+	assert.equal(s.git("rev-parse", "HEAD"), head);
 });

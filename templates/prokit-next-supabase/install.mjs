@@ -390,6 +390,36 @@ export function ensureClaudeHook(target, { dryRun = false } = {}) {
 }
 const HOOK_MANUAL = `.claude/settings.json을 읽지 못했다. hooks.SessionStart에 ${KEY_HOOK} 명령을 직접 더하세요`;
 
+// git pre-commit 훅: 열린 dev-cycle 라운드나 닫은 라운드 기록 없이 코드·하네스를 커밋하지 못하게 한다(scripts/dev-cycle.mjs guard).
+// 어느 세션·도구가 커밋해도 돈다. 훅은 .git 안에 있어 이 사본에만 있고, 새로 clone한 사본은 release.mjs의 검사가 뒤를 받친다.
+// core.hooksPath는 바꾸지 않는다(husky·LFS 훅을 끈다). 이미 pre-commit이 있으면 덮어쓰지 않는다.
+// 반환: 더했으면 "added", 이미 걸려 있으면 false, 다른 pre-commit이 있으면 그 경로, git 저장소 루트가 아니면 null.
+const GUARD_CMD = "node scripts/dev-cycle.mjs guard --staged";
+const GUARD_HOOK = `#!/bin/sh
+# prokit: 열린 dev-cycle 라운드나 닫은 라운드 기록 없이 코드·하네스를 커밋하지 못하게 한다.
+# scripts/dev-cycle.mjs가 없거나 guard를 모르는 옛 판이면 건너뛴다.
+grep -qs '"guard"' scripts/dev-cycle.mjs || exit 0
+exec ${GUARD_CMD}
+`;
+export function ensureGitHook(target, { dryRun = false } = {}) {
+  const top = run("git", ["rev-parse", "--show-toplevel"], { cwd: target });
+  // 상위 저장소의 하위 폴더면 훅이 저장소 루트에서 돌아 scripts/dev-cycle.mjs를 찾지 못한다.
+  if (top.status !== 0 || realpathSync(top.stdout.trim()) !== realpathSync(target)) return null;
+  const p = resolve(target, run("git", ["rev-parse", "--git-path", "hooks"], { cwd: target }).stdout.trim(), "pre-commit");
+  if (existsSync(p)) return readFileSync(p, "utf8").includes(GUARD_CMD) ? false : p;
+  if (!dryRun) {
+    mkdirSync(dirname(p), { recursive: true });
+    writeFileSync(p, GUARD_HOOK, { mode: 0o755 });
+  }
+  return "added";
+}
+const gitHookLines = (h, dryRun) =>
+  h === "added"
+    ? [`git pre-commit 훅${dryRun ? " 추가 예정" : " 추가"}: ${GUARD_CMD} (열린 라운드나 닫은 라운드 기록 없이 코드·하네스를 커밋하지 못하게 한다)`]
+    : typeof h === "string"
+      ? [`경고: pre-commit 훅이 이미 있어(${h}) 덮어쓰지 않았다. 그 훅에 \`${GUARD_CMD}\` 한 줄을 더한다`]
+      : [];
+
 // 벤더 스킬은 upstream 원본이다. `pnpm check`(biome check --write .)가 고쳐 쓰면 skills-lock.json의 contentHash와 어긋난다.
 // OMC·OMX·pro-kit·impeccable 상태 파일과 .claude/settings.json, .codex/(OMX 생성물)는 도구가 다시 쓰는 파일이다.
 // biome.json은 vcs.useIgnoreFile이 꺼져 있어 .gitignore만으로는 빠지지 않는다.
@@ -614,6 +644,7 @@ export function main(argv) {
     const turbo = adopt ? null : ensureTurboAgentGuidance(target, { dryRun: true });
     const eslint = adopt ? ensureEslintIgnores(target, { dryRun: true }) : null;
     const hook = ensureClaudeHook(target, { dryRun: true });
+    const gitHook = ensureGitHook(target, { dryRun: true });
     console.log([
       `파일: 복사 예정 ${files.copied.join(", ") || "없음"}, 덧붙임 예정 ${files.appended.join(", ") || "없음"}, 동일 ${files.same.length}, 유지(템플릿과 다름) ${kept}`,
       ...files.kept.map((k) => k.diff),
@@ -630,6 +661,7 @@ export function main(argv) {
       ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
       `.claude/settings.json 추가 예정: ${hook ? "SessionStart 훅(scripts/load-keys.mjs)" : "없음"}`,
       ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
+      ...gitHookLines(gitHook, true),
       ...(turbo === "manual" ? [`경고: ${TURBO_MANUAL}`] : []),
       ...legacyWarning(target),
       ...(choices.length ? [`.dev-cycle.json 기록 예정: ${choices.join(", ")} (고르지 않은 설치본 정리는 반영할 때 skills-setup이 한다)`] : []),
@@ -651,6 +683,7 @@ export function main(argv) {
   const turbo = adopt ? null : ensureTurboAgentGuidance(target);
   const eslint = adopt ? ensureEslintIgnores(target) : null;
   const hook = ensureClaudeHook(target);
+  const gitHook = ensureGitHook(target);
   const toFormat = [
     ...files.copied.filter((f) => /\.(mjs|js|json)$/.test(f)),
     ...(scripts.added.length || scripts.wrapped.length ? ["package.json"] : []),
@@ -691,6 +724,7 @@ export function main(argv) {
     ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
     ...(hook ? [".claude/settings.json: SessionStart 훅(scripts/load-keys.mjs) 추가 (.env의 이미지 키와 배포 토큰을 세션에 불러온다)"] : []),
     ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
+    ...gitHookLines(gitHook, false),
     ...legacyWarning(target),
     `biome 포맷: ${biome}`,
     `에이전트 생성물(Codex·Antigravity): ${`${agents.stdout}${agents.stderr}`.trim().split("\n").join("; ")}`,

@@ -42,7 +42,7 @@ flowchart LR
 
 | 구성 | 내용 |
 |---|---|
-| dev-cycle | 작업을 케이스(<!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->)로 나눠요. 케이스별 대조표의 모든 행에 증거를 채워야 라운드가 끝나요(`pnpm dev-cycle …`). 기존 프로젝트는 진행 계획을 확정한 뒤 Task 단위(`--task T<n>`)로 라운드를 열어요 |
+| dev-cycle | 작업을 케이스(<!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->)로 나눠요. 케이스별 대조표의 모든 행에 증거를 채워야 라운드가 끝나요(`pnpm dev-cycle …`). 기존 프로젝트는 진행 계획을 확정한 뒤 Task 단위(`--task T<n>`)로 라운드를 열어요. 설치기가 git pre-commit 훅을 걸어 라운드 없이 코드나 하네스를 커밋하지 못하게 하고, `pnpm release`도 닫은 라운드 기록이 없으면 멈춰요 |
 | 기존 프로젝트 도입 | 이미 있는 프로젝트에도 설치할 수 있어요. 유형(`--project-type`)에 따라 같은 폴더, 새 브랜치, 새 폴더로 적용하고 `docs/prokit/intake.md`(도입 기록), `docs/prokit/analysis.md`(정밀 분석), `tasks/plan.md`(진행 계획)를 남겨요([기존 프로젝트에 도입하기](../start/adopt.md), [정밀 분석과 진행 계획](../concepts/project-plan.md)) |
 | 문서 골격 | `AGENTS.md`(맨 앞에 개발 원칙: 계획, 서브에이전트, 교훈 기록, 완료 전 확인. 이어서 공통 규칙), `CLAUDE.md`(`@AGENTS.md`로 같은 지침을 읽어요), `GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md`, `docs/dev-workflow.md` |
 | 개발 자원 보호 | 캐시·Next 출력·설치 패키지·Python 실행환경·관리 임시 폴더를 감시해요. 새 프로젝트의 개발·빌드 명령에 연결하고, 이미 프로킷을 설치한 프로젝트는 H 라운드에서 반영해요([위임과 자원 관리](../concepts/delegation-and-resources.md)) |

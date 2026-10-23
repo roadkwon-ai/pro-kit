@@ -4,6 +4,19 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 라운드 없는 커밋·릴리스 막기: dev-cycle guard (2026-10-23)
+
+프로킷을 설치한 저장소의 코드를 그 프로젝트 밖 세션이 dev-cycle 라운드 없이 고치고 커밋한 일이 있었다(pro-kit-web, 2026-10-20\~23). 규칙 문서만으로는 다른 폴더에서 연 세션이 이를 읽지 않으므로, 어느 세션·도구가 커밋해도 도는 검사를 더했다.
+
+- `pnpm dev-cycle guard --staged`: 스테이징한 변경이 케이스 A가 아니거나 인증 경로인데 활성 라운드도, 함께 커밋하는 닫은 라운드 기록(`tasks/archive/`의 `<!-- dev-cycle:archived` 표시가 있는 새 파일)도 없으면 exit 1. `.dev-cycle.json`을 새로 더하는 커밋(설치 커밋)은 통과한다. `archive` 명령의 완료 항목 기록은 라운드 기록으로 치지 않는다.
+- `pnpm dev-cycle guard --since <커밋>`: 그 커밋 뒤의 코드·하네스 변경에 새로 더한 닫은 라운드 기록이 없으면 exit 1. 활성 라운드는 치지 않는다.
+- 설치기: 대상이 git 저장소 루트이고 pre-commit 훅이 없으면 `git rev-parse --git-path hooks`의 `pre-commit`에 훅을 쓴다. 훅은 `scripts/dev-cycle.mjs`가 없거나 guard를 모르는 옛 판이면 건너뛴다(`--skip-skills`로 갱신하며 옛 스크립트를 둔 프로젝트도 커밋이 막히지 않는다). 이미 pre-commit이 있으면(husky 등) 덮어쓰지 않고 더할 줄을 경고한다. `core.hooksPath`와 `package.json`의 `prepare`는 쓰지 않는다(LFS·husky 훅을 끄거나 `.git`이 없는 Vercel 빌드에서 깨진다). `--diff`에도 보인다.
+- `pnpm release`: 노트를 만들 때와 `--publish` 때 지난 태그(없으면 `.dev-cycle.json`을 처음 더한 커밋)부터 `guard --since`를 부르고 실패하면 노트도 커밋도 만들지 않는다. 릴리스 커밋(노트와 `package.json` version)은 `--no-verify`로 만든다. 훅을 돌리면 `package.json`(H)으로 막힌다.
+- 테스트: 두 템플릿 `node --test 'templates/<템플릿>/tests/*.test.mjs'` 각 364개 통과(`tests/dev-cycle-guard.test.mjs` 5개와 `release.test.mjs` 1개를 더했다). 이 기기의 python3에 PyYAML이 없어 skill-creator `quick_validate` 10건은 PyYAML을 넣은 임시 venv를 PATH 앞에 두고 실행했다. `node --test scripts/handbook.test.mjs scripts/doc-values.test.mjs` 67개 통과.
+- 실제 설치(Better-T-Stack 3.47.0, Next 16.3.4, git 2.56.0, `--brain none --simplicity none`): 설치 출력에 `git pre-commit 훅 추가`, 훅 권한 755. 설치 결과 커밋(397개 파일)은 통과했다. 라운드 없이 `apps/web/src/app/page.tsx`를 커밋하면 exit 1과 안내(케이스 B, 파일, `--no-verify`는 사용자가 허락할 때만)가 나왔다. `pnpm dev-cycle table B --write`로 라운드를 연 뒤에는 같은 커밋이 통과했다. 라운드를 닫지 않은 채 `node scripts/release.mjs`를 실행하면 설치 커밋 뒤의 B 변경에 기록이 없다며 노트를 만들지 않고 exit 1이었다. 확인용 project scope 플러그인(skill-creator)은 지웠고 DB 컨테이너는 띄우지 않았다.
+- 함께 본 것: Better-T-Stack 3.47.0이 만든 `biome.json`의 `linter.rules.nursery.useSortedClasses`를 Biome 2.6.2가 모르는 키로 거부해, 설치기의 Biome 포맷이 경고로 끝났다(이번 변경과 관계없는 생성기 판 문제다. 템플릿은 고치지 않았다).
+- 남은 한계: 훅은 `.git` 안이라 그 사본에만 있다. 새로 clone한 사본과 설치 뒤에 만든 다른 clone에는 없고, `pnpm release`의 `--since` 검사가 뒤를 받친다. `git commit --no-verify`로 건너뛸 수 있다(사용자가 허락할 때만 쓰라고 안내만 한다). 라운드를 닫고 커밋한 뒤 그 커밋을 `--amend`로 코드까지 고치면 기록이 이미 HEAD에 있어 막힌다. `--since`는 그 사이 기록이 하나라도 있으면 통과하므로 기록과 커밋을 하나씩 맞춰 보지는 않는다. 훅은 `node`가 PATH에 있어야 돈다. 상위 저장소의 하위 폴더에 설치한 프로젝트에는 훅을 걸지 않는다.
+
 ## 프로젝트 유형별 도입, 두뇌 확장, Task 게이트 (2026-10-22)
 
 설계와 결정 근거는 [프로젝트 유형별 도입 계획](../../docs/plans/2026-10-22-prokit-project-types-and-brains.md)이다. 측정 산출물(확인용 프로젝트, eval 작업 공간)은 세션 스크래치에 있었으므로 여기에는 결과만 남긴다.

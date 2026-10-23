@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // 릴리스: 다음 버전을 정해 release/에 노트를 쓰고, 검수한 노트로 버전 커밋·태그·push·GitHub Release를 만든다. `pnpm release`가 부른다.
 // production 배포는 릴리스한 커밋(HEAD의 vX.Y.Z 태그와 그 GitHub Release)만 한다. scripts/vercel-deploy.mjs가 검사하고, 절차는 prokit-deploy 스킬의 릴리스 절에 있다.
+// 지난 태그 뒤의 코드·하네스 변경에 닫은 dev-cycle 라운드 기록이 없으면 노트도 발행도 멈춘다(dev-cycle guard --since).
 // 사용법:
 //   node scripts/release.mjs [--title "<영어 제목>"] [--minor]  마지막 vX.Y.Z 태그 이후 커밋으로 다음 버전을 정하고(기본 patch, --minor면 minor) release/<YYYYMMDD-HHmm>-<제목>.md를 쓴다. 커밋하지 않는다.
 //   node scripts/release.mjs --publish <노트 파일>    기본 브랜치에서 package.json version을 올려 노트와 함께 커밋하고, 태그를 달아 push한 뒤 GitHub Release를 만든다.
@@ -217,6 +218,7 @@ export function main(argv, root = process.cwd()) {
 	// 머지 커밋은 빼고 머지된 커밋을 적는다. 머지 커밋만 늘었으면 그 머지를 적는다(릴리스 없이 배포가 막히지 않게).
 	const plain = all.filter((c) => !c.merge);
 	const commits = plain.length ? plain : all;
+	if (commits.length && roundGuard(root, git, prevTag)) return 1;
 	if (values.publish !== undefined)
 		return publish({ root, git, file: values.publish, prevTag, commits, repo });
 	if (commits.length === 0) {
@@ -239,6 +241,29 @@ export function main(argv, root = process.cwd()) {
 		`v${version} — ${title} → ${file}\n노트를 검수한 뒤: pnpm release --publish ${file}`,
 	);
 	return 0;
+}
+
+// 지난 태그(없으면 프로킷 설치 커밋) 뒤의 코드·하네스 변경에 닫은 dev-cycle 라운드 기록이 있어야 릴리스한다.
+// dev-cycle.mjs가 없거나 guard를 모르는 옛 판이면 건너뛴다. 반환: 막았으면 1.
+function roundGuard(root, git, prevTag) {
+	const script = join(root, "scripts/dev-cycle.mjs");
+	if (!existsSync(script) || !readFileSync(script, "utf8").includes('"guard"'))
+		return 0;
+	const since =
+		prevTag ??
+		git("log", "--diff-filter=A", "--format=%H", "--", ".dev-cycle.json")
+			.split("\n")
+			.at(-1);
+	if (!since) return 0;
+	const r = spawnSync(process.execPath, [script, "guard", "--since", since], {
+		cwd: root,
+		stdio: "inherit",
+	});
+	return r.status === 0
+		? 0
+		: fail(
+				"릴리스를 멈췄다(위 dev-cycle guard 출력). 노트와 커밋은 만들지 않았다",
+			);
 }
 
 function publish({ root, git, file, prevTag, commits, repo }) {
@@ -306,7 +331,8 @@ function publish({ root, git, file, prevTag, commits, repo }) {
 				setVersion(readFileSync(join(root, f), "utf8"), tag.slice(1)),
 			);
 		git("add", rel, ...versioned);
-		git("commit", "-q", "-m", `chore(release): ${tag}`);
+		// 노트와 version만 담는 커밋이고 라운드는 위 roundGuard가 봤다. 훅을 돌리면 package.json(H)으로 막힌다.
+		git("commit", "-q", "--no-verify", "-m", `chore(release): ${tag}`);
 		committed = true;
 		git("tag", "-a", tag, "-m", `${tag} — ${title}`);
 		tagged = true;

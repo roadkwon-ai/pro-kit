@@ -57,6 +57,7 @@ GitHub `origin` 원격과 `gh auth login`이 필요해요. pro-kit 저장소의 
 - GitHub Release만 실패하면(exit 2, 태그는 push된 상태) 출력된 `gh release create` 명령으로 다시 만들어요.
 - 노트를 쓴 뒤 커밋이 늘었거나 검수하다 커밋 해시를 지웠으면 멈춰요. 노트를 지우고 처음부터 해요.
 - "릴리스할 커밋이 없다"가 나오면 HEAD가 이미 릴리스한 커밋이에요. 바로 배포로 가요.
+- 지난 태그(첫 릴리스는 프로킷 설치 커밋) 뒤에 코드나 하네스를 바꿨는데 `close`로 닫은 라운드 기록(`tasks/archive/`)이 없으면 노트를 만들지 않고 `--publish`도 멈춰요(`pnpm dev-cycle guard --since`). 그 변경을 라운드로 검토하고 닫은 기록을 커밋한 뒤 다시 해요.
 
 > [!WARNING]
 > `--publish`는 기본 브랜치를 push하므로 그 전에 `pnpm vercel:deploy production --check` 출력에 `Git 자동 배포`가 없어야 해요. 있으면 push가 곧 검사 없는 production 배포가 돼요.

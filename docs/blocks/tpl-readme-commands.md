@@ -6,6 +6,7 @@
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일(끝 줄바꿈 하나는 허용)로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
 | `pnpm dev-cycle secrets` | 라운드 끝 커밋 전에 스테이징한 변경에서 로컬 `.env*`(루트, `apps/web`, `packages/db`. `.env.schema`·`.env.example` 제외)의 비밀값과 흔한 키 형식(개인 키, `sk-`, GitHub 토큰 등)을 찾는다. 값은 출력하지 않는다. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
+| `pnpm dev-cycle guard --staged`, `pnpm dev-cycle guard --since <커밋>` | 라운드 검사. `--staged`는 설치기가 건 git pre-commit 훅이 부른다. 스테이징한 코드·하네스·인증 경로 변경이 있는데 활성 라운드도, 함께 커밋하는 닫은 라운드 기록(`tasks/archive/`)도 없으면 exit 1(프로킷 설치 커밋은 통과). `--since`는 `pnpm release`가 부르고, 그 커밋 뒤의 코드·하네스 변경에 닫은 라운드 기록이 없으면 exit 1 |
 | `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고. 컨테이너 엔진(Podman·Docker)이 보고한 이미지·컨테이너·볼륨 크기도 `containers`로 보여 줌(예산에 넣지 않고 지우지 않음). 정상·경고는 exit 0, 예산 초과는 exit 1(측정이 불완전해도 여유 공간이 차단 한계 이하면 1), 측정 불완전은 exit 2 |
 | `pnpm dev-cycle resource run --kind <이름> -- <명령>` | 명령 전후 자원을 확인하고 실행. 실행 중에는 예산 초과일 때만 멈추고 측정 지연·실패는 기록만 함(여유 공간은 측정이 늦어도 따로 확인). 실행 뒤 전체 측정이 끝나지 않으면 실행 전 측정에 이번 캐시와 여유 공간을 다시 재서 판정. 자원 차단·측정 불완전·정리 중이면 exit 75, 실행했다면 자식 명령의 종료 코드를 유지(명령을 찾지 못하면 127) |
 | `pnpm dev-cycle resource clean [--apply]` | 끝난 guard 실행이 만든 compiler cache(Turbopack) 가운데 소유 기록·같은 디렉터리·실행과 자식 종료가 확인된 것만 후보로 보여 줌(강제 종료로 종료를 적지 못한 기록은 guard와 자식 그룹이 모두 끝났는지로 확인). `--apply`는 실행 중인 guard나 Next dev·build가 없을 때만 지우고(다른 환경 guard는 lease로 판단), 거부하면 exit 1 |
@@ -18,4 +19,4 @@
 | `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음({{v:optional.namesCode}})을 설치. 여러 개는 쉼표로 잇는다(`ops,motion`) |
 | `pnpm export:html [--base /<하위 경로>]` | 화면을 정적 HTML로 내보내 `html/`에 둔다(git 무시). 프로젝트 파일은 바꾸지 않고 임시 복사본에서 `/api`·`/dashboard`를 빼고 빌드한다. 서버 전용 `.env` 값이 결과물에 들어가면 exit 2. 보기: `pnpm dlx serve html`. GitHub Pages처럼 하위 경로에 올릴 때 `--base` |
 | `pnpm vercel:deploy develop`, `production` | Vercel 배포. `--check`는 준비 상태와 새 마이그레이션만 본다 |
-| `pnpm release [--title "<영어 제목>"] [--minor]`, `pnpm release --publish <노트>` | production 배포 전 릴리스. 다음 버전과 `release/` 노트를 만들고, `--publish`가 version 커밋, 태그, push, GitHub Release를 만든다 |
+| `pnpm release [--title "<영어 제목>"] [--minor]`, `pnpm release --publish <노트>` | production 배포 전 릴리스. 다음 버전과 `release/` 노트를 만들고, `--publish`가 version 커밋, 태그, push, GitHub Release를 만든다. 지난 태그(첫 릴리스는 프로킷 설치 커밋) 뒤의 코드·하네스 변경에 닫은 라운드 기록이 없으면 둘 다 멈춘다 |

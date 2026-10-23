@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// dev-cycle 경량 러너: case | table | status | audit | close | archive | plan | secrets
+// dev-cycle 경량 러너: case | table | status | audit | close | archive | plan | secrets | guard
 // 절차 정본은 docs/dev-workflow.md, 판정 규칙은 .dev-cycle.json이다.
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
@@ -1687,8 +1687,53 @@ export function stagedSecrets(root) {
 	return [...hits];
 }
 
+// 커밋·릴리스 전 검사: 코드·하네스 변경이 dev-cycle 라운드를 거쳤는지 본다.
+// --staged는 pre-commit 훅이(활성 라운드, 함께 커밋하는 닫은 라운드 기록, 설치 커밋이면 통과),
+// --since <ref>는 release.mjs가 부른다(그 사이 더한 닫은 라운드 기록이 있어야 통과).
+const ROUND_RECORD = "<!-- dev-cycle:archived ";
+export function guard(root, config, since) {
+	const range = since ? [`${since}..HEAD`] : ["--cached"];
+	const names = (...filter) =>
+		splitZ(
+			git(root, [
+				"-c",
+				"core.quotePath=false",
+				"diff",
+				"-z",
+				"--name-only",
+				"--no-renames",
+				"--relative",
+				...filter,
+				...range,
+				"--",
+			]),
+		);
+	const cls = classify(names(), config);
+	if (cls.pathCase === "A" && !cls.auth)
+		return { ok: true, why: "코드 변경 없음" };
+	const added = names("--diff-filter=A");
+	if (!since && added.includes(".dev-cycle.json"))
+		return { ok: true, why: "프로킷 설치 커밋" };
+	const dir = `${config.archiveDir.replace(/\/+$/, "")}/`;
+	const record = added.find(
+		(f) =>
+			f.startsWith(dir) &&
+			f.endsWith(".md") &&
+			!f.endsWith("/README.md") &&
+			git(root, ["show", `${since ? "HEAD" : ""}:${f}`]).includes(ROUND_RECORD),
+	);
+	if (record) return { ok: true, why: `라운드 기록 ${record}` };
+	const md = !since && readTodo(root, config);
+	if (md && parseActive(md)) return { ok: true, why: "활성 라운드" };
+	return {
+		ok: false,
+		pathCase: cls.pathCase,
+		files: cls.evidence.map((e) => e.file),
+	};
+}
+
 const USAGE =
-	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--title 제목] [--task T번호 | --plan | --no-task] | evidence <행 번호> --file <증거 파일> | status | plan | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|diff|resolve|validate|accept> | close [--partial] | archive | secrets> [--json]";
+	"사용법: dev-cycle <case | table [CASE] [--write] [--upgrade] [--title 제목] [--task T번호 | --plan | --no-task] | evidence <행 번호> --file <증거 파일> | status | plan | audit [--packet 파일 --context 파일] | resource <check|run|clean> | delegation <capture|diff|resolve|validate|accept> | close [--partial] | archive | secrets | guard --staged | guard --since <ref>> [--json]";
 
 function readDelegationJson(root, path, flag) {
 	if (!path || path.startsWith("--"))
@@ -2728,6 +2773,42 @@ export function main(argv, root = process.cwd()) {
 				].join("\n"),
 			);
 			return chk.problems.length ? 1 : 0;
+		}
+		case "guard": {
+			const args = rest.filter((a) => a !== "--json");
+			const staged = args.length === 1 && args[0] === "--staged";
+			if (
+				!staged &&
+				!(
+					args.length === 2 &&
+					args[0] === "--since" &&
+					!args[1].startsWith("-")
+				)
+			)
+				throw new UsageError(
+					"사용법: dev-cycle guard --staged | --since <ref> [--json]",
+				);
+			const since = staged ? undefined : commitOf(root, args[1]);
+			if (!staged && !since)
+				throw new UsageError(`커밋을 찾을 수 없다: ${args[1]}`);
+			const r = guard(root, config, since);
+			const shown = r.files?.slice(0, 10).map((f) => `  ${f}`) ?? [];
+			if (r.files?.length > 10) shown.push(`  … 외 ${r.files.length - 10}개`);
+			print(
+				r,
+				r.ok
+					? `dev-cycle guard 통과 (${r.why})`
+					: [
+							staged
+								? `dev-cycle guard: 열린 dev-cycle 라운드 없이 코드·하네스 변경(케이스 ${r.pathCase})을 커밋하려 한다.`
+								: `dev-cycle guard: ${args[1]} 뒤의 코드·하네스 변경(케이스 ${r.pathCase})에 닫은 라운드 기록(${config.archiveDir}/)이 없다.`,
+							...shown,
+							staged
+								? `이 프로젝트에서 연 세션에서 pnpm dev-cycle table로 라운드를 열어 진행하거나, close로 닫은 라운드 기록(${config.archiveDir}/)과 함께 커밋한다. 훅을 건너뛰는 git commit --no-verify는 사용자가 허락할 때만 쓴다.`
+								: "이 변경을 라운드로 검토하고 close로 닫은 기록을 커밋한 뒤 다시 릴리스한다.",
+						].join("\n"),
+			);
+			return r.ok ? 0 : 1;
 		}
 		case "secrets": {
 			let hits;
