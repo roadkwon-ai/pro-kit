@@ -4,14 +4,14 @@
 
 ## 무엇이 필요한가요
 
-| 준비물 | 화면만 만들기 <!-- edition:pro -->| 서비스 (neon) | 서비스 (supabase) <!-- /edition -->| 쓰는 곳 |
-|---|---|<!-- edition:pro -->---|---|<!-- /edition -->---|
-| AI 에이전트 (<!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나. [지원하는 에이전트](supported-agents.md)) | 필요 <!-- edition:pro -->| 필요 | 필요 <!-- /edition -->| 요청하고 개발하기 |
-| Node <!-- v:node.min -->22.20<!-- /v --> 이상(<!-- v:node.recommended -->24<!-- /v --> 권장) | 필요 <!-- edition:pro -->| 필요 | 필요 <!-- /edition -->| 앱과 설치기 실행 |
-| pnpm | 필요 <!-- edition:pro -->| 필요 | 필요 <!-- /edition -->| 패키지 설치와 명령 실행 |
-| git | 필요 <!-- edition:pro -->| 필요 | 필요 <!-- /edition -->| pro-kit 받기, 커밋 |
-| 컨테이너 엔진 (Podman 또는 Docker) | 필요 없음 | 필요 (compose provider 포함) | 필요 | 내 컴퓨터의 개발용 DB | <!-- edition:pro -->
-| Supabase CLI <!-- v:supabaseCli.min -->2.117<!-- /v --> 이상 | 필요 없음 | 필요 없음 | 필요 | Supabase 로컬 스택 | <!-- edition:pro -->
+| 준비물 | 필요한 때 | 쓰는 곳 |
+|---|---|---|
+| AI 에이전트 (<!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나. [지원하는 에이전트](supported-agents.md)) | 늘 | 요청하고 개발하기 |
+| Node <!-- v:node.min -->22.20<!-- /v --> 이상(<!-- v:node.recommended -->24<!-- /v --> 권장) | 늘 | 앱과 설치기 실행 |
+| pnpm | 늘 | 패키지 설치와 명령 실행 |
+| git | 늘 | pro-kit 받기, 커밋 |
+| 컨테이너 엔진 (Podman 또는 Docker) | 로그인과 DB가 있는 서비스를 만들 때. neon은 compose provider도 있어야 해요 | 내 컴퓨터의 개발용 DB | <!-- edition:pro -->
+| Supabase CLI <!-- v:supabaseCli.min -->2.117<!-- /v --> 이상 | supabase 템플릿으로 서비스를 만들 때 | Supabase 로컬 스택 | <!-- edition:pro -->
 
 필요할 때만 있으면 되는 것도 있어요.
 
@@ -74,7 +74,7 @@ Supabase CLI는 없어요. supabase 템플릿을 쓸 때만 필요해요.
 프로젝트를 만들어 달라고 하면 에이전트가 준비물부터 확인해요([AGENTS.md](../../AGENTS.md) "템플릿으로 새 프로젝트 만들기" 3번).
 
 - **빠진 것이 있으면 설치 명령을 알려 주고 멈춰요.** 전역 설치는 사용자가 요청할 때만 해요.
-- <!-- edition:pro -->화면만 만들 때는 컨테이너 엔진을 확인하지 않아요. <!-- /edition -->요청에 "없는 준비물은 설치해줘"가 있으면 빠진 Node <!-- v:node.min -->22.20<!-- /v --> 이상, pnpm, git을 에이전트가 설치해요. 비밀번호가 필요한 명령은 실행하지 않고 사용자에게 알려 줘요.
+- 요청에 "없는 준비물은 설치해줘"가 있으면 빠진 Node <!-- v:node.min -->22.20<!-- /v --> 이상, pnpm, git을 에이전트가 설치해요. 비밀번호가 필요한 명령은 실행하지 않고 사용자에게 알려 줘요.<!-- edition:pro --> 화면만 만들 때는 컨테이너 엔진을 확인하지 않아요.<!-- /edition -->
 - Node는 <!-- v:node.min -->22.20<!-- /v --> 이상이면 돼요. 이보다 낮으면 설치기가 멈춰요(새 프로젝트를 만들고 스킬을 받는 도구가 요구하는 하한이에요).
 - 새로 설치한다면 지금 LTS인 <!-- v:node.recommended -->24<!-- /v -->를 받으세요. <!-- v:node.recommended -->24<!-- /v --> 미만이면 설치기가 권장 경고만 내요.
 - Node 20은 <!-- v:node.eol -->2026-04-30<!-- /v -->에 지원이 끝났어요. Vercel에 배포할 때는 프로젝트의 Node.js를 <!-- v:vercel.node -->24.x<!-- /v -->로 둬요.

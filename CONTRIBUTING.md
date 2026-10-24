@@ -96,6 +96,7 @@ UI 스킬셋 저장소 [pro-kit-ui](<!-- v:link.repoUi -->https://github.com/roa
 - 넣을 파일과 뺄 파일은 `editions.json`에, 판에만 있는 `README.md`·`AGENTS.md`·`CLAUDE.md`는 `editions/ui/`에 둡니다. 판에는 neon 템플릿, `prokit-init`, handbook과 튜토리얼 중 화면 작업에 필요한 쪽이 들어갑니다.
 - 그 문서들에서 UI 판에 없는 내용(화면 동작·API·DB·배포 스킬, 로그인·DB가 있는 서비스, 운영 배포와 릴리스, 기존 프로젝트 도입, Supabase, 클론 튜토리얼)은 `<!-- edition:pro -->` 표시로 감쌉니다. 판을 만들 때 그 부분을 지우고, 판에서만 보일 글은 `<!-- edition:ui 글 -->`로 둡니다. 표 행과 여러 줄(코드 블록, 그림)을 판에서 바꾸는 꼴은 `scripts/edition.mjs` 머리와 [AGENTS.md "템플릿 수정 규칙"](AGENTS.md#템플릿-수정-규칙)에 있습니다.
 - 생성기는 판에서 빠진 쪽을 첫 칸이나 맨 앞에서 가리키는 표 행과 목록 줄을 빼고, 받을 저장소와 폴더 이름 `pro-kit`을 `pro-kit-ui`로 바꿉니다.
+- 표시는 Pro 쪽 문서도 깨지 않게 둡니다. 줄이나 목록 항목을 표시로 시작하고 같은 줄에 글을 이으면 GitHub과 홈페이지가 그 줄을 HTML로 읽고, 표 구분 행의 표시는 표를 깨뜨립니다. Pro에만 있는 열은 Pro 구간에 따로 표를 둡니다. 검사가 두 꼴을 모두 잡습니다.
 - 검사는 판에서 끊긴 링크와 앵커, Pro 구간 밖에 남은 판에서 다른 값(`proValues`: 스킬 수, 템플릿 수 등), 이름을 쓰지 않은 Pro 절차를 잡습니다. `editions.json`의 `proTerms`(마이그레이션, Supabase, 기존 프로젝트 등)가 판에 남으면 실패하고, 판에도 맞는 글만 `editions/ui-allow.txt`에 줄 수와 이유를 적어 둡니다.
 - 판을 만들어 보려면 `node scripts/edition.mjs ui <출력 폴더>`, 검사는 `node --test scripts/edition.test.mjs`입니다.
 - 내보내기와 확인은 릴리스 3단계가 같은 태그로 합니다. push가 실패하면 두 번 더 하고, 실패하면 `node scripts/edition.mjs ui --publish --tag vX.Y.Z`로 다시 합니다(이미 같은 내용으로 올라간 태그면 확인만 합니다). 따로 확인만 하려면 `node scripts/edition.mjs ui --verify --tag vX.Y.Z`입니다.

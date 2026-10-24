@@ -15,21 +15,40 @@
 - **프리셋 팩으로 나만의 서비스 만들기**: 프리셋 팩을 바탕으로 이름, 색, 페이지, 주제를 바꿔요.
 - **이 컨셉으로 처음부터 만들기**: 같은 컨셉으로 나만의 화면을 새로 만들어요. 이름, 스타일, 화면이 프리셋과 다르게 나와요.
 
-| 프리셋 | 분류 | 컨셉 | 페이지 |<!-- edition:pro --> 실제 서비스로 바꾸기 |<!-- /edition -->
-|---|---|---|---|<!-- edition:pro -->---|<!-- /edition -->
-| [<!-- v:preset.slidelab.title -->슬라이드랩<!-- /v -->](slidelab.md) | <!-- v:preset.slidelab.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.slidelab.summary -->과정과 교육 시간을 고르는 AI·PPT 교육 랜딩<!-- /v --> | <!-- v:preset.slidelab.pages -->1<!-- /v --> |<!-- edition:pro --> <!-- v:preset.slidelab.difficulty -->문의 서비스 연결 설계 필요<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.speaker-portfolio.title -->스피커 포트폴리오<!-- /v -->](speaker-portfolio.md) | <!-- v:preset.speaker-portfolio.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.speaker-portfolio.summary -->활동과 콘텐츠를 소개하는 개인 브랜딩 포트폴리오<!-- /v --> | <!-- v:preset.speaker-portfolio.pages -->6<!-- /v --> |<!-- edition:pro --> <!-- v:preset.speaker-portfolio.difficulty -->문의·결제 연동과 운영 정책 작성 필요<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.goru.title -->고루<!-- /v -->](goru.md) | <!-- v:preset.goru.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.goru.summary -->같이 사는 사람들의 생활비 정산<!-- /v --> | <!-- v:preset.goru.pages -->7<!-- /v --> |<!-- edition:pro --> <!-- v:preset.goru.difficulty -->쉬움<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.ullim.title -->울림<!-- /v -->](ullim.md) | <!-- v:preset.ullim.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.ullim.summary -->대본을 한국어 내레이션으로 만드는 AI 스튜디오<!-- /v --> | <!-- v:preset.ullim.pages -->11<!-- /v --> |<!-- edition:pro --> <!-- v:preset.ullim.difficulty -->어려움<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.studyday.title -->하루공부<!-- /v -->](studyday.md) | <!-- v:preset.studyday.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.studyday.summary -->시험 날짜까지 하루 공부 나누기와 공부 기록<!-- /v --> | <!-- v:preset.studyday.pages -->14<!-- /v --> |<!-- edition:pro --> <!-- v:preset.studyday.difficulty -->가장 쉬움<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->](afterglow.md) | <!-- v:preset.afterglow.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.afterglow.summary -->가정용 태양광 배터리 소개와 설치 상담<!-- /v --> | <!-- v:preset.afterglow.pages -->17<!-- /v --> |<!-- edition:pro --> <!-- v:preset.afterglow.difficulty -->어려움<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->](fitslot.md) | <!-- v:preset.fitslot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.fitslot.summary -->필라테스 수업 예약과 수강권 관리<!-- /v --> | <!-- v:preset.fitslot.pages -->20<!-- /v --> |<!-- edition:pro --> <!-- v:preset.fitslot.difficulty -->보통<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.jecheol.title -->제철상자<!-- /v -->](jecheol.md) | <!-- v:preset.jecheol.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.jecheol.summary -->제철 농산물 정기배송<!-- /v --> | <!-- v:preset.jecheol.pages -->21<!-- /v --> |<!-- edition:pro --> <!-- v:preset.jecheol.difficulty -->어려움<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->](pacecrew.md) | <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.pacecrew.summary -->동네 러닝 크루 매칭과 레이스 신청<!-- /v --> | <!-- v:preset.pacecrew.pages -->22<!-- /v --> |<!-- edition:pro --> <!-- v:preset.pacecrew.difficulty -->어려움<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.uptrail.title -->Uptrail<!-- /v -->](uptrail.md) | <!-- v:preset.uptrail.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.uptrail.summary -->개발팀의 서비스 상태와 배포 모니터링<!-- /v --> | <!-- v:preset.uptrail.pages -->22<!-- /v --> |<!-- edition:pro --> <!-- v:preset.uptrail.difficulty -->올곧 다음으로 어려움<!-- /v --> |<!-- /edition -->
-| [<!-- v:preset.olgot.title -->올곧<!-- /v -->](olgot.md) | <!-- v:preset.olgot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.olgot.summary -->고등부 수학·과학 입시학원 웹 앱<!-- /v --> | <!-- v:preset.olgot.pages -->203<!-- /v --> |<!-- edition:pro --> <!-- v:preset.olgot.difficulty -->가장 어려움<!-- /v --> |<!-- /edition -->
+| 프리셋 | 분류 | 컨셉 | 페이지 |
+|---|---|---|---|
+| [<!-- v:preset.slidelab.title -->슬라이드랩<!-- /v -->](slidelab.md) | <!-- v:preset.slidelab.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.slidelab.summary -->과정과 교육 시간을 고르는 AI·PPT 교육 랜딩<!-- /v --> | <!-- v:preset.slidelab.pages -->1<!-- /v --> |
+| [<!-- v:preset.speaker-portfolio.title -->스피커 포트폴리오<!-- /v -->](speaker-portfolio.md) | <!-- v:preset.speaker-portfolio.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.speaker-portfolio.summary -->활동과 콘텐츠를 소개하는 개인 브랜딩 포트폴리오<!-- /v --> | <!-- v:preset.speaker-portfolio.pages -->6<!-- /v --> |
+| [<!-- v:preset.goru.title -->고루<!-- /v -->](goru.md) | <!-- v:preset.goru.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.goru.summary -->같이 사는 사람들의 생활비 정산<!-- /v --> | <!-- v:preset.goru.pages -->7<!-- /v --> |
+| [<!-- v:preset.ullim.title -->울림<!-- /v -->](ullim.md) | <!-- v:preset.ullim.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.ullim.summary -->대본을 한국어 내레이션으로 만드는 AI 스튜디오<!-- /v --> | <!-- v:preset.ullim.pages -->11<!-- /v --> |
+| [<!-- v:preset.studyday.title -->하루공부<!-- /v -->](studyday.md) | <!-- v:preset.studyday.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.studyday.summary -->시험 날짜까지 하루 공부 나누기와 공부 기록<!-- /v --> | <!-- v:preset.studyday.pages -->14<!-- /v --> |
+| [<!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->](afterglow.md) | <!-- v:preset.afterglow.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.afterglow.summary -->가정용 태양광 배터리 소개와 설치 상담<!-- /v --> | <!-- v:preset.afterglow.pages -->17<!-- /v --> |
+| [<!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->](fitslot.md) | <!-- v:preset.fitslot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.fitslot.summary -->필라테스 수업 예약과 수강권 관리<!-- /v --> | <!-- v:preset.fitslot.pages -->20<!-- /v --> |
+| [<!-- v:preset.jecheol.title -->제철상자<!-- /v -->](jecheol.md) | <!-- v:preset.jecheol.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.jecheol.summary -->제철 농산물 정기배송<!-- /v --> | <!-- v:preset.jecheol.pages -->21<!-- /v --> |
+| [<!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->](pacecrew.md) | <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.pacecrew.summary -->동네 러닝 크루 매칭과 레이스 신청<!-- /v --> | <!-- v:preset.pacecrew.pages -->22<!-- /v --> |
+| [<!-- v:preset.uptrail.title -->Uptrail<!-- /v -->](uptrail.md) | <!-- v:preset.uptrail.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.uptrail.summary -->개발팀의 서비스 상태와 배포 모니터링<!-- /v --> | <!-- v:preset.uptrail.pages -->22<!-- /v --> |
+| [<!-- v:preset.olgot.title -->올곧<!-- /v -->](olgot.md) | <!-- v:preset.olgot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.olgot.summary -->고등부 수학·과학 입시학원 웹 앱<!-- /v --> | <!-- v:preset.olgot.pages -->203<!-- /v --> |
 
-표는 페이지가 적은 순이에요. 페이지가 많을수록 오래 걸려요. 랜딩페이지는 서비스를 알리는 시각 연출이 큰 사이트이고, 앱 화면은 서비스를 쓰는 화면이 중심인 웹 앱이에요.<!-- edition:pro --> "실제 서비스로 바꾸기"는 로그인과 DB를 붙여 진짜 서비스로 바꿀 때의 난이도예요. 필요한 외부 서비스와 지킬 데이터 규칙으로 견줬고, 까닭은 프리셋 쪽의 "실제 서비스로 만들 때"에 있어요.<!-- /edition -->
+표는 페이지가 적은 순이에요. 페이지가 많을수록 오래 걸려요. 랜딩페이지는 서비스를 알리는 시각 연출이 큰 사이트이고, 앱 화면은 서비스를 쓰는 화면이 중심인 웹 앱이에요.
+
+<!-- edition:pro -->
+"실제 서비스로 바꾸기"는 로그인과 DB를 붙여 진짜 서비스로 바꿀 때의 난이도예요. 필요한 외부 서비스와 지킬 데이터 규칙으로 견줬고, 까닭은 프리셋 쪽의 "실제 서비스로 만들 때"에 있어요.
+
+| 프리셋 | 실제 서비스로 바꾸기 |
+|---|---|
+| [<!-- v:preset.slidelab.title -->슬라이드랩<!-- /v -->](slidelab.md) | <!-- v:preset.slidelab.difficulty -->문의 서비스 연결 설계 필요<!-- /v --> |
+| [<!-- v:preset.speaker-portfolio.title -->스피커 포트폴리오<!-- /v -->](speaker-portfolio.md) | <!-- v:preset.speaker-portfolio.difficulty -->문의·결제 연동과 운영 정책 작성 필요<!-- /v --> |
+| [<!-- v:preset.goru.title -->고루<!-- /v -->](goru.md) | <!-- v:preset.goru.difficulty -->쉬움<!-- /v --> |
+| [<!-- v:preset.ullim.title -->울림<!-- /v -->](ullim.md) | <!-- v:preset.ullim.difficulty -->어려움<!-- /v --> |
+| [<!-- v:preset.studyday.title -->하루공부<!-- /v -->](studyday.md) | <!-- v:preset.studyday.difficulty -->가장 쉬움<!-- /v --> |
+| [<!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->](afterglow.md) | <!-- v:preset.afterglow.difficulty -->어려움<!-- /v --> |
+| [<!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->](fitslot.md) | <!-- v:preset.fitslot.difficulty -->보통<!-- /v --> |
+| [<!-- v:preset.jecheol.title -->제철상자<!-- /v -->](jecheol.md) | <!-- v:preset.jecheol.difficulty -->어려움<!-- /v --> |
+| [<!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->](pacecrew.md) | <!-- v:preset.pacecrew.difficulty -->어려움<!-- /v --> |
+| [<!-- v:preset.uptrail.title -->Uptrail<!-- /v -->](uptrail.md) | <!-- v:preset.uptrail.difficulty -->올곧 다음으로 어려움<!-- /v --> |
+| [<!-- v:preset.olgot.title -->올곧<!-- /v -->](olgot.md) | <!-- v:preset.olgot.difficulty -->가장 어려움<!-- /v --> |
+
+<!-- /edition -->
 
 만들고 싶은 서비스가 따로 있으면 [가장 쉬운 방법](#가장-쉬운-방법)의 프롬프트에 내 컨셉을 넣어 보내세요.
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// AI 서버 주소는 site-links.json 한 곳에서 관리하고 Pages 루트에 공개 설정만 내보낸다.
-// 사용법: node scripts/ai-service-config.mjs <GitHub Pages 체크아웃>
+// AI 서버 주소는 site-links.json 한 곳에서 관리하고 프리셋 사이트 루트(/pro-kit/)에 공개 설정만 내보낸다.
+// 사용법: node scripts/ai-service-config.mjs <pro-kit-presets 체크아웃>/public/pro-kit
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -15,7 +15,7 @@ export function aiServiceConfig(links) {
 
 if (process.argv[1] && resolve(process.argv[1]) === import.meta.filename) {
   const destination = process.argv[2];
-  if (!destination) throw new Error("사용법: node scripts/ai-service-config.mjs <Pages 체크아웃>");
+  if (!destination) throw new Error("사용법: node scripts/ai-service-config.mjs <pro-kit-presets 체크아웃>/public/pro-kit");
   const links = JSON.parse(readFileSync(new URL("../site-links.json", import.meta.url), "utf8"));
   const file = resolve(destination, "ai-service.json");
   writeFileSync(file, aiServiceConfig(links));

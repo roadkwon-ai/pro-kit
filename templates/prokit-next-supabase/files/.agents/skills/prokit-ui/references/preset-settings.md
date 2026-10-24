@@ -16,7 +16,7 @@
 
 제작용 폰트·색 팔레트와 설정 견본을 서비스에 더하지 않는다. 팩에 관리 미리보기용 adapter가 있으면 사용자 서비스에 필요한지 구분하고 기존 shared message schema를 복제·확장하지 않는다. 제거가 필요하면 실제 소비자를 확인하고 공개 UI의 설정 전환은 유지한다.
 
-<!-- edition:pro -->API·DB 연결은 `prokit-web`·`prokit-api`·`prokit-db`가 맡는다. <!-- /edition -->loading·empty·error·비인가·긴 실제 콘텐츠에도 팩의 카드 비율·간격·모션·반응형 구조가 유지되는지 검사한다. 데이터 변화로 생긴 배치 변경을 디자인 재선택의 근거로 삼지 않는다.
+loading·empty·error·비인가·긴 실제 콘텐츠에도 팩의 카드 비율·간격·모션·반응형 구조가 유지되는지 검사한다. 데이터 변화로 생긴 배치 변경을 디자인 재선택의 근거로 삼지 않는다.<!-- edition:pro --> API·DB 연결은 `prokit-web`·`prokit-api`·`prokit-db`가 맡는다.<!-- /edition -->
 
 ## 실제 적용 증거
 

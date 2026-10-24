@@ -7,7 +7,7 @@
 - 같은 값이나 글이 두 곳 이상에 나오거나 자주 바뀌면 이 목록에 올리고 표시로 쓴다. 새 값이 생기면 정본에 먼저 더한다. 손으로 정하는 값은 `doc-values.json`, 파일에서 셀 수 있는 값은 `scripts/doc-values.mjs`의 `loadValues`, 글 묶음은 `docs/blocks/<이름>.md`다.
 - 값은 정본에서만 바꾸고 `node scripts/doc-values.mjs`를 돌린다. 이 명령이 문서의 표시와 아래 표를 함께 고친다. `--check`는 고치지 않고 어긋난 곳(파일:줄, 키, 지금 값, 정본 값)을 보여 주고, `--list`는 키마다 값과 정본, 쓰는 곳 수를 보여 준다. `--json <파일>`은 모든 값(손으로 정한 값과 계산값)을 마크다운 이스케이프를 푼 `{키: 값}` JSON으로 쓴다. 홈페이지가 시간을 손으로 적지 않고 읽는 파일이다. 고친 뒤 `node --test scripts/doc-values.test.mjs`를 실행한다.
 - 공개 주소는 `site-links.json`이 정본이다. 바꿀 때는 `node scripts/site-links.mjs set <키> <주소>`가 추적 파일 전체의 주소를 바꾸고, 이어서 `node scripts/doc-values.mjs`를 돌린다.
-- AI 서버 주소는 `site-links.json`의 `aiService`만 바꾼다. `node scripts/site-links.mjs set aiService <HTTPS 서버 주소>` 뒤 `node scripts/ai-service-config.mjs <Pages 체크아웃>`으로 공통 `ai-service.json`을 내보내고 그 파일을 `gh-pages`에 올린다. Claudle과 다른 AI 서비스는 요청할 때마다 Pages 루트의 이 파일을 캐시 없이 읽고 `aiServiceUrl`에 `/api/chat`을 붙인다. 서버 주소만 바뀌면 각 서비스를 다시 빌드하지 않는다.
+- AI 서버 주소는 `site-links.json`의 `aiService`만 바꾼다. `node scripts/site-links.mjs set aiService <HTTPS 서버 주소>` 뒤 `node scripts/ai-service-config.mjs <pro-kit-presets 체크아웃>/public/pro-kit`으로 공통 `ai-service.json`을 내보내고 그 파일을 `pro-kit-presets` 저장소에 올린다. Claudle과 다른 AI 서비스는 요청할 때마다 프리셋 사이트 루트(`/pro-kit/`)의 이 파일을 캐시 없이 읽고 `aiServiceUrl`에 `/api/chat`을 붙인다. 서버 주소만 바뀌면 각 서비스를 다시 빌드하지 않는다.
 - 표시 꼴
   - 한 줄 안 값: `<!-- v:키 -->값<!-- /v -->`. 표시 사이의 값만 바뀐다.
   - 여러 줄 글 묶음: `<!-- b:이름 키=값 키="띄어 쓴 값" -->` 줄과 `<!-- /b -->` 줄 사이를 묶음 원본으로 채운다. 원본의 첫 줄 주석은 설명이고, `{{키}}`는 표시에 준 인자(`{{키|기본값}}`은 인자가 없을 때 기본값), `{{v:키}}`는 값이다. 인자 안에서 `{{name}}`을 먼저 바꾸므로 `{{v:preset.{{name}}.title}}`처럼 쓸 수 있다.
@@ -152,7 +152,7 @@
 | `port.web.urlCode` | `http://localhost:3001` | 웹 개발 서버 주소의 코드 꼴(백틱 포함) | doc-values.json ports.web | `doc-values.json`을 고친다 | 9 |
 | `port.neonDb.addrCode` | `localhost:5432` | neon 로컬 DB 주소의 코드 꼴(백틱 포함) | doc-values.json ports.neonDb | `doc-values.json`을 고친다 | 2 |
 | `port.supabaseDb.addrCode` | `127.0.0.1:54322` | supabase 로컬 DB 주소의 코드 꼴(백틱 포함) | doc-values.json ports.supabaseDb | `doc-values.json`을 고친다 | 1 |
-| `preset.<이름>.title` | 13개(`--list`) | 프리셋 이름 | doc-values.json presets.<이름>.title | `doc-values.json`을 고친다 | 134 |
+| `preset.<이름>.title` | 13개(`--list`) | 프리셋 이름 | doc-values.json presets.<이름>.title | `doc-values.json`을 고친다 | 145 |
 | `preset.<이름>.kind` | 13개(`--list`) | 분류(landing 랜딩페이지, app 앱 화면, clone 클론 튜토리얼) | doc-values.json presets.<이름>.kind | `doc-values.json`을 고친다 | 0 |
 | `preset.<이름>.kindLabel` | 13개(`--list`) | 분류 이름(랜딩페이지, 앱 화면, 클론 튜토리얼) | 계산: doc-values.json presets.<이름>.kind | `doc-values.json`을 고친다 | 42 |
 | `preset.<이름>.field` | 13개(`--list`) | 짧은 분야(README 대표 예시, 프로킷 사이트 카드) | doc-values.json presets.<이름>.field | `doc-values.json`을 고친다 | 9 |

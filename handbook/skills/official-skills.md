@@ -100,7 +100,7 @@ E·D 라운드에서 읽는 스킬이에요.
 
 ## 읽을 스킬을 정해 두는 방법
 
-- <!-- edition:pro -->`prokit-web`, `prokit-api`, `prokit-db`, `prokit-deploy`, <!-- /edition -->`prokit-dev-cycle`에는 어떤 상황에서 어떤 공식 스킬을 읽을지 적은 "공식 스킬 연결" 표가 있어요. `prokit-ui`와 `prokit-verify`는 본문의 단계와 규칙에 스킬 이름을 적어 둬요.
+- 어떤 상황에서 어떤 공식 스킬을 읽을지 적은 "공식 스킬 연결" 표는 `prokit-dev-cycle`<!-- edition:pro -->, `prokit-web`, `prokit-api`, `prokit-db`, `prokit-deploy`<!-- /edition -->에 있어요. `prokit-ui`와 `prokit-verify`는 본문의 단계와 규칙에 스킬 이름을 적어 둬요.
 - dev-cycle 대조표의 행에도 그 단계에서 읽을 스킬 이름이 괄호로 들어가 있어요. 에이전트는 그 행을 진행할 때 스킬을 실제로 읽고 증거 칸에 이름을 남겨요(`사용: supabase-postgres-best-practices(schema-data-types)`).
 - 기본 연결은 프로젝트의 `.agents/skills/<이름>/SKILL.md`를 직접 읽어요. 사용자가 다른 출처를 지정했으면 그 실제 경로를 먼저 확인해요. 같은 이름이라도 경로·출처·내용 해시로 구분해요([선택 순서와 증거](../concepts/delegation-and-resources.md#위임할-때-남기는-근거)).
 - 이 표는 기본 설치와 연결을 설명해요. 접근 가능한 다른 전문 스킬도 작업에 맞으면 선택하고, 한 번 사용한 것만으로 매니페스트에 더하지 않아요. 행동 지침의 기본은 Ponytail을 유지해요.

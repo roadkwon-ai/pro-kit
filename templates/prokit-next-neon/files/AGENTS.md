@@ -95,7 +95,8 @@
 - 사용자 데이터를 다루는 프로시저는 `protectedProcedure`를 쓰고, 소유자 id는 세션에서만 가져와 where 조건에 넣는다. <!-- edition:pro -->
 - 비밀값과 서버 전용 모듈은 클라이언트 번들로 보내지 않는다. 배포 환경의 값은 Vercel 환경변수에만 두고 `.env.production` 같은 파일, 출력, 커밋에 남기지 않는다. 새 변수는 `apps/web/.env.schema`에 선언한다.<!-- edition:pro --> 배포 환경 값은 `prokit-deploy`로 넣는다.<!-- /edition --> 커밋 전에는 `pnpm dev-cycle secrets`로 스테이징한 변경을 검사하고, exit 1이면 커밋하지 않는다.
 - 스키마 변경은 `db:generate`로 만든 마이그레이션으로만 한다. 공유 DB 브랜치에는 `db:push`를 쓰지 않는다. <!-- edition:pro -->
-- <!-- edition:pro -->운영 DB와 실사용자 데이터는 사용자가 요청할 때만 다룬다(라운드 끝 배포에서 적용할 마이그레이션 목록을 보고 동의할 때 포함). <!-- /edition -->커밋, push, 릴리스, 배포는 사용자가 요청할 때와 라운드 끝(`prokit-dev-cycle` 5절: 사용자 확인 → audit·close → 커밋·push<!-- edition:pro --> → 사용자가 고르면 릴리스와 production 배포. 운영 중인 기존 프로젝트는 커밋까지<!-- /edition -->)에만 한다.<!-- edition:pro --> production은 릴리스(`pnpm release`: 버전 태그, `release/` 노트, GitHub Release)한 커밋만 배포한다(`prokit-deploy`).<!-- /edition -->
+- 운영 DB와 실사용자 데이터는 사용자가 요청할 때만 다룬다(라운드 끝 배포에서 적용할 마이그레이션 목록을 보고 동의할 때 포함). <!-- edition:pro -->
+- 커밋, push, 릴리스, 배포는 사용자가 요청할 때와 라운드 끝(`prokit-dev-cycle` 5절: 사용자 확인 → audit·close → 커밋·push<!-- edition:pro --> → 사용자가 고르면 릴리스와 production 배포. 운영 중인 기존 프로젝트는 커밋까지<!-- /edition -->)에만 한다.<!-- edition:pro --> production은 릴리스(`pnpm release`: 버전 태그, `release/` 노트, GitHub Release)한 커밋만 배포한다(`prokit-deploy`).<!-- /edition -->
 
 ## 에이전트
 - `prokit-analyzer`: 읽기 전용 정밀 분석. 기존 프로젝트를 들일 때와 진행 계획을 세우기 전에 쓴다. <!-- edition:pro -->

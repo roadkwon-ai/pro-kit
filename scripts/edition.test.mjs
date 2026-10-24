@@ -107,6 +107,12 @@ test("표시 짝 검사: 닫히지 않은 구간, 짝 없는 닫는 표시, 한 
   assert.deepEqual(markerErrors(`a${E} b`), [1]);
   assert.deepEqual(markerErrors("<!-- edition:ui\nA --> B\n-->"), [2]); // 여러 줄 판 글 안의 -->
   assert.deepEqual(markerErrors("<!-- edition:ui\n닫지 않음"), [1]);
+  // 줄(목록 항목, 인용 안 포함) 맨 앞의 표시 뒤에 글을 이으면 GitHub과 홈페이지가 그 줄을 HTML로 본다
+  assert.deepEqual(markerErrors(`- ${P}Pro 문장. ${E}뒤 문장.\n> ${P}Pro${E} 뒤\n${P}Pro${E}\n- <!-- edition:ui 판 글 --> 뒤`), [1, 2, 3, 4]);
+  assert.deepEqual(markerErrors(`- 앞 문장.${P} Pro 문장.${E}\n- <!-- edition:ui 판 글 -->\n> 앞${P} Pro${E}`), []);
+  // 표 머리 행이나 구분 행의 표시는 칸 수를 어긋나게 하고, 구분 행의 주석은 Pro 쪽 표를 표가 아니게 만든다
+  assert.deepEqual(markerErrors(`| a |${P} b |${E}\n|---|${P}---|${E}\n| 1 | 2 |`), [1, 2]);
+  assert.deepEqual(markerErrors(`| a | b${P} (Pro)${E} |\n|---|---|\n| 1 | 2 | ${P}\n| 3 |${P} 4${E} |`), []);
 });
 
 test("ui 판: 검사(표시 짝, 남은 표시, 빠진 스킬 이름, 끊긴 링크, Pro 말)를 통과하고 Pro 전용 파일은 없다", () => {

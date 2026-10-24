@@ -130,7 +130,7 @@
 ## 자세히
 
 > [!WARNING]
-> <!-- edition:pro -->DB 연결 문자열, <!-- /edition -->Vercel·GitHub 토큰은 파일과 출력에 남기지 않아요. <!-- edition:pro -->Neon 연결 문자열은 `neon cs`로 명령마다 받고, <!-- /edition -->토큰은 그 명령에만 넣어요.
+> Vercel·GitHub 토큰<!-- edition:pro -->과 DB 연결 문자열<!-- /edition -->은 파일과 출력에 남기지 않아요. <!-- edition:pro -->Neon 연결 문자열은 `neon cs`로 명령마다 받고, <!-- /edition -->토큰은 그 명령에만 넣어요.
 
 - **최신판을 받아요**: Better-T-Stack, skills CLI, 공식 스킬, Claude 플러그인, agent-browser CLI는 템플릿에 판을 고정하지 않고 설치할 때 최신판을 받아요. <!-- edition:pro -->새 판 때문에 생성이나 설치가 깨지면 템플릿을 고치고 확인한 판을 검증 기록에 남겨요([검증 결과](verification.md)).<!-- /edition -->
 - **배포는 정해진 명령으로만 해요**: 서비스 배포는 `prokit-deploy`의 `pnpm vercel:deploy`로 하고, 운영에는 `pnpm release`로 만든 커밋만 올려요. 두뇌 gstack의 `ship`이나 Vercel 플러그인의 배포 명령은 쓰지 않아요([Vercel 배포](../deploy/vercel.md)). <!-- edition:pro -->

@@ -57,13 +57,22 @@ export function markerErrors(text) {
   const errors = [];
   let open = 0;
   let ui = 0;
-  text.split("\n").forEach((line, i) => {
+  text.split("\n").forEach((line, i, lines) => {
     const t = line.trim();
+    // 표 머리 행이나 구분 행의 표시는 칸 수를 어긋나게 하고, 구분 행의 주석은 Pro 쪽 표를 표가 아니게 만든다
+    if (!ui && /^\|\s*:?-+/.test(t)) {
+      const cells = (s) => s.trim().replace(/^\||\|$/g, "").split("|").length;
+      if (i && cells(lines[i - 1]) !== cells(stripPro(lines[i - 1]))) errors.push(i);
+      if (t.includes("<!--")) errors.push(i + 1);
+    }
     // 여러 줄 판 글 주석 안: 닫는 --> 줄 전에 -->가 나오면 pro-kit 쪽에서 주석이 일찍 끝나 판 글이 보인다
     if (ui) return t === "-->" ? (ui = 0) : line.includes("-->") && errors.push(i + 1);
     if (t === "<!-- edition:ui") return (ui = i + 1);
     if (t === OPEN) return open ? errors.push(i + 1) : (open = i + 1);
     if (t === CLOSE) return open ? (open = 0) : errors.push(i + 1);
+    // 줄(목록 항목, 인용 안 포함) 맨 앞의 표시 뒤에 글을 이으면 GitHub과 홈페이지가 그 줄을 HTML로 읽는다
+    const head = t.replace(/^(?:>\s*)*(?:(?:[-*+]|\d+\.)\s+)?/, "").match(/^<!-- \/?edition[^\n]*?-->(.*)/);
+    if (head?.[1].trim()) return errors.push(i + 1);
     const count = (s) => line.split(s).length - 1;
     if (!open && count(OPEN) - (t.endsWith(OPEN) ? 1 : 0) !== count(CLOSE)) errors.push(i + 1);
   });
