@@ -448,7 +448,7 @@ Expected: `PASS 대화 9(질문 22), 프로젝트 6, 아티팩트 8, 그림 21`,
 
 - [ ] **Step 1: 첫 쪽을 쓴다**
 
-`tutorials/01-nextflix/README.md`의 절 순서와 모양을 그대로 따른다: 제목 "Claude 같은 AI 대화 서비스 만들기", 안내 문구 NOTE, 토큰 경고 WARNING(값은 Task 13에서), 무엇을 만드나요(프리셋 링크 `https://roadkwon-ai.github.io/pro-kit/claudle/`, 넣는 것 목록, 화면만인 것, 뺀 것), "AI 키가 없어도 끝까지 가요" 문단(5장 모의 응답, 7장에서 키를 넣는 법 링크), 가장 쉬운 방법, 장 목록, 시간과 비용, 만든 기록.
+`tutorials/01-nextflix/README.md`의 절 순서와 모양을 그대로 따른다: 제목 "Claude 같은 AI 대화 서비스 만들기", 안내 문구 NOTE, 토큰 경고 WARNING(값은 Task 13에서), 무엇을 만드나요(프리셋 링크 `https://prokit-web.vercel.app/pro-kit/claudle/`, 넣는 것 목록, 화면만인 것, 뺀 것), "AI 키가 없어도 끝까지 가요" 문단(5장 모의 응답, 7장에서 키를 넣는 법 링크), 가장 쉬운 방법, 장 목록, 시간과 비용, 만든 기록.
 
 가장 쉬운 방법 프롬프트:
 
@@ -829,7 +829,7 @@ gh release create pack-claudle /Users/freelife/youtube/pro-kit-samples/packs/_zi
 - [ ] **Step 3: gh-pages와 `main`**
 
 `tools/publish.sh claudle`(또는 그 절차)로 `pages/pro-kit/claudle/`을 gh-pages에 올리고, 포트폴리오 루트는 `tools/publish-root.sh`로 합친다. `main`은 `node scripts/release.mjs` 절차로 push한다.
-Expected: `https://roadkwon-ai.github.io/pro-kit/claudle/`가 열리고, `node scripts/pack.mjs claudle`이 새 `packs.json`으로 받아진다.
+Expected: `https://prokit-web.vercel.app/pro-kit/claudle/`가 열리고, `node scripts/pack.mjs claudle`이 새 `packs.json`으로 받아진다.
 
 ---
 

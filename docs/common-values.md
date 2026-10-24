@@ -38,7 +38,7 @@
 | 키 | 값 | 뜻 | 정본 | 바꾸는 법 | 쓰는 곳 |
 |---|---|---|---|---|---|
 | `link.home` | https://prokit-web.vercel.app | 홈페이지(프로킷 사이트) 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json home | `node scripts/site-links.mjs set <키> <주소>` | 0 |
-| `link.pages` | https://roadkwon-ai.github.io/pro-kit | 프리셋 사이트(GitHub Pages) 주소. 뒤에 /<이름>/을 붙인다. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json pages | `node scripts/site-links.mjs set <키> <주소>` | 0 |
+| `link.pages` | https://prokit-web.vercel.app/pro-kit | 프리셋 사이트(GitHub Pages) 주소. 뒤에 /<이름>/을 붙인다. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json pages | `node scripts/site-links.mjs set <키> <주소>` | 0 |
 | `link.repo` | https://github.com/roadkwon-ai/pro-kit | pro-kit 저장소 주소 | site-links.json repo | `node scripts/site-links.mjs set <키> <주소>` | 39 |
 | `link.repoUi` | https://github.com/roadkwon-ai/pro-kit-ui | pro-kit-ui 저장소 주소(UI 스킬셋. scripts/edition.mjs가 pro-kit에서 만드는 읽기 전용 사본) | site-links.json repoUi | `node scripts/site-links.mjs set <키> <주소>` | 2 |
 | `link.packs` | https://github.com/roadkwon-ai/pro-kit-packs | 프리셋 팩 저장소 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json packs | `node scripts/site-links.mjs set <키> <주소>` | 0 |

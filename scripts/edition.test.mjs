@@ -41,7 +41,7 @@ test("저장소 이름 바꾸기: 받을 저장소·폴더·주소를 판으로 
   assert.equal(r("작업 폴더에 `pro-kit`이 없으면, `pro-kit`의"), "작업 폴더에 `pro-kit-ui`가 없으면, `pro-kit-ui`의");
   assert.equal(r("pro-kit이면 pro-kit이나 pro-kit이라는 pro-kit이에요 pro-kit이름 pro-kit이미"), "pro-kit-ui면 pro-kit-ui나 pro-kit-ui라는 pro-kit-ui예요 pro-kit-ui이름 pro-kit-ui이미");
   assert.equal(r("[받기](README.md#pro-kit-받기) [웹](a.md#pro-kit-web-규칙)"), "[받기](README.md#pro-kit-ui-받기) [웹](a.md#pro-kit-web-규칙)");
-  const keep = "Pro 스킬셋(`pro-kit`)이 필요하다. roadkwon-ai.github.io/pro-kit/goru/ pro-kit-old pro-kit-web <!-- edition:ui pro-kit에서 만든 사본 -->";
+  const keep = "Pro 스킬셋(`pro-kit`)이 필요하다. prokit-web.vercel.app/pro-kit/goru/ https://prokit-web.vercel.app/pro-kit/goru/ prokit.highvalue.kr/pro-kit pro-kit-old pro-kit-web <!-- edition:ui pro-kit에서 만든 사본 -->";
   assert.equal(r(keep), keep);
 });
 

@@ -4,7 +4,7 @@
 
 ![하루공부 첫 화면](assets/studyday-home-desktop.webp)
 
-[프리셋 사이트 열기](https://roadkwon-ai.github.io/pro-kit/studyday/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit-web.vercel.app/work/studyday/)
+[프리셋 사이트 열기](https://prokit-web.vercel.app/pro-kit/studyday/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit-web.vercel.app/work/studyday/)
 
 | 항목 | 내용 |
 |---|---|

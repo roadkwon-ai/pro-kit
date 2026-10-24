@@ -4,7 +4,7 @@
 
 ![PACECREW 첫 화면](assets/pacecrew-home-desktop.webp)
 
-[프리셋 사이트 열기](https://roadkwon-ai.github.io/pro-kit/pacecrew/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit-web.vercel.app/work/pacecrew/)
+[프리셋 사이트 열기](https://prokit-web.vercel.app/pro-kit/pacecrew/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit-web.vercel.app/work/pacecrew/)
 
 | 항목 | 내용 |
 |---|---|

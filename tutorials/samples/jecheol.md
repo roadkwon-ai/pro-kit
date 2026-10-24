@@ -4,7 +4,7 @@
 
 ![제철상자 첫 화면](assets/jecheol-home-desktop.webp)
 
-[프리셋 사이트 열기](https://roadkwon-ai.github.io/pro-kit/jecheol/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit-web.vercel.app/work/jecheol/)
+[프리셋 사이트 열기](https://prokit-web.vercel.app/pro-kit/jecheol/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit-web.vercel.app/work/jecheol/)
 
 | 항목 | 내용 |
 |---|---|
