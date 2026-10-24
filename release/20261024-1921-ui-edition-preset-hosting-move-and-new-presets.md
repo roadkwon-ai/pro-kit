@@ -1,0 +1,123 @@
+# v0.3.1 — UI edition, preset hosting move, and new presets
+
+- 날짜: 2026-10-24 19:21 (KST)
+- 이전 버전: v0.3.0
+- 전체 변경: https://github.com/roadkwon-ai/pro-kit/compare/v0.3.0...v0.3.1
+
+## Features
+
+- site-links set home이 그 아래 경로인 pages도 함께 바꿈 (`b2f6145`)
+  - set으로 바꾸는 주소 아래 경로인 다른 키(pages = home/pro-kit)를 site-links.json에서도 함께 바꾼다(파일 속 주소는 이미 함께 바뀌었다)
+- UI 판에 handbook·튜토리얼을 넣고 판 내보내기를 확인까지 한 번에 끝내도록 함 (`cfcf2dc`)
+  - UI 판(pro-kit-ui)에 handbook과 튜토리얼(시작하기, 컨셉으로 화면 만들기, 가이드)을 넣고, 서비스·도입·배포·릴리스·클론 문서는 뺀다
+  - 문서의 Pro 내용에 edition:pro 표시를 달고, 판에서 보일 글은 edition:ui로 둔다(줄 끝, 표 행, 여러 줄 꼴)
+  - 판에서 pro-kit을 pro-kit-ui로 바꾸고 조사를 맞춘다. 판에서 빠진 쪽을 가리키는 표 행과 목록 줄은 뺀다
+  - 판 검사에 Pro 절차 말(proTerms)과 허용 목록(editions/ui-allow.txt), 판에서 틀리는 값(proValues), 앵커와 HTML 링크, 판 저장소 주소 검사를 더한다
+  - 판 내보내기가 push를 두 번 다시 하고, 다시 받아 태그와 main이 새로 만든 판과 같은지 확인해야 릴리스가 끝난다(--verify로 따로 확인)
+  - pro-kit-ui README를 pro-kit 수준으로 다시 쓴다
+- UI 스킬셋 저장소(pro-kit-ui)를 만드는 판 생성기를 더함 (`abcc63f`)
+  - pro-kit이 정본이고 pro-kit-ui는 생성기가 만드는 읽기 전용 사본이다. 판 목록은 `editions.json`, 생성기는 `scripts/edition.mjs`, 판에만 있는 루트 문서는 `editions/ui/`, 저장소 주소는 site-links.json `repoUi`다
+  - 판 경계는 handbook "프로킷 UI 스킬셋"을 따른다: prokit 스킬 6개와 `prokit-init`, neon 템플릿. 화면 동작·API·DB·배포 스킬, supabase 템플릿, 기존 프로젝트 도입은 넣지 않는다
+  - neon 템플릿과 `prokit-init` 문서의 Pro 전용 글을 `<!-- edition:pro -->` 표시로 감쌌다. 생성기가 표시 짝, 남은 표시, 판에 없는 이름, 끊긴 링크를 검사한다
+  - `node scripts/release.mjs --publish`가 커밋 전에 판을 사전 검사하고, GitHub Release 뒤 같은 태그로 판 저장소에 내보낸다. 실패하면 `node scripts/edition.mjs ui --publish --tag vX.Y.Z`로 다시 한다
+  - dev-cycle 대조표 파서가 행 글의 HTML 주석을 뺀다(Pro 대조표 행은 전과 같다)
+  - 화면만 프로젝트의 라운드 끝은 배포 준비가 되어도 릴리스와 production 배포를 묻지 않고 `배포 PASS: 화면만`을 적는다. "실제 서비스로 바꾸기"는 서버 스킬이 있는지 먼저 본다
+  - 실측(Better-T-Stack 3.47.0): 생성한 UI 판으로 화면만 프로젝트를 만들고 설치 뒤 확인 다섯 개(`pnpm check`, `skills:check`, `agents:check`, `check-types`, `biome check .`)가 exit 0
+- prokit-ui 모션 지침과 화면 작업의 휴대폰 스크롤 측정 행을 더함 (`68fa35f`)
+  - 스크롤 타임라인 모션은 몇 개에만, 마우스 기기((hover: hover) and (pointer: fine))에서만 쓴다. 많은 섹션 등장은 IntersectionObserver로 한 번 도는 시간 모션을 쓰고, 반복 애니메이션은 화면 밖에서 멈춘다
+  - 케이스 B 대조표에 휴대폰 스크롤 측정 행을 더했다(스크롤 모션·긴 쪽·반복해서 다시 그리는 요소를 바꾸지 않았으면 N/A: 사유)
+  - prokit-verify browser.md에 390px 터치·CPU 6배 늦춤 측정 절차(50ms 넘는 프레임, 스크롤 모션 수, 레이어 수)를 더했다
+- 템플릿에 라운드 없는 커밋을 막는 훅과 릴리스 전 라운드 확인을 더함 (`0cdb535`)
+  - pnpm dev-cycle guard: --staged는 열린 라운드, 함께 커밋하는 닫은 라운드 기록, 설치 커밋이 아니면 코드·하네스 커밋을 막는다. --since <ref>는 그 사이 닫은 라운드 기록이 있는지 본다
+  - 설치기가 git pre-commit 훅을 건다. 이미 다른 pre-commit 훅이 있으면 덮어쓰지 않고 경고한다. core.hooksPath는 바꾸지 않는다
+  - pnpm release는 지난 태그 뒤 코드·하네스 변경에 닫은 라운드 기록이 없으면 노트도 발행도 멈춘다
+  - 템플릿 README, VERIFICATION.md, handbook(dev-cycle, 릴리스, 명령, 설치되는 것)에 guard와 훅을 적고, 명령 표의 팩 받기를 --zip 꼴로 고쳤다
+
+## Fixes
+
+- site-links가 주소 뒤에 .이름이 붙은 다른 호스트를 바꾸지 않음 (`4e745d0`)
+  - 주소 뒤 경계에 .이름(다른 호스트, 파일 이름)을 더해 홈페이지 pnpm domain과 맞춘다. .git은 같은 저장소라 바꾼다(git clone …/pro-kit.git)
+- 제목 줄과 링크 글 안의 UI 판 표시를 뺌 (`277adc1`)
+  - 판마다 수만 다른 제목과 링크 글은 수를 빼고, 문장이 다른 제목 2곳은 판마다 제목 줄을 나눈다(홈페이지 제목 id가 원본 앵커와 달라지고 .md 사본이 링크 안 주석 자리를 찾지 못했다)
+  - markerErrors가 제목 줄과 링크 글 안의 표시를 잡는다
+- Pro 구간 표시 줄이 <details>와 붙어 홈페이지가 짝 태그를 찾지 못하던 곳을 고침 (`c107589`)
+  - handbook dev-cycle과 튜토리얼 process-and-time의 Pro 구간 표시 줄과 <details>·</details> 사이에 빈 줄을 둔다(marked가 </details>와 닫는 표시를 HTML 블록 하나로 읽었다)
+  - markerErrors가 혼자 선 표시 줄이 HTML 줄에 붙은 꼴을 잡는다
+- UI 판 표시가 Pro 쪽 문서의 줄과 표를 깨던 곳을 고침 (`5b4830d`)
+  - 목록 항목·인용·줄 맨 앞의 표시 뒤에 글을 이은 6줄을 표시가 맨 앞에 오지 않게 고쳐 쓴다(마크다운이 HTML로 읽어 홈페이지 handbook sync가 멈췄다)
+  - 구분 행에 표시를 둔 준비물 표는 '필요한 때' 열로, 프리셋 표는 공통 표와 Pro 구간의 '실제 서비스로 바꾸기' 표로 나눈다(GitHub과 홈페이지가 표로 그리지 않았다)
+  - markerErrors가 줄 맨 앞 표시 뒤의 글과 판마다 열 수가 다른 표 머리·구분 행을 잡는다
+  - ai-service-config의 내보낼 곳을 pro-kit-presets 저장소의 public/pro-kit으로 고친다
+- 프리셋 사이트 주소를 홈페이지 아래 /pro-kit으로 옮김 (`8647148`)
+  - site-links.json의 pages를 https://prokit-web.vercel.app/pro-kit으로 바꾸고 교재·문서의 프리셋 링크를 같이 바꾼다(pro-kit 비공개 전환으로 GitHub Pages를 쓰지 않는다. pro-kit-web이 /pro-kit/을 프리셋 저장소로 rewrite한다)
+  - UI 판 생성기가 도메인 바로 뒤의 /pro-kit/ 경로를 저장소 이름으로 보고 pro-kit-ui로 바꾸지 않게 하고 테스트를 더한다
+- 줄 끝이 CRLF로 설치된 스킬 파일을 원격과 같은 판으로 대조 (`e335fce`)
+  - skills-setup이 설치본 파일마다 원본 blob과 CRLF를 LF로 바꾼 blob을 함께 보고 원격 blob과 비교한다(localBlobs)
+  - impeccable 0.1.16의 scripts/impeccable.cmd(eol=crlf)가 늘 업데이트로 잡히고 설치 뒤 '검토한 판과 다르다'로 멈추던 문제를 고친다
+  - 테스트 3건과 실제 설치 확인을 VERIFICATION.md에 적는다
+- 설치기가 Antigravity 에이전트 생성물을 Biome 검사에서 뺌 (`e9e7251`)
+  - Biome 2.6.2가 `.agents/agents/*.md`(agents:sync가 만드는 Antigravity 에이전트)의 YAML 머리를 다시 맞춰, 새 프로젝트 확인의 `pnpm check` 뒤 `pnpm agents:check`가 실패했다
+  - 설치기의 biome.json 제외 목록에 `!.agents/agents`를 더하고 두 템플릿의 설치 테스트 기대값을 맞췄다
+  - 실측(Better-T-Stack 3.47.0, Biome 2.6.2): `pnpm check` 뒤 `agents:check` exit 0. 기존 프로젝트는 `install.sh --skip-skills`가 항목을 더하고, 이미 바뀐 파일은 `pnpm agents:sync`로 다시 만든다
+- 생성기의 옛 Biome 설정을 설치기가 biome migrate로 맞춤 (`5f5d6a3`)
+  - Better-T-Stack 3.47.0의 biome.json(nursery.useSortedClasses)을 Biome 2.6.2가 읽지 못해 설치기 포맷과 새 프로젝트의 pnpm check가 실패했다
+  - 설치기는 biome check에서 설정 읽기 오류가 날 때만 Biome 공식 biome migrate --write로 biome.json을 설치된 판에 맞추고 다시 검사한다. 생성기와 공식 스킬은 고치지 않는다
+  - 실측: Better-T-Stack 3.47.0 새 프로젝트에서 설치 뒤 pnpm check와 biome check .가 exit 0. 단위 테스트 1개를 더했다
+
+## Docs
+
+- pliko·마루빌드 프리셋 공개 교재와 공통 값, 검증 결과 반영 (`72094ba`)
+  - pliko(블로그, 프리미엄)와 마루빌드 교재 쪽·첫 화면 그림·목록 행을 더하고 packs.json을 공개 팩으로 등록
+  - 두 프리셋의 예상 시간·비용·검사 값과 측정 근거(docs/reports/2026-10-24-preset-measurements.json)를 공통 값에 반영
+  - 마루빌드 쇼룸 데모 2건(아이콘 404, 이용권 선택 상태)을 고쳐 다시 발행한 팩의 sha256·크기와 검사 결과(콘솔 오류 0, 반응 없는 버튼 0)로 교재·handbook 문장을 갱신
+  - handbook 검증 결과의 GitHub Pages 표현을 공개 주소 기준으로 고침
+- site-links 안내를 홈페이지의 사본 sync와 pnpm domain 흐름으로 고침 (`3ec7058`)
+  - 홈페이지는 site.ts를 고치지 않고 pnpm tutorials:sync로 site-links.json 사본을 받는다. 도메인 변경은 web의 pnpm domain이 이 명령까지 실행하고, pro-kit 변경은 이 저장소에서 검사하고 커밋한다
+- 화면만 규칙에 설치된 Next 문서 먼저 읽기와 Server Component 기본을 더함 (`850c626`)
+  - prokit-ui screen-only.md에 Next API를 쓰기 전 apps/web/node_modules/next/dist/docs/를 읽는 규칙과 use client를 가장 작은 컴포넌트에만 붙이는 규칙을 더한다(UI 판에는 이 규칙을 가진 서버 쪽 스킬이 없다)
+  - handbook 화면만 쪽에도 같은 내용을 한 줄로 적는다
+- 프로킷을 설치한 다른 저장소는 그 폴더에서 연 세션에서 고친다는 규칙을 더함 (`088464e`)
+  - 루트에 .dev-cycle.json이 있는 저장소(pro-kit-web, 템플릿으로 만든 프로젝트)의 코드·설정·화면·문서는 이 세션에서 고치지 않고, 요청을 정리해 그 폴더에서 이어 갈 한 줄을 준다. worktree와 임시 사본도 같은 저장소로 본다
+  - 사용자가 그래도 이 세션에서 하라고 하면 그 저장소의 AGENTS.md와 dev-workflow대로 라운드를 열고 닫는다
+  - CONTRIBUTING.md에 요약을 더했다
+- 레퍼런스·배포 문서 문장을 다듬고 제목 그림 두 장과 UI 스킬셋 쪽 순서를 고침 (`745b3ef`)
+  - 레퍼런스 8쪽과 배포와 릴리스 6쪽의 어색한 문장을 다시 다듬었다
+  - "쓰는 기술과 도구"를 "프로킷이 쓰는 기술과 도구"로, "앱을 이루는 기술"을 "앱에 들어가는 기술"로 바꾸고 이 제목을 쓰는 링크 글을 맞췄다
+  - 제목 글자가 바뀐 그림 두 장(tech-stack-layers, first-deploy-paths)을 다시 그렸다
+  - 디자인 묶음에서 "프로킷 UI 스킬셋"을 소개 바로 다음으로 옮겼다
+- handbook 문장을 다듬고 프로킷 UI 스킬셋 쪽을 더함 (`db20ac7`)
+  - handbook 7묶음 42쪽의 어색한 문장(번역투, 문어체 ~며, 명사 나열, 주어와 서술어 불일치, 긴 문장)과 오탈자를 고침
+  - 쓰는 기술과 도구 쪽의 앱을 이루는 기술 절과 표 칸 문장을 다듬음
+  - 에이전트 역할 표의 "하지 않는 일" 칸이 긍정문으로 읽히던 것을 바로잡음
+  - 디자인 묶음에 프로킷 UI 스킬셋 쪽을 더하고 문서 홈과 묶음 표에 올림(쪽 수 47)
+  - 라운드 한 바퀴 그림의 6번 칸을 audit과 close, 통과하면 커밋으로 다시 그림
+- 표·글이 많은 쪽의 가독성을 한 번 더 보강하고 요약 그림 11장을 더함 (`41bad3d`)
+  - 긴 표를 묶음별 소제목으로 나누고, 처음에 몰라도 되는 참고 표는 접기로 정리
+  - 맨글이 이어지는 절을 목록, 소제목, 알림 상자로 나눔
+  - 튜토리얼 참고 쪽, 샘플 과정, Nextflix·Claudle 과정, handbook 참고·스킬·개념 쪽 정리
+  - 마스코트가 든 요약 그림 11장 추가(비용, 에이전트 다루기, 배포 네 단계, 시간 줄이기, 배포 여섯 단계, 샘플 장 지도, 준비물, 에이전트 고르기, 기술 구성, 케이스 고르기, 팩 쓰는 법)
+- handbook·튜토리얼 가독성 보강(강조 상자, 요약 그림, 그래프) (`659ca45`)
+  - 쪽마다 핵심은 중요(IMPORTANT), 함정은 주의(WARNING), 요령은 도움말(TIP) 상자로 옮기고 절마다 핵심 문장만 굵게 함
+  - 긴 문단을 목록·표·접기로 나누고 흐름 띠, 성공 상자, 파일 트리, Mermaid 도식을 필요한 쪽에 더함
+  - 마스코트를 넣은 요약 그림 11장(gpt-image)과 설명 그림 3장(SVG), 화면만 시작 위치 그림을 문서에 배치
+  - 검증 결과 쪽에 스킬 있을 때와 없을 때 막대그래프(skill-effect-chart 묶음) 추가
+  - 라운드 예시의 대조표를 코드 블록 대신 표로 보이고, "브리프"를 "화면 설계"로 바꿈(용어집에는 괄호로 남김)
+- 서비스 빠른 시작의 작업 폴더 프롬프트를 요청 예시 뒤로 옮김 (`dd7304f`)
+  - 사이트 소개 쪽이 이 쪽의 첫 프롬프트를 서비스 시작 예시로 읽으므로, pro-kit을 받지 않았을 때의 프롬프트를 요청하기 아래 절로 옮겼다
+- 초보자가 프로킷 전체를 이해하고 쓰도록 handbook·튜토리얼 보강 (`03ad05f`)
+  - 새 쪽 7개: 처음 한 시간, 요청하고 이어 가는 법, 프리셋 팩으로 시작하기, 라운드 한 번 따라가 보기, 고쳐도 되는 파일, .dev-cycle.json 설정 읽기, 처음 배포하기
+  - 쪽마다 왜 필요한가, 무엇인가, 어떻게 하나(보낼 말, 화면 예시, 다음 행동), 막히면 순서로 정리하고 기술 상세는 자세히 절로 내림
+  - 프로킷이란에 취지와 읽는 순서, 빠른 시작에 0단계와 에이전트가 물어보는 것 표, 도입 쪽에 안전 약속과 동의·점검 표를 더함
+  - 핵심 개념에 읽는 순서, 하네스 비유와 보장 목록, 확인 요청에 답하는 법, 진행 계획 화면 예시, 에이전트 역할 도식, 위임·자원 쉬운 요약을 더함
+  - 두뇌 모르겠으면 기본값과 질문 예시, mattpocock 추가 스킬 14개 표, 두뇌 준비물·전역 설치 표, status 스킬 업데이트 알림, 스킬별 요청 예시와 참고 자료 표를 더함
+  - 설치 유형별 범위 표, 일반 업데이트 3줄, 디자인 바꾸는 요청 예시, 배포 상황 고르기, 직접 칠 명령 표, FAQ 멈추는 법을 더함
+  - 용어집 20여 개 용어, 문제 해결 멈췄을 때 표, 처음 열면 나오는 질문, 과정별 배우는 프로킷 기능 표, 폴더 트리 licenses·briefs·evidence를 더함
+  - 두 번의 소스 대조로 audit 거절 범위, projectType 기록, 재지시 상한, push 조건, 팩 복원 출력 같은 문장을 바로잡음
+- v0.3.0 기준으로 handbook·튜토리얼·루트 문서 1차 보완 (`1d91ae9`)
+  - 프로킷이란에 시작하는 네 가지 방법, 요청이 배포까지 가는 길, 설치 파일 트리와 도식을 더함
+  - 설치 명령의 --brain·--simplicity, 도입 조건(Better-T-Stack·Postgres·Drizzle), tmux 준비물, 운영 중 프로젝트 템플릿 고르기를 고침
+  - commands·cases·audit 쪽에 --plan/--task/--no-task 제한, sig= 거절, --adopt 경로 규칙, [design] 행, 판정·Task 게이트 도식을 더함
+  - update-existing에 v0.3.0 이전 프로젝트가 옮길 것을 정리하고 AGENTS.md 갱신 반영 절차에 같은 항목을 더함
+  - --adopt 프로젝트의 릴리스·배포 스크립트 없음, 두뇌 전역 도구(OpenSpec CLI), 분석 에이전트 읽기 전용 설명을 맞춤
+  - 튜토리얼에 길 고르기·준비 순서·기능 장 흐름 도식, 3001 포트 문제 해결, vitest 도입 순서를 반영
+  - 범위 물결표(\~), VERIFICATION 엠대시와 머리말, CONTRIBUTING 스크립트 목록, 제3자 안내의 OpenSpec·Spec Kit 설명을 정리
