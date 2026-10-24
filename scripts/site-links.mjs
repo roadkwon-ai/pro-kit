@@ -4,8 +4,10 @@
 // 사용법: node scripts/site-links.mjs set <키> <새 주소> (AI 서버: aiService)
 //   그 주소 아래 경로인 다른 키(pages = home/pro-kit)도 함께 바뀐다.
 //   https 주소, 스킴 없는 주소, GitHub이면 owner/name 꼴까지 바꾼다. 이름이 이어지는 주소(pro-kit → pro-kit-packs)와 release/ 옛 노트는 그대로 둔다.
-//   두 템플릿의 PROKIT_LINKS도 같은 값으로 바뀐다. 바꾼 뒤 복사할 곳(저장소 밖이라 이 명령이 바꾸지 않는다):
-//   프리셋 작업공간의 prokit-credit.tsx(AGENTS.md 템플릿 수정 규칙), ../pro-kit-web(홈페이지 원본, apps/web/src/lib/site.ts).
+//   두 템플릿의 PROKIT_LINKS도 같은 값으로 바뀐다. 바꾼 뒤 저장소 밖에서 할 일(이 명령이 바꾸지 않는다):
+//   프리셋 작업공간의 prokit-credit.tsx에 복사한다(AGENTS.md 템플릿 수정 규칙). ../pro-kit-web은 `pnpm tutorials:sync`로
+//   이 파일의 사본(apps/web/content/site-links.json)을 받는다. 도메인을 바꿀 때는 web의 `pnpm domain <주소> --apply`가
+//   이 명령과 doc-values.mjs까지 실행한다. 그 뒤 pro-kit에 생긴 변경은 이 저장소에서 검사하고 커밋한다.
 //   문서의 값 표시는 이어서 node scripts/doc-values.mjs로 채운다.
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
