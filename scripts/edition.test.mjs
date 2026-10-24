@@ -110,6 +110,9 @@ test("표시 짝 검사: 닫히지 않은 구간, 짝 없는 닫는 표시, 한 
   // 줄(목록 항목, 인용 안 포함) 맨 앞의 표시 뒤에 글을 이으면 GitHub과 홈페이지가 그 줄을 HTML로 본다
   assert.deepEqual(markerErrors(`- ${P}Pro 문장. ${E}뒤 문장.\n> ${P}Pro${E} 뒤\n${P}Pro${E}\n- <!-- edition:ui 판 글 --> 뒤`), [1, 2, 3, 4]);
   assert.deepEqual(markerErrors(`- 앞 문장.${P} Pro 문장.${E}\n- <!-- edition:ui 판 글 -->\n> 앞${P} Pro${E}`), []);
+  // 혼자 선 표시 줄이 HTML 줄(<details> 등)에 붙으면 marked가 둘을 한 HTML 블록으로 읽어 홈페이지가 </details>를 찾지 못한다
+  assert.deepEqual(markerErrors(`${P}\n<details>\n<summary>a</summary>\n\nb\n\n</details>\n${E}`), [1, 8]);
+  assert.deepEqual(markerErrors(`${P}\n\n<details>\n<summary>a</summary>\n\nb\n\n</details>\n\n${E}`), []);
   // 표 머리 행이나 구분 행의 표시는 칸 수를 어긋나게 하고, 구분 행의 주석은 Pro 쪽 표를 표가 아니게 만든다
   assert.deepEqual(markerErrors(`| a |${P} b |${E}\n|---|${P}---|${E}\n| 1 | 2 |`), [1, 2]);
   assert.deepEqual(markerErrors(`| a | b${P} (Pro)${E} |\n|---|---|\n| 1 | 2 | ${P}\n| 3 |${P} 4${E} |`), []);

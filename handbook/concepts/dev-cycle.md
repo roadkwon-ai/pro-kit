@@ -127,12 +127,14 @@ flowchart LR
 > Vercel 프로젝트의 Git 연결이 push마다 배포를 만드는 경우(`Git 자동 배포`)에는 push가 곧 운영 배포라서 커밋만 하고 push하지 않아요. 연결을 끊거나 이 기기에서 확인할 수 있게 한 뒤 push하라고 안내해요.
 
 <!-- edition:pro -->
+
 <details>
 <summary>기존 프로젝트에 도입한 프로젝트의 마무리</summary>
 
 [기존 프로젝트에 도입한](../start/adopt.md) 프로젝트(하네스만 설치한 `adopt`)는 배포 스크립트가 없어서 배포 확인과 릴리스를 하지 않아요. 묻지 않고 커밋까지 하고, 대조표에 `배포 PASS: adopt(기존 배포 절차)`를 적어요. 배포는 그 프로젝트의 기존 절차를 따르고, push는 요청할 때만 해요. 운영 중인 Better-T-Stack 프로젝트(`operating`)도 기본 브랜치 push가 기존 CI·배포를 부를 수 있어서, 배포 방법을 `prokit-deploy`에 맞췄다고 `docs/adr/`에 기록하기 전까지는 같게 해요(`배포 PASS: 운영 중(기존 배포 절차)`).
 
 </details>
+
 <!-- /edition -->
 
 라운드를 마무리하는 단계가 아니면 커밋, push, 릴리스, 배포는 사용자가 요청할 때만 해요.
