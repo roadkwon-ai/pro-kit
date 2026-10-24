@@ -7,6 +7,8 @@
 - 체크, 상태 바꾸기, 추가 같은 동작은 화면 상태나 브라우저 저장소(`localStorage`)로 흉내 내서 버튼이 실제로 반응하게 한다.
 - 서버나 DB를 부르는 Better-T-Stack 기본 부품을 화면에 쓰지 않는다: 헤더의 사용자 메뉴(`components/user-menu.tsx`)와 `/dashboard` 링크, 로그인·가입 폼의 `authClient`, `orpc` 호출. 첫 화면을 만들 때 Better-T-Stack 기본 헤더와 로그인 화면을 제품 화면으로 바꾼다. `/dashboard`와 `/api` 파일은 지우지 않아도 된다(내보내기가 뺀다).
 - `.dev-cycle.json`의 `authPaths` 파일(`auth-client.ts`, `services.ts`, `env.server.ts`, `packages/auth/` 등)은 고치지 않는다. 실제 서비스로 바꿀 때 그대로 쓴다.
+- 쓰거나 바꾸는 Next API(`page`/`layout`, `Link`, `params`, `generateStaticParams`, `loading`/`error` 파일, `next/image` 등)는 `apps/web/node_modules/next/dist/docs/`에서 문서를 찾아 먼저 읽는다. 에이전트가 아는 Next와 설치된 판이 다를 수 있다. 읽은 문서 경로는 대조표 증거에 적는다.
+- Server Component가 기본이다. `"use client"`는 상태, 이벤트, 브라우저 API(`localStorage` 등)가 필요한 가장 작은 컴포넌트에만 붙인다.
 - HTML로 내보낼 수 있게 짓는다.
   - 동적 경로(`[slug]`)는 `generateStaticParams`로 값을 모두 낸다.
   - 쿼리 값(`?tab=`)은 클라이언트 컴포넌트에서 `useSearchParams`로 읽고 `<Suspense>`로 감싼다.

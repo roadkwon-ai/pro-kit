@@ -26,6 +26,7 @@
 - **버튼이 실제로 반응해요**: 체크, 상태 바꾸기, 추가 같은 동작은 화면 상태나 브라우저 저장소(`localStorage`)로 흉내 내요.
 - **서버를 부르는 부품은 빼요**: 헤더의 사용자 메뉴와 `/dashboard` 링크, 로그인·가입 폼의 `authClient`, `orpc` 호출은 화면에 쓰지 않아요. 첫 화면을 만들 때 Better-T-Stack 기본 헤더와 로그인 화면을 제품 화면으로 바꿔요.
 - **인증 파일은 그대로 둬요**: `auth-client.ts`, `packages/auth/` 같은 인증 경로 파일은 고치지 않아요. 실제 서비스로 바꿀 때 그대로 써요.
+- **설치된 Next 판을 따라요**: Next 기능을 쓰기 전에 프로젝트에 설치된 판의 문서(`apps/web/node_modules/next/dist/docs/`)를 먼저 읽어요. 에이전트가 아는 Next와 판이 다를 수 있어서예요. 컴포넌트는 Server Component가 기본이고, `"use client"`는 상태나 이벤트가 필요한 가장 작은 부분에만 붙여요.
 - **HTML로 내보낼 수 있게 지어요**: 동적 경로는 `generateStaticParams`로 값을 모두 내고, 쿼리 값은 클라이언트 컴포넌트에서 읽어요. `headers`, `cookies`, `redirect`, route handler, server action은 쓰지 않아요. 이미지는 `apps/web/public/` 아래에 두고 `next/image`로 불러요.
 - **제작 표시는 선택 사항이에요**: 출처를 알리고 싶으면 사이트 푸터에 `<ProkitCredit />`를 넣어요. 프로킷 심볼과 홈페이지·GitHub 링크를 제공해요. 템플릿이 `apps/web/src/components/prokit-credit.tsx`를 설치해 둬요. 표시 여부·문구·배치는 조정할 수 있어요. MIT의 저작권·허가문 보존 조건은 이 홍보 표시와 별개예요.
 - **모드와 언어도 화면 기능이에요**: 프리셋처럼 만들 때는 시스템·라이트·다크와 한국어·영어 전환을 넣어요. 문구는 같은 키의 두 사전에 두고, 전환 뒤 현재 페이지·입력 상태가 남아야 해요. 실전 서비스의 요구가 다르면 그 요구를 따라요.
