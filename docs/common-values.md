@@ -389,7 +389,6 @@
 | `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
 | `prokit.skills.count.ko` | 열 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `prokit.agents.count` | 4 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |
-| `prokit.agents.count.ko` | 네 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수의 한글 수 관형사 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `devCycle.cases.count` | 7 | dev-cycle 케이스 수 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.count.ko` | 일곱 | dev-cycle 케이스 수의 한글 수 관형사 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.list` | A, B, C, D, E, F, H | dev-cycle 케이스 목록 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
@@ -410,7 +409,6 @@
 | `optional.names` | ops, motion, mobile, i-have-adhd, taste | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `optional.namesCode` | `ops`, `motion`, `mobile`, `i-have-adhd`, `taste` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
 | `optional.count` | 5 | 선택 스킬 묶음 수 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `optional.count.ko` | 다섯 | 선택 스킬 묶음 수의 한글 수 관형사 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.ops.skillsCode.neon` | `vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | neon 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.count.neon` | 4 | neon 템플릿 ops 묶음의 스킬 수 | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.skillsCode.supabase` | `vercel-optimize` | supabase 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-supabase/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 2 |

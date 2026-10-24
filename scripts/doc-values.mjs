@@ -452,7 +452,6 @@ export function loadValues(root = ROOT) {
   same("prokit.skills.count", (t) => readdirSync(tpl(t, "files", ".agents", "skills")).filter((n) => n.startsWith("prokit-")).length, "templates/*/files/.agents/skills/prokit-* 수", "프로젝트 스킬(prokit-*) 수");
   add("prokit.skills.count.ko", ko(vals.get("prokit.skills.count").value), "templates/*/files/.agents/skills/prokit-* 수", "프로젝트 스킬 수의 한글 수 관형사");
   same("prokit.agents.count", (t) => readdirSync(tpl(t, "files", ".claude", "agents")).filter((n) => n.endsWith(".md")).length, "templates/*/files/.claude/agents/*.md 수", "구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수");
-  add("prokit.agents.count.ko", ko(vals.get("prokit.agents.count").value), "templates/*/files/.claude/agents/*.md 수", "구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수의 한글 수 관형사");
   const cases = (t) => JSON.parse(readFileSync(tpl(t, "files", "scripts", "dev-cycle.mjs"), "utf8").match(/export const CASES = (\[[^\]]*\])/)[1]);
   same("devCycle.cases.count", (t) => cases(t).length, "templates/*/files/scripts/dev-cycle.mjs CASES", "dev-cycle 케이스 수");
   add("devCycle.cases.count.ko", ko(vals.get("devCycle.cases.count").value), "templates/*/files/scripts/dev-cycle.mjs CASES", "dev-cycle 케이스 수의 한글 수 관형사");
@@ -501,7 +500,6 @@ export function loadValues(root = ROOT) {
   same("optional.names", (t) => Object.keys(optional(t)).join(", "), "templates/*/files/skills.manifest.json optional", "선택 스킬 묶음 이름");
   same("optional.namesCode", (t) => code(Object.keys(optional(t))), "templates/*/files/skills.manifest.json optional", "선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱)");
   same("optional.count", (t) => Object.keys(optional(t)).length, "templates/*/files/skills.manifest.json optional", "선택 스킬 묶음 수");
-  add("optional.count.ko", ko(vals.get("optional.count").value), "templates/*/files/skills.manifest.json optional", "선택 스킬 묶음 수의 한글 수 관형사");
   for (const b of Object.keys(optional("neon"))) {
     for (const t of T) {
       add(`optional.${b}.skillsCode.${t}`, code(bundleSkills(t, b)), `templates/prokit-next-${t}/files/skills.manifest.json optional.${b}`, `${t} 템플릿 ${b} 묶음의 스킬(스킬마다 백틱)`);
