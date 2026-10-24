@@ -64,6 +64,18 @@ test("set pages·packs: 프리셋 경로와 owner/name 꼴까지 바꾸고, 이�
   });
 });
 
+test("set home: 홈페이지 아래 경로인 키(pages = home/pro-kit)도 함께 바꾼다", () => {
+  const dir = mkdtempSync(join(tmpdir(), "site-links-"));
+  execFileSync("git", ["init", "-q"], { cwd: dir });
+  const links = { home: "https://prokit-web.vercel.app", pages: "https://prokit-web.vercel.app/pro-kit", repo: "https://github.com/a/pro-kit" };
+  writeFileSync(join(dir, "site-links.json"), `${JSON.stringify(links, null, 2)}\n`);
+  writeFileSync(join(dir, "doc.md"), "https://prokit-web.vercel.app/pro-kit/goru/\n");
+  execFileSync("git", ["add", "."], { cwd: dir });
+  execFileSync(process.execPath, [SCRIPT, "set", "home", "https://prokit.dev"], { cwd: dir, encoding: "utf8" });
+  assert.equal(readFileSync(join(dir, "doc.md"), "utf8"), "https://prokit.dev/pro-kit/goru/\n");
+  assert.deepEqual(JSON.parse(readFileSync(join(dir, "site-links.json"), "utf8")), { ...links, home: "https://prokit.dev", pages: "https://prokit.dev/pro-kit" });
+});
+
 // 공개 주소가 site-links.json에서 벗어나지 않게 막는다. 옛 계정 이름은 이 파일이 검사에 걸리지 않게 나눠 쓴다.
 const ROOT = join(import.meta.dirname, "..");
 const OLD = ["roadkwon", "ai"].join("");
