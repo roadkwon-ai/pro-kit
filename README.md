@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://prokit-web.vercel.app/"><strong>프로킷 사이트 보기 →</strong></a><br>
-  <sub>이 키트로 만든 사이트 <!-- v:presets.count -->13<!-- /v -->개를 모든 페이지까지 열어 볼 수 있습니다.</sub>
+  <sub>이 키트로 만든 사이트 <!-- v:presets.count -->15<!-- /v -->개를 모든 페이지까지 열어 볼 수 있습니다.</sub>
 </p>
 
 <p align="center">
@@ -146,7 +146,7 @@ claude
 </tr>
 </table>
 
-전체 <!-- v:presets.count -->13<!-- /v -->개(화면 <!-- v:presets.screen.count -->11<!-- /v -->개, 클론 <!-- v:presets.clone.count -->2<!-- /v -->개)는 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 보고, 화면은 [컨셉으로 화면 만들기 목록](tutorials/samples/README.md), 클론은 [튜토리얼](tutorials/README.md)에서 만들어 봅니다.
+전체 <!-- v:presets.count -->15<!-- /v -->개(화면 <!-- v:presets.screen.count -->13<!-- /v -->개, 클론 <!-- v:presets.clone.count -->2<!-- /v -->개)는 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 보고, 화면은 [컨셉으로 화면 만들기 목록](tutorials/samples/README.md), 클론은 [튜토리얼](tutorials/README.md)에서 만들어 봅니다.
 
 ## 얼마나 걸리고 얼마 드나요
 <!-- v:limit.pro5h.plans -->Claude Pro · ChatGPT Plus(Codex)<!-- /v --> 같은 구독 요금제로 만들 수 있습니다. 사용량이 <!-- v:limit.window -->5시간<!-- /v --> 한도에 걸리면 안내된 시간이 지난 뒤 "하던 작업 이어서 해줘"로 이어 갑니다. 위 예시를 만드는 데 걸리는 시간은 이렇습니다.

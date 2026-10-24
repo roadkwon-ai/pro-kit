@@ -1,0 +1,6 @@
+{
+	"prompt": "Derived raster: pliko ed19414 Korean light home-d capture (DPR 1, Playwright Chromium headless shell, static export /pro-kit/pliko 127.0.0.1:8191) re-encoded with cwebp -q 82.",
+	"source": "pliko ed19414 subpath static export capture",
+	"sourceSha256": "af21b5e2afae40b3516d0c43cab70be628fda54832b81110449eefeb1afe7baa",
+	"captureRevision": "718aafd3b77b4f9402c1c43dbf9ecd67c5b912eedb0072d5e182598db7d8b6bf"
+}

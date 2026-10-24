@@ -1,4 +1,4 @@
 <!-- 정책 기반 재현 예상의 범위. 실측 및 실제 청구와 구분한다. -->
-시간은 공통 단계별 계획의 합이고, 토큰은 같은 정책의 기준 단위에서 환산한 예상값이에요. 검사 예상은 이 프리셋의 화면 범위를 기준으로 정했어요. [예상 계산 근거](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/2026-10-13-preset-measurements.json)를 확인해요.
+시간은 공통 단계별 계획의 합이고, 토큰은 같은 정책의 기준 단위에서 환산한 예상값이에요. 검사 예상은 이 프리셋의 화면 범위를 기준으로 정했어요. [예상 계산 근거](https://github.com/roadkwon-ai/pro-kit/blob/main/docs/reports/{{report|2026-10-13-preset-measurements.json}})를 확인해요.
 
 실제 제작 기록이나 현재 제공자의 청구 요금을 뜻하지 않으며, API·DB·실결제 개발은 포함하지 않았어요. 고쳐 달라는 횟수와 사용하는 모델에 따라 늘어날 수 있어요. [시간과 비용 읽는 법](../reference/costs-and-keys.md#시간과-비용-읽는-법)을 참고해요.

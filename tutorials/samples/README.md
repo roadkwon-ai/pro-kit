@@ -9,7 +9,7 @@
 
 ## 프리셋으로 만들어 보기
 
-[프로킷 사이트](https://prokit-web.vercel.app/)의 화면 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->6<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개)도 이 튜토리얼과 같은 흐름으로 만들었어요. **만들어 보고 싶은 프리셋을 고르고, 프리셋 쪽의 프롬프트 셋 중 하나를 보내세요.**
+[프로킷 사이트](https://prokit-web.vercel.app/)의 화면 프리셋 <!-- v:presets.screen.count -->13<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->8<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개)도 이 튜토리얼과 같은 흐름으로 만들었어요. **만들어 보고 싶은 프리셋을 고르고, 프리셋 쪽의 프롬프트 셋 중 하나를 보내세요.**
 
 - **프리셋 팩으로 만들어 보기**: 팩에 든 화면 구성, 디자인, 그림으로 프리셋과 같은 서비스를 만들어 봐요. AI가 만들기 때문에 100% 똑같지는 않을 수 있어요. 이름만 바꿀 수도 있어요.
 - **프리셋 팩으로 나만의 서비스 만들기**: 프리셋 팩을 바탕으로 이름, 색, 페이지, 주제를 바꿔요.
@@ -19,10 +19,12 @@
 |---|---|---|---|
 | [<!-- v:preset.slidelab.title -->슬라이드랩<!-- /v -->](slidelab.md) | <!-- v:preset.slidelab.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.slidelab.summary -->과정과 교육 시간을 고르는 AI·PPT 교육 랜딩<!-- /v --> | <!-- v:preset.slidelab.pages -->1<!-- /v --> |
 | [<!-- v:preset.speaker-portfolio.title -->스피커 포트폴리오<!-- /v -->](speaker-portfolio.md) | <!-- v:preset.speaker-portfolio.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.speaker-portfolio.summary -->활동과 콘텐츠를 소개하는 개인 브랜딩 포트폴리오<!-- /v --> | <!-- v:preset.speaker-portfolio.pages -->6<!-- /v --> |
+| [<!-- v:preset.pliko.title -->pliko<!-- /v -->](pliko.md) | <!-- v:preset.pliko.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.pliko.summary -->팀 이야기·기술 글·행사 소식을 한곳에 모은 제품 팀 블로그<!-- /v --> | <!-- v:preset.pliko.pages -->6<!-- /v --> |
 | [<!-- v:preset.goru.title -->고루<!-- /v -->](goru.md) | <!-- v:preset.goru.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.goru.summary -->같이 사는 사람들의 생활비 정산<!-- /v --> | <!-- v:preset.goru.pages -->7<!-- /v --> |
 | [<!-- v:preset.ullim.title -->울림<!-- /v -->](ullim.md) | <!-- v:preset.ullim.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.ullim.summary -->대본을 한국어 내레이션으로 만드는 AI 스튜디오<!-- /v --> | <!-- v:preset.ullim.pages -->11<!-- /v --> |
 | [<!-- v:preset.studyday.title -->하루공부<!-- /v -->](studyday.md) | <!-- v:preset.studyday.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.studyday.summary -->시험 날짜까지 하루 공부 나누기와 공부 기록<!-- /v --> | <!-- v:preset.studyday.pages -->14<!-- /v --> |
 | [<!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->](afterglow.md) | <!-- v:preset.afterglow.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.afterglow.summary -->가정용 태양광 배터리 소개와 설치 상담<!-- /v --> | <!-- v:preset.afterglow.pages -->17<!-- /v --> |
+| [<!-- v:preset.marubuild.title -->마루빌드<!-- /v -->](marubuild.md) | <!-- v:preset.marubuild.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.marubuild.summary -->서비스와 제작 사례를 보여 주고 프로젝트 문의로 잇는 제작사 소개<!-- /v --> | <!-- v:preset.marubuild.pages -->19<!-- /v --> |
 | [<!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->](fitslot.md) | <!-- v:preset.fitslot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.fitslot.summary -->필라테스 수업 예약과 수강권 관리<!-- /v --> | <!-- v:preset.fitslot.pages -->20<!-- /v --> |
 | [<!-- v:preset.jecheol.title -->제철상자<!-- /v -->](jecheol.md) | <!-- v:preset.jecheol.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.jecheol.summary -->제철 농산물 정기배송<!-- /v --> | <!-- v:preset.jecheol.pages -->21<!-- /v --> |
 | [<!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->](pacecrew.md) | <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.pacecrew.summary -->동네 러닝 크루 매칭과 레이스 신청<!-- /v --> | <!-- v:preset.pacecrew.pages -->22<!-- /v --> |
@@ -38,10 +40,12 @@
 |---|---|
 | [<!-- v:preset.slidelab.title -->슬라이드랩<!-- /v -->](slidelab.md) | <!-- v:preset.slidelab.difficulty -->문의 서비스 연결 설계 필요<!-- /v --> |
 | [<!-- v:preset.speaker-portfolio.title -->스피커 포트폴리오<!-- /v -->](speaker-portfolio.md) | <!-- v:preset.speaker-portfolio.difficulty -->문의·결제 연동과 운영 정책 작성 필요<!-- /v --> |
+| [<!-- v:preset.pliko.title -->pliko<!-- /v -->](pliko.md) | <!-- v:preset.pliko.difficulty -->글 관리(CMS)와 구독 발송 연결, 사이트 주소 설정 필요<!-- /v --> |
 | [<!-- v:preset.goru.title -->고루<!-- /v -->](goru.md) | <!-- v:preset.goru.difficulty -->쉬움<!-- /v --> |
 | [<!-- v:preset.ullim.title -->울림<!-- /v -->](ullim.md) | <!-- v:preset.ullim.difficulty -->어려움<!-- /v --> |
 | [<!-- v:preset.studyday.title -->하루공부<!-- /v -->](studyday.md) | <!-- v:preset.studyday.difficulty -->가장 쉬움<!-- /v --> |
 | [<!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->](afterglow.md) | <!-- v:preset.afterglow.difficulty -->어려움<!-- /v --> |
+| [<!-- v:preset.marubuild.title -->마루빌드<!-- /v -->](marubuild.md) | <!-- v:preset.marubuild.difficulty -->문의 서비스 연결과 약관·사업자 정보 교체 필요<!-- /v --> |
 | [<!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->](fitslot.md) | <!-- v:preset.fitslot.difficulty -->보통<!-- /v --> |
 | [<!-- v:preset.jecheol.title -->제철상자<!-- /v -->](jecheol.md) | <!-- v:preset.jecheol.difficulty -->어려움<!-- /v --> |
 | [<!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->](pacecrew.md) | <!-- v:preset.pacecrew.difficulty -->어려움<!-- /v --> |
@@ -56,7 +60,7 @@
 
 공개 프리셋 쪽마다 프롬프트 세 가지를 모았어요. 팩으로 만들어 보기, 팩을 바탕으로 이름·색·페이지·주제를 바꿔 나만의 서비스 만들기, 팩 없이 그 컨셉으로 처음부터 만들기예요. 실제로 거친 과정<!-- edition:pro -->과 실제 서비스로 만들 때 필요한 것<!-- /edition -->도 함께 있어요.
 
-- <!-- v:presets.screen.count -->11<!-- /v -->개 모두 기획 문서를 미리 쓰고 결과를 보며 여러 번 다시 요청해서 만들었어요.
+- <!-- v:presets.screen.count -->13<!-- /v -->개 모두 기획 문서를 미리 쓰고 결과를 보며 여러 번 다시 요청해서 만들었어요.
 - 평가 기록이 있는 프리셋 쪽의 디자인 리뷰 점수는 화면이 쓰기 편한지 10가지 기준으로 매긴 40점 만점 점수예요([처음 보는 용어](../reference/glossary.md)).
 
 ### 라이트·다크와 두 언어
@@ -302,6 +306,6 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 
 - 2026-10-02에 썼어요. 올곧은 2026-10-08에 더했어요. 2026-10 기준 pro-kit에 맞췄어요.
 - 프리셋은 Claude Code(<!-- v:meta.presetModel -->Opus 5.5<!-- /v -->)로 만들었어요. 튜토리얼은 Claude Code와 Codex로 확인했어요([에이전트별 차이](../reference/claude-code-and-codex.md)). 고루는 첫 화면 리디자인에 <!-- v:preset.goru.actual.redesign.time -->56분<!-- /v --> 걸렸어요.
-- 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개를 만든 실제 요청 기록과 pro-kit의 절차(프로젝트 생성 절차, 화면을 만드는 `prokit-ui` 스킬)에 맞춰 썼어요. 튜토리얼의 프롬프트를 처음부터 끝까지 다시 실행해 확인하지는 않았어요.
+- 프리셋 <!-- v:presets.screen.count -->13<!-- /v -->개를 만든 실제 요청 기록과 pro-kit의 절차(프로젝트 생성 절차, 화면을 만드는 `prokit-ui` 스킬)에 맞춰 썼어요. 튜토리얼의 프롬프트를 처음부터 끝까지 다시 실행해 확인하지는 않았어요.
 - 같은 프롬프트라도 결과는 매번 달라요. 튜토리얼 그림과 내 화면이 달라도 정상이에요.
 - 프리셋의 인물과 사진은 AI로 만든 가상 이미지이고, 데이터는 모두 예시예요.

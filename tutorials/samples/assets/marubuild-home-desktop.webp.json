@@ -1,0 +1,6 @@
+{
+  "prompt": "Derived raster: marubuild revision F Korean light 1440x900 capture (DPR 1, Playwright Chromium, static export 127.0.0.1:4123) re-encoded with cwebp -q 82.",
+  "source": "marubuild revision F frozen static export capture",
+  "sourceSha256": "183f739a33bf02d140e012472c1af521b3366fa27838a51de1a7a2e8930fe6c1",
+  "captureRevision": "06a261bbd02034c8b005c2077c73f9276872128c661bcae5deb9d943030badf8"
+}

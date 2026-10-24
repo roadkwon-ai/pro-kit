@@ -1,0 +1,322 @@
+{
+	"schemaVersion": 1,
+	"method": "policy-stage-and-unit-v1",
+	"policyDate": "2026-10-05",
+	"modelBasis": "Opus 5.5",
+	"scope": "완성팩 재사용 및 처음부터 화면 제작의 정책 기반 예상. 실제 청구액·실측 토큰이 아님.",
+	"limitations": [
+		"선택한 11분/12분 검사 예상은 열아홉 페이지 및 여섯 페이지 범위에 대한 계획값",
+		"이미지 생성 토큰·캐시는 기존 공통 정책의 환산이며 실제 제공자 요금 아님",
+		"상용 API·DB·결제 연동 범위 제외"
+	],
+	"presets": {
+		"marubuild": {
+			"stages": {
+				"check": "11분"
+			},
+			"estimateStages": {
+				"pack": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"design": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"mockup": {
+						"time": "해당 없음",
+						"tokens": "0만",
+						"usd": "1달러 미만"
+					},
+					"images": {
+						"time": "1분",
+						"tokens": "2만",
+						"usd": "1달러 미만"
+					},
+					"first": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"rest": {
+						"time": "1시간 12분",
+						"tokens": "146.9만",
+						"usd": "27달러"
+					},
+					"check": {
+						"time": "11분",
+						"tokens": "22.4만",
+						"usd": "4달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				},
+				"scratch": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"design": {
+						"time": "8분",
+						"tokens": "16.3만",
+						"usd": "3달러"
+					},
+					"mockup": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"images": {
+						"time": "5분",
+						"tokens": "27.2만",
+						"usd": "5달러"
+					},
+					"first": {
+						"time": "15분",
+						"tokens": "30.6만",
+						"usd": "6달러"
+					},
+					"rest": {
+						"time": "1시간 30분",
+						"tokens": "183.6만",
+						"usd": "33달러"
+					},
+					"check": {
+						"time": "11분",
+						"tokens": "22.4만",
+						"usd": "4달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				}
+			},
+			"basis": {
+				"method": "policy-stage-and-unit-v1",
+				"policyDate": "2026-10-05",
+				"pages": 19,
+				"images": 10,
+				"checkMinutes": 11,
+				"unitMinutes": 12,
+				"unitUsd": 4.45,
+				"pack": {
+					"stages": {
+						"setup": 5,
+						"plan": 5,
+						"design": 5,
+						"mockup": 0,
+						"images": 1,
+						"first": 10,
+						"rest": 72,
+						"check": 11,
+						"export": 2
+					},
+					"totalMinutes": 111,
+					"modelUsd": 41.1625,
+					"generatedTokens": 0
+				},
+				"scratch": {
+					"stages": {
+						"setup": 5,
+						"plan": 10,
+						"design": 8,
+						"mockup": 10,
+						"images": 5,
+						"first": 15,
+						"rest": 90,
+						"check": 11,
+						"export": 2
+					},
+					"totalMinutes": 156,
+					"modelUsd": 57.85,
+					"generatedTokens": 170000
+				}
+			},
+			"pack": {
+				"time": "1시간 51분",
+				"tokens": "226.4만",
+				"cached": "11319.7만",
+				"usd": "41.16"
+			},
+			"scratch": {
+				"time": "2시간 36분",
+				"tokens": "335.2만",
+				"cached": "15925.8만",
+				"usd": "60.94"
+			}
+		},
+		"pliko": {
+			"stages": {
+				"check": "12분"
+			},
+			"estimateStages": {
+				"pack": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"design": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"mockup": {
+						"time": "해당 없음",
+						"tokens": "0만",
+						"usd": "1달러 미만"
+					},
+					"images": {
+						"time": "1분",
+						"tokens": "2만",
+						"usd": "1달러 미만"
+					},
+					"first": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"rest": {
+						"time": "20분",
+						"tokens": "40.8만",
+						"usd": "7달러"
+					},
+					"check": {
+						"time": "12분",
+						"tokens": "24.5만",
+						"usd": "4달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				},
+				"scratch": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"design": {
+						"time": "8분",
+						"tokens": "16.3만",
+						"usd": "3달러"
+					},
+					"mockup": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"images": {
+						"time": "8분",
+						"tokens": "43.5만",
+						"usd": "8달러"
+					},
+					"first": {
+						"time": "15분",
+						"tokens": "30.6만",
+						"usd": "6달러"
+					},
+					"rest": {
+						"time": "25분",
+						"tokens": "51만",
+						"usd": "9달러"
+					},
+					"check": {
+						"time": "12분",
+						"tokens": "24.5만",
+						"usd": "4달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				}
+			},
+			"basis": {
+				"method": "policy-stage-and-unit-v1",
+				"policyDate": "2026-10-05",
+				"pages": 6,
+				"images": 16,
+				"checkMinutes": 12,
+				"unitMinutes": 12,
+				"unitUsd": 4.45,
+				"pack": {
+					"stages": {
+						"setup": 5,
+						"plan": 5,
+						"design": 5,
+						"mockup": 0,
+						"images": 1,
+						"first": 10,
+						"rest": 20,
+						"check": 12,
+						"export": 2
+					},
+					"totalMinutes": 60,
+					"modelUsd": 22.25,
+					"generatedTokens": 0
+				},
+				"scratch": {
+					"stages": {
+						"setup": 5,
+						"plan": 10,
+						"design": 8,
+						"mockup": 10,
+						"images": 8,
+						"first": 15,
+						"rest": 25,
+						"check": 12,
+						"export": 2
+					},
+					"totalMinutes": 95,
+					"modelUsd": 35.22916666666667,
+					"generatedTokens": 272000
+				}
+			},
+			"pack": {
+				"time": "1시간",
+				"tokens": "122.4만",
+				"cached": "6118.8만",
+				"usd": "22.25"
+			},
+			"scratch": {
+				"time": "1시간 35분",
+				"tokens": "221만",
+				"cached": "9715.2만",
+				"usd": "40.17"
+			}
+		}
+	}
+}

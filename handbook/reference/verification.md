@@ -1,6 +1,6 @@
 # 검증 결과
 
-> 한눈에: 프로킷의 <!-- v:templates.count.ko -->두<!-- /v --> 템플릿은 **실제 프로젝트에 설치해 확인했어요.** 작은 기능 검사부터 실제 DB에서 처음부터 끝까지 해 본 작업, 스킬이 결과를 바꾸는지 잰 비교까지 기록이 남아 있어요. 화면 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개는 모든 페이지의 링크와 버튼을 눌러 확인했어요.
+> 한눈에: 프로킷의 <!-- v:templates.count.ko -->두<!-- /v --> 템플릿은 **실제 프로젝트에 설치해 확인했어요.** 작은 기능 검사부터 실제 DB에서 처음부터 끝까지 해 본 작업, 스킬이 결과를 바꾸는지 잰 비교까지 기록이 남아 있어요. 화면 프리셋 <!-- v:presets.screen.count -->13<!-- /v -->개는 링크와 버튼을 눌러 확인했어요.
 
 ## 무엇으로 검증했나요
 
@@ -109,19 +109,19 @@ Codex와 Antigravity 시험에서 찾아 고친 것은 이래요.
 
 ### 화면 프리셋
 
-화면 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->6<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개)의 화면을 확인했어요. 슬라이드랩과 스피커 포트폴리오의 전체 제작 시간·비용·critique 점수는 미측정이에요. 아래 추천·comp·비용 기록은 두 프리셋을 제외한 기존 프리셋의 기록이에요. 자세한 범위는 [슬라이드랩 제작 기록](../../tutorials/samples/slidelab.md#시간과-비용)과 [스피커 포트폴리오 제작 기록](../../tutorials/samples/speaker-portfolio.md#시간과-비용)을 확인하세요. 클론 코딩 프리셋 <!-- v:presets.clone.count -->2<!-- /v -->개는 이 측정 밖이에요.
+화면 프리셋 <!-- v:presets.screen.count -->13<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->8<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개)의 화면을 확인했어요. 슬라이드랩과 스피커 포트폴리오의 전체 제작 시간·비용·critique 점수는 미측정이에요. 마루빌드와 pliko는 전체 제작 시간·비용을 재지 않았고, critique 점수는 마지막 수정본이 아니라 그 앞 판의 점수예요. 아래 추천·comp·비용 기록은 이 네 프리셋을 제외한 기존 프리셋의 기록이에요. 자세한 범위는 [슬라이드랩 제작 기록](../../tutorials/samples/slidelab.md#시간과-비용), [스피커 포트폴리오 제작 기록](../../tutorials/samples/speaker-portfolio.md#시간과-비용), [마루빌드 제작 기록](../../tutorials/samples/marubuild.md#시간과-비용), [pliko 제작 기록](../../tutorials/samples/pliko.md#시간과-비용)을 확인하세요. 클론 코딩 프리셋 <!-- v:presets.clone.count -->2<!-- /v -->개는 이 측정 밖이에요.
 
 | 항목 | 결과 |
 |---|---|
-| 페이지 | 프리셋당 <!-- v:presets.screen.pages.range -->1\~22<!-- /v -->개, 올곧 프리셋은 <!-- v:preset.olgot.pages -->203<!-- /v -->개(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종), 모두 <!-- v:presets.screen.pages -->344<!-- /v -->개. 링크와 버튼은 모두 실제 페이지나 동작으로 이어지고, 404나 "준비 중" 페이지는 없어요 |
-| 확인 | GitHub Pages와 같은 하위 경로로 정적 HTML을 띄우고 모든 페이지의 링크와 버튼을 눌렀어요. 404 0, 콘솔 오류 0, 반응 없는 버튼 0 |
-| critique (40점 만점) | <!-- v:presets.design.critique.list -->제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 스피커 포트폴리오 29, 핏슬롯 28, Uptrail 28, 슬라이드랩 28<!-- /v -->. P0·P1은 모두 고쳤어요 |
+| 페이지 | 프리셋당 <!-- v:presets.screen.pages.range -->1\~22<!-- /v -->개, 올곧 프리셋은 <!-- v:preset.olgot.pages -->203<!-- /v -->개(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종), 모두 <!-- v:presets.screen.pages -->369<!-- /v -->개. 링크와 버튼은 모두 실제 페이지나 동작으로 이어지고, 404나 "준비 중" 페이지는 없어요 |
+| 확인 | 공개 주소와 같은 하위 경로로 정적 HTML을 띄우고 페이지의 링크와 버튼을 눌렀어요. 404, 콘솔 오류, 반응 없는 버튼 모두 0이에요. 마루빌드는 처음 공개 때 쇼룸 데모 쪽에서 나온 2건(아이콘 링크가 없어 `/favicon.ico` 자동 요청이 404, "그룹 30회권" 카드가 선택 상태를 보조기기에 알리지 않음)을 고친 뒤 다시 쟀어요 |
+| critique (40점 만점) | <!-- v:presets.design.critique.list -->제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 스피커 포트폴리오 29, 핏슬롯 28, Uptrail 28, 슬라이드랩 28, 마루빌드 28, pliko 27<!-- /v -->. 마루빌드와 pliko를 뺀 프리셋은 P0·P1을 모두 고쳤어요 |
 | 추천 | 1위는 <!-- v:presets.design.first.summary -->Refero Styles 6개, awesome-design-md 2개<!-- /v -->예요. 이전 판과 같은 계열(토스, Sequel 등)은 에이전트가 먼저 후보에서 뺐어요. 올곧 프리셋은 추천 없이 입시학원 사이트 한 곳을 실측해 만든 `DESIGN.md`를 썼어요 |
 | comp | gpt-image-2.5-flare로 그렸어요. 첫 화면은 방향 comp 3장 중에서 골랐고, 나머지 페이지는 고른 comp를 참고로 페이지마다 한 장씩 그렸어요. 올곧 프리셋은 첫 화면 comp 3장만 ChatGPT로 로그인한 Codex(`gpt-image` 스킬)로 그렸어요 |
-| 시각 자산 | 서체는 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개 모두 파일로 받아 프로젝트에 직접 넣었어요(자체 호스팅: Pretendard, Wanted Sans, SUIT, JetBrains Mono, Black Han Sans, Hahmlet, Paperlogy, Outfit, Noto Sans KR). 사진과 일러스트는 AI로 만들었고, 아이콘은 lucide예요. 사람이 나오는 사진은 원본 크기로 팔다리와 손을 확인해 이상한 사진을 다시 만들었어요. 모션은 모두 reduced-motion(움직임 줄이기) 설정에서 꺼져요 |
+| 시각 자산 | 서체는 프리셋 <!-- v:presets.screen.count -->13<!-- /v -->개 모두 파일로 받아 프로젝트에 직접 넣었어요(자체 호스팅: Pretendard, Wanted Sans, SUIT, JetBrains Mono, Black Han Sans, Hahmlet, Paperlogy, Outfit, Noto Sans KR). 사진과 일러스트는 AI로 만들었고, 아이콘은 lucide예요. 사람이 나오는 사진은 원본 크기로 팔다리와 손을 확인해 이상한 사진을 다시 만들었어요. 모션은 마루빌드를 뺀 프리셋 모두 reduced-motion(움직임 줄이기) 설정에서 꺼져요. 마루빌드의 움직임 줄이기는 확인하지 않았어요 |
 | 비용 (추천부터 모든 페이지 확인까지) | 에이전트 비용은 프리셋당 $68\~$181, 모두 약 $1,090예요(중간에 작업공간을 기록으로 되살린 세션 포함). OpenAI 이미지 비용은 따로 청구돼요 |
 
-클론 코딩까지 프리셋 <!-- v:presets.count -->13<!-- /v -->개는 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지를 열어 볼 수 있어요.
+클론 코딩까지 프리셋 <!-- v:presets.count -->15<!-- /v -->개는 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지를 열어 볼 수 있어요.
 
 ### 측정 보고서
 

@@ -545,5 +545,9 @@ export const CASES = [
     [`tutorials/samples/${name}.md`, "preset-estimate-method", {}],
     [`tutorials/samples/${name}.md`, "preset-estimate-stages", { name }],
   ]),
+  ...["marubuild", "pliko"].flatMap((name) => [
+    [`tutorials/samples/${name}.md`, "preset-estimate-method", { report: "2026-10-24-preset-measurements.json" }],
+    [`tutorials/samples/${name}.md`, "preset-estimate-stages", { name }],
+  ]),
   ...TPL.flatMap((t, i) => TPL_README.map(([b, ...args]) => [`templates/${t}/README.md`, `tpl-readme-${b}`, args[i]])),
 ];

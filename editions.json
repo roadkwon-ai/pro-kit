@@ -25,7 +25,8 @@
 			"docs/assets/design-samples/goru.webp",
 			"docs/assets/design-samples/olgot.webp",
 			"docs/assets/landing-samples/pacecrew.webp",
-			"docs/reports/2026-10-13-preset-measurements.json"
+			"docs/reports/2026-10-13-preset-measurements.json",
+			"docs/reports/2026-10-24-preset-measurements.json"
 		],
 		"exclude": [
 			".agents/skills/prokit-init/references/existing-project.md",

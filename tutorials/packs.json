@@ -78,5 +78,19 @@
     "sha256": "384fffbdce82abba894aefeef5f0ea548398709da65954896ac2e2aa436eb8d7",
     "bytes": 11731864,
     "published": true
+  },
+  "marubuild": {
+    "release": "pack-marubuild",
+    "url": "https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/download/pack-marubuild/marubuild-pack.zip",
+    "sha256": "90dc12d02d37e1f88bd9598a45b7ba20d64cade7dea9a4f3f440e04452d41760",
+    "bytes": 23877359,
+    "published": true
+  },
+  "pliko": {
+    "release": "pack-pliko",
+    "url": "https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/download/pack-pliko/pliko-pack.zip",
+    "sha256": "93065420c2e119d4410a82655fae11ff57c5b0c9f01841d4837d1be24e21ecab",
+    "bytes": 13817430,
+    "published": true
   }
 }
