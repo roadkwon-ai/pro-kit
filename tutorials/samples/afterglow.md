@@ -46,7 +46,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 <summary>막히면</summary>
 
 <!-- b:trouble-pack name=afterglow -->
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/afterglow에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs afterglow 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/afterglow에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs afterglow 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 <!-- /b -->
 
 </details>
@@ -187,6 +187,7 @@ AFTERGLOW는 한 번에 나오지 않았어요. 결과를 보고 몇 번 다시 
 
 ![AFTERGLOW 휴대폰 첫 화면](assets/afterglow-home-mobile.webp)
 
+<!-- edition:pro -->
 ## 실제 서비스로 만들 때
 
 AFTERGLOW의 상담 신청 저장과 절감 계산은 DB만 있으면 되지만, 내 에너지 화면은 배터리 기기가 보내는 데이터가 있어야 하고 알림에는 푸시나 문자 서비스가 필요해요.
@@ -223,3 +224,4 @@ AFTERGLOW의 상담 신청 저장과 절감 계산은 DB만 있으면 되지만,
 > AFTERGLOW 프리셋은 화면만 만들 때 이미 월 전기요금으로 절감액과 투자 회수 기간을 계산하는 코드(`apps/web/src/app/(site)/calculator/_components/model.ts`)를 만들어 두었어요. 요금표와 계산 값은 예시예요. 내 프로젝트에도 비슷한 계산 코드가 있으면 새로 만들지 말고 그대로 쓰자고 하세요.
 
 기기 데이터를 받으려면 배터리 제조사나 기기 서비스가 주는 데이터 연결(API)과 그 계정이 필요해요. 이 서비스에서 준비하기 가장 어려운 부분이에요. 푸시 알림은 푸시 서비스 계정이, 문자 알림은 문자 발송 서비스 계정이 따로 필요해요. 없으면 앱 안의 알림 화면만 먼저 만들 수 있어요.
+<!-- /edition -->

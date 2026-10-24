@@ -73,7 +73,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 <summary>막히면</summary>
 
 - **DB에 연결할 수 없대요**: Docker Desktop이 켜져 있는지 보고 `DB가 켜져 있는지 확인하고 안 켜져 있으면 켜줘`라고 보내세요.
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/nextflix에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs nextflix 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/nextflix에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs nextflix 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 - **에이전트가 앞 장 작업을 이어서 하려고 해요**: 앞 장 라운드가 아직 닫히지 않았을 때예요. 앞 장 결과를 확인해 `확인했어`라고 보내고, 마무리가 끝나면 이 장 프롬프트를 다시 보내세요.
 - **중간에 멈췄어요**: `이어서 만들어줘`라고 보내세요. 사용량 한도에 걸렸으면 안내된 시간이 지난 뒤 `~/projects/nextflix`에서 `claude --continue --dangerously-skip-permissions`(Codex는 `codex resume --last --yolo`)로 다시 열고 `이어서 해줘`라고 보내세요. 기다리는 법은 [<!-- v:limit.window -->5시간<!-- /v --> 한도에 걸리면](../reference/costs-and-keys.md#5시간-한도에-걸리면)에 있어요.
 - **로그인했는데 다시 로그인 화면으로 가요**: `로그인한 뒤에도 로그인 화면으로 돌아가. 세션과 고른 프로필을 확인하는 곳을 살펴보고 고쳐줘`라고 보내세요.

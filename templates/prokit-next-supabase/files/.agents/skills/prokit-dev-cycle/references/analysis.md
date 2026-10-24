@@ -1,5 +1,7 @@
 # 정밀 분석 점검표
 
+<!-- edition:ui 이 문서는 Pro 스킬셋의 정밀 분석 점검표다. UI 스킬셋 프로젝트에서는 쓰지 않는다. -->
+<!-- edition:pro -->
 `prokit-analyzer`가 기존 프로젝트를 들일 때 쓰는 점검표와 보고서 틀이다. 유형(`.dev-cycle.json`의 `projectType`)은 `early`(기획 자료와 프로토타입만 있음), `operating`(운영 중인 Next.js), `migration`(다른 언어·프레임워크에서 Next.js로 전환)이다. 분석은 읽기 전용이고, 결과는 `docs/prokit/analysis.md`에 남긴다.
 
 ## 공통 점검표
@@ -48,3 +50,4 @@
 8. 진행 계획 후보
 9. 먼저 확인할 질문
 10. 확인하지 못한 것
+<!-- /edition -->

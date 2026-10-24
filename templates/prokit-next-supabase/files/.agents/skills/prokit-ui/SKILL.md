@@ -29,17 +29,17 @@ description: >-
 완성 프리셋 팩이 제공되면 `prokit-pack-use`를 먼저 읽고 복원한 제품을 시각 기준으로 삼는다. 팩의 PRODUCT.md·DESIGN.md·사이트맵과 승인된 사용자 요청이 있으면 init·스타일 선택·브리프 재승인을 반복하지 않고 변경 범위만 기록한다. 레퍼런스 URL 조사·COPY와 공식 프리셋 제작은 별도 `pro-kit-preset-skills`의 `prokit-preset-create`가 담당한다. 해당 제작 스킬이 정한 명세로 기술 구현을 맡을 때도 시각 방향을 다시 고르지 않는다. 일반 서비스의 새 UI·접근성·반응형 구현은 이 스킬을 계속 따른다.
 
 새 작업이면 코드보다 먼저 아래를 한다.
-1. `PRODUCT.md`가 없으면(context가 `BUILD_INIT_REQUIRED`나 `PRODUCT_INIT_REQUIRED`처럼 init을 요구하면) `init`부터 한다. init은 사용자 인터뷰이므로 질문을 사용자에게 보낸다. 기존 프로젝트면 PRD, `docs/prokit/intake.md`, `docs/prokit/analysis.md`에서 찾은 답을 질문마다 초안으로 함께 보여 주고 확인받는다. 찾지 못한 답은 지어내지 않는다.
-2. **기존 프로젝트의 디자인 방향(한 번만)**: `.dev-cycle.json`의 `projectType`이 `early`·`operating`·`migration`이고 `docs/prokit/intake.md`의 "디자인 방향" 절에 답이 없으면(init이 남긴 괄호 안내 줄은 답이 아니다), 이어 갈 기존 디자인이 있는지 본다. 근거는 디자인 토큰·테마 파일, 디자인 시스템 문서, 프로토타입, 운영 화면이다(정밀 분석의 "디자인 자산" 절. migration은 `legacy.path`의 기존 화면). 근거가 없으면 묻지 않고 그 절에 `이어 갈 기존 디자인 없음`과 날짜를 적은 뒤 3번 스타일 고르기로 간다. 근거가 있으면 스타일을 고르게 하기 전에 먼저 묻는다: "지금 디자인(디자인 시스템, 화면)을 그대로 이어 갈까요, 다른 스타일로 리디자인할까요?" 선택지는 `기존 디자인 유지 (추천)`와 `리디자인`이다. 답과 날짜를 그 절에 적는다(파일이 없으면 `# 도입 기록`과 그 절만 만든다).
-   - 유지: 스타일 후보를 내지 않는다. `DESIGN.md`가 있으면 그것이 시각 세계다. 없으면 기존 디자인(운영 화면의 토큰과 컴포넌트, 디자인 시스템 문서, 프로토타입)을 분석해 `DESIGN.md`를 만든다([references/impeccable-map.md](references/impeccable-map.md) "기존 디자인으로 DESIGN.md 만들기").
-   - 리디자인: 3번의 스타일 고르기와 impeccable-map "리디자인"을 따른다.
-   - `projectType`이 없거나 `new`면 이 질문을 하지 않는다.
-3. 새 프로젝트에서 `DESIGN.md`가 없고 화면이 아직 Better-T-Stack 기본 화면뿐이면, 또는 사용자가 시각 세계를 바꾸는 리디자인을 요청하거나 2번에서 리디자인을 고르면 디자인 스타일을 고르게 한다. 새 프로젝트에 이미 만든 화면이 있으면 `DESIGN.md`가 없어도 그 화면이 시각 세계이므로 묻지 않는다. 디자인 카탈로그에서 서비스에 맞는 스타일 1~3개를 추천 순위로 추리고, "카탈로그 없이 impeccable로 정하기"를 함께 내놓는다. 선택 묶음 `taste`(`.agents/skills/design-taste-frontend/`)가 있으면 "taste-skill로 방향 뽑기"도 내놓는다([references/taste.md](references/taste.md)). 사용자가 브랜드를 지목했으면("토스처럼") 세 카탈로그에서 그 브랜드를 찾아 1위로 둔다. 없으면 지어내지 않고 "카탈로그에 없음"이라고 알린다. 절차는 [references/impeccable-map.md](references/impeccable-map.md)의 "디자인 카탈로그에서 고르기"를 따른다.
+1. `PRODUCT.md`가 없으면(context가 `BUILD_INIT_REQUIRED`나 `PRODUCT_INIT_REQUIRED`처럼 init을 요구하면) `init`부터 한다. init은 사용자 인터뷰이므로 질문을 사용자에게 보낸다. <!-- edition:pro -->기존 프로젝트면 PRD, `docs/prokit/intake.md`, `docs/prokit/analysis.md`에서 찾은 답을 질문마다 초안으로 함께 보여 주고 확인받는다.<!-- /edition --><!-- edition:ui PRD에서 찾은 답을 질문마다 초안으로 함께 보여 주고 확인받는다. --> 찾지 못한 답은 지어내지 않는다.
+2. **기존 프로젝트의 디자인 방향(한 번만)**: `.dev-cycle.json`의 `projectType`이 `early`·`operating`·`migration`이고 `docs/prokit/intake.md`의 "디자인 방향" 절에 답이 없으면(init이 남긴 괄호 안내 줄은 답이 아니다), 이어 갈 기존 디자인이 있는지 본다. 근거는 디자인 토큰·테마 파일, 디자인 시스템 문서, 프로토타입, 운영 화면이다(정밀 분석의 "디자인 자산" 절. migration은 `legacy.path`의 기존 화면). 근거가 없으면 묻지 않고 그 절에 `이어 갈 기존 디자인 없음`과 날짜를 적은 뒤 3번 스타일 고르기로 간다. 근거가 있으면 스타일을 고르게 하기 전에 먼저 묻는다: "지금 디자인(디자인 시스템, 화면)을 그대로 이어 갈까요, 다른 스타일로 리디자인할까요?" 선택지는 `기존 디자인 유지 (추천)`와 `리디자인`이다. 답과 날짜를 그 절에 적는다(파일이 없으면 `# 도입 기록`과 그 절만 만든다). <!-- edition:pro -->
+   - 유지: 스타일 후보를 내지 않는다. `DESIGN.md`가 있으면 그것이 시각 세계다. 없으면 기존 디자인(운영 화면의 토큰과 컴포넌트, 디자인 시스템 문서, 프로토타입)을 분석해 `DESIGN.md`를 만든다([references/impeccable-map.md](references/impeccable-map.md) "기존 디자인으로 DESIGN.md 만들기"). <!-- edition:pro -->
+   - 리디자인: 3번의 스타일 고르기와 impeccable-map "리디자인"을 따른다. <!-- edition:pro -->
+   - `projectType`이 없거나 `new`면 이 질문을 하지 않는다. <!-- edition:pro -->
+3. 새 프로젝트에서 `DESIGN.md`가 없고 화면이 아직 Better-T-Stack 기본 화면뿐이면, 또는 사용자가 시각 세계를 바꾸는 리디자인을 요청하<!-- edition:pro -->거나 2번에서 리디자인을 고르<!-- /edition -->면 디자인 스타일을 고르게 한다. 새 프로젝트에 이미 만든 화면이 있으면 `DESIGN.md`가 없어도 그 화면이 시각 세계이므로 묻지 않는다. 디자인 카탈로그에서 서비스에 맞는 스타일 1~3개를 추천 순위로 추리고, "카탈로그 없이 impeccable로 정하기"를 함께 내놓는다. 선택 묶음 `taste`(`.agents/skills/design-taste-frontend/`)가 있으면 "taste-skill로 방향 뽑기"도 내놓는다([references/taste.md](references/taste.md)). 사용자가 브랜드를 지목했으면("토스처럼") 세 카탈로그에서 그 브랜드를 찾아 1위로 둔다. 없으면 지어내지 않고 "카탈로그에 없음"이라고 알린다. 절차는 [references/impeccable-map.md](references/impeccable-map.md)의 "디자인 카탈로그에서 고르기"를 따른다.
 4. 사이트맵 `docs/briefs/site-map.md`를 먼저 쓰고, `shape <기능>`으로 화면마다 브리프를 `docs/briefs/<화면>.md`에 쓴 뒤 사용자 확인을 요청한다. 사이트맵에는 화면에서 나가는 링크와 버튼이 모두 어디로 이어지는지 적는다. 브리프에는 상호작용(hover, 툴팁, 모달, 드로어, 햄버거 메뉴, 사이드바), 서체, 이미지, 아이콘, 모션 계획을 적는다(impeccable-map "사이트맵과 상호작용", "시각 자산"). 제품 이름이나 첫 화면 헤드라인을 새로 정해야 하면 후보를 함께 낸다(impeccable-map "이름과 문구"). 스타일 선택, 이름·문구 후보, 브리프 확인은 한 번에 묻는다.
 
 리디자인이면 1번 전에 지금 화면을 데스크톱과 모바일로 찍고 `critique`한다. 점수와 약점은 브리프의 "버릴 것"에, 제품 사실·문구·기능은 "지킬 것"에 적는다. 옛 모양은 다듬을 출발점이 아니라 반례다(impeccable-map "리디자인").
 
-이번 턴의 결과물은 init 질문, 디자인 방향 질문(기존 프로젝트), 스타일 후보, 브리프다. 여기서 멈춘다. 사용자 답을 받기 전에는 `PRODUCT.md`를 만들지 않는다. 추정으로 채운 `PRODUCT.md`가 있으면 impeccable이 init을 끝난 것으로 보고 다음 세션에서 인터뷰를 건너뛴다. 사용자에게 물을 수 없는 환경이어도 가정으로 코드를 쓰지 않는다. 질문과 브리프 초안을 남기고 멈추는 것이 올바른 결과다.
+이번 턴의 결과물은 init 질문, <!-- edition:pro -->디자인 방향 질문(기존 프로젝트), <!-- /edition -->스타일 후보, 브리프다. 여기서 멈춘다. 사용자 답을 받기 전에는 `PRODUCT.md`를 만들지 않는다. 추정으로 채운 `PRODUCT.md`가 있으면 impeccable이 init을 끝난 것으로 보고 다음 세션에서 인터뷰를 건너뛴다. 사용자에게 물을 수 없는 환경이어도 가정으로 코드를 쓰지 않는다. 질문과 브리프 초안을 남기고 멈추는 것이 올바른 결과다.
 
 ## 컴포넌트와 토큰 재사용
 
@@ -49,7 +49,7 @@ description: >-
 | 단계 | 할 일 | impeccable |
 |---|---|---|
 | 기획 (프로젝트당 1회) | 새 작업을 시작할 때 `PRODUCT.md`가 없으면 먼저 만든다(좁은 개선은 init 없이 진행) | `init` |
-| 시각 방향 (1회, 리디자인 때 다시) | 첫 새 작업에서 시각 세계를 정한다. 기존 프로젝트는 디자인 방향 질문부터 하고, 유지면 기존 디자인으로 `DESIGN.md`를 만든다(카탈로그를 쓰지 않는다). 카탈로그 스타일을 고르면 받아서 `DESIGN.md`로 두고 그 세계로 만든다. 직접 정하면 만든 화면을 바탕으로 마감 때 `DESIGN.md`를 기록한다. 이때 시작 전에 `DESIGN.md`를 지어내지 않는다. Better-T-Stack 기본 shadcn 룩은 출발점일 뿐 정체성이 아니다 | 카탈로그: `use-design-md` → new-work. 직접: new-work → 마감에서 `document` |
+| 시각 방향 (1회, 리디자인 때 다시) | 첫 새 작업에서 시각 세계를 정한다. <!-- edition:pro -->기존 프로젝트는 디자인 방향 질문부터 하고, 유지면 기존 디자인으로 `DESIGN.md`를 만든다(카탈로그를 쓰지 않는다). <!-- /edition -->카탈로그 스타일을 고르면 받아서 `DESIGN.md`로 두고 그 세계로 만든다. 직접 정하면 만든 화면을 바탕으로 마감 때 `DESIGN.md`를 기록한다. 이때 시작 전에 `DESIGN.md`를 지어내지 않는다. Better-T-Stack 기본 shadcn 룩은 출발점일 뿐 정체성이 아니다 | 카탈로그: `use-design-md` → new-work. 직접: new-work → 마감에서 `document` |
 | 설계 (새 화면과 흐름마다) | 코드 없이 사이트맵과 브리프를 만들고 사용자 확인을 받는다 | `shape <기능>` |
 | 시각 자산 (새 화면마다) | 구현 전에 브리프의 서체 파일을 받아 자체 호스팅한다. 이미지를 그릴 수 있으면(아래 규칙 "이미지 그리기") comp를 먼저 만들고 사진·일러스트는 plate 이미지로 만든다. 상세는 impeccable-map "시각 자산" | 이미지: comp-led new-work(`visualize`, `generate-image`) |
 | 개발 | 편집 직전에 impeccable의 `reference/craft-floor.md`를 읽는다. 브리프에 따라 필요할 때만 `layout`, `typeset`, `colorize`, `clarify`, `harden`, `onboard`, `adapt`, `animate`. 화면 전환과 공유 요소 애니메이션은 React `<ViewTransition>`으로 만들고 `vercel-react-view-transitions` 스킬(선택 묶음 `motion`)을 따른다 | new-work |

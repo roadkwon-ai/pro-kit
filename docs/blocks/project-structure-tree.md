@@ -1,4 +1,4 @@
-<!-- handbook/reference/project-structure.md "폴더 한눈에 보기"의 폴더 트리. 스킬 수는 값으로 채운다 -->
+<!-- handbook/reference/project-structure.md "폴더 한눈에 보기"의 폴더 트리. UI 판에도 들어가서 판마다 다른 스킬 수는 적지 않는다 -->
 ```text
 my-app/
 ├── apps/web/                   Next.js App Router: 화면, /api/rpc, /api/auth          (Better-T-Stack)
@@ -11,7 +11,7 @@ my-app/
 │   └── config/                 공유 tsconfig                                          (Better-T-Stack)
 ├── bts.jsonc, turbo.json, biome.json, pnpm-workspace.yaml                             (Better-T-Stack)
 ├── AGENTS.md, CLAUDE.md, GLOSSARY.md                                                   (템플릿)
-├── .agents/skills/             prokit-* {{v:prokit.skills.count}}개, 공식 도메인 스킬, mattpocock·skill-creator, 고른 두뇌·과설계 방지 스킬(Codex·Antigravity·Grok Build)
+├── .agents/skills/             prokit-* 스킬, 공식 도메인 스킬, mattpocock·skill-creator, 고른 두뇌·과설계 방지 스킬(Codex·Antigravity·Grok Build)
 ├── .agents/agents/             에이전트 생성물(Antigravity)
 ├── .claude/                    agents/(정본), skills/(링크), settings.json(플러그인, 키 훅)
 ├── .codex/                     agents/(생성물), skills·prompts(OMX)

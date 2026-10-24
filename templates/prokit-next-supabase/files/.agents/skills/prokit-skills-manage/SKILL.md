@@ -28,7 +28,7 @@ description: >-
 | 추가 스킬·선택 묶음 지우기 | `--drop <스킬이나 묶음>[,…]` |
 
 - 한 번에 여러 항목을 바꿔도 된다(예: `--brain openspec --simplicity caveman --drop tdd`).
-- 무엇을 고를지 사용자가 정하지 못했으면 정본의 "추천 기준"과 "단계 표"로 추천을 하나 만들어 근거 한 줄과 함께 묻는다(Claude Code는 AskUserQuestion, 추천에 ` (추천)`을 붙여 앞에 둔다). 근거는 `docs/prd.md`·`docs/first-request.md`·`docs/prokit/intake.md`·`docs/prokit/analysis.md`에서 찾는다. 두뇌는 하나를 권한다. 여럿을 원하면 맡는 단계가 덜 겹치는 조합을 제안하고, 진행 순서를 강제하는 두뇌(superpowers, gstack, oh-my)를 둘 이상 넣지 않는다.
+- 무엇을 고를지 사용자가 정하지 못했으면 정본의 "추천 기준"과 "단계 표"로 추천을 하나 만들어 근거 한 줄과 함께 묻는다(Claude Code는 AskUserQuestion, 추천에 ` (추천)`을 붙여 앞에 둔다). 근거는 `docs/prd.md`·`docs/first-request.md`<!-- edition:pro -->·`docs/prokit/intake.md`·`docs/prokit/analysis.md`<!-- /edition -->에서 찾는다. 두뇌는 하나를 권한다. 여럿을 원하면 맡는 단계가 덜 겹치는 조합을 제안하고, 진행 순서를 강제하는 두뇌(superpowers, gstack, oh-my)를 둘 이상 넣지 않는다.
 - 필수 스킬(`domain-modeling`, `grilling`, `grill-with-docs`)과 공식 도메인 스킬은 하네스라 지우지 않는다. `--drop`도 받지 않는다.
 - 고를 수 없는 이름(매니페스트에 없는 스킬)을 원하면 이유를 알리고, 계속 쓸 스킬이면 이 H 라운드에서 `skills.manifest.json`에 더한 뒤 설치한다.
 

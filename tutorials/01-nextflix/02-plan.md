@@ -49,7 +49,7 @@
 <details>
 <summary>막히면</summary>
 
-- **프리셋 팩을 못 찾는대요**: `~/projects` 안에 `pro-kit`과 `nextflix`가 나란히 있는지 보세요. 있으면 `프리셋 팩은 옆 폴더 pro-kit의 packs/nextflix에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs nextflix 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `~/projects` 안에 `pro-kit`과 `nextflix`가 나란히 있는지 보세요. 있으면 `프리셋 팩은 옆 폴더 pro-kit의 packs/nextflix에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs nextflix 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 - **에이전트가 질문 없이 바로 화면을 만들어요**: `먼저 기획만 해줘. 화면은 디자인을 정한 뒤에 만들어`라고 보내세요.
 - **디자인 스타일 후보를 찾기 시작했어요**: `디자인은 3장에서 프리셋 팩대로 정할 거야. 후보 찾기는 멈춰줘`라고 보내세요.
 - **문서에 Nextflix가 남았어요(이름을 바꿨을 때)**: `팩은 고치지 말고, 프로젝트 문서에 남은 팩의 서비스 이름을 내가 정한 이름으로 바꿔줘`라고 보내세요.

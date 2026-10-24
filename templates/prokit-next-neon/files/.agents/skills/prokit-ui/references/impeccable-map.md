@@ -7,7 +7,7 @@ impeccable은 화면마다 모드를 고른다. 앱 화면(대시보드, 목록,
 | 단계 | 명령 | 산출물 | 주의 |
 |---|---|---|---|
 | 기획 | `init` (별칭 `teach`) | `PRODUCT.md` (Platform, Stack, Users, Purpose, Positioning, Brand Commitments, Principles, Accessibility) | 프로젝트당 1회. 이미 있으면 다시 만들지 않는다 |
-| 시각 방향 | 카탈로그: `use-design-md` → new-work. 직접: new-work → 마감에서 `document`. 기존 디자인 유지: 아래 "기존 디자인으로 DESIGN.md 만들기" | `DESIGN.md` (토큰 frontmatter + 섹션) | 카탈로그에서 고르면 받은 파일이 시각 세계다. impeccable은 이미 있는 `DESIGN.md`를 정해진 세계로 보고 세계를 다시 고르지 않는다(new-work 2·3절). 아래 "디자인 카탈로그에서 고르기"를 따른다. 직접 정하는 새 세계는 만든 뒤 마감에서 기록한다(new-work 5절). Better-T-Stack은 기본 화면이 있으므로 seed 모드를 쓰지 않는다. 기존 화면을 넓히는 작업이면 `DESIGN.md`가 없어도 막지 않는다. 기존 `DESIGN.md`를 조용히 덮어쓰지 않는다 |
+| 시각 방향 | 카탈로그: `use-design-md` → new-work. 직접: new-work → 마감에서 `document`<!-- edition:pro -->. 기존 디자인 유지: 아래 "기존 디자인으로 DESIGN.md 만들기"<!-- /edition --> | `DESIGN.md` (토큰 frontmatter + 섹션) | 카탈로그에서 고르면 받은 파일이 시각 세계다. impeccable은 이미 있는 `DESIGN.md`를 정해진 세계로 보고 세계를 다시 고르지 않는다(new-work 2·3절). 아래 "디자인 카탈로그에서 고르기"를 따른다. 직접 정하는 새 세계는 만든 뒤 마감에서 기록한다(new-work 5절). Better-T-Stack은 기본 화면이 있으므로 seed 모드를 쓰지 않는다. 기존 화면을 넓히는 작업이면 `DESIGN.md`가 없어도 막지 않는다. 기존 `DESIGN.md`를 조용히 덮어쓰지 않는다 |
 | 설계 | `shape <기능>` | 사이트맵 `docs/briefs/site-map.md`와 확정된 브리프 `docs/briefs/<화면>.md` (코드 없음) | 사용자 확인 또는 한 번의 수정 뒤 멈춘다. 아래 "사이트맵과 상호작용"을 따른다 |
 | 시각 자산 | 서체 받기, comp-led면 `generate-image`로 comp와 plate | `apps/web/src/fonts/`, `apps/web/public/images/<화면>/`, `.impeccable/mocks/` | 아래 "시각 자산"을 따른다 |
 | 개발 | new-work, 필요 시 `layout`, `typeset`, `colorize`, `clarify`, `harden`, `onboard`, `adapt`, `animate`, 밋밋하면 `bolder` | 코드 | 편집 직전에 `reference/craft-floor.md`를 로드한다 |
@@ -55,6 +55,7 @@ Claude Code에서는 `.agents/skills/impeccable/SKILL.md`를 Read로 읽고 그 
    - 저장한 뒤 아래 "DESIGN.md 검사"의 lint를 실행한다.
 5. **적용**: 첫 구현 행에서 토큰을 `packages/ui/src/styles/globals.css`의 shadcn 변수로 옮긴다(apply-guide 1~3절). 글자 크기 토큰은 새 이름(`--text-body-md`)을 만들지 않고 Tailwind 기본 이름(`--text-sm` 등)의 값을 바꾼다. `cn()`은 모르는 `text-<이름>`을 글자색으로 보고, 같은 요소의 색 클래스와 겹치면 지운다(`cn("text-body-md text-muted-foreground")` → `text-muted-foreground`). 이후 impeccable은 이 파일을 정해진 세계로 보고 shape와 구현을 이어 간다. 마감의 `document`는 파일을 덮어쓰지 않고 merge로 프로젝트가 바꾼 토큰만 더한다.
 
+<!-- edition:pro -->
 ## 기존 디자인으로 DESIGN.md 만들기
 기존 프로젝트(`projectType`이 `early`·`operating`·`migration`)에서 사용자가 디자인 방향을 "기존 디자인 유지"로 정했고 `DESIGN.md`가 없을 때 쓴다. 새 스타일을 고르지 않고 지금 있는 디자인을 [DESIGN.md 명세](https://github.com/google-labs-code/design.md) 형식으로 옮긴다.
 1. **근거 모으기**: 운영 화면 코드(전역 CSS 변수, Tailwind 설정이나 `@theme`, 테마 파일, 컴포넌트 라이브러리), 디자인 시스템 문서(예: `docs/design-system.md`), 프로토타입(`prototype/`), 정밀 분석의 "디자인 자산" 절을 읽는다. migration은 `.dev-cycle.json`의 `legacy.path`(기존 서비스의 CSS, 테마, 템플릿)에서 모은다. 이 폴더의 화면은 Better-T-Stack 기본 화면이라 근거가 아니다. 토큰마다 어느 파일에서 왔는지 적어 둔다.
@@ -65,6 +66,7 @@ Claude Code에서는 `.agents/skills/impeccable/SKILL.md`를 Read로 읽고 그 
 3. **검사**: 아래 "DESIGN.md 검사"의 lint를 실행한다.
 4. **확인**: 색, 서체, 간격·반경, 주요 컴포넌트 요약과 토큰별 출처를 보여 주고 사용자 확인을 받는다.
 5. **적용**: early와 migration은 첫 구현 행에서 토큰을 `packages/ui/src/styles/globals.css`의 shadcn 변수로 옮긴다("디자인 카탈로그에서 고르기" 5번과 같다). operating(adopt)은 기존 토큰 파일이 정본이라 코드를 바꾸지 않고, `DESIGN.md`는 그 기록이다. 이후 impeccable은 이 파일을 정해진 세계로 보고 shape와 구현을 이어 간다.
+<!-- /edition -->
 
 ## 리디자인
 시각 세계를 바꾸는 요청이다. impeccable은 리디자인에서 제품 사실, 문구, 기능은 지키고 옛 모양은 반례로 본다("Redesign replaces").

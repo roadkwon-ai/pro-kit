@@ -8,7 +8,7 @@
 
 값은 프리셋을 만든 Claude Code 기록에서 쟀어요(2026-10-08). 만들기는 <!-- v:meta.presetModel -->Opus 5.5<!-- /v -->, 리서치 에이전트는 Sonnet 5.5였어요.
 
-에이전트가 일한 시간이고, 따로 적은 곳(올곧의 백그라운드 작업 기다림, Nextflix의 로그인 확인 기다림)을 빼고는 10분 넘게 아무 일도 없던 구간을 뺐어요. 내가 결과를 보고 확인하는 시간은 들어 있지 않아요.
+에이전트가 일한 시간이고, 따로 적은 곳(올곧의 백그라운드 작업 기다림<!-- edition:pro -->, Nextflix의 로그인 확인 기다림<!-- /edition -->)을 빼고는 10분 넘게 아무 일도 없던 구간을 뺐어요. 내가 결과를 보고 확인하는 시간은 들어 있지 않아요.
 
 튜토리얼 표의 시간 범위를 읽는 법은 [시간과 비용 읽는 법](costs-and-keys.md#시간과-비용-읽는-법)에 있어요.
 
@@ -32,12 +32,13 @@ flowchart TD
 |---|---|---|---|---|
 | 프리셋 팩으로 | 프로킷의 예시를 따라 만들어 볼 때 | 프리셋 쪽의 프롬프트 | 없어요. 팩에 든 사이트맵, 화면 설명, 예시 데이터, 그림을 읽고 바로 기획을 확인해요 | <!-- v:presets.pack.time.cell -->약 36분\~7시간 50분 (여러 번 고치면 약 11시간 45분까지)<!-- /v --> |
 | 내 컨셉으로 처음부터 | 만들고 싶은 서비스가 따로 있을 때 | 누가 쓰고 무엇을 하는 서비스인지 한두 문장 | 서비스 질문, 이름, 사이트맵, 스타일 추천, 시안과 그림 | <!-- v:presets.scratch.time.cell -->약 1시간 5분\~11시간 30분 (여러 번 고치면 약 17시간 15분까지)<!-- /v --> |
-| 레퍼런스 사이트 리서치부터 | 본뜨고 싶은 서비스가 있을 때 | 참고할 서비스 주소와 볼 범위 | 사이트를 둘러보고 화면, 디자인 값, 동작을 모아 정리한 뒤 프리셋 팩처럼 묶어요 | 리서치와 팩 만들기가 더 들어요(Claudle 약 <!-- v:preset.claudle.prep.total.time -->2시간 5분<!-- /v -->) |
+| 레퍼런스 사이트 리서치부터 | 본뜨고 싶은 서비스가 있을 때 | 참고할 서비스 주소와 볼 범위 | 사이트를 둘러보고 화면, 디자인 값, 동작을 모아 정리한 뒤 프리셋 팩처럼 묶어요 | 리서치와 팩 만들기가 더 들어요<!-- edition:pro -->(Claudle 약 <!-- v:preset.claudle.prep.total.time -->2시간 5분<!-- /v -->)<!-- /edition --> |
 
 시간은 화면 프리셋 <!-- v:presets.screen.count -->11<!-- /v -->개를 만들 때의 범위예요. 페이지가 많을수록 길어요. 프리셋마다 값은 [예시로 보는 시간](#예시로-보는-시간)에 있어요.
 
 ## 레퍼런스 사이트 리서치부터 하는 과정
 
+<!-- edition:pro -->
 클론 튜토리얼(Nextflix, Claudle)과 올곧은 실제 사이트를 둘러보는 것부터 시작했어요. 에이전트가 브라우저로 사이트를 열어 보고 모았어요. Nextflix와 Claudle은 모은 것을 프리셋 팩으로 정리한 뒤 그 팩으로 만들었고, 올곧은 둘러본 결과로 DESIGN.md만 만들어 처음부터 만들었어요(팩은 다 만든 뒤 묶었어요). 아래 표는 팩까지 만든 Claudle과 Nextflix 값이에요.
 
 | 단계 | 에이전트가 하는 일 | 내가 정할 것 | 결과물 | Claudle 실측 | Nextflix 실측 |
@@ -53,6 +54,8 @@ flowchart TD
 
 - 2와 3은 에이전트 여럿이 같은 시간에 나눠 해서, 요청부터 리서치 끝까지는 Claudle 약 <!-- v:preset.claudle.prep.research.time -->1시간 28분<!-- /v -->, Nextflix 약 <!-- v:preset.nextflix.prep.research.time -->1시간 22분<!-- /v -->이 걸렸어요. 내가 답하거나 로그인해 주는 시간도 그 안에 들어 있어요.
 - Nextflix는 처음 만든 프리셋 팩이라 팩 검사 도구, 그림 도구, 배치도 생성기까지 이때 만들어서 오래 걸렸어요. Claudle은 그 도구와 리서치의 화면 계획을 그대로 써서 설계와 팩 만들기가 약 <!-- v:preset.claudle.prep.pack.time -->35분<!-- /v -->에 끝났어요.
+<!-- /edition -->
+<!-- edition:ui 올곧은 실제 사이트를 둘러보는 것부터 시작했어요. 에이전트가 브라우저로 사이트를 열어 보고 모은 결과로 DESIGN.md를 만들어 처음부터 만들었어요(팩은 다 만든 뒤 묶었어요). -->
 
 ### 본뜰 때 지키는 것
 
@@ -64,9 +67,10 @@ flowchart TD
 ### 조사할 때 지키는 것
 
 - 공개 페이지 위주로 봐요.
-- 로그인한 화면은 내 계정으로 보이는 것만 봐요. 설정 바꾸기, 결제, 다른 사람에게 보내기처럼 계정에 남는 일은 하지 않아요. Claudle은 답이 나오는 모습을 재려고 기록이 남지 않는 대화로 메시지 몇 개를 보냈어요. 이런 동작은 내가 허락한 만큼만 해요.
+- 로그인한 화면은 내 계정으로 보이는 것만 봐요. 설정 바꾸기, 결제, 다른 사람에게 보내기처럼 계정에 남는 일은 하지 않아요.<!-- edition:pro --> Claudle은 답이 나오는 모습을 재려고 기록이 남지 않는 대화로 메시지 몇 개를 보냈어요.<!-- /edition --> 이런 동작은 내가 허락한 만큼만 해요.
 - 그 사이트의 이용약관을 따르고, 페이지를 한꺼번에 많이 여는 자동 수집은 하지 않아요.
 
+<!-- edition:pro -->
 <details>
 <summary>조사 범위에 따라 얼마나 걸리나요</summary>
 
@@ -80,6 +84,7 @@ flowchart TD
 처음에는 로그인 프로필을 고르고 지침을 읽는 준비가 들어서, 첫 스크린샷까지 시간이 걸려요. 에이전트 둘이 나눠 맡으면 기다리는 시간은 더 짧아요.
 
 </details>
+<!-- /edition -->
 
 ### 직접 해 보려면
 
@@ -101,8 +106,9 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 
 ## 시간이 어디에 쓰이나요
 
-Claudle과 올곧을 만들 때 메인 에이전트가 무엇에 시간을 썼는지예요(단위 분). 같은 시간에 따로 일한 다른 에이전트의 시간은 빼고, 메인이 그 에이전트를 기다린 시간만 넣었어요.
+올곧<!-- edition:pro -->과 Claudle<!-- /edition -->을 만들 때 메인 에이전트가 무엇에 시간을 썼는지예요(단위 분). 같은 시간에 따로 일한 다른 에이전트의 시간은 빼고, 메인이 그 에이전트를 기다린 시간만 넣었어요.
 
+<!-- edition:pro -->
 <!-- b:process-pie name=claudle title="Claudle 만들기, 무엇에 시간이 갔나(분)" -->
 ```mermaid
 pie showData
@@ -116,6 +122,7 @@ pie showData
   "기타" : 2
 ```
 <!-- /b -->
+<!-- /edition -->
 
 <!-- b:process-pie name=olgot title="올곧 만들기, 무엇에 시간이 갔나(분)" -->
 ```mermaid
@@ -131,13 +138,13 @@ pie showData
 ```
 <!-- /b -->
 
-- **모든 페이지 확인**이 가장 커요. 고친 곳만 보지 않고 링크와 버튼, 여러 너비의 화면, 접근성을 페이지마다 봐요. 페이지가 많을수록 커져서, Claudle은 <!-- v:process.pie.claudle.recheck.pct -->35<!-- /v -->%, 페이지가 <!-- v:preset.olgot.pages -->203<!-- /v -->개인 올곧은 <!-- v:process.pie.olgot.recheck.pct -->60<!-- /v -->%였어요.
+- **모든 페이지 확인**이 가장 커요. 고친 곳만 보지 않고 링크와 버튼, 여러 너비의 화면, 접근성을 페이지마다 봐요. 페이지가 많을수록 커져서, <!-- edition:pro -->Claudle은 <!-- v:process.pie.claudle.recheck.pct -->35<!-- /v -->%, <!-- /edition -->페이지가 <!-- v:preset.olgot.pages -->203<!-- /v -->개인 올곧은 <!-- v:process.pie.olgot.recheck.pct -->60<!-- /v -->%였어요.
 - **프로킷은 확인해야 끝나요.** 검사를 실제로 돌린 증거가 없으면 끝났다고 하지 않아서 그냥 AI에게 맡길 때보다 시간이 더 들어요. 대신 깨진 링크나 겹친 화면을 내가 찾지 않아도 돼요([그냥 AI에게 맡길 때와 다른 점](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/what-is-prokit.md#그냥-ai에게-맡길-때와-다른-점)).
-- **생각하고 쓰기**는 요청을 읽고 고칠 곳을 찾아 코드를 쓰는 시간이에요. Claudle <!-- v:process.pie.claudle.model.pct -->31<!-- /v -->%, 올곧 <!-- v:process.pie.olgot.model.pct -->27<!-- /v -->%예요.
+- **생각하고 쓰기**는 요청을 읽고 고칠 곳을 찾아 코드를 쓰는 시간이에요. <!-- edition:pro -->Claudle <!-- v:process.pie.claudle.model.pct -->31<!-- /v -->%, <!-- /edition -->올곧 <!-- v:process.pie.olgot.model.pct -->27<!-- /v -->%예요.
 
 ## 예시로 보는 시간
 
-### 프리셋 <!-- v:presets.count -->13<!-- /v -->개 한눈에
+### 프리셋 <!-- edition:pro --><!-- v:presets.count -->13<!-- /v --><!-- /edition --><!-- edition:ui 11 -->개 한눈에
 
 내가 만들 서비스와 분류, 페이지 수가 비슷한 줄을 찾아 "프리셋 팩으로"나 "처음부터" 칸의 시간을 보세요.
 
@@ -154,9 +161,10 @@ pie showData
 | [<!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->](../samples/pacecrew.md) | <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.pacecrew.pages -->22<!-- /v --> | <!-- v:preset.pacecrew.pack.time.cell -->약 2시간 5분\~4시간 10분 (여러 번 고치면 약 6시간 15분까지)<!-- /v --> | <!-- v:preset.pacecrew.scratch.time.cell -->약 3시간 10분\~6시간 20분 (여러 번 고치면 약 9시간 30분까지)<!-- /v --> |
 | [<!-- v:preset.uptrail.title -->Uptrail<!-- /v -->](../samples/uptrail.md) | <!-- v:preset.uptrail.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.uptrail.pages -->22<!-- /v --> | <!-- v:preset.uptrail.pack.time.cell -->약 2시간 5분\~4시간 10분 (여러 번 고치면 약 6시간 15분까지)<!-- /v --> | <!-- v:preset.uptrail.scratch.time.cell -->약 2시간 50분\~5시간 40분 (여러 번 고치면 약 8시간 30분까지)<!-- /v --> |
 | [<!-- v:preset.olgot.title -->올곧<!-- /v -->](../samples/olgot.md) | <!-- v:preset.olgot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.olgot.pages -->203<!-- /v -->(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종) | <!-- v:preset.olgot.pack.time.cell -->약 3시간 55분\~7시간 50분 (여러 번 고치면 약 11시간 45분까지)<!-- /v --> | <!-- v:preset.olgot.scratch.time.cell -->약 5시간 45분\~11시간 30분 (여러 번 고치면 약 17시간 15분까지)<!-- /v --> |
-| [<!-- v:preset.nextflix.title -->Nextflix<!-- /v -->](../01-nextflix/README.md) | <!-- v:preset.nextflix.kindLabel -->클론 튜토리얼<!-- /v --> | 튜토리얼 12장 | 화면까지 <!-- v:preset.nextflix.screens.time.cell -->약 2시간 25분\~4시간 50분 (여러 번 고치면 약 7시간 15분까지)<!-- /v -->, 끝까지 <!-- v:preset.nextflix.full.time.cell -->약 5시간 15분\~10시간 30분 (여러 번 고치면 약 15시간 45분까지)<!-- /v --> | 프리셋 팩으로만 해요 |
-| [<!-- v:preset.claudle.title -->Claudle<!-- /v -->](../02-claudle/README.md) | <!-- v:preset.claudle.kindLabel -->클론 튜토리얼<!-- /v --> | 튜토리얼 12장 | 화면까지 <!-- v:preset.claudle.screens.time.cell -->약 2시간 25분\~4시간 50분 (여러 번 고치면 약 7시간 15분까지)<!-- /v -->, 끝까지 <!-- v:preset.claudle.full.time.cell -->약 5시간\~10시간 (여러 번 고치면 약 15시간까지)<!-- /v --> | 프리셋 팩으로만 해요 |
+| [<!-- v:preset.nextflix.title -->Nextflix<!-- /v -->](../01-nextflix/README.md) | <!-- v:preset.nextflix.kindLabel -->클론 튜토리얼<!-- /v --> | 튜토리얼 12장 | 화면까지 <!-- v:preset.nextflix.screens.time.cell -->약 2시간 25분\~4시간 50분 (여러 번 고치면 약 7시간 15분까지)<!-- /v -->, 끝까지 <!-- v:preset.nextflix.full.time.cell -->약 5시간 15분\~10시간 30분 (여러 번 고치면 약 15시간 45분까지)<!-- /v --> | 프리셋 팩으로만 해요 | <!-- edition:pro -->
+| [<!-- v:preset.claudle.title -->Claudle<!-- /v -->](../02-claudle/README.md) | <!-- v:preset.claudle.kindLabel -->클론 튜토리얼<!-- /v --> | 튜토리얼 12장 | 화면까지 <!-- v:preset.claudle.screens.time.cell -->약 2시간 25분\~4시간 50분 (여러 번 고치면 약 7시간 15분까지)<!-- /v -->, 끝까지 <!-- v:preset.claudle.full.time.cell -->약 5시간\~10시간 (여러 번 고치면 약 15시간까지)<!-- /v --> | 프리셋 팩으로만 해요 | <!-- edition:pro -->
 
+<!-- edition:pro -->
 ### Claudle을 리서치부터 만든 시간
 
 Claudle은 claude.ai를 둘러보는 리서치부터 시작해 프리셋 팩을 만들고, 그 팩으로 프리셋을 만들었어요. 가로축은 시작부터 걸린 시간(시:분)이에요. [라운드](glossary.md#만들기)(<!-- v:gloss.round -->기능 하나를 만들거나 요청한 것을 고치고 확인까지 마치는 작업 묶음<!-- /v -->) 사이에 내가 확인하느라 기다린 시간은 빼고 이어 그렸어요.
@@ -190,6 +198,7 @@ gantt
 | 합계 | 약 <!-- v:preset.claudle.all.time -->7시간 55분<!-- /v --> | 약 <!-- v:preset.claudle.all.tokens -->940만<!-- /v -->(캐시 포함 약 <!-- v:preset.claudle.all.cached -->5.3억<!-- /v -->) | 약 <!-- v:preset.claudle.all.usd -->172<!-- /v -->달러 |
 
 만들기 네 줄의 토큰은 달러에서 1달러당 약 <!-- v:cost.tokensPerUsd -->5.5만<!-- /v -->(캐시 포함 약 <!-- v:cost.cachedPerUsd -->275만<!-- /v -->)으로 바꾼 값이고, 리서치와 팩 두 줄의 토큰은 기록에서 잰 값이에요. 이 두 줄의 달러는 거꾸로 토큰을 같은 비율로 나눠 어림해서, 표 안에 두 방식이 섞여 있어요. 프리셋 팩으로 시작하면 이 두 줄이 빠져요.
+<!-- /edition -->
 
 <details>
 <summary>올곧을 만든 라운드별 시간</summary>
@@ -218,7 +227,7 @@ gantt
 |---|---|---|
 | 고칠 곳 찾고 고치기 | 요청을 읽고, 고칠 파일을 찾아 코드를 고쳐요. 에이전트가 생각하고 쓰는 시간이에요 | 약 <!-- v:cost.revise.fix -->2\~12분<!-- /v --> |
 | 검사 | 타입 검사, 포맷 검사, 빌드를 다시 돌려요 | 약 <!-- v:cost.revise.check -->1\~3분<!-- /v --> |
-| 모든 페이지 다시 확인 | 링크와 버튼, 여러 너비의 화면, 접근성을 페이지마다 다시 봐요. 페이지 수에 비례하고, 작은 수정은 고친 곳에 맞는 검사만 다시 돌려 짧아요 | <!-- v:preset.claudle.pages -->13<!-- /v -->쪽(Claudle) 약 <!-- v:cost.revise.recheck.13 -->5분<!-- /v -->, <!-- v:preset.olgot.pages -->203<!-- /v -->쪽(올곧) 약 <!-- v:cost.revise.recheck.203 -->6\~37분<!-- /v --> |
+| 모든 페이지 다시 확인 | 링크와 버튼, 여러 너비의 화면, 접근성을 페이지마다 다시 봐요. 페이지 수에 비례하고, 작은 수정은 고친 곳에 맞는 검사만 다시 돌려 짧아요 | <!-- edition:pro --><!-- v:preset.claudle.pages -->13<!-- /v -->쪽(Claudle) 약 <!-- v:cost.revise.recheck.13 -->5분<!-- /v -->, <!-- /edition --><!-- v:preset.olgot.pages -->203<!-- /v -->쪽(올곧) 약 <!-- v:cost.revise.recheck.203 -->6\~37분<!-- /v --> |
 | 리뷰 에이전트 | 크게 고쳤으면 다른 에이전트가 고친 코드를 검토하고, 지적을 다시 고쳐요 | 약 <!-- v:cost.revise.review -->4\~10분<!-- /v --> |
 | 마무리 | 내가 확인했다고 하면 기록을 남기고 검사한 뒤 커밋해요. 고친 횟수와 관계없이 마지막에 한 번이에요. 정적 내보내기를 다시 확인하면 길어져요 | 약 <!-- v:cost.revise.close -->1\~15분<!-- /v --> |
 
@@ -246,6 +255,7 @@ gantt
 
 ### 두 군데를 고치면
 
+<!-- edition:pro -->
 **약 <!-- v:cost.revise.twoSpots -->28\~43분<!-- /v -->이 들었어요.** Claudle에서 공개 전에 두 가지를 손볼 때는 약 <!-- v:cost.revise.example.twoSpotsClaudle.total -->28분<!-- /v -->이 이렇게 들었어요.
 
 | 순서 | 한 일 | 걸린 시간 |
@@ -256,12 +266,13 @@ gantt
 | 4 | 리뷰 에이전트가 고친 코드를 검토 | 약 <!-- v:cost.revise.flow.twoSpotsClaudle.review -->5분<!-- /v --> |
 | 5 | 지적을 고치고 다시 내보내 모두 확인 | 약 <!-- v:cost.revise.flow.twoSpotsClaudle.refix -->5분<!-- /v --> |
 | 6 | 기록과 보고 | 약 <!-- v:cost.revise.flow.twoSpotsClaudle.report -->3분<!-- /v --> |
+<!-- /edition -->
 
 올곧에서 두 군데를 고칠 때는 약 <!-- v:cost.revise.example.twoSpotsOlgot.total -->43분<!-- /v -->(모든 페이지 다시 확인 <!-- v:cost.revise.example.twoSpotsOlgot.recheck -->37분<!-- /v -->, 고치기 <!-- v:cost.revise.example.twoSpotsOlgot.fix -->5분<!-- /v -->)이 들었어요. 페이지가 많은 올곧은 모든 페이지 다시 확인이 대부분이에요.
 
 ### 마무리 검토를 한 번 더 하면
 
-다시 디자인하거나 마무리 검토(디자인 리뷰, 리뷰 에이전트, 모든 페이지 다시 확인)를 한 번 더 하면 **<!-- v:cost.revise.reviewRound -->2\~3시간<!-- /v -->이 더 들어요.** 올곧은 약 <!-- v:cost.revise.example.reviewRoundOlgot.total -->2시간 20분<!-- /v -->(모든 페이지 다시 확인 <!-- v:cost.revise.example.reviewRoundOlgot.recheck -->1시간 36분<!-- /v -->, 리뷰·디자인 검사 에이전트 약 <!-- v:cost.revise.example.reviewRoundOlgot.review -->15분<!-- /v -->, 고치기 <!-- v:cost.revise.example.reviewRoundOlgot.fix -->19분<!-- /v -->), Claudle은 약 <!-- v:cost.revise.example.reviewRoundClaudle.total -->2시간 48분<!-- /v -->(모든 페이지 다시 확인 <!-- v:cost.revise.example.reviewRoundClaudle.recheck -->1시간 14분<!-- /v -->, 리뷰·디자인 검사 에이전트 약 <!-- v:cost.revise.example.reviewRoundClaudle.review -->49분<!-- /v -->, 고치기 <!-- v:cost.revise.example.reviewRoundClaudle.fix -->34분<!-- /v -->)이 들었어요.
+다시 디자인하거나 마무리 검토(디자인 리뷰, 리뷰 에이전트, 모든 페이지 다시 확인)를 한 번 더 하면 **<!-- v:cost.revise.reviewRound -->2\~3시간<!-- /v -->이 더 들어요.** 올곧은 약 <!-- v:cost.revise.example.reviewRoundOlgot.total -->2시간 20분<!-- /v -->(모든 페이지 다시 확인 <!-- v:cost.revise.example.reviewRoundOlgot.recheck -->1시간 36분<!-- /v -->, 리뷰·디자인 검사 에이전트 약 <!-- v:cost.revise.example.reviewRoundOlgot.review -->15분<!-- /v -->, 고치기 <!-- v:cost.revise.example.reviewRoundOlgot.fix -->19분<!-- /v -->)<!-- edition:pro -->, Claudle은 약 <!-- v:cost.revise.example.reviewRoundClaudle.total -->2시간 48분<!-- /v -->(모든 페이지 다시 확인 <!-- v:cost.revise.example.reviewRoundClaudle.recheck -->1시간 14분<!-- /v -->, 리뷰·디자인 검사 에이전트 약 <!-- v:cost.revise.example.reviewRoundClaudle.review -->49분<!-- /v -->, 고치기 <!-- v:cost.revise.example.reviewRoundClaudle.fix -->34분<!-- /v -->)<!-- /edition -->이 들었어요.
 
 내가 결과를 보고 확인하는 시간은 이 값에 들어 있지 않아요.
 
@@ -276,10 +287,10 @@ gantt
 
 ![시간을 줄이는 법 여섯 가지예요. 프리셋 팩으로 시작하고, 작은 범위로 먼저 만들고, 고칠 것은 모아서 한 번에 요청하고, 리서치는 볼 화면만 고르고, 하루에 다 하지 않고 나눠 만들고, 끊기면 하던 작업을 이어서 해 달라고 보내요.](assets/save-time-tips.webp)
 
-1. **프리셋 팩으로 시작해요**. 리서치와 팩 만들기가 빠져서 Claudle 약 <!-- v:preset.claudle.prep.total.time -->2시간 5분<!-- /v -->, Nextflix 약 <!-- v:preset.nextflix.prep.total.time -->3시간 35분<!-- /v -->이 줄어요. 올곧은 처음부터 만든 뒤 팩을 묶어서, 빠지는 사전 작업은 사이트 조사(약 <!-- v:preset.olgot.prep.total.time -->50분<!-- /v -->)예요. 팩으로 만들면 처음부터 만들 때보다 기획과 그림도 줄어요([위 표](#예시로-보는-시간)).
-2. **작은 범위로 시작해요**. 페이지 5\~7개짜리로 먼저 만들고 넓혀요. 모든 페이지 확인은 페이지 수에 비례해요(<!-- v:preset.claudle.pages -->13<!-- /v -->쪽 약 <!-- v:cost.revise.recheck.13 -->5분<!-- /v -->, <!-- v:preset.olgot.pages -->203<!-- /v -->쪽 약 <!-- v:cost.revise.recheck.203 -->6\~37분<!-- /v -->).
+1. **프리셋 팩으로 시작해요**. 리서치와 팩 만들기가 빠져<!-- edition:pro -->서 Claudle 약 <!-- v:preset.claudle.prep.total.time -->2시간 5분<!-- /v -->, Nextflix 약 <!-- v:preset.nextflix.prep.total.time -->3시간 35분<!-- /v -->이 줄어<!-- /edition -->요. 올곧은 처음부터 만든 뒤 팩을 묶어서, 빠지는 사전 작업은 사이트 조사(약 <!-- v:preset.olgot.prep.total.time -->50분<!-- /v -->)예요. 팩으로 만들면 처음부터 만들 때보다 기획과 그림도 줄어요([위 표](#예시로-보는-시간)).
+2. **작은 범위로 시작해요**. 페이지 5\~7개짜리로 먼저 만들고 넓혀요. 모든 페이지 확인은 페이지 수에 비례해요(<!-- edition:pro --><!-- v:preset.claudle.pages -->13<!-- /v -->쪽 약 <!-- v:cost.revise.recheck.13 -->5분<!-- /v -->, <!-- /edition --><!-- v:preset.olgot.pages -->203<!-- /v -->쪽 약 <!-- v:cost.revise.recheck.203 -->6\~37분<!-- /v -->).
 3. **고칠 것은 모아서 한 번에 요청해요**. 당시 제작 기록에서는 한 군데를 따로 고칠 때마다 약 <!-- v:cost.revise.oneSpot -->10분<!-- /v -->이 더 들었어요. 관련 수정을 모으면 같은 범위의 재확인을 줄일 수 있어요.
-4. **리서치 범위를 정해요**. 공개 페이지 몇 개만 보면 약 <!-- v:process.research.nextflix.public -->18분<!-- /v -->, 웹의 거의 모든 화면을 보면 약 <!-- v:process.scope.all.time -->1시간 10분\~1시간 45분<!-- /v -->이 들어요.
+4. **리서치 범위를 정해요**. <!-- edition:pro -->공개 페이지 몇 개만 보면 약 <!-- v:process.research.nextflix.public -->18분<!-- /v -->, 웹의 거의 모든 화면을 보면 약 <!-- v:process.scope.all.time -->1시간 10분\~1시간 45분<!-- /v -->이 들어요.<!-- /edition --><!-- edition:ui 볼 화면만 고르면 리서치 시간이 줄어요. -->
 5. **하루에 다 하려고 하지 않아요**. 큰 프리셋은 [<!-- v:limit.window -->5시간<!-- /v --> 한도](costs-and-keys.md#5시간-한도에-걸리면)에 걸려요. 올곧을 처음부터 만들면 <!-- v:preset.olgot.scratch.limitText -->5시간 한도에 약 4번 걸려요<!-- /v -->. 나눠서 만들어도 결과는 같아요.
 6. **끊기면 이어서 해요**. 멈춘 폴더에서 에이전트를 다시 열고 `하던 작업 이어서 해줘`라고 보내면 멈춘 곳부터 해요. 처음부터 다시 시키면 같은 일을 두 번 해요.
 
@@ -290,20 +301,22 @@ gantt
 
 **튜토리얼에 적은 시간의 앞 숫자는 순조롭게 한 번에 끝날 때의 최솟값이에요.** 올곧은 팩 없이 처음부터 만들었으니, 비교할 값은 처음부터 만들 때의 범위예요(<!-- v:preset.olgot.scratch.time.text -->한 번에 완성하면 약 5시간 45분\~11시간 30분(여러 번 고쳐 달라고 하면 약 17시간 15분까지)<!-- /v -->). 실제로는 사이트를 조사해 DESIGN.md를 만드는 데 약 <!-- v:preset.olgot.prep.research.time -->43분<!-- /v -->, 그 뒤 만들기에 약 <!-- v:preset.olgot.actual.total.time -->8시간 20분<!-- /v -->이 들었어요(범위 넓히기 조사는 만들기와 같은 시간에 해서 따로 더하지 않았어요). 범위 안이지만 앞 숫자보다 길었어요. 이유는 이래요.
 
-- 모든 페이지 확인이 만들기 시간의 <!-- v:process.pie.olgot.recheck.pct -->60<!-- /v -->%였어요(Claudle은 <!-- v:process.pie.claudle.recheck.pct -->35<!-- /v -->%).
+- 모든 페이지 확인이 만들기 시간의 <!-- v:process.pie.olgot.recheck.pct -->60<!-- /v -->%였어요<!-- edition:pro -->(Claudle은 <!-- v:process.pie.claudle.recheck.pct -->35<!-- /v -->%).<!-- /edition -->
 - 마무리 검토를 한 번 하는 데 <!-- v:cost.revise.reviewRound -->2\~3시간<!-- /v -->이 들었어요.
 - 그림 그리기 같은 백그라운드 작업이 끝나기를 <!-- v:process.olgot.wait -->48분<!-- /v --> 기다린 라운드가 있었어요.
 - 범위를 넓히고 두 번 고쳐 달라고 했어요.
 - 라운드 사이에 내가 결과를 보고 답하는 시간은 표시에 들어 있지 않아요. 기다리는 동안 시계는 계속 가요.
 
+<!-- edition:pro -->
 Nextflix는 4장 라운드가 중간에 끊겨 이어 가느라 더 들었어요.
+<!-- /edition -->
 
 </details>
 
 <details>
 <summary>프리셋 팩으로 하면 얼마나 빨라지나요?</summary>
 
-**리서치, 분석, 팩 만들기를 건너뛰어요.** 프리셋을 만든 사람이 쓴 시간으로 Claudle 약 <!-- v:preset.claudle.prep.total.time -->2시간 5분<!-- /v -->, Nextflix 약 <!-- v:preset.nextflix.prep.total.time -->3시간 35분<!-- /v -->이에요. 올곧은 처음부터 만든 뒤 팩을 묶어서, 빠지는 사전 작업은 사이트 조사(약 <!-- v:preset.olgot.prep.total.time -->50분<!-- /v -->)예요. 팩에 사이트맵과 화면 설명, 예시 데이터, 그림이 들어 있어서 기획 질문도 줄고 그림을 새로 그리지 않아요. 처음부터 만들 때와 비교한 시간은 [프리셋 한눈에](#예시로-보는-시간) 표에 있어요.
+**리서치, 분석, 팩 만들기를 건너뛰어요.** <!-- edition:pro -->프리셋을 만든 사람이 쓴 시간으로 Claudle 약 <!-- v:preset.claudle.prep.total.time -->2시간 5분<!-- /v -->, Nextflix 약 <!-- v:preset.nextflix.prep.total.time -->3시간 35분<!-- /v -->이에요. <!-- /edition -->올곧은 처음부터 만든 뒤 팩을 묶어서, 빠지는 사전 작업은 사이트 조사(약 <!-- v:preset.olgot.prep.total.time -->50분<!-- /v -->)예요. 팩에 사이트맵과 화면 설명, 예시 데이터, 그림이 들어 있어서 기획 질문도 줄고 그림을 새로 그리지 않아요. 처음부터 만들 때와 비교한 시간은 [프리셋 한눈에](#예시로-보는-시간) 표에 있어요.
 
 </details>
 

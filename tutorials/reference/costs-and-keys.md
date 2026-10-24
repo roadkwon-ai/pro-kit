@@ -50,7 +50,7 @@
 | 첫 화면(다듬기 없이) | <!-- v:cost.unit.first.time -->12\~19분<!-- /v -->, <!-- v:cost.unit.first.usd -->4.45\~6.34<!-- /v -->달러 |
 | 두 번째 화면(따로 만들 때) | <!-- v:cost.unit.second.time -->6\~10분<!-- /v -->, <!-- v:cost.unit.second.usd -->2.74\~3.05<!-- /v -->달러 |
 | 기능 하나를 만들고 검사하기 | 약 <!-- v:cost.feature.time -->15분<!-- /v -->, <!-- v:cost.feature.usd -->7<!-- /v -->달러 |
-| Nextflix 2\~4장(4장에서 끊겨 이어 간 값 포함) | 약 <!-- v:preset.nextflix.actual.build.time -->2시간 25분<!-- /v -->, 약 <!-- v:preset.nextflix.actual.build.usd -->90<!-- /v -->달러 |
+| Nextflix 2\~4장(4장에서 끊겨 이어 간 값 포함) | 약 <!-- v:preset.nextflix.actual.build.time -->2시간 25분<!-- /v -->, 약 <!-- v:preset.nextflix.actual.build.usd -->90<!-- /v -->달러 | <!-- edition:pro -->
 
 실제로 프리셋을 만들 때 단계마다 걸린 시간과 그 이유, 고쳐 달라고 할 때마다 더 드는 시간(한 군데 약 <!-- v:cost.revise.oneSpot -->10분<!-- /v -->, 마무리 검토 한 번 더 <!-- v:cost.revise.reviewRound -->2\~3시간<!-- /v -->)은 [만드는 과정과 걸리는 시간](process-and-time.md)에 있어요.
 
@@ -67,7 +67,7 @@ Claude Pro와 ChatGPT Plus 같은 유료 요금제는 **처음 쓰기 시작한 
 
 ### 주간 한도
 
-**주간 한도**도 있어요. 일주일 동안 쓸 수 있는 전체 양이라, 다 쓰면 정해진 날까지 기다려야 해요. 한 주에 프리셋 몇 개는 넉넉히 만들 수 있지만, Nextflix를 끝까지 만들면 주간 한도에 닿을 수 있어요. 자주 만든다면 Claude Max나 ChatGPT Pro가 편해요. ChatGPT Pro는 지금 <!-- v:limit.window -->5시간<!-- /v --> 한도가 없어요.
+**주간 한도**도 있어요. 일주일 동안 쓸 수 있는 전체 양이라, 다 쓰면 정해진 날까지 기다려야 해요. 한 주에 프리셋 몇 개는 넉넉히 만들 수 있<!-- edition:pro -->지만, Nextflix를 끝까지 만들면 주간 한도에 닿을 수 있<!-- /edition -->어요. 자주 만든다면 Claude Max나 ChatGPT Pro가 편해요. ChatGPT Pro는 지금 <!-- v:limit.window -->5시간<!-- /v --> 한도가 없어요.
 
 남은 양은 Claude Code에서 `/usage`를 입력하거나 Codex의 사용량 화면에서 확인해요.
 
@@ -130,4 +130,4 @@ curl -fsSL https://chatgpt.com/codex/install.sh | sh
 
 ## 배포 비용
 
-배포는 선택이에요. 화면만 올릴 때는 GitHub Pages나 Vercel 무료 요금제(Hobby)로 충분해요([배포하기](deploy.md)). GitHub Pages는 무료 계정이면 공개 저장소에서만 쓸 수 있고, Vercel Hobby는 개인적인 비상업 용도예요. 로그인과 DB가 있는 실제 서비스를 올리려면 Vercel과 Neon(인터넷에 있는 DB) 계정이 필요하고, 둘 다 무료 요금제로 시작할 수 있어요. 요금과 조건은 바뀔 수 있으니 각 사이트에서 확인하세요.
+배포는 선택이에요. 화면만 올릴 때는 GitHub Pages나 Vercel 무료 요금제(Hobby)로 충분해요([배포하기](deploy.md)). GitHub Pages는 무료 계정이면 공개 저장소에서만 쓸 수 있고, Vercel Hobby는 개인적인 비상업 용도예요.<!-- edition:pro --> 로그인과 DB가 있는 실제 서비스를 올리려면 Vercel과 Neon(인터넷에 있는 DB) 계정이 필요하고, 둘 다 무료 요금제로 시작할 수 있어요.<!-- /edition --> 요금과 조건은 바뀔 수 있으니 각 사이트에서 확인하세요.

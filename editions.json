@@ -2,16 +2,30 @@
 	"ui": {
 		"link": "repoUi",
 		"overlay": "editions/ui",
+		"rename": [
+			"pro-kit",
+			"pro-kit-ui"
+		],
 		"include": [
 			"LICENSE",
 			"THIRD_PARTY_NOTICES.md",
 			"site-links.json",
 			"scripts/pack.mjs",
 			"scripts/apply-pack.mjs",
-			"tutorials/packs.json",
 			".agents/skills/prokit-init",
 			".claude/skills/prokit-init",
-			"templates/prokit-next-neon"
+			"templates/prokit-next-neon",
+			"handbook",
+			"tutorials/README.md",
+			"tutorials/packs.json",
+			"tutorials/start",
+			"tutorials/samples",
+			"tutorials/reference",
+			"docs/assets/brand/banner.png",
+			"docs/assets/design-samples/goru.webp",
+			"docs/assets/design-samples/olgot.webp",
+			"docs/assets/landing-samples/pacecrew.webp",
+			"docs/reports/2026-10-13-preset-measurements.json"
 		],
 		"exclude": [
 			".agents/skills/prokit-init/references/existing-project.md",
@@ -23,7 +37,15 @@
 			"templates/prokit-next-neon/files/.agents/skills/prokit-api",
 			"templates/prokit-next-neon/files/.agents/skills/prokit-db",
 			"templates/prokit-next-neon/files/.agents/skills/prokit-deploy",
-			"templates/prokit-next-neon/files/.agents/skills/prokit-web"
+			"templates/prokit-next-neon/files/.agents/skills/prokit-web",
+			"handbook/start/quickstart-service.md",
+			"handbook/start/adopt.md",
+			"handbook/concepts/project-plan.md",
+			"handbook/templates/choose.md",
+			"handbook/deploy/vercel.md",
+			"handbook/deploy/release.md",
+			"handbook/reference/verification.md",
+			"tutorials/samples/real-service.md"
 		],
 		"missing": [
 			"prokit-api",
@@ -32,6 +54,56 @@
 			"prokit-web",
 			"prokit-next-supabase",
 			"existing-project.md"
-		]
+		],
+		"proTerms": [
+			"db:migrate",
+			"db:generate",
+			"db:push",
+			"db:start",
+			"마이그레이션",
+			"migration",
+			"migrations",
+			"DATABASE_URL",
+			"RLS",
+			"Neon",
+			"Supabase",
+			"프로시저",
+			"procedure",
+			"protectedProcedure",
+			"authClient",
+			"vercel:deploy",
+			"pnpm release",
+			"production",
+			"neon link",
+			"vercel link",
+			"--adopt",
+			"--project-type",
+			"--legacy",
+			"prokit/setup",
+			"intake",
+			"operating",
+			"prokit-analyzer",
+			"project-plan",
+			"기존 프로젝트",
+			"운영 중",
+			"클론",
+			"Nextflix",
+			"Claudle",
+			"Podman",
+			"Docker",
+			"컨테이너"
+		],
+		"proValues": [
+			"prokit.skills.count",
+			"prokit.agents.count",
+			"templates.count",
+			"templates.count.ko",
+			"presets.count",
+			"presets.clone.count",
+			"handbook.pages.count",
+			"handbook.sections.count",
+			"skills.official.supabase"
+		],
+		"allow": "editions/ui-allow.txt"
 	}
 }

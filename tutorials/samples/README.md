@@ -5,7 +5,7 @@
 **코드를 몰라도 프롬프트 하나로 시작하면 돼요.** pro-kit이 설치한 규칙과 스킬, 전문 에이전트가 개발자와 디자이너가 밟는 절차를 단계마다 나눠 맡아요. 그래서 짧은 프롬프트로도 에이전트의 실력을 끝까지 끌어내 전문가 수준의 화면을 얻을 수 있어요.
 
 > [!NOTE]
-> 에이전트(<!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나)를 설치하고 로그인만 해 두세요([시작하기](../start/README.md)). pro-kit 받기와 필요한 프로그램 설치는 프롬프트를 받은 에이전트가 해요. 화면만 만들 때는 Docker가 없어도 돼요.
+> 에이전트(<!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나)를 설치하고 로그인만 해 두세요([시작하기](../start/README.md)). pro-kit 받기와 필요한 프로그램 설치는 프롬프트를 받은 에이전트가 해요.<!-- edition:pro --> 화면만 만들 때는 Docker가 없어도 돼요.<!-- /edition -->
 
 ## 프리셋으로 만들어 보기
 
@@ -15,27 +15,27 @@
 - **프리셋 팩으로 나만의 서비스 만들기**: 프리셋 팩을 바탕으로 이름, 색, 페이지, 주제를 바꿔요.
 - **이 컨셉으로 처음부터 만들기**: 같은 컨셉으로 나만의 화면을 새로 만들어요. 이름, 스타일, 화면이 프리셋과 다르게 나와요.
 
-| 프리셋 | 분류 | 컨셉 | 페이지 | 실제 서비스로 바꾸기 |
-|---|---|---|---|---|
-| [<!-- v:preset.slidelab.title -->슬라이드랩<!-- /v -->](slidelab.md) | <!-- v:preset.slidelab.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.slidelab.summary -->과정과 교육 시간을 고르는 AI·PPT 교육 랜딩<!-- /v --> | <!-- v:preset.slidelab.pages -->1<!-- /v --> | <!-- v:preset.slidelab.difficulty -->문의 서비스 연결 설계 필요<!-- /v --> |
-| [<!-- v:preset.speaker-portfolio.title -->스피커 포트폴리오<!-- /v -->](speaker-portfolio.md) | <!-- v:preset.speaker-portfolio.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.speaker-portfolio.summary -->활동과 콘텐츠를 소개하는 개인 브랜딩 포트폴리오<!-- /v --> | <!-- v:preset.speaker-portfolio.pages -->6<!-- /v --> | <!-- v:preset.speaker-portfolio.difficulty -->문의·결제 연동과 운영 정책 작성 필요<!-- /v --> |
-| [<!-- v:preset.goru.title -->고루<!-- /v -->](goru.md) | <!-- v:preset.goru.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.goru.summary -->같이 사는 사람들의 생활비 정산<!-- /v --> | <!-- v:preset.goru.pages -->7<!-- /v --> | <!-- v:preset.goru.difficulty -->쉬움<!-- /v --> |
-| [<!-- v:preset.ullim.title -->울림<!-- /v -->](ullim.md) | <!-- v:preset.ullim.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.ullim.summary -->대본을 한국어 내레이션으로 만드는 AI 스튜디오<!-- /v --> | <!-- v:preset.ullim.pages -->11<!-- /v --> | <!-- v:preset.ullim.difficulty -->어려움<!-- /v --> |
-| [<!-- v:preset.studyday.title -->하루공부<!-- /v -->](studyday.md) | <!-- v:preset.studyday.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.studyday.summary -->시험 날짜까지 하루 공부 나누기와 공부 기록<!-- /v --> | <!-- v:preset.studyday.pages -->14<!-- /v --> | <!-- v:preset.studyday.difficulty -->가장 쉬움<!-- /v --> |
-| [<!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->](afterglow.md) | <!-- v:preset.afterglow.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.afterglow.summary -->가정용 태양광 배터리 소개와 설치 상담<!-- /v --> | <!-- v:preset.afterglow.pages -->17<!-- /v --> | <!-- v:preset.afterglow.difficulty -->어려움<!-- /v --> |
-| [<!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->](fitslot.md) | <!-- v:preset.fitslot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.fitslot.summary -->필라테스 수업 예약과 수강권 관리<!-- /v --> | <!-- v:preset.fitslot.pages -->20<!-- /v --> | <!-- v:preset.fitslot.difficulty -->보통<!-- /v --> |
-| [<!-- v:preset.jecheol.title -->제철상자<!-- /v -->](jecheol.md) | <!-- v:preset.jecheol.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.jecheol.summary -->제철 농산물 정기배송<!-- /v --> | <!-- v:preset.jecheol.pages -->21<!-- /v --> | <!-- v:preset.jecheol.difficulty -->어려움<!-- /v --> |
-| [<!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->](pacecrew.md) | <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.pacecrew.summary -->동네 러닝 크루 매칭과 레이스 신청<!-- /v --> | <!-- v:preset.pacecrew.pages -->22<!-- /v --> | <!-- v:preset.pacecrew.difficulty -->어려움<!-- /v --> |
-| [<!-- v:preset.uptrail.title -->Uptrail<!-- /v -->](uptrail.md) | <!-- v:preset.uptrail.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.uptrail.summary -->개발팀의 서비스 상태와 배포 모니터링<!-- /v --> | <!-- v:preset.uptrail.pages -->22<!-- /v --> | <!-- v:preset.uptrail.difficulty -->올곧 다음으로 어려움<!-- /v --> |
-| [<!-- v:preset.olgot.title -->올곧<!-- /v -->](olgot.md) | <!-- v:preset.olgot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.olgot.summary -->고등부 수학·과학 입시학원 웹 앱<!-- /v --> | <!-- v:preset.olgot.pages -->203<!-- /v --> | <!-- v:preset.olgot.difficulty -->가장 어려움<!-- /v --> |
+| 프리셋 | 분류 | 컨셉 | 페이지 |<!-- edition:pro --> 실제 서비스로 바꾸기 |<!-- /edition -->
+|---|---|---|---|<!-- edition:pro -->---|<!-- /edition -->
+| [<!-- v:preset.slidelab.title -->슬라이드랩<!-- /v -->](slidelab.md) | <!-- v:preset.slidelab.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.slidelab.summary -->과정과 교육 시간을 고르는 AI·PPT 교육 랜딩<!-- /v --> | <!-- v:preset.slidelab.pages -->1<!-- /v --> |<!-- edition:pro --> <!-- v:preset.slidelab.difficulty -->문의 서비스 연결 설계 필요<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.speaker-portfolio.title -->스피커 포트폴리오<!-- /v -->](speaker-portfolio.md) | <!-- v:preset.speaker-portfolio.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.speaker-portfolio.summary -->활동과 콘텐츠를 소개하는 개인 브랜딩 포트폴리오<!-- /v --> | <!-- v:preset.speaker-portfolio.pages -->6<!-- /v --> |<!-- edition:pro --> <!-- v:preset.speaker-portfolio.difficulty -->문의·결제 연동과 운영 정책 작성 필요<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.goru.title -->고루<!-- /v -->](goru.md) | <!-- v:preset.goru.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.goru.summary -->같이 사는 사람들의 생활비 정산<!-- /v --> | <!-- v:preset.goru.pages -->7<!-- /v --> |<!-- edition:pro --> <!-- v:preset.goru.difficulty -->쉬움<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.ullim.title -->울림<!-- /v -->](ullim.md) | <!-- v:preset.ullim.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.ullim.summary -->대본을 한국어 내레이션으로 만드는 AI 스튜디오<!-- /v --> | <!-- v:preset.ullim.pages -->11<!-- /v --> |<!-- edition:pro --> <!-- v:preset.ullim.difficulty -->어려움<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.studyday.title -->하루공부<!-- /v -->](studyday.md) | <!-- v:preset.studyday.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.studyday.summary -->시험 날짜까지 하루 공부 나누기와 공부 기록<!-- /v --> | <!-- v:preset.studyday.pages -->14<!-- /v --> |<!-- edition:pro --> <!-- v:preset.studyday.difficulty -->가장 쉬움<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.afterglow.title -->AFTERGLOW<!-- /v -->](afterglow.md) | <!-- v:preset.afterglow.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.afterglow.summary -->가정용 태양광 배터리 소개와 설치 상담<!-- /v --> | <!-- v:preset.afterglow.pages -->17<!-- /v --> |<!-- edition:pro --> <!-- v:preset.afterglow.difficulty -->어려움<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->](fitslot.md) | <!-- v:preset.fitslot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.fitslot.summary -->필라테스 수업 예약과 수강권 관리<!-- /v --> | <!-- v:preset.fitslot.pages -->20<!-- /v --> |<!-- edition:pro --> <!-- v:preset.fitslot.difficulty -->보통<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.jecheol.title -->제철상자<!-- /v -->](jecheol.md) | <!-- v:preset.jecheol.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.jecheol.summary -->제철 농산물 정기배송<!-- /v --> | <!-- v:preset.jecheol.pages -->21<!-- /v --> |<!-- edition:pro --> <!-- v:preset.jecheol.difficulty -->어려움<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->](pacecrew.md) | <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.pacecrew.summary -->동네 러닝 크루 매칭과 레이스 신청<!-- /v --> | <!-- v:preset.pacecrew.pages -->22<!-- /v --> |<!-- edition:pro --> <!-- v:preset.pacecrew.difficulty -->어려움<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.uptrail.title -->Uptrail<!-- /v -->](uptrail.md) | <!-- v:preset.uptrail.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.uptrail.summary -->개발팀의 서비스 상태와 배포 모니터링<!-- /v --> | <!-- v:preset.uptrail.pages -->22<!-- /v --> |<!-- edition:pro --> <!-- v:preset.uptrail.difficulty -->올곧 다음으로 어려움<!-- /v --> |<!-- /edition -->
+| [<!-- v:preset.olgot.title -->올곧<!-- /v -->](olgot.md) | <!-- v:preset.olgot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.olgot.summary -->고등부 수학·과학 입시학원 웹 앱<!-- /v --> | <!-- v:preset.olgot.pages -->203<!-- /v --> |<!-- edition:pro --> <!-- v:preset.olgot.difficulty -->가장 어려움<!-- /v --> |<!-- /edition -->
 
-표는 페이지가 적은 순이에요. 페이지가 많을수록 오래 걸려요. 랜딩페이지는 서비스를 알리는 시각 연출이 큰 사이트이고, 앱 화면은 서비스를 쓰는 화면이 중심인 웹 앱이에요. "실제 서비스로 바꾸기"는 로그인과 DB를 붙여 진짜 서비스로 바꿀 때의 난이도예요. 필요한 외부 서비스와 지킬 데이터 규칙으로 견줬고, 까닭은 프리셋 쪽의 "실제 서비스로 만들 때"에 있어요.
+표는 페이지가 적은 순이에요. 페이지가 많을수록 오래 걸려요. 랜딩페이지는 서비스를 알리는 시각 연출이 큰 사이트이고, 앱 화면은 서비스를 쓰는 화면이 중심인 웹 앱이에요.<!-- edition:pro --> "실제 서비스로 바꾸기"는 로그인과 DB를 붙여 진짜 서비스로 바꿀 때의 난이도예요. 필요한 외부 서비스와 지킬 데이터 규칙으로 견줬고, 까닭은 프리셋 쪽의 "실제 서비스로 만들 때"에 있어요.<!-- /edition -->
 
 만들고 싶은 서비스가 따로 있으면 [가장 쉬운 방법](#가장-쉬운-방법)의 프롬프트에 내 컨셉을 넣어 보내세요.
 
 ### 프리셋 쪽에 있는 것
 
-공개 프리셋 쪽마다 프롬프트 세 가지를 모았어요. 팩으로 만들어 보기, 팩을 바탕으로 이름·색·페이지·주제를 바꿔 나만의 서비스 만들기, 팩 없이 그 컨셉으로 처음부터 만들기예요. 실제로 거친 과정과 실제 서비스로 만들 때 필요한 것도 함께 있어요.
+공개 프리셋 쪽마다 프롬프트 세 가지를 모았어요. 팩으로 만들어 보기, 팩을 바탕으로 이름·색·페이지·주제를 바꿔 나만의 서비스 만들기, 팩 없이 그 컨셉으로 처음부터 만들기예요. 실제로 거친 과정<!-- edition:pro -->과 실제 서비스로 만들 때 필요한 것<!-- /edition -->도 함께 있어요.
 
 - <!-- v:presets.screen.count -->11<!-- /v -->개 모두 기획 문서를 미리 쓰고 결과를 보며 여러 번 다시 요청해서 만들었어요.
 - 평가 기록이 있는 프리셋 쪽의 디자인 리뷰 점수는 화면이 쓰기 편한지 10가지 기준으로 매긴 40점 만점 점수예요([처음 보는 용어](../reference/glossary.md)).
@@ -117,7 +117,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 - **빈 프로젝트** `~/projects/living`을 pro-kit 옆에 만들어요. 화면을 담을 틀과 pro-kit의 규칙, 스킬, 에이전트만 들어 있고 내 서비스 화면은 아직 없어요.
 - 서비스 요청(`[같이 사는 사람들이…]`가 있는 줄부터 끝까지)을 새 프로젝트에 저장하고, 새 폴더에서 이어 갈 **명령 한 줄**을 알려 줘요.
 
-보고에 원격 DB 연결 같은 할 일이 함께 나오면, [실제 서비스로 만들기](real-service.md) 때 하는 일이라 지금은 넘어가도 돼요.
+보고에 원격 DB 연결 같은 할 일이 함께 나오면, [실제 서비스로 만들기](real-service.md) 때 하는 일이라 지금은 넘어가도 돼요. <!-- edition:pro -->
 
 > [!TIP]
 > **Claude Code로 시안과 사진을 AI로 그리려면** 프롬프트를 보내기 전에 ChatGPT 유료 요금제(Codex CLI로 로그인)나 유료 OpenAI API 키(작업 폴더의 `.env`에 저장) 중 하나를 준비하세요. 늦었으면 화면 구성을 고르기 전에 준비하고 에이전트를 닫았다가 같은 폴더에서 다시 열면 돼요. 방법은 [이미지 그리기](../reference/costs-and-keys.md#이미지-그리기)에 있어요. <!-- v:agents.imageTools -->Codex, Antigravity, Grok Build<!-- /v -->는 자체 이미지 도구가 있어서 따로 준비할 것이 없어요. 이미지 준비가 없어도 시안 대신 배치도로 끝까지 만들어요.
@@ -171,9 +171,9 @@ Claude Code는 고를 것이 있으면 선택지 창을 띄워요. 방향키로 
 - **비밀번호를 입력하라고 해요**: 프로그램 설치에 컴퓨터 비밀번호가 필요할 때예요. 에이전트가 알려 준 명령을 새 터미널 창에서 직접 실행하고, 끝나면 대화창에 `설치했어. 이어서 해줘`라고 보내세요.
 - **git을 설치하라는 창이 떴어요(macOS)**: "설치"를 누르세요. 끝나면 대화창에 `다시 해줘`라고 보내세요.
 - **pro-kit 폴더나 living 폴더가 이미 있대요**: pro-kit이면 `있는 pro-kit을 최신으로 받아서 써줘`, 프로젝트면 `living2라는 이름으로 만들어줘`처럼 다른 이름을 보내세요.
-- **pro-kit 폴더가 예전 것이라 받기가 멈춰요**: 2026-10-08에 pro-kit 저장소를 옮기며 기록을 새로 시작해서, 그 전에 받은 pro-kit은 최신으로 받을 수 없어요. `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **pro-kit 폴더가 예전 것이라 받기가 멈춰요**: 2026-10-08에 pro-kit 저장소를 옮기며 기록을 새로 시작해서, 그 전에 받은 pro-kit은 최신으로 받을 수 없어요. `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요. <!-- edition:pro -->
 - **이어 갈 한 줄을 알려 주지 않았어요**: `새 폴더에서 이어 갈 명령 알려줘`라고 보내세요.
-- **템플릿을 neon과 supabase 중에서 고르라고 해요**: `화면만 만들 거야. 추천대로 해줘`라고 답하세요.
+- **템플릿을 neon과 supabase 중에서 고르라고 해요**: `화면만 만들 거야. 추천대로 해줘`라고 답하세요. <!-- edition:pro -->
 - **Docker가 없다고 멈췄어요**: `화면만 만들 거라 DB는 쓰지 않아. Docker 없이 진행해줘`라고 보내세요.
 - **에이전트가 바로 화면부터 만들어요**: `먼저 서비스 질문과 디자인 추천부터 해줘. 화면은 설계를 확인한 뒤에 만들어`라고 보내세요.
 - **사용량 한도에 걸려 멈췄어요**: 안내된 시간이 지난 뒤 `~/projects/living`에서 에이전트를 열고 `하던 작업 이어서 해줘`라고 보내세요. 기다리는 법은 [5시간 한도에 걸리면](../reference/costs-and-keys.md#5시간-한도에-걸리면)에 있어요.
@@ -202,7 +202,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 ```
 <!-- /b -->
 
-열고 나서 [다듬기](refine.md)나 [실제 서비스로 만들기](real-service.md)의 프롬프트를 보내면 돼요.
+열고 나서 [다듬기](refine.md)<!-- edition:pro -->나 [실제 서비스로 만들기](real-service.md)<!-- /edition -->의 프롬프트를 보내면 돼요.
 
 ## 이어서 할 수 있는 것
 
@@ -210,7 +210,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 |---|---|
 | [다듬기](refine.md) | 결과를 보고 고치고 싶을 때, 스타일·색·서체를 내가 정해 자세히 요청하고 싶을 때 |
 | [장별로 자세히](#장별로-자세히) | 에이전트가 알아서 하는 일을 단계마다 확인하며 만들고 싶을 때 |
-| [실제 서비스로 만들기](real-service.md) | 로그인과 DB 저장이 되는 진짜 서비스로 바꾸고 싶을 때. 화면 만들기와는 따로예요 |
+| [실제 서비스로 만들기](real-service.md) | 로그인과 DB 저장이 되는 진짜 서비스로 바꾸고 싶을 때. 화면 만들기와는 따로예요 | <!-- edition:pro -->
 
 ## 장별로 자세히
 
@@ -232,7 +232,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 
 | 장 | 쓰는 프로킷 기능 | 이 장에서 일어나는 일 | 더 알아보기 |
 |---|---|---|---|
-| 1 | 화면만 프로젝트, 스킬 구성 | 로컬 DB와 마이그레이션 없이 프로젝트를 만들고, 서비스 설명을 PRD로 읽어 스킬을 추천해요 | [화면만 프로젝트와 HTML 내보내기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/screen-only.md), [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md) |
+| 1 | 화면만 프로젝트, 스킬 구성 | 로컬 DB<!-- edition:pro -->와 마이그레이션<!-- /edition --> 없이 프로젝트를 만들고, 서비스 설명을 PRD로 읽어 스킬을 추천해요 | [화면만 프로젝트와 HTML 내보내기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/screen-only.md), [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md) |
 | 2 | 기획 문서(`PRODUCT.md`) | 컨셉 질문에 답해 서비스 소개 문서를 만들어요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
 | 3 | 디자인 카탈로그, `DESIGN.md` | 스타일 후보 1\~3위 중 하나를 골라 디자인 규칙 파일로 저장해요 | [DESIGN.md](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/design-md.md) |
 | 4 | 사이트맵과 화면 설계 | 모든 페이지의 목록과 설계 메모를 만들기 전에 확인해요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
@@ -240,7 +240,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 | 6 | 화면 검사와 다듬기 | 링크와 버튼을 모두 눌러 보고 점수와 문제 목록으로 다듬어요 | [UI/UX 흐름](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/ui-flow.md) |
 | 7 | HTML 내보내기 | `pnpm export:html`이 임시 복사본에서 빌드해 `html/` 폴더를 만들어요 | [화면만 프로젝트와 HTML 내보내기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/design/screen-only.md) |
 
-라운드가 실제로 어떻게 흘러가는지는 [라운드 한 번 따라가 보기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/round-example.md)에서 예시로 볼 수 있어요. 로그인과 DB가 필요해지면 [실제 서비스로 만들기](real-service.md)로 넘어가요.
+라운드가 실제로 어떻게 흘러가는지는 [라운드 한 번 따라가 보기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/concepts/round-example.md)에서 예시로 볼 수 있어요.<!-- edition:pro --> 로그인과 DB가 필요해지면 [실제 서비스로 만들기](real-service.md)로 넘어가요.<!-- /edition -->
 
 ## 시간과 비용
 

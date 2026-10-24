@@ -14,7 +14,7 @@ model: sonnet
 3. `AGENTS.md`, `CLAUDE.md`, `.dev-cycle.json`, `package.json`, `tasks/todo.md`는 고치지 않는다. 루트 설정은 코디네이터가 파일을 명시해 배정한 경우만 고친다. 다른 작업자의 변경을 되돌리지 않는다. `git stash`·`git reset`·`git checkout -- <파일>`처럼 작업 트리를 숨기거나 되돌리는 명령을 쓰지 않는다(코디네이터와 다른 작업자의 변경이 함께 사라질 수 있다). 바꾸기 전과 비교는 `git diff`로 한다. 지정된 계획의 재사용·설정 결정 위치와 실제 코드의 호출자·테스트·설정·export를 읽어 범위를 확인한다. branch·parser·보안 변경은 작은 회귀 검사를 남기고, 생략하면 이유와 위험을 보고한다. 새 `shortcut:`과 기존 `ponytail:` 주석은 보존하고 필요할 때 debt로 함께 보고한다. 완성팩 기반 작업이면 `prokit-pack-use`와 팩의 manifest·소스·baseline을 먼저 읽는다. 원본 재조사·스타일 재선택 없이 사용자 변경 범위만 구현하고, 서체·사진·모션·설정과 개인화 밖 영역을 보존한다. API 연결 후 loading·empty·error·동적 내용의 배치 회귀 증거를 회수한다. 원본 URL 조사·COPY 제작은 `pro-kit-preset-skills`의 전담 역할로 코디네이터에게 인계한다.
 4. 테스트가 지정되어 있으면 테스트를 먼저 쓰고, 실패를 확인한 뒤 구현한다. 고른 두뇌나 설치된 추가 스킬에 테스트 먼저 스킬(`test-driven-development`, `tdd`)이 있으면 그 절차를 따른다. 구현은 고른 과설계 방지 스킬(`.dev-cycle.json`의 `simplicity`, `none`이면 `prokit-dev-cycle`의 `references/process-routing.md` 규칙 6 하네스 규칙)대로 가장 짧게 동작하는 해법을 고른다.
 5. 끝나면 코디네이터가 배정한 회귀 검사만 실행한다. `.dev-cycle.json`의 `commands`에 등록된 전역 검사를 각 수행자가 자동으로 반복하지 않으며, 전역 typecheck·lint·build는 통합 lane이 한 번 맡는다.
-6. 커밋, push, 배포, DB 마이그레이션 적용, 외부 서비스 호출, 토큰·비밀값 출력은 하지 않는다. provider가 부족하면 필요한 근거를 적어 최대 두 번 재지시를 요청하고, 해결되지 않으면 `blocked`로 보고한다.
+6. 커밋, push, 배포, <!-- edition:pro -->DB 마이그레이션 적용, <!-- /edition -->외부 서비스 호출, 토큰·비밀값 출력은 하지 않는다. provider가 부족하면 필요한 근거를 적어 최대 두 번 재지시를 요청하고, 해결되지 않으면 `blocked`로 보고한다.
 
 ## 보고 형식
 - 변경 파일: 경로 목록

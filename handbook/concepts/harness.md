@@ -28,9 +28,9 @@ AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 �
 | 부분 | 파일 | 하는 일 |
 |---|---|---|
 | 규칙 문서 | `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/domain/project.md` | 에이전트가 시작할 때 읽는 개발 원칙과 공통 규칙, 용어집, 프로젝트 소개. `CLAUDE.md`는 `@AGENTS.md`로 같은 지침을 읽어요 |
-| 스킬 | `.agents/skills/prokit-*` <!-- v:prokit.skills.count -->10<!-- /v -->개와 공식 스킬 | 분야마다 일하는 법을 알려 줘요. 대조표의 행마다 그 단계에서 읽을 공식 스킬이 정해져 있어요 |
-| 역할 나누기 | `.claude/agents/prokit-implementer.md`, `specialist-reviewer.md`, `prokit-analyzer.md`, `prokit-reviewer.md` | 코디네이터가 수행자와 읽기 전용 분석·리뷰를 나눠 맡겨요. `prokit-reviewer(...)` 통합 리뷰 행은 최종 리뷰어만 채울 수 있어요 |
-| 대조표와 audit | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 작업을 케이스로 나누고 케이스별 대조표를 연 뒤 빈칸이 없는지 검사해요. 큰 일은 `tasks/plan.md`의 진행 계획으로 Task를 나누고, 앞 Task가 끝나야 다음 Task 라운드가 열려요([정밀 분석과 진행 계획](project-plan.md)) |
+| 스킬 | `.agents/skills/prokit-*` <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개와 공식 스킬 | 분야마다 일하는 법을 알려 줘요. 대조표의 행마다 그 단계에서 읽을 공식 스킬이 정해져 있어요 |
+| 역할 나누기 | `.claude/agents/prokit-implementer.md`, `specialist-reviewer.md`, <!-- edition:pro -->`prokit-analyzer.md`, <!-- /edition -->`prokit-reviewer.md` | 코디네이터가 수행자와 읽기 전용 분석·리뷰를 나눠 맡겨요. `prokit-reviewer(...)` 통합 리뷰 행은 최종 리뷰어만 채울 수 있어요 |
+| 대조표와 audit | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 작업을 케이스로 나누고 케이스별 대조표를 연 뒤 빈칸이 없는지 검사해요. <!-- edition:pro -->큰 일은 `tasks/plan.md`의 진행 계획으로 Task를 나누고, 앞 Task가 끝나야 다음 Task 라운드가 열려요([정밀 분석과 진행 계획](project-plan.md)) <!-- /edition -->|
 | 자동 검사 | `.dev-cycle.json`의 `commands`, `pnpm skills:check`, `pnpm agents:check`, `pnpm dev-cycle secrets`, `pnpm vercel:deploy … --check` | 타입, 린트, 빌드, 테스트, 스킬과 에이전트 상태, 비밀값, 배포 준비를 명령으로 확인해요. 실행한 결과가 곧 증거예요 |
 
 ## 요청이 흘러가는 길
@@ -40,9 +40,10 @@ AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 �
 - **전문 공급자 연결**: 코디네이터는 실제 출처와 범위를 확인한 전문 공급자를 `prokit-implementer`에 연결해요.
 - **보완 검토**: 공급자 자체의 내장 리뷰가 없을 때만 `specialist-reviewer`에 맡겨요.
 - **최종 통합 리뷰**: `prokit-reviewer`가 매번 해요.
-- **배포 요청**: 코드를 바꾸지 않으므로 라운드를 열지 않고 `prokit-deploy`가 맡아요. 배포와 운영 DB 적용은 중간에 사용자 동의가 필요해서 서브에이전트(보조 에이전트)에 맡기지 않고 메인 세션에서 해요.
+- **배포 요청**: 코드를 바꾸지 않으므로 라운드를 열지 않고 `prokit-deploy`가 맡아요. 배포와 운영 DB 적용은 중간에 사용자 동의가 필요해서 서브에이전트(보조 에이전트)에 맡기지 않고 메인 세션에서 해요. <!-- edition:pro -->
 - **선택 묶음**: 해당하는 분야인데 스킬이 없으면 에이전트가 설치를 제안해요.
 
+<!-- edition:pro -->
 ```mermaid
 flowchart TD
   REQ["사용자 요청<br/>…을 만들어줘 · 고쳐줘"] --> DC["prokit-dev-cycle<br/>케이스 판정 · 대조표"]
@@ -62,6 +63,7 @@ flowchart TD
   DC -->|모든 행의 증거를 채운 뒤| AUD["pnpm dev-cycle audit"]
   AUD --> CLOSE["pnpm dev-cycle close"]
 ```
+<!-- /edition -->
 
 ## 자세히
 
@@ -77,6 +79,6 @@ flowchart TD
 - [라운드 한 번 따라가 보기](round-example.md)
 - [위임 에이전트와 리뷰 에이전트](agent-roles.md)
 - [위임과 자원 관리](delegation-and-resources.md)
-- [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md)
+- [prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개](../skills/prokit-skills.md)
 - [공식 스킬과 연결](../skills/official-skills.md)
 - [템플릿이 더하는 것](../templates/what-it-adds.md)

@@ -1,6 +1,6 @@
 # 에이전트 규칙 (pro-kit-ui)
 
-이 저장소는 프로킷 UI 스킬셋이다. Better-T-Stack Next.js 프로젝트에 화면 작업용 AI 에이전트 개발 환경을 설치하는 템플릿 하나(`templates/prokit-next-neon`)와 프리셋 팩 도구(`scripts/pack.mjs`, `scripts/apply-pack.mjs`)를 둔다. 정본은 [pro-kit](<!-- v:link.repo -->https://github.com/roadkwon-ai/pro-kit<!-- /v -->)이고, 이 저장소는 그 생성기가 만든 읽기 전용 사본이다. 이 저장소의 파일은 고치지 않는다. 템플릿 결함을 찾으면 새 프로젝트에서만 고치고 넘어가지 말고 사용자에게 보고한다.
+이 저장소는 프로킷 UI 스킬셋이다. Better-T-Stack Next.js 프로젝트에 화면 작업용 AI 에이전트 개발 환경을 설치하는 템플릿 하나(`templates/prokit-next-neon`), 프리셋 팩 도구(`scripts/pack.mjs`, `scripts/apply-pack.mjs`), 사람이 읽는 문서(`handbook/`, `tutorials/`)를 둔다. 정본은 [pro-kit](<!-- v:link.repo -->https://github.com/roadkwon-ai/pro-kit<!-- /v -->)이고, 이 저장소는 그 생성기가 만든 읽기 전용 사본이다. 이 저장소의 파일은 고치지 않는다. 템플릿 결함을 찾으면 새 프로젝트에서만 고치고 넘어가지 말고 사용자에게 보고한다.
 
 ## UI 스킬셋이 하는 일
 - 화면만 만드는 프로젝트를 만든다. DB 없이 예시 데이터로 화면을 만들고, HTML로 내보내고, 요청하면 GitHub Pages나 Vercel에 올린다. 화면 프리셋 팩으로 시작할 수 있다.
@@ -46,7 +46,7 @@
 - 보고 끝에 새 폴더에서 이어 갈 한 줄을 준다: `cd <프로젝트 절대 경로> && <지금 에이전트를 여는 명령> "docs/first-request.md의 요청대로 이어서 해줘"`. Antigravity는 `agy -i "<요청>"`, Grok Build는 `grok --trust "<요청>"`으로 연다. 지금 세션을 묻지 않고 진행하는 모드로 열었으면 같은 옵션을 붙인다(<!-- v:agent.claude.yoloCode -->`claude --dangerously-skip-permissions`<!-- /v -->, <!-- v:agent.codex.yoloCode -->`codex --yolo`<!-- /v -->, <!-- v:agent.agy.yoloCode -->`agy --dangerously-skip-permissions`<!-- /v -->, <!-- v:agent.grok.yoloCode -->`grok --permission-mode bypassPermissions`<!-- /v -->). 새 폴더에서 열어야 그 프로젝트의 규칙, 스킬, 에이전트가 켜진다고 함께 알린다.
 - 이 세션에서 화면을 이어 만들지 않는다. 배포 요청("GitHub Pages에 배포해줘", "Vercel에 배포해줘")도 `docs/first-request.md`에 넣어 두면 프로젝트 세션이 화면을 다 만든 뒤 `prokit-ui`의 배포 절차로 한다. 원격 저장소와 프로젝트를 만드는 것까지 요청한 것으로 본다.
 
-## 템플릿 갱신 반영
+## 기존 프로젝트에 템플릿 갱신 반영
 "템플릿 변경을 <프로젝트>에 반영해줘"라고 요청하면 `bash templates/prokit-next-neon/install.sh <프로젝트> --diff`로 차이를 본다(파일을 쓰지 않는다). `.dev-cycle.json`은 템플릿의 `files/.dev-cycle.json`과 직접 비교한다. 옮길 항목을 정리해 보고하고, 실제 반영은 그 프로젝트에서 연 세션이 dev-cycle 케이스 H 라운드로 한다(`install.sh <프로젝트> --skip-skills`로 없는 파일과 설정 항목을 더하고, 템플릿과 다른 파일은 직접 옮긴다).
 
 ## Pro 스킬셋으로 올리기

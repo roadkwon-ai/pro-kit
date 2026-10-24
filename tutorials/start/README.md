@@ -22,7 +22,7 @@ flowchart LR
 |---|---|
 | 컴퓨터 | macOS, 또는 WSL2를 켠 Windows. Windows라면 [Windows 준비](../reference/windows.md)를 먼저 하고 오세요 |
 | 에이전트 요금제 | 쓰려는 에이전트의 유료 요금제. Claude Code는 Claude, Codex는 ChatGPT 요금제예요. 요금제 이름은 [에이전트별 차이](../reference/claude-code-and-codex.md)에 있어요 |
-| 만들 서비스 설명(PRD) | 누가 쓰고 무엇을 할 수 있는 서비스인지 한두 문장이에요. 프로킷은 이 설명으로 스킬 구성을 추천하고 개발 환경을 만들어서, 끝내 없으면 프로젝트를 만들지 않아요. 프리셋 쪽의 프롬프트에는 PRD(프리셋 팩이나 컨셉 설명)가 이미 들어 있어요. 이미 진행하던 프로젝트에 들일 때는 PRD가 없어도 돼요. [PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md), [기존 프로젝트에 도입하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/adopt.md) |
+| 만들 서비스 설명(PRD) | 누가 쓰고 무엇을 할 수 있는 서비스인지 한두 문장이에요. 프로킷은 이 설명으로 스킬 구성을 추천하고 개발 환경을 만들어서, 끝내 없으면 프로젝트를 만들지 않아요. 프리셋 쪽의 프롬프트에는 PRD(프리셋 팩이나 컨셉 설명)가 이미 들어 있어요. <!-- edition:pro -->이미 진행하던 프로젝트에 들일 때는 PRD가 없어도 돼요. <!-- /edition -->[PRD 먼저 정하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/prd.md)<!-- edition:pro -->, [기존 프로젝트에 도입하기](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/start/adopt.md)<!-- /edition --> |
 | (선택) 이미지 그리기 준비 | Claude Code로 화면 시안과 사진을 AI로 그릴 때만 필요해요. ChatGPT 유료 요금제(Codex CLI로 그려요)나 유료 OpenAI API 키 중 하나이고, 튜토리얼의 첫 프롬프트를 보내기 전에 해요. <!-- v:agents.imageTools -->Codex, Antigravity, Grok Build<!-- /v -->는 준비 없이 그려요. 없어도 튜토리얼을 끝까지 할 수 있어요. [이미지 그리기](../reference/costs-and-keys.md#이미지-그리기) |
 
 ## 2. 터미널 열기
@@ -147,7 +147,7 @@ cd ~/projects
 git clone https://github.com/roadkwon-ai/pro-kit.git
 ```
 
-**ZIP으로 받기**: 같은 `Code` 버튼에서 `Download ZIP`을 누르고 받은 파일의 압축을 풀어요. 풀린 폴더(`pro-kit-main`)의 이름을 `pro-kit`으로 바꿔 작업 폴더(홈 폴더의 `projects`)로 옮겨요. ZIP으로 받으면 새 판이 나왔을 때 다시 받아야 해요. Windows(WSL)는 터미널로 받는 게 편해요.
+**ZIP으로 받기**: 같은 `Code` 버튼에서 `Download ZIP`을 누르고 받은 파일의 압축을 풀어요. 풀린 폴더(<!-- edition:pro -->`pro-kit-main`<!-- /edition --><!-- edition:ui `pro-kit-ui-main` -->)의 이름을 `pro-kit`으로 바꿔 작업 폴더(홈 폴더의 `projects`)로 옮겨요. ZIP으로 받으면 새 판이 나왔을 때 다시 받아야 해요. Windows(WSL)는 터미널로 받는 게 편해요.
 
 **이렇게 되면 성공**
 - `~/projects/pro-kit` 폴더가 생겨요.
@@ -156,10 +156,10 @@ git clone https://github.com/roadkwon-ai/pro-kit.git
 <details>
 <summary>막히면</summary>
 
-- **Docker가 없대요**: 화면만 만들 때는 없어도 돼요. 실제 서비스를 만들 때 [docker.com](https://www.docker.com/products/docker-desktop/)에서 Docker Desktop을 받아 설치하고 앱을 켜 두세요(macOS는 메뉴 막대에 고래 아이콘이 보여요).
+- **Docker가 없대요**: 화면만 만들 때는 없어도 돼요. 실제 서비스를 만들 때 [docker.com](https://www.docker.com/products/docker-desktop/)에서 Docker Desktop을 받아 설치하고 앱을 켜 두세요(macOS는 메뉴 막대에 고래 아이콘이 보여요). <!-- edition:pro -->
 - **에이전트가 중간에 멈췄어요**: "하던 작업 이어서 해줘"라고 보내세요.
-- **Podman 머신이 꺼져 있다고 해요**: "켜줘"라고 답하세요.
-- **Neon CLI나 Vercel CLI가 없다고 해요**: 배포할 때만 필요해요. 지금은 넘어가도 돼요.
+- **Podman 머신이 꺼져 있다고 해요**: "켜줘"라고 답하세요. <!-- edition:pro -->
+- **<!-- edition:pro -->Neon CLI나 <!-- /edition -->Vercel CLI가 없다고 해요**: 배포할 때만 필요해요. 지금은 넘어가도 돼요.
 - 그 밖의 문제는 [막혔을 때](../reference/troubleshooting.md)를 보세요.
 
 </details>

@@ -24,7 +24,7 @@
 | 언제 | 프리셋과 같은 서비스를 처음부터 만들어 보고 싶을 때 | 이미 프로킷으로 만든 Better-T-Stack 프로젝트에 완성된 프리셋 화면을 들이고 싶을 때 |
 | 팩의 역할 | PRD와 디자인 자료. 에이전트가 팩대로 새로 만들어요 | 복원할 소스. 스크립트가 파일을 그대로 복사해요 |
 | 어떻게 | 튜토리얼 프리셋 쪽의 프롬프트를 작업 폴더에서 보내요 | 프로젝트에서 연 에이전트에게 팩 복원을 요청해요(`prokit-pack-use`) |
-| 결과 | 화면만 만든 새 프로젝트와 HTML | 팩의 화면이 들어간 기존 프로젝트 |
+| 결과 | 화면만 만든 새 프로젝트와 HTML | 팩의 화면이 들어간 <!-- edition:pro -->기존 프로젝트<!-- /edition --><!-- edition:ui 이미 만든 프로젝트 --> |
 
 **처음 쓰는 분은 대부분 왼쪽 방법이 맞아요.**
 
@@ -35,7 +35,7 @@
 3. 작업 폴더에서 연 에이전트에 붙여 넣어요([처음 한 시간](first-hour.md)).
 4. 프롬프트에 `packs/<이름> 프리셋 팩`이 있으면 에이전트가 pro-kit의 `AGENTS.md`대로 그 팩만 받아요. 직접 받아 둔 zip이 있으면 프롬프트 끝에 `프리셋 팩 zip은 [받은 zip 경로]에 받아 뒀어.` 한 줄을 더해요.
 
-팩은 PRD로도 쓰여서 에이전트가 스킬 구성을 추천하고 물어봐요. 질문과 답하는 법은 [빠른 시작: 서비스 만들기](quickstart-service.md#에이전트가-물어보는-것)와 같아요.
+팩은 PRD로도 쓰여서 에이전트가 스킬 구성을 추천하고 물어봐요. 질문과 답하는 법은 <!-- edition:pro -->[빠른 시작: 서비스 만들기](quickstart-service.md#에이전트가-물어보는-것)와<!-- /edition --><!-- edition:ui [처음 한 시간](first-hour.md)과 --> 같아요.
 
 **이렇게 되면 성공**
 
@@ -116,8 +116,8 @@ node scripts/pack.mjs goru --zip ~/Downloads/goru-pack.zip   # 받아 둔 zip �
 | `pacecrew` | <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> | <!-- v:preset.pacecrew.summary -->동네 러닝 크루 매칭과 레이스 신청<!-- /v --> | [<!-- v:preset.pacecrew.title -->PACECREW<!-- /v -->](../../tutorials/samples/pacecrew.md) |
 | `uptrail` | <!-- v:preset.uptrail.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.uptrail.summary -->개발팀의 서비스 상태와 배포 모니터링<!-- /v --> | [<!-- v:preset.uptrail.title -->Uptrail<!-- /v -->](../../tutorials/samples/uptrail.md) |
 | `olgot` | <!-- v:preset.olgot.kindLabel -->앱 화면<!-- /v --> | <!-- v:preset.olgot.summary -->고등부 수학·과학 입시학원 웹 앱<!-- /v --> | [<!-- v:preset.olgot.title -->올곧<!-- /v -->](../../tutorials/samples/olgot.md) |
-| `nextflix` | <!-- v:preset.nextflix.kindLabel -->클론 튜토리얼<!-- /v --> | <!-- v:preset.nextflix.field -->영상 구독 서비스<!-- /v --> 만들기 | [<!-- v:preset.nextflix.title -->Nextflix<!-- /v -->](../../tutorials/01-nextflix/README.md) |
-| `claudle` | <!-- v:preset.claudle.kindLabel -->클론 튜토리얼<!-- /v --> | <!-- v:preset.claudle.field -->AI 대화 서비스<!-- /v --> 만들기 | [<!-- v:preset.claudle.title -->Claudle<!-- /v -->](../../tutorials/02-claudle/README.md) |
+| `nextflix` | <!-- v:preset.nextflix.kindLabel -->클론 튜토리얼<!-- /v --> | <!-- v:preset.nextflix.field -->영상 구독 서비스<!-- /v --> 만들기 | [<!-- v:preset.nextflix.title -->Nextflix<!-- /v -->](../../tutorials/01-nextflix/README.md) | <!-- edition:pro -->
+| `claudle` | <!-- v:preset.claudle.kindLabel -->클론 튜토리얼<!-- /v --> | <!-- v:preset.claudle.field -->AI 대화 서비스<!-- /v --> 만들기 | [<!-- v:preset.claudle.title -->Claudle<!-- /v -->](../../tutorials/02-claudle/README.md) | <!-- edition:pro -->
 
 팩은 팩에 함께 든 이용 조건을 따라요. pro-kit 자체의 조건은 [LICENSE](../../LICENSE), 팩과 외부 원본의 조건은 [제3자 안내](../../THIRD_PARTY_NOTICES.md#사용자-작성-코드와-프리셋-팩)에 있어요.
 
@@ -129,7 +129,7 @@ node scripts/pack.mjs goru --zip ~/Downloads/goru-pack.zip   # 받아 둔 zip �
 | `아직 공개하지 않은 팩`이라고 나와요 | 원격으로는 받을 수 없어요. 받아 둔 zip이 있으면 `--zip <경로>`를 붙여요 |
 | `sha256이 다름`이라고 나와요 | 받은 zip이 옛 판이거나 깨졌어요. `--zip` 없이 다시 받아요. 그래도 같으면 이슈로 알려요 |
 | `zip을 풀 도구가 없어요`라고 나와요 | `unzip`을 설치해요(Ubuntu와 WSL은 `sudo apt install unzip`) |
-| pro-kit을 최신으로 맞추는 `git pull --ff-only`가 실패해요(옛 저장소 사본) | pro-kit 폴더 이름을 `pro-kit-old`로 바꾸고 새로 받아요 |
+| pro-kit을 최신으로 맞추는 `git pull --ff-only`가 실패해요(옛 저장소 사본) | pro-kit 폴더 이름을 `pro-kit-old`로 바꾸고 새로 받아요 | <!-- edition:pro -->
 | 복원 계획에서 `사용자 파일 충돌`이 나와요 | 충돌한 파일은 보존돼요. 에이전트에게 차이와 최소 병합안을 보여 달라고 해요. 팩이나 목록을 고쳐 검사를 피하지 않아요 |
 | 복원 뒤 빌드가 실패해요 | 오류 메시지를 붙여 `이 오류 해결해줘`라고 보내요. 팩의 호환 정보(Next.js, pnpm 버전)가 내 프로젝트와 맞는지도 확인해 달라고 해요 |
 

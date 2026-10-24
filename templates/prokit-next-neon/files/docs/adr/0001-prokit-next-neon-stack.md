@@ -1,3 +1,6 @@
+<!-- edition:ui # Better-T-Stack 기본 구성 -->
+<!-- edition:ui 이 프로젝트는 Better-T-Stack(Next.js)으로 만든 화면 프로젝트다. 서버와 인증, 데이터 구성을 정하는 결정은 Pro 스킬셋의 문서에 있고, 이 프로젝트에서는 쓰지 않는다. -->
+<!-- edition:pro -->
 # Neon + 자체 관리 Better Auth, 소유권은 서버 코드가 지킨다
 
 이 프로젝트는 Better-T-Stack(Next.js, oRPC, Drizzle)으로 만들고, DB는 Postgres(개발은 로컬 컨테이너, 병합 전 검증과 운영은 Neon), 인증은 Better-T-Stack이 생성하는 자체 관리 Better Auth를 쓴다. Better-T-Stack 생성물을 그대로 살리고 인증 벤더 종속을 줄이기 위해 이 조합을 골랐다. RLS를 쓰지 않으므로 사용자 데이터 보호는 서버 프로시저의 세션 기반 소유권 검사와 2계정 격리 테스트가 맡고, 스키마 변경은 Drizzle `db:generate` 마이그레이션으로만 하며 로컬 DB에서 확인한 뒤 병합 전에 Neon 개발 브랜치에서 검증한다. DB 드라이버는 로컬과 Neon에 모두 붙는 `pg`(Better-T-Stack `--db-setup docker` 생성물)를 쓴다.
@@ -10,3 +13,4 @@
 ## Consequences
 - 새 프로시저마다 소유권 검사를 빠뜨릴 위험이 있다. dev-cycle D 케이스의 격리 테스트와 `prokit-reviewer(security)`로 막는다.
 - 로컬 Postgres와 Neon의 차이(풀러, 확장 버전, 일시 정지 후 첫 연결)는 로컬에서 드러나지 않는다. 병합 전 Neon 개발 브랜치 적용으로 확인하고, 서버리스 배포에서는 Neon 풀러(`-pooler`) 주소를 쓴다.
+<!-- /edition -->

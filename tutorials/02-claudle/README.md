@@ -175,9 +175,9 @@ Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅
 - **비밀번호를 입력하라고 해요**: 프로그램 설치에 컴퓨터 비밀번호가 필요할 때예요. 에이전트가 알려 준 명령을 새 터미널 창에서 직접 실행하고, 끝나면 대화창에 `설치했어. 이어서 해줘`라고 보내세요.
 - **git을 설치하라는 창이 떴어요(macOS)**: "설치"를 누르세요. 끝나면 대화창에 `다시 해줘`라고 보내세요.
 - **pro-kit 폴더나 claudle 폴더가 이미 있대요**: pro-kit이면 `있는 pro-kit을 최신으로 받아서 써줘`, 프로젝트면 `claudle2라는 이름으로 만들어줘`처럼 다른 이름을 보내세요.
-- **pro-kit 폴더가 예전 것이라 받기가 멈춰요**: 2026-10-08에 pro-kit 저장소를 옮기며 기록을 새로 시작해서, 그 전에 받은 pro-kit은 최신으로 받을 수 없어요. `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **pro-kit 폴더가 예전 것이라 받기가 멈춰요**: 2026-10-08에 pro-kit 저장소를 옮기며 기록을 새로 시작해서, 그 전에 받은 pro-kit은 최신으로 받을 수 없어요. `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요. <!-- edition:pro -->
 - **이어 갈 한 줄을 알려 주지 않았어요**: `새 폴더에서 이어 갈 명령 알려줘`라고 보내세요.
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/claudle에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs claudle 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/claudle에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs claudle 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 - **Docker나 Podman이 없다고 멈췄어요**: [Docker Desktop](https://www.docker.com/products/docker-desktop/)을 받아 설치하고 앱을 켜 두세요. 그다음 `설치했어. 이어서 해줘`라고 보내세요.
 - **DESIGN.md를 받지 못했대요**: [3장의 막히면](03-design.md#1-designmd-받아-고치기)대로 하세요.
 - **사용량 한도에 걸려 멈췄어요**: 안내된 시간이 지난 뒤 멈춘 폴더에서 `claude --continue --dangerously-skip-permissions`(Codex는 `codex resume --last --yolo`)로 다시 열고 `이어서 해줘`라고 보내세요. 2단계에서 멈췄으면 `~/projects`, 3·4단계면 `~/projects/claudle`이에요. 기다리는 법은 [5시간 한도에 걸리면](../reference/costs-and-keys.md#5시간-한도에-걸리면)에 있어요.

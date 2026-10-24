@@ -37,9 +37,9 @@
 <!-- doc-values:list -->
 | 키 | 값 | 뜻 | 정본 | 바꾸는 법 | 쓰는 곳 |
 |---|---|---|---|---|---|
-| `link.home` | https://prokit-web.vercel.app | 홈페이지(프로킷 사이트) 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json home | `node scripts/site-links.mjs set <키> <주소>` | 1 |
+| `link.home` | https://prokit-web.vercel.app | 홈페이지(프로킷 사이트) 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json home | `node scripts/site-links.mjs set <키> <주소>` | 0 |
 | `link.pages` | https://roadkwon-ai.github.io/pro-kit | 프리셋 사이트(GitHub Pages) 주소. 뒤에 /<이름>/을 붙인다. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json pages | `node scripts/site-links.mjs set <키> <주소>` | 0 |
-| `link.repo` | https://github.com/roadkwon-ai/pro-kit | pro-kit 저장소 주소 | site-links.json repo | `node scripts/site-links.mjs set <키> <주소>` | 38 |
+| `link.repo` | https://github.com/roadkwon-ai/pro-kit | pro-kit 저장소 주소 | site-links.json repo | `node scripts/site-links.mjs set <키> <주소>` | 39 |
 | `link.repoUi` | https://github.com/roadkwon-ai/pro-kit-ui | pro-kit-ui 저장소 주소(UI 스킬셋. scripts/edition.mjs가 pro-kit에서 만드는 읽기 전용 사본) | site-links.json repoUi | `node scripts/site-links.mjs set <키> <주소>` | 2 |
 | `link.packs` | https://github.com/roadkwon-ai/pro-kit-packs | 프리셋 팩 저장소 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json packs | `node scripts/site-links.mjs set <키> <주소>` | 0 |
 | `link.premiumPacks` | https://github.com/roadkwon-ai/pro-kit-premium-packs | 프리미엄 프리셋 팩 저장소 주소. 문서에 나오는 주소는 표시 없이 site-links.mjs가 바꾼다 | site-links.json premiumPacks | `node scripts/site-links.mjs set <키> <주소>` | 0 |
@@ -122,12 +122,12 @@
 | `cost.unit.second.time` | 6\~10분 | 잰 단위값: 두 번째 화면(따로 만들 때)의 시간. 물결은 \~로 바꾼 값 | doc-values.json cost.unit.second.time | `doc-values.json`을 고친다 | 1 |
 | `cost.unit.second.usd` | 2.74\~3.05 | 잰 단위값: 두 번째 화면(따로 만들 때)의 API 요금 환산(달러). 물결은 \~로 바꾼 값 | doc-values.json cost.unit.second.usd | `doc-values.json`을 고친다 | 1 |
 | `supabaseCli.min` | 2.117 | supabase 템플릿의 Supabase CLI 최소 판 | doc-values.json supabaseCli.min | `doc-values.json`을 고친다 | 6 |
-| `limit.window` | 5시간 | 구독 요금제의 사용량 한도 시간("5시간 한도"). 링크 주소의 앵커(#5시간-한도에-걸리면)에는 표시를 달 수 없어 링크 검사가 지킨다 | doc-values.json limits.window | `doc-values.json`을 고친다 | 39 |
+| `limit.window` | 5시간 | 구독 요금제의 사용량 한도 시간("5시간 한도"). 링크 주소의 앵커(#5시간-한도에-걸리면)에는 표시를 달 수 없어 링크 검사가 지킨다 | doc-values.json limits.window | `doc-values.json`을 고친다 | 40 |
 | `limit.waitLong` | 4시간 | 한도에 걸렸을 때 길면 기다리는 시간(처음 쓰기 시작하고 한 시간쯤 만에 걸린 경우의 어림) | 계산: doc-values.json limits.window − 1시간 | `doc-values.json`을 고친다 | 1 |
 | `limit.pro5h.tokens` | 170만 | Pro 5시간 한도 어림(토큰). 한도 횟수 계산에 쓴다 | doc-values.json limits.pro5h.tokens | `doc-values.json`을 고친다 | 1 |
 | `limit.pro5h.usd` | 30 | 같은 한도의 API 요금 환산(달러) | doc-values.json limits.pro5h.usd | `doc-values.json`을 고친다 | 1 |
 | `limit.pro5h.date` | 2026-10-05 | 한도를 어림한 날 | doc-values.json limits.pro5h.date | `doc-values.json`을 고친다 | 1 |
-| `limit.pro5h.plans` | Claude Pro · ChatGPT Plus(Codex) | 5시간 한도를 어림한 구독 요금제(한도 줄의 앞머리와 표 머리) | doc-values.json limits.pro5h.plans | `doc-values.json`을 고친다 | 13 |
+| `limit.pro5h.plans` | Claude Pro · ChatGPT Plus(Codex) | 5시간 한도를 어림한 구독 요금제(한도 줄의 앞머리와 표 머리) | doc-values.json limits.pro5h.plans | `doc-values.json`을 고친다 | 14 |
 | `agent.<이름>.name` | 4개(`--list`) | 지원 에이전트 이름 | doc-values.json agents.<이름>.name | `doc-values.json`을 고친다 | 23 |
 | `agent.<이름>.open` | 4개(`--list`) | 에이전트를 요청과 함께 여는 명령 | doc-values.json agents.<이름>.open | `doc-values.json`을 고친다 | 5 |
 | `agent.<이름>.start` | 4개(`--list`) | 에이전트를 요청 없이 여는 명령 | doc-values.json agents.<이름>.start | `doc-values.json`을 고친다 | 8 |
@@ -137,9 +137,9 @@
 | `agent.<이름>.yoloCode` | 4개(`--list`) | 같은 명령의 코드 꼴(백틱 포함). 인라인 코드 한 덩어리가 이 값 전체일 때 코드 바깥에 표시를 단다 | doc-values.json agents.<이름>.yolo | `doc-values.json`을 고친다 | 28 |
 | `agent.<이름>.install` | 2개(`--list`) | 에이전트 설치 명령 | doc-values.json agents.<이름>.install | `doc-values.json`을 고친다 | 3 |
 | `agent.<이름>.installCell` | 2개(`--list`) | 같은 명령의 표 칸 안 코드 꼴(백틱 포함, 파이프는 \\|) | doc-values.json agents.<이름>.install | `doc-values.json`을 고친다 | 2 |
-| `agents.count` | 4 | 지원 에이전트 수 | doc-values.json agents 수 | `doc-values.json`을 고친다 | 3 |
+| `agents.count` | 4 | 지원 에이전트 수 | doc-values.json agents 수 | `doc-values.json`을 고친다 | 4 |
 | `agents.count.ko` | 네 | 지원 에이전트 수의 한글 수 관형사 | doc-values.json agents 수 | `doc-values.json`을 고친다 | 1 |
-| `agents.list` | Claude Code, Codex, Antigravity, Grok Build | 지원 에이전트 목록 | doc-values.json agents 이름 | `doc-values.json`을 고친다 | 15 |
+| `agents.list` | Claude Code, Codex, Antigravity, Grok Build | 지원 에이전트 목록 | doc-values.json agents 이름 | `doc-values.json`을 고친다 | 16 |
 | `agents.imageTools` | Codex, Antigravity, Grok Build | 자체 이미지 도구가 있어 준비 없이 그리는 에이전트 목록 | doc-values.json agents imageTool | `doc-values.json`을 고친다 | 15 |
 | `catalogs.<이름>.name` | 3개(`--list`) | 디자인 카탈로그 이름 | doc-values.json catalogs.<이름>.name | `doc-values.json`을 고친다 | 11 |
 | `catalogs.<이름>.url` | 3개(`--list`) | 디자인 카탈로그 이름 링크의 주소(주소 안에는 표시를 달 수 없어 테스트가 같은지 본다) | doc-values.json catalogs.<이름>.url | `doc-values.json`을 고친다 | 0 |
@@ -152,13 +152,13 @@
 | `port.web.urlCode` | `http://localhost:3001` | 웹 개발 서버 주소의 코드 꼴(백틱 포함) | doc-values.json ports.web | `doc-values.json`을 고친다 | 9 |
 | `port.neonDb.addrCode` | `localhost:5432` | neon 로컬 DB 주소의 코드 꼴(백틱 포함) | doc-values.json ports.neonDb | `doc-values.json`을 고친다 | 2 |
 | `port.supabaseDb.addrCode` | `127.0.0.1:54322` | supabase 로컬 DB 주소의 코드 꼴(백틱 포함) | doc-values.json ports.supabaseDb | `doc-values.json`을 고친다 | 1 |
-| `preset.<이름>.title` | 13개(`--list`) | 프리셋 이름 | doc-values.json presets.<이름>.title | `doc-values.json`을 고친다 | 128 |
+| `preset.<이름>.title` | 13개(`--list`) | 프리셋 이름 | doc-values.json presets.<이름>.title | `doc-values.json`을 고친다 | 134 |
 | `preset.<이름>.kind` | 13개(`--list`) | 분류(landing 랜딩페이지, app 앱 화면, clone 클론 튜토리얼) | doc-values.json presets.<이름>.kind | `doc-values.json`을 고친다 | 0 |
-| `preset.<이름>.kindLabel` | 13개(`--list`) | 분류 이름(랜딩페이지, 앱 화면, 클론 튜토리얼) | 계산: doc-values.json presets.<이름>.kind | `doc-values.json`을 고친다 | 39 |
-| `preset.<이름>.field` | 13개(`--list`) | 짧은 분야(README 대표 예시, 프로킷 사이트 카드) | doc-values.json presets.<이름>.field | `doc-values.json`을 고친다 | 6 |
+| `preset.<이름>.kindLabel` | 13개(`--list`) | 분류 이름(랜딩페이지, 앱 화면, 클론 튜토리얼) | 계산: doc-values.json presets.<이름>.kind | `doc-values.json`을 고친다 | 42 |
+| `preset.<이름>.field` | 13개(`--list`) | 짧은 분야(README 대표 예시, 프로킷 사이트 카드) | doc-values.json presets.<이름>.field | `doc-values.json`을 고친다 | 9 |
 | `preset.<이름>.summary` | 11개(`--list`) | 컨셉 한 줄(tutorials/samples/README.md 표) | doc-values.json presets.<이름>.summary | `doc-values.json`을 고친다 | 22 |
 | `preset.<이름>.difficulty` | 11개(`--list`) | 실제 서비스로 바꾸는 난이도(tutorials/samples/README.md 표) | doc-values.json presets.<이름>.difficulty | `doc-values.json`을 고친다 | 11 |
-| `preset.<이름>.pages` | 12개(`--list`) | 페이지 수 | doc-values.json presets.<이름>.pages | `doc-values.json`을 고친다 | 85 |
+| `preset.<이름>.pages` | 12개(`--list`) | 페이지 수 | doc-values.json presets.<이름>.pages | `doc-values.json`을 고친다 | 91 |
 | `preset.<이름>.pages.rest` | 12개(`--list`) | 첫 화면을 뺀 나머지 페이지 수 | 계산: doc-values.json presets.<이름>.pages − 1 | `doc-values.json`을 고친다 | 8 |
 | `preset.<이름>.design.rec1` | 8개(`--list`) | 스타일 추천 1위 이름 | doc-values.json presets.<이름>.design.recs | `doc-values.json`을 고친다 | 27 |
 | `preset.<이름>.design.src1` | 8개(`--list`) | 스타일 추천 1위의 카탈로그 이름 | doc-values.json presets.<이름>.design.recs + catalogs.<이름>.name | `doc-values.json`을 고친다 | 10 |
@@ -186,7 +186,7 @@
 | `preset.<이름>.pack.time.max` | 11개(`--list`) | 프리셋 팩으로 만들 때 한 번에 완성할 때 걸릴 수 있는 최대 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange.oneShotMax | `doc-values.json`을 고친다 | 0 |
 | `preset.<이름>.pack.time.revise` | 11개(`--list`) | 프리셋 팩으로 만들 때 여러 번 고쳐 달라고 할 때 시간(5분 단위 반올림) | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange.reviseMax | `doc-values.json`을 고친다 | 0 |
 | `preset.<이름>.pack.time.cell` | 11개(`--list`) | 프리셋 팩으로 만들 때 시간의 표 칸 꼴. 요약 시간은 이 꼴이나 .text로 쓴다 | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange | `doc-values.json`을 고친다 | 21 |
-| `preset.<이름>.pack.time.text` | 11개(`--list`) | 프리셋 팩으로 만들 때 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange | `doc-values.json`을 고친다 | 15 |
+| `preset.<이름>.pack.time.text` | 11개(`--list`) | 프리셋 팩으로 만들 때 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets.<이름>.pack.time × cost.timeRange | `doc-values.json`을 고친다 | 18 |
 | `preset.<이름>.scratch.time` | 11개(`--list`) | 처음부터 만들 때 최소 시간 | doc-values.json presets.<이름>.scratch.time | `doc-values.json`을 고친다 | 0 |
 | `preset.<이름>.scratch.tokens` | 11개(`--list`) | 처음부터 만들 때 최소 토큰 | doc-values.json presets.<이름>.scratch.tokens | `doc-values.json`을 고친다 | 22 |
 | `preset.<이름>.scratch.cached` | 11개(`--list`) | 처음부터 만들 때 캐시 포함 토큰 | doc-values.json presets.<이름>.scratch.cached | `doc-values.json`을 고친다 | 11 |
@@ -199,7 +199,7 @@
 | `preset.<이름>.scratch.time.text` | 11개(`--list`) | 처음부터 만들 때 시간의 문장 꼴. 요약 시간은 이 꼴이나 .cell로 쓴다 | 계산: doc-values.json presets.<이름>.scratch.time × cost.timeRange | `doc-values.json`을 고친다 | 12 |
 | `preset.<이름>.design.comp` | 6개(`--list`) | 고른 시안 글자 | doc-values.json presets.<이름>.design.comp | `doc-values.json`을 고친다 | 6 |
 | `preset.<이름>.design.compName` | 6개(`--list`) | 고른 시안 이름 | doc-values.json presets.<이름>.design.compName | `doc-values.json`을 고친다 | 6 |
-| `preset.<이름>.pageTypes` | 48 | 같은 틀을 하나로 센 페이지 종류 수 | doc-values.json presets.<이름>.pageTypes | `doc-values.json`을 고친다 | 8 |
+| `preset.<이름>.pageTypes` | 48 | 같은 틀을 하나로 센 페이지 종류 수 | doc-values.json presets.<이름>.pageTypes | `doc-values.json`을 고친다 | 9 |
 | `preset.<이름>.pageTypes.rest` | 47 | 첫 화면을 뺀 나머지 페이지 종류 수 | 계산: doc-values.json presets.<이름>.pageTypes − 1 | `doc-values.json`을 고친다 | 1 |
 | `preset.<이름>.prep.<행>.<값>` | 50개(`--list`) | 원래 서비스 조사와 프리셋 팩 만들기의 실측(기록). <행>은 research(조사와 분석, 요청부터 리서치 끝까지 벽시계)·expand(올곧 범위 넓히기 조사)·plan(기획)·pack(팩 만들기. Claudle은 설계 포함) | doc-values.json presets.<이름>.prep.research | `doc-values.json`을 고친다 | 48 |
 | `preset.<이름>.all.<값>` | 15개(`--list`) | 조사부터 만들기까지 더한 시간(벽시계, 5분 단위. 팩 다듬기 뺌) | 계산: preset.olgot.actual.total + doc-values.json presets.<이름>.prep 합 | `doc-values.json`을 고친다 | 13 |
@@ -294,7 +294,7 @@
 | `preset.<이름>.recordedProduction.cached` | 2.1억 | 실제 root 캐시 포함 입력+출력 토큰 | doc-values.json presets.<이름>.recordedProduction.cached | `doc-values.json`을 고친다 | 1 |
 | `preset.<이름>.recordedProduction.scope` | 프리셋 제작·보완과 관련 스킬 개선을 포함한 root 활성 턴 | 복원 기록의 범위 | doc-values.json presets.<이름>.recordedProduction.scope | `doc-values.json`을 고친다 | 0 |
 | `presets.count` | 13 | 공개 프리셋 수(클론 튜토리얼 포함) | doc-values.json 공개 presets 수 | `doc-values.json`을 고친다 | 7 |
-| `presets.screen.count` | 11 | 공개 화면 프리셋 수 | doc-values.json 공개 presets 중 landing·app | `doc-values.json`을 고친다 | 12 |
+| `presets.screen.count` | 11 | 공개 화면 프리셋 수 | doc-values.json 공개 presets 중 landing·app | `doc-values.json`을 고친다 | 14 |
 | `presets.landing.count` | 6 | 공개 랜딩페이지 프리셋 수 | doc-values.json 공개 presets 중 landing | `doc-values.json`을 고친다 | 6 |
 | `presets.app.count` | 5 | 공개 앱 화면 프리셋 수 | doc-values.json 공개 presets 중 app | `doc-values.json`을 고친다 | 7 |
 | `presets.clone.count` | 2 | 공개 클론 튜토리얼 프리셋 수 | doc-values.json 공개 presets 중 clone | `doc-values.json`을 고친다 | 5 |
@@ -380,7 +380,7 @@
 | `process.olgot.work` | 7시간 35분 | 올곧 라운드 합에서 백그라운드 기다림을 뺀 일한 시간(5분 단위) | 계산: process.olgot.total − doc-values.json process.olgot.wait | `doc-values.json`을 고친다 | 1 |
 | `templates.count` | 2 | 템플릿 수 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 16 |
-| `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 30 |
+| `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 29 |
 | `prokit.skills.count.ko` | 열 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `prokit.agents.count` | 4 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |
 | `prokit.agents.count.ko` | 네 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수의 한글 수 관형사 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
@@ -594,7 +594,7 @@
 | `b:process-flow-diagram` | (글 묶음) | tutorials/reference/process-and-time.md "시작하는 방법 세 가지"의 흐름도(mermaid). 세 시작점(레퍼런스 리서치, 프리셋 팩, 내 컨셉)이 한 흐름의 어디로 들어가는지 보인다. 단계 이름은 README "프로킷은 이렇게 일합니다"와 홈페이지 워크플로우에 맞춘다 | docs/blocks/process-flow-diagram.md | 묶음 원본을 고친다 | 1 |
 | `b:process-gantt-claudle` | (글 묶음) | tutorials/reference/process-and-time.md "예시로 보는 시간"의 Claudle 풀 사이클 gantt(가로축은 시작부터 걸린 시간). 막대 길이는 preset.claudle.prep.*·actual.*의 .min(분). 라운드 사이에 사람을 기다린 시간은 빼고 이어 그린다 | docs/blocks/process-gantt-claudle.md | 묶음 원본을 고친다 | 1 |
 | `b:process-pie` | (글 묶음) | tutorials/reference/process-and-time.md "시간이 어디에 쓰이나요"의 원그래프(mermaid pie, 단위 분). 값은 doc-values.json process.pie(메인 에이전트가 일한 시간을 도구 종류로 나눈 실측). 인자: name(claudle·olgot), title(그래프 제목. 숫자를 넣지 않는다) | docs/blocks/process-pie.md | 묶음 원본을 고친다 | 2 |
-| `b:project-structure-tree` | (글 묶음) | handbook/reference/project-structure.md "폴더 한눈에 보기"의 폴더 트리. 스킬 수는 값으로 채운다 | docs/blocks/project-structure-tree.md | 묶음 원본을 고친다 | 1 |
+| `b:project-structure-tree` | (글 묶음) | handbook/reference/project-structure.md "폴더 한눈에 보기"의 폴더 트리. UI 판에도 들어가서 판마다 다른 스킬 수는 적지 않는다 | docs/blocks/project-structure-tree.md | 묶음 원본을 고친다 | 1 |
 | `b:prompt-varies-line` | (글 묶음) | "같은 프롬프트라도 결과는 매번 달라요" 안내 줄. 클론 튜토리얼 README(01-nextflix, 02-claudle)와 tutorials/samples/README.md가 쓴다. 목록 한 줄이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/prompt-varies-line.md | 묶음 원본을 고친다 | 3 |
 | `b:qa-row-color` | (글 묶음) | 튜토리얼 "에이전트가 물어보면" 표의 대표 색 행(3장 표와 클론 튜토리얼 README "답하며 4장까지 가기" 표). clone-design-qa, clone-readme-qa-rows 묶음이 품는다. 목록 한 줄이거나 표 한 행이라 묶음 표시를 달면 목록·표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/qa-row-color.md | 묶음 원본을 고친다 | 4 |
 | `b:qa-row-confirm` | (글 묶음) | 튜토리얼 README "답하며 4장까지 가기" 표의 결과 확인 행. clone-readme-qa-tail 묶음이 품는다. 목록 한 줄이거나 표 한 행이라 묶음 표시를 달면 목록·표가 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/qa-row-confirm.md | 묶음 원본을 고친다 | 3 |

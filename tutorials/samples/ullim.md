@@ -46,7 +46,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 <summary>막히면</summary>
 
 <!-- b:trouble-pack name=ullim -->
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/ullim에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs ullim 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/ullim에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs ullim 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 <!-- /b -->
 
 </details>
@@ -187,6 +187,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도 안) · [5시간 한�
 
 ![울림 휴대폰 첫 화면](assets/ullim-home-mobile.webp)
 
+<!-- edition:pro -->
 ## 실제 서비스로 만들 때
 
 울림은 음성 합성 서비스, 파일 저장소, 정기결제까지 외부 서비스가 세 가지 필요하고, 소셜 로그인을 붙이면 하나 더 늘어요.
@@ -223,3 +224,4 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도 안) · [5시간 한�
 > 울림 프리셋은 화면만 만들 때 이미 대본을 문장으로 나누는 코드(`apps/web/src/lib/manuscript.ts`의 `splitManuscript`)를 만들어 두었어요. 빈 줄은 챕터 경계로 처리해요. 내 프로젝트에도 비슷한 코드가 있으면 새로 만들지 말고 그대로 쓰자고 하세요.
 
 외부 서비스는 계정과 키가 따로 필요해요. 음성 합성은 쓸 음성 합성 서비스의 API 키, 파일 저장은 저장소 서비스의 계정, 정기결제는 결제 대행사의 가맹 계정이 있어야 해요. 카카오로 로그인하려면 카카오 개발자 계정에서 앱을 등록해야 하고, 이메일 로그인만 쓰면 이 부분은 건너뛸 수 있어요. 키는 대화창에 붙여 넣지 마세요([비용과 키](../reference/costs-and-keys.md)).
+<!-- /edition -->

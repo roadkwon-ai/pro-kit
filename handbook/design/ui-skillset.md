@@ -4,7 +4,7 @@
 
 ## UI 스킬셋이란
 
-UI 스킬셋은 프로킷에서 화면을 만드는 데 필요한 스킬만 모은 묶음이에요. **예시 데이터로 모든 화면을 만들고, 모든 링크와 버튼이 실제로 동작하는지 검사한 뒤 넘겨줘요.** UI 스킬셋은 [pro-kit-ui](<!-- v:link.repoUi -->https://github.com/roadkwon-ai/pro-kit-ui<!-- /v -->) 저장소로 받아요. pro-kit에서 만든 사본이라 pro-kit을 릴리스할 때 같은 버전으로 함께 바뀌어요.
+UI 스킬셋은 프로킷에서 화면을 만드는 데 필요한 스킬만 모은 묶음이에요. **예시 데이터로 모든 화면을 만들고, 모든 링크와 버튼이 실제로 동작하는지 검사한 뒤 넘겨줘요.** UI 스킬셋은 [pro-kit-ui](<!-- v:link.repoUi -->https://github.com/roadkwon-ai/pro-kit-ui<!-- /v -->) 저장소로 받아요. <!-- edition:pro -->pro-kit에서 만든 사본이라 pro-kit을 릴리스할 때 같은 버전으로 함께 바뀌어요.<!-- /edition --><!-- edition:ui pro-kit에서 만든 사본이라 pro-kit을 릴리스할 때 같은 버전으로 함께 바뀌어요. --> 저장소에는 화면을 만드는 데 필요한 문서(handbook과 튜토리얼 중 화면 쪽)도 함께 들어 있어요.
 
 이런 분께 맞아요.
 
@@ -49,7 +49,7 @@ UI 스킬셋은 프로킷에서 화면을 만드는 데 필요한 스킬만 모�
 
 ## 실제 서비스로 키울 때
 
-화면만 프로젝트는 나중에 로그인과 DB가 있는 서비스로 키울 수 있어요. 이때 쓰는 스킬(`prokit-web`, `prokit-api`, `prokit-db`, `prokit-deploy`)은 Pro 스킬셋에 들어 있어요([실제 서비스로 바꾸기](screen-only.md#실제-서비스로-바꾸기)).
+화면만 프로젝트는 나중에 로그인과 DB가 있는 서비스로 키울 수 있어요. 이때 쓰는 스킬<!-- edition:pro -->(`prokit-web`, `prokit-api`, `prokit-db`, `prokit-deploy`)<!-- /edition -->은 Pro 스킬셋에 들어 있어요([실제 서비스로 바꾸기](screen-only.md#실제-서비스로-바꾸기)).
 
 ## 관련 문서
 

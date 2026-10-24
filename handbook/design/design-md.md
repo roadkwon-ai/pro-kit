@@ -37,7 +37,7 @@
 | 검사기 `diff` | 카탈로그 파일에 `document` merge를 한 뒤 지워진 토큰(`removed`)이 없는지 봐요 |
 | 세션이 바뀌어도 에이전트에게 남는 디자인 맥락 | 새 세션도 `DESIGN.md`를 읽고 같은 디자인 방향을 이어 가요. 덮어쓰기 전에는 사용자에게 물어요 |
 
-파일은 이런 모양이에요. 본문 절은 [기존 디자인으로 만들기](#기존-디자인으로-만들기)의 순서를 따라요. 근거가 없는 절은 빼요.
+파일은 이런 모양이에요. 본문 절은 <!-- edition:pro -->[기존 디자인으로 만들기](#기존-디자인으로-만들기)의<!-- /edition --><!-- edition:ui Google 스펙의 --> 순서를 따라요. 근거가 없는 절은 빼요.
 
 ```text
 DESIGN.md
@@ -77,9 +77,10 @@ DESIGN.md
   - 받는 법: getdesign.kr과 awesome-design-md는 `curl`로, Refero는 `agent-browser`로 페이지의 다운로드 버튼을 눌러 받아요.
   - Refero 원문 변환: Refero 원문은 Google 스펙 형식이 아니라서(표와 글뿐이고 맨 위의 YAML 토큰 머리말이 없어요) 본문 표의 값을 그대로 옮겨 토큰 머리말을 붙여요.
   - 지우거나 쓰지 않을 것: 다른 브랜드 이름(`Similar Brands`)과 새 토큰을 만드는 예시(`Quick Start`)는 지우고, robots.txt가 막은 사이트 검색과 `/api/`는 쓰지 않아요.
-- **기존 디자인으로 만들기**: 기존 프로젝트에서 디자인 유지를 골랐을 때 쓰는 길이에요. 아래에서 따로 설명해요.
+- **기존 디자인으로 만들기**: 기존 프로젝트에서 디자인 유지를 골랐을 때 쓰는 길이에요. 아래에서 따로 설명해요. <!-- edition:pro -->
 - **직접 정하기**: "카탈로그 없이 impeccable로 정하기"를 고르면 시작 전에 `DESIGN.md`를 지어내지 않아요. 만든 화면을 바탕으로 마감 때 impeccable `document`로 기록해요.
 
+<!-- edition:pro -->
 ### 기존 디자인으로 만들기
 
 기존 프로젝트(초기, 운영 중, 전환)에서 [디자인 방향을 "기존 디자인 유지"로 정했는데](ui-flow.md#기존-프로젝트의-디자인-방향) `DESIGN.md`가 없으면, 카탈로그를 쓰지 않고 지금 있는 디자인으로 만들어요.
@@ -88,6 +89,8 @@ DESIGN.md
 2. Google 스펙 형식으로 써요. 머리말에 토큰을 두고, 본문은 Overview, Colors, Typography, Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts 순서예요. 근거가 없는 절은 빼요. 화면에서 실제로 쓰는 값만 옮기고 값을 지어내지 않아요.
 3. 위의 lint를 실행하고, 색과 서체와 간격·반경, 주요 컴포넌트, 토큰별 출처를 보여 주고 사용자 확인을 받아요.
 4. 초기 프로젝트와 전환은 첫 구현 행에서 토큰을 `globals.css`로 옮겨요. 운영 중인 프로젝트는 기존 토큰 파일이 원본이라 코드를 바꾸지 않고, `DESIGN.md`는 그 기록이에요.
+
+<!-- /edition -->
 
 ### 고칠 때
 
@@ -120,7 +123,7 @@ DESIGN.md
 - A: 카탈로그에서 고른 `DESIGN.md`를 함께 줬어요.
 - B: "토스 느낌으로, 대표 색은 #12805C"처럼 브랜드 이름과 대표 색만 말로 줬어요.
 
-두 조건 모두 프로킷의 `prokit-ui` 규칙을 따랐고, 두 번째 화면은 새 세션에서 만들었어요(neon 템플릿, `claude -p`, Opus 5.5, 2026-09-30). 일치율은 두 조건 모두 A가 저장한 `DESIGN.md`의 토큰과 비교했어요.
+두 조건 모두 프로킷의 `prokit-ui` 규칙을 따랐고, 두 번째 화면은 새 세션에서 만들었어요(<!-- edition:pro -->neon 템플릿, <!-- /edition -->`claude -p`, Opus 5.5, 2026-09-30). 일치율은 두 조건 모두 A가 저장한 `DESIGN.md`의 토큰과 비교했어요.
 
 <!-- b:design-md-effect-chart -->
 ```mermaid
@@ -144,14 +147,14 @@ xychart-beta
 | axe 접근성 위반 | 0 | 2 |
 | 서비스당 에이전트 비용과 시간 | $10.34 · 24.1분 | $7.19 · 21.5분 |
 
-같은 서비스(같이살림)의 첫 화면을 나란히 본 [비교 그림](../../docs/assets/design-samples/living-compare.webp)이 있어요. 왼쪽은 `DESIGN.md`가 있는 쪽, 오른쪽은 브랜드 이름과 대표 색만 준 쪽이에요.
+같은 서비스(같이살림)의 첫 화면을 나란히 본 [비교 그림](../../docs/assets/design-samples/living-compare.webp)이 있어요. 왼쪽은 `DESIGN.md`가 있는 쪽, 오른쪽은 브랜드 이름과 대표 색만 준 쪽이에요. <!-- edition:pro -->
 
 - **품질**: `DESIGN.md`가 있으면 고른 디자인 시스템을 거의 그대로 재현해요. B도 깔끔했지만 화면에 쓴 색의 약 <!-- v:eval.designMd.palette.offTarget -->29<!-- /v -->%가 목표 밖 색이었고, 서체와 글자 크기도 에이전트가 새로 정했어요. 블라인드 평가에서는 A가 충실도 8전 8승, 종합 6승 2패였어요. B가 이긴 <!-- v:preset.uptrail.title -->Uptrail<!-- /v -->은 상태가 나빠진 서비스를 표 맨 위로 올리는 등 해야 할 일이 더 빨리 읽혔어요.
 - **일관성**: 두 번째 화면의 일관성은 차이가 없었어요. B도 새 세션에서 첫 화면 코드를 읽고 따라갔어요. 색 코드를 직접 쓴 곳과 임의 색 클래스는 두 조건 모두 0이었어요(템플릿의 토큰 규칙).
 - **효율**: 비용은 A가 44% 더 들었어요. 차이는 추천 단계($0.95, 1분)와 첫 화면의 원문 받기·lint·토큰 옮기기에서 났어요. 두 번째 화면은 비슷했어요($3.05, $2.74). B를 목표에 맞추려면 고치는 라운드가 더 필요하겠지만, 그 비용은 재지 않았어요.
 - **한계**: 서비스 <!-- v:eval.designMd.services -->4<!-- /v -->개를 조건마다 한 번씩, 리뷰와 polish 없이 쟀어요. 평가자도 Claude예요. 측정 중 찾은 결함 2건(추천 글이 대표 색을 원문과 다르게 적음, `cn()`이 새 글자 크기 토큰을 지움)은 고쳤어요.
 
-측정 방법, 서비스별 수치, 블라인드 평가 이유, 결함은 [DESIGN.md 효과 측정 보고서](../../docs/reports/2026-09-30-design-md-effect.html)([claude.ai 게시본](https://claude.ai/artifact/2tp355rbvt6QC2dBbfBHzb), 공유받은 계정만 열려요)와 [neon 검증 기록](../../templates/prokit-next-neon/VERIFICATION.md#designmd-효과-측정-2026-09-30-추가)에 있어요.
+측정 방법, 서비스별 수치, 블라인드 평가 이유, 결함은 [DESIGN.md 효과 측정 보고서](../../docs/reports/2026-09-30-design-md-effect.html)([claude.ai 게시본](https://claude.ai/artifact/2tp355rbvt6QC2dBbfBHzb), 공유받은 계정만 열려요)와 [neon 검증 기록](../../templates/prokit-next-neon/VERIFICATION.md#designmd-효과-측정-2026-09-30-추가)에 있어요. <!-- edition:pro -->
 
 ## 관련 문서
 

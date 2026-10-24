@@ -50,7 +50,7 @@
 - **이어 보기, 찜, 예고편, 좋아요 줄이 비었어요**: `이어 보기, 찜, 시청한 예고편, 좋아요 줄은 8~10장 전까지 rows.json의 예시 그대로 보여줘`라고 보내세요.
 - **작품 그림이 안 나와요**: `작품 그림이 안 나와. DB의 그림 주소가 apps/web/public/images의 파일을 가리키는지 확인해줘`라고 보내세요.
 - **DB에 연결할 수 없대요**: Docker Desktop이 켜져 있는지 보고 `DB가 켜져 있는지 확인하고 안 켜져 있으면 켜줘`라고 보내세요.
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/nextflix에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs nextflix 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/nextflix에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs nextflix 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 - **앞 장 작업을 이어서 하려 하거나 중간에 멈췄어요**: [5장의 막히면](05-auth-profiles.md#3-직접-써-보고-확인하기)과 같아요.
 - 그 밖의 문제는 [막혔을 때](../reference/troubleshooting.md)를 보세요.
 

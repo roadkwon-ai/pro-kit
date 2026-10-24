@@ -3,7 +3,7 @@
 // 1. node scripts/release.mjs [--title "<영어 제목>"] [--minor]
 //    마지막 v* 태그 이후 커밋으로 다음 버전을 정하고(기본 patch, --minor면 minor) release/<YYYYMMDD-HHmm>-<영어 제목>.md를 쓴다. 커밋하지 않는다.
 // 2. node scripts/release.mjs --publish <노트 파일>
-//    main에서 노트 커밋, 태그, main과 태그 push, GitHub Release 생성, 판 저장소(editions.json) 내보내기까지 한다.
+//    main에서 노트 커밋, 태그, main과 태그 push, GitHub Release 생성, 판 저장소(editions.json) 내보내기와 확인까지 한다.
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -170,13 +170,15 @@ function publish(file, prevTag, commits) {
     input: releaseBody(note),
   });
   console.log(`${tag} — ${title} 릴리스 완료`);
-  // 판 저장소도 같은 태그로 내보낸다. pro-kit은 이미 나갔으므로 실패하면 다시 할 명령만 알린다.
+  // 판 저장소도 같은 태그로 내보내고 다시 받아 확인한다. 확인까지 통과해야 릴리스가 끝난다.
+  // pro-kit은 이미 나갔으므로 실패하면 다시 할 명령만 알린다(같은 태그로 다시 해도 된다).
   let code = 0;
   for (const name of names) {
     try {
-      publishEdition(name, { tag, root });
+      const head = publishEdition(name, { tag, root });
+      console.log(`${name} 판 ${tag} 내보내기와 확인 완료 (${head})`);
     } catch (e) {
-      console.error(`${name} 판 내보내기 실패: ${e.message}\n고친 뒤 다시: node scripts/edition.mjs ${name} --publish --tag ${tag}`);
+      console.error(`${name} 판 내보내기 실패: ${e.message}\n릴리스가 끝나지 않았다. 고친 뒤 다시: node scripts/edition.mjs ${name} --publish --tag ${tag}`);
       code = 1;
     }
   }

@@ -46,7 +46,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 <summary>막히면</summary>
 
 <!-- b:trouble-pack name=fitslot -->
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/fitslot에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs fitslot 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/fitslot에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs fitslot 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 <!-- /b -->
 
 </details>
@@ -186,6 +186,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 
 ![핏슬롯 휴대폰 첫 화면](assets/fitslot-home-mobile.webp)
 
+<!-- edition:pro -->
 ## 실제 서비스로 만들 때
 
 핏슬롯은 외부 서비스가 결제 대행사(PG) 하나뿐이에요. 대신 돈이 오가고, 여러 사람이 같은 자리를 동시에 예약하는 문제를 다뤄야 해요.
@@ -222,3 +223,4 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 > 핏슬롯 프리셋은 화면만 만들 때 이미 취소 마감 시각을 구하는 코드(`apps/web/src/lib/data.ts`의 `cancelDeadline`)와 캘린더 파일을 만드는 코드(`apps/web/src/app/reservations/calendar.ts`의 `downloadIcs`)를 만들어 두었어요. 내 프로젝트에도 비슷한 코드가 있으면 새로 만들지 말고 그대로 쓰자고 하세요.
 
 수강권을 실제로 팔려면 결제 대행사(PG) 계정이 따로 필요해요. 계정이 없으면 구매 화면은 예시 결제 흐름으로 두고, 수강권은 스튜디오가 직접 넣어 주는 방식으로 시작할 수 있어요.
+<!-- /edition -->

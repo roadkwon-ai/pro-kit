@@ -17,7 +17,7 @@
 | 리뷰 | **`prokit-reviewer` 계약 게이트(필수)** + 규칙 6 역할 표의 구현 diff 보완 검토. provider 내장 review coverage를 재사용하고 빈 계약만 보완한다 | 리뷰 행 증거 |
 | QA | `ego-browser`로 스펙의 테스트 시나리오 전부 확인(F, 보고만. 발견은 다음 행에서 고치고 다시 확인한다. 절차는 `prokit-verify`의 `references/browser.md`). ego-browser가 없으면 `agent-browser`로 같은 흐름을 확인하고 대안으로 적는다 | 시나리오별 결과 |
 | 검증 | `prokit-verify` | 검사 결과 |
-| 마무리 | `prokit-dev-cycle` 5절(사용자 확인 → audit·close → 커밋·push → 고르면 릴리스·production 배포) | audit 출력 |
+| 마무리 | `prokit-dev-cycle` 5절(사용자 확인 → audit·close → 커밋·push<!-- edition:pro --> → 고르면 릴리스·production 배포<!-- /edition -->) | audit 출력 |
 
 설치된 mattpocock 추가 스킬은 해당 단계의 방법으로 쓴다(`pnpm skills:check`의 `mattpocock 추가` 줄). 요구 명확화는 `to-questionnaire`(결정권자가 따로 있을 때), 계획은 `codebase-design`·`prototype`·`research`, 구현은 `tdd`, 디버깅은 `diagnosing-bugs`, 리뷰 추가 관점은 `code-review`, F 공통화는 `improve-codebase-architecture`, 사람이 할 외부 설정은 `wizard`, H(규칙·스킬 수정)는 `writing-for-agents`, 마무리는 `pr`·`handoff`, 설명은 `teach`·`wait-what`이다. 사용자 호출 스킬(`/to-questionnaire` 등)은 에이전트가 대신 실행하지 않고 사용자에게 명령을 제안한다. 증거 칸에는 `사용: 내장(요구 명확화) → docs/specs/…`, `사용: tdd(추가 스킬) → …`처럼 적는다.
 

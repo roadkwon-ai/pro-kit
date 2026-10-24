@@ -20,6 +20,7 @@ pro-kit은 Windows에서 WSL2(Windows 안에서 Linux를 쓰게 해 주는 기�
 **이렇게 되면 성공**
 - Ubuntu 창이 열려 있고, 내 이름과 비밀번호를 만들었어요.
 
+<!-- edition:pro -->
 ## 2. Docker Desktop 설치 (실제 서비스로 만들 때만)
 
 화면만 만들 때는 건너뛰어도 돼요. 로그인과 DB 저장이 되는 실제 서비스로 만들 때 설치하세요.
@@ -31,8 +32,9 @@ pro-kit은 Windows에서 WSL2(Windows 안에서 Linux를 쓰게 해 주는 기�
 > Docker Desktop은 직원 250명 이상이거나 연 매출 1천만 달러 이상인 조직이 업무에 쓰려면 유료 구독이 필요해요. 개인 학습용이면 보통 상관없지만 회사 컴퓨터라면 확인하세요.
 
 무료로 쓰고 싶으면 Docker Desktop 대신 Ubuntu 안에 Podman을 설치해도 돼요(Linux에서는 Podman 머신 설정이 따로 필요 없어요). 설치 명령은 에이전트에게 `Podman으로 로컬 DB를 띄울 수 있게 준비해줘`라고 부탁하세요. 컴퓨터 비밀번호(sudo)가 필요한 명령은 에이전트가 알려 주면 Ubuntu 창에서 직접 실행하세요.
+<!-- /edition -->
 
-## 3. 앞으로 지킬 것
+## <!-- edition:pro -->3<!-- /edition --><!-- edition:ui 2 -->. 앞으로 지킬 것
 
 - 모든 명령은 **Ubuntu 창**에서 입력해요. [시작하기](../start/README.md)의 터미널은 Ubuntu 창을 뜻해요.
 - 프로젝트는 Ubuntu의 홈 폴더(`~/projects`)에 만들어요. `/mnt/c` 아래(Windows의 C 드라이브)에 만들면 느리고 오류가 나요.

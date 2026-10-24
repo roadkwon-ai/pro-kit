@@ -6,7 +6,7 @@
 |---|---|---|
 | 명령 | `<명령> → exit <코드>[, 첫 오류]` | `pnpm check-types → exit 0` |
 | 테스트 | `<러너> <대상> → <n> passed[, <m> failed]` | `vitest todo.isolation → 3 passed` |
-| 마이그레이션 | `<로컬 호스트:포트 또는 Neon 브랜치> ← <마이그레이션> 적용 → <요약>` | `localhost:5433 ← 20261001_add_due_at 적용 → ok`, `dev/todo-due ← 20261001_add_due_at 적용 → ok` |
+| 마이그레이션 | `<로컬 호스트:포트 또는 Neon 브랜치> ← <마이그레이션> 적용 → <요약>` | `localhost:5433 ← 20261001_add_due_at 적용 → ok`, `dev/todo-due ← 20261001_add_due_at 적용 → ok` | <!-- edition:pro -->
 | 런타임 | `next-dev-loop <경로> → <관찰>` | `next-dev-loop /todos → 200, 콘솔 오류 0` |
 | 오류 예산 | `<경로>: 콘솔 <n>, 오버레이 Issues <n>, get_errors <n>, 서버 로그 <n>[, 의도한 <상태> <n>(<경로>)][, 알려진 문제 <n>]` (F QA는 ego-browser와 agent-browser를 따로) | `/todos: 콘솔 0, 오버레이 Issues 0, get_errors 0, 서버 로그 0 (ego·agent 모두)`, `/nope: 콘솔 0, 오버레이 Issues 0, get_errors 0, 서버 로그 0, 의도한 404 1(/nope)` |
 | QA 시나리오 | `<시나리오 번호·이름> → 통과/실패(<관찰>)` | `S3 새로 고침 뒤 테마 유지 → 통과(다크)` |
@@ -29,5 +29,5 @@
 - 실행하지 않은 검사를 다른 검사 결과로 대신한 것 (예: 빌드 통과를 격리 테스트 통과로 적기)
 - `오류 0(…은 제외)`처럼 원인을 추정해 뺀 오류 수 (깨끗한 프로필로 원인을 가르고 고치거나 알려진 문제로 보고한다)
 - `skipped`로 끝난 테스트
-- 프로시저를 호출하지 않고 SQL로 조건을 흉내 낸 확인을 격리 테스트로 적은 것
+- 프로시저를 호출하지 않고 SQL로 조건을 흉내 낸 확인을 격리 테스트로 적은 것 <!-- edition:pro -->
 - 두뇌 실행 모드(OMC·OMX 등)의 "완료" 보고

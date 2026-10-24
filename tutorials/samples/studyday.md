@@ -46,7 +46,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 <summary>막히면</summary>
 
 <!-- b:trouble-pack name=studyday -->
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/studyday에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs studyday 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/studyday에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs studyday 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 <!-- /b -->
 
 </details>
@@ -186,6 +186,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 
 ![하루공부 휴대폰 첫 화면](assets/studyday-home-mobile.webp)
 
+<!-- edition:pro -->
 ## 실제 서비스로 만들 때
 
 하루공부는 외부 서비스 없이 DB만 있으면 되고, 혼자 쓰는 서비스라 다른 회원과 데이터를 나누는 규칙도 없어요.
@@ -222,3 +223,4 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 > 하루공부 프리셋은 화면만 만들 때 이미 남은 단원을 공부하는 날에 나누고(`planSchedule`), 과목 진도와 오늘 공부 시간을 계산하는 코드(`apps/web/src/lib/derive.ts`)를 만들어 두었어요. 지금은 브라우저에 저장한 값으로 계산하지만 계산식은 그대로 쓸 수 있어요. 내 프로젝트에도 비슷한 계산 코드가 있으면 새로 만들지 말고 그대로 쓰자고 하세요.
 
 외부 서비스 계정은 필요 없어요. 알림이나 메일이 필요해지면 그때 메일 발송 서비스 같은 계정을 따로 만들면 돼요.
+<!-- /edition -->

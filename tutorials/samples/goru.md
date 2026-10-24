@@ -46,7 +46,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 <summary>막히면</summary>
 
 <!-- b:trouble-pack name=goru -->
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/goru에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs goru 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/goru에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs goru 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 <!-- /b -->
 
 </details>
@@ -186,6 +186,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도 안) · [5시간 한�
 
 ![고루 휴대폰 첫 화면](assets/goru-home-mobile.webp)
 
+<!-- edition:pro -->
 ## 실제 서비스로 만들 때
 
 고루는 외부 서비스 없이 DB만 있으면 돼요.
@@ -218,3 +219,4 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도 안) · [5시간 한�
 > 고루 프리셋은 화면만 만들 때 이미 가장 적은 송금을 계산하는 코드(`apps/web/src/lib/settle.ts`)를 만들어 두었어요. 내 프로젝트에도 비슷한 계산 코드가 있으면 새로 만들지 말고 그대로 쓰자고 하세요.
 
 초대 링크를 메일로 보내고 싶으면 메일 발송 서비스 계정이 따로 필요해요. 없어도 초대 코드를 복사해 전하면 돼요.
+<!-- /edition -->

@@ -46,7 +46,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 <summary>막히면</summary>
 
 <!-- b:trouble-pack name=pacecrew -->
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/pacecrew에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs pacecrew 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/pacecrew에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs pacecrew 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 <!-- /b -->
 
 </details>
@@ -186,6 +186,7 @@ PACECREW는 한 번에 나오지 않았어요. 결과를 보고 몇 번 다시 �
 
 ![PACECREW 휴대폰 첫 화면](assets/pacecrew-home-mobile.webp)
 
+<!-- edition:pro -->
 ## 실제 서비스로 만들 때
 
 PACECREW는 DB 말고도 지도, 문자, 달리기 기록 연동까지 외부 서비스가 세 가지 필요해요.
@@ -226,3 +227,4 @@ PACECREW는 DB 말고도 지도, 문자, 달리기 기록 연동까지 외부 �
 > PACECREW 프리셋은 화면만 만들 때 이미 크루 추천의 맞는 정도를 계산하는 코드(`apps/web/src/components/match/score.ts`)를 만들어 두었어요. 동네, 페이스, 요일로 100점 만점 점수를 매겨요. 내 프로젝트에도 비슷한 계산 코드가 있으면 새로 만들지 말고 그대로 쓰자고 하세요.
 
 지도, 문자, 기록 연동은 서비스마다 계정과 키가 따로 필요해요. 지도는 지도 서비스의 API 키, 문자는 문자 발송 서비스의 계정과 발신 번호, 기록 연동은 기록을 내보내 주는 러닝 서비스의 개발자 등록이 있어야 해요. 키를 받기 전에는 프리셋처럼 코스는 그림으로 두고, 문자와 기록 연동은 화면만 두어도 돼요.
+<!-- /edition -->

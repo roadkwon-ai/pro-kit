@@ -2,7 +2,7 @@
 
 > 한눈에: 템플릿이 바뀌어도 이미 만든 프로젝트는 그대로예요. 바뀐 내용을 옮기려면 차이를 미리 보고 옮길 것을 정리한 뒤, 그 프로젝트에서 새 대화를 열어 작업 한 번(라운드)으로 반영해요. **그 프로젝트가 스스로 고친 내용은 덮어쓰지 않아요.**
 
-프로킷이 없는 프로젝트에 처음 들이는 일은 "도입"이라 [기존 프로젝트에 도입하기](../start/adopt.md)가 맡아요. 이 쪽은 이미 프로킷이 설치된 프로젝트를 새 판 템플릿에 맞추는 "갱신 반영"만 다뤄요.
+이 쪽은 이미 프로킷이 설치된 프로젝트를 새 판 템플릿에 맞추는 "갱신 반영"만 다뤄요.<!-- edition:pro --> 프로킷이 없는 프로젝트에 처음 들이는 일은 "도입"이라 [기존 프로젝트에 도입하기](../start/adopt.md)가 맡아요.<!-- /edition -->
 
 ## 일반 업데이트 3줄
 
@@ -50,7 +50,7 @@ flowchart LR
 
 템플릿 갱신 반영은 템플릿이 설치한 파일과 설정을 옮기는 일이에요. 공식 스킬의 새 버전은 그 프로젝트에서 `pnpm skills:update`로 받아요([설치와 업데이트 구조](../skills/install-and-update.md)).
 
-도입 브랜치에서 `--adopt`로 설치한 프로젝트(`.dev-cycle.json`의 `adopt: true`)는 `--adopt` 없이 `install.sh`를 다시 실행해도 adopt로 보고, 하네스 파일만 비교해요. 두뇌를 여러 개로 늘리거나 바꾸는 일은 갱신이 아니라 구성 변경이라 `prokit-skills-manage` 스킬로 해요([두뇌와 선택 스킬](../skills/brains.md)).
+두뇌를 여러 개로 늘리거나 바꾸는 일은 갱신이 아니라 구성 변경이라 `prokit-skills-manage` 스킬로 해요([두뇌와 선택 스킬](../skills/brains.md)).<!-- edition:pro --> 도입 브랜치에서 `--adopt`로 설치한 프로젝트(`.dev-cycle.json`의 `adopt: true`)는 `--adopt` 없이 `install.sh`를 다시 실행해도 adopt로 보고, 하네스 파일만 비교해요.<!-- /edition -->
 
 ## 옛 판에서 올 때
 
@@ -74,6 +74,7 @@ flowchart LR
 4. `AGENTS.md`·`CLAUDE.md`의 `bts-template` 마커와 문서의 `bts-*` 참조를 고쳐요.
 5. `pnpm agents:sync`로 `.codex/agents`와 `.agents/agents`를 다시 만들어요.
 
+<!-- edition:pro -->
 ### v0.3.0 이전에 만든 프로젝트
 
 기존 프로젝트 도입(v0.3.0)이 더한 것은 새 파일과 바뀐 파일로 나뉘어요. 먼저 `--diff`로 차이를 본 뒤 H 라운드에서 옮겨요.
@@ -87,6 +88,7 @@ flowchart LR
 - **Task 게이트는 `projectType`이 있어야 켜져요**: `dev-cycle.mjs`는 `projectType`이 `early`, `operating`, `migration`일 때만 진행 계획과 Task 게이트를 적용해요. 값이 없거나 `new`이면 이전처럼 라운드를 바로 열어요. 기존 프로젝트로 다루려면 `install.sh <프로젝트> --skip-skills --project-type <유형>`으로 유형을 기록해요. 설치기는 다시 실행해도 이 값을 기록해요.
 - **새 두뇌와 구성 변경**: openspec, spec-kit, compound-engineering과 두뇌 여러 개 고르기는 옮긴 `skills-setup.mjs`와 `skills.manifest.json`이 있어야 돼요. 옛 판이면 `--brain`을 줄 때 설치기가 경고해요. 고르는 일 자체는 `prokit-skills-manage`로 해요([두뇌와 선택 스킬](../skills/brains.md#바꾸기)).
 - **열린 라운드와 진행 계획**: 열린 라운드는 먼저 닫아요. 도입한 프로젝트가 아직 진행 계획을 확정하지 않았다면 이 반영 라운드는 `--no-task`로 열어요([정밀 분석과 진행 계획](../concepts/project-plan.md)).
+<!-- /edition -->
 
 ### 두뇌와 과설계 방지 스킬을 고르게 된 판(2026-10-20) 이전
 

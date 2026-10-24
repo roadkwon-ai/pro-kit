@@ -11,7 +11,7 @@
 
 ## 키 한눈에 보기
 
-에이전트가 왜 그렇게 판정하고 검사하는지 궁금할 때 이 표에서 키를 찾아보세요. 아래는 neon 템플릿의 `.dev-cycle.json`과 설치기가 더하는 키예요. "채우는 쪽"은 처음 값을 누가 넣는지예요.
+에이전트가 왜 그렇게 판정하고 검사하는지 궁금할 때 이 표에서 키를 찾아보세요. 아래는 <!-- edition:pro -->neon <!-- /edition -->템플릿의 `.dev-cycle.json`과 설치기가 더하는 키예요. "채우는 쪽"은 처음 값을 누가 넣는지예요.
 
 > [!TIP]
 > 처음에는 `rules`, `ui`, `commands` 세 키만 읽어도 돼요. 케이스, 화면 점수 기준, 검사 명령이 여기서 나와요.
@@ -23,19 +23,21 @@
 | `todoPath` | 진행 중인 대조표와 할 일 파일 | `"tasks/todo.md"` | 템플릿 |
 | `archiveDir` | 닫은 라운드와 완료 기록을 보관하는 폴더 | `"tasks/archive"` | 템플릿 |
 | `workflowDoc` | 케이스별 대조표 행의 정본 문서 | `"docs/dev-workflow.md"` | 템플릿 |
-| `planPath` | 진행 계획의 Task 표. 파일에 안 적혀 있으면 기본값을 써요 | `"tasks/plan.md"` | 기본값 |
-| `defaultBranch` | 케이스 판정의 기준이 되는 브랜치. 이 브랜치와 비교해서 바뀐 파일을 세요 | `"main"` | 설치기가 프로젝트의 기본 브랜치를 찾아 적어요. 기존 프로젝트는 `--default-branch`로 정해요 |
+| `planPath` | 진행 계획의 Task 표. 파일에 안 적혀 있으면 기본값을 써요 | `"tasks/plan.md"` | 기본값 | <!-- edition:pro -->
+| `defaultBranch` | 케이스 판정의 기준이 되는 브랜치. 이 브랜치와 비교해서 바뀐 파일을 세요 | `"main"` | 설치기가 프로젝트의 기본 브랜치를 찾아 적어요.<!-- edition:pro --> 기존 프로젝트는 `--default-branch`로 정해요<!-- /edition --> |
 | `rules` | 파일 경로로 케이스를 정하는 규칙 목록 | 아래 설명 | 템플릿 |
 | `authPaths` | 인증과 권한에 닿는 경로. 걸리면 보안 리뷰 행이 더 붙어요 | 아래 설명 | 템플릿 |
 | `ui` | 화면 작업의 통과 점수 기준 | `{ "auditMin": 16, "a11yMin": 3 }` | 템플릿 |
 | `commands` | 검사에 쓰는 명령 | 아래 설명 | 설치기가 찾아 적고, 에이전트가 더해요 |
 | `resources` | 캐시와 임시 폴더를 감시하는 정책 | `{ "roots": [] }` | 템플릿, 필요하면 H 라운드 |
-| `projectType` | 프로젝트 유형 | `"new"`, `"early"`, `"operating"`, `"migration"` | 설치기(`--project-type`). 기존 프로젝트를 들였을 때 적혀요 |
-| `adopt` | 하네스만 설치한 프로젝트 표시 | `true` | 설치기(`--adopt`) |
-| `legacy.path` | 전환 프로젝트에서 읽기 전용으로 참조하는 기존 코드 경로 | `"../old-php"` | 설치기(`--legacy`) |
+| `projectType` | 프로젝트 유형 | `"new"`, `"early"`, `"operating"`, `"migration"` | 설치기(`--project-type`). 기존 프로젝트를 들였을 때 적혀요 | <!-- edition:pro -->
+| `adopt` | 하네스만 설치한 프로젝트 표시 | `true` | 설치기(`--adopt`) | <!-- edition:pro -->
+| `legacy.path` | 전환 프로젝트에서 읽기 전용으로 참조하는 기존 코드 경로 | `"../old-php"` | 설치기(`--legacy`) | <!-- edition:pro -->
 
+<!-- edition:pro -->
 > [!NOTE]
 > 값이 처음부터 모두 채워지는 것은 아니에요. `--project-type`을 주지 않은 새 프로젝트에는 `projectType`, `adopt`, `legacy`가 없어요. `--project-type new`를 줬다면 `projectType`만 적혀요. `adopt`와 `legacy`는 기존 프로젝트를 들였을 때만 생겨요.
+<!-- /edition -->
 
 ## 케이스를 정하는 `rules`
 
@@ -65,7 +67,7 @@
 - 빌드·배포 설정(`next.config`, `vercel.json`, `.github/workflows/`, `turbo.json`)
 - 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`)
 
-`--adopt` 프로젝트는 설치기가 이 규칙을 그 프로젝트에 맞게 바꾸고, 규칙 밖의 코드는 계층을 알 수 없어서 무거운 F로 봐요.
+`--adopt` 프로젝트는 설치기가 이 규칙을 그 프로젝트에 맞게 바꾸고, 규칙 밖의 코드는 계층을 알 수 없어서 무거운 F로 봐요. <!-- edition:pro -->
 
 > [!WARNING]
 > 케이스를 낮추려고 `rules`를 고치는 것은 허용하지 않아요. 리뷰어가 지적해요.
@@ -90,8 +92,8 @@
 | `lint` | 파일을 고치지 않는 린트 | `pnpm exec biome check .` |
 | `build` | 빌드 | `pnpm build` |
 | `test` | 테스트. 테스트 러너가 없으면 비어 있고, 처음 D·E 라운드에서 vitest를 도입하며 등록해요 | `pnpm test` |
-| `dbGenerate` | 마이그레이션 만들기 | `pnpm --filter @my-app/db db:generate` |
-| `dbMigrate` | 마이그레이션 적용 | `pnpm --filter @my-app/db db:migrate` |
+| `dbGenerate` | 마이그레이션 만들기 | `pnpm --filter @my-app/db db:generate` | <!-- edition:pro -->
+| `dbMigrate` | 마이그레이션 적용 | `pnpm --filter @my-app/db db:migrate` | <!-- edition:pro -->
 
 **없는 키는 그 프로젝트에서 실행할 수 없는 검사예요.** 에이전트는 없는 검사를 한 것처럼 적지 않아요([명령 모음](commands.md)).
 
@@ -104,8 +106,8 @@
 ### 설치기가 파일을 어떻게 다루나요
 
 - `.dev-cycle.json`은 설치기가 첫 복사 뒤 프로젝트 값으로 채우는 파일이라서 "템플릿과 다름"으로 보이지 않고 `--diff`에도 나오지 않아요. 템플릿의 새 판을 반영할 때는 템플릿의 `files/.dev-cycle.json`과 직접 비교해요([기존 프로젝트에 갱신 반영](../templates/update-existing.md)).
-- 이미 `.dev-cycle.json`이 있는 프로젝트에 다시 설치해도 이 파일은 새로 복사하지 않고, 경로 규칙과 `commands`는 그대로 둬요. 다시 실행할 때 새로 기록하는 것은 `projectType`, `adopt`, `legacy.path`, `defaultBranch`(`--default-branch`를 줬을 때), 그리고 고른 `brain`, `simplicity`뿐이에요.
-- `defaultBranch`는 설치기가 `origin/HEAD`, `main`, `master`, 지금 브랜치 순으로 찾아요. 도입 브랜치(`prokit/setup`)에서 계속 작업할 때는 `--default-branch`로 기준 브랜치를 정하고, 나중에 기본 브랜치에 병합하면 H 라운드에서 되돌려요([기존 프로젝트에 도입하기](../start/adopt.md)).
+- 이미 `.dev-cycle.json`이 있는 프로젝트에 다시 설치해도 이 파일은 새로 복사하지 않고, 경로 규칙과 `commands`는 그대로 둬요. 다시 실행할 때 새로 기록하는 것은 <!-- edition:pro -->`projectType`, `adopt`, `legacy.path`, <!-- /edition -->`defaultBranch`(`--default-branch`를 줬을 때), 그리고 고른 `brain`, `simplicity`뿐이에요.
+- `defaultBranch`는 설치기가 `origin/HEAD`, `main`, `master`, 지금 브랜치 순으로 찾아요. 도입 브랜치(`prokit/setup`)에서 계속 작업할 때는 `--default-branch`로 기준 브랜치를 정하고, 나중에 기본 브랜치에 병합하면 H 라운드에서 되돌려요([기존 프로젝트에 도입하기](../start/adopt.md)). <!-- edition:pro -->
 
 ### 이 파일을 바꾸는 흔한 이유
 

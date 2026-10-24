@@ -8,7 +8,7 @@
 |---|---|
 | 말로 요청하면 에이전트가 정해진 순서로 일해요 | 코드를 몰라도 평소 말로 요청하면 돼요. 에이전트는 스펙과 화면 설계, 구현, 실행한 증거, 독립 리뷰의 순서를 지켜요. 이 순서를 지키게 하는 규칙, 스킬, 자동 검사의 묶음이 하네스예요. [하네스 엔지니어링](concepts/harness.md) · [처음 한 시간](start/first-hour.md) |
 | 확인은 내가 해요 | 에이전트는 확인 질문을 하고 결과를 보여 줘요. 마지막 결과 확인은 에이전트가 대신하거나 건너뛸 수 없고, 릴리스와 배포처럼 되돌리기 어려운 일은 내가 정해요. [증거와 audit, 사용자 확인](concepts/audit-and-confirm.md) · [요청하고 이어 가는 법](start/ask-well.md) |
-| 화면부터 배포까지 | 스타일 추천과 `DESIGN.md`로 디자인을 정하고, 모든 화면을 만들어 HTML로 내보내거나 로그인과 DB를 갖춘 서비스로 키우고, Vercel 배포까지 할 수 있어요. 전용 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개가 이 일을 맡아요. [UI/UX 흐름](design/ui-flow.md) · [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](skills/prokit-skills.md) |
+| 화면부터 배포까지 | 스타일 추천과 `DESIGN.md`로 디자인을 정하고, 모든 화면을 만들어 HTML로 내보내거나 <!-- edition:pro -->로그인과 DB를 갖춘 서비스로 키우고, Vercel 배포까지 할 수 있어요. 전용 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개가 이 일을 맡아요.<!-- /edition --><!-- edition:ui GitHub Pages나 Vercel에 올릴 수 있어요. 전용 스킬 6개가 이 일을 맡아요. --> [UI/UX 흐름](design/ui-flow.md) · [prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개](skills/prokit-skills.md) |
 
 ## 문서 둘러보기
 
@@ -16,10 +16,10 @@
 
 | 묶음 | 내용 |
 |---|---|
-| [시작하기](start/README.md) | 프로킷이 무엇이고 왜 필요한지, 어떤 분께 추천하는지, 처음 한 시간 따라가기, 준비물, 지원하는 에이전트, 먼저 정할 PRD, 화면만·서비스·프리셋 팩으로 시작하기, 만든 뒤 개발하기, 요청하고 이어 가는 법, 기존 프로젝트에 도입하기 |
-| [핵심 개념](concepts/README.md) | 하네스, dev-cycle 라운드, 라운드 한 번 따라가 보기, 케이스와 대조표, 증거와 확인, 정밀 분석과 진행 계획, 위임·리뷰 에이전트, 자원 관리 |
-| [템플릿](templates/README.md) | neon과 supabase 고르기, 템플릿이 더하는 것, 앱 구조, 설치기, 갱신 반영 |
+| [시작하기](start/README.md) | 프로킷이 무엇이고 왜 필요한지, 어떤 분께 추천하는지, 처음 한 시간 따라가기, 준비물, 지원하는 에이전트, 먼저 정할 PRD, 화면만·서비스·프리셋 팩으로 시작하기, 만든 뒤 개발하기, 요청하고 이어 가는 법<!-- edition:pro -->, 기존 프로젝트에 도입하기<!-- /edition --> |
+| [핵심 개념](concepts/README.md) | 하네스, dev-cycle 라운드, 라운드 한 번 따라가 보기, 케이스와 대조표, 증거와 확인, <!-- edition:pro -->정밀 분석과 진행 계획, <!-- /edition -->위임·리뷰 에이전트, 자원 관리 |
+| [템플릿](templates/README.md) | <!-- edition:pro -->neon과 supabase 고르기, <!-- /edition -->템플릿이 더하는 것, 앱 구조, 설치기, 갱신 반영 |
 | [스킬과 에이전트](skills/README.md) | prokit 스킬, 공식 스킬과 연결, 선택 스킬 묶음, 설치와 업데이트 |
 | [디자인](design/README.md) | UI 스킬셋, 스타일 추천과 화면 설계, `DESIGN.md`, 화면만 프로젝트와 HTML 내보내기, 완성팩 활용 |
-| [배포와 릴리스](deploy/README.md) | 처음 배포하기, Vercel 배포와 되돌리기, GitHub Pages, 버전과 릴리스, 비밀값 지키기 |
-| [레퍼런스](reference/README.md) | 프로킷이 쓰는 기술과 도구, 명령 모음, 폴더 구조, 고쳐도 되는 파일, `.dev-cycle.json` 설정 읽기, 검증 결과, 자주 묻는 질문 |
+| [배포와 릴리스](deploy/README.md) | 처음 배포하기, <!-- edition:pro -->Vercel 배포와 되돌리기, <!-- /edition -->GitHub Pages, <!-- edition:pro -->버전과 릴리스, <!-- /edition -->비밀값 지키기 |
+| [레퍼런스](reference/README.md) | 프로킷이 쓰는 기술과 도구, 명령 모음, 폴더 구조, 고쳐도 되는 파일, `.dev-cycle.json` 설정 읽기, <!-- edition:pro -->검증 결과, <!-- /edition -->자주 묻는 질문 |

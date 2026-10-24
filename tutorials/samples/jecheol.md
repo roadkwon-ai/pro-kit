@@ -46,7 +46,7 @@ DB는 쓰지 않아. 없는 준비물은 설치해줘.
 <summary>막히면</summary>
 
 <!-- b:trouble-pack name=jecheol -->
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/jecheol에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs jecheol 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/jecheol에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs jecheol 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 <!-- /b -->
 
 </details>
@@ -186,6 +186,7 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 
 ![제철상자 휴대폰 첫 화면](assets/jecheol-home-mobile.webp)
 
+<!-- edition:pro -->
 ## 실제 서비스로 만들 때
 
 제철상자는 정기결제, 주소 검색, 메일·문자 알림까지 외부 서비스가 세 종류 필요하고, 그중 2주마다 자동으로 돈이 빠지는 정기결제가 가장 까다로워요.
@@ -226,3 +227,4 @@ Claude Pro · ChatGPT Plus(Codex): 가능 (5시간 한도에 약 1번 걸려요)
 > 제철상자 프리셋은 화면만 만들 때 이미 회차와 마감 날짜를 계산하는 코드(`apps/web/src/lib/store.ts`의 `slots`)와 그 확인 파일(`apps/web/src/lib/schedule.check.ts`)을 만들어 두었어요. 내 프로젝트에도 비슷한 계산 코드가 있으면 새로 만들지 말고 그대로 쓰자고 하세요.
 
 정기결제에는 결제 대행 서비스(PG)의 계정과 정기결제 사용 승인, API 키가 필요해요. 주소 검색은 주소 검색 서비스의 키, 메일은 메일 발송 서비스 계정, 문자는 문자 발송 서비스 계정과 등록한 발신번호가 필요해요. 처음에는 결제를 테스트 모드로 두고, 알림은 메일부터 붙여 보세요.
+<!-- /edition -->

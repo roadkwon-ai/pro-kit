@@ -46,7 +46,7 @@
 
 ### Vercel에 올릴 때
 
-`pnpm export:html`(하위 경로 없이)로 만든 HTML을 프로젝트 이름의 폴더로 올려요(`vercel deploy … --prod --yes`). 보고하는 주소는 `https://<프로젝트 이름>.vercel.app`이에요. Hobby 요금제는 무료이고 개인 비상업 용도예요. 서비스 프로젝트의 풀스택 배포(`pnpm vercel:deploy`)와는 다른 방법이에요([Vercel 배포와 되돌리기](vercel.md)).
+`pnpm export:html`(하위 경로 없이)로 만든 HTML을 프로젝트 이름의 폴더로 올려요(`vercel deploy … --prod --yes`). 보고하는 주소는 `https://<프로젝트 이름>.vercel.app`이에요. Hobby 요금제는 무료이고 개인 비상업 용도예요.<!-- edition:pro --> 서비스 프로젝트의 풀스택 배포(`pnpm vercel:deploy`)와는 다른 방법이에요([Vercel 배포와 되돌리기](vercel.md)).<!-- /edition -->
 
 ### 토큰을 다루는 방법
 

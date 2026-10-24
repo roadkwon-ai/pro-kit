@@ -47,9 +47,9 @@ flowchart TD
 | `PRODUCT.md` | 제품 맥락(누구를 위한 서비스인지, 어조)이에요. impeccable의 인터뷰로 만들어요. 서비스 방향이 바뀌면 다시 인터뷰하도록 시켜요 |
 | `docs/briefs/` | 사이트맵과 화면 설계예요. 화면을 만들기 전에 확인받는 기준이라 바꾸면 화면도 함께 바뀌어야 해요 |
 | `apps/`, `packages/`의 코드 | 코드를 바꾸면 대조표, 검사, 리뷰가 따라와요. 직접 고치면 그 기록 없이 diff만 생겨서 다음 라운드가 케이스를 높게 판정할 수 있어요 |
-| `packages/db`의 스키마와 새 마이그레이션 | 스키마는 `db:generate`로 만든 마이그레이션으로만 바꿔요([만든 뒤 개발하기](../start/after-create.md)) |
+| `packages/db`의 스키마와 새 마이그레이션 | 스키마는 `db:generate`로 만든 마이그레이션으로만 바꿔요([만든 뒤 개발하기](../start/after-create.md)) | <!-- edition:pro -->
 | `docs/adr/` | 되돌리기 어려운 설계 결정의 기록이에요. 결정을 바꿀 때 에이전트가 이유와 함께 남겨요 |
-| `docs/plans/`, `tasks/plan.md` | 진행 계획이에요. Task의 순서와 제목에는 지문(sig)이 있어서 손으로 고치면 검사가 알아채요([정밀 분석과 진행 계획](../concepts/project-plan.md)) |
+| `docs/plans/`, `tasks/plan.md` | 진행 계획이에요. Task의 순서와 제목에는 지문(sig)이 있어서 손으로 고치면 검사가 알아채요([정밀 분석과 진행 계획](../concepts/project-plan.md)) | <!-- edition:pro -->
 | `tasks/todo.md`의 할 일과 백로그 | 에이전트에게 "할 일에 ○○ 더해줘"라고 시켜요. 아래 "건드리지 말 것"의 대조표 칸과 같은 파일에 있어서, 직접 고치다가 표를 깨기 쉬워요 |
 | `skills.manifest.json`, 스킬 구성 | 두뇌, 과설계 방지 스킬, 추가 스킬은 "두뇌 바꿔줘"처럼 요청해요. 에이전트가 H 라운드에서 `pnpm skills:setup`으로 바꿔요([두뇌와 선택 스킬](../skills/brains.md)) |
 
@@ -65,17 +65,17 @@ flowchart TD
 | `.codex/agents/`, `.agents/agents/` | `.claude/agents/`의 정본에서 `pnpm agents:sync`가 만든 생성물이에요. 고쳐도 다음 동기화가 덮어쓰고, `pnpm agents:check`가 어긋남을 알려 줘요. 에이전트 규칙을 바꾸려면 정본(`.claude/agents/`)을 H 라운드로 고쳐요 |
 | `.agents/skills/prokit-*`, `.claude/skills/` | 프로킷 스킬과 연결이에요. 바꾸면 모든 라운드의 규칙이 달라져요. 템플릿의 새 판은 [갱신 반영](../templates/update-existing.md)으로 가져와요 |
 | `scripts/`의 하네스 스크립트 | `dev-cycle.mjs`, `skills-setup.mjs`, `vercel-deploy.mjs` 같은 도구예요. 템플릿과 같아야 `--diff`와 갱신이 깔끔해요 |
-| 이미 적용한 마이그레이션 파일 | 적용한 뒤 바꾸면 DB의 기록과 파일이 어긋나요. 고치려면 새 마이그레이션을 더해요 |
+| 이미 적용한 마이그레이션 파일 | 적용한 뒤 바꾸면 DB의 기록과 파일이 어긋나요. 고치려면 새 마이그레이션을 더해요 | <!-- edition:pro -->
 | `tasks/todo.md`의 대조표 칸 | 에이전트가 실제로 실행한 명령과 결과로 채우는 증거 칸이에요. `audit`은 빈 칸과 `ok` 같은 형식만 채운 값을 거절하지만, 손으로 지어 쓴 내용까지 가려내지는 못해요. 그래서 손으로 채우지 않아요. 마지막 `[confirm]` 칸은 사용자가 결과를 직접 보고 알려 줘야 채워요 |
 | `tasks/archive/` | 닫은 라운드의 기록이에요. 이력이라 고치지 않아요 |
-| `release/` 노트, `v*` 태그 | `pnpm release` 절차로만 만들어요. 에이전트가 쓰고 사용자는 동의만 해요([버전과 릴리스](../deploy/release.md)) |
+| `release/` 노트, `v*` 태그 | `pnpm release` 절차로만 만들어요. 에이전트가 쓰고 사용자는 동의만 해요([버전과 릴리스](../deploy/release.md)) | <!-- edition:pro -->
 | `licenses/` | 프로킷 사용 조건과 적용 범위 안내예요. 지우지 않아요([폴더 구조](project-structure.md)) |
 | `.vercelignore` | 배포에서 비밀값 파일을 빼는 장치예요. 지우면 `.env`가 배포에 올라갈 수 있어요 |
 | `.impeccable/`의 기록 | 화면 리뷰(critique)와 점수 기록이에요. `audit`은 이번 라운드에 만든 기록 파일이 있는지와 점수가 증거와 같은지 대조해요. 다만 지어낸 기록을 가려내지는 못하니 손으로 쓰지 않아요 |
 
 ## 헷갈릴 때
 
-- 마이그레이션과 `schema/auth.ts`처럼 도구가 다시 만드는 파일은 `biome.json`에서 제외돼 있어요. 손으로 다듬지 말고 만든 도구(`db:generate` 등)로 다시 만들어요.
+- 마이그레이션과 `schema/auth.ts`처럼 도구가 다시 만드는 파일은 `biome.json`에서 제외돼 있어요. 손으로 다듬지 말고 만든 도구(`db:generate` 등)로 다시 만들어요. <!-- edition:pro -->
 - 막히면 [막혔을 때](../../tutorials/reference/troubleshooting.md)의 프롬프트를 써요.
 
 > [!TIP]

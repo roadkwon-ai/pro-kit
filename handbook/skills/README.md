@@ -6,7 +6,7 @@
 
 | 쪽 | 내용 |
 |---|---|
-| [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](prokit-skills.md) | 먼저 읽어요. 분야마다 일하는 법을 알려 주는 전용 스킬이 무엇이고, 어떤 말을 하면 쓰이는지 |
+| [prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개](prokit-skills.md) | 먼저 읽어요. 분야마다 일하는 법을 알려 주는 전용 스킬이 무엇이고, 어떤 말을 하면 쓰이는지 |
 | [두뇌와 선택 스킬](brains.md) | 프로젝트를 만들 때 묻는 두뇌(여럿 가능), 과설계 방지 스킬, mattpocock 추가 스킬, 응답 방식, 화면 디자인 보조의 설명과 진행 중에 바꾸는 법. 모르겠을 때의 기본값도 있어요 |
 | [선택 스킬 묶음](optional-bundles.md) | 필요할 때만 더하는 <!-- v:optional.names -->ops, motion, mobile, i-have-adhd, taste<!-- /v --> 묶음을 언제, 어떻게 더하는지 |
 | [공식 스킬과 연결](official-skills.md) | 참고 쪽이에요. 함께 설치되는 공식 스킬과 prokit 스킬이 읽는 곳, 늘 설치하는 프로세스 스킬과 전역 도구, Ponytail 사용법 |

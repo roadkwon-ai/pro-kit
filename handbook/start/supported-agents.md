@@ -51,6 +51,7 @@
 - **Antigravity**는 Claude 플러그인 훅, Claude Code·Codex 전용 두뇌(OMC, OMX, gstack, pstack), impeccable 편집 훅을 쓰지 않아요. 그 자리는 Codex와 같은 대체 절차(설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`)가 맡고, 화면을 고친 뒤에는 critique의 detector로 확인해요.
 - **Grok Build**는 Claude 호환이 기본으로 켜져 있어 사용자 전역의 Claude 플러그인과 훅, `~/.claude/CLAUDE.md`, `~/.claude/skills`도 함께 불러와요. 신뢰한 폴더에서는 프로젝트 `.claude/settings.json`과 `settings.local.json`의 훅도 읽어요. 이 훅이 실제로 도는지는 확인하지 않았으므로, Grok Build에서도 화면을 고친 뒤 critique의 detector로 확인해요.
 
+<!-- edition:pro -->
 ### 확인한 범위
 
 **네 도구 모두 같은 규칙과 스킬을 읽지만, 실제 세션으로 어디까지 시험했는지는 도구마다 달라요.** 아래는 확인한 판과 범위만 줄였어요. 채점 점수, 고친 점, 시험 방법은 [검증 결과](../reference/verification.md#실제-에이전트-세션-시험-2026-10-22)와 템플릿의 `VERIFICATION.md`에 있어요.
@@ -69,6 +70,8 @@
 - 지원 파일이 있다는 사실을 실제 실행 통과로 세지 않아요([최종 증분 인수와 한계](../../docs/reports/2026-10-09-orchestration-resources/README.md#한계)).
 
 기록 위치: [neon VERIFICATION](../../templates/prokit-next-neon/VERIFICATION.md#실제-프로젝트-시험-prokit-init과-정밀-분석진행-계획-2026-10-22-추가) · [neon Antigravity·Grok Build](../../templates/prokit-next-neon/VERIFICATION.md#antigravitygrok-build-2026-10-08-추가) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#antigravitygrok-build-2026-10-08-추가)
+<!-- /edition -->
+<!-- edition:ui **네 도구 모두 같은 규칙과 스킬을 읽어요.** -->
 
 ## 관련 문서
 

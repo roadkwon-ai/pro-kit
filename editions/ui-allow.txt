@@ -1,0 +1,77 @@
+# UI 판(pro-kit-ui)에 남겨도 되는 Pro 말. scripts/edition.mjs의 검사가 읽는다.
+# 한 줄에 "판 안 경로 | 말 | 그 말이 든 줄 수 | 이유". 줄 수가 달라지면 검사가 다시 묻는다.
+tutorials/start/README.md | Docker | 1 | 준비물 확인 프롬프트는 원본 묶음이라 고칠 수 없고 실제 서비스에만 필요하다는 안내다.
+tutorials/start/README.md | Podman | 1 | 준비물 확인 프롬프트는 원본 묶음이라 고칠 수 없고 실제 서비스에만 필요하다는 안내다.
+handbook/concepts/cases.md | --adopt | 1 | 코드 블록 안의 판정 도식이라 표시를 달 수 없고 규칙 밖 코드가 F가 되는 흐름을 보이는 도식의 일부다.
+handbook/concepts/delegation-and-resources.md | 기존 프로젝트 | 1 | 이미 만든 프로젝트에 새 하네스를 반영하는 범위를 말하는 것이라 화면만 프로젝트에도 맞는다.
+handbook/concepts/delegation-and-resources.md | 컨테이너 | 3 | 컨테이너나 다른 OS에서 도는 guard와 컨테이너에 마운트한 파일 시스템을 설명하는 일반 글이라 DB 컨테이너와 무관하다.
+handbook/start/what-is-prokit.md | production | 1 | 로컬 환경변수 파일에 운영 키를 적지 말라는 비밀값 안전 규칙을 설명하는 글이다.
+handbook/start/what-is-prokit.md | prokit-analyzer | 1 | 템플릿에 실제로 들어 있는 에이전트 파일 목록을 보여 주는 코드 블록이라 표시를 넣을 수 없다.
+handbook/reference/dev-cycle-config.md | 마이그레이션 | 1 | 규칙 형식을 보여 주는 예시 코드 줄이다.
+handbook/reference/dev-cycle-config.md | 기존 프로젝트 | 1 | 판에도 있는 템플릿 갱신 반영 쪽의 제목을 링크하는 글이다.
+handbook/concepts/dev-cycle.md | vercel:deploy | 1 | 화면만 프로젝트에서도 도는 마무리 절차의 Git 자동 배포 확인 명령이다.
+handbook/concepts/dev-cycle.md | production | 2 | 마무리 절차의 배포 확인 명령과 마무리 도식의 노드다. 도식은 화면만 프로젝트가 close 뒤 커밋·push로 끝나는 갈래를 함께 그린다.
+handbook/concepts/harness.md | vercel:deploy | 1 | 화면만 프로젝트에서도 쓰는 자동 검사 목록의 배포 확인 명령이다.
+handbook/reference/project-structure.md | 마이그레이션 | 1 | 묶음으로 채우는 폴더 구조 그림 안의 줄이라 고칠 수 없고 프로젝트에 실제로 있는 폴더를 보여 준다.
+handbook/reference/project-structure.md | Neon | 1 | 묶음으로 채우는 폴더 구조 그림 안의 줄이라 고칠 수 없고 프로젝트에 실제로 있는 폴더를 보여 준다.
+handbook/reference/project-structure.md | Supabase | 1 | 묶음으로 채우는 폴더 구조 그림 안의 줄이라 고칠 수 없고 프로젝트에 실제로 있는 폴더를 보여 준다.
+handbook/reference/project-structure.md | protectedProcedure | 1 | 묶음으로 채우는 폴더 구조 그림 안의 줄이라 고칠 수 없고 프로젝트에 실제로 있는 폴더를 보여 준다.
+handbook/reference/project-structure.md | pnpm release | 1 | 묶음으로 채우는 폴더 구조 그림(코드 블록)이라 줄마다 표시를 달 수 없다. 기존 프로젝트를 들였을 때(docs/prokit/)와 운영 릴리스(release/)처럼 조건이 붙은 Pro 폴더도 함께 보이고, 그림 안에 그 조건이 적혀 있다.
+handbook/reference/project-structure.md | production | 1 | 묶음으로 채우는 폴더 구조 그림(코드 블록)이라 줄마다 표시를 달 수 없다. 기존 프로젝트를 들였을 때(docs/prokit/)와 운영 릴리스(release/)처럼 조건이 붙은 Pro 폴더도 함께 보이고, 그림 안에 그 조건이 적혀 있다.
+handbook/reference/project-structure.md | intake | 1 | 묶음으로 채우는 폴더 구조 그림(코드 블록)이라 줄마다 표시를 달 수 없다. 기존 프로젝트를 들였을 때(docs/prokit/)와 운영 릴리스(release/)처럼 조건이 붙은 Pro 폴더도 함께 보이고, 그림 안에 그 조건이 적혀 있다.
+handbook/reference/project-structure.md | 기존 프로젝트 | 1 | 묶음으로 채우는 폴더 구조 그림(코드 블록)이라 줄마다 표시를 달 수 없다. 기존 프로젝트를 들였을 때(docs/prokit/)와 운영 릴리스(release/)처럼 조건이 붙은 Pro 폴더도 함께 보이고, 그림 안에 그 조건이 적혀 있다.
+handbook/start/quickstart-screens.md | 마이그레이션 | 2 | 화면만 프로젝트가 로컬 DB와 마이그레이션을 건너뛴다는 설명이다.
+handbook/reference/faq.md | 기존 프로젝트 | 1 | 판에도 있는 템플릿 갱신 반영 쪽의 제목을 링크하는 글이다.
+handbook/reference/faq.md | 컨테이너 | 1 | 화면만 프로젝트에는 컨테이너 엔진이 필요 없다고 알리는 글이다.
+handbook/design/screen-only.md | 마이그레이션 | 1 | 화면만 프로젝트는 로컬 DB와 첫 마이그레이션 없이 만든다고 서비스 프로젝트와 비교하는 표 행이다.
+handbook/design/screen-only.md | authClient | 1 | 화면에 쓰지 않는 부품을 알려 주는 화면만 규칙이다.
+handbook/design/screen-only.md | vercel:deploy | 1 | 화면만 프로젝트는 풀스택 배포를 쓰지 않는다는 안내다.
+handbook/design/ui-skillset.md | 운영 중 | 1 | UI 스킬셋이 다루지 않는 일을 Pro로 안내하는 비교표 행이다.
+handbook/templates/README.md | 기존 프로젝트 | 1 | 이미 만든 UI 프로젝트에 템플릿 갱신을 반영하는 쪽의 이름이라 판에도 맞다.
+handbook/templates/installer.md | 기존 프로젝트 | 1 | 이미 만든 UI 프로젝트에 템플릿 갱신을 반영하는 쪽으로 가는 링크 이름이다.
+handbook/templates/installer.md | 클론 | 2 | 팀원이 저장소를 git으로 받은 뒤 스킬을 설치하는 일반 절차 설명이라 판에도 맞다.
+handbook/templates/update-existing.md | 기존 프로젝트 | 2 | 이미 만든 UI 프로젝트에 새 판 템플릿을 반영하는 쪽의 제목과 안내라 판에도 맞다.
+tutorials/samples/01-project.md | Docker | 1 | 막히면 목록은 원본 묶음이라 고칠 수 없고 화면만 프로젝트에서는 Docker 없이 진행하라는 안내다.
+tutorials/samples/README.md | Docker | 1 | 막히면 목록은 원본 묶음이라 고칠 수 없고 화면만 프로젝트에서는 Docker 없이 진행하라는 안내다.
+.agents/skills/prokit-init/SKILL.md | Neon | 1 | Vercel과 Neon, Supabase의 외부 agent-skills 이름을 두뇌 agent-skills 선택지와 구분하는 글이다.
+.agents/skills/prokit-init/SKILL.md | Supabase | 1 | Vercel과 Neon, Supabase의 외부 agent-skills 이름을 두뇌 agent-skills 선택지와 구분하는 글이다.
+.agents/skills/prokit-init/SKILL.md | 기존 프로젝트 | 3 | YAML 머리의 스킬 설명이라 표시를 달 수 없고 Pro 스킬셋으로 안내하는 트리거 문구다.
+.agents/skills/prokit-init/SKILL.md | 운영 중 | 1 | YAML 머리의 스킬 설명이라 표시를 달 수 없고 Pro 스킬셋으로 안내하는 트리거 문구다.
+THIRD_PARTY_NOTICES.md | Neon | 2 | 설치하는 외부 스킬의 출처와 라이선스를 알리는 제3자 안내다.
+THIRD_PARTY_NOTICES.md | Supabase | 2 | 설치하는 외부 스킬의 출처와 라이선스를 알리는 제3자 안내다.
+templates/prokit-next-neon/files/.agents/skills/prokit-dev-cycle/SKILL.md | 마이그레이션 | 1 | 케이스 판정표의 E 행이며 dev-cycle 스크립트가 읽는 케이스라 행을 지우지 않는다.
+templates/prokit-next-neon/files/.agents/skills/prokit-dev-cycle/SKILL.md | vercel:deploy | 1 | 화면만 프로젝트에서도 도는 마무리 절차의 Git 자동 배포 확인 명령이다.
+templates/prokit-next-neon/files/.agents/skills/prokit-dev-cycle/SKILL.md | production | 2 | 화면만 프로젝트에서도 도는 마무리 절차의 Git 자동 배포 확인과 그 설명이다.
+templates/prokit-next-neon/files/.agents/skills/prokit-dev-cycle/references/brains/README.md | 기존 프로젝트 | 1 | 이미 만든 프로젝트에서 스킬 구성을 바꿀 때도 이 파일을 쓴다는 뜻이라 판에도 맞다.
+templates/prokit-next-neon/files/.agents/skills/prokit-dev-cycle/references/reuse-design.md | production | 1 | 환경 변수 공급 위치를 환경별로 적으라는 일반 규칙이라 화면만 프로젝트에도 맞다.
+templates/prokit-next-neon/files/.agents/skills/prokit-skills-update/SKILL.md | 기존 프로젝트 | 1 | 이미 만든 프로젝트에 템플릿 갱신을 반영하는 절차의 이름이라 판에도 맞다.
+templates/prokit-next-neon/files/.agents/skills/prokit-ui/references/screen-only.md | 마이그레이션 | 1 | 화면만 프로젝트는 로컬 DB와 마이그레이션 없이 만든다고 설명하는 화면만 규칙이다.
+templates/prokit-next-neon/files/.agents/skills/prokit-ui/references/screen-only.md | authClient | 1 | 화면에 쓰지 않는 부품을 알려 주는 화면만 규칙이다.
+templates/prokit-next-neon/files/.agents/skills/prokit-ui/references/screen-only.md | vercel:deploy | 1 | 화면만 프로젝트는 풀스택 배포를 쓰지 않는다는 화면만 규칙이다.
+templates/prokit-next-neon/files/.claude/agents/prokit-analyzer.md | prokit-analyzer | 1 | YAML 머리의 에이전트 이름이라 표시를 달 수 없고 파일 이름과 맞아야 한다.
+templates/prokit-next-neon/files/.claude/agents/prokit-analyzer.md | 기존 프로젝트 | 1 | YAML 머리의 에이전트 설명이라 표시를 달 수 없고 UI 프로젝트에서는 쓰지 않는다고 본문에 밝힌다.
+templates/prokit-next-neon/files/.claude/agents/prokit-analyzer.md | 운영 중 | 1 | YAML 머리의 에이전트 설명이라 표시를 달 수 없고 UI 프로젝트에서는 쓰지 않는다고 본문에 밝힌다.
+templates/prokit-next-neon/files/AGENTS.md | Supabase | 1 | 전역 스킬 이름의 예시일 뿐 이 프로젝트의 DB와 무관하다.
+templates/prokit-next-neon/files/AGENTS.md | production | 1 | 배포용 환경 파일을 만들지 말라는 비밀값 규칙에 든 파일 이름이다.
+templates/prokit-next-neon/files/CLAUDE.md | vercel:deploy | 1 | Vercel 플러그인의 배포 명령에 맡기지 않는다는 금지 글이라 화면 배포에도 맞다.
+templates/prokit-next-neon/files/docs/dev-workflow.md | 마이그레이션 | 1 | 케이스 E 행이며 dev-cycle 스크립트가 읽는 케이스라 행을 지우지 않는다.
+templates/prokit-next-neon/files/docs/dev-workflow.md | 프로시저 | 1 | 케이스 D 행이며 dev-cycle 스크립트가 읽는 케이스라 행을 지우지 않는다.
+templates/prokit-next-neon/files/docs/dev-workflow.md | protectedProcedure | 1 | 케이스 D 행이며 dev-cycle 스크립트가 읽는 케이스라 행을 지우지 않는다.
+templates/prokit-next-neon/files/docs/domain/project.md | 프로시저 | 2 | Better-T-Stack 기본 구성에 실제로 있는 API를 적는 프로젝트 개관 틀이다.
+templates/prokit-next-neon/files/docs/domain/project.md | protectedProcedure | 1 | Better-T-Stack 기본 구성에 실제로 있는 로그인 사용자 보호를 적는 프로젝트 개관 틀이다.
+handbook/skills/optional-bundles.md | 클론 | 1 | 팀원이 저장소를 git으로 받은 뒤 선택 묶음을 받는 일반 절차라 판에도 맞는다.
+handbook/skills/brains.md | 기존 프로젝트 | 1 | 이미 만든 UI 프로젝트에 템플릿 갱신을 반영하는 쪽으로 가는 링크 이름이다.
+handbook/skills/install-and-update.md | Neon | 1 | 전역 도구 설치를 그린 도식 안의 설치 대상 이름이라 판에도 맞다.
+handbook/skills/install-and-update.md | Supabase | 1 | 전역 도구 설치를 그린 도식 안의 설치 대상 이름이라 판에도 맞다.
+templates/prokit-next-neon/files/docs/dev-workflow.md | Neon | 1 | 케이스 E 행이며 dev-cycle 스크립트가 읽는 케이스라 행에 표시를 달 수 없다.
+AGENTS.md | Supabase | 1 | 판에만 있는 규칙이 Supabase 템플릿 요청은 Pro 스킬셋이 필요하다고 알리고 멈추게 한다.
+AGENTS.md | 기존 프로젝트 | 2 | 판에만 있는 규칙이 기존 프로젝트 도입 요청은 Pro 스킬셋이 필요하다고 알리고 멈추게 하고, 이미 만든 UI 프로젝트에 템플릿 갱신을 반영하는 절 제목을 Pro와 같게 둔다.
+AGENTS.md | 클론 | 1 | 판에만 있는 규칙이 클론 코딩 요청은 Pro 스킬셋이 필요하다고 알리고 멈추게 한다.
+AGENTS.md | 컨테이너 | 1 | 판에만 있는 규칙이 컨테이너 엔진은 확인하지 않는다고 말한다.
+AGENTS.md | Docker | 1 | 생성 명령의 --db-setup docker는 Pro와 같은 생성 명령을 그대로 쓰기 때문이다.
+AGENTS.md | 마이그레이션 | 1 | 판에만 있는 규칙이 첫 마이그레이션은 만들지 않는다고 말한다.
+README.md | 컨테이너 | 1 | 판 README가 컨테이너 엔진은 필요 없다고 말한다.
+README.md | Neon | 1 | UI 스킬셋과 Pro 스킬셋 비교표의 Pro 칸이다.
+README.md | Supabase | 1 | UI 스킬셋과 Pro 스킬셋 비교표의 Pro 칸이다.
+README.md | 기존 프로젝트 | 1 | UI 스킬셋과 Pro 스킬셋 비교표에서 판에 없다고 적은 행이다.
+README.md | 클론 | 1 | UI 스킬셋과 Pro 스킬셋 비교표에서 판에 없다고 적은 행이다.

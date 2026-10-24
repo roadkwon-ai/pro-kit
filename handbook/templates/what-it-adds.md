@@ -4,6 +4,7 @@
 
 ## 뼈대와 그 위에 더하는 것
 
+<!-- edition:pro -->
 <!-- b:what-it-adds-diagram -->
 ```mermaid
 flowchart LR
@@ -25,25 +26,26 @@ flowchart LR
   TPL --> APP
 ```
 <!-- /b -->
+<!-- /edition -->
 
-표는 위 그림의 오른쪽 상자(템플릿이 설치)를 풀어 쓴 거예요. 처음에는 스킬과 에이전트, dev-cycle만 읽어도 돼요.
+표는 <!-- edition:pro -->위 그림의 오른쪽 상자(템플릿이 설치)를<!-- /edition --><!-- edition:ui Better-T-Stack이 만든 뼈대(`apps/web`, `packages/*`, Turborepo·Biome·pnpm) 위에 템플릿이 설치하는 것을 --> 풀어 쓴 거예요. 처음에는 스킬과 에이전트, dev-cycle만 읽어도 돼요.
 
 ### 스킬과 에이전트
 
 | 구성 | 내용 |
 |---|---|
-| 프로젝트 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개 | `prokit-dev-cycle`(작업 진행), `prokit-web`(라우팅·RSC·캐시), `prokit-ui`(화면·UX), `prokit-api`(oRPC·인증·데이터 주인 확인), `prokit-db`(스키마·마이그레이션), `prokit-verify`(검사·증거), `prokit-deploy`(Vercel 배포·릴리스), `prokit-pack-use`(완성팩 활용), `prokit-skills-update`(외부 스킬 업데이트), `prokit-skills-manage`(진행 중 두뇌·스킬 구성 바꾸기) |
-| 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 | `prokit-analyzer`(기존 프로젝트를 읽기만 하며 정밀 분석), `prokit-implementer`(범위를 받은 수행), `specialist-reviewer`(부족한 전문 계약만 읽기 전용 검토), `prokit-reviewer`(증거·통합 수용을 보는 최종 읽기 전용 게이트). 프로킷은 외부 전문 수행자에게 일을 맡기고 범위·증거·재지시를 관리해요. `.claude/agents`가 원본이고, `.codex/agents`(Codex)와 `.agents/agents`(Antigravity)는 이 원본에서 자동으로 만들어요 |
+| 프로젝트 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개 | `prokit-dev-cycle`(작업 진행), <!-- edition:pro -->`prokit-web`(라우팅·RSC·캐시), <!-- /edition -->`prokit-ui`(화면·UX), <!-- edition:pro -->`prokit-api`(oRPC·인증·데이터 주인 확인), `prokit-db`(스키마·마이그레이션), <!-- /edition -->`prokit-verify`(검사·증거), <!-- edition:pro -->`prokit-deploy`(Vercel 배포·릴리스), <!-- /edition -->`prokit-pack-use`(완성팩 활용), `prokit-skills-update`(외부 스킬 업데이트), `prokit-skills-manage`(진행 중 두뇌·스킬 구성 바꾸기) |
+| 에이전트 <!-- edition:pro --><!-- v:prokit.agents.count -->4<!-- /v --><!-- /edition --><!-- edition:ui 3 -->개 | <!-- edition:pro -->`prokit-analyzer`(기존 프로젝트를 읽기만 하며 정밀 분석), <!-- /edition -->`prokit-implementer`(범위를 받은 수행), `specialist-reviewer`(부족한 전문 계약만 읽기 전용 검토), `prokit-reviewer`(증거·통합 수용을 보는 최종 읽기 전용 게이트). 프로킷은 외부 전문 수행자에게 일을 맡기고 범위·증거·재지시를 관리해요. `.claude/agents`가 원본이고, `.codex/agents`(Codex)와 `.agents/agents`(Antigravity)는 이 원본에서 자동으로 만들어요 |
 | 내부 스킬 (이 프로젝트에만, 자동 설치) | 공식 도메인 스킬(Next.js, React, Better Auth, shadcn, impeccable, turborepo, DB 스킬, Vercel 배포 스킬 등), mattpocock 필수 3개, skill-creator(Claude 플러그인과 Codex 스킬). 두뇌와 과설계 방지 스킬은 고른 것만 설치해요(기본은 없음. [두뇌와 선택 스킬](../skills/brains.md)). ponytail을 고르면 Codex 스킬 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->종도 받고, Codex 네이티브 Ponytail은 `--with-global`일 때만 선택 설치해요 |
 | 외부 스킬 위임 | 설치 목록 밖에서도 현재 접근 가능한 사용자 지정·프로젝트별 전문 스킬을 확인해 연결해요. 출처와 부작용을 확인하고 결과와 증거를 받아 최종 검수해요 |
-| 선택 스킬 묶음 (기본 설치 안 함) | `ops`(배포한 서비스의 비용·성능 점검. neon은 Neon 함수·파일 저장·LLM 게이트웨이 포함), `motion`(화면 전환 애니메이션), `mobile`(React Native·Expo 앱), `i-have-adhd`(짧은 행동 중심 응답), `taste`(화면 디자인 보조 taste-skill) |
+| 선택 스킬 묶음 (기본 설치 안 함) | `ops`(배포한 서비스의 비용·성능 점검<!-- edition:pro -->. neon은 Neon 함수·파일 저장·LLM 게이트웨이 포함<!-- /edition -->), `motion`(화면 전환 애니메이션), `mobile`(React Native·Expo 앱), `i-have-adhd`(짧은 행동 중심 응답), `taste`(화면 디자인 보조 taste-skill) |
 
 ### 작업 흐름과 문서
 
 | 구성 | 내용 |
 |---|---|
-| dev-cycle | 작업을 케이스(<!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->)로 나눠요. 케이스별 대조표의 모든 행에 증거를 채워야 라운드가 끝나요(`pnpm dev-cycle …`). 기존 프로젝트는 진행 계획을 확정한 뒤 Task 단위(`--task T<n>`)로 라운드를 열어요. 설치기가 git pre-commit 훅을 걸어 라운드 없이 코드나 하네스를 커밋하지 못하게 하고, `pnpm release`도 닫은 라운드 기록이 없으면 멈춰요 |
-| 기존 프로젝트 도입 | 이미 있는 프로젝트에도 설치할 수 있어요. 유형(`--project-type`)에 따라 같은 폴더, 새 브랜치, 새 폴더로 적용하고 `docs/prokit/intake.md`(도입 기록), `docs/prokit/analysis.md`(정밀 분석), `tasks/plan.md`(진행 계획)를 남겨요([기존 프로젝트에 도입하기](../start/adopt.md), [정밀 분석과 진행 계획](../concepts/project-plan.md)) |
+| dev-cycle | 작업을 케이스(<!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->)로 나눠요. 케이스별 대조표의 모든 행에 증거를 채워야 라운드가 끝나요(`pnpm dev-cycle …`). <!-- edition:pro -->기존 프로젝트는 진행 계획을 확정한 뒤 Task 단위(`--task T<n>`)로 라운드를 열어요. <!-- /edition -->설치기가 git pre-commit 훅을 걸어 라운드 없이 코드나 하네스를 커밋하지 못하게 <!-- edition:pro -->하고, `pnpm release`도 닫은 라운드 기록이 없으면 멈춰요<!-- /edition --><!-- edition:ui 해요 --> |
+| 기존 프로젝트 도입 | 이미 있는 프로젝트에도 설치할 수 있어요. 유형(`--project-type`)에 따라 같은 폴더, 새 브랜치, 새 폴더로 적용하고 `docs/prokit/intake.md`(도입 기록), `docs/prokit/analysis.md`(정밀 분석), `tasks/plan.md`(진행 계획)를 남겨요([기존 프로젝트에 도입하기](../start/adopt.md), [정밀 분석과 진행 계획](../concepts/project-plan.md)) | <!-- edition:pro -->
 | 문서 골격 | `AGENTS.md`(맨 앞에 개발 원칙: 계획, 서브에이전트, 교훈 기록, 완료 전 확인. 이어서 공통 규칙), `CLAUDE.md`(`@AGENTS.md`로 같은 지침을 읽어요), `GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md`, `docs/dev-workflow.md` |
 | 개발 자원 보호 | 캐시·Next 출력·설치 패키지·Python 실행환경·관리 임시 폴더를 감시해요. 새 프로젝트의 개발·빌드 명령에 연결하고, 이미 프로킷을 설치한 프로젝트는 H 라운드에서 반영해요([위임과 자원 관리](../concepts/delegation-and-resources.md)) |
 
@@ -52,11 +54,11 @@ flowchart LR
 | 구성 | 내용 |
 |---|---|
 | 화면만 프로젝트 | `scripts/export-html.mjs`로 DB 없이 만든 화면을 정적 HTML로 내보내요(`pnpm export:html`). 선택해서 쓸 수 있는 사이트 하단 제작 표시 컴포넌트 `apps/web/src/components/prokit-credit.tsx`를 함께 둬요. `scripts/load-keys.mjs`와 SessionStart 훅이 프로젝트나 작업 폴더 `.env`의 `OPENAI_API_KEY`를 Claude Code 세션에 불러와요 |
-| Vercel 배포와 릴리스 | `pnpm vercel:deploy develop`·`production`이 배포 전 검사, 배포, 되돌리기 명령 안내를 맡아요. 운영에는 `pnpm release`로 버전 태그, `release/` 노트, GitHub Release를 만든 커밋만 배포해요. `.vercelignore`와 `.gitignore`의 `.env.*` 규칙 덕분에 로컬 비밀값이 배포나 커밋에 섞이지 않아요. `--adopt`로 하네스만 들인 프로젝트에는 이 스크립트가 없어요 |
+| Vercel 배포와 릴리스 | `pnpm vercel:deploy develop`·`production`이 배포 전 검사, 배포, 되돌리기 명령 안내를 맡아요. 운영에는 `pnpm release`로 버전 태그, `release/` 노트, GitHub Release를 만든 커밋만 배포해요. `.vercelignore`와 `.gitignore`의 `.env.*` 규칙 덕분에 로컬 비밀값이 배포나 커밋에 섞이지 않아요. `--adopt`로 하네스만 들인 프로젝트에는 이 스크립트가 없어요 | <!-- edition:ui | 화면 배포 | 정적 HTML은 GitHub Pages나 Vercel에 올릴 수 있어요. 절차는 `prokit-ui`에 있어요 | --> <!-- edition:pro -->
 | 전역 도구 | <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 두뇌 gstack, OMX CLI, OpenSpec CLI는 그 두뇌를 고를 때만 설치해요. ego lite(macOS)는 직접 설치해요 |
 
 > [!WARNING]
-> Vercel CLI, Neon CLI 또는 Supabase CLI, 그리고 네이티브 플러그인을 지원하는 Codex의 Ponytail(ponytail을 고른 경우)은 `--with-global`을 줄 때만 설치해요. 이 옵션은 전역 설정을 바꿔요.
+> Vercel CLI<!-- edition:pro -->, Neon CLI 또는 Supabase CLI,<!-- /edition --> 그리고 네이티브 플러그인을 지원하는 Codex의 Ponytail(ponytail을 고른 경우)은 `--with-global`을 줄 때만 설치해요. 이 옵션은 전역 설정을 바꿔요.
 
 ## 설치한 뒤 폴더에 생기는 것
 
@@ -72,15 +74,17 @@ flowchart LR
 | `scripts/` | dev-cycle, 스킬 설치, 에이전트 동기화, 위임 검증, 자원 보호, Vercel 배포, 릴리스, HTML 내보내기 도구 |
 | `.dev-cycle.json` | 케이스 판정 경로, 검사 명령, 두뇌와 과설계 방지 스킬 기록, 프로젝트 유형 같은 작업 규칙 |
 | `skills.manifest.json`, `skills-lock.json` | 설치할 스킬 목록과 실제로 설치한 판의 기록 |
-| `docs/` | `dev-workflow.md`(케이스별 대조표 행), `adr/`(설계 결정 기록), `domain/project.md`(프로젝트 소개). 진행 계획을 세우면 `plans/`, 기존 프로젝트를 들였으면 `prokit/`(도입 기록 `intake.md`, 정밀 분석 `analysis.md`)와 `first-request.md`가 생겨요 |
-| `tasks/` | `todo.md`(남은 일과 진행 중인 대조표), `plan.md`(진행 계획의 Task 표. 계획 라운드를 열면 생겨요), `archive/`(끝낸 일의 기록). 증거 파일은 `tasks/evidence/`에 쌓여요 |
+| `docs/` | `dev-workflow.md`(케이스별 대조표 행), `adr/`(설계 결정 기록), `domain/project.md`(프로젝트 소개).<!-- edition:pro --> 진행 계획을 세우면 `plans/`, 기존 프로젝트를 들였으면 `prokit/`(도입 기록 `intake.md`, 정밀 분석 `analysis.md`)와 `first-request.md`가 생겨요<!-- /edition --> |
+| `tasks/` | `todo.md`(남은 일과 진행 중인 대조표), <!-- edition:pro -->`plan.md`(진행 계획의 Task 표. 계획 라운드를 열면 생겨요), <!-- /edition -->`archive/`(끝낸 일의 기록). 증거 파일은 `tasks/evidence/`에 쌓여요 |
 | `licenses/` | 프로킷이 제공한 파일의 MIT 라이선스 사본(`PROKIT-LICENSE.txt`)과 어느 파일이 해당하는지 적은 `PROKIT-SCOPE.md` |
 | `.vercelignore` | 배포할 때 `.env` 같은 비밀값 파일이 올라가지 않게 빼요 |
-| `release/` | `pnpm release`가 production 배포 전에 쓰는 릴리스 노트(처음엔 없어요) |
+| `release/` | `pnpm release`가 production 배포 전에 쓰는 릴리스 노트(처음엔 없어요) | <!-- edition:pro -->
 | `apps/web/src/components/prokit-credit.tsx` | 사이트 하단에 제작 표시를 달고 싶을 때 쓰는 선택 컴포넌트예요 |
 
+<!-- edition:pro -->
 > [!NOTE]
 > `--adopt`로 하네스만 들인 프로젝트에는 이 중 일부만 들어가요([설치기와 옵션](installer.md#기존-프로젝트에-설치하기)).
+<!-- /edition -->
 
 ## Better-T-Stack이란
 
@@ -99,11 +103,11 @@ flowchart LR
 | 패키지 매니저 | pnpm | `--package-manager pnpm` |
 | CLI 버전 | 생성할 때의 최신판 (마지막 확인 3.47.0) | `pnpm create better-t-stack@latest` |
 
-DB 옵션만 템플릿마다 달라요(neon은 `--db-setup docker`, supabase는 `--db-setup supabase --manual-db`).
+DB 옵션<!-- edition:pro -->만 템플릿마다 달라요(neon은 `--db-setup docker`, supabase는 `--db-setup supabase --manual-db`).<!-- /edition --><!-- edition:ui 은 생성 명령에 이미 들어 있어요. -->
 
 ## 자세히
 
-- **최신판을 받아요**: 생성기(`@latest`), 공식 스킬, Claude 플러그인은 템플릿에 복사해 두지 않고 설치할 때의 최신판을 받아요. 새 판 때문에 생성이나 설치가 깨지면 pro-kit 쪽에서 템플릿을 고치고, 확인한 판을 `VERIFICATION.md`에 적어요(pro-kit 관리 규칙).
+- **최신판을 받아요**: 생성기(`@latest`), 공식 스킬, Claude 플러그인은 템플릿에 복사해 두지 않고 설치할 때의 최신판을 받아요.<!-- edition:pro --> 새 판 때문에 생성이나 설치가 깨지면 pro-kit 쪽에서 템플릿을 고치고, 확인한 판을 `VERIFICATION.md`에 적어요(pro-kit 관리 규칙).<!-- /edition -->
 - **템플릿 파일 위치**: 설치기는 `templates/<템플릿>/files/` 아래 파일을 프로젝트에 복사해요. 스킬 목록의 정본은 `files/skills.manifest.json`이에요([설치와 업데이트 구조](../skills/install-and-update.md)).
 - **설치된 결과**: 설치한 뒤 프로젝트의 폴더 구조는 [설치된 프로젝트의 폴더 구조](../reference/project-structure.md)에 있어요.
 
@@ -113,5 +117,5 @@ DB 옵션만 템플릿마다 달라요(neon은 `--db-setup docker`, supabase는 
 - [앱 구조](app-structure.md)
 - [설치기와 옵션](installer.md)
 - [기존 프로젝트에 도입하기](../start/adopt.md)
-- [prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md)
+- [prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개](../skills/prokit-skills.md)
 - [하네스 엔지니어링](../concepts/harness.md)

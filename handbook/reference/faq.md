@@ -30,9 +30,11 @@ Antigravity로는 구현부터 리뷰까지 한 라운드를 사용자 확인 �
 
 도구마다 읽는 파일과 확인한 범위는 [지원하는 에이전트](../start/supported-agents.md)에 있어요.
 
+<!-- edition:pro -->
 ### 이미 진행하던 프로젝트에도 쓸 수 있나요?
 
 네. 초기 프로젝트(기획 자료와 프로토타입만 있음), 운영 중인 Next.js, 다른 스택에서 Next.js로 전환하는 프로젝트, 이렇게 세 유형을 지원해요. 새 프로젝트까지 합쳐 네 유형이고, 기존 프로젝트는 PRD가 없어도 돼요. 에이전트가 먼저 파일을 읽기만 하면서 분석한 뒤 설정을 추천하고, **동의하기 전에는 프로젝트를 하나도 바꾸지 않아요**([기존 프로젝트에 도입하기](../start/adopt.md)).
+<!-- /edition -->
 
 ### 비용은 얼마나 드나요?
 
@@ -51,13 +53,17 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 
 네. 프롬프트에 "화면만", "DB는 쓰지 않아"를 넣으면 DB 없이 예시 데이터로 모든 화면을 만들고, 요청하면 HTML로 내보내요. 컨테이너 엔진도 필요 없어요([빠른 시작: 화면만 만들기](../start/quickstart-screens.md)).
 
+<!-- edition:pro -->
 ### 화면만 만든 걸 나중에 실제 서비스로 바꿀 수 있나요?
 
 네. "실제 서비스로 바꿀 거야"라고 하면 로컬 DB와 첫 마이그레이션을 더하고, 로그인과 저장 같은 기능은 dev-cycle 라운드로 이어서 만들어요([화면만 프로젝트와 HTML 내보내기](../design/screen-only.md)).
+<!-- /edition -->
 
+<!-- edition:pro -->
 ### neon과 supabase 중 무엇을 골라야 하나요?
 
 기능을 바꿀 때마다 DB의 테스트용 복사본(브랜치)을 만들어 확인하고 싶으면 neon, 이미 Supabase를 쓰고 있으면 supabase예요. 앱 코드 구성은 같아요([템플릿 고르기](../templates/choose.md)).
+<!-- /edition -->
 
 ### PRD 없이 프로젝트를 만들 수 있나요?
 
@@ -66,7 +72,7 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 > [!IMPORTANT]
 > 새 프로젝트에는 PRD가 꼭 필요해요. 요청에 빠지면 에이전트가 먼저 달라고 하고, 끝내 주지 않으면 아무것도 만들지 않고 끝나요.
 
-이미 진행하던 프로젝트는 PRD가 없어도 돼요([PRD 먼저 정하기](../start/prd.md), [기존 프로젝트에 도입하기](../start/adopt.md), [두뇌와 선택 스킬](../skills/brains.md)).
+이미 진행하던 프로젝트는 PRD가 없어도 돼요([PRD 먼저 정하기](../start/prd.md), [기존 프로젝트에 도입하기](../start/adopt.md), [두뇌와 선택 스킬](../skills/brains.md)). <!-- edition:pro -->
 
 ### 두뇌를 여러 개 쓸 수 있나요?
 
@@ -81,7 +87,7 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 
 ### 스킬을 직접 불러야 하나요?
 
-아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개](../skills/prokit-skills.md)).
+아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v -->개<!-- /edition --><!-- edition:ui 6개 -->](../skills/prokit-skills.md)).
 
 ### 프리셋과 같은 프롬프트로 만들면 똑같이 나오나요?
 
@@ -91,7 +97,7 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 
 ### 새 세션을 열면 프로젝트를 다시 설명해야 하나요?
 
-아니요. 에이전트는 시작할 때 `AGENTS.md`, `GLOSSARY.md`(용어집), `docs/domain/project.md`(프로젝트 소개)를 읽고, `pnpm dev-cycle status`로 진행 중인 작업과 진행 계획의 다음 Task를 이어받아요. "하던 작업 이어서 해줘"라고 하면 돼요([만든 뒤 개발하기](../start/after-create.md)).
+아니요. 에이전트는 시작할 때 `AGENTS.md`, `GLOSSARY.md`(용어집), `docs/domain/project.md`(프로젝트 소개)를 읽고, `pnpm dev-cycle status`로 진행 중인 작업<!-- edition:pro -->과 진행 계획의 다음 Task를<!-- /edition --><!-- edition:ui 을 --> 이어받아요. "하던 작업 이어서 해줘"라고 하면 돼요([만든 뒤 개발하기](../start/after-create.md)).
 
 ### 이미 만든 프로젝트에 템플릿의 새 내용을 넣을 수 있나요?
 
@@ -105,6 +111,7 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 
 꼭 그렇지는 않아요. 설치와 훅 허용은 따로예요(과설계 방지 스킬로 ponytail을 고른 프로젝트에 해당해요). Codex에서는 신뢰한 프로젝트의 `/hooks`에서 훅이 허용됐는지 확인하고 새 세션을 열어요. 플러그인이 없어도 에이전트가 프로젝트 스킬을 읽어 같은 검토를 할 수 있어요. 사용자가 직접 끈 모드는 다른 경로로도 다시 켜지 않아요([Ponytail 사용하기](../skills/official-skills.md#ponytail-사용하기)).
 
+<!-- edition:pro -->
 ## 기존 프로젝트와 진행 계획
 
 ### 기존 프로젝트에서 바로 기능을 시켰는데 계획부터 하자고 해요
@@ -114,6 +121,7 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 ### Task를 건너뛸 수 있나요?
 
 **앞 Task가 끝나야 다음 Task가 열려요.** 미루고 싶다고 하면 에이전트가 세 가지를 물어요. 그 Task를 마저 하기(추천), 제외(사유를 기록하고 하지 않기), 순서 바꾸기(진행 계획 라운드에서 계획 리뷰와 확인을 다시 받기)예요. Task의 순서와 제목은 손으로 고치지 않아요([정밀 분석과 진행 계획](../concepts/project-plan.md)).
+<!-- /edition -->
 
 ## 파일과 설정
 
@@ -134,12 +142,14 @@ Claude Code와 Codex는 **`Esc`를 눌러 하던 일을 바로 멈춰요**([Clau
 > [!TIP]
 > 멈춘 뒤에 무엇이 바뀌었는지 "방금 바꾼 파일을 알려줘"라고 물어보고, 원치 않는 변경은 "그 변경을 되돌려줘"라고 시켜요. 이미 저장(커밋)한 것은 에이전트가 새 커밋으로 정리해요.
 
-### 에이전트가 운영 DB나 배포를 마음대로 하나요?
+### 에이전트가 <!-- edition:pro -->운영 DB나 <!-- /edition -->배포를 마음대로 하나요?
 
-아니요. 원격 DB 연결과 전역 도구 설치는 요청할 때만 해요. 예외로 agent-browser CLI와 고른 두뇌의 도구(gstack, OMX CLI, OpenSpec CLI)는 설치기가 설치해요. 커밋과 push는 작업(라운드)을 마칠 때 해요. 하네스만 들인 기존 프로젝트와 배포 방법을 아직 프로킷에 맞추지 않은 운영 중 프로젝트는 커밋까지만 하고, push는 요청할 때만 해요. 배포는 사용자가 요청하거나 라운드 끝에서 고를 때만 해요.
+아니요. <!-- edition:pro -->원격 DB 연결과 <!-- /edition -->전역 도구 설치는 요청할 때만 해요. 예외로 agent-browser CLI와 고른 두뇌의 도구(gstack, OMX CLI, OpenSpec CLI)는 설치기가 설치해요. 커밋과 push는 작업(라운드)을 마칠 때 해요.<!-- edition:pro --> 하네스만 들인 기존 프로젝트와 배포 방법을 아직 프로킷에 맞추지 않은 운영 중 프로젝트는 커밋까지만 하고, push는 요청할 때만 해요.<!-- /edition --> 배포는 사용자가 요청하거나 라운드 끝에서 고를 때만 해요.
 
+<!-- edition:pro -->
 > [!IMPORTANT]
 > 운영 DB에 마이그레이션을 적용하기 전에는 목록을, 운영에 배포할 때마다 버전과 릴리스 노트를 보여 주고 동의를 받아요([Vercel 배포와 되돌리기](../deploy/vercel.md)).
+<!-- /edition -->
 
 ### "완료했어요"라는 말을 믿어도 되나요?
 

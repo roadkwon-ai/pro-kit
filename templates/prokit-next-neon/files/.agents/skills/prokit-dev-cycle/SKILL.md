@@ -1,7 +1,7 @@
 ---
 name: prokit-dev-cycle
 description: >-
-  이 Better-T-Stack Next.js + Neon 프로젝트에서 코드, 스키마, 화면, 설정, 스킬을 바꾸는
+  이 Better-T-Stack Next.js 프로젝트에서 코드, 스키마, 화면, 설정, 스킬을 바꾸는
   모든 작업의 진입점. 기능 추가, 버그 수정, 리팩터, 화면 변경, API나 DB 변경, 스킬이나 에이전트
   수정 요청을 받으면 구현을 시작하기 전에 이 스킬로 케이스를 판정하고 dev-cycle 대조표를 연다.
   만들어줘, 추가해줘, 고쳐줘, 버그, 바꿔줘, 리팩터, 기능 개발, 작업 시작, 다 됐어, 완료 처리
@@ -18,7 +18,7 @@ description: >-
 1. `pnpm dev-cycle status`로 진행 중인 라운드가 있는지 본다. 있으면 그 라운드를 이어서 진행한다. 없으면 status가 외부 스킬의 새 버전도 확인한다(원격은 하루에 한 번). `UPDATE_AVAILABLE`, `UPSTREAM_GONE`, `CHECK_FAILED` 줄이 붙어 나오면 라운드를 열기 전에 `prokit-skills-update`의 1절을 따른다.
 2. `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`, `tasks/lessons.md`(있으면)를 읽는다. `.dev-cycle.json`의 `brain`·`simplicity`로 이 프로젝트의 두뇌와 과설계 방지 스킬을 확인한다(키가 없으면 `none`. `brain`이 배열이면 두뇌가 여럿이고 첫 값이 주 두뇌다). 진행 방법은 [references/process-routing.md](references/process-routing.md)의 기본 칸과 고른 두뇌의 [두뇌 파일](references/brains)(`<이름>.md`, 고르는 기준과 두뇌가 여럿일 때의 단계 표는 `README.md`), 설치된 추가 스킬(`pnpm skills:check`의 `mattpocock 추가` 줄)을 따른다. 구성을 바꾸는 요청은 `prokit-skills-manage`를 따른다.
 3. 요청을 한 문장으로 다시 쓰고, 결과를 바꾸는 모호함이 있으면 구현 전에 묻는다.
-4. 진행 계획(`tasks/plan.md`)이 있으면 `status`가 다음 Task를 함께 보여 준다. 진행 계획의 일은 6절을 따른다. 기존 프로젝트(`.dev-cycle.json`의 `projectType`이 `early`·`operating`·`migration`)인데 `docs/prokit/analysis.md`가 없으면 정밀 분석부터 한다(6절).
+4. 진행 계획(`tasks/plan.md`)이 있으면 `status`가 다음 Task를 함께 보여 준다. 진행 계획의 일은 6절을 따른다. 기존 프로젝트(`.dev-cycle.json`의 `projectType`이 `early`·`operating`·`migration`)인데 `docs/prokit/analysis.md`가 없으면 정밀 분석부터 한다(6절). <!-- edition:pro -->
 5. 수행자를 배정하기 전에 `pnpm dev-cycle resource check`로 현재 루트를 확인한다. 설치·새 Node 또는 Python 환경·수동 검증은 선택한 수행자가 `pnpm dev-cycle resource run --kind <install|pythonVenv|verify> -- <명령>`으로 실행한다. 명령 인자는 출력과 증거에 남으므로 비밀값(비밀번호, 토큰)은 인자로 넘기지 않고 환경 변수나 git이 무시하는 파일로 넘긴다. 새 무거운 작업에서 측정이 unknown이거나 차단되면 `blocked`다. dev·build·export의 기존 보호 경로는 다시 감싸지 않는다. 활성 환경은 크기만으로 지우지 않으며, 관리 임시는 실제 handle·전후 측정·결과 참조가 확인될 때만 정리한다.
 
 ## 1. 케이스 판정
@@ -51,7 +51,7 @@ pnpm dev-cycle table <케이스> --write --title "<요청 요약>"
 - 위에서부터 순서대로 수행하고, 끝낸 행의 현재 프로젝트 한 줄 증거 파일을 `tasks/evidence/`에 둔 뒤 `pnpm dev-cycle evidence <행 번호> --file <증거 파일>`로 채운다. 대조표 셀을 수동으로 stage 문자열로 고치지 않는다. 첫 증거를 적기 전에 `prokit-verify`를 불러 검사 고르기(lint 기준 비교 포함)와 증거 형식을 따른다: 실행한 명령과 결과, 산출물 경로, 사용한 스킬 이름. `✓`, `ok`, `done`만 적는 것은 증거가 아니다. 해당 없는 행은 `N/A: 사유`로 적는다. 표 끝의 `[confirm]` 행은 예외다(5절).
 - 병렬 수행, 검사 재사용, 실패 뒤 재시도는 [실행 효율과 재검증](references/execution-efficiency.md)을 따른다.
 - 계층별 스킬: <!-- edition:pro -->화면 동작은 `prokit-web`, <!-- /edition -->화면 모양과 UX는 `prokit-ui`<!-- edition:pro -->, API와 인증은 `prokit-api`, DB는 `prokit-db`<!-- /edition -->, 검사와 증거는 `prokit-verify`.
-- 문서는 그 계층을 구현하는 행에서 함께 고친다. 새 용어는 `domain-modeling`을 읽고 그 형식(`GLOSSARY-FORMAT.md`)으로 `GLOSSARY.md`에, 새 화면·프로시저·테이블은 `docs/domain/project.md`의 해당 표와 `용어` 칸에 넣는다. 그래야 뒤의 리뷰 행이 문서까지 함께 본다. 표 끝의 `문서 영향 확인` 행에는 고친 내역이나 `N/A: 사유`를 적는다.
+- 문서는 그 계층을 구현하는 행에서 함께 고친다. 새 용어는 `domain-modeling`을 읽고 그 형식(`GLOSSARY-FORMAT.md`)으로 `GLOSSARY.md`에, 새 화면<!-- edition:pro -->·프로시저·테이블<!-- /edition -->은 `docs/domain/project.md`의 해당 표와 `용어` 칸에 넣는다. 그래야 뒤의 리뷰 행이 문서까지 함께 본다. 표 끝의 `문서 영향 확인` 행에는 고친 내역이나 `N/A: 사유`를 적는다.
 - 행 문구에 괄호로 적힌 스킬(외부 스킬 `supabase-postgres-best-practices` 등)은 그 행을 할 때 실제로 불러 쓰거나 읽고, 증거 칸에 `사용: supabase-postgres-best-practices`처럼 이름을 적는다. 괄호의 단계 이름(요구 명확화, 계획, 구현, 테스트 먼저, 디버깅, 간결성 검토)은 `process-routing.md`의 그 단계 방법(고른 두뇌 파일, 설치된 추가 스킬, 기본 칸)으로 하고, 증거 칸에 실제로 쓴 방법을 적는다(예: `사용: 내장(디버깅)`, `사용: superpowers:systematic-debugging`). 외부 스킬은 `.agents/skills/<이름>/SKILL.md`를 읽는다(`AGENTS.md` 계층별 스킬). 계층 스킬의 "공식 스킬 연결" 표에 해당하는 상황이 오면 괄호에 없어도 같다.
 - 설계, 계획, 구현, 디버깅, 리뷰, QA, 검증의 [references/process-routing.md](references/process-routing.md) 표는 사용자 출처가 없을 때의 기본이다. 실제 선택은 위임 정본의 사용자 명시 출처 → 프로젝트 정본 → 접근 가능한 외부 제공자 → 검증한 표의 대안 순서로 하고, 증거 칸에 실제 제공자와 coverage를 적는다.
 - `[design]` 행은 구현 전에 [references/reuse-design.md](references/reuse-design.md)를 따라 기존 경로·소비자, 재사용·분리 결정, 환경 변수·설정 영향, 회귀 검사를 계획·브리프 또는 증거 칸에 남긴다. F는 계층별 결정을 함께 점검한다. 증거는 참조의 `기존: …; 결정: …; 설정: …; 검증: …` 형식을 쓰며, 환경 변수·설정이 바뀌지 않아도 그 사실을 생략하지 않는다. A·C도 관련 변경이면 같은 기준을 쓰되 별도 설계 문서를 강제하지 않는다.
@@ -70,7 +70,7 @@ pnpm dev-cycle table <케이스> --write --title "<요청 요약>"
 - 구현을 위임할 때는 `prokit-implementer`에 정확한 파일 목록, 선택한 전문 스킬의 검증 결과, 재사용·설정 결정 위치, 완료 조건을 준다. 병렬로 위임할 때는 파일이 겹치지 않게 나눈다. `AGENTS.md`, `.dev-cycle.json`, `package.json`, 루트 설정은 메인이 맡는다. 메인이 파일을 명시해 배정한 경우만 수행자가 그 루트 설정을 고칠 수 있다.
 - 위임한 쪽의 보고만 믿지 않는다. 수행자·리뷰어·QA를 부르기 전과 끝난 뒤 `pnpm dev-cycle delegation capture`·`diff`로 작업 트리를 대조하고, 배정 밖 변경이나 커밋이 나오면(exit 1) 그 결과를 통합하지 않고 재지시한다. 명령과 병렬 위임의 대조 방법은 위임 프로토콜의 "관측과 수행 범위"를 따른다.
 - impeccable `critique`처럼 서브에이전트를 스스로 띄우는 스킬은 메인 세션에서 실행한다.
-- 정밀 분석은 읽기 전용 `prokit-analyzer`에 맡긴다. 도입 기록, 유형, 기존 코드 경로, 초점을 주고 돌려받은 보고서를 메인이 `docs/prokit/analysis.md`에 쓴다(6절).
+- 정밀 분석은 읽기 전용 `prokit-analyzer`에 맡긴다. 도입 기록, 유형, 기존 코드 경로, 초점을 주고 돌려받은 보고서를 메인이 `docs/prokit/analysis.md`에 쓴다(6절). <!-- edition:pro -->
 
 ## 5. 종료
 라운드는 사용자 확인 → audit·close → 커밋·push<!-- edition:pro --> → (사용자가 고르면) 릴리스와 production 배포<!-- /edition --> 순서로 마무리한다. `[confirm]`과 audit은 건너뛰지 않는다.
@@ -88,6 +88,7 @@ pnpm dev-cycle table <케이스> --write --title "<요청 요약>"
 
 라운드 끝이 아닐 때 커밋, push, 릴리스, 배포는 사용자가 요청할 때만 한다.
 
+<!-- edition:pro -->
 ## 6. 진행 계획과 Task
 여러 라운드에 걸친 일(기존 프로젝트 도입, 전환, 큰 기능 묶음)은 진행 계획을 세워 Task로 나눈다. 절차의 정본은 [references/project-plan.md](references/project-plan.md), 정밀 분석 점검표는 [references/analysis.md](references/analysis.md)다.
 1. 진행 계획 라운드를 `pnpm dev-cycle table A --write --title "<요약>" --plan`으로 연다. 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 계획 리뷰 행이 붙는다. 계획을 고칠 때도 이 명령으로 연다.
@@ -95,3 +96,4 @@ pnpm dev-cycle table <케이스> --write --title "<요청 요약>"
 3. 주 두뇌(없으면 기본 AI)가 진행 계획 문서(`docs/plans/`)와 Task 표(`tasks/plan.md`)를 쓰고, `prokit-reviewer(plan)` 리뷰와 사용자 확인을 받는다. 확인은 최종 계획 요약(Task 목록과 지문 `sig=`)을 보여 주고 그 턴을 끝낸 뒤 받는다(`references/project-plan.md` 4).
 4. Task마다 `pnpm dev-cycle table <케이스> --write --title "T<n> <요약>" --task T<n>`으로 연다. 맨 앞의 Task 세부 계획 행과 계획 리뷰 행(F는 케이스의 계획 리뷰 행)을 먼저 끝낸 뒤 구현·검수·테스트·보완을 한다. 앞 Task가 끝나지 않으면 다음 Task는 열리지 않는다. 기존 프로젝트는 계획을 확정(진행 계획 라운드를 닫아 `sig=`)하기 전에는 `--task` 없는 라운드도 열리지 않는다. 사용자가 계획 전에 하라고 한, 계획에 없는 일(급한 버그 수정, 템플릿 갱신 반영, 스킬 구성 변경)만 `--no-task`를 붙여 연다. 경로 규칙·하네스 맞추기와 기능 일은 진행 계획의 Task로 한다.
 5. `close`가 Task를 `완료`로 기록한다. `pnpm dev-cycle plan`으로 상태와 문제를 본다.
+<!-- /edition -->

@@ -71,7 +71,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 
 - **DB에 연결할 수 없대요**: Docker Desktop이 켜져 있는지 보고 `DB가 켜져 있는지 확인하고 안 켜져 있으면 켜줘`라고 보내세요.
 - **마이그레이션이 실패했대요**: `마이그레이션 오류를 보고 고친 뒤 다시 적용해줘`라고 보내세요. DB를 처음부터 다시 만들어도 되는지 물으면, 연습용 데이터뿐이니 `그렇게 해줘`라고 답해도 돼요.
-- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/claudle에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs claudle 명령으로 받아줘`라고 보내세요. pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.
+- **프리셋 팩을 못 찾는대요**: `프리셋 팩은 옆 폴더 pro-kit의 packs/claudle에 있어. 없으면 pro-kit 폴더에서 node scripts/pack.mjs claudle 명령으로 받아줘`라고 보내세요.<!-- edition:pro --> pro-kit 폴더가 2026-10-08 전에 받은 것이라 팩 받기가 멈추면 `그 폴더 이름을 pro-kit-old로 바꾸고 새로 받아줘`라고 보내세요.<!-- /edition -->
 - **에이전트가 앞 장 작업을 이어서 하려고 해요**: 앞 장 라운드가 아직 닫히지 않았을 때예요. 앞 장 결과를 확인해 `확인했어`라고 보내고, 마무리가 끝나면 이 장 프롬프트를 다시 보내세요.
 - **같은 답이 두 번 저장되거나 답이 저장되지 않아요**: `features.md "대화 저장과 모의 응답"의 저장 순서대로 사용자 메시지를 먼저 저장하고, 기록은 DB에서 다시 읽게 고쳐줘`라고 보내세요.
 - **중간에 멈췄어요**: `이어서 만들어줘`라고 보내세요. 사용량 한도에 걸렸으면 안내된 시간이 지난 뒤 `~/projects/claudle`에서 `claude --continue --dangerously-skip-permissions`(Codex는 `codex resume --last --yolo`)로 다시 열고 `이어서 해줘`라고 보내세요. 기다리는 법은 [<!-- v:limit.window -->5시간<!-- /v --> 한도에 걸리면](../reference/costs-and-keys.md#5시간-한도에-걸리면)에 있어요.

@@ -4,6 +4,45 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## UI 판 문서, Pro 글 검사, 판 내보내기 확인 (2026-10-24)
+
+UI 스킬셋 구매자가 pro-kit-ui만 받아도 화면 작업을 따라 할 수 있게, 판에 문서를 넣고 Pro 글을 가르는 검사를 더했다. 릴리스는 판 저장소를 다시 받아 확인해야 끝난다.
+
+- 판에 넣은 문서: handbook 48쪽, 튜토리얼 29쪽(시작하기, 컨셉으로 화면 만들기, 가이드), 판 README가 쓰는 그림 4개, 프리셋 예상 계산 근거 JSON. 서비스 만들기, 기존 프로젝트 도입, 정밀 분석과 진행 계획, 템플릿 고르기, Vercel 배포, 버전과 릴리스, 검증 결과, 실제 서비스로 바꾸기, 클론 튜토리얼 두 과정은 넣지 않았다. 판 README(`editions/ui/README.md`)는 pro-kit README 꼴로 다시 썼다.
+- Pro 글 표시: 마크다운 116개에서 `edition:pro` 표시 줄이 96줄에서 704줄로, 판에서만 보이는 `edition:ui` 글이 129곳으로 늘었다. 이 템플릿의 문서도 함께 표시했고, 공유 파일은 supabase에 같게 복사했다.
+- 생성기(`scripts/edition.mjs`)가 더 하는 일:
+  - 판에서 빠진 쪽을 첫 칸이나 맨 앞에서 가리키는 표 행과 목록 줄을 뺀다.
+  - 판 글 주석을 세 꼴로 벗긴다: 한 줄 안, 줄 끝 표시 행의 판 행(표 중간에 주석만 있는 줄을 두면 GitHub이 표를 끝낸다), 여러 줄(판 전용 코드 블록과 `==>` 화살표 그림).
+  - 받을 저장소·폴더 `pro-kit`을 `pro-kit-ui`로 바꾼다. 조사, 코드 표시 뒤 조사, `#pro-kit-…` 앵커까지 맞춘다. "Pro 스킬셋(`pro-kit`)", 주석 안, 프리셋 주소는 그대로 둔다.
+  - 판에서는 공통 값 표시를 벗긴다(줄 맨 앞 주석이면 GitHub이 그 줄의 마크다운을 풀지 않는다).
+  - 판 저장소 커밋과 확인은 `git add -A -f`로 해서 전역 제외 규칙에 판 파일이 빠지지 않게 한다.
+- 검사가 더 잡는 것:
+  - `proTerms` 말 36개가 든 줄(허용 목록 `editions/ui-allow.txt` 75줄. 파일·말·줄 수·이유)
+  - Pro 구간 밖에 남은 판에서 다른 값(`proValues` 9개 키)
+  - 끊긴 앵커, HTML `src`·`href`, 판 저장소 파일 주소(`…/blob/main/<경로>`)
+- 판 내보내기 확인:
+  - `publish`는 push 뒤 판 저장소의 태그를 다시 받아, 같은 커밋으로 새로 만든 판의 git 트리와 같은지, `main`이 그 태그인지 본다. 다르면 실패한다.
+  - push가 실패하면 5초, 15초 뒤 두 번 더 한다. 응답만 끊기고 들어간 push는 성공으로 본다.
+  - 같은 태그로 다시 실행하면 내용이 같을 때 확인만 하고, 다르면 멈춘다. 따로 확인하는 명령은 `node scripts/edition.mjs ui --verify --tag vX.Y.Z`다.
+  - 테스트는 로컬 bare 저장소, 첫 push를 거절하는 pre-receive hook, 같은 태그에 다른 내용을 둔 저장소로 한다.
+  - 실측: 이 변경 전 HEAD(`abcc63f8`)로 만든 판과 실제 pro-kit-ui `main`이 같다고 `--verify`가 확인했다.
+- Pro 쪽 보이는 글: 표시와 판 글 주석을 뗀 글을 HEAD와 비교했다. 바뀐 것은 다음뿐이다.
+  - 표시를 달려고 문장을 둘로 나눈 곳, 관계없는 두 문장의 순서
+  - `install.sh` 예시의 supabase 주석을 문장으로 옮긴 곳
+  - `prokit-dev-cycle` description의 "+ Neon"
+  - 폴더 트리 묶음(`docs/blocks/project-structure-tree.md`)과 "프로킷이란" 코드 블록의 스킬 수(판마다 달라 뺐다)
+- 독립 리뷰(읽기 전용 에이전트): 높음 1건(표 중간 판 행 주석이 Pro 표를 끊음), 중간 6건(조사 `이` 오변환, 이름 바꾸기로 생긴 거짓 문장, 근거 칸 링크로 행이 통째로 빠짐, 네트워크 오류에서 재시도 안 됨, 판에 남은 Pro 안내, 판에서 틀린 수)과 낮음 항목을 반영했다. 재시도를 다 쓴 실패와 실제 worktree 경로(`ref: "HEAD"`) 테스트를 더했다.
+- 테스트: `scripts` 118/118, 두 템플릿 각각 366/366, `doc-values.mjs --check`가 통과했다.
+- 한계:
+  - 코드 블록과 mermaid 안의 Pro 노드(dev-cycle 판정도의 `--adopt`, 에이전트 역할 그림의 `prokit-analyzer`, 마무리 도식의 production)는 표시를 달 수 없어 허용 목록에 뒀다.
+  - `handbook/concepts/round-example.md`는 DB·API가 걸린 F 케이스 예시 그대로다. 판 구매자용 B 케이스 예시는 따로 쓰지 않았다.
+  - 묶음 안 Pro 글(폴더 트리의 `release/`·`docs/prokit/`, 샘플 튜토리얼 "막히면" 목록의 neon·supabase·Docker 항목)은 허용으로 뒀다.
+  - 판 글 주석 안의 숫자(스킬 6개, 에이전트 3개, 화면 프리셋 11개)는 값 표시를 쓸 수 없어 바뀌면 직접 고친다. `proValues` 검사는 Pro 쪽 값만 잡는다.
+  - D·E 케이스 행은 `dev-cycle` 스크립트가 읽어 판에도 남겼다.
+  - 검사는 `proTerms`에 없는 말로 쓴 Pro 절차를 잡지 못한다. 템플릿은 마크다운만 바뀌어 판의 실제 설치는 다시 하지 않았다.
+  - `tutorials/packs.json`에는 클론 팩(nextflix, claudle)이 남아 판에서도 `scripts/pack.mjs`로 받을 수 있다. 판 템플릿에는 `prokit-analyzer.md`가 본문을 비운 채 설치된다(문서는 에이전트 3개로 적는다). `release.mjs`에서 GitHub Release 만들기가 실패하면 판 내보내기를 하지 않는다(이 변경 전부터).
+  - pro-kit-ui에는 아직 올리지 않았다. 다음 릴리스가 같은 태그로 내보낸다.
+
 ## UI 스킬셋 판(pro-kit-ui) 생성과 설치 확인 (2026-10-24)
 
 UI 스킬셋 저장소 `pro-kit-ui`는 pro-kit에서 생성하는 읽기 전용 사본이다(`editions.json`, `scripts/edition.mjs`, 판에만 있는 루트 문서는 `editions/ui/`). 판 경계는 handbook "프로킷 UI 스킬셋" 쪽을 따른다: prokit 스킬 6개(`prokit-dev-cycle`, `prokit-ui`, `prokit-verify`, `prokit-pack-use`, `prokit-skills-manage`, `prokit-skills-update`)와 저장소 스킬 `prokit-init`을 넣고, `prokit-web`·`prokit-api`·`prokit-db`·`prokit-deploy`, supabase 템플릿, 이 템플릿의 README·VERIFICATION·tests·evals·adopt는 넣지 않는다.
