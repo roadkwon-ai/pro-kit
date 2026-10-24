@@ -110,6 +110,9 @@ test("표시 짝 검사: 닫히지 않은 구간, 짝 없는 닫는 표시, 한 
   // 줄(목록 항목, 인용 안 포함) 맨 앞의 표시 뒤에 글을 이으면 GitHub과 홈페이지가 그 줄을 HTML로 본다
   assert.deepEqual(markerErrors(`- ${P}Pro 문장. ${E}뒤 문장.\n> ${P}Pro${E} 뒤\n${P}Pro${E}\n- <!-- edition:ui 판 글 --> 뒤`), [1, 2, 3, 4]);
   assert.deepEqual(markerErrors(`- 앞 문장.${P} Pro 문장.${E}\n- <!-- edition:ui 판 글 -->\n> 앞${P} Pro${E}`), []);
+  // 제목 줄과 링크 글 안의 표시: 제목 id가 원본 앵커와 달라지고, 홈페이지 .md 사본이 링크를 바꾼 뒤 그 안의 주석 자리를 찾지 못한다
+  assert.deepEqual(markerErrors(`## 스킬 ${P}10${E}<!-- edition:ui 6 -->개\n[스킬 ${P}10${E}개](a.md)`), [1, 2]);
+  assert.deepEqual(markerErrors(`${P}\n## 3. 지킬 것\n${E}\n<!-- edition:ui\n## 2. 지킬 것\n-->\n[스킬](a.md) ${P}10${E}<!-- edition:ui 6 -->개`), []);
   // 혼자 선 표시 줄이 HTML 줄(<details> 등)에 붙으면 marked가 둘을 한 HTML 블록으로 읽어 홈페이지가 </details>를 찾지 못한다
   assert.deepEqual(markerErrors(`${P}\n<details>\n<summary>a</summary>\n\nb\n\n</details>\n${E}`), [1, 8]);
   assert.deepEqual(markerErrors(`${P}\n\n<details>\n<summary>a</summary>\n\nb\n\n</details>\n\n${E}`), []);

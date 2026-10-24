@@ -79,6 +79,6 @@ flowchart TD
 - [라운드 한 번 따라가 보기](round-example.md)
 - [위임 에이전트와 리뷰 에이전트](agent-roles.md)
 - [위임과 자원 관리](delegation-and-resources.md)
-- [prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개](../skills/prokit-skills.md)
+- [prokit 스킬](../skills/prokit-skills.md)
 - [공식 스킬과 연결](../skills/official-skills.md)
 - [템플릿이 더하는 것](../templates/what-it-adds.md)

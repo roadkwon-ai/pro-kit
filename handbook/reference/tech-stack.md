@@ -39,7 +39,7 @@
 | 무엇 | 내용 | 자세히 |
 |---|---|---|
 | AI 에이전트 | <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나 | [지원하는 에이전트](../start/supported-agents.md) |
-| prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v -->개<!-- /edition --><!-- edition:ui 6개 -->와 에이전트 <!-- edition:pro --><!-- v:prokit.agents.count -->4<!-- /v -->개<!-- /edition --><!-- edition:ui 3개 --> | 분야별로 일하는 법을 적은 스킬<!-- edition:pro -->, 기존 프로젝트를 읽기 전용으로 정밀 분석하는 에이전트<!-- /edition -->, 구현을 맡는 에이전트, 전문 리뷰와 최종 리뷰를 맡는 읽기 전용 에이전트 | [prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v -->개<!-- /edition --><!-- edition:ui 6개 -->](../skills/prokit-skills.md), [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
+| prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v -->개<!-- /edition --><!-- edition:ui 6개 -->와 에이전트 <!-- edition:pro --><!-- v:prokit.agents.count -->4<!-- /v -->개<!-- /edition --><!-- edition:ui 3개 --> | 분야별로 일하는 법을 적은 스킬<!-- edition:pro -->, 기존 프로젝트를 읽기 전용으로 정밀 분석하는 에이전트<!-- /edition -->, 구현을 맡는 에이전트, 전문 리뷰와 최종 리뷰를 맡는 읽기 전용 에이전트 | [prokit 스킬](../skills/prokit-skills.md), [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
 | 공식 도메인 스킬 | Next.js, React, Better Auth, shadcn, impeccable, DB, Vercel 배포 등 | [공식 스킬과 연결](../skills/official-skills.md) |
 | 프로세스 스킬 | skill-creator, mattpocock 필수 3개(늘 설치), 고른 두뇌(하나 이상, 첫 번째가 주 두뇌. <!-- v:brains.names -->superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering<!-- /v --> 중에서), 고른 과설계 방지 스킬(ponytail, caveman, karpathy 중 하나) | [프로세스 스킬과 전역 도구](../skills/official-skills.md#프로세스-스킬과-전역-도구) |
 | 선택 스킬 묶음 | <!-- v:optional.names -->ops, motion, mobile, i-have-adhd, taste<!-- /v --> | [선택 스킬 묶음](../skills/optional-bundles.md) |

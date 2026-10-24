@@ -1,4 +1,4 @@
-# prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개
+# prokit 스킬
 
 > 한눈에: 프로킷 전용 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개는 이 프로젝트에서 일하는 방법을 에이전트에게 알려 주는 작업 설명서예요. 스킬 이름을 몰라도 돼요. "할 일에 마감일 붙여줘"처럼 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러와요. 그 전에 프로젝트를 <!-- edition:pro -->만들거나 기존 프로젝트에 들이<!-- /edition --><!-- edition:ui 만드 -->는 처음 설정은 `prokit-init`이 맡아요.
 
@@ -13,7 +13,7 @@
 
 자세한 순서는 [PRD 먼저 정하기](../start/prd.md)<!-- edition:pro -->와 [기존 프로젝트에 도입하기](../start/adopt.md)<!-- /edition -->에 있어요.
 
-## <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개의 스킬
+## 스킬마다 맡는 일
 
 | 스킬 | 맡는 일 | 이런 요청에 쓰여요 | 지키게 하는 것 |
 |---|---|---|---|

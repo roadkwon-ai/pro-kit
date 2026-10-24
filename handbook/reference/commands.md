@@ -118,7 +118,7 @@ Codex 네이티브 Ponytail은 `pnpm skills:setup --with-global`을 실행할 �
 
 `pnpm vercel:deploy`의 옵션은 `--check`(배포하지 않고 준비 상태와 새 마이그레이션만 보기) 하나예요. 하네스만 설치한 `--adopt` 프로젝트에는 `vercel:deploy`, `export:html`, `release`가 없어요. <!-- edition:pro -->
 
-### 화면, 배포<!-- edition:pro -->, 릴리스<!-- /edition -->
+### 화면과 배포
 
 화면을 보고 내보내거나 배포할 때 보는 표예요. **배포<!-- edition:pro -->와 릴리스<!-- /edition -->는 요청할 때만 하는 일이라 에이전트가 사용자에게 먼저 물어요.**
 

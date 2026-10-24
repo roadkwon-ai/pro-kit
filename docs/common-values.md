@@ -293,7 +293,7 @@
 | `preset.<이름>.recordedProduction.tokens` | 380만 | 실제 root 입력(캐시 제외)+출력 토큰; USD 역산 아님 | doc-values.json presets.<이름>.recordedProduction.tokens | `doc-values.json`을 고친다 | 1 |
 | `preset.<이름>.recordedProduction.cached` | 2.1억 | 실제 root 캐시 포함 입력+출력 토큰 | doc-values.json presets.<이름>.recordedProduction.cached | `doc-values.json`을 고친다 | 1 |
 | `preset.<이름>.recordedProduction.scope` | 프리셋 제작·보완과 관련 스킬 개선을 포함한 root 활성 턴 | 복원 기록의 범위 | doc-values.json presets.<이름>.recordedProduction.scope | `doc-values.json`을 고친다 | 0 |
-| `presets.count` | 13 | 공개 프리셋 수(클론 튜토리얼 포함) | doc-values.json 공개 presets 수 | `doc-values.json`을 고친다 | 7 |
+| `presets.count` | 13 | 공개 프리셋 수(클론 튜토리얼 포함) | doc-values.json 공개 presets 수 | `doc-values.json`을 고친다 | 6 |
 | `presets.screen.count` | 11 | 공개 화면 프리셋 수 | doc-values.json 공개 presets 중 landing·app | `doc-values.json`을 고친다 | 14 |
 | `presets.landing.count` | 6 | 공개 랜딩페이지 프리셋 수 | doc-values.json 공개 presets 중 landing | `doc-values.json`을 고친다 | 6 |
 | `presets.app.count` | 5 | 공개 앱 화면 프리셋 수 | doc-values.json 공개 presets 중 app | `doc-values.json`을 고친다 | 7 |
@@ -380,10 +380,10 @@
 | `process.olgot.work` | 7시간 35분 | 올곧 라운드 합에서 백그라운드 기다림을 뺀 일한 시간(5분 단위) | 계산: process.olgot.total − doc-values.json process.olgot.wait | `doc-values.json`을 고친다 | 1 |
 | `templates.count` | 2 | 템플릿 수 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 16 |
-| `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 29 |
+| `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
 | `prokit.skills.count.ko` | 열 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `prokit.agents.count` | 4 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |
-| `prokit.agents.count.ko` | 네 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수의 한글 수 관형사 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `prokit.agents.count.ko` | 네 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수의 한글 수 관형사 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `devCycle.cases.count` | 7 | dev-cycle 케이스 수 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.count.ko` | 일곱 | dev-cycle 케이스 수의 한글 수 관형사 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.list` | A, B, C, D, E, F, H | dev-cycle 케이스 목록 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
@@ -404,7 +404,7 @@
 | `optional.names` | ops, motion, mobile, i-have-adhd, taste | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `optional.namesCode` | `ops`, `motion`, `mobile`, `i-have-adhd`, `taste` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
 | `optional.count` | 5 | 선택 스킬 묶음 수 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `optional.count.ko` | 다섯 | 선택 스킬 묶음 수의 한글 수 관형사 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `optional.count.ko` | 다섯 | 선택 스킬 묶음 수의 한글 수 관형사 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.ops.skillsCode.neon` | `vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | neon 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.count.neon` | 4 | neon 템플릿 ops 묶음의 스킬 수 | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.skillsCode.supabase` | `vercel-optimize` | supabase 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-supabase/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 2 |

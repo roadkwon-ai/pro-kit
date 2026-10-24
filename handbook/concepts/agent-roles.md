@@ -44,7 +44,7 @@ flowchart LR
 
 아래 표는 각 에이전트의 도구와 금지 사항을 정확히 적은 자세한 설명이에요. 위 표로 충분하면 접어 둔 채로 넘어가도 돼요.
 
-## 코디네이터와 <!-- edition:pro --><!-- v:prokit.agents.count.ko -->네<!-- /v --><!-- /edition --><!-- edition:ui 세 --> 에이전트
+## 코디네이터와 에이전트
 
 <details>
 <summary>에이전트별 도구와 금지 사항 표 보기</summary>
@@ -128,4 +128,4 @@ Codex에서는 분석과 리뷰 에이전트를 메인 대화 없이(`spawn_agen
 - [dev-cycle 라운드](dev-cycle.md)
 - [정밀 분석과 진행 계획](project-plan.md)
 - [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)
-- [prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개](../skills/prokit-skills.md)
+- [prokit 스킬](../skills/prokit-skills.md)

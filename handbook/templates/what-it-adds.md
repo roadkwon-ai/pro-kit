@@ -117,5 +117,5 @@ DB 옵션<!-- edition:pro -->만 템플릿마다 달라요(neon은 `--db-setup d
 - [앱 구조](app-structure.md)
 - [설치기와 옵션](installer.md)
 - [기존 프로젝트에 도입하기](../start/adopt.md)
-- [prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개](../skills/prokit-skills.md)
+- [prokit 스킬](../skills/prokit-skills.md)
 - [하네스 엔지니어링](../concepts/harness.md)

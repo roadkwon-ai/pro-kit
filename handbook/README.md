@@ -8,7 +8,7 @@
 |---|---|
 | 말로 요청하면 에이전트가 정해진 순서로 일해요 | 코드를 몰라도 평소 말로 요청하면 돼요. 에이전트는 스펙과 화면 설계, 구현, 실행한 증거, 독립 리뷰의 순서를 지켜요. 이 순서를 지키게 하는 규칙, 스킬, 자동 검사의 묶음이 하네스예요. [하네스 엔지니어링](concepts/harness.md) · [처음 한 시간](start/first-hour.md) |
 | 확인은 내가 해요 | 에이전트는 확인 질문을 하고 결과를 보여 줘요. 마지막 결과 확인은 에이전트가 대신하거나 건너뛸 수 없고, 릴리스와 배포처럼 되돌리기 어려운 일은 내가 정해요. [증거와 audit, 사용자 확인](concepts/audit-and-confirm.md) · [요청하고 이어 가는 법](start/ask-well.md) |
-| 화면부터 배포까지 | 스타일 추천과 `DESIGN.md`로 디자인을 정하고, 모든 화면을 만들어 HTML로 내보내거나 <!-- edition:pro -->로그인과 DB를 갖춘 서비스로 키우고, Vercel 배포까지 할 수 있어요. 전용 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개가 이 일을 맡아요.<!-- /edition --><!-- edition:ui GitHub Pages나 Vercel에 올릴 수 있어요. 전용 스킬 6개가 이 일을 맡아요. --> [UI/UX 흐름](design/ui-flow.md) · [prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개](skills/prokit-skills.md) |
+| 화면부터 배포까지 | 스타일 추천과 `DESIGN.md`로 디자인을 정하고, 모든 화면을 만들어 HTML로 내보내거나 <!-- edition:pro -->로그인과 DB를 갖춘 서비스로 키우고, Vercel 배포까지 할 수 있어요. 전용 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개가 이 일을 맡아요.<!-- /edition --><!-- edition:ui GitHub Pages나 Vercel에 올릴 수 있어요. 전용 스킬 6개가 이 일을 맡아요. --> [UI/UX 흐름](design/ui-flow.md) · [prokit 스킬](skills/prokit-skills.md) |
 
 ## 문서 둘러보기
 

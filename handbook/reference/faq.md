@@ -87,7 +87,7 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 
 ### 스킬을 직접 불러야 하나요?
 
-아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v -->개<!-- /edition --><!-- edition:ui 6개 -->](../skills/prokit-skills.md)).
+아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬](../skills/prokit-skills.md)).
 
 ### 프리셋과 같은 프롬프트로 만들면 똑같이 나오나요?
 
@@ -142,7 +142,12 @@ Claude Code와 Codex는 **`Esc`를 눌러 하던 일을 바로 멈춰요**([Clau
 > [!TIP]
 > 멈춘 뒤에 무엇이 바뀌었는지 "방금 바꾼 파일을 알려줘"라고 물어보고, 원치 않는 변경은 "그 변경을 되돌려줘"라고 시켜요. 이미 저장(커밋)한 것은 에이전트가 새 커밋으로 정리해요.
 
-### 에이전트가 <!-- edition:pro -->운영 DB나 <!-- /edition -->배포를 마음대로 하나요?
+<!-- edition:pro -->
+### 에이전트가 운영 DB나 배포를 마음대로 하나요?
+<!-- /edition -->
+<!-- edition:ui
+### 에이전트가 배포를 마음대로 하나요?
+-->
 
 아니요. <!-- edition:pro -->원격 DB 연결과 <!-- /edition -->전역 도구 설치는 요청할 때만 해요. 예외로 agent-browser CLI와 고른 두뇌의 도구(gstack, OMX CLI, OpenSpec CLI)는 설치기가 설치해요. 커밋과 push는 작업(라운드)을 마칠 때 해요.<!-- edition:pro --> 하네스만 들인 기존 프로젝트와 배포 방법을 아직 프로킷에 맞추지 않은 운영 중 프로젝트는 커밋까지만 하고, push는 요청할 때만 해요.<!-- /edition --> 배포는 사용자가 요청하거나 라운드 끝에서 고를 때만 해요.
 

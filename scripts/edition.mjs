@@ -70,6 +70,8 @@ export function markerErrors(text) {
     // 혼자 선 표시 줄이 HTML 줄(<details> 등)에 붙으면 marked가 둘을 한 HTML 블록으로 읽어 홈페이지가 짝 태그를 찾지 못한다
     const html = (s = "") => /^<(?!!--)/.test(s.trim());
     if ((t === OPEN || t === CLOSE || /^<!-- edition:ui( .*-->)?$/.test(t)) && (html(lines[i - 1]) || html(lines[i + 1]))) errors.push(i + 1);
+    // 제목 줄과 링크 글 안의 표시: 제목 id가 원본 앵커와 달라지고, 홈페이지 .md 사본이 링크를 바꾼 뒤 그 안의 주석 자리를 찾지 못한다
+    if (/^#{1,6} .*<!-- \/?edition/.test(t) || /\[[^\]]*<!-- \/?edition[^\]]*\]\(/.test(t)) errors.push(i + 1);
     if (t === "<!-- edition:ui") return (ui = i + 1);
     if (t === OPEN) return open ? errors.push(i + 1) : (open = i + 1);
     if (t === CLOSE) return open ? (open = 0) : errors.push(i + 1);

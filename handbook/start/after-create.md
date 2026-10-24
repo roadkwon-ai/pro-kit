@@ -49,7 +49,7 @@ claude                                                   # 신뢰 질문에 동�
 | 점검과 관리 | 개발 자원 확인 | 캐시와 설치 환경이 커지는 원인을 확인하고 안전하게 정리할 수 있는 후보를 알려줘 |
 | 배포 | 배포 | <!-- edition:pro -->운영에 배포해줘 · develop에 배포해줘<!-- /edition --><!-- edition:ui GitHub Pages에 배포해줘 · Vercel에 배포해줘 --> |
 
-스킬 이름을 몰라도 돼요. 요청에 맞는 스킬을 에이전트가 스스로 불러요([prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개](../skills/prokit-skills.md)).
+스킬 이름을 몰라도 돼요. 요청에 맞는 스킬을 에이전트가 스스로 불러요([prokit 스킬](../skills/prokit-skills.md)).
 
 멈추는 법(`Esc`), 사용량 한도에 걸렸을 때, 새 세션에서 이어 가는 법은 [요청하고 이어 가는 법](ask-well.md#이어-가는-법)에 있어요.
 
