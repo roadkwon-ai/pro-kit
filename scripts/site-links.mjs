@@ -28,8 +28,8 @@ const forms = (url) => {
 const from = forms(links[key].replace(/\/$/, ""));
 const to = forms(next.replace(/\/$/, ""));
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-// 긴 꼴부터 한 번에 바꾼다. 앞은 주소 중간이 아니고(https://, 다른 이름의 끝이 아님), 뒤에 이름이 이어지지 않을 때만.
-const rx = new RegExp(`(?<![\\w.-])(${from.map(esc).join("|")})(?![\\w-])`, "g");
+// 긴 꼴부터 한 번에 바꾼다. 앞은 주소 중간이 아니고(https://, 다른 이름의 끝이 아님), 뒤에 이름이나 .이름(다른 호스트. .git은 같은 저장소)이 이어지지 않을 때만.
+const rx = new RegExp(`(?<![\\w.-])(${from.map(esc).join("|")})(?![\\w-]|\\.(?!git\\b)\\w)`, "g");
 const swap = (m) => to[from.indexOf(m)];
 
 let total = 0;

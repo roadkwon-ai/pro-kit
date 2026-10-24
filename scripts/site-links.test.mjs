@@ -16,7 +16,7 @@ test("set: 추적 파일의 주소(https, 스킴 없음, owner/name)를 바꾸�
   writeFileSync(join(dir, "site-links.json"), `${JSON.stringify(links, null, 2)}\n`);
   writeFileSync(
     join(dir, "doc.md"),
-    "[사이트](https://prokit-web.vercel.app/docs/) https://github.com/a/pro-kit/releases github.com/a/pro-kit api/repos/a/pro-kit https://github.com/a/pro-kit-packs --repo a/pro-kit-packs\n",
+    "[사이트](https://prokit-web.vercel.app/docs/) https://github.com/a/pro-kit/releases github.com/a/pro-kit api/repos/a/pro-kit https://github.com/a/pro-kit.git https://github.com/a/pro-kit-packs --repo a/pro-kit-packs\n",
   );
   execFileSync("mkdir", [join(dir, "release")]);
   writeFileSync(join(dir, "release", "old.md"), "https://github.com/a/pro-kit\n");
@@ -28,7 +28,7 @@ test("set: 추적 파일의 주소(https, 스킴 없음, owner/name)를 바꾸�
 
   assert.equal(
     readFileSync(join(dir, "doc.md"), "utf8"),
-    "[사이트](https://prokit.dev/docs/) https://github.com/b/pro-kit/releases github.com/b/pro-kit api/repos/b/pro-kit https://github.com/a/pro-kit-packs --repo a/pro-kit-packs\n",
+    "[사이트](https://prokit.dev/docs/) https://github.com/b/pro-kit/releases github.com/b/pro-kit api/repos/b/pro-kit https://github.com/b/pro-kit.git https://github.com/a/pro-kit-packs --repo a/pro-kit-packs\n",
   );
   assert.equal(readFileSync(join(dir, "release", "old.md"), "utf8"), "https://github.com/a/pro-kit\n");
   assert.deepEqual(JSON.parse(readFileSync(join(dir, "site-links.json"), "utf8")), { ...links, home: "https://prokit.dev", repo: "https://github.com/b/pro-kit" });
@@ -40,7 +40,7 @@ test("set pages·packs: 프리셋 경로와 owner/name 꼴까지 바꾸고, 이�
   g("init", "-q");
   const links = { home: "https://prokit-web.vercel.app", pages: "https://a.github.io/pro-kit", repo: "https://github.com/a/pro-kit", packs: "https://github.com/a/pro-kit-packs" };
   writeFileSync(join(dir, "site-links.json"), `${JSON.stringify(links, null, 2)}\n`);
-  const keep = "https://a.github.io/pro-kit-web/ github.com/a/pro-kit-web https://dev-prokit-web.vercel.app dev.prokit-web.vercel.app https://prokit-web.vercel.app-dev";
+  const keep = "https://a.github.io/pro-kit-web/ github.com/a/pro-kit-web https://dev-prokit-web.vercel.app dev.prokit-web.vercel.app https://prokit-web.vercel.app-dev https://prokit-web.vercel.app.evil.com prokit-web.vercel.app.md";
   writeFileSync(
     join(dir, "doc.md"),
     `https://a.github.io/pro-kit/goru/ a.github.io/pro-kit https://github.com/a/pro-kit-packs/releases/download/pack-goru/goru-pack.zip --repo a/pro-kit-packs https://prokit-web.vercel.app/work/ ${keep}\n`,
