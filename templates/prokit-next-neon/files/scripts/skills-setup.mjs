@@ -1044,9 +1044,21 @@ function localFiles(dir, base = dir, out = new Map()) {
 		const p = join(dir, e.name);
 		if (e.isDirectory()) localFiles(p, base, out);
 		else if (e.isFile())
-			out.set(relative(base, p).split(sep).join("/"), gitBlob(readFileSync(p)));
+			out.set(
+				relative(base, p).split(sep).join("/"),
+				localBlobs(readFileSync(p)),
+			);
 	}
 	return out;
+}
+
+// 설치 CLI는 원본의 .gitattributes(eol=crlf 등)대로 줄 끝을 바꿔 쓴다. git이 저장하는 blob은 LF로
+// 정규화한 내용이므로 CRLF를 LF로 바꾼 blob도 같은 판으로 본다.
+export function localBlobs(buf) {
+	const raw = gitBlob(buf);
+	const text = buf.toString("latin1");
+	if (!text.includes("\r\n")) return [raw];
+	return [raw, gitBlob(Buffer.from(text.replaceAll("\r\n", "\n"), "latin1"))];
 }
 
 // tree: GitHub git/trees 응답의 tree. skillPath: lock에 적힌 SKILL.md 경로.
@@ -1086,10 +1098,10 @@ export function remoteSkill(tree, skillPath, name) {
 	return { folder, files, links, pin };
 }
 
-// local: 설치본의 {상대 경로 → git blob sha}. 돌려주는 값: 원격과 다른 파일의 상대 경로 목록(같으면 빈 목록).
+// local: 설치본의 {상대 경로 → git blob sha 목록(localBlobs)}. 돌려주는 값: 원격과 다른 파일의 상대 경로 목록(같으면 빈 목록).
 export function changedFiles(remote, local) {
 	const changed = [...remote.files]
-		.filter(([rel, sha]) => local.get(rel) !== sha)
+		.filter(([rel, sha]) => !local.get(rel)?.includes(sha))
 		.map(([rel]) => rel);
 	for (const rel of local.keys()) {
 		if (remote.files.has(rel) || notCopied(rel)) continue;

@@ -4,6 +4,17 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 줄 끝이 CRLF인 설치본 대조, 화면만 규칙 두 줄 (2026-10-24)
+
+pro-kit-web 세션이 알려 온 결함이다. impeccable 0.1.16의 `.gitattributes`가 `*.cmd text eol=crlf`라 설치본 `scripts/impeccable.cmd`가 CRLF로 쓰인다. git이 저장하는 blob은 LF로 정규화한 내용이라, 원본 바이트만 비교하던 `skills-setup.mjs`가 이 파일을 늘 바뀐 파일로 봤다. 그래서 `pnpm skills:update --check`가 impeccable을 매번 업데이트로 알리고, 설치한 뒤에는 "설치본이 검토한 판과 다르다"로 멈췄다.
+
+- `localFiles`가 파일마다 원본 blob과, CRLF가 있으면 LF로 바꾼 blob을 함께 두고(`localBlobs`), `changedFiles`는 원격 blob이 그 안에 있으면 같은 판으로 본다. 원격 blob이 CRLF 그대로인 파일(`-text`)은 원본 바이트로 맞는다. pro-kit-web에서 고친 방식과 같다.
+- 단위 테스트: `tests/skills-setup.test.mjs`에 CRLF 설치본이 같은 판인 경우, 줄 끝을 맞춰도 내용이 다른 경우, 원격이 CRLF 그대로인 경우를 더했다. 고치기 전에는 `localBlobs`가 없어 실패했다.
+- 실측(Better-T-Stack 3.47.0, Next 16.4.2, neon 생성 명령 그대로, `--brain none --simplicity none`): 설치본 `impeccable.cmd`는 CRLF였다. 원본 blob은 `e7f74b89…`, LF로 바꾼 blob은 원격과 같은 `789a96f4…`였다. 같은 설치본에서 고치기 전 스크립트는 `29개 중 업데이트 1개`(impeccable, `scripts/impeccable.cmd`)였고, 고친 스크립트는 `업데이트 0개`였다. 설치된 `scripts/skills-setup.mjs`는 템플릿과 바이트가 같았다(Biome 형식). 확인용 project scope 플러그인(skill-creator)은 지웠고 DB 컨테이너는 띄우지 않았다.
+- `prokit-ui/references/screen-only.md`의 화면 규칙에 두 줄을 더했다. Next API를 쓰기 전에 설치된 판의 문서(`apps/web/node_modules/next/dist/docs/`)를 읽는다, Server Component가 기본이고 `"use client"`는 가장 작은 컴포넌트에만 붙인다. UI 판에는 이 규칙을 가진 서버 쪽 스킬이 없어서 화면만 프로젝트에 필요한 두 줄만 옮겼다. 실측 프로젝트의 Next 16.4.2에 `dist/docs/`(`01-app` 등)가 있었다.
+- 테스트: 두 템플릿 각각 367개 통과. `skills.test.mjs`의 quick_validate 10개는 시스템 `python3`에 PyYAML이 없어 처음에 실패했고, PyYAML이 있는 python으로 다시 돌려 24개 모두 통과했다.
+- 한계: 이미 설치한 프로젝트는 템플릿 갱신 반영(H 라운드)에서 `scripts/skills-setup.mjs`를 옮겨야 고쳐진다. Windows 셸에서 CRLF로 받은 다른 스킬 파일도 같은 규칙으로 맞지만, 실제 Windows는 확인하지 않았다.
+
 ## Antigravity 에이전트 생성물을 Biome 검사에서 빼기 (2026-10-24)
 
 UI 판 실측에서 `pnpm check`(`biome check --write .`) 뒤 `pnpm agents:check`가 `.agents/agents/*.md` 4개 불일치로 실패했다. Biome 2.6.2가 `agents:sync`가 만든 Antigravity 에이전트 파일의 YAML 머리(목록 들여쓰기, 빈 줄)를 다시 맞추기 때문이다. 판과 관계없이 두 템플릿에 같은 결함이었다.

@@ -1006,7 +1006,7 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
 });
 
 // --update (pnpm skills:update)
-const { changedFiles, recordChoices, remoteSkill, update } = await import(SCRIPT);
+const { changedFiles, localBlobs, recordChoices, remoteSkill, update } = await import(SCRIPT);
 const blob = (c) => createHash("sha1").update(`blob ${Buffer.byteLength(c)}\0`).update(c).digest("hex");
 const HOUR = 3_600_000;
 const NEXT = " → 라운드를 열기 전에 prokit-skills-update 스킬 1절을 따른다";
@@ -1065,6 +1065,15 @@ test("업데이트 판정: 원격 스킬 폴더와 설치본을 파일 단위로
   assert.equal(pin(tree), pin(structuredClone(tree)));
   assert.notEqual(pin(tree), pin(tree.map((t) => (t.path === "skills/a/ref/x.md" ? { ...t, sha: blob("X2") } : t))), "폴더의 파일이 하나라도 바뀌면 검토 고정값이 바뀐다");
   assert.equal(pin(tree), pin([...tree, { path: "skills/ab/tool.sh", type: "blob", mode: "100644", sha: blob("T") }]), "다른 스킬 폴더는 상관없다");
+});
+
+test("업데이트 판정: 원본 .gitattributes로 CRLF가 된 설치본은 LF로 저장된 원격 blob과 같은 판이다", () => {
+  // impeccable 0.1.16의 scripts/impeccable.cmd(*.cmd text eol=crlf)가 늘 업데이트로 잡혀 설치 뒤 '검토한 판과 다르다'로 멈췄다.
+  const remote = (files) => ({ files: new Map(Object.entries(files)), links: [] });
+  const local = (rel, text) => new Map([[rel, localBlobs(Buffer.from(text))]]);
+  assert.deepEqual(changedFiles(remote({ "a.cmd": blob("x\ny\n") }), local("a.cmd", "x\r\ny\r\n")), []);
+  assert.deepEqual(changedFiles(remote({ "a.cmd": blob("x\ny\n") }), local("a.cmd", "x\r\nz\r\n")), ["a.cmd"], "줄 끝을 맞춰도 내용이 다르면 바뀐 파일이다");
+  assert.deepEqual(changedFiles(remote({ "a.bat": blob("x\r\n") }), local("a.bat", "x\r\n")), [], "원격 blob이 CRLF 그대로면 원본 바이트로 맞춘다");
 });
 
 // 원격: {source: {스킬: SKILL.md 내용 또는 {파일: 내용}}}. 설치본: dom-b는 옛 내용이고 dom-c는 원격에서 없어졌다.
