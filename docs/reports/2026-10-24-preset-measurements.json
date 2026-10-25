@@ -7,7 +7,8 @@
 	"limitations": [
 		"선택한 11분/12분 검사 예상은 열아홉 페이지 및 여섯 페이지 범위에 대한 계획값",
 		"이미지 생성 토큰·캐시는 기존 공통 정책의 환산이며 실제 제공자 요금 아님",
-		"상용 API·DB·결제 연동 범위 제외"
+		"상용 API·DB·결제 연동 범위 제외",
+		"윤슬당 10분은 4쪽 팩 r4 재조립·복원·검사 전체 구간(13:46~13:56, 재촬영·ZIP 생성 포함) 실측을 검사 단계 계획값의 근거로 씀"
 	],
 	"presets": {
 		"marubuild": {
@@ -316,6 +317,160 @@
 				"tokens": "221만",
 				"cached": "9715.2만",
 				"usd": "40.17"
+			}
+		},
+		"yunseul": {
+			"stages": {
+				"check": "10분"
+			},
+			"estimateStages": {
+				"pack": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"design": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"mockup": {
+						"time": "해당 없음",
+						"tokens": "0만",
+						"usd": "1달러 미만"
+					},
+					"images": {
+						"time": "1분",
+						"tokens": "2만",
+						"usd": "1달러 미만"
+					},
+					"first": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"rest": {
+						"time": "12분",
+						"tokens": "24.5만",
+						"usd": "4달러"
+					},
+					"check": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				},
+				"scratch": {
+					"setup": {
+						"time": "5분",
+						"tokens": "10.2만",
+						"usd": "2달러"
+					},
+					"plan": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"design": {
+						"time": "8분",
+						"tokens": "16.3만",
+						"usd": "3달러"
+					},
+					"mockup": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"images": {
+						"time": "20분",
+						"tokens": "107.1만",
+						"usd": "19달러"
+					},
+					"first": {
+						"time": "15분",
+						"tokens": "30.6만",
+						"usd": "6달러"
+					},
+					"rest": {
+						"time": "15분",
+						"tokens": "30.6만",
+						"usd": "6달러"
+					},
+					"check": {
+						"time": "10분",
+						"tokens": "20.4만",
+						"usd": "4달러"
+					},
+					"export": {
+						"time": "2분",
+						"tokens": "4.1만",
+						"usd": "1달러 미만"
+					}
+				}
+			},
+			"basis": {
+				"method": "policy-stage-and-unit-v1",
+				"policyDate": "2026-10-05",
+				"pages": 4,
+				"images": 39,
+				"checkMinutes": 10,
+				"unitMinutes": 12,
+				"unitUsd": 4.45,
+				"pack": {
+					"stages": {
+						"setup": 5,
+						"plan": 5,
+						"design": 5,
+						"mockup": 0,
+						"images": 1,
+						"first": 10,
+						"rest": 12,
+						"check": 10,
+						"export": 2
+					},
+					"totalMinutes": 50,
+					"modelUsd": 18.541666666666668,
+					"generatedTokens": 0
+				},
+				"scratch": {
+					"stages": {
+						"setup": 5,
+						"plan": 10,
+						"design": 8,
+						"mockup": 10,
+						"images": 20,
+						"first": 15,
+						"rest": 15,
+						"check": 10,
+						"export": 2
+					},
+					"totalMinutes": 95,
+					"modelUsd": 35.22916666666667,
+					"generatedTokens": 663000
+				}
+			},
+			"pack": {
+				"time": "50분",
+				"tokens": "102만",
+				"cached": "5099만",
+				"usd": "18.54"
+			},
+			"scratch": {
+				"time": "1시간 35분",
+				"tokens": "260.1만",
+				"cached": "9754.3만",
+				"usd": "47.28"
 			}
 		}
 	}

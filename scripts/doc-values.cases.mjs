@@ -545,7 +545,7 @@ export const CASES = [
     [`tutorials/samples/${name}.md`, "preset-estimate-method", {}],
     [`tutorials/samples/${name}.md`, "preset-estimate-stages", { name }],
   ]),
-  ...["marubuild", "pliko"].flatMap((name) => [
+  ...["marubuild", "pliko", "yunseul"].flatMap((name) => [
     [`tutorials/samples/${name}.md`, "preset-estimate-method", { report: "2026-10-24-preset-measurements.json" }],
     [`tutorials/samples/${name}.md`, "preset-estimate-stages", { name }],
   ]),

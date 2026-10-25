@@ -1170,7 +1170,7 @@
       },
       "measurementEvidence": {
         "source": "docs/reports/2026-10-24-preset-measurements.json",
-        "sha256": "21ebb69d8ff607148e6e0442939ed1a056599f9430830ff64b635acf550ff002",
+        "sha256": "c304ce6a01d93e76374d35f02fbe33f8c6204548f3ed82951f98b87e706e616a",
         "method": "policy-stage-and-unit-v1",
         "scope": "완성팩 재사용 및 처음부터 화면 제작의 정책 기반 예상. 실제 청구액·실측 토큰이 아님."
       },
@@ -1304,7 +1304,7 @@
       },
       "measurementEvidence": {
         "source": "docs/reports/2026-10-24-preset-measurements.json",
-        "sha256": "21ebb69d8ff607148e6e0442939ed1a056599f9430830ff64b635acf550ff002",
+        "sha256": "c304ce6a01d93e76374d35f02fbe33f8c6204548f3ed82951f98b87e706e616a",
         "method": "policy-stage-and-unit-v1",
         "scope": "완성팩 재사용 및 처음부터 화면 제작의 정책 기반 예상. 실제 청구액·실측 토큰이 아님."
       },
@@ -1395,6 +1395,140 @@
           "check": {
             "time": "12분",
             "tokens": "24.5만",
+            "usd": "4달러"
+          },
+          "export": {
+            "time": "2분",
+            "tokens": "4.1만",
+            "usd": "1달러 미만"
+          }
+        }
+      }
+    },
+    "yunseul": {
+      "published": true,
+      "title": "윤슬당한의원",
+      "kind": "landing",
+      "field": "3대째 이어 온 한의원 소개",
+      "summary": "3대째 이어 온 한의원의 이야기·의료진·진료과목과 칼럼을 소개하는 한의원 사이트",
+      "difficulty": "상담·예약 서비스 연결과 약관·사업자 정보 교체 필요",
+      "pages": "4",
+      "design": {
+        "color": "크림·잉크·오렌지",
+        "hex": "#f39800",
+        "images": "39",
+        "clicks": "18",
+        "critique": "36"
+      },
+      "measurements": "estimated",
+      "pack": {
+        "time": "50분",
+        "tokens": "102만",
+        "cached": "5099만",
+        "usd": "18.54"
+      },
+      "scratch": {
+        "time": "1시간 35분",
+        "tokens": "260.1만",
+        "cached": "9754.3만",
+        "usd": "47.28"
+      },
+      "stages": {
+        "check": "10분"
+      },
+      "measurementEvidence": {
+        "source": "docs/reports/2026-10-24-preset-measurements.json",
+        "sha256": "c304ce6a01d93e76374d35f02fbe33f8c6204548f3ed82951f98b87e706e616a",
+        "method": "policy-stage-and-unit-v1",
+        "scope": "완성팩 재사용 및 처음부터 화면 제작의 정책 기반 예상. 실제 청구액·실측 토큰이 아님."
+      },
+      "estimateStages": {
+        "pack": {
+          "setup": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "plan": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "design": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "mockup": {
+            "time": "해당 없음",
+            "tokens": "0만",
+            "usd": "1달러 미만"
+          },
+          "images": {
+            "time": "1분",
+            "tokens": "2만",
+            "usd": "1달러 미만"
+          },
+          "first": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "rest": {
+            "time": "12분",
+            "tokens": "24.5만",
+            "usd": "4달러"
+          },
+          "check": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "export": {
+            "time": "2분",
+            "tokens": "4.1만",
+            "usd": "1달러 미만"
+          }
+        },
+        "scratch": {
+          "setup": {
+            "time": "5분",
+            "tokens": "10.2만",
+            "usd": "2달러"
+          },
+          "plan": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "design": {
+            "time": "8분",
+            "tokens": "16.3만",
+            "usd": "3달러"
+          },
+          "mockup": {
+            "time": "10분",
+            "tokens": "20.4만",
+            "usd": "4달러"
+          },
+          "images": {
+            "time": "20분",
+            "tokens": "107.1만",
+            "usd": "19달러"
+          },
+          "first": {
+            "time": "15분",
+            "tokens": "30.6만",
+            "usd": "6달러"
+          },
+          "rest": {
+            "time": "15분",
+            "tokens": "30.6만",
+            "usd": "6달러"
+          },
+          "check": {
+            "time": "10분",
+            "tokens": "20.4만",
             "usd": "4달러"
           },
           "export": {

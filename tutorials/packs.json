@@ -92,5 +92,12 @@
     "sha256": "93065420c2e119d4410a82655fae11ff57c5b0c9f01841d4837d1be24e21ecab",
     "bytes": 13817430,
     "published": true
+  },
+  "yunseul": {
+    "release": "pack-yunseul",
+    "url": "https://github.com/roadkwon-ai/pro-kit-premium-packs/releases/download/pack-yunseul/yunseul-pack.zip",
+    "sha256": "46b757ee6267b84a78fbe61d06eaf855f916e41ea3f667670263281c64e42d88",
+    "bytes": 19709222,
+    "published": true
   }
 }

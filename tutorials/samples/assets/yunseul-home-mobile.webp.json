@@ -1,0 +1,6 @@
+{
+  "prompt": "Derived raster: yunseul ws/yunseul 537bf43 Korean light 390x844 capture (DPR 1, Playwright Chrome, reduced motion, static export root http://localhost:3116/) re-encoded with cwebp -q 82.",
+  "source": "yunseul ws/yunseul 537bf43 static export capture",
+  "sourceSha256": "5054e20b87d0c8639a4dddf30951edfb0f152498246a8ef577edeff47d3d9747",
+  "captureRevision": "537bf437b317b102069fee4a2f1b3ab5875f1709"
+}

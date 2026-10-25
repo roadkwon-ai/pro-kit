@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://prokit-web.vercel.app/"><strong>프로킷 사이트 보기 →</strong></a><br>
-  <sub>같은 흐름으로 만든 화면 프리셋 <!-- v:presets.screen.count -->13<!-- /v -->개를 모든 페이지까지 열어 볼 수 있습니다.</sub>
+  <sub>같은 흐름으로 만든 화면 프리셋 <!-- v:presets.screen.count -->14<!-- /v -->개를 모든 페이지까지 열어 볼 수 있습니다.</sub>
 </p>
 
 <p align="center">
@@ -115,7 +115,7 @@ claude
 </tr>
 <tr>
 <td width="50%" valign="top"><a href="https://prokit-web.vercel.app/pro-kit/pacecrew/"><img src="docs/assets/landing-samples/pacecrew.webp" alt="PACECREW 랜딩페이지 첫 화면, 데스크톱과 모바일"></a><br><strong><!-- v:preset.pacecrew.title -->PACECREW<!-- /v --></strong> · <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> · <!-- v:preset.pacecrew.field -->동네 러닝 크루 매칭<!-- /v --> · 페이지 <!-- v:preset.pacecrew.pages -->22<!-- /v -->개 · <a href="https://prokit-web.vercel.app/pro-kit/pacecrew/">HTML</a> · <a href="tutorials/samples/pacecrew.md">만들어 보기</a></td>
-<td width="50%" valign="top"><strong>화면 프리셋 <!-- v:presets.screen.count -->13<!-- /v -->개 전체</strong><br><a href="https://prokit-web.vercel.app/">프로킷 사이트</a>에서 모든 페이지까지 열어 보고, <a href="tutorials/samples/README.md">컨셉으로 화면 만들기</a>에서 같은 컨셉으로 만들어 봅니다.</td>
+<td width="50%" valign="top"><strong>화면 프리셋 <!-- v:presets.screen.count -->14<!-- /v -->개 전체</strong><br><a href="https://prokit-web.vercel.app/">프로킷 사이트</a>에서 모든 페이지까지 열어 보고, <a href="tutorials/samples/README.md">컨셉으로 화면 만들기</a>에서 같은 컨셉으로 만들어 봅니다.</td>
 </tr>
 </table>
 

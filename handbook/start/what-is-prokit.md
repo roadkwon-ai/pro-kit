@@ -208,7 +208,7 @@ PRD, 화면 정의서, 프로토타입만 있는 초기 프로젝트, 운영 중
 
 - **지원하는 에이전트**: <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v -->예요. 도구마다 읽는 파일과 여는 명령은 [지원하는 에이전트](supported-agents.md), Claude Code와 Codex의 조작 차이는 [Claude Code와 Codex](../../tutorials/reference/claude-code-and-codex.md)에 있어요.
 - **스킬이 결과를 바꾸나요**: 같은 요청을 스킬이 있을 때와 없을 때로 나눠 비교했어요. 규칙을 지킨 비율이 작업 진행(`prokit-dev-cycle`)은 <!-- v:eval.dev-cycle.without -->27<!-- /v -->%에서 <!-- v:eval.dev-cycle.with -->93<!-- /v -->%로, 화면 설계(`prokit-ui`)는 <!-- v:eval.ui.without -->12<!-- /v -->%에서 <!-- v:eval.ui.with -->100<!-- /v -->%로 올랐어요. 골라 둔 `DESIGN.md`가 있으면 목표 디자인과 팔레트가 맞는 비율이 <!-- v:eval.designMd.palette.without -->71<!-- /v -->%에서 <!-- v:eval.designMd.palette.with -->99<!-- /v -->%로 올랐어요. <!-- edition:pro -->측정 방법은 [검증 결과](../reference/verification.md)에 있어요.<!-- /edition -->
-- **만든 것**: 프로킷으로 만든 프리셋 <!-- edition:pro --><!-- v:presets.count -->15<!-- /v --><!-- /edition --><!-- edition:ui 11 -->개(랜딩페이지 <!-- v:presets.landing.count -->8<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개<!-- edition:pro -->, 클론 코딩 <!-- v:presets.clone.count -->2<!-- /v -->개<!-- /edition -->)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 볼 수 있어요.
+- **만든 것**: 프로킷으로 만든 프리셋 <!-- edition:pro --><!-- v:presets.count -->16<!-- /v --><!-- /edition --><!-- edition:ui 11 -->개(랜딩페이지 <!-- v:presets.landing.count -->9<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개<!-- edition:pro -->, 클론 코딩 <!-- v:presets.clone.count -->2<!-- /v -->개<!-- /edition -->)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 볼 수 있어요.
 - **라이선스**: [MIT](../../LICENSE)예요. 상업 이용·유료 고객 개발·수정·재판매를 허용하며 저작권 표시와 허가문을 보존해야 해요. 사이트의 홍보용 제작 표시는 선택 사항이고, [외부 구성 요소](../../THIRD_PARTY_NOTICES.md)에는 원래 조건을 적용해요.
 
 ## 관련 문서
