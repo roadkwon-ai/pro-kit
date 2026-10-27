@@ -569,8 +569,11 @@ const STAGES = [
 	{ re: /구현 단계/, label: (l) => l === "구현" },
 	{ re: /디버깅 단계/, label: (l) => l.startsWith("디버깅") },
 ];
-export function brainStageSkills(root, brains, text) {
-	const stage = STAGES.find((s) => s.re.test(text));
+// 버그 수정 라운드(디버깅 단계 행이 있는 표)를 D·E로 올리면 붙는 구현 행은 그 수정이라 디버깅 단계 방법을 따른다.
+export function brainStageSkills(root, brains, text, rows = []) {
+	const bugfix =
+		/구현 단계/.test(text) && rows.some((r) => /디버깅 단계/.test(r.text));
+	const stage = STAGES.find((s) => s.re.test(bugfix ? "디버깅 단계" : text));
 	if (!stage) return null;
 	for (const b of brains) {
 		const p = join(root, BRAINS_DIR, `${b}.md`);
@@ -659,9 +662,10 @@ function brainProblem(root, config, active) {
 		if (/^(blocked|미실행|n\/a)\s*:/i.test(value)) return null;
 		if (missing.length)
 			return `고른 두뇌의 파일이 없다: ${missing.map((b) => `${BRAINS_DIR}/${b}.md`).join(", ")} (.dev-cycle.json의 brain 확인)`;
-		const used = [...value.matchAll(/사용:\s*`?([^\s,;`()]+)`?/g)].map(
-			(m) => m[1],
-		);
+		// 이름 뒤에 붙은 마침표·조사(`사용: ce-debug.`, `ce-debug로`)는 이름이 아니다.
+		const used = [...value.matchAll(/사용:\s*`?([^\s,;`()]+)`?/g)]
+			.map((m) => m[1].replace(/[^A-Za-z0-9_-]+$/, ""))
+			.filter(Boolean);
 		const extra = [
 			...value.matchAll(/사용:\s*`?([^\s,;`()]+)`?\s*\(추가 스킬\)/g),
 		].map((m) => m[1]);
@@ -679,7 +683,7 @@ function brainProblem(root, config, active) {
 		if (reason === undefined)
 			return `두뇌(${brains.join(", ")})를 골랐으면 단계 행 증거에 그 방법을 ${how}`;
 		// 두뇌가 맡는 단계는 내장으로 넘기지 않는다. 그 스킬을 쓸 수 없으면 blocked다.
-		const cover = brainStageSkills(root, now, r.text);
+		const cover = brainStageSkills(root, now, r.text, active?.rows);
 		if (cover)
 			return `이 단계는 두뇌 ${cover.brain}이 맡는다(${cover.names.join(", ")}). 작은 변경이어도 그 스킬을 불러(Claude Code는 Skill 도구, 다른 도구는 SKILL.md를 읽는다) 사용: <이름>으로 적고, 쓸 수 없으면 blocked: 사유로 적는다`;
 		// 두뇌 스킬의 방법을 쓰고 내장이라고 적지 않는다.
@@ -1614,7 +1618,7 @@ function stageGuide(root, config) {
 	const active = md && parseActive(md);
 	if (!active) return "";
 	const lines = active.rows
-		.map((r, i) => [i + 1, brainStageSkills(root, brains, r.text)])
+		.map((r, i) => [i + 1, brainStageSkills(root, brains, r.text, active.rows)])
 		.filter(([, c]) => c)
 		.map(([n, c]) => `  #${n}: ${c.names.join(", ")} (${c.brain})`);
 	return lines.length
@@ -1641,7 +1645,8 @@ function statusOfRound(root, config) {
 	const problemOf = roundRowProblem(root, config, active);
 	const filled = active.rows.filter((r) => !problemOf(r)).length;
 	const next = active.rows.find(problemOf)?.text ?? null;
-	const cover = next && brainStageSkills(root, brainsOf(config), next);
+	const cover =
+		next && brainStageSkills(root, brainsOf(config), next, active.rows);
 	const line = `라운드 ${active.meta.case}${active.meta.task ? `(${active.meta.task})` : active.meta.notask === "true" ? "(--no-task)" : ""} "${active.title}" — ${filled}/${active.rows.length}칸 — 다음: ${next ?? "audit 후 close"}${next && isConfirm(next) && isPlanRound(active) ? ` — ${PLAN_CONFIRM_NOTE}` : ""}${cover ? ` — 이 행은 두뇌 ${cover.brain}의 ${cover.names.join(", ")}를 먼저 불러서 한다` : ""}`;
 	return {
 		active: true,

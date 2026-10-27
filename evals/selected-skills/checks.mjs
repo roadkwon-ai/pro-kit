@@ -90,12 +90,12 @@ export function grade({ sc, meta, runDir }) {
 			add("builtin", "두뇌 없음: 단계 행을 내장 절차로 적었다", ok, stage.map((r) => `${r.n}: ${r.evidence.slice(0, 120)}`).join(" / ") || "채운 단계 행 없음");
 		} else {
 			for (const r of stage) {
-				const used = [...r.evidence.matchAll(/사용:\s*`?([^\s,;`()]+)`?/g)].map((m) => m[1]);
+				const used = [...r.evidence.matchAll(/사용:\s*`?([^\s,;`()]+)`?/g)].map((m) => m[1].replace(/[^A-Za-z0-9_-]+$/, "")).filter(Boolean);
 				const brainUsed = used.filter((u) => names.has(u) || [...names].some((n) => base(n) === base(u)));
 				const extra = used.filter((u) => lock.includes(u) && /\(추가 스킬\)/.test(r.evidence));
 				const real = [...brainUsed, ...extra].filter((u) => calls.has(u) || calls.has(base(u)));
 				const builtin = /사용:\s*내장\([^)]+\)\s*:\s*\S/.test(r.evidence);
-				const cover = brainStageSkills(copy, brains, r.text);
+				const cover = brainStageSkills(copy, brains, r.text, rows);
 				const ok = real.length > 0 || (builtin && !cover);
 				add(`stage-${r.n}`, `단계 행 "${r.text.slice(0, 30)}"을 고른 두뇌 스킬로 실제로 진행했다(두뇌가 맡지 않는 단계는 내장)`, ok, `증거 이름 ${used.join(", ") || "없음"} / 실제 호출 ${real.join(", ") || "없음"}${builtin ? ` / 내장(${cover ? `두뇌가 맡음: ${cover.names.join(", ")}` : "두뇌가 맡지 않음"})` : ""}`);
 			}

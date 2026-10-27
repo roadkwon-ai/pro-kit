@@ -763,6 +763,36 @@ test("두뇌가 맡는 단계는 내장으로 넘기지 못하고, 맡지 않는
   assert.match(p[0], /내장 사유에 두뇌 스킬 이름\(code-review-and-quality\)/);
 });
 
+test("버그 수정 라운드를 D로 올려 붙은 구현 행은 디버깅 단계 방법을 따르고, 이름 뒤 마침표·조사는 이름이 아니다", () => {
+  const brainFile = (debug) => `| 단계 | Claude Code |\n|---|---|\n| 구현 | \`agent-skills:incremental-implementation\` |\n${debug ? "| 디버깅 | `agent-skills:debugging-and-error-recovery` |\n" : ""}`;
+  const implRow = (debug, c) => {
+    const repo = brainRepo("agent-skills");
+    writeFileSync(join(repo.root, BRAINS_DIR, "agent-skills.md"), brainFile(debug));
+    if (c) assert.equal(run(repo.root, "table", "C", "--write", "--title", "버그").status, 0);
+    const out = run(repo.root, "table", "D", "--write", ...(c ? ["--upgrade"] : ["--title", "버그"]));
+    assert.equal(out.status, 0, out.stderr);
+    const rows = parseActive(readFileSync(join(repo.root, "tasks/todo.md"), "utf8")).rows;
+    const i = rows.findIndex((r) => /구현 단계/.test(r.text));
+    const set = (v) => {
+      mkdirSync(join(repo.root, "tasks/evidence"), { recursive: true });
+      writeFileSync(join(repo.root, "tasks/evidence/e.txt"), `${v}\n`);
+      assert.equal(run(repo.root, "evidence", String(i + 1), "--file", "tasks/evidence/e.txt").status, 0);
+      return stageProblems(repo.root, repo.config).filter((p) => p.startsWith(`#${i + 1} `));
+    };
+    return { set, out: out.stdout, status: () => status(repo.root, repo.config).line };
+  };
+  // 두뇌가 디버깅을 맡지 않으면 버그 수정의 구현 행은 내장이다. 새 기능 D의 구현 행은 그대로 두뇌 스킬이다
+  assert.deepEqual(implRow(false, true).set("사용: 내장(디버깅): 두뇌가 디버깅을 맡지 않음"), []);
+  assert.match(implRow(false, false).set("사용: 내장(디버깅): 두뇌가 디버깅을 맡지 않음")[0] ?? "", /이 단계는 두뇌 agent-skills이 맡는다\(agent-skills:incremental-implementation\)/);
+  // 두뇌가 디버깅을 맡으면 그 스킬을 안내하고 받는다
+  const r = implRow(true, true);
+  assert.match(r.out, /#\d+: agent-skills:debugging-and-error-recovery \(agent-skills\)/);
+  assert.doesNotMatch(r.out, /incremental-implementation/);
+  assert.match(r.set("사용: 내장(구현): 한 줄 수정")[0] ?? "", /맡는다\(agent-skills:debugging-and-error-recovery\)/);
+  for (const ok of ["사용: debugging-and-error-recovery. 가드 1줄", "사용: /debugging-and-error-recovery로 고침"])
+    assert.deepEqual(r.set(ok), [], ok);
+});
+
 test("부른 스킬 기록: skill-log 훅이 Skill 호출과 SKILL.md Read를 남기고, 기록이 있으면 audit이 단계 행·과설계 방지 리뷰 증거와 대조한다", () => {
   const { root, write } = brainRepo("agent-skills");
   const cfg = JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8"));

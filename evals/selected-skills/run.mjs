@@ -3,7 +3,8 @@
 // 구성마다 fixture를 만들고, 그 안에서 `claude -p`를 실제 세션처럼(사용자·프로젝트·로컬 설정, 플러그인, 훅) 돌린다.
 //   node evals/selected-skills/run.mjs base <이름> <템플릿 폴더>        WS/fx/<이름>에 Better-T-Stack + 템플릿 + 시드(이미 있으면 둔다)
 //   node evals/selected-skills/run.mjs prep [--base base] [--suffix ""] [fixture…]   base 사본에 scenarios.json의 구성을 설치
-//   node evals/selected-skills/run.mjs behavior <회차> [--scenario 1,2] [--fixtures a,b] [--suffix -old] [--jobs 4]
+//   node evals/selected-skills/run.mjs behavior <회차> [--scenario 1,2] [--fixtures a,b] [--suffix -old] [--jobs 4] [--go-reply]
+//     --go-reply: [confirm]까지 온 뒤에도 진행 지시(reply)를 한 번 더 보낸다. 진행 지시를 확인으로 적지 않는지 본다
 //   node evals/selected-skills/run.mjs grade <회차>
 // WS는 PKSS_WORKSPACE(기본 os.tmpdir()/pro-kit-selected-skills), 모델은 PKSS_MODEL(기본 claude-sonnet-5-5).
 import { execFileSync, spawn, spawnSync } from "node:child_process";
@@ -188,11 +189,16 @@ async function behavior(iter) {
 		const t0 = Date.now();
 		const turns = [];
 		let session;
+		let goSent = !rest.includes("--go-reply");
 		for (let t = 0; t < CONF.maxTurns; t++) {
 			const r = await claude(copy, t === 0 ? sc.prompt : CONF.reply, session);
 			turns.push(r);
 			session = r.result?.session_id ?? r.events.find((e) => e.session_id)?.session_id;
-			if (r.stop || !session || reached(copy, sc.stop) || r.result?.subtype === "error_max_budget_usd") break;
+			if (r.stop || !session || r.result?.subtype === "error_max_budget_usd") break;
+			if (reached(copy, sc.stop)) {
+				if (goSent || !sc.stop.confirm) break;
+				goSent = true;
+			}
 		}
 		spawnSync("pkill", ["-f", copy]);
 		const events = turns.flatMap((r) => r.events);
