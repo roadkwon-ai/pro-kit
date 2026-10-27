@@ -1,7 +1,7 @@
 ---
 name: prokit-writing
 description: >-
-  프로킷 저장소(pro-kit, pro-kit-web, pro-kit-samples, pro-kit-packs, pro-kit-preset-skills, pro-kit-docs-skills) 안의 한국어 글을
+  프로킷 저장소(pro-kit, pro-kit-web, pro-kit-samples, pro-kit-packs, pro-kit-preset-skills, pro-kit-docs-skills, pro-kit-feature-packs) 안의 한국어 글을
   쓰고, 다듬고, 검수할 때만 사용한다. 문서 종류별 문체(-습니다, -요, -다), 용어와 화면에 쓰는 이름, 이름 뒤 조사,
   숫자·범위 꼴, 확인한 숫자만 쓰기, 지킬 값 표시·링크·코드, korean-skills 검수 순서와 프로킷
   예외, 릴리스 노트 검수를 다룬다. 프로킷 문서 문장 다듬어줘, 번역투 고쳐줘, 프로킷 용어 맞춰줘, 문체 봐줘, 릴리스
@@ -26,8 +26,8 @@ description: >-
 
 | 문서 | 문체 | 예 |
 |---|---|---|
-| pro-kit 루트 `README.md`, `CONTRIBUTING.md`, pro-kit-docs-skills `README.md` | `~습니다` | 설치합니다 |
-| `handbook/`, `tutorials/`, pro-kit-web 화면 글, 프리셋 팩 문서(pro-kit-samples `packs/<이름>/`의 `README.md`, `CUSTOMIZE.md`, `screens.md`, `SOURCES.md`) | `~요`(해요체) | 설치해요 |
+| pro-kit 루트 `README.md`, `CONTRIBUTING.md`, pro-kit-docs-skills·pro-kit-feature-packs `README.md` | `~습니다` | 설치합니다 |
+| `handbook/`, `tutorials/`, pro-kit-web 화면 글, 프리셋 팩 문서(pro-kit-samples `packs/<이름>/`의 `README.md`, `CUSTOMIZE.md`, `screens.md`, `SOURCES.md`), 기능 팩 교안(pro-kit-feature-packs `packs/<기능>/lecture/`) | `~요`(해요체) | 설치해요 |
 | `AGENTS.md`, 템플릿 README와 설치본 문서, `VERIFICATION.md`, 설계(`docs/superpowers/specs/`), 스킬, pro-kit-web의 `README.md`·`PRODUCT.md`·`DESIGN.md`·`docs/briefs/` | `~다` | 설치한다 |
 | `docs/common-values.md` | 맨 위와 "목록" 절의 설명 문단은 `~요`, "규칙" 절은 `~다` | |
 | 글 묶음 원본(`docs/blocks/`) | 그 묶음을 쓰는 문서의 문체(`tpl-readme-*`는 `~다`, 나머지는 `~요`) | |

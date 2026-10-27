@@ -2,14 +2,16 @@
   "version": 1,
   "skills": {
     "prokit-docs": {
-      "source": "../pro-kit-docs-skills",
-      "sourceType": "local",
+      "source": "roadkwon-ai/pro-kit-docs-skills",
+      "sourceType": "github",
+      "skillPath": "skills/prokit-docs/SKILL.md",
       "computedHash": "e26e3664a977e6a85a8a0f3cbb657fec37b611e77cbb863f8dc04ab1fb40df5d"
     },
     "prokit-writing": {
-      "source": "../pro-kit-docs-skills",
-      "sourceType": "local",
-      "computedHash": "c64f6f7cd95aec0496a0673e9a34c21eb79924213ca08eb9fc298dcdea297c79"
+      "source": "roadkwon-ai/pro-kit-docs-skills",
+      "sourceType": "github",
+      "skillPath": "skills/prokit-writing/SKILL.md",
+      "computedHash": "6795d468b5c8fd4e2588bc7422c7c198b415097e6181c5cba8e717ba7dae6a7c"
     }
   }
 }
