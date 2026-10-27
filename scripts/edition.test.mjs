@@ -98,6 +98,23 @@ test("판 만들기: Pro 구간 밖에 남은 판에서 틀리는 값(proValues)
   }
 });
 
+test("판 만들기: proPacks에 든 팩을 판 팩 목록에서 빼고, 목록에 없는 팩 이름은 잡는다", () => {
+  const tmp = mkdtempSync(join(tmpdir(), "prokit-ui-packs-"));
+  try {
+    const root = join(tmp, "root");
+    mkdirSync(join(root, "tutorials"), { recursive: true });
+    writeFileSync(join(root, "editions.json"), JSON.stringify({ t: { include: ["tutorials"], exclude: [], missing: ["prokit-db"], proPacks: ["clone", "gone"] } }));
+    writeFileSync(join(root, "tutorials/packs.json"), `${JSON.stringify({ clone: { release: "a" }, goru: { release: "b" } }, null, 2)}\n`);
+    execFileSync("git", ["init", "-q", root]);
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    const out = join(tmp, "out");
+    assert.deepEqual(build("t", out, { root }), ["tutorials/packs.json: proPacks의 gone가 팩 목록에 없다"]);
+    assert.equal(readFileSync(join(out, "tutorials/packs.json"), "utf8"), `${JSON.stringify({ goru: { release: "b" } }, null, 2)}\n`);
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test("표시 짝 검사: 닫히지 않은 구간, 짝 없는 닫는 표시, 한 줄 안에서 닫히지 않은 구간을 잡는다", () => {
   assert.deepEqual(markerErrors(["a", P, "Pro", "b"].join("\n")), [2]);
   assert.deepEqual(markerErrors(["a", E, "b"].join("\n")), [2]);
@@ -128,7 +145,10 @@ test("ui 판: 검사(표시 짝, 남은 표시, 빠진 스킬 이름, 끊긴 링
     const skills = join(out, "templates/prokit-next-neon/files/.agents/skills");
     for (const s of ["prokit-dev-cycle", "prokit-ui", "prokit-verify", "prokit-pack-use", "prokit-skills-manage", "prokit-skills-update"]) assert.ok(existsSync(join(skills, s, "SKILL.md")), s);
     for (const s of ["prokit-web", "prokit-api", "prokit-db", "prokit-deploy"]) assert.ok(!existsSync(join(skills, s)), s);
-    for (const f of ["templates/prokit-next-supabase", "templates/prokit-next-neon/tests", ".agents/skills/prokit-docs", "CONTRIBUTING.md", "handbook/start/adopt.md", "handbook/deploy/vercel.md", "tutorials/01-nextflix", "tutorials/samples/real-service.md"]) assert.ok(!existsSync(join(out, f)), f);
+    for (const f of ["templates/prokit-next-supabase", "templates/prokit-next-neon/tests", ".agents/skills/prokit-docs", "CONTRIBUTING.md", "handbook/start/adopt.md", "handbook/deploy/vercel.md", "tutorials/01-nextflix", "tutorials/samples/real-service.md", "templates/prokit-next-neon/files/.claude/agents/prokit-analyzer.md"]) assert.ok(!existsSync(join(out, f)), f);
+    // 판 팩 목록: Pro 전용 팩(proPacks)만 빠지고 나머지 팩은 그대로
+    const packs = Object.keys(JSON.parse(readFileSync(join(ROOT, "tutorials/packs.json"), "utf8")));
+    assert.deepEqual(Object.keys(JSON.parse(readFileSync(join(out, "tutorials/packs.json"), "utf8"))), packs.filter((p) => !editions()["ui"].proPacks.includes(p)));
     // UI 문서: handbook과 튜토리얼 중 화면 작업 쪽, README가 쓰는 그림
     for (const f of ["handbook/design/ui-skillset.md", "handbook/start/quickstart-screens.md", "tutorials/samples/README.md", "tutorials/reference/deploy.md", "docs/assets/brand/banner.png"]) assert.ok(existsSync(join(out, f)), f);
     // 덧씌운 루트 문서, 링크로 둔 스킬, 실행 권한

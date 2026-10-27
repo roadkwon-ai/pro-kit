@@ -6,7 +6,6 @@ handbook/concepts/cases.md | --adopt | 1 | 코드 블록 안의 판정 도식이
 handbook/concepts/delegation-and-resources.md | 기존 프로젝트 | 1 | 이미 만든 프로젝트에 새 하네스를 반영하는 범위를 말하는 것이라 화면만 프로젝트에도 맞는다.
 handbook/concepts/delegation-and-resources.md | 컨테이너 | 3 | 컨테이너나 다른 OS에서 도는 guard와 컨테이너에 마운트한 파일 시스템을 설명하는 일반 글이라 DB 컨테이너와 무관하다.
 handbook/start/what-is-prokit.md | production | 1 | 로컬 환경변수 파일에 운영 키를 적지 말라는 비밀값 안전 규칙을 설명하는 글이다.
-handbook/start/what-is-prokit.md | prokit-analyzer | 1 | 템플릿에 실제로 들어 있는 에이전트 파일 목록을 보여 주는 코드 블록이라 표시를 넣을 수 없다.
 handbook/reference/dev-cycle-config.md | 마이그레이션 | 1 | 규칙 형식을 보여 주는 예시 코드 줄이다.
 handbook/reference/dev-cycle-config.md | 기존 프로젝트 | 1 | 판에도 있는 템플릿 갱신 반영 쪽의 제목을 링크하는 글이다.
 handbook/concepts/dev-cycle.md | vercel:deploy | 1 | 화면만 프로젝트에서도 도는 마무리 절차의 Git 자동 배포 확인 명령이다.
@@ -48,9 +47,6 @@ templates/prokit-next-neon/files/.agents/skills/prokit-skills-update/SKILL.md | 
 templates/prokit-next-neon/files/.agents/skills/prokit-ui/references/screen-only.md | 마이그레이션 | 1 | 화면만 프로젝트는 로컬 DB와 마이그레이션 없이 만든다고 설명하는 화면만 규칙이다.
 templates/prokit-next-neon/files/.agents/skills/prokit-ui/references/screen-only.md | authClient | 1 | 화면에 쓰지 않는 부품을 알려 주는 화면만 규칙이다.
 templates/prokit-next-neon/files/.agents/skills/prokit-ui/references/screen-only.md | vercel:deploy | 1 | 화면만 프로젝트는 풀스택 배포를 쓰지 않는다는 화면만 규칙이다.
-templates/prokit-next-neon/files/.claude/agents/prokit-analyzer.md | prokit-analyzer | 1 | YAML 머리의 에이전트 이름이라 표시를 달 수 없고 파일 이름과 맞아야 한다.
-templates/prokit-next-neon/files/.claude/agents/prokit-analyzer.md | 기존 프로젝트 | 1 | YAML 머리의 에이전트 설명이라 표시를 달 수 없고 UI 프로젝트에서는 쓰지 않는다고 본문에 밝힌다.
-templates/prokit-next-neon/files/.claude/agents/prokit-analyzer.md | 운영 중 | 1 | YAML 머리의 에이전트 설명이라 표시를 달 수 없고 UI 프로젝트에서는 쓰지 않는다고 본문에 밝힌다.
 templates/prokit-next-neon/files/AGENTS.md | Supabase | 1 | 전역 스킬 이름의 예시일 뿐 이 프로젝트의 DB와 무관하다.
 templates/prokit-next-neon/files/AGENTS.md | production | 1 | 배포용 환경 파일을 만들지 말라는 비밀값 규칙에 든 파일 이름이다.
 templates/prokit-next-neon/files/CLAUDE.md | vercel:deploy | 1 | Vercel 플러그인의 배포 명령에 맡기지 않는다는 금지 글이라 화면 배포에도 맞다.

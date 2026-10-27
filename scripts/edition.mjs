@@ -117,7 +117,8 @@ export function dropProRows(text, rel, isPro) {
 }
 
 // 덧씌운 문서(names 없음)는 판을 위해 쓴 글이라 이름을 바꾸지 않는다. proValues는 판에서 틀리는 공통 값 키(Pro 스킬 수 등)다.
-function copy(root, rel, out, dstRel, { problems, isPro, names, proValues = [] }) {
+// proPacks는 Pro에서만 받는 팩이라 판의 팩 목록(tutorials/packs.json)에서 뺀다.
+function copy(root, rel, out, dstRel, { problems, isPro, names, proValues = [], proPacks = [] }) {
   const src = join(root, rel);
   const dst = join(out, dstRel);
   mkdirSync(dirname(dst), { recursive: true });
@@ -132,6 +133,11 @@ function copy(root, rel, out, dstRel, { problems, isPro, names, proValues = [] }
     // 공통 값 표시(<!-- v:키 -->값<!-- /v -->)는 판에서 값만 남긴다. 줄 맨 앞 주석은 GitHub이 그 줄을 HTML로 보고 마크다운을 풀지 않는다.
     const plain = unwrapUi(names ? rename(md, ...names) : md).replace(/<!-- (?:v:[\w.-]+|\/v) -->/g, "");
     writeFileSync(dst, dropProRows(plain, dstRel, isPro));
+  } else if (rel === "tutorials/packs.json") {
+    const packs = JSON.parse(readFileSync(src, "utf8"));
+    for (const p of proPacks) if (p in packs) delete packs[p];
+    else problems.push(`${rel}: proPacks의 ${p}가 팩 목록에 없다`);
+    writeFileSync(dst, `${JSON.stringify(packs, null, 2)}\n`);
   } else copyFileSync(src, dst);
   chmodSync(dst, statSync(src).mode);
 }
@@ -149,7 +155,7 @@ export function build(name, out, { root = ROOT } = {}) {
   const inEdition = new Set([...files, ...overlay.keys()]);
   const all = new Set(tracked);
   const isPro = (p) => all.has(p) && !inEdition.has(p);
-  for (const f of files.filter((f) => !overlay.has(f))) copy(root, f, out, f, { problems, isPro, names: ed.rename, proValues: ed.proValues });
+  for (const f of files.filter((f) => !overlay.has(f))) copy(root, f, out, f, { problems, isPro, names: ed.rename, proValues: ed.proValues, proPacks: ed.proPacks });
   for (const [dst, f] of overlay) copy(root, f, out, dst, { problems, isPro, proValues: ed.proValues });
   return [...problems, ...check(ed, out, root)];
 }

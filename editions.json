@@ -39,6 +39,7 @@
 			"templates/prokit-next-neon/files/.agents/skills/prokit-db",
 			"templates/prokit-next-neon/files/.agents/skills/prokit-deploy",
 			"templates/prokit-next-neon/files/.agents/skills/prokit-web",
+			"templates/prokit-next-neon/files/.claude/agents/prokit-analyzer.md",
 			"handbook/start/quickstart-service.md",
 			"handbook/start/adopt.md",
 			"handbook/concepts/project-plan.md",
@@ -54,7 +55,12 @@
 			"prokit-deploy",
 			"prokit-web",
 			"prokit-next-supabase",
-			"existing-project.md"
+			"existing-project.md",
+			"prokit-analyzer"
+		],
+		"proPacks": [
+			"nextflix",
+			"claudle"
 		],
 		"proTerms": [
 			"db:migrate",
@@ -83,7 +89,6 @@
 			"prokit/setup",
 			"intake",
 			"operating",
-			"prokit-analyzer",
 			"project-plan",
 			"기존 프로젝트",
 			"운영 중",
