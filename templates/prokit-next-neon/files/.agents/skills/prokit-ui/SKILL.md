@@ -72,7 +72,7 @@ description: >-
 - 사용자 요청이나 승인된 브리프에 생성 이미지가 있으면 실제 생성·화면 연결·출처·검수 증거를 회수한다. 이를 임의로 "SVG로 충분"이나 "생성 불필요"라는 사용자 승인으로 바꾸지 않는다. 수행자에 이미지 도구가 없으면 코디네이터가 접근 가능한 이미지 도구로 위임하고, 대안도 없으면 해당 자산을 미완료로 남긴다. 아이콘·정확한 글자가 필요한 슬라이드 같은 벡터 자산은 그대로 재사용하며, 생성 이미지를 실제 인물·행사·성과의 증거로 표현하지 않는다.
 - 팩 기반 작업은 완성 프리셋과 같은 뷰포트·설정·스크롤·hover 상태에서 비교한다. 개인화 밖 영역의 자산·서체·레이아웃·모션을 유지하며 기능 QA 통과로 시각 비교를 대신하지 않는다. 검증은 `prokit-verify`의 팩 기준 비교를 따른다.
 - 키: Claude Code는 세션을 열 때 훅(`scripts/load-keys.mjs`)이 프로젝트 `.env`, 작업 폴더(프로젝트의 상위 폴더) `.env` 순서로 `OPENAI_API_KEY`를 셸 환경에 넣는다. 셸에 없는데 `.env`에 있으면(Codex·Antigravity·Grok Build, 세션을 연 뒤 넣은 키) `node scripts/load-keys.mjs -- <명령>`으로 그 명령에만 넣는다. 배포 토큰(`GH_TOKEN`, `VERCEL_TOKEN`)은 늘 이 방법으로 배포 명령에만 넣는다. 키 값은 출력(`printenv`, `echo`, `cat .env` 포함), 다른 파일, 커밋에 남기지 않고 대화창에 붙여 넣으라고 하지 않는다. 있는지만 볼 때는 `node scripts/load-keys.mjs -- sh -c 'test -n "$GH_TOKEN"'`처럼 exit로 본다.
-- taste-skill(선택 묶음 `taste`)은 사용자가 고른 화면에만 쓴다. 고르지 않은 화면에서 불려도 이 흐름대로 하고, 고른 화면은 [references/taste.md](references/taste.md)의 단계 대응을 따른다. 순서, `DESIGN.md`, 토큰 규칙, critique·audit 통과 기준은 그대로다.
+- taste-skill(선택 묶음 `taste`)은 사용자가 고른 화면에만 쓴다. 고르지 않은 화면에서 불려도 이 흐름대로 한다. 고른 화면은 `design-taste-frontend`를 부르기 전에 [references/taste.md](references/taste.md)를 읽고 그 단계 대응을 따른다(taste-skill 자체 순서가 아니다). 순서, `DESIGN.md`, 토큰 규칙, critique·audit 통과 기준은 그대로다.
 - 데이터 상태(loading, empty, error, 비인가)의 모양과 문구를 설계한다<!-- edition:pro -->(동작은 `prokit-web`과 함께)<!-- /edition -->.
 - 제작 표시(선택): 출처를 알리고 싶으면 하단에 `apps/web/src/components/prokit-credit.tsx`의 `<ProkitCredit />`를 사용한다. 프로킷 심볼, 홈페이지로 가는 "이 사이트도 프로킷으로 만들었어요" 링크, GitHub 링크를 제공한다. MIT는 사이트에 이 홍보 표시를 유지할 의무를 부과하지 않는다. 사용자가 표시를 제외하거나 문구·모양을 조정하도록 요청하면 따른다. 표시를 쓰는 경우 위치·크기·간격은 사이트 디자인과 접근성에 맞춰 조정한다. 프로킷 주소는 이 파일의 `PROKIT_LINKS`에 있다. MIT의 저작권·허가문 보존 조건은 홍보 표시와 별도로 지킨다.
 

@@ -122,7 +122,8 @@ export function grade({ sc, meta, runDir }) {
 		const simp = {
 			ponytail: () => calls.has("ponytail:ponytail-review") || calls.has("ponytail-review"),
 			caveman: () => calls.has("caveman-review"),
-			karpathy: () => /karpathy/i.test(p),
+			// 리뷰어가 simplicity를 보고 karpathy-guidelines를 읽는다. 부른 기록은 audit이 대조한다
+			karpathy: () => /간결성|karpathy/i.test(p),
 			none: () => /간결성/.test(p),
 		}[simplicity]?.();
 		add("simplicity", `코드 리뷰 행에서 과설계 방지 역할 표의 검토(${simplicity})를 썼다`, simp, `simplicity=${simplicity}, 호출 ${[...calls].filter((c) => /ponytail|caveman|karpathy/.test(c)).join(", ") || "없음"}`);
@@ -134,7 +135,7 @@ export function grade({ sc, meta, runDir }) {
 		add("audit-confirm-only", "audit에 [confirm] 말고 남은 문제가 없다", fails.length > 0 && fails.every((l) => l.includes("[confirm]")), audit.slice(0, 400));
 	}
 	if (sc.id === 3) {
-		add("taste-ref", "prokit-ui의 taste 안내를 읽었다", tools.some((t) => /prokit-ui\/references\/taste\.md/.test(String(t.input?.file_path ?? ""))), "references/taste.md");
+		add("taste-ref", "prokit-ui의 taste 안내를 읽었다", tools.some((t) => /prokit-ui\/references\/taste\.md/.test(String(t.input?.file_path ?? t.input?.command ?? ""))), "references/taste.md");
 		add("taste-run", "design-taste-frontend를 실제로 썼다(SKILL.md 읽기나 스크립트 실행)", calls.has("design-taste-frontend") || bash.some((b) => /design-taste-frontend\/scripts\//.test(b)), bash.filter((b) => /taste/.test(b)).join(" | ").slice(0, 300) || "없음");
 		add("impeccable", "impeccable 흐름도 그대로 썼다", calls.has("impeccable") || bash.some((b) => /impeccable/.test(b)), [...calls].join(", "));
 	}

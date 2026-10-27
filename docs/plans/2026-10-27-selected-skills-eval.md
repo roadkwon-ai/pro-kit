@@ -68,7 +68,7 @@ impeccable은 `prokit-ui`가 의존하는 기본 설치라 선택 묶음이 아�
 
 v7(그 행 거부 알림·진행 지시 거부를 넣은 판) S2 1회에서 audit 결함 두 가지(이름 뒤 구두점, 버그 수정을 D로 올린 구현 행이 두뇌 구현 스킬을 요구)를 찾아 고쳤다. 고친 판(v8)으로 막혔던 세 구성을 다시 돌렸고, 다른 세 구성은 `[confirm]` 뒤 진행 지시를 한 번 더 보내(`run.mjs --go-reply`) 확인으로 적지 않는지 봤다.
 
+v9에서 karpathy 검토를 실제 행동에 맞췄다. 리뷰어가 `simplicity`를 보고 `karpathy-guidelines`를 읽고, audit은 그 스킬을 부른 기록을 대조한다. 같은 판으로 S1·S3·S4를 반복하고 karpathy 두 구성의 S2를 돌렸다. u-taste 한 실행이 `prokit-ui`를 건너뛴 것은 `AGENTS.md` taste 행으로 막았다(v11).
+
 남은 일:
-- karpathy 검토를 `prokit-reviewer(code)` focus로 넘기지 않고 메인이 직접 하는 실행(v7 2회, v8 1회). 역할 표를 행동에 맞출지, audit이 리뷰 프롬프트를 볼 방법을 둘지 정한다.
-- S1·S3·S4 반복 실행.
-- Codex 실행.
+- Codex 실행(사용자가 다음 회차로 정함, 2026-10-27). `codex exec` 실행기와 격리, Codex 플러그인·OMX 실측이 필요하고, 부른 스킬 기록이 없어 증거 이름만 본다.

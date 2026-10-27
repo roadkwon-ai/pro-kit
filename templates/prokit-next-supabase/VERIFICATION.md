@@ -35,26 +35,28 @@
 - v7에서 찾은 audit 결함 두 가지(9회 중 3회가 `[confirm]` 전에 막혔다):
   - 이름 뒤 구두점: `사용: /ce-debug.`처럼 이름 뒤에 마침표·조사가 붙으면 `ce-debug.`를 이름으로 읽어 두뇌 이름이 아니라고 거부했다. 이제 이름 끝의 영문·숫자·`-`·`_`가 아닌 글자는 뗀다.
   - 버그 수정의 구현 행: 서버 버그(C)를 D로 올리면 붙는 `구현 (구현 단계…)` 행이 두뇌의 구현 스킬(`speckit-implement`, `openspec-apply-change`)을 요구했다. 이미 디버깅 흐름으로 고친 뒤라 openspec·spec-kit 실행은 증거를 지어내지 않고 멈췄다. 이제 디버깅 단계 행이 있는 표의 구현 행은 디버깅 단계 방법을 따른다(두뇌가 디버깅을 맡으면 그 스킬, 맡지 않으면 사유 있는 내장). audit, `table --write` 안내, `status` 안내가 같은 판정을 쓴다. 새 기능 D의 구현 행은 그대로다.
-- eval 채점·실행기 버그(수치를 모두 다시 채점했다): 증거 칸 속 `\|`에서 칸을 잘못 잘라 증거 이름을 놓쳤다. `audit-confirm-only`가 다른 실패 줄을 보지 않았다. 두뇌 파일의 `/ce-debug`와 `compound-engineering:ce-debug`를 다른 이름으로 봤다. 실행이 끝난 뒤 플러그인 등록 해제가 `.claude/settings.json`을 바꿔 audit에 하네스 행 누락이 섞였다(이제 해제 전에 audit을 남기고, 지난 실행은 그 파일을 되돌려 다시 audit했다).
+- karpathy 검토: v7 2회, v8 1회는 메인이 `karpathy-guidelines`를 불러 판단하고 `prokit-reviewer(code)` focus에는 "간결성"만 적었다. 역할 표는 focus에 karpathy 원칙을 넣으라고 했고, audit은 증거 문구만 봤다. 실제 행동에 맞췄다. 이제 리뷰어가 `simplicity`를 보고 focus에 이름이 없어도 `karpathy-guidelines`를 읽는다. audit은 ponytail·caveman처럼 이 라운드에 `karpathy-guidelines`를 부른 기록을 대조한다. v9 두 실행 모두 메인이 그 스킬을 불렀고(기록 있음) 리뷰어도 그 SKILL.md를 읽었다.
+- taste 안내 누락: u-taste 한 실행(v10)이 `prokit-ui`를 읽지 않고 `design-taste-frontend`로 바로 갔다. 그래서 `prokit-ui`의 단계 대응(`references/taste.md`)과 impeccable 흐름을 건너뛰었다. `prokit-ui` 안의 문구로는 막을 수 없어, 늘 읽히는 `AGENTS.md`의 taste 행에 "쓰기 전에 `prokit-ui`와 그 `references/taste.md`를 읽는다"를 넣었다. 다음 실행(v11)은 둘 다 읽었다.
+- eval 채점·실행기 버그(수치를 모두 다시 채점했다): taste 안내를 Bash `cat`으로 읽은 것을 채점기가 놓쳤다(3회차와 v9 u-taste는 실제로 읽었다). 증거 칸 속 `\|`에서 칸을 잘못 잘라 증거 이름을 놓쳤다. `audit-confirm-only`가 다른 실패 줄을 보지 않았다. 두뇌 파일의 `/ce-debug`와 `compound-engineering:ce-debug`를 다른 이름으로 봤다. 실행이 끝난 뒤 플러그인 등록 해제가 `.claude/settings.json`을 바꿔 audit에 하네스 행 누락이 섞였다(이제 해제 전에 audit을 남기고, 지난 실행은 그 파일을 되돌려 다시 audit했다).
 
-행동 eval(Sonnet 5.5. 지금 판과 옛 판은 2회차, S1·S3·S4 최종 판은 3회차를 한 번씩 돌렸다. S2는 편집 훅을 넣은 판(v5)을 3회, `evidence` 알림을 넣은 판(v6)을 1회, 그 행 거부 알림과 진행 지시 거부를 넣은 판(v7)을 1회 돌렸다. v7에서 찾은 두 결함을 고친 판(v8)은 막혔던 세 구성(compound, openspec, spec-kit)을 다시 돌렸다. 또 세 구성(agent-skills, mattpocock, superpowers)은 `[confirm]`까지 온 뒤 "추천한 대로 진행해 줘"를 한 번 더 보냈다(`run.mjs --go-reply`). 수치는 위 채점·실행기 버그를 고친 뒤 모든 회차를 다시 채점한 값이다. 비용은 2~9회차 합 약 $128):
+행동 eval(Sonnet 5.5. 지금 판과 옛 판은 2회차, S1·S3·S4 최종 판은 3회차를 한 번씩 돌렸다. S2는 편집 훅을 넣은 판(v5)을 3회, `evidence` 알림을 넣은 판(v6)을 1회, 그 행 거부 알림과 진행 지시 거부를 넣은 판(v7)을 1회 돌렸다. v7에서 찾은 두 결함을 고친 판(v8)은 막혔던 세 구성(compound, openspec, spec-kit)을 다시 돌렸다. 또 세 구성(agent-skills, mattpocock, superpowers)은 `[confirm]`까지 온 뒤 "추천한 대로 진행해 줘"를 한 번 더 보냈다(`run.mjs --go-reply`). karpathy 검토를 고친 판(v9)으로 S1·S3·S4 전체와 karpathy를 고른 두 구성(gstack, openspec)의 S2를 다시 돌렸고, taste 안내를 고치며 S3를 두 번 더 돌렸다(v10, v11). 수치는 위 채점·실행기 버그를 고친 뒤 모든 회차를 다시 채점한 값이다. 비용은 2~12회차 합 약 $153):
 
 | 시나리오 | 옛 판(v0.3.2) | 지금 판(9af280d1) | 최종 판 |
 |---|---|---|---|
-| S1 F 스펙·계획(두뇌 9 + none): 전체 | 90% | 92% | 100% |
-| S1 단계 행을 두뇌 스킬로 실제 진행 | 7/18 | 10/18 | 18/18 |
-| S2 C 버그 수정(두뇌 9): 전체 | - | 88% | v5 95%(367/385), v6 98%(124/127), v7 94%(122/130), v8 98%(43/44), 진행 지시 100%(45/45) |
+| S1 F 스펙·계획(두뇌 9 + none): 전체 | 90% | 92% | 100%, v9 100%(118/118) |
+| S1 단계 행을 두뇌 스킬로 실제 진행 | 7/18 | 10/18 | 18/18, v9 18/18 |
+| S2 C 버그 수정(두뇌 9): 전체 | - | 88% | v5 95%(367/385), v6 98%(124/127), v7 94%(122/130), v8 98%(43/44), 진행 지시 100%(45/45), v9 karpathy 2구성 100%(29/29. fixture 준비 때 `agents:sync`를 빠뜨려 생긴 audit 줄 하나는 뺐다) |
 | S2 라운드를 열었다 | - | 9/9 | v5 27/27(2회는 편집 훅이 막은 뒤 열었다), v6 8/9(스스로 닫음), v7 9/9, v8 3/3, 진행 지시 3/3 |
 | S2 단계 행 실제 진행 | - | 3/12 | v5 31/34, v6 10/10, v7 12/13, v8 5/5, 진행 지시 6/6 |
-| S2 과설계 방지 검토 | - | 4/9 | v5 22/27, v6 9/9, v7 7/9, v8 2/3, 진행 지시 3/3 |
+| S2 과설계 방지 검토 | - | 4/9 | v5 22/27, v6 9/9, v7 7/9, v8 2/3, 진행 지시 3/3, v9 karpathy 2/2 |
 | S2 `[confirm]` 전에 audit 문제를 다 풀었다 | - | 8/9 | v5 22/27, v6 8/9, v7 6/9(위 audit 결함 3), v8 3/3, 진행 지시 3/3 |
-| S3 taste·S4 motion | - | 15/15 | 14/15 |
+| S3 taste·S4 motion | - | 15/15 | 15/15, v9 15/15, v10 taste 6/8(위 taste 안내 누락), v11 taste 8/8 |
 
 - 남은 한계:
   - 진행 지시를 받은 세 실행은 모두 스스로 `[confirm]`을 비워 두고 "확인했다"나 "확인 없이 닫자"를 다시 물었다. 그래서 audit의 진행 지시 거부가 실제로 걸린 실행은 없다(단위 테스트만 했다).
-  - karpathy 검토: v7 2회, v8 1회는 메인이 `karpathy-guidelines`를 직접 불러 판단했고, `prokit-reviewer(code)` focus에는 karpathy를 넣지 않았다. audit은 증거 문구만 보므로 이 차이를 잡지 못한다.
+  - 리뷰어 서브에이전트가 Read로 읽은 스킬이 기록 훅에 남는지는 확인하지 못했다. v9에서는 메인이 먼저 불러 기록이 있었다.
   - 편집 훅은 Edit·Write만 본다. Bash로 고치는 것과 Codex는 pre-commit guard가 커밋 때 막는다.
-  - S1·S3·S4는 한 번씩 돌린 결과다.
+  - S1·S4는 두 번, S3는 네 번 돌린 결과다.
   - Codex·Antigravity는 돌리지 않았다.
   - 샌드박스에서 Turbopack 개발 서버가 FSEvent를 열지 못해 화면 확인과 스크린샷은 하지 않았다.
   - 기록 훅은 그 훅을 설치한 뒤의 호출만 남긴다. 이미 설치한 프로젝트는 템플릿 갱신 반영(`install.sh --skip-skills`)으로 훅을 더한다.

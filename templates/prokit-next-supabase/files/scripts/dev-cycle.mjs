@@ -892,6 +892,7 @@ const SIMPLICITY_LABEL = {
 	karpathy: {
 		re: /karpathy/i,
 		label: "간결성(karpathy 기준, prokit-reviewer focus): …",
+		skill: "karpathy-guidelines",
 	},
 };
 function simplicityProblem(root, config, active) {

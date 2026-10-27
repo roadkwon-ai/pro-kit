@@ -69,7 +69,7 @@ provider 선택·검증·packet 필드는 [delegation.md](delegation.md)가 정�
 |---|---|---|---|---|
 | 늘 지키는 간결성(사다리, "만들지 않는 것", `shortcut:` 주석, 공통화 범위, 지적 처리) | 하네스 규칙 + ponytail 모드(플러그인 훅으로 늘 켜짐) | 하네스 규칙 + 일에 맞는 작업 스킬(새 기능 `lean-build`, 버그·작은 변경 `surgical-patch`) | 하네스 규칙 + `karpathy-guidelines`(코드 작업 때 모델이 부른다) | 하네스 규칙 |
 | 계획 간결성 기준(`prokit-reviewer(plan)`이 읽는다) | `ponytail` | `lean-build`(C는 `surgical-patch`) | `karpathy-guidelines` | 하네스 사다리 |
-| 구현 diff 보완 검토(`prokit-reviewer(code)` 게이트는 따로 늘 한다) | `ponytail-review` | `caveman-review`(지적은 `lean-build`·`surgical-patch` 기준) | `prokit-reviewer(code)` focus에 karpathy 단순함·정밀 수정 원칙 | `prokit-reviewer(code)` focus에 간결성(delete·reuse·stdlib·yagni) |
+| 구현 diff 보완 검토(`prokit-reviewer(code)` 게이트는 따로 늘 한다) | `ponytail-review` | `caveman-review`(지적은 `lean-build`·`surgical-patch` 기준) | `prokit-reviewer(code)` focus에 간결성(리뷰어가 `karpathy-guidelines`를 읽고 단순함·정밀 수정 원칙으로 본다) | `prokit-reviewer(code)` focus에 간결성(delete·reuse·stdlib·yagni) |
 | F 공통화·리팩토링 행 | `ponytail-review`(이번 diff와 공통 모듈 소비자) | `safe-refactor` | `prokit-reviewer(code)` + karpathy 정밀 수정 원칙 | 하네스 공통화 범위 + `prokit-reviewer(code)` |
 | 읽기 전용 보조(요청할 때만) | `ponytail-audit`·`ponytail-debt`·`ponytail-help`·`ponytail-gain` | 없음 | 없음 | 없음 |
 

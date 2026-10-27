@@ -827,6 +827,30 @@ test("부른 스킬 기록: skill-log 훅이 Skill 호출과 SKILL.md Read를 �
   assert.equal(readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").length, 3);
 });
 
+test("karpathy를 골랐으면 코드 리뷰 행은 karpathy 간결성 결과와 karpathy-guidelines를 부른 기록을 요구한다", () => {
+  const { root, write } = brainRepo("agent-skills");
+  const cfg = JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8"));
+  write(".dev-cycle.json", JSON.stringify({ ...cfg, simplicity: "karpathy" }));
+  const config = loadConfig(root);
+  writeTable(root, config, "D", { write: true, title: "karpathy 리뷰" });
+  const review = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^\[review\] prokit-reviewer\(code\)/.test(r.text));
+  const set = (v) => {
+    mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(review + 1), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  const mine = () => audit(root, config).problems.filter((p) => /기록이 없다|보완 검토 결과/.test(p)).map((p) => p.replace(/^#\d+ .*?: /, ""));
+  set("prokit-reviewer(code): approve, max=low");
+  assert.deepEqual(mine(), ["고른 과설계 방지(karpathy)의 보완 검토 결과를 덧붙인다: 간결성(karpathy 기준, prokit-reviewer focus): …"]);
+  const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: root, input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  hook({ tool_name: "Skill", tool_input: { skill: "prokit-dev-cycle" } });
+  set("prokit-reviewer(code): approve, max=low; 간결성(karpathy 기준, prokit-reviewer focus): 지적 없음");
+  assert.equal(mine().length, 1);
+  assert.ok(mine()[0].includes("karpathy-guidelines를 이 라운드에서 부른 기록이 없다"));
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/karpathy-guidelines/SKILL.md") } });
+  assert.deepEqual(mine(), []);
+});
+
 test("편집 전 확인: 열린 라운드 없이 코드·하네스 파일을 Edit·Write로 고치면 edit-guard 훅이 exit 2로 막고, 문서·프로젝트 밖·깨진 입력은 막지 않는다", () => {
   const { root } = makeRepo();
   const hook = (input) => spawnSync(process.execPath, [CLI, "edit-guard"], { cwd: tmpdir(), input: typeof input === "string" ? input : JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
