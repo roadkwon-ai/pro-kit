@@ -834,7 +834,7 @@ export function noteSkillsChange(root, config, { before, after }) {
 }
 
 // 부른 스킬 기록: Claude Code 훅이 Skill 호출과 SKILL.md Read를 .prokit/skills-used.jsonl에 남긴다(git이 무시하는 폴더).
-// 기록 파일이 있으면 audit이 단계 행·리뷰 행 증거의 스킬 이름을 이 라운드의 기록과 대조한다. 없으면(Codex 등) 자기 신고다.
+// 이 라운드의 기록이 있으면 audit이 단계 행·리뷰 행 증거의 스킬 이름을 그 기록과 대조한다. 없으면(Codex 등) 자기 신고다.
 export const SKILL_LOG = ".prokit/skills-used.jsonl";
 export function logSkill(root, input) {
 	const e = JSON.parse(input);
@@ -852,18 +852,20 @@ export function logSkill(root, input) {
 		`${JSON.stringify({ t: new Date().toISOString(), skill: String(name) })}\n`,
 	);
 }
-// 라운드를 연 날(KST) 이후 기록의 스킬 이름(접두어·`/` 없이). 기록 파일이 없으면 null.
+// 이 라운드(마지막 라운드 시작 줄, 없으면 연 날 KST 이후) 기록의 스킬 이름(접두어·`/` 없이).
+// 기록 파일이 없거나 이 라운드 기록이 하나도 없으면(Codex처럼 훅이 없는 에이전트가 연 라운드) null이라 자기 신고다.
 function skillsLogged(root, active) {
 	const p = join(root, SKILL_LOG);
 	if (!existsSync(p)) return null;
 	const since = Date.parse(
 		`${active?.meta.opened ?? "1970-01-01"}T00:00:00+09:00`,
 	);
-	const out = new Set();
+	let out = new Set();
 	for (const line of readFileSync(p, "utf8").split("\n")) {
 		try {
 			const e = JSON.parse(line);
-			if (Date.parse(e.t) >= since)
+			if ("round" in e) out = new Set();
+			else if (Date.parse(e.t) >= since)
 				out.add(
 					String(e.skill)
 						.replace(/^[/$]+/, "")
@@ -872,7 +874,7 @@ function skillsLogged(root, active) {
 				);
 		} catch {}
 	}
-	return out;
+	return out.size ? out : null;
 }
 const LOG_HINT =
 	"Claude Code는 Skill 도구로 부르거나(사용자 호출 전용이면 그 SKILL.md를 Read로 읽는다) 다시 진행한 뒤 적는다. Bash cat으로 읽은 것은 기록되지 않는다";
@@ -1238,6 +1240,12 @@ export function writeTable(
 		const p = join(root, config.todoPath);
 		mkdirSync(dirname(p), { recursive: true });
 		writeFileSync(p, next);
+		// 새 라운드의 시작 줄. 그 뒤 기록만 이 라운드의 것으로 본다(앞 라운드를 Claude Code로 한 뒤 Codex로 연 라운드 등).
+		if (!active && existsSync(join(root, SKILL_LOG)))
+			appendFileSync(
+				join(root, SKILL_LOG),
+				`${JSON.stringify({ t: now.toISOString(), round: meta.title })}\n`,
+			);
 	}
 	return {
 		case: key,

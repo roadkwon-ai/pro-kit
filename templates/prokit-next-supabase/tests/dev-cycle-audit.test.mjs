@@ -825,6 +825,17 @@ test("부른 스킬 기록: skill-log 훅이 Skill 호출과 SKILL.md Read를 �
   hook({ tool_name: "Skill", tool_input: { skill: "ponytail:ponytail-review" } });
   assert.deepEqual(mine(), []);
   assert.equal(readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").length, 3);
+  // 다음 라운드를 기록 없이(Codex 등) 진행하면 앞 라운드 기록과 대조하지 않고 자기 신고로 본다
+  write("tasks/todo.md", "# 할 일\n");
+  writeTable(root, config, "D", { write: true, title: "Codex 라운드" });
+  assert.match(readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").at(-1), /"round":"Codex 라운드"/);
+  const rows2 = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
+  set(rows2.findIndex((r) => /구현 단계/.test(r.text)), "사용: agent-skills:incremental-implementation → 위임");
+  set(rows2.findIndex((r) => /^\[review\] prokit-reviewer\(code\)/.test(r.text)), "prokit-reviewer(code): approve, max=low; ponytail-review: 반영 0");
+  assert.deepEqual(mine(), []);
+  // 이 라운드에 기록이 생기면 다시 대조한다
+  hook({ tool_name: "Skill", tool_input: { skill: "prokit-verify" } });
+  assert.ok(mine().some((x) => x.includes("ponytail-review를 이 라운드에서 부른 기록이 없다")), mine().join("\n"));
 });
 
 test("karpathy를 골랐으면 코드 리뷰 행은 karpathy 간결성 결과와 karpathy-guidelines를 부른 기록을 요구한다", () => {
