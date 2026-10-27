@@ -491,6 +491,47 @@ export function mergeClaudeSettings(
 	return { added, settings: cur };
 }
 
+// Codex 프로젝트 훅(.codex/hooks.json): 라운드 없는 편집을 막고(apply_patch) 셸로 읽은 SKILL.md를 기록한다(Bash).
+// OMX도 이 파일에 쓰므로 다른 항목은 그대로 두고 없는 것만 더한다. Codex는 훅을 세션 cwd에서 셸로
+// 실행하므로, 하위 폴더에서 시작해도 저장소 루트의 스크립트를 부르게 한다.
+const CODEX_HOOKS = [
+	{
+		event: "PreToolUse",
+		matcher: "apply_patch",
+		command:
+			'node "$(git rev-parse --show-toplevel)/scripts/dev-cycle.mjs" edit-guard',
+	},
+	{
+		event: "PostToolUse",
+		matcher: "Bash",
+		command:
+			'node "$(git rev-parse --show-toplevel)/scripts/dev-cycle.mjs" skill-log',
+	},
+];
+export function mergeCodexHooks(root, { write = true } = {}) {
+	const p = join(root, ".codex/hooks.json");
+	const cur = existsSync(p) ? JSON.parse(readFileSync(p, "utf8")) : {};
+	cur.hooks ??= {};
+	const added = [];
+	for (const { event, matcher, command } of CODEX_HOOKS) {
+		cur.hooks[event] ??= [];
+		if (
+			cur.hooks[event].some((g) => g.hooks?.some((h) => h.command === command))
+		)
+			continue;
+		cur.hooks[event].push({
+			matcher,
+			hooks: [{ type: "command", command, timeout: 10 }],
+		});
+		added.push(command.split(" ").at(-1));
+	}
+	if (write && added.length) {
+		mkdirSync(dirname(p), { recursive: true });
+		writeFileSync(p, `${JSON.stringify(cur, null, 2)}\n`);
+	}
+	return added;
+}
+
 const codexSourceMatches = (source, expected) => {
 	if (source?.sourceType !== "git" || typeof source.source !== "string")
 		return false;
@@ -1002,6 +1043,18 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 				"OMX(project): omx 없음 → npm install -g oh-my-codex 뒤 pnpm skills:setup --brain oh-my (또는 --with-global)",
 			);
 		}
+	}
+
+	// OMX 설정 뒤에 더해야 OMX가 다시 쓴 파일에도 남는다. Codex를 쓰지 않는 기기도 있어 --check는 알리기만 한다.
+	try {
+		const added = mergeCodexHooks(root, { write: !check });
+		out.push(
+			`Codex 훅(project): .codex/hooks.json ${added.length ? (check ? `없음 ${added.join(", ")} → Codex를 쓰면 pnpm skills:setup` : `추가 ${added.join(", ")} → Codex에서 /hooks로 신뢰해야 돈다(바뀌면 다시)`) : "있음"}`,
+		);
+	} catch (e) {
+		const msg = `.codex/hooks.json을 읽을 수 없다: ${e.message}`;
+		if (!check) failures.push(msg);
+		out.push(`Codex 훅(project): ${msg}`);
 	}
 
 	// 두 항목의 상태. 고르지 않은 설치본은 --check에서 충돌(누락)이고, 인자 없는 설치에서는 알리기만 한다.

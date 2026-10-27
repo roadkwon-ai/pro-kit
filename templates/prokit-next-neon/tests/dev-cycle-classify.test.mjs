@@ -17,7 +17,7 @@ test("경로별 케이스: 첫 일치 규칙 하나만 적용한다", () => {
   assert.equal(classify(["packages/db/drizzle.config.ts"], c).pathCase, "E");
   assert.equal(classify(["packages/api/src/routers/todo.ts"], c).pathCase, "D");
   assert.equal(classify([".agents/skills/prokit-web/SKILL.md"], c).pathCase, "H");
-  for (const f of ["skills.manifest.json", ".claude/settings.json", ".codex/skills/plan/SKILL.md", ".codex/prompts/x.md", ".agents/agents/prokit-reviewer.md", "scripts/skills-setup.mjs"]) {
+  for (const f of ["skills.manifest.json", ".claude/settings.json", ".agents/hooks.json", ".codex/hooks.json", ".codex/skills/plan/SKILL.md", ".codex/prompts/x.md", ".agents/agents/prokit-reviewer.md", "scripts/skills-setup.mjs"]) {
     assert.equal(classify([f], c).pathCase, "H", f);
   }
   for (const f of ["scripts/resource-guard.mjs", "scripts/delegation.mjs", "scripts/export-html.mjs", "scripts/load-keys.mjs"]) {

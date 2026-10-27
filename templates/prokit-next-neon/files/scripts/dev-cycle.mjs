@@ -833,27 +833,46 @@ export function noteSkillsChange(root, config, { before, after }) {
 	return true;
 }
 
-// 부른 스킬 기록: Claude Code 훅이 Skill 호출과 SKILL.md Read를 .prokit/skills-used.jsonl에 남긴다(git이 무시하는 폴더).
-// 이 라운드의 기록이 있으면 audit이 단계 행·리뷰 행 증거의 스킬 이름을 그 기록과 대조한다. 없으면(Codex 등) 자기 신고다.
+// 부른 스킬 기록: 훅이 스킬 호출과 SKILL.md 읽기를 .prokit/skills-used.jsonl에 남긴다(git이 무시하는 폴더).
+// Claude Code는 Skill·Read, Codex는 Bash(SKILL.md를 셸로 읽는다), Antigravity는 read_file·view_file이다.
+// 이 라운드의 기록이 있으면 audit이 단계 행·리뷰 행 증거의 스킬 이름을 그 기록과 대조한다. 없으면(훅이 없거나 신뢰 전) 자기 신고다.
 export const SKILL_LOG = ".prokit/skills-used.jsonl";
+// 훅 입력: Claude Code·Codex는 tool_name·tool_input, Antigravity는 toolCall.name·args다.
+const hookCall = (e) => ({
+	name: e?.tool_name ?? e?.toolCall?.name,
+	t: e?.tool_input ?? e?.toolCall?.args ?? {},
+});
 export function logSkill(root, input) {
-	const e = JSON.parse(input);
-	const t = e.tool_input ?? {};
-	const name =
-		e.tool_name === "Skill"
-			? t.skill
-			: e.tool_name === "Read"
-				? String(t.file_path ?? "").match(/([^/\\]+)[/\\]SKILL\.md$/)?.[1]
-				: null;
-	if (!name) return;
+	const { name, t } = hookCall(JSON.parse(input));
+	const names =
+		name === "Skill"
+			? [t.skill]
+			: // shortcut: 명령에 경로만 나와도(ls·test -f 등) 읽은 것으로 남긴다. 셸 명령은 해석하지 않는다
+				name === "Bash"
+				? [
+						...String(t.command ?? "").matchAll(
+							/([^\s/\\'"*]+)[/\\]SKILL\.md(?![\w.])/g,
+						),
+					].map((m) => m[1])
+				: ["Read", "read_file", "view_file"].includes(name)
+					? [
+							String(t.file_path ?? t.Path ?? t.AbsolutePath ?? "").match(
+								/([^/\\]+)[/\\]SKILL\.md$/,
+							)?.[1],
+						]
+					: [];
+	const lines = names
+		.filter(Boolean)
+		.map(
+			(skill) =>
+				`${JSON.stringify({ t: new Date().toISOString(), skill: String(skill) })}\n`,
+		);
+	if (!lines.length) return;
 	mkdirSync(join(root, ".prokit"), { recursive: true });
-	appendFileSync(
-		join(root, SKILL_LOG),
-		`${JSON.stringify({ t: new Date().toISOString(), skill: String(name) })}\n`,
-	);
+	appendFileSync(join(root, SKILL_LOG), lines.join(""));
 }
 // 이 라운드(마지막 라운드 시작 줄, 없으면 연 날 KST 이후) 기록의 스킬 이름(접두어·`/` 없이).
-// 기록 파일이 없거나 이 라운드 기록이 하나도 없으면(Codex처럼 훅이 없는 에이전트가 연 라운드) null이라 자기 신고다.
+// 기록 파일이 없거나 이 라운드 기록이 하나도 없으면(훅이 없거나 아직 신뢰하지 않은 도구로 진행한 라운드) null이라 자기 신고다.
 function skillsLogged(root, active) {
 	const p = join(root, SKILL_LOG);
 	if (!existsSync(p)) return null;
@@ -877,7 +896,7 @@ function skillsLogged(root, active) {
 	return out.size ? out : null;
 }
 const LOG_HINT =
-	"Claude Code는 Skill 도구로 부르거나(사용자 호출 전용이면 그 SKILL.md를 Read로 읽는다) 다시 진행한 뒤 적는다. Bash cat으로 읽은 것은 기록되지 않는다";
+	"Claude Code는 Skill 도구로 부르거나(사용자 호출 전용이면 그 SKILL.md를 Read로 읽는다. Bash cat은 기록되지 않는다), Codex는 그 SKILL.md 경로를 그대로 cat으로, Antigravity는 read_file로 읽어 다시 진행한 뒤 적는다";
 
 // 고른 과설계 방지 스킬의 구현 diff 보완 검토는 prokit-reviewer(code) 행 증거 뒤에 덧붙인다(process-routing 규칙 6).
 const SIMPLICITY_LABEL = {
@@ -2158,13 +2177,36 @@ export function guard(root, config, since) {
 	};
 }
 
-// 편집 전 확인(Claude Code PreToolUse 훅): 열린 라운드 없이 코드·하네스 파일을 고치려 하면 막을 사유, 아니면 null.
-// pre-commit guard는 커밋할 때에야 알려서, 라운드를 건너뛰고 다 고친 뒤에 알게 된다. Bash로 고치는 것은 보지 않는다.
+// 편집 전 확인(PreToolUse 훅): 열린 라운드 없이 코드·하네스 파일을 고치려 하면 막을 사유, 아니면 null.
+// pre-commit guard는 커밋할 때에야 알려서, 라운드를 건너뛰고 다 고친 뒤에 알게 된다. 셸로 고치는 것은 보지 않는다.
+// 고칠 파일: Claude Code는 file_path·notebook_path, Antigravity는 Path·TargetFile, Codex apply_patch는 패치 본문의 파일 줄이다.
 export function editGuard(root, config, input) {
-	const t = input?.tool_input ?? {};
-	const file = t.file_path ?? t.notebook_path;
-	if (typeof file !== "string" || !file) return null;
-	const abs = resolve(input.cwd ?? root, file);
+	const { name, t } = hookCall(input);
+	const one =
+		t.file_path ?? t.notebook_path ?? t.TargetFile ?? t.Path ?? t.AbsolutePath;
+	const files =
+		typeof one === "string" && one
+			? [one]
+			: name === "apply_patch"
+				? [
+						...String(t.command ?? "").matchAll(
+							/^\*\*\* (?:(?:Add|Update|Delete) File|Move to): (.+)$/gm,
+						),
+					].map((m) => m[1].trim())
+				: [];
+	const rels = files
+		.map((f) => projectPath(root, input?.cwd, f))
+		.filter(Boolean);
+	if (!rels.length) return null;
+	const cls = classify(rels, config);
+	if (cls.pathCase === "A" && !cls.auth) return null;
+	const md = readTodo(root, config);
+	if (md && parseActive(md)) return null;
+	return `dev-cycle: 열린 라운드 없이 ${rels.join(", ")}(케이스 ${cls.pathCase} 경로)를 고치려 한다. prokit-dev-cycle대로 pnpm dev-cycle status를 보고 pnpm dev-cycle table <케이스> --write --title "<요약>"로 라운드를 연 뒤 고친다. 코드를 바꾸지 않는 요청이면 이 파일을 고치지 않는다.`;
+}
+// 프로젝트 안 파일이면 /로 나눈 상대 경로, 밖이면 null.
+function projectPath(root, cwd, file) {
+	const abs = resolve(cwd ?? root, file);
 	// 있는 가장 가까운 상위 폴더까지 실제 경로로 바꾼다. 프로젝트 폴더가 심볼릭 링크 너머여도(macOS /var 등) 같은 파일로 본다
 	const real = (p) => {
 		for (
@@ -2182,12 +2224,7 @@ export function editGuard(root, config, input) {
 	const rel = [relative(root, abs), relative(real(root), real(abs))].find(
 		(r) => r && !/^\.\.([/\\]|$)/.test(r) && !isAbsolute(r),
 	);
-	if (!rel) return null;
-	const cls = classify([rel.split(sep).join("/")], config);
-	if (cls.pathCase === "A" && !cls.auth) return null;
-	const md = readTodo(root, config);
-	if (md && parseActive(md)) return null;
-	return `dev-cycle: 열린 라운드 없이 ${rel}(케이스 ${cls.pathCase} 경로)를 고치려 한다. prokit-dev-cycle대로 pnpm dev-cycle status를 보고 pnpm dev-cycle table <케이스> --write --title "<요약>"로 라운드를 연 뒤 고친다. 코드를 바꾸지 않는 요청이면 이 파일을 고치지 않는다.`;
+	return rel ? rel.split(sep).join("/") : null;
 }
 
 const USAGE =
@@ -3000,25 +3037,41 @@ export function main(argv, root = process.cwd()) {
 			(titleAt < 0 || i !== titleAt + 1) &&
 			(taskAt < 0 || i !== taskAt + 1),
 	);
-	// Claude Code PostToolUse 훅(Skill|Read). 어떤 오류도 세션을 막지 않게 조용히 끝낸다.
+	// 훅의 프로젝트는 이 스크립트가 든 프로젝트다(Antigravity는 훅을 .agents/에서 실행한다). Claude Code는 CLAUDE_PROJECT_DIR를 준다.
+	const hookRoot =
+		process.env.CLAUDE_PROJECT_DIR ||
+		dirname(dirname(fileURLToPath(import.meta.url)));
+	// PostToolUse 훅(Claude Code Skill|Read, Codex Bash, Antigravity read_file|view_file). 어떤 오류도 세션을 막지 않게 조용히 끝낸다.
+	// Antigravity는 PostToolUse 출력으로 JSON 객체를 기대한다.
 	if (cmd === "skill-log") {
+		let input = "";
 		try {
-			logSkill(process.env.CLAUDE_PROJECT_DIR || root, readFileSync(0, "utf8"));
+			input = readFileSync(0, "utf8");
+			logSkill(hookRoot, input);
 		} catch {}
+		if (input.includes('"toolCall"')) console.log("{}");
 		return 0;
 	}
-	// Claude Code PreToolUse 훅(Edit|Write|MultiEdit|NotebookEdit). exit 2는 그 편집을 막고 stderr를 에이전트에게 보인다.
-	// 입력이 깨졌거나 프로킷 설정을 읽지 못하면 막지 않는다.
+	// PreToolUse 훅(Claude Code Edit|Write|MultiEdit|NotebookEdit, Codex apply_patch, Antigravity 편집 도구).
+	// Claude Code·Codex는 exit 2가 그 편집을 막고 stderr를 에이전트에게 보인다. Antigravity는 stdout의 decision을 따르고,
+	// 출력이 없으면 막으므로 늘 allow나 deny를 낸다. 입력이 깨졌거나 프로킷 설정을 읽지 못하면 막지 않는다.
 	if (cmd === "edit-guard") {
 		let why = null;
+		let raw = "";
+		let input = null;
 		try {
-			const dir = process.env.CLAUDE_PROJECT_DIR || root;
-			why = editGuard(
-				dir,
-				loadConfig(dir),
-				JSON.parse(readFileSync(0, "utf8")),
-			);
+			raw = readFileSync(0, "utf8");
+			input = JSON.parse(raw);
+			why = editGuard(hookRoot, loadConfig(hookRoot), input);
 		} catch {}
+		if (input?.toolCall || raw.includes('"toolCall"')) {
+			console.log(
+				JSON.stringify(
+					why ? { decision: "deny", reason: why } : { decision: "allow" },
+				),
+			);
+			return 0;
+		}
 		if (why) console.error(why);
 		return why ? 2 : 0;
 	}

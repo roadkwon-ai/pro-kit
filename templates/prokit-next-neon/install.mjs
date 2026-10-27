@@ -767,7 +767,7 @@ export function main(argv) {
         ]
       : [
           "  1. 첫 마이그레이션(README 설치한 뒤 1번)까지 마치고, pnpm check로 Better-T-Stack이 만든 코드의 포맷을 한 번 정리해 pnpm exec biome check .가 exit 0인지 본 뒤 기본 브랜치에 커밋한다 (커밋 전에 연 dev-cycle 라운드는 설치 파일이 diff에 섞여 audit이 F 상향을 요구한다)",
-          "  2. 새 에이전트 세션을 열어 스킬과 에이전트를 불러온다 (Claude는 프로젝트를 신뢰해야 project 플러그인을 켜고, Codex는 신뢰해야 .codex/agents를 읽는다. Antigravity는 .agents/agents와 .agents/skills를 읽는다. Grok Build는 폴더를 신뢰해야 AGENTS.md와 프로젝트 스킬을 읽는다: 처음 열 때 신뢰하거나 grok --trust)",
+          "  2. 새 에이전트 세션을 열어 스킬과 에이전트를 불러온다 (Claude는 프로젝트를 신뢰해야 project 플러그인을 켜고, Codex는 신뢰해야 .codex/agents를 읽는다. Antigravity는 .agents/agents와 .agents/skills를 읽는다. Grok Build는 폴더를 신뢰해야 AGENTS.md와 프로젝트 스킬을 읽는다: 처음 열 때 신뢰하거나 grok --trust. 라운드 없는 편집 막기와 스킬 기록 훅은 Codex는 /hooks에서 .codex/hooks.json을, Antigravity는 폴더를 신뢰해야 돈다)",
           "  3. 개발자마다 한 번 프로젝트 루트에서 .agents/skills/impeccable/scripts/impeccable hooks on (스킬 호출로 켜지 않는다. Codex는 /hooks에서 신뢰 확인. Antigravity에서는 돌지 않고 Grok Build에서 도는지는 확인하지 않았다)",
           "  4. GLOSSARY.md와 docs/domain/project.md에 서비스 이름과 요약을 채운다",
           "  5. 첫 UI 라운드에서 impeccable init으로 PRODUCT.md를 만든다",

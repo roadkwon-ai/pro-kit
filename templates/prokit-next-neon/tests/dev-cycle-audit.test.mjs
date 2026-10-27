@@ -873,6 +873,7 @@ test("편집 전 확인: 열린 라운드 없이 코드·하네스 파일을 Edi
   assert.equal(edit(join(root, ".agents/skills/x/SKILL.md"), "MultiEdit").status, 2, "하네스(H)도 라운드가 필요하다");
   for (const ok of [join(root, "docs/notes.md"), join(root, "tasks/todo.md"), join(tmpdir(), "elsewhere/page.tsx")]) assert.equal(edit(ok).status, 0, ok);
   assert.equal(hook("깨진 입력").status, 0);
+  assert.deepEqual(JSON.parse(hook('{"toolCall": 깨짐').stdout), { decision: "allow" }, "Antigravity는 깨진 입력에도 허용을 낸다");
   assert.equal(hook({ tool_name: "Edit", tool_input: {} }).status, 0);
   assert.equal(hook({ tool_name: "Edit", cwd: join(root, "apps/web"), tool_input: { file_path: "src/app/page.tsx" } }).status, 2, "상대 경로는 훅 입력의 cwd 기준");
   assert.equal(edit(join(root, "..hidden/page.tsx")).status, 0, "이름이 ..로 시작해도 프로젝트 안으로 본다(규칙 밖이라 A)");
@@ -882,8 +883,38 @@ test("편집 전 확인: 열린 라운드 없이 코드·하네스 파일을 Edi
   const viaLink = (projectDir, file) => spawnSync(process.execPath, [CLI, "edit-guard"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Write", tool_input: { file_path: file } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir } }).status;
   assert.equal(viaLink(root, join(link, "apps/web/src/app/new/page.tsx")), 2);
   assert.equal(viaLink(link, join(root, "apps/web/src/app/new/page.tsx")), 2);
+  // Codex apply_patch: 패치 본문의 파일 줄을 보고, 하나라도 라운드가 필요한 경로면 막는다
+  const patch = (body) => hook({ tool_name: "apply_patch", cwd: root, tool_input: { command: `*** Begin Patch\n${body}\n*** End Patch` } });
+  assert.equal(patch("*** Update File: docs/notes.md\n@@\n-a\n+b").status, 0);
+  r = patch(`*** Update File: docs/notes.md\n@@\n-a\n+b\n*** Add File: ${join(root, "packages/api/src/lib/x.ts")}\n+x`);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /docs\/notes\.md, packages\/api\/src\/lib\/x\.ts\(케이스 D 경로\)/);
+  assert.equal(patch("*** Update File: docs/a.md\n*** Move to: apps/web/src/app/b.tsx\n@@\n-a\n+b").status, 2, "옮길 곳도 본다");
+  // Antigravity: exit 코드가 아니라 stdout decision으로 답하고, 출력이 없으면 막히므로 허용도 늘 적는다
+  const agy = (file) => {
+    const x = hook({ toolCall: { name: "edit_file", args: { Path: file } } });
+    return [x.status, JSON.parse(x.stdout)];
+  };
+  assert.deepEqual(agy(join(root, "docs/notes.md")), [0, { decision: "allow" }]);
+  const [status, out] = agy(join(root, "apps/web/src/app/page.tsx"));
+  assert.equal(status, 0);
+  assert.equal(out.decision, "deny");
+  assert.match(out.reason, /열린 라운드 없이 apps\/web\/src\/app\/page\.tsx\(케이스 B 경로\)/);
   writeTable(root, loadConfig(root), "B", { write: true, title: "화면" });
   assert.equal(edit(join(root, "apps/web/src/app/page.tsx")).status, 0, "열린 라운드가 있으면 통과");
+  assert.deepEqual(agy(join(root, "apps/web/src/app/page.tsx")), [0, { decision: "allow" }]);
+});
+
+test("부른 스킬 기록: Codex는 Bash 명령 속 SKILL.md 경로를, Antigravity는 read_file·view_file 경로를 남긴다", () => {
+  const { root } = makeRepo();
+  const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  assert.equal(hook({ tool_name: "Bash", tool_input: { command: "cat .agents/skills/prokit-verify/SKILL.md '/x/agent-skills/skills/debugging-and-error-recovery/SKILL.md'; ls .agents/skills/*/SKILL.md x/SKILL.md.bak" } }).stdout, "");
+  hook({ tool_name: "Bash", tool_input: { command: "ls .agents/skills" } });
+  assert.equal(hook({ toolCall: { name: "read_file", args: { Path: "/p/.agents/skills/ponytail-review/SKILL.md" } } }).stdout.trim(), "{}", "Antigravity에는 JSON 객체로 답한다");
+  hook({ toolCall: { name: "view_file", args: { AbsolutePath: "/p/.agents/skills/grilling/SKILL.md" } } });
+  hook({ toolCall: { name: "edit_file", args: { Path: "/p/.agents/skills/x/SKILL.md" } } });
+  const skills = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l).skill);
+  assert.deepEqual(skills, ["prokit-verify", "debugging-and-error-recovery", "ponytail-review", "grilling"]);
 });
 
 test("evidence: 행을 채울 때 케이스 상향·빠진 필수 행·그 행의 audit 거부를 바로 알린다", () => {

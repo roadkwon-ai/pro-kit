@@ -71,4 +71,4 @@ v7(그 행 거부 알림·진행 지시 거부를 넣은 판) S2 1회에서 audi
 v9에서 karpathy 검토를 실제 행동에 맞췄다. 리뷰어가 `simplicity`를 보고 `karpathy-guidelines`를 읽고, audit은 그 스킬을 부른 기록을 대조한다. 같은 판으로 S1·S3·S4를 반복하고 karpathy 두 구성의 S2를 돌렸다. u-taste 한 실행이 `prokit-ui`를 건너뛴 것은 `AGENTS.md` taste 행으로 막았다(v11).
 
 남은 일:
-- Codex 실행(사용자가 다음 회차로 정함, 2026-10-27). `codex exec` 실행기와 격리, Codex 플러그인·OMX 실측이 필요하고, 부른 스킬 기록이 없어 증거 이름만 본다.
+- Codex·Antigravity 실행기(run.mjs). S2 한 구성(agent-skills·ponytail)은 손으로 실측했다(VERIFICATION.md). 남은 것: `codex exec`·`agy -p` 실행기(`codex exec`는 stdin을 닫아야 끝난다), 두뇌 9개 행렬, Codex 플러그인·OMX 실측, Codex `/hooks` 신뢰 절차를 거친 실행.

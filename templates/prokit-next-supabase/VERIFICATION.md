@@ -17,8 +17,9 @@
   - 두뇌 파일 단계 표가 맡는 단계는 내장을 거부한다. 쓸 수 없으면 `blocked`로 적는다.
   - 내장 사유에 두뇌 스킬 이름이 있으면 거부한다.
   - `table --write`와 `status`가 단계 행마다 부를 스킬을 보여 준다.
-  - Claude Code PostToolUse 훅(`dev-cycle skill-log`, 설치기가 넣는다)이 Skill 호출과 `SKILL.md` Read를 `.prokit/skills-used.jsonl`에 남긴다. audit은 단계 행과 코드 리뷰 행의 과설계 방지 검토 이름을 이 라운드의 기록과 대조한다. 이 라운드의 기록이 없으면(Codex처럼 훅이 없는 도구로 진행한 라운드. 앞 라운드를 Claude Code로 했어도) 자기 신고 그대로다. 라운드를 열 때 기록 파일에 시작 줄을 남겨 앞 라운드 기록과 나눈다.
-  - Claude Code PreToolUse 훅(`dev-cycle edit-guard`, 설치기가 넣는다)이 열린 라운드 없이 코드·하네스 파일(케이스 A가 아닌 경로)을 Edit·Write로 고치면 exit 2로 막는다. 한 실행이 dev-cycle을 열지 않고 바로 고친 일을 구조로 막는다. Bash로 고치는 것과 Codex는 pre-commit guard가 뒤를 받친다.
+  - PostToolUse 훅(`dev-cycle skill-log`)이 스킬 호출과 `SKILL.md` 읽기를 `.prokit/skills-used.jsonl`에 남긴다. Claude Code는 Skill·Read(설치기가 `.claude/settings.json`에 넣는다), Codex는 Bash 명령 속 `SKILL.md` 경로(`pnpm skills:setup`이 기기마다 `.codex/hooks.json`에 넣는다), Antigravity는 `read_file`·`view_file`(`.agents/hooks.json`)이다. audit은 단계 행과 코드 리뷰 행의 과설계 방지 검토 이름을 이 라운드의 기록과 대조한다. 라운드를 열 때 기록 파일에 시작 줄을 남겨 앞 라운드 기록과 나누고, 이 라운드의 기록이 없으면(훅이 없거나 아직 신뢰하지 않은 도구) 자기 신고 그대로다.
+  - PreToolUse 훅(`dev-cycle edit-guard`)이 열린 라운드 없이 코드·하네스 파일(케이스 A가 아닌 경로)을 편집 도구로 고치면 막는다. Claude Code는 Edit·Write(exit 2), Codex는 `apply_patch`의 패치 본문 파일 줄(exit 2), Antigravity는 `edit_file` 등(stdout `decision: deny`. 출력이 없으면 도구가 막혀서 허용도 늘 적는다)이다. Codex는 `/hooks`에서, Antigravity는 폴더를 신뢰해야 돈다. 셸로 고치는 것은 세 도구 모두 pre-commit guard가 뒤를 받친다.
+  - 실측(2026-10-27, agent-skills·ponytail 구성, 앞 라운드의 Claude 기록을 넣은 사본, Codex 0.164.0과 agy 1.4.5): S2 버그 수정은 두 도구 모두 `[confirm]`만 남기고 audit을 통과했다. 기록에는 Codex 메인과 `spawn_agent`로 띄운 `prokit-implementer`·`prokit-reviewer`의 `SKILL.md` 읽기(ponytail-review 포함), agy의 `read_file` 읽기가 남았다. 수정 전 dev-cycle.mjs로 같은 상태를 audit하면 Codex 라운드의 디버깅 행과 ponytail-review가 "부른 기록이 없다"로 막혔다. 라운드 없이 바로 고치라는 요청은 두 도구 모두 edit-guard가 막아 파일이 바뀌지 않았다(Codex는 `apps/web`에서 시작). Codex는 `--dangerously-bypass-hook-trust`로 돌려 `/hooks` 신뢰 절차는 거치지 않았다.
 - 과설계 방지 검토 누락: ponytail·caveman·karpathy를 골랐는데 코드 리뷰 행에 그 결과가 없었다. audit이 `ponytail-review:`·`caveman-review:`·karpathy 결과를 요구한다.
 - 라운드 중 전환: 열린 라운드에서 구성을 바꾸면 설치기 파일 때문에 케이스가 H로 올랐다(필수 행 누락·케이스 상향 7건). 바꾸기 전 두뇌로 채운 단계 행도 거부됐다.
   - 이제 설치기가 마커에 `brains=…`, `skills=true`와 메모를 적는다.

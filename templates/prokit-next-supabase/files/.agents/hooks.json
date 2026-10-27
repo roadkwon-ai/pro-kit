@@ -1,0 +1,28 @@
+{
+	"prokit": {
+		"PreToolUse": [
+			{
+				"matcher": "edit_file|write_to_file|create_file|delete_file|replace_file_content|multi_replace_file_content",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "node ../scripts/dev-cycle.mjs edit-guard",
+						"timeout": 10
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "read_file|view_file",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "node ../scripts/dev-cycle.mjs skill-log",
+						"timeout": 10
+					}
+				]
+			}
+		]
+	}
+}
