@@ -15,3 +15,6 @@ garrytan/gstack. 무엇을 만들지 검토하는 제품 판단, 디자인, 실�
 - 팀 모드(`./setup --team`)는 프로젝트 `CLAUDE.md`를 고치므로 쓰지 않는다. 저장소 벤더링(`./setup --local`)도 쓰지 않는다.
 - 전역 설치는 `~/.claude/settings.json`에 Stop 훅(timeline)을 등록하고 `~/.gstack` 상태를 만든다. 다른 프로젝트에서는 설치기가 gstack 개인 스킬을 `.claude/settings.local.json`의 `skillOverrides`로 끄지만, 훅과 Codex 전역 스킬은 끌 수 없다.
 - 업데이트는 `/gstack-upgrade`(Codex `gstack-upgrade`)다. `pnpm skills:update`는 전역 도구를 올리지 않는다.
+
+## 에이전트
+- 없음. 이 두뇌는 에이전트나 프롬프트 틀을 주지 않는다. 서브에이전트는 `prokit-*`와 `specialist-reviewer`만 쓴다.

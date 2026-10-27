@@ -537,12 +537,81 @@ function uiRecordProblem(root, meta, r) {
 	return problem && `${problem} (${file})`;
 }
 
+// 두뇌를 고르면 단계 행은 그 두뇌의 방법으로 한다. 증거의 `사용:` 이름이 고른 두뇌 파일에 백틱으로 적혀 있거나,
+// 추가 스킬이거나, 사유가 있는 내장이어야 한다. 이름만 본다(실제로 불렀는지는 보지 않는 자기 신고다).
+const STAGE_RE =
+	/요구 명확화 단계|계획 단계|구현 단계|디버깅 단계|고른 두뇌의 계획 방법/;
+export const BRAINS_DIR = ".agents/skills/prokit-dev-cycle/references/brains";
+const brainsOf = (config) =>
+	[config.brain ?? "none"].flat().filter((b) => b && b !== "none");
+const readJson = (p) => {
+	try {
+		return JSON.parse(readFileSync(p, "utf8"));
+	} catch {
+		return null;
+	}
+};
+
+function brainProblem(root, config) {
+	const brains = brainsOf(config);
+	if (!brains.length) return () => null;
+	const missing = brains.filter(
+		(b) => !existsSync(join(root, BRAINS_DIR, `${b}.md`)),
+	);
+	// 두뇌 파일이 함께 적은 하네스 이름(prokit-*, specialist-reviewer, 필수 mattpocock 스킬)은 두뇌 방법이 아니다.
+	// 필수 mattpocock 스킬은 mattpocock 두뇌일 때만 그 두뇌의 방법이다.
+	const harness = brains.includes("mattpocock")
+		? /^(prokit-|specialist-reviewer$|blocked$|none$)/
+		: /^(prokit-|specialist-reviewer$|blocked$|none$|grilling$|domain-modeling$|grill-with-docs$)/;
+	const names = new Set(
+		brains
+			.filter((b) => !missing.includes(b))
+			.flatMap((b) => [
+				...readFileSync(join(root, BRAINS_DIR, `${b}.md`), "utf8").matchAll(
+					/`([^`\s]+)`/g,
+				),
+			])
+			.map((m) => m[1])
+			.filter((n) => !harness.test(n)),
+	);
+	// 추가 스킬은 이 프로젝트에 설치한(skills-lock.json) mattpocock 추가 스킬만 받는다.
+	const pool = readJson(join(root, "skills.manifest.json"))?.mattpocock?.pool;
+	const extras = new Set(
+		Object.keys(readJson(join(root, "skills-lock.json"))?.skills ?? {}).filter(
+			(n) => !pool || pool.includes(n),
+		),
+	);
+	const how = `사용: <${BRAINS_DIR}/${brains[0]}.md에 백틱으로 적힌 이름>, 사용: <스킬>(추가 스킬), 사용: 내장(<단계>): <사유> 중 하나로 적는다`;
+	return (r) => {
+		if (!STAGE_RE.test(r.text)) return null;
+		const value = bare(r.evidence);
+		if (/^(blocked|미실행|n\/a)\s*:/i.test(value)) return null;
+		if (missing.length)
+			return `고른 두뇌의 파일이 없다: ${missing.map((b) => `${BRAINS_DIR}/${b}.md`).join(", ")} (.dev-cycle.json의 brain 확인)`;
+		const used = [...value.matchAll(/사용:\s*`?([^\s,;`()]+)`?/g)].map(
+			(m) => m[1],
+		);
+		const extra = [
+			...value.matchAll(/사용:\s*`?([^\s,;`()]+)`?\s*\(추가 스킬\)/g),
+		].map((m) => m[1]);
+		if (
+			used.some((u) => names.has(u)) ||
+			extra.some((u) => extras.has(u)) ||
+			/사용:\s*내장\([^)]+\)\s*:\s*\S/.test(value)
+		)
+			return null;
+		return `두뇌(${brains.join(", ")})를 골랐으면 단계 행 증거에 그 방법을 ${how}`;
+	};
+}
+
 // audit과 status가 같은 판정을 쓴다. 진행 계획 라운드의 확인 행은 지문까지 본다.
 const roundRowProblem = (root, config, active) => {
 	const planRound = isPlanRound(active);
+	const brain = brainProblem(root, config);
 	return (r) =>
 		rowProblem(r) ??
 		uiRecordProblem(root, active.meta, r) ??
+		brain(r) ??
 		(planRound && isConfirm(r.text)
 			? planConfirmProblem(root, config, r.evidence)
 			: null);
@@ -1213,10 +1282,19 @@ function planLines(root, config, open) {
 	return lines;
 }
 
+// 라운드를 열고 이어받을 때 고른 두뇌와 그 두뇌 파일을 보여 준다.
+const brainLine = (config) => {
+	const b = brainsOf(config);
+	return b.length
+		? `두뇌: ${b.join(", ")} → 단계 행은 ${b.map((x) => `${BRAINS_DIR}/${x}.md`).join(", ")}의 방법으로 한다`
+		: "두뇌: 없음(기본 칸)";
+};
+
 export function status(root, config) {
 	const s = statusOfRound(root, config);
 	const extra = planLines(root, config, s.active ? { task: s.task } : null);
-	return { ...s, planLines: extra, line: [s.line, ...extra].join("\n") };
+	const lines = [s.line, ...(s.active ? [brainLine(config)] : []), ...extra];
+	return { ...s, planLines: extra, line: lines.join("\n") };
 }
 
 function statusOfRound(root, config) {
@@ -2575,7 +2653,7 @@ export function main(argv, root = process.cwd()) {
 				noTask: rest.includes("--no-task"),
 			});
 			const text = rest.includes("--write")
-				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다`
+				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}`
 				: r.block;
 			print(r, r.warning ? `${text}\n${r.warning}` : text);
 			return 0;

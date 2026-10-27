@@ -18,3 +18,9 @@ obra/superpowers. 설계 합의, 계획, 테스트 먼저, 작업별 리뷰를 �
 - 구현 스킬이 끝에서 `finishing-a-development-branch`를 불러도 라운드 끝이 아니다(라우팅 규칙 4).
 - 태스크 리뷰 원장은 `subagent-driven-development`의 원장이다. 요약은 구현 방식 행에 적는다(규칙 6 리뷰).
 - 같은 이름의 `test-driven-development`가 agent-skills에도 있다. 두뇌를 바꿀 때 설치기는 `skills-lock.json` 출처로 구분해 지운다.
+
+## 에이전트
+- 에이전트는 없다. 스킬 안의 프롬프트 틀을 범용 서브에이전트에 넘긴다: `subagent-driven-development/implementer-prompt.md`, `task-reviewer-prompt.md`, `re-review-prompt.md`, `requesting-code-review/code-reviewer.md`.
+- 구현 틀(`implementer-prompt.md`)은 `prokit-implementer`의 위임 지시에, 리뷰 틀은 `specialist-reviewer`의 위임 지시에 넣는다. 서브에이전트 종류는 바꾸지 않는다.
+- Codex·Antigravity·Grok Build: 스킬과 함께 틀이 오므로 같은 방식으로 읽어 넣는다.
+- 쓰는 방법은 `process-routing.md`의 두뇌 에이전트 규칙을 따른다.

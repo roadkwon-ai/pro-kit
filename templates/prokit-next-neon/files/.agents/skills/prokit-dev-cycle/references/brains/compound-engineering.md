@@ -21,3 +21,9 @@ EveryInc/compound-engineering-plugin. "일 하나가 다음 일을 더 쉽게 �
 - 간결화(`ce-simplify-code`)는 과설계 방지 스킬의 검토와 겹친다. 과설계 방지 스킬을 골랐으면 규칙 6 역할 표의 검토를 먼저 쓴다.
 - `/ce-plan`의 계획과 진행 계획 문서가 같은 `docs/plans/`에 생긴다. 진행 계획의 정본은 `tasks/plan.md`의 `doc=`가 가리키는 파일이고, Task 세부 계획 증거에는 `/ce-plan`이 만든 파일 경로를 적는다.
 - 다른 두뇌로 바꾸면 설치기가 플러그인과 스킬만 지우고 `docs/plans/`, `docs/solutions/`, `.compound-engineering/`은 인계 자료로 남긴다.
+
+## 에이전트
+- 에이전트는 없다(플러그인이 일부러 뺐다). 스킬 안의 `references/agents/*.md`(예: `ce-plan`의 조사 에이전트 틀)와 `references/personas/*.md`(예: `ce-code-review`의 리뷰어 관점)를 서브에이전트에 넘긴다.
+- 조사 틀은 계획 단계의 읽기 전용 조사에, 리뷰어 관점은 `specialist-reviewer`의 위임 지시에 넣는다. 구현은 `prokit-implementer`가 한다.
+- Codex·Antigravity·Grok Build: 스킬과 함께 틀이 오므로 같은 방식으로 읽어 넣는다.
+- 쓰는 방법은 `process-routing.md`의 두뇌 에이전트 규칙을 따른다.

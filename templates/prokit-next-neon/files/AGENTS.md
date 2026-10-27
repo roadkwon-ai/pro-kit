@@ -103,7 +103,7 @@
 - `prokit-implementer`: 코디네이터가 지정한 파일만 구현한다.
 - `prokit-reviewer`: 읽기 전용 통합 리뷰. focus는 plan, code, security, db이고 실제 계약·evidence hash·통합 수용 여부를 JSON으로 응답한다.
 - `specialist-reviewer`: provider에 내장 리뷰가 없을 때만 전문 산출물을 읽기 전용으로 검토한다. 일반 코드 리뷰를 반복하지 않는다.
-- 리뷰는 구현한 쪽이 아니라 `prokit-reviewer`가 한다. Codex는 `spawn_agent`의 `agent_type`으로 부른다. <!-- edition:pro -->`prokit-analyzer`·<!-- /edition -->`prokit-reviewer`·`specialist-reviewer`는 `fork_turns: "none"`으로 띄워 메인 대화를 넘기지 않고(독립 분석·리뷰), 필요한 입력(초점, 기준 SHA, 파일 목록, evidence packet hash)은 메시지에 모두 넣는다.
+- 리뷰는 구현한 쪽이 아니라 `prokit-reviewer`가 한다. Codex는 `spawn_agent`의 `agent_type`으로 부른다. <!-- edition:pro -->`prokit-analyzer`·<!-- /edition -->`prokit-reviewer`·`specialist-reviewer`는 `fork_turns: "none"`으로 띄워 메인 대화를 넘기지 않고(독립 분석·리뷰), 필요한 입력(초점, 기준 SHA, 파일 목록, evidence packet hash)은 메시지에 모두 넣는다. 고른 두뇌 파일(`references/brains/<이름>.md`)의 "에이전트" 절에 있는 에이전트는 읽기 전용 보완 검토로만 쓴다. 쓰는 쪽이 아니고 최종 게이트는 `prokit-reviewer`다.
 - 배포, 릴리스, 운영 DB 적용은 서브에이전트에 맡기지 않는다. 라운드 끝 마무리 선택, 릴리스 발행 동의, 운영 DB 적용 동의처럼 중간에 사용자 확인이 필요하다.
 - 스킬이나 플러그인이 없다고 나오면 `pnpm skills:check`로 확인해 보고한다. 설치(`pnpm skills:setup`, 네트워크와 설정 파일 변경)는 사용자가 요청할 때 한다. 목록 정본은 `skills.manifest.json`이다. 외부 스킬의 새 버전 확인과 업데이트(`pnpm skills:update`)는 `prokit-skills-update`를 따른다. 진행 중인 라운드가 없으면 `pnpm dev-cycle status`가 하루 한 번 확인한다.
 <!-- prokit-template:end -->

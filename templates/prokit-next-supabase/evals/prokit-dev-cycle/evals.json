@@ -736,6 +736,22 @@
         "계획은 케이스 A 라운드에서 prokit-reviewer(plan) 리뷰와 사용자 확인을 받는다",
         "agent-skills /plan이 다시 tasks/plan.md에 쓰지 않도록 계획 경로(docs/plans/)를 정해 알린다"
       ]
+    },
+    {
+      "id": 44,
+      "name": "brain-stage-evidence",
+      "template": "neon",
+      "risk": "normal",
+      "prompt": "이 프로젝트는 .dev-cycle.json의 brain을 agent-skills로 골라 두었어. 할 일에 우선순위(높음·보통·낮음)를 붙이는 기능을 F 라운드로 열고, 스펙 작성과 구현 계획 행까지만 진행한 뒤 멈춰 줘.",
+      "expected_output": "F 라운드를 열고 table·status 출력의 두뇌 줄을 확인한다. 스펙·계획 단계에서 agent-skills의 해당 스킬(spec-driven-development, planning-and-task-breakdown)을 실제로 불러 쓰고 증거 칸에 `사용: <두뇌 파일의 이름>`으로 적는다. 내장으로 했다면 사유를 적는다. 구현 행 전에 멈춘다.",
+      "files": [],
+      "expectations": [
+        "F 라운드를 열었다",
+        "table이나 status 출력의 두뇌 줄(두뇌: agent-skills → 단계 행은 …)을 보고 두뇌 파일을 읽었다",
+        "스펙·계획 단계에서 agent-skills 스킬을 실제로 불렀다(도구 호출 기록)",
+        "단계 행 증거가 `사용: <agent-skills 두뇌 파일의 이름>`이거나 사유가 있는 `사용: 내장(<단계>): <사유>`다",
+        "구현 행을 시작하지 않고 멈췄다"
+      ]
     }
   ]
 }

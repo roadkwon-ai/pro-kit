@@ -90,7 +90,7 @@ Better-T-Stack 전용 계층 스킬(`prokit-api`, `prokit-db`, `prokit-deploy`)�
 - `prokit-analyzer`: 읽기 전용 정밀 분석. 도입할 때와 큰 Task를 계획하기 전에 쓴다.
 - `prokit-implementer`: 코디네이터가 지정한 파일만 구현한다.
 - `prokit-reviewer`: 읽기 전용 통합 리뷰. focus는 plan, code, security, db이고 실제 계약·evidence hash·통합 수용 여부를 JSON으로 응답한다.
-- `specialist-reviewer`: provider에 내장 리뷰가 없을 때만 전문 산출물을 읽기 전용으로 검토한다.
+- `specialist-reviewer`: provider에 내장 리뷰가 없을 때만 전문 산출물을 읽기 전용으로 검토한다. 고른 두뇌 파일(`references/brains/<이름>.md`)의 "에이전트" 절에 있는 에이전트는 읽기 전용 보완 검토로만 쓴다. 쓰는 쪽이 아니고 최종 게이트는 `prokit-reviewer`다.
 - Codex는 `spawn_agent`의 `agent_type`으로 부른다. `prokit-analyzer`·`prokit-reviewer`·`specialist-reviewer`는 `fork_turns: "none"`으로 띄워 메인 대화를 넘기지 않고(독립 분석·리뷰), 필요한 입력(초점, 기준 SHA, 파일 목록, evidence packet hash)은 메시지에 모두 넣는다.
 - 배포와 운영 DB 적용은 서브에이전트에 맡기지 않는다.
 - 스킬이나 플러그인이 없다고 나오면 `pnpm skills:check`로 확인해 보고한다. 설치는 사용자가 요청할 때 한다. 목록 정본은 `skills.manifest.json`이다. 외부 스킬 업데이트는 `prokit-skills-update`를 따른다.

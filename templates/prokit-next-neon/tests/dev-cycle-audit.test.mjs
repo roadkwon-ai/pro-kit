@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
-  audit, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, parseActive, renderBlock, status, writeTable,
+  audit, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, parseActive, renderBlock, status, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
 import { captureSnapshot } from "../files/scripts/delegation.mjs";
 import { auditRecord, critiqueRecord, makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
@@ -688,4 +688,61 @@ test("archive: 모르는 옵션과 제목 누락은 파일을 변경하지 않�
   assert.equal(run(root, "archive", "--typo").status, 2);
   assert.equal(run(root, "archive", "--title").status, 2);
   assert.equal(readFileSync(join(root, "tasks/todo.md"), "utf8"), text);
+});
+
+// 두뇌를 고른 프로젝트: 단계 행 증거는 고른 두뇌 파일의 이름, 추가 스킬, 사유가 있는 내장 중 하나다.
+function brainRepo(brain) {
+  const { root } = makeRepo();
+  const cfg = JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8"));
+  writeFileSync(join(root, ".dev-cycle.json"), JSON.stringify({ ...cfg, brain }));
+  mkdirSync(join(root, BRAINS_DIR), { recursive: true });
+  writeFileSync(join(root, BRAINS_DIR, "agent-skills.md"), "| 계획 | `agent-skills:planning-and-task-breakdown` | 위임은 `prokit-implementer`, 질문은 `grilling` |\n");
+  writeFileSync(join(root, BRAINS_DIR, "openspec.md"), "| 요구 | `/opsx:propose` |\n");
+  writeFileSync(join(root, "skills-lock.json"), JSON.stringify({ version: 1, skills: { tdd: {} } }));
+  return { root, config: loadConfig(root) };
+}
+const stageProblems = (root, config) => audit(root, config).problems.filter((p) => p.includes("두뇌("));
+
+test("두뇌를 고르면 단계 행 증거에 두뇌 방법·추가 스킬·사유 있는 내장을 요구하고, 두뇌가 없으면 보지 않는다", () => {
+  const { root, config } = brainRepo("agent-skills");
+  writeTable(root, config, "F", { write: true, title: "두뇌 증거" });
+  fill(root, "사용: 내장(계획)");
+  assert.ok(stageProblems(root, config).length >= 3, "사유 없는 내장은 단계 행마다 거부한다");
+  assert.equal(status(root, config).line.split("\n")[1], `두뇌: agent-skills → 단계 행은 ${BRAINS_DIR}/agent-skills.md의 방법으로 한다`);
+  const withEvidence = (value) => {
+    const r = brainRepo("agent-skills");
+    writeTable(r.root, r.config, "F", { write: true, title: "두뇌 증거" });
+    fill(r.root, value);
+    return stageProblems(r.root, r.config);
+  };
+  for (const ok of ["사용: agent-skills:planning-and-task-breakdown → docs/plans/a.md", "사용: `agent-skills:planning-and-task-breakdown`", "사용: tdd(추가 스킬)", "사용: 내장(계획): 두뇌가 이 단계를 맡지 않음", "N/A: 문서만 바꿈"])
+    assert.deepEqual(withEvidence(ok), [], ok);
+  for (const bad of ["사용: superpowers:writing-plans", "사용: research(추가 스킬)", "agent-skills planning-and-task-breakdown 방식", "사용: prokit-implementer", "사용: grilling", "사용: 내장: 단계 없이 사유만"])
+    assert.ok(withEvidence(bad).length > 0, bad);
+  const none = makeRepo();
+  const noneConfig = loadConfig(none.root);
+  writeTable(none.root, noneConfig, "F", { write: true, title: "두뇌 없음" });
+  fill(none.root, "사용: 내장(계획)");
+  assert.deepEqual(stageProblems(none.root, noneConfig), []);
+  assert.equal(status(none.root, noneConfig).line.split("\n")[1], "두뇌: 없음(기본 칸)");
+});
+
+test("두뇌가 여럿이면 고른 어느 두뇌 파일의 이름이든 받고, 파일이 없는 두뇌는 예외 대신 문제로 알린다", () => {
+  const { root, config } = brainRepo(["openspec", "agent-skills"]);
+  writeTable(root, config, "C", { write: true, title: "여러 두뇌" });
+  fill(root, "사용: /opsx:propose");
+  assert.deepEqual(stageProblems(root, config), []);
+  const odd = brainRepo("no-such-brain");
+  writeTable(odd.root, odd.config, "C", { write: true, title: "모르는 두뇌" });
+  fill(odd.root, "사용: x");
+  assert.ok(audit(odd.root, odd.config).problems.some((p) => p.includes("고른 두뇌의 파일이 없다")));
+});
+
+test("두뇌를 고른 H 라운드: 설치만 바꾼 구현 행의 N/A는 받고, table --write 출력에 두뇌 줄이 나온다", () => {
+  const { root, config } = brainRepo("agent-skills");
+  const out = run(root, "table", "H", "--write", "--title", "스킬 구성 변경");
+  assert.equal(out.status, 0, out.stderr);
+  assert.match(out.stdout, /두뇌: agent-skills → 단계 행은 .*agent-skills\.md의 방법으로 한다/);
+  fill(root, "N/A: 스킬 구성만 변경");
+  assert.deepEqual(stageProblems(root, config), []);
 });

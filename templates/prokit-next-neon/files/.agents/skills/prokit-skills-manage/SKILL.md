@@ -39,7 +39,7 @@ description: >-
 4. 2절의 명령을 실행하고 출력의 `정리:`, `남김:`, `제거:`, `경고:`, `실패:` 줄을 그대로 보여 준다. 출력을 `tail` 등으로 자르지 않는다(앞쪽에 경고가 있을 수 있다). 종료 코드는 파이프 없이 `<명령> 2>&1; echo "exit=$?"`로 본다(zsh에는 `PIPESTATUS`가 없어 빈 값이 나온다). exit 2면 출력을 보고하고 멈춘다.
 5. 두뇌를 바꾸거나 뺐으면 인계를 남긴다. 이전 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`, `docs/superpowers/` 등)와 진행 중인 계획·남은 일의 경로를 대조표 메모와 `tasks/todo.md`에 적는다. 새 두뇌는 그 문서를 읽고 이어 가며 인터뷰·계획을 처음부터 되풀이하지 않는다. 설치기는 이 문서들을 지우지 않는다.
 6. 확인: `pnpm skills:check` exit 0과 바뀐 줄, `pnpm agents:check`, `git status --short`. 바뀐 것이 스킬·플러그인 파일(`.agents/`, `.claude/`, `.codex/`, `skills-lock.json`, `.dev-cycle.json`)과 고른 두뇌가 만든 파일(`openspec/`, `.specify/`, `specs/`)뿐인지 본다. 앱 코드가 바뀌었으면 멈추고 보고한다.
-7. 행을 채운다. 증거는 `tasks/evidence/`의 한 줄 파일로 `pnpm dev-cycle evidence <행 번호> --file <파일>`로 채우고 표를 손으로 고치지 않는다. skill-creator eval 행은 `N/A: 외부 스킬 구성만 변경(prokit-* 변경 없음)`, 문서 영향 행은 바뀐 문서가 없으면 `N/A: 스킬 구성 변경`이다. `[confirm]` 행에서 바뀐 구성(전과 후), 남긴 문서, 전역에 설치한 도구를 보여 주고 확인받는다.
+7. 행을 채운다. 증거는 `tasks/evidence/`의 한 줄 파일로 `pnpm dev-cycle evidence <행 번호> --file <파일>`로 채우고 표를 손으로 고치지 않는다. 구현 행은 `N/A: 스킬 구성만 변경`, skill-creator eval 행은 `N/A: 외부 스킬 구성만 변경(prokit-* 변경 없음)`, 문서 영향 행은 바뀐 문서가 없으면 `N/A: 스킬 구성 변경`이다. `[confirm]` 행에서 바뀐 구성(전과 후), 남긴 문서, 전역에 설치한 도구를 보여 주고 확인받는다.
 8. `prokit-dev-cycle` 5절대로 닫고 커밋한다. 커밋 제목 예: `chore: 두뇌를 openspec으로 바꿈`. 앱 코드는 바뀌지 않았으므로 마무리 질문에서 배포는 필요 없다고 알린다.
 9. 새 세션을 열어야 바뀐 플러그인과 훅이 적용된다고 알린다.
 

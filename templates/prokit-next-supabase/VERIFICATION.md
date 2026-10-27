@@ -4,6 +4,19 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 두뇌 스킬 연결: 단계 행 증거 검사와 두뇌 에이전트 (2026-10-27)
+
+pro-kit-web 세션이 알려 온 결함이다. 두뇌를 `agent-skills`로 고른 뒤 연 라운드 여섯 개에서 두뇌의 스킬과 에이전트가 한 번도 불리지 않았다. 원인과 설계는 [두뇌 스킬 연결 보완 계획](../../docs/plans/2026-10-27-brain-wiring.md)에 있다.
+
+- `scripts/dev-cycle.mjs`: 두뇌를 고르면(`.dev-cycle.json`의 `brain`, 문자열이나 배열) 단계 행의 증거를 본다. 단계 행은 행 문구에 요구 명확화·계획·구현·디버깅 단계나 "고른 두뇌의 계획 방법"이 든 행이다. 증거는 셋 중 하나여야 한다: 고른 두뇌 파일에 백틱으로 적힌 이름(`사용: <이름>`), 설치한 추가 스킬(`사용: <스킬>(추가 스킬)`, `skills-lock.json`), 사유가 있는 내장(`사용: 내장(<단계>): <사유>`). `N/A`·`blocked`·`미실행`은 지금 규칙대로다. 두뇌 파일이 없으면 예외 대신 문제로 알린다. 이름만 보는 자기 신고이고 실제로 불렀는지는 보지 않는다.
+- `status`(진행 중인 라운드)와 `table --write` 출력에 `두뇌: <이름> → 단계 행은 <두뇌 파일>의 방법으로 한다`(없으면 `두뇌: 없음(기본 칸)`) 줄을 더했다.
+- `docs/dev-workflow.md`: B·D·E 구현 행에 "구현 단계"를 붙이고, H에 구현 행을 더했다(스킬 설치·업데이트만 한 H는 `N/A: 사유`).
+- 두뇌 파일 9개에 "에이전트" 절을 두었다. 두뇌가 주는 에이전트(agent-skills의 `agent-skills:security-auditor` 등)와 프롬프트 틀은 읽기 전용 보완 검토로만 쓰고, 최종 게이트는 `prokit-reviewer`다. `CLAUDE.md`·`AGENTS.md`(files, adopt), `prokit-implementer`(위임 지시의 두뇌 스킬을 먼저 읽는다), `process-routing.md`, `prokit-dev-cycle` SKILL.md, handbook 네 쪽을 맞췄다.
+- `evals/prokit-dev-cycle`에 시나리오 44(brain-stage-evidence)를 더했다. 아직 실행하지 않았다.
+- 리뷰: 계획 리뷰(prokit-reviewer plan, changes-required high 1·medium 4)와 구현 diff 리뷰(prokit-reviewer code, changes-required medium 2·low 7)를 모두 반영했다. 주요 반영: 두뇌 에이전트를 쓰는 쪽에서 빼 읽기 전용으로 둠, 허용 이름을 두뇌 파일 백틱 이름으로(하네스 이름 제외), Task 전용 구현 행 대신 행 문구에 단계 이름, oh-my `team` 예외와 공통 규칙 정리, provider 검증 언급.
+- 테스트: `tests/dev-cycle-audit.test.mjs`에 세 개를 더했다. (1) 두뇌 문자열: 사유 없는 내장 거부. 두뇌 파일 이름·백틱·추가 스킬·사유 있는 내장·N/A 통과. 다른 두뇌 이름·설치 안 한 추가 스킬·"방식" 문구·하네스 이름(`prokit-implementer`, 필수 `grilling`)·단계 없는 내장 거부. 두뇌 없음은 검사하지 않고 status에 두뇌 줄. (2) 두뇌 배열과 없는 두뇌 파일. (3) H 라운드 구현 행의 N/A와 `table --write`의 두뇌 줄. 두 템플릿 전체 테스트 각 370개 통과(skill-creator `quick_validate`는 pyyaml이 있는 python으로 돌렸다), handbook·공통 값·판 검사 80개 통과.
+- 한계: 새 Better-T-Stack 프로젝트에 설치해 실제 세션으로 F 라운드를 돌리지 않았다. 행동 확인은 pro-kit-web에 갱신을 반영한 뒤 T2(구글 로그인, F)에서 한다. 행 문구가 바뀌어 갱신 전에 연 라운드는 `--upgrade`가 필요하다.
+
 ## 줄 끝이 CRLF인 설치본 대조, 화면만 규칙 두 줄 (2026-10-24)
 
 pro-kit-web 세션이 알려 온 결함이다. impeccable 0.1.16의 `.gitattributes`가 `*.cmd text eol=crlf`라 설치본 `scripts/impeccable.cmd`가 CRLF로 쓰인다. git이 저장하는 blob은 LF로 정규화한 내용이라, 원본 바이트만 비교하던 `skills-setup.mjs`가 이 파일을 늘 바뀐 파일로 봤다. 그래서 `pnpm skills:update --check`가 impeccable을 매번 업데이트로 알리고, 설치한 뒤에는 "설치본이 검토한 판과 다르다"로 멈췄다.

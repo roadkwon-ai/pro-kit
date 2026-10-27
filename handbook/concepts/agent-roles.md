@@ -62,6 +62,8 @@ flowchart LR
 > [!IMPORTANT]
 > 대조표의 통합 리뷰 행(`prokit-reviewer(...)`)은 반드시 `prokit-reviewer`에게 맡겨요.
 
+두뇌가 주는 에이전트(예: `agent-skills:security-auditor`)는 위 표의 역할이 아니라 **읽기 전용 보완 검토**예요. 파일을 쓰지 않게 지시하고 부르기 전후의 작업 트리를 비교해서, 쓴 것이 있으면 결과를 버려요. 결과는 `prokit-reviewer`의 입력일 뿐 최종 리뷰를 대신하지 않아요. 어떤 두뇌가 어떤 에이전트를 주는지는 두뇌 파일의 "에이전트" 절과 [두뇌와 선택 스킬](../skills/brains.md)에 있어요. 구현을 맡길 때는 코디네이터가 그 단계의 두뇌 스킬 이름을 지시에 적고, `prokit-implementer`는 그 스킬을 먼저 읽어요.
+
 `prokit-implementer`는 기존 위임 이름을 유지하는 호환 어댑터예요. 전문 공급자에 자체 리뷰가 있으면 그 범위를 증거 패킷에 적고, `specialist-reviewer`를 다시 부르지 않아요. 전문 스킬의 리뷰 증거는 같은 출처·계약·환경일 때만 재사용하고, `prokit-reviewer`의 새 최종 게이트는 매 라운드 다시 받아요.
 
 `prokit-analyzer`는 기존 프로젝트를 도입할 때와 큰 일의 진행 계획을 세우기 전에 불러요. 리뷰어가 아니라 계획의 입력을 만드는 에이전트예요([정밀 분석과 진행 계획](project-plan.md), [기존 프로젝트에 도입하기](../start/adopt.md)). <!-- edition:pro -->

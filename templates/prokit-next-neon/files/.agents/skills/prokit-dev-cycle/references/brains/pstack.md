@@ -17,3 +17,8 @@ cursor/plugins의 pstack. React 코어팀 poteto가 쓰는 엄격한 엔지니�
 - `poteto-mode`의 Opening a PR, Babysit, Shipping, Autonomous run, Orchestrate, Autopilot, Worktree cleanup 플레이북은 쓰지 않는다. 커밋·push는 `prokit-dev-cycle` 5절이고, 라운드는 `[confirm]`에서 사용자 확인을 기다린다.
 - `arena`·`swarm`(같은 일을 여러 작업자에게 맡김)은 사용자가 요청할 때만 위임 프로토콜로 쓴다. 프로젝트에 스킬을 만드는 것(`create-verification-skill`, `automate-me`, `reflect`, `correct`)은 사용자가 요청할 때 H 라운드에서만 한다.
 - `setup-pstack`은 모델이 스스로 부를 수 있지만 실행하지 않는다. 전역 `~/.claude/rules/pstack-models.md`를 쓴다. 비Claude 모델 지정은 세션 모델로 바뀐다.
+
+## 에이전트
+- Claude Code 전용 두뇌다: `pstack:poteto-agent`, `pstack:comment-sicko`. Codex·Antigravity·Grok Build는 없다.
+- 읽기 전용 보완 검토나 메모로만 쓴다(`comment-sicko`는 주석 검토).
+- 쓰는 방법은 `process-routing.md`의 두뇌 에이전트 규칙을 따른다.

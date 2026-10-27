@@ -5,6 +5,7 @@
 ## 두뇌와 과설계 방지 스킬
 - 이 프로젝트의 두뇌(요구 정리, 계획, 구현 진행, 디버깅을 주도하는 스킬 묶음)는 `.dev-cycle.json`의 `brain`, 과설계 방지 스킬은 `simplicity`다. 과설계 방지 스킬은 하나만 쓴다. 두뇌는 하나(문자열)나 여럿(배열. 첫 값이 주 두뇌)이다. `none`이면 지금 세션의 에이전트가 아래 표의 기본 칸과 규칙 6으로 그 역할을 맡는다.
 - 두뇌를 골랐으면 [brains/](brains/)의 `<이름>.md`가 그 두뇌가 맡는 단계의 방법을 바꾼다. 두뇌가 여럿이면 단계마다 [brains/README.md](brains/README.md) "단계 표"에서 목록 순서로 그 단계를 맡는 첫 두뇌를 쓴다. 맡는 두뇌가 없는 단계는 설치된 추가 스킬, 없으면 기본 칸이다. 추가 스킬이 두뇌와 같은 단계를 맡으면 두뇌의 스킬을 먼저 쓴다. 카탈로그, 선택지 설명, 추천 기준, 바꾸는 법은 [brains/README.md](brains/README.md)다.
+- 두뇌 에이전트 규칙: 두뇌 파일의 "에이전트" 절에서 직접 부르는 에이전트는 읽기 전용 보완 검토나 메모로만 쓴다. 부르기 전에 [delegation.md](delegation.md)의 provider 검증을 거치고, 프롬프트에 "파일을 쓰지 않는다"를 넣고, 전후에 `pnpm dev-cycle delegation capture`·`diff`를 `--scope` 없이 한다. 도구 제한이 없는 에이전트는 diff로 쓰기가 없음을 확인한 경우만 결과를 받고, 쓴 것이 있으면 결과를 버리고 `blocked`로 남긴다. 결과는 `prokit-reviewer` 최종 게이트의 입력이지 대체가 아니다. 구현 프롬프트 틀(superpowers `implementer-prompt.md` 등)은 `prokit-implementer` 위임 지시에 넣는 입력이다. 구현은 `prokit-implementer`가 하고, oh-my의 `team` 예외는 그 두뇌 파일을 따른다. 이름은 접두어를 붙여 적는다(예: `agent-skills:security-auditor`).
 - 고르지 않은 두뇌와 과설계 방지 스킬은 쓰지 않는다. 전역 설치본이나 플러그인이 보이거나 세션 시작 훅이 그 스킬을 먼저 쓰라고 해도 같다. `pnpm skills:check`가 이 프로젝트에 남은 고르지 않은 설치본을 충돌로 알린다.
 - 용어, 도메인 규칙, 되돌리기 어려운 설계 결정은 두뇌와 상관없이 `grilling` 형식(묶음별 질문과 추천 답)으로 묻고 `domain-modeling` 형식으로 `GLOSSARY.md`·`docs/adr/`에 적는다. 사용자는 `/grill-with-docs`로 직접 시작할 수 있다.
 
@@ -12,14 +13,14 @@
 |---|---|---|
 | 요구 명확화 | 요청을 한 문장으로 다시 쓰고 결과를 바꾸는 모호함만 묻는다. Claude Code는 AskUserQuestion으로 한 번에 1~4개, 다른 도구는 대화로 묻는다. 묻는 형식은 `grilling`이다. 간결성 사다리(규칙 6)로 범위를 줄이고 새 용어는 `domain-modeling` 형식으로 바로 적는다 | `docs/specs/YYYY-MM-DD-<주제>.md`(목표, 만들지 않는 것, 인수 조건, 테스트 시나리오) |
 | 계획 | 파일별 단계, 위임 단위(파일이 겹치지 않게), 단계별 검사를 쓴다. 재사용·설정 결정은 [reuse-design.md](reuse-design.md)를 따른다. Claude Code는 plan mode를 쓸 수 있다. 필수 계획 리뷰는 `prokit-reviewer(plan)`이다 | `docs/plans/YYYY-MM-DD-<주제>.md` |
-| 구현 | 네이티브 서브에이전트 `prokit-implementer`에 대조표 행 단위로 위임한다. 테스트가 있으면 먼저 쓰고 실패를 확인한 뒤 구현한다. 검증한 수행자가 없으면 `blocked`로 남기고 Main이 직접 구현하지 않는다 | 위임 packet, snapshot diff |
+| 구현 | 네이티브 서브에이전트 `prokit-implementer`에 대조표 행 단위로 위임한다. 위임 지시에 그 단계의 두뇌 스킬(위 두뇌 파일의 구현 칸)을 적는다. 테스트가 있으면 먼저 쓰고 실패를 확인한 뒤 구현한다. 검증한 수행자가 없으면 `blocked`로 남기고 Main이 직접 구현하지 않는다 | 위임 packet, snapshot diff |
 | 디버깅 (C) | 재현(실패하는 테스트나 브라우저 재현) → 가설을 하나씩 확인 → 근본 원인 수정 → 회귀 테스트. 같은 가설로 세 번 실패하면 멈추고 보고한다 | 재현 테스트 이름, 원인 한 줄 |
 | 리뷰 | **`prokit-reviewer` 계약 게이트(필수)** + 규칙 6 역할 표의 구현 diff 보완 검토. provider 내장 review coverage를 재사용하고 빈 계약만 보완한다 | 리뷰 행 증거 |
 | QA | `ego-browser`로 스펙의 테스트 시나리오 전부 확인(F, 보고만. 발견은 다음 행에서 고치고 다시 확인한다. 절차는 `prokit-verify`의 `references/browser.md`). ego-browser가 없으면 `agent-browser`로 같은 흐름을 확인하고 대안으로 적는다 | 시나리오별 결과 |
 | 검증 | `prokit-verify` | 검사 결과 |
 | 마무리 | `prokit-dev-cycle` 5절(사용자 확인 → audit·close → 커밋·push<!-- edition:pro --> → 고르면 릴리스·production 배포<!-- /edition -->) | audit 출력 |
 
-설치된 mattpocock 추가 스킬은 해당 단계의 방법으로 쓴다(`pnpm skills:check`의 `mattpocock 추가` 줄). 요구 명확화는 `to-questionnaire`(결정권자가 따로 있을 때), 계획은 `codebase-design`·`prototype`·`research`, 구현은 `tdd`, 디버깅은 `diagnosing-bugs`, 리뷰 추가 관점은 `code-review`, F 공통화는 `improve-codebase-architecture`, 사람이 할 외부 설정은 `wizard`, H(규칙·스킬 수정)는 `writing-for-agents`, 마무리는 `pr`·`handoff`, 설명은 `teach`·`wait-what`이다. 사용자 호출 스킬(`/to-questionnaire` 등)은 에이전트가 대신 실행하지 않고 사용자에게 명령을 제안한다. 증거 칸에는 `사용: 내장(요구 명확화) → docs/specs/…`, `사용: tdd(추가 스킬) → …`처럼 적는다.
+설치된 mattpocock 추가 스킬은 해당 단계의 방법으로 쓴다(`pnpm skills:check`의 `mattpocock 추가` 줄). 요구 명확화는 `to-questionnaire`(결정권자가 따로 있을 때), 계획은 `codebase-design`·`prototype`·`research`, 구현은 `tdd`, 디버깅은 `diagnosing-bugs`, 리뷰 추가 관점은 `code-review`, F 공통화는 `improve-codebase-architecture`, 사람이 할 외부 설정은 `wizard`, H(규칙·스킬 수정)는 `writing-for-agents`, 마무리는 `pr`·`handoff`, 설명은 `teach`·`wait-what`이다. 사용자 호출 스킬(`/to-questionnaire` 등)은 에이전트가 대신 실행하지 않고 사용자에게 명령을 제안한다. 증거 칸에는 `사용: <두뇌 파일에 백틱으로 적힌 이름>`, `사용: <스킬>(추가 스킬)`, `사용: 내장(<단계>): <사유>` 중 하나로 적는다(예: `사용: tdd(추가 스킬) → …`, `사용: 내장(요구 명확화): 두뇌에 없는 단계 → docs/specs/…`). 두뇌를 골랐으면 내장은 사유가 필요하고, 두뇌가 `none`이면 `사용: 내장(<단계>)`로 충분하지만 사유를 적어도 좋다. audit은 단계 행(`요구 명확화 단계`·`계획 단계`·`구현 단계`·`디버깅 단계`·`고른 두뇌의 계획 방법`)의 증거에서 이름이 맞는지 본다. 실제로 불렀는지는 보지 않는 자기 신고다.
 
 ## 설치 위치
 - 프로젝트 scope(설치기와 `pnpm skills:setup`이 설치): skill-creator(Claude 플러그인, Codex는 `.agents/skills`), 공식 도메인 스킬, mattpocock `domain-modeling`·`grilling`·`grill-with-docs`. 두뇌와 과설계 방지 스킬은 고른 것만 설치한다(`pnpm skills:setup --brain <이름|none> --simplicity <이름|none>`). 추가 스킬은 `--matt <스킬>`, 응답 방식 i-have-adhd는 `--optional i-have-adhd`로 설치한다.
