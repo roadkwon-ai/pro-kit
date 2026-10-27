@@ -367,6 +367,12 @@ export function ensureGitignore(target, { dryRun = false, adopt = false } = {}) 
 // 다른 키와 훅은 그대로 두고 없을 때만 더한다. 반환: 더했으면 true, 이미 있으면 false, settings.json을 읽지 못하거나
 // 모양이 예상과 다르면(객체가 아님, hooks가 객체가 아님, SessionStart가 배열이 아님) null.
 const KEY_HOOK = 'node "$CLAUDE_PROJECT_DIR/scripts/load-keys.mjs"';
+// PostToolUse 훅: Skill 호출과 SKILL.md Read를 .prokit/skills-used.jsonl에 남긴다. audit이 단계 행 증거의 스킬 이름과 대조한다.
+const LOG_HOOK = 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" skill-log';
+const HOOKS = [
+  { event: "SessionStart", mark: "scripts/load-keys.mjs", entry: { hooks: [{ type: "command", command: KEY_HOOK }] } },
+  { event: "PostToolUse", mark: "dev-cycle.mjs\" skill-log", entry: { matcher: "Skill|Read", hooks: [{ type: "command", command: LOG_HOOK }] } },
+];
 const isObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
 export function ensureClaudeHook(target, { dryRun = false } = {}) {
   const p = join(target, ".claude/settings.json");
@@ -377,18 +383,23 @@ export function ensureClaudeHook(target, { dryRun = false } = {}) {
     return null;
   }
   if (!isObject(cur) || !(cur.hooks === undefined || isObject(cur.hooks))) return null;
-  if (!(cur.hooks?.SessionStart === undefined || Array.isArray(cur.hooks.SessionStart))) return null;
+  if (!HOOKS.every(({ event }) => cur.hooks?.[event] === undefined || Array.isArray(cur.hooks[event]))) return null;
   cur.hooks ??= {};
-  cur.hooks.SessionStart ??= [];
-  if (cur.hooks.SessionStart.some((g) => g.hooks?.some((h) => h.command?.includes("scripts/load-keys.mjs")))) return false;
-  cur.hooks.SessionStart.push({ hooks: [{ type: "command", command: KEY_HOOK }] });
+  let added = false;
+  for (const { event, mark, entry } of HOOKS) {
+    cur.hooks[event] ??= [];
+    if (cur.hooks[event].some((g) => g.hooks?.some((h) => h.command?.includes(mark)))) continue;
+    cur.hooks[event].push(entry);
+    added = true;
+  }
+  if (!added) return false;
   if (!dryRun) {
     mkdirSync(dirname(p), { recursive: true });
     writeFileSync(p, `${JSON.stringify(cur, null, 2)}\n`);
   }
   return true;
 }
-const HOOK_MANUAL = `.claude/settings.json을 읽지 못했다. hooks.SessionStart에 ${KEY_HOOK} 명령을 직접 더하세요`;
+const HOOK_MANUAL = `.claude/settings.json을 읽지 못했다. hooks.SessionStart에 ${KEY_HOOK}, hooks.PostToolUse(matcher "Skill|Read")에 ${LOG_HOOK} 명령을 직접 더하세요`;
 
 // git pre-commit 훅: 열린 dev-cycle 라운드나 닫은 라운드 기록 없이 코드·하네스를 커밋하지 못하게 한다(scripts/dev-cycle.mjs guard).
 // 어느 세션·도구가 커밋해도 돈다. 훅은 .git 안에 있어 이 사본에만 있고, 새로 clone한 사본은 release.mjs의 검사가 뒤를 받친다.
@@ -669,7 +680,7 @@ export function main(argv) {
       `turbo.json 추가 예정: ${turbo === "added" ? '"agentGuidance": false' : "없음"}`,
       ...(Array.isArray(eslint) ? [`ESLint 무시 추가 예정: ${eslint.join(", ") || "없음"}`] : []),
       ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
-      `.claude/settings.json 추가 예정: ${hook ? "SessionStart 훅(scripts/load-keys.mjs)" : "없음"}`,
+      `.claude/settings.json 추가 예정: ${hook ? "SessionStart 훅(scripts/load-keys.mjs), PostToolUse 훅(부른 스킬 기록)" : "없음"}`,
       ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
       ...gitHookLines(gitHook, true),
       ...(turbo === "manual" ? [`경고: ${TURBO_MANUAL}`] : []),
@@ -732,7 +743,7 @@ export function main(argv) {
     ...(turbo === "manual" ? [`경고: ${TURBO_MANUAL}`] : []),
     ...(Array.isArray(eslint) && eslint.length ? [`ESLint 무시 추가: ${eslint.join(", ")} (벤더 스킬과 하네스 스크립트는 프로젝트 lint에서 뺀다)`] : []),
     ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
-    ...(hook ? [".claude/settings.json: SessionStart 훅(scripts/load-keys.mjs) 추가 (.env의 이미지 키와 배포 토큰을 세션에 불러온다)"] : []),
+    ...(hook ? [".claude/settings.json: SessionStart 훅(scripts/load-keys.mjs: .env의 이미지 키와 배포 토큰을 세션에 불러온다)과 PostToolUse 훅(dev-cycle skill-log: 부른 스킬을 .prokit/skills-used.jsonl에 남겨 audit이 단계 행 증거와 대조한다) 중 없는 것을 더함"] : []),
     ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
     ...gitHookLines(gitHook, false),
     ...legacyWarning(target),

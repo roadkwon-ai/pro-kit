@@ -306,7 +306,15 @@ test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 �
   assert.deepEqual(cur.hooks.Stop, [other]);
   assert.equal(cur.hooks.SessionStart.length, 2);
   assert.deepEqual(cur.hooks.SessionStart[0], other);
-  for (const bad of ["{ broken", "null", "[]", '{"hooks":"x"}', '{"hooks":{"SessionStart":{}}}']) {
+  assert.deepEqual(cur.hooks.PostToolUse, [{ matcher: "Skill|Read", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" skill-log' }] }]);
+  // 키 훅만 있던 옛 설치본에는 스킬 기록 훅만 더한다
+  delete cur.hooks.PostToolUse;
+  writeFileSync(p, JSON.stringify(cur));
+  assert.equal(ensureClaudeHook(root), true);
+  const again = JSON.parse(readFileSync(p, "utf8"));
+  assert.equal(again.hooks.SessionStart.length, 2);
+  assert.equal(again.hooks.PostToolUse.length, 1);
+  for (const bad of ["{ broken", "null", "[]", '{"hooks":"x"}', '{"hooks":{"SessionStart":{}}}', '{"hooks":{"PostToolUse":{}}}']) {
     writeFileSync(p, bad);
     assert.equal(ensureClaudeHook(root), null, bad);
     assert.equal(readFileSync(p, "utf8"), bad);

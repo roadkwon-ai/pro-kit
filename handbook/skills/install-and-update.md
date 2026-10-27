@@ -94,7 +94,7 @@ flowchart TD
 pnpm skills:update --check     # 설치한 외부 스킬을 GitHub 원본과 비교해 새 버전만 알려 준다
 pnpm skills:update             # 바뀐 스킬과 빠진 스킬만 다시 설치한다
 pnpm skills:update <이름>...   # 지정한 스킬만 다시 설치한다
-pnpm skills:setup --drop <스킬|묶음>[,…]   # 추가 스킬이나 선택 묶음을 지운다
+pnpm skills:setup --drop <스킬|묶음>[,…]   # 추가 스킬이나 선택 묶음을 지운다(모두 지우기는 --drop all)
 ```
 
 > [!WARNING]

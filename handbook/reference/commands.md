@@ -71,7 +71,8 @@
 |---|---|
 | `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬, 플러그인, OMX 설정, agent-browser CLI를 설치해요. `--with-global`을 붙이면 나머지 전역 도구도 설치해요. 모르는 인자(오타 등)를 주면 설치하지 않고 exit 2로 멈추고, `--help`는 사용법만 보여 줘요 |
 | `pnpm skills:setup --brain <이름>[,…]` | 두뇌를 고르거나 바꿔요. 여러 개는 쉼표로 잇고 첫 번째가 주 두뇌예요. 고르지 않은 설치본은 정리해요(openspec·spec-kit의 도구 파일은 지우지만 `openspec/`, `specs/`, `.specify/memory/` 문서는 남겨요) |
-| `pnpm skills:setup --drop <스킬 또는 묶음>[,…]` | mattpocock 추가 스킬이나 선택 묶음을 지워요 |
+| `pnpm skills:setup --drop <스킬 또는 묶음>[,…]` | mattpocock 추가 스킬이나 선택 묶음을 지워요. `--drop all`은 설치한 것을 모두 지워요 |
+| `pnpm skills:setup --brain none --simplicity none --drop all` | 순수 AI로 돌아가요. `prokit-*`와 필수·공식 스킬만 남아요 |
 | `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`<!-- /v -->)을 설치해요. 여러 개는 쉼표로 이어요(`ops,motion`) |
 | `pnpm skills:check` | 설치하지 않고 상태만 확인해요. 프로젝트 범위 항목이 빠졌으면 exit 1이에요 |
 | `pnpm skills:update --check` | 설치한 외부 스킬을 GitHub 원본과 비교해 새 버전이 있는지만 알려 줘요 |

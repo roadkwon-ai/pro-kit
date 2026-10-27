@@ -803,6 +803,39 @@ test("--drop: 추가 스킬과 선택 묶음을 출처가 맞는 설치본만 �
   assert.match(exec(["--drop", "m-b", "--check"]).stderr, /--drop은 --check와 함께 쓰지 않는다/);
 });
 
+test("--check: 선언한 project 플러그인이 이 폴더에 설치 기록이 없으면(폴더 이동·복사, 다른 기기) 미등록으로 알린다", () => {
+  const { root, exec } = slotProject();
+  assert.equal(exec(["--brain", "sp"]).status, 0);
+  const home = mkdtempSync(join(tmpdir(), "cfg-"));
+  const reg = (entries) => {
+    mkdirSync(join(home, "plugins"), { recursive: true });
+    writeFileSync(join(home, "plugins/installed_plugins.json"), JSON.stringify({ version: 2, plugins: entries }));
+  };
+  const check = () => exec(["--check"], { CLAUDE_CONFIG_DIR: home });
+  reg({ "sp@mk": [{ scope: "project", projectPath: "/somewhere/else" }] });
+  let r = check();
+  assert.equal(r.status, 1, r.stdout);
+  assert.match(r.stdout, /Claude 플러그인 미등록: .*sp@mk/);
+  reg({ "sp@mk": [{ scope: "project", projectPath: root }], "p1@mk": [{ scope: "user" }], "p2@mk": [{ scope: "local", projectPath: root }] });
+  r = check();
+  assert.doesNotMatch(r.stdout, /미등록/);
+});
+
+test("--drop all: 설치한 추가 스킬과 선택 묶음을 한 번에 지워 순수 AI로 돌아가고, 없는 것은 알리지 않는다", () => {
+  const manifest = { ...MANIFEST, ...SLOTS, optional: { look: { description: "보조", skills: [{ agents: ["claude-code", "codex"], source: "org/look", skills: ["look-a"] }] } } };
+  const { root, exec } = setup({ manifest, devCycle: {} });
+  assert.equal(exec(["--brain", "sp", "--matt", "m-a", "--optional", "look"]).status, 0);
+  const r = exec(["--brain", "none", "--simplicity", "none", "--drop", "all"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /^제거: m-a\(스킬 m-a\), look\(스킬 look-a\)$/m);
+  assert.doesNotMatch(r.stdout, /제거할 것 없음/);
+  assert.match(r.stdout, /^세션: Claude Code는 \/reload-plugins/m);
+  assert.equal(existsSync(join(root, ".agents/skills/m-a")), false);
+  assert.equal(existsSync(join(root, ".agents/skills/look-a")), false);
+  assert.equal(exec(["--check"]).status, 0);
+  assert.equal(exec(["--optional", "look", "--drop", "all"]).status, 2, "더하면서 모두 지울 수 없다");
+});
+
 test("--matt: pool에서 고른 추가 스킬만 설치하고 상태 줄에 보이며, 모르는 스킬은 exit 2", () => {
   const { root, exec, calls } = slotProject();
   const r = exec(["--matt", "m-a"]);
@@ -950,7 +983,7 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
   // 지우는 경로는 이 목록 그대로다(그 도구가 만든 이름만). 넓히려면 실제 생성 파일을 확인하고 여기도 고친다.
   const REMOVE = {
     openspec: [".claude/skills/openspec-*", ".agents/skills/openspec-*", ".agents/skills/.openspec-target", ".claude/commands/opsx", ".agents/workflows/opsx-*.md"],
-    "spec-kit": [".claude/skills/speckit-*", ".agents/skills/speckit-*", ".specify/scripts", ".specify/templates", ".specify/workflows", ".specify/integrations", ".specify/integration.json", ".specify/init-options.json", ".specify/.gitignore"],
+    "spec-kit": [".claude/skills/speckit-*", ".agents/skills/speckit-*", ".specify/scripts", ".specify/templates", ".specify/workflows", ".specify/integrations", ".specify/integration.json", ".specify/init-options.json", ".specify/feature.json", ".specify/.gitignore"],
   };
   for (const n of ["openspec", "spec-kit"]) {
     const { init } = m.brains[n];

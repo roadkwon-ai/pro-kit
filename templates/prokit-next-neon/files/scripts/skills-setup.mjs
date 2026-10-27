@@ -13,6 +13,7 @@
 //   --matt         mattpocock 추가 스킬(manifest.mattpocock.pool)을 설치한다. 기록하지 않는다(설치본이 선택이다).
 //   --optional     기본으로 설치하지 않는 선택 스킬 묶음(manifest.optional)도 설치한다. --check와 쓰면 그 묶음도 검사한다.
 //   --drop         mattpocock 추가 스킬이나 선택 묶음을 지운다(--drop tdd,taste). skills-lock.json 출처가 맞는 설치본만 지운다.
+//                  --drop all은 설치한 추가 스킬과 선택 묶음을 모두 지운다(--brain none --simplicity none --drop all이면 순수 AI).
 //   이 기기 전역에 켜진 고르지 않은 플러그인과 gstack 개인 스킬은 .claude/settings.local.json으로 이 프로젝트에서만 끈다.
 // exit: 0 정상, 1 --check 누락이나 충돌, 2 설치 실패나 모르는 이름
 //
@@ -38,6 +39,7 @@ import {
 import { homedir } from "node:os";
 import { basename, dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadConfig, noteSkillsChange } from "./dev-cycle.mjs";
 
 const run = (cmd, args, opts = {}) =>
 	spawnSync(cmd, args, { encoding: "utf8", ...opts });
@@ -152,14 +154,19 @@ export function readChoices(argv, manifest) {
 			"--drop",
 			"drop",
 			(x) => pool.includes(x) || Object.hasOwn(optional, x),
-			`사용법: --drop <추가 스킬|선택 묶음>[,…]. 추가 스킬: ${pool.join(", ") || "없음"}. 묶음: ${Object.keys(optional).join(", ") || "없음"}. 필수 스킬과 공식 스킬은 지우지 않는다`,
+			`사용법: --drop <추가 스킬|선택 묶음>[,…] 또는 --drop all. 추가 스킬: ${pool.join(", ") || "없음"}. 묶음: ${Object.keys(optional).join(", ") || "없음"}. 필수 스킬과 공식 스킬은 지우지 않는다`,
 		],
 	]) {
 		const v = argValue(argv, flag);
 		if (v === undefined) continue;
-		const list = v.split(",").filter(Boolean);
+		// --drop all: 설치한 추가 스킬과 선택 묶음을 모두 지운다(--brain none --simplicity none과 함께 쓰면 순수 AI).
+		const all = key === "drop" && v === "all";
+		const list = all
+			? [...pool, ...Object.keys(optional)]
+			: v.split(",").filter(Boolean);
 		if (!list.length || !list.every(ok)) return { error: usage };
 		picked[key] = list;
+		if (all) picked.dropAll = true;
 	}
 	const both = picked.drop.filter(
 		(x) => picked.matt.includes(x) || picked.optional.includes(x),
@@ -407,6 +414,40 @@ export function missingSkills(root, entry) {
 // marketplaces 값은 settings의 source 객체 그대로다({source:"github",repo} 또는 {source:"git",url}).
 // on: 고른 두뇌·과설계 방지 스킬의 플러그인(false였어도 켠다). off: 정리한 플러그인(false로 남겨 user scope 설치도
 // 이 프로젝트에서 끈다). drop: 고르지 않은 후보만 쓰던 마켓플레이스 선언.
+// ~/.claude/plugins/installed_plugins.json에서 이 폴더(또는 user scope)에 설치 기록이 없는 플러그인. 파일이 없으면 보지 않는다.
+export function unregisteredPlugins(
+	root,
+	plugins,
+	configDir = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), ".claude"),
+) {
+	let installed;
+	try {
+		installed = readJson(
+			join(configDir, "plugins/installed_plugins.json"),
+			{},
+		).plugins;
+	} catch {
+		return [];
+	}
+	if (!installed) return [];
+	const here = realpathSync(root);
+	const same = (p) => {
+		try {
+			return realpathSync(p) === here;
+		} catch {
+			return false;
+		}
+	};
+	return plugins.filter(
+		(id) =>
+			![]
+				.concat(installed[id] ?? [])
+				.some(
+					(i) => i.scope === "user" || (i.projectPath && same(i.projectPath)),
+				),
+	);
+}
+
 export function mergeClaudeSettings(
 	root,
 	claude,
@@ -732,7 +773,7 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 			out.push(`제거: ${dropping.map(describe).join(", ")}`);
 			cleanup(root, manifest.skillsCli, dropping, failures, out);
 		}
-		if (absentDrop.length)
+		if (absentDrop.length && !picked.dropAll)
 			out.push(
 				`제거할 것 없음: ${absentDrop.join(", ")} (설치되지 않았거나 다른 출처)`,
 			);
@@ -860,7 +901,21 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		});
 		if (check && added.length)
 			missing.push(`.claude/settings.json: ${added.join(", ")}`);
-		let line = `Claude 플러그인(project): .claude/settings.json ${check ? (added.length ? `선언 누락 ${added.join(", ")}` : "선언 있음") : added.length ? `선언 추가 ${added.join(", ")}` : off.length ? "" : "선언 변화 없음"}${!check && off.length ? `${added.length ? ", " : ""}끔 ${off.join(", ")}` : ""}`;
+		// 선언만으로는 켜지지 않는다. Claude Code는 project scope 설치를 폴더 경로별로 기록하므로
+		// 폴더를 옮기거나 복사했거나 다른 기기에서 받으면 선언이 있어도 세션에 플러그인이 없다.
+		const unregistered = check
+			? unregisteredPlugins(
+					root,
+					[...claude.plugins, ...on].filter(
+						(p) => settings.enabledPlugins[p] !== false,
+					),
+				)
+			: [];
+		if (unregistered.length)
+			missing.push(
+				`Claude 플러그인 미등록: ${unregistered.join(", ")} (이 폴더에 설치 기록이 없어 세션에 켜지지 않는다 → pnpm skills:setup)`,
+			);
+		let line = `Claude 플러그인(project): .claude/settings.json ${check ? (added.length ? `선언 누락 ${added.join(", ")}` : "선언 있음") : added.length ? `선언 추가 ${added.join(", ")}` : off.length ? "" : "선언 변화 없음"}${!check && off.length ? `${added.length ? ", " : ""}끔 ${off.join(", ")}` : ""}${unregistered.length ? `, 이 폴더에 미등록 ${unregistered.join(", ")}` : ""}`;
 		if (!check) {
 			if (onPath("claude")) {
 				const bad = [];
@@ -1011,6 +1066,47 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		out.push(
 			`경고: ${warnings.join("; ")} 설치 실패 → 위 출력을 보고 직접 설치한다 (없어도 dev-cycle은 진행된다)`,
 		);
+	// 구성을 바꿨으면 지금 세션에 다시 불러오는 법을 알리고, 열린 라운드가 있으면 그 라운드에 적는다(라운드를 닫지 않고 이어 간다)
+	if (
+		!check &&
+		(record ||
+			picked.optional.length ||
+			picked.matt.length ||
+			picked.drop.length)
+	) {
+		out.push(
+			"세션: Claude Code는 /reload-plugins로 바뀐 플러그인·스킬·훅을 지금 세션에 불러온다(새 세션도 된다). 다시 불러오기 전에는 세션의 스킬 목록·훅 안내가 아니라 .dev-cycle.json과 pnpm skills:check를 따른다",
+		);
+		const todo = join(root, cfg.todoPath ?? "tasks/todo.md");
+		const label = (v) => [v ?? "none"].flat().join(",");
+		const changed =
+			label(picked.brain ?? cfg.brain) !== label(cfg.brain) ||
+			(picked.simplicity ?? cfg.simplicity ?? "none") !==
+				(cfg.simplicity ?? "none") ||
+			picked.optional.length ||
+			picked.matt.length ||
+			picked.drop.length;
+		// 실패한 설치는 라운드에 적지 않는다(구성이 반쯤 바뀐 채라 exit 2를 보고 다시 실행한다)
+		if (
+			changed &&
+			!failures.length &&
+			existsSync(todo) &&
+			readFileSync(todo, "utf8").includes("<!-- dev-cycle:start ")
+		)
+			try {
+				const before = { brain: cfg.brain, simplicity: cfg.simplicity };
+				const after = {
+					brain: picked.brain ?? cfg.brain,
+					simplicity: picked.simplicity ?? cfg.simplicity,
+				};
+				if (noteSkillsChange(root, loadConfig(root), { before, after }))
+					out.push(
+						"라운드: 열린 라운드에 스킬 구성 변경을 적었다 → 닫지 않고 이어 간다. 설치기가 바꾼 파일은 케이스 판정에서 빠지고, 남은 단계 행은 새 구성으로 한다",
+					);
+			} catch (e) {
+				out.push(`경고: 열린 라운드에 구성 변경을 적지 못했다: ${e.message}`);
+			}
+	}
 	if (failures.length) out.push(`실패: ${failures.join("; ")}`);
 	if (check && missing.length) out.push(`누락: ${missing.join("; ")}`);
 	console.log(out.join("\n"));

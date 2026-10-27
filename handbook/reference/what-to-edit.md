@@ -51,7 +51,7 @@ flowchart TD
 | `docs/adr/` | 되돌리기 어려운 설계 결정의 기록이에요. 결정을 바꿀 때 에이전트가 이유와 함께 남겨요 |
 | `docs/plans/`, `tasks/plan.md` | 진행 계획이에요. Task의 순서와 제목에는 지문(sig)이 있어서 손으로 고치면 검사가 알아채요([정밀 분석과 진행 계획](../concepts/project-plan.md)) | <!-- edition:pro -->
 | `tasks/todo.md`의 할 일과 백로그 | 에이전트에게 "할 일에 ○○ 더해줘"라고 시켜요. 아래 "건드리지 말 것"의 대조표 칸과 같은 파일에 있어서, 직접 고치다가 표를 깨기 쉬워요 |
-| `skills.manifest.json`, 스킬 구성 | 두뇌, 과설계 방지 스킬, 추가 스킬은 "두뇌 바꿔줘"처럼 요청해요. 에이전트가 H 라운드에서 `pnpm skills:setup`으로 바꿔요([두뇌와 선택 스킬](../skills/brains.md)) |
+| `skills.manifest.json`, 스킬 구성 | 두뇌, 과설계 방지 스킬, 추가 스킬은 "두뇌 바꿔줘"처럼 요청해요. 에이전트가 `pnpm skills:setup`으로 바꿔요(열린 라운드가 있으면 그 라운드에서, 없으면 H 라운드에서)([두뇌와 선택 스킬](../skills/brains.md)) |
 
 ## 건드리지 말 것
 

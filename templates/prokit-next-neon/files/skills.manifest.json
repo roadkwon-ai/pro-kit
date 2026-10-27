@@ -395,7 +395,7 @@
 					".claude/skills/speckit-specify/SKILL.md",
 					".agents/skills/speckit-specify/SKILL.md"
 				],
-				"remove": "rm -rf .claude/skills/speckit-* .agents/skills/speckit-* .specify/scripts .specify/templates .specify/workflows .specify/integrations .specify/integration.json .specify/init-options.json .specify/.gitignore",
+				"remove": "rm -rf .claude/skills/speckit-* .agents/skills/speckit-* .specify/scripts .specify/templates .specify/workflows .specify/integrations .specify/integration.json .specify/init-options.json .specify/feature.json .specify/.gitignore",
 				"keep": ["specs", ".specify/memory"]
 			}
 		},
@@ -470,7 +470,13 @@
 					"source": "DietrichGebert/ponytail"
 				},
 				"plugins": ["ponytail@ponytail"]
-			}
+			},
+			"userTraces": [
+				{
+					"path": ".codex/config.toml",
+					"contains": "[plugins.\"ponytail@ponytail\"]"
+				}
+			]
 		},
 		"caveman": {
 			"description": "작업별 간결 패턴(새 기능·버그·리팩터), 한 줄 리뷰, /caveman 응답 압축",

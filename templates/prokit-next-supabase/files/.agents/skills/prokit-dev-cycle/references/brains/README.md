@@ -17,11 +17,11 @@
 ## 바꾸는 법
 진행 중에 두뇌나 과설계 방지 스킬을 바꾸거나 더하거나 빼는 요청은 `prokit-skills-manage` 스킬이 받는다. 절차의 정본은 아래다.
 
-1. 열린 라운드가 있으면 먼저 닫는다. 라운드 중간에는 바꾸지 않는다.
-2. H 라운드를 열고 `pnpm skills:setup --brain <이름>[,<이름>]`(또는 `--brain none`)이나 `--simplicity <이름|none>`을 실행한다. `--brain`에는 남길 두뇌 전부를 준다. 더할 때는 지금 목록 뒤에 새 두뇌를 붙이고(지금이 `none`이면 새 두뇌만), 뺄 때는 남길 것만 준다. 그 항목에서 고르지 않은 설치본(스킬은 `skills-lock.json` 출처, 플러그인은 ID, OMX는 `.omx/setup-scope.json`, OpenSpec·Spec Kit은 그 도구가 만든 파일)을 지우고 고른 것을 설치한다. 기록값과 같은 값을 줘도 남은 설치본을 정리한다. 추가 스킬과 선택 묶음은 두뇌를 바꿔도 남는다. 지우려면 `--drop <스킬이나 묶음>`을 준다. 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`)도 지우지 않는다.
+1. 언제든 바꿀 수 있다. 열린 라운드가 없으면 H 라운드를 열고, 열린 라운드가 있으면 그 라운드에서 바로 바꾼다. 설치기가 대조표 마커에 바꾼 구성을 적고(`brains=…`, `skills=true`, 메모 한 줄), audit은 그 라운드에서 설치기가 바꾼 파일을 케이스 판정에서 빼며 바꾸기 전 두뇌 이름으로 채운 단계 행도 받는다. 남은 단계 행은 새 구성으로 한다.
+2. `pnpm skills:setup --brain <이름>[,<이름>]`(또는 `--brain none`)이나 `--simplicity <이름|none>`을 실행한다. `--brain`에는 남길 두뇌 전부를 준다. 더할 때는 지금 목록 뒤에 새 두뇌를 붙이고(지금이 `none`이면 새 두뇌만), 뺄 때는 남길 것만 준다. 그 항목에서 고르지 않은 설치본(스킬은 `skills-lock.json` 출처, 플러그인은 ID, OMX는 `.omx/setup-scope.json`, OpenSpec·Spec Kit은 그 도구가 만든 파일)을 지우고 고른 것을 설치한다. 기록값과 같은 값을 줘도 남은 설치본을 정리한다. 추가 스킬과 선택 묶음은 두뇌를 바꿔도 남는다. 지우려면 `--drop <스킬이나 묶음>`을 준다. 순수 AI(두뇌·과설계 방지·추가 스킬·선택 묶음 없이 `prokit-*`와 필수·공식 스킬만)로 돌아가려면 `--brain none --simplicity none --drop all` 한 번이면 된다. 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`)도 지우지 않는다.
 3. 이 기기 전역에 켜진 고르지 않은 플러그인과 gstack 개인 스킬은 `.claude/settings.local.json`으로 이 프로젝트에서만 끈다. 고른 것을 끄던 항목은 지운다. 전역 파일은 쓰지 않는다.
 4. 두뇌를 바꾸면 이전 두뇌가 만든 산출물(확정한 요구, 설계, 계획 경로, 남은 일)을 대조표 메모와 `tasks/todo.md`로 넘겨 새 두뇌가 인터뷰·계획을 처음부터 반복하지 않게 한다.
-5. `pnpm skills:check` exit 0, `pnpm agents:check`를 확인하고 새 세션을 연다.
+5. `pnpm skills:check` exit 0, `pnpm agents:check`를 확인한다. Claude Code는 `/reload-plugins`로 지금 세션에 바뀐 플러그인·스킬·훅을 불러온다(새 세션도 된다). 다시 불러오기 전에는 세션의 스킬 목록·훅 안내가 아니라 `.dev-cycle.json`과 `pnpm skills:check`를 따른다.
 
 ## 두뇌
 두뇌는 요구 정리, 계획, 구현 진행, 디버깅, 완료 확인의 순서와 방법을 스스로 주도한다. 하나를 추천한다. 여럿을 고를 수도 있다. 그때는 첫 두뇌가 주 두뇌이고, 단계마다 목록 순서에서 그 단계를 맡는 첫 두뇌를 쓴다(아래 "단계 표"). 진행 순서를 강제하는 두뇌(superpowers, gstack, oh-my. 세션 시작 훅이나 전역 지시를 쓴다)를 둘 이상 고르면 지시가 서로 덮어써서 설치기가 경고한다. 단계별 스킬 이름과 금지는 각 파일에 있다.

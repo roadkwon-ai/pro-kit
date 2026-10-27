@@ -18,6 +18,9 @@ mattpocock/skills를 두뇌로 쓴다. 따로 설치하는 플러그인이나 �
 | 설명 | `/teach`, `/wait-what` |
 
 - 설치하지 않은 스킬의 단계와 QA, 검증, 마무리 절차는 기본 칸이다.
+- `grilling`이 사실 확인 서브에이전트를 띄우라고 하면 메인이 직접 조사한다. Claude Code는 질문을 AskUserQuestion(한 번에 최대 4개)으로 묻고 `grilling`의 질문 묶음과 추천 답 형식을 쓴다.
+- `code-review`는 이슈 트래커 문서 없이 진행하고(`/setup-matt-pocock-skills`는 설치하지 않는다), 병렬 서브에이전트는 `prokit-reviewer` 규칙을 따른다.
+- `prototype`은 커밋·브랜치·`package.json` 스크립트 추가를 하지 않고 시안을 `tasks/evidence/`나 임시 폴더에 둔다. `/teach`는 저장소 밖 폴더에서 쓴다. `wizard`가 다루는 키는 `apps/web/.env.schema` 선언<!-- edition:pro -->과 Vercel 환경변수<!-- /edition --> 기준으로 맞추고 `gh secret set`은 사용자가 직접 실행한다.
 - 앞에 `/`를 붙인 사용자 호출 스킬은 에이전트가 대신 실행하지 않고 그 단계에서 명령을 제안한다.
 - 추가 스킬을 더하거나 빼는 일은 H 라운드에서 `pnpm skills:setup --matt <스킬>`로 한다. 다른 두뇌로 바꿔도 추가 스킬은 지우지 않는다.
 - 증거 칸에는 `사용: grilling → docs/specs/…`처럼 적는다. 설치하지 않은 단계는 `사용: 내장(계획): 사유`로 적는다.

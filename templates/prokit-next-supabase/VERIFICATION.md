@@ -4,6 +4,52 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 고른 스킬 실사용 검수와 자유로운 전환 (2026-10-27)
+
+두뇌 9개, 과설계 방지 3개, 화면 선택 묶음(taste, motion)을 실제로 설치한 프로젝트에서 dev-cycle이 그 스킬을 단계마다 부르는지 확인했다. 구성을 언제든 바꾸고 빼는 경로(순수 AI 포함)도 확인했다. 계획은 [고른 스킬 실사용 검수 계획](../../docs/plans/2026-10-27-selected-skills-eval.md)이고, 실행기는 저장소 `evals/selected-skills/`(`run.mjs`, `checks.mjs`, `switch.mjs`, 시드)다.
+
+- 환경: Better-T-Stack 최신(neon 생성 명령 그대로), 이 저장소 템플릿, eval 시드(todo, vitest, 빈 목록에서 NaN인 `completionRate`). `claude -p`(Sonnet 5.5)를 fixture 안에서 사용자·프로젝트·로컬 설정, 플러그인, 훅을 켠 채로 돌렸다. 격리는 기능 팩 저장소 eval과 같은 네 겹이다. 질문으로 멈추면 정해진 답으로 최대 4번 이어 갔다.
+- 설치 매트릭스: 12개 구성(두뇌 9 + none, taste, motion) 모두 `skills:setup`·`skills:check`·`agents:check` exit 0. 전환 매트릭스: none → superpowers+ponytail → agent-skills+caveman → taste 추가 → openspec+karpathy → taste 제거 → spec-kit+tdd → compound-engineering,mattpocock → oh-my → none+none(순수 AI) 9단계 모두 exit 0, 고르지 않은 설치본·플러그인 남음 0.
+- 정적 검수(독립 리뷰 둘): 두뇌 스킬 안의 커밋·브랜치·worktree·자동 수정·직접 구현·자율 진행 단계를 두뇌 파일이 일부만 막았다. 공통 규칙(라우팅 규칙 3)과 두뇌별 줄로 막았다. 그 밖에 oh-my 훅·쓰기 가능 에이전트, gstack 전역 훅·자동 수정, pstack 사용자 호출 전용 스킬, spec-kit·mattpocock 서브에이전트·커밋 지시, motion 연결 조건, caveman C 기준, karpathy·caveman 구현 읽기, Codex 전역 ponytail 흔적(경고)을 반영했다.
+
+찾아서 고친 결함:
+- 증거만 적고 실제로 부르지 않음(사용자가 처음 지적한 것): 단계 행 증거에 두뇌 스킬 이름을 적거나 `사용: 내장(…): <두뇌 스킬 이름> 방식`으로 적고 실제로는 부르지 않았다. 이제는 이렇게 막는다.
+  - 두뇌 파일 단계 표가 맡는 단계는 내장을 거부한다. 쓸 수 없으면 `blocked`로 적는다.
+  - 내장 사유에 두뇌 스킬 이름이 있으면 거부한다.
+  - `table --write`와 `status`가 단계 행마다 부를 스킬을 보여 준다.
+  - Claude Code PostToolUse 훅(`dev-cycle skill-log`, 설치기가 넣는다)이 Skill 호출과 `SKILL.md` Read를 `.prokit/skills-used.jsonl`에 남긴다. audit은 단계 행과 코드 리뷰 행의 과설계 방지 검토 이름을 이 라운드의 기록과 대조한다. 기록이 없는 도구(Codex 등)는 자기 신고 그대로다.
+- 과설계 방지 검토 누락: ponytail·caveman·karpathy를 골랐는데 코드 리뷰 행에 그 결과가 없었다. audit이 `ponytail-review:`·`caveman-review:`·karpathy 결과를 요구한다.
+- 라운드 중 전환: 열린 라운드에서 구성을 바꾸면 설치기 파일 때문에 케이스가 H로 올랐다(필수 행 누락·케이스 상향 7건). 바꾸기 전 두뇌로 채운 단계 행도 거부됐다.
+  - 이제 설치기가 마커에 `brains=…`, `skills=true`와 메모를 적는다.
+  - audit은 설치기가 다루는 이름만 케이스 판정에서 뺀다. 그 이름은 `skills-lock.json`·매니페스트의 스킬, 두뇌 도구가 만든 스킬, 매니페스트의 플러그인·마켓플레이스다. 손으로 만든 스킬·훅·`prokit-*`·모르는 플러그인은 그대로 하네스 변경으로 본다.
+  - 같은 라운드 재실험에서 문제는 7건에서 0건이 됐다.
+- 폴더를 옮긴 project 플러그인: Claude Code는 project scope 설치를 폴더 경로별로 기록한다. 설치기가 project scope로 등록한 마켓플레이스의 플러그인(agent-skills, pstack, compound-engineering)은 복사·이동한 폴더에서 켜지지 않았다. 그런데 `skills:check`는 "설치됨"이라고 했다. 이제 `--check`가 `installed_plugins.json`에서 이 폴더 기록이 없는 플러그인을 `Claude 플러그인 미등록`으로 알린다.
+- 그 밖에 고친 것:
+  - 순수 AI로 한 번에 돌아가는 `--drop all`을 더했다.
+  - 바꾼 뒤 `/reload-plugins` 안내를 넣고, 다시 불러오기 전에는 `.dev-cycle.json`을 따른다는 규칙을 더했다.
+  - 이름 표기(`agent-skills:x`·`x`·`/x`·`$x`)는 같게 보고, 다른 두뇌 접두어는 거부한다.
+  - 케이스 상향은 묻지 않고 바로 하게 했다.
+  - "진행해" 같은 지시를 `[confirm]` 확인으로 받지 않게 했다.
+
+행동 eval(실행마다 한 번이라 편차가 크다. 지금 판과 옛 판은 실행기를 고친 2회차, 최종 판은 S1·S3·S4가 3회차, S2가 4회차. 4회차 S2는 9개 중 4개가 만점이었다. 비용은 2~4회차 합 $77):
+
+| 시나리오 | 옛 판(v0.3.2) | 지금 판(9af280d1) | 최종 판 |
+|---|---|---|---|
+| S1 F 스펙·계획(두뇌 9 + none): 전체 | 89% | 91% | 97% |
+| S1 단계 행을 두뇌 스킬로 실제 진행 | 6/18 | 9/18 | 15/18 |
+| S2 C 버그 수정(두뇌 9): 단계 행 실제 진행 | - | 2/12 | 7/10 |
+| S2 과설계 방지 검토 | - | 4/9 | 6/9 |
+| S3 taste·S4 motion | - | 15/15 | 14/15 |
+
+- 남은 한계:
+  - S2에서 한 번(spec-kit) `prokit-dev-cycle` 없이 바로 고치고 끝냈다. 두뇌와 관계없는 진입 누락이라 백로그로 둔다(편집 전 라운드 확인 훅 후보).
+  - S2 리뷰·과설계 방지 검토는 케이스 상향 뒤에 붙는다. 상향을 묻고 멈춘 실행이 남았다(상향은 묻지 않고 하게 고친 뒤 4회차에서 줄었다).
+  - 한 번씩 돌린 결과다.
+  - Codex·Antigravity는 돌리지 않았다.
+  - 샌드박스에서 Turbopack 개발 서버가 FSEvent를 열지 못해 화면 확인과 스크린샷은 하지 않았다.
+  - 기록 훅은 그 훅을 설치한 뒤의 호출만 남긴다. 이미 설치한 프로젝트는 템플릿 갱신 반영(`install.sh --skip-skills`)으로 훅을 더한다.
+  - 같은 라운드 안의 외부 스킬 본문 수정(설치 기록에 있는 이름)은 케이스 판정에서 빠지고 리뷰 diff로만 보인다.
+
 ## 두뇌 스킬 연결: 단계 행 증거 검사와 두뇌 에이전트 (2026-10-27)
 
 pro-kit-web 세션이 알려 온 결함이다. 두뇌를 `agent-skills`로 고른 뒤 연 라운드 여섯 개에서 두뇌의 스킬과 에이전트가 한 번도 불리지 않았다. 원인과 설계는 [두뇌 스킬 연결 보완 계획](../../docs/plans/2026-10-27-brain-wiring.md)에 있다.
@@ -12,7 +58,7 @@ pro-kit-web 세션이 알려 온 결함이다. 두뇌를 `agent-skills`로 고�
 - `status`(진행 중인 라운드)와 `table --write` 출력에 `두뇌: <이름> → 단계 행은 <두뇌 파일>의 방법으로 한다`(없으면 `두뇌: 없음(기본 칸)`) 줄을 더했다.
 - `docs/dev-workflow.md`: B·D·E 구현 행에 "구현 단계"를 붙이고, H에 구현 행을 더했다(스킬 설치·업데이트만 한 H는 `N/A: 사유`).
 - 두뇌 파일 9개에 "에이전트" 절을 두었다. 두뇌가 주는 에이전트(agent-skills의 `agent-skills:security-auditor` 등)와 프롬프트 틀은 읽기 전용 보완 검토로만 쓰고, 최종 게이트는 `prokit-reviewer`다. `CLAUDE.md`·`AGENTS.md`(files, adopt), `prokit-implementer`(위임 지시의 두뇌 스킬을 먼저 읽는다), `process-routing.md`, `prokit-dev-cycle` SKILL.md, handbook 네 쪽을 맞췄다.
-- `evals/prokit-dev-cycle`에 시나리오 44(brain-stage-evidence)를 더했다. 아직 실행하지 않았다.
+- `evals/prokit-dev-cycle`에 시나리오 44(brain-stage-evidence)를 더했다. 같은 일을 두뇌 9개로 실제 세션에서 돌린 결과는 위 "고른 스킬 실사용 검수"에 있다.
 - 리뷰: 계획 리뷰(prokit-reviewer plan, changes-required high 1·medium 4)와 구현 diff 리뷰(prokit-reviewer code, changes-required medium 2·low 7)를 모두 반영했다. 주요 반영: 두뇌 에이전트를 쓰는 쪽에서 빼 읽기 전용으로 둠, 허용 이름을 두뇌 파일 백틱 이름으로(하네스 이름 제외), Task 전용 구현 행 대신 행 문구에 단계 이름, oh-my `team` 예외와 공통 규칙 정리, provider 검증 언급.
 - 테스트: `tests/dev-cycle-audit.test.mjs`에 세 개를 더했다. (1) 두뇌 문자열: 사유 없는 내장 거부. 두뇌 파일 이름·백틱·추가 스킬·사유 있는 내장·N/A 통과. 다른 두뇌 이름·설치 안 한 추가 스킬·"방식" 문구·하네스 이름(`prokit-implementer`, 필수 `grilling`)·단계 없는 내장 거부. 두뇌 없음은 검사하지 않고 status에 두뇌 줄. (2) 두뇌 배열과 없는 두뇌 파일. (3) H 라운드 구현 행의 N/A와 `table --write`의 두뇌 줄. 두 템플릿 전체 테스트 각 370개 통과(skill-creator `quick_validate`는 pyyaml이 있는 python으로 돌렸다), handbook·공통 값·판 검사 80개 통과.
 - 한계: 새 Better-T-Stack 프로젝트에 설치해 실제 세션으로 F 라운드를 돌리지 않았다. 행동 확인은 pro-kit-web에 갱신을 반영한 뒤 T2(구글 로그인, F)에서 한다. 행 문구가 바뀌어 갱신 전에 연 라운드는 `--upgrade`가 필요하다.

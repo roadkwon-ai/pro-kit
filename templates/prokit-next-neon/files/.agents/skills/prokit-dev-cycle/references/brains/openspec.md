@@ -18,6 +18,7 @@ Fission-AI/OpenSpec. 변경마다 제안(무엇을, 왜), 설계, 작업 목록�
 - 맡지 않는 단계(디버깅, 리뷰 추가 관점, QA, 검증)는 기본 칸이다. 용어·설계 질문은 `grilling`·`domain-modeling`이다.
 - `openspec-propose`는 계획 문서만 만들고 멈춘다. 같은 요청에서 구현으로 넘어가지 않는 규칙은 프로킷 순서(요구 → `prokit-reviewer(plan)` → 구현)와 맞는다. 대조표 증거에 `openspec/changes/<이름>/` 경로를 적는다.
 - 프로킷 스펙·계획 경로(`docs/specs/`, `docs/plans/`) 대신 `openspec/changes/<이름>/`을 써도 된다. 진행 계획(`tasks/plan.md`)의 Task 하나가 변경 하나가 되게 나누면 추적이 쉽다.
+- `openspec init --force`는 옛 OpenSpec 설치 흔적(전역 `~/.codex/prompts`의 옛 프롬프트, 지침 파일의 옛 표시)을 묻지 않고 정리한다. 전역 설정의 `delivery`가 `commands`면 스킬이 만들어지지 않아 `skills:check`가 빠짐으로 알린다. 그때는 전역 설정을 사용자가 직접 확인한다.
 - CLI는 기본으로 사용 통계(명령 이름과 판)를 보낸다. 끄려면 셸 설정에 `OPENSPEC_TELEMETRY=0`을 둔다. 설치기는 전역 설정을 바꾸지 않는다.
 - 다른 두뇌로 바꾸면 설치기가 생성 스킬·명령만 지우고 `openspec/`(스펙과 변경 기록)은 인계 자료로 남긴다.
 

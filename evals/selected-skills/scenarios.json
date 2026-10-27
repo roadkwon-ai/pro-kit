@@ -1,0 +1,49 @@
+{
+	"fixtures": {
+		"b-superpowers": ["--brain", "superpowers", "--simplicity", "ponytail"],
+		"b-agent-skills": ["--brain", "agent-skills", "--simplicity", "ponytail"],
+		"b-pstack": ["--brain", "pstack", "--simplicity", "caveman"],
+		"b-gstack": ["--brain", "gstack", "--simplicity", "karpathy"],
+		"b-oh-my": ["--brain", "oh-my", "--simplicity", "none"],
+		"b-mattpocock": ["--brain", "mattpocock", "--simplicity", "caveman", "--matt", "tdd,diagnosing-bugs,codebase-design"],
+		"b-openspec": ["--brain", "openspec", "--simplicity", "karpathy"],
+		"b-spec-kit": ["--brain", "spec-kit", "--simplicity", "ponytail"],
+		"b-compound": ["--brain", "compound-engineering", "--simplicity", "caveman"],
+		"b-none": ["--brain", "none", "--simplicity", "none"],
+		"u-taste": ["--brain", "none", "--simplicity", "ponytail", "--optional", "taste"],
+		"u-motion": ["--brain", "none", "--simplicity", "ponytail", "--optional", "motion"]
+	},
+	"reply": "추천한 대로 진행해 줘. 내가 고를 것은 네 추천안으로 정하고 더 묻지 마. 처음 요청한 범위까지 마치고 멈춰.",
+	"maxTurns": 4,
+	"budgetUsd": 4,
+	"scenarios": [
+		{
+			"id": 1,
+			"name": "f-spec-plan",
+			"fixtures": ["b-superpowers", "b-agent-skills", "b-pstack", "b-gstack", "b-oh-my", "b-mattpocock", "b-openspec", "b-spec-kit", "b-compound", "b-none"],
+			"prompt": "할 일에 우선순위(높음·보통·낮음)를 붙이는 기능을 만들고 싶어. F 라운드로 열고, 스펙 작성과 구현 계획 행까지만 진행한 뒤 멈춰 줘. 계획 리뷰 행과 그 뒤 행은 다음에 할게.",
+			"stop": { "rows": ["스펙 작성", "구현 계획"] }
+		},
+		{
+			"id": 2,
+			"name": "c-bugfix",
+			"fixtures": ["b-superpowers", "b-agent-skills", "b-pstack", "b-gstack", "b-oh-my", "b-mattpocock", "b-openspec", "b-spec-kit", "b-compound"],
+			"prompt": "할 일이 하나도 없는 사용자에게 완료율이 NaN으로 나와. packages/api/src/lib/completion.ts의 completionRate 버그를 고쳐 줘. 빈 목록이면 0이어야 해.",
+			"stop": { "confirm": true }
+		},
+		{
+			"id": 3,
+			"name": "b-taste-landing",
+			"fixtures": ["u-taste"],
+			"prompt": "첫 화면(apps/web/src/app/page.tsx)을 할 일 관리 서비스 소개 화면으로 새로 디자인해 줘. 화면 디자인 보조는 taste로 방향을 뽑아서 해 줘. 서비스 이름은 '오늘할일', 대상은 바쁜 직장인이야.",
+			"stop": { "confirm": true }
+		},
+		{
+			"id": 4,
+			"name": "b-motion-transition",
+			"fixtures": ["u-motion"],
+			"prompt": "첫 화면에서 로그인 화면(/login)으로 넘어갈 때 부드러운 화면 전환 애니메이션을 넣어 줘. 나머지 화면 모양은 그대로 둬.",
+			"stop": { "confirm": true }
+		}
+	]
+}

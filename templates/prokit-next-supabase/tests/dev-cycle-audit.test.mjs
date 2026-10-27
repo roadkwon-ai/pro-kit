@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, utimesSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
-  audit, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, parseActive, renderBlock, status, writeTable,
+  audit, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, noteSkillsChange, parseActive, renderBlock, status, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
 import { captureSnapshot } from "../files/scripts/delegation.mjs";
 import { auditRecord, critiqueRecord, makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
@@ -692,16 +692,17 @@ test("archive: 모르는 옵션과 제목 누락은 파일을 변경하지 않�
 
 // 두뇌를 고른 프로젝트: 단계 행 증거는 고른 두뇌 파일의 이름, 추가 스킬, 사유가 있는 내장 중 하나다.
 function brainRepo(brain) {
-  const { root } = makeRepo();
+  const repo = makeRepo();
+  const { root } = repo;
   const cfg = JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8"));
   writeFileSync(join(root, ".dev-cycle.json"), JSON.stringify({ ...cfg, brain }));
   mkdirSync(join(root, BRAINS_DIR), { recursive: true });
   writeFileSync(join(root, BRAINS_DIR, "agent-skills.md"), "| 계획 | `agent-skills:planning-and-task-breakdown` | 위임은 `prokit-implementer`, 질문은 `grilling` |\n");
   writeFileSync(join(root, BRAINS_DIR, "openspec.md"), "| 요구 | `/opsx:propose` |\n");
   writeFileSync(join(root, "skills-lock.json"), JSON.stringify({ version: 1, skills: { tdd: {} } }));
-  return { root, config: loadConfig(root) };
+  return { ...repo, config: loadConfig(root) };
 }
-const stageProblems = (root, config) => audit(root, config).problems.filter((p) => p.includes("두뇌("));
+const stageProblems = (root, config) => audit(root, config).problems.filter((p) => /두뇌\(|맡는다\(|내장 사유에/.test(p));
 
 test("두뇌를 고르면 단계 행 증거에 두뇌 방법·추가 스킬·사유 있는 내장을 요구하고, 두뇌가 없으면 보지 않는다", () => {
   const { root, config } = brainRepo("agent-skills");
@@ -715,9 +716,9 @@ test("두뇌를 고르면 단계 행 증거에 두뇌 방법·추가 스킬·사
     fill(r.root, value);
     return stageProblems(r.root, r.config);
   };
-  for (const ok of ["사용: agent-skills:planning-and-task-breakdown → docs/plans/a.md", "사용: `agent-skills:planning-and-task-breakdown`", "사용: tdd(추가 스킬)", "사용: 내장(계획): 두뇌가 이 단계를 맡지 않음", "N/A: 문서만 바꿈"])
+  for (const ok of ["사용: agent-skills:planning-and-task-breakdown → docs/plans/a.md", "사용: `agent-skills:planning-and-task-breakdown`", "사용: planning-and-task-breakdown", "사용: /planning-and-task-breakdown", "사용: tdd(추가 스킬)", "N/A: 문서만 바꿈"])
     assert.deepEqual(withEvidence(ok), [], ok);
-  for (const bad of ["사용: superpowers:writing-plans", "사용: research(추가 스킬)", "agent-skills planning-and-task-breakdown 방식", "사용: prokit-implementer", "사용: grilling", "사용: 내장: 단계 없이 사유만"])
+  for (const bad of ["사용: superpowers:writing-plans", "사용: superpowers:planning-and-task-breakdown", "사용: research(추가 스킬)", "agent-skills planning-and-task-breakdown 방식", "사용: prokit-implementer", "사용: grilling", "사용: 내장: 단계 없이 사유만", "사용: 내장(계획): 작은 변경이라 생략"])
     assert.ok(withEvidence(bad).length > 0, bad);
   const none = makeRepo();
   const noneConfig = loadConfig(none.root);
@@ -725,6 +726,72 @@ test("두뇌를 고르면 단계 행 증거에 두뇌 방법·추가 스킬·사
   fill(none.root, "사용: 내장(계획)");
   assert.deepEqual(stageProblems(none.root, noneConfig), []);
   assert.equal(status(none.root, noneConfig).line.split("\n")[1], "두뇌: 없음(기본 칸)");
+});
+
+test("두뇌가 맡는 단계는 내장으로 넘기지 못하고, 맡지 않는 단계의 내장은 사유에 두뇌 스킬 이름이 없을 때만 받는다. status와 table이 부를 스킬을 알려 준다", () => {
+  const { root, config } = brainRepo("agent-skills");
+  writeFileSync(join(root, BRAINS_DIR, "agent-skills.md"), "| 단계 | Claude Code |\n|---|---|\n| 계획 | `agent-skills:planning-and-task-breakdown`, 산출물 `docs/plans/x.md` |\n| 리뷰 | `agent-skills:code-review-and-quality` |\n");
+  const out = run(root, "table", "F", "--write", "--title", "단계 안내");
+  assert.equal(out.status, 0, out.stderr);
+  assert.match(out.stdout, /단계 행에서 먼저 부를 두뇌 스킬[^\n]*\n {2}#\d+: agent-skills:planning-and-task-breakdown \(agent-skills\)/);
+  assert.doesNotMatch(out.stdout, /docs\/plans\/x\.md \(/, "파일 경로는 스킬 이름이 아니다");
+  const md = readFileSync(join(root, "tasks/todo.md"), "utf8");
+  const rows = parseActive(md).rows;
+  const at = (re) => rows.findIndex((r) => re.test(r.text));
+  const spec = at(/요구 명확화 단계/);
+  const plan = at(/계획 단계/);
+  const set = (i, v) => {
+    mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    const r = run(root, "evidence", String(i + 1), "--file", "tasks/evidence/e.txt");
+    assert.equal(r.status, 0, r.stderr);
+  };
+  for (let i = 0; i < Math.max(spec, plan); i++) if (i !== spec && i !== plan) set(i, "pnpm check-types → exit 0");
+  set(spec, "사용: 내장(요구 명확화): 두뇌가 이 단계를 맡지 않음 → docs/specs/a.md");
+  assert.match(status(root, config).line, /이 행은 두뇌 agent-skills의 agent-skills:planning-and-task-breakdown를 먼저 불러서 한다/);
+  set(plan, "사용: 내장(계획): 작은 변경이라 직접 씀");
+  let p = stageProblems(root, config);
+  assert.equal(p.length, 1, p.join("\n"));
+  assert.match(p[0], /이 단계는 두뇌 agent-skills이 맡는다\(agent-skills:planning-and-task-breakdown\)/);
+  set(plan, "blocked: 플러그인이 이 세션에 없음");
+  set(spec, "사용: 내장(요구 명확화): code-review-and-quality 방식으로 정리");
+  p = stageProblems(root, config);
+  assert.equal(p.length, 1, p.join("\n"));
+  assert.match(p[0], /내장 사유에 두뇌 스킬 이름\(code-review-and-quality\)/);
+});
+
+test("부른 스킬 기록: skill-log 훅이 Skill 호출과 SKILL.md Read를 남기고, 기록이 있으면 audit이 단계 행·과설계 방지 리뷰 증거와 대조한다", () => {
+  const { root, write } = brainRepo("agent-skills");
+  const cfg = JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8"));
+  write(".dev-cycle.json", JSON.stringify({ ...cfg, simplicity: "ponytail" }));
+  const config = loadConfig(root);
+  writeTable(root, config, "D", { write: true, title: "기록 대조" });
+  const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
+  const impl = rows.findIndex((r) => /구현 단계/.test(r.text));
+  const review = rows.findIndex((r) => /^\[review\] prokit-reviewer\(code\)/.test(r.text));
+  const set = (i, v) => {
+    mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(i + 1), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  set(impl, "사용: agent-skills:planning-and-task-breakdown → 위임");
+  set(review, "prokit-reviewer(code): approve, max=low");
+  const mine = () => audit(root, config).problems.filter((p) => /기록이 없다|보완 검토 결과/.test(p));
+  // 기록 파일이 없으면(Codex 등) 단계 행은 자기 신고 그대로다. 리뷰 행은 과설계 방지 결과를 요구한다
+  assert.deepEqual(mine().map((p) => p.replace(/^#\d+ .*?: /, "")), ["고른 과설계 방지(ponytail)의 보완 검토 결과를 덧붙인다: ponytail-review: …"]);
+  const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: root, input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  assert.equal(hook({ tool_name: "Read", tool_input: { file_path: "/x/README.md" } }).status, 0);
+  assert.equal(hook({ tool_name: "Skill", tool_input: { skill: "prokit-dev-cycle" } }).status, 0);
+  assert.equal(spawnSync(process.execPath, [CLI, "skill-log"], { cwd: root, input: "깨진 입력", encoding: "utf8" }).status, 0, "훅은 세션을 막지 않는다");
+  set(review, "prokit-reviewer(code): approve, max=low; ponytail-review: 반영 1");
+  let p = mine();
+  assert.equal(p.length, 2, p.join("\n"));
+  assert.ok(p.some((x) => x.includes("agent-skills:planning-and-task-breakdown를 이 라운드에서 부른 기록이 없다")));
+  assert.ok(p.some((x) => x.includes("ponytail-review를 이 라운드에서 부른 기록이 없다")));
+  hook({ tool_name: "Read", tool_input: { file_path: "/home/u/.claude/plugins/cache/addy/agent-skills/0.6/skills/planning-and-task-breakdown/SKILL.md" } });
+  hook({ tool_name: "Skill", tool_input: { skill: "ponytail:ponytail-review" } });
+  assert.deepEqual(mine(), []);
+  assert.equal(readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").length, 3);
 });
 
 test("두뇌가 여럿이면 고른 어느 두뇌 파일의 이름이든 받고, 파일이 없는 두뇌는 예외 대신 문제로 알린다", () => {
@@ -736,6 +803,62 @@ test("두뇌가 여럿이면 고른 어느 두뇌 파일의 이름이든 받고,
   writeTable(odd.root, odd.config, "C", { write: true, title: "모르는 두뇌" });
   fill(odd.root, "사용: x");
   assert.ok(audit(odd.root, odd.config).problems.some((p) => p.includes("고른 두뇌의 파일이 없다")));
+});
+
+test("라운드 중 구성 전환: 마커에 적으면 설치기 파일은 케이스 판정에서 빠지고 전환 전 두뇌 이름도 받는다. 그 밖의 하네스 변경은 그대로 본다", () => {
+  const { root, write } = (() => {
+    const r = brainRepo("openspec");
+    r.write(".claude/settings.json", JSON.stringify({ hooks: { SessionStart: [] }, enabledPlugins: {} }));
+    r.write("skills.manifest.json", readFileSync(join(TEMPLATE_FILES, "skills.manifest.json"), "utf8"));
+    r.git("add", "-A");
+    r.git("commit", "-qm", "openspec");
+    return r;
+  })();
+  const todo = join(root, "tasks/todo.md");
+  writeTable(root, loadConfig(root), "D", { write: true, title: "라운드 중 전환" });
+  fill(root, "사용: /opsx:propose");
+  // 설치기가 하는 일: 기록, 새 두뇌 스킬·lock, 플러그인 켜기
+  const cfg = JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8"));
+  write(".dev-cycle.json", JSON.stringify({ ...cfg, brain: "agent-skills", simplicity: "caveman" }));
+  write(".agents/skills/spec-driven-development/SKILL.md", "---\nname: spec-driven-development\n---\n");
+  write(".claude/skills/spec-driven-development/SKILL.md", "---\nname: spec-driven-development\n---\n");
+  write("skills-lock.json", JSON.stringify({ version: 1, skills: { tdd: {}, "spec-driven-development": {} } }));
+  write(".claude/settings.json", JSON.stringify({ hooks: { SessionStart: [] }, enabledPlugins: { "agent-skills@addy-agent-skills": true } }));
+  const config = loadConfig(root);
+  const control = audit(root, config).problems;
+  assert.ok(control.some((p) => p.includes("케이스 상향")), "기록 없이 바꾸면 지금처럼 하네스 변경으로 본다");
+  assert.ok(control.some((p) => p.includes("두뇌(")), "기록 없이 바꾸면 전환 전 두뇌 이름을 거부한다");
+  assert.equal(noteSkillsChange(root, config, { before: { brain: "openspec", simplicity: "none" }, after: { brain: "agent-skills", simplicity: "caveman" } }), true);
+  const md = readFileSync(todo, "utf8");
+  assert.match(md, /<!-- dev-cycle:start [^>]*brains=openspec,agent-skills[^>]* skills=true/);
+  assert.match(md, /스킬 구성 변경\(\d{4}-\d{2}-\d{2}\): 두뇌 openspec → agent-skills, 과설계 방지 none → caveman/);
+  noteSkillsChange(root, config, { before: { brain: "openspec", simplicity: "none" }, after: { brain: "agent-skills", simplicity: "caveman" } });
+  assert.equal(readFileSync(todo, "utf8").match(/스킬 구성 변경\(/g).length, 1, "같은 변경은 한 번만 적는다");
+  const switchProblems = () => audit(root, config).problems.filter((p) => /케이스 상향|필수 행 누락|두뇌\(/.test(p));
+  assert.deepEqual(switchProblems(), []);
+  assert.match(status(root, config).line, /두뇌: agent-skills → /);
+  // 업그레이드해도 기록과 메모가 남는다
+  assert.equal(run(root, "table", "D", "--write", "--upgrade").status, 0);
+  assert.match(readFileSync(todo, "utf8"), /brains=openspec,agent-skills[^>]* skills=true/);
+  assert.match(readFileSync(todo, "utf8"), /스킬 구성 변경\(/);
+  assert.deepEqual(switchProblems(), []);
+  // 설치기 밖의 하네스 변경(훅, prokit-* 스킬)은 그대로 케이스 판정에 넣는다
+  write(".claude/settings.json", JSON.stringify({ hooks: { SessionStart: [{ x: 1 }] }, enabledPlugins: { "agent-skills@addy-agent-skills": true } }));
+  assert.ok(audit(root, config).problems.some((p) => p.includes("케이스 상향")), "훅 변경");
+  write(".claude/settings.json", JSON.stringify({ hooks: { SessionStart: [] }, enabledPlugins: { "agent-skills@addy-agent-skills": true } }));
+  write(".agents/skills/prokit-web/SKILL.md", "x\n");
+  assert.ok(audit(root, config).problems.some((p) => p.includes("케이스 상향")), "prokit-* 스킬 변경");
+  rmSync(join(root, ".agents/skills/prokit-web"), { recursive: true });
+  write(".claude/skills/my-own/SKILL.md", "x\n");
+  assert.ok(audit(root, config).problems.some((p) => p.includes("케이스 상향")), "설치 기록에 없는 손으로 만든 스킬");
+  rmSync(join(root, ".claude/skills/my-own"), { recursive: true });
+  write(".claude/settings.json", JSON.stringify({ hooks: { SessionStart: [] }, enabledPlugins: { "agent-skills@addy-agent-skills": true, "evil@somewhere": true } }));
+  assert.ok(audit(root, config).problems.some((p) => p.includes("케이스 상향")), "매니페스트에 없는 플러그인");
+  write(".claude/settings.json", JSON.stringify({ hooks: { SessionStart: [] }, enabledPlugins: { "agent-skills@addy-agent-skills": true } }));
+  assert.deepEqual(switchProblems(), []);
+  // 지금 두뇌가 none이면 전환 전 이름과 상관없이 단계 행을 보지 않는다. 열린 라운드가 없으면 기록하지 않는다
+  const none = makeRepo();
+  assert.equal(noteSkillsChange(none.root, loadConfig(none.root), { before: { brain: "none" }, after: { brain: "superpowers" } }), false);
 });
 
 test("두뇌를 고른 H 라운드: 설치만 바꾼 구현 행의 N/A는 받고, table --write 출력에 두뇌 줄이 나온다", () => {

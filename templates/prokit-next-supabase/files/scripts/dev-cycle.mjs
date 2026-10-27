@@ -4,6 +4,7 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import {
+	appendFileSync,
 	closeSync,
 	existsSync,
 	lstatSync,
@@ -286,7 +287,7 @@ const esc = (s) => String(s ?? "").replace(/\|/g, "\\|");
 
 export function renderBlock(meta, rows, extra = []) {
 	const lines = [
-		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened}${meta.task ? ` task=${meta.task}` : ""}${meta.notask ? " notask=true" : ""} -->`,
+		`<!-- dev-cycle:start case=${meta.case} base=${meta.base ?? "none"} auth=${Boolean(meta.auth)} opened=${meta.opened}${meta.task ? ` task=${meta.task}` : ""}${meta.notask ? " notask=true" : ""}${meta.brains ? ` brains=${meta.brains}` : ""}${meta.skills ? " skills=true" : ""} -->`,
 		`## 활성 라운드: ${meta.case} — ${meta.title}`,
 		"| # | 단계 | 증거 |",
 		"|---|---|---|",
@@ -552,9 +553,56 @@ const readJson = (p) => {
 	}
 };
 
-function brainProblem(root, config) {
-	const brains = brainsOf(config);
-	if (!brains.length) return () => null;
+// 단계 행이 맡는 단계를 고른 두뇌 파일의 단계 표(첫 칸)에서 찾고, 그 칸(Claude Code 열)의 스킬 이름을 돌려준다.
+// 두뇌가 여럿이면 목록 순서로 그 단계를 맡는 첫 두뇌다. 맡는 두뇌가 없으면 null(기본 칸).
+const STAGES = [
+	{ re: /요구 명확화 단계/, label: (l) => l.startsWith("요구") },
+	{ re: /계획 단계|고른 두뇌의 계획 방법/, label: (l) => l === "계획" },
+	{ re: /구현 단계/, label: (l) => l === "구현" },
+	{ re: /디버깅 단계/, label: (l) => l.startsWith("디버깅") },
+];
+export function brainStageSkills(root, brains, text) {
+	const stage = STAGES.find((s) => s.re.test(text));
+	if (!stage) return null;
+	for (const b of brains) {
+		const p = join(root, BRAINS_DIR, `${b}.md`);
+		if (!existsSync(p)) continue;
+		for (const line of readFileSync(p, "utf8").split("\n")) {
+			const cells = line.split("|").map((c) => c.trim());
+			if (cells.length < 4 || !stage.label(cells[1].replace(/\s*\(.*\)$/, "")))
+				continue;
+			// mattpocock은 설치한 스킬만 그 단계를 맡는다.
+			// 스킬·명령 이름만 본다(파일 경로, 하네스 이름, 사용자가 요청할 때만 켜는 실행 모드는 뺀다).
+			const names = [...cells[2].matchAll(/`([^`\s]+)`/g)]
+				.map((m) => m[1])
+				.filter((n) => /^[/$]?[a-z][a-z0-9-]*(:[a-z0-9-]+)?$/.test(n))
+				.filter(
+					(n) =>
+						!/^(prokit-|specialist-reviewer$|team$|ralph$|autopilot$|ultragoal$)/.test(
+							n,
+						) &&
+						(b === "mattpocock" ||
+							!/^(grilling|domain-modeling|grill-with-docs)$/.test(n)),
+				)
+				.filter(
+					(n) =>
+						b !== "mattpocock" ||
+						[".claude/skills", ".agents/skills"].some((d) =>
+							existsSync(join(root, d, n.replace(/^\//, ""))),
+						),
+				);
+			if (names.length) return { brain: b, names };
+		}
+	}
+	return null;
+}
+
+function brainProblem(root, config, active) {
+	const now = brainsOf(config);
+	if (!now.length) return () => null;
+	const brains = [
+		...new Set([...now, ...(active?.meta.brains?.split(",") ?? [])]),
+	].filter((b) => b !== "none");
 	const missing = brains.filter(
 		(b) => !existsSync(join(root, BRAINS_DIR, `${b}.md`)),
 	);
@@ -563,17 +611,31 @@ function brainProblem(root, config) {
 	const harness = brains.includes("mattpocock")
 		? /^(prokit-|specialist-reviewer$|blocked$|none$)/
 		: /^(prokit-|specialist-reviewer$|blocked$|none$|grilling$|domain-modeling$|grill-with-docs$)/;
-	const names = new Set(
-		brains
-			.filter((b) => !missing.includes(b))
-			.flatMap((b) => [
-				...readFileSync(join(root, BRAINS_DIR, `${b}.md`), "utf8").matchAll(
-					/`([^`\s]+)`/g,
-				),
-			])
-			.map((m) => m[1])
-			.filter((n) => !harness.test(n)),
-	);
+	// 표기만 다른 이름(`agent-skills:idea-refine`·`idea-refine`, `/speckit-plan`·`$speckit-plan`)은 같은 이름이다.
+	// 접두어가 있으면 그 두뇌 파일에 나온 접두어여야 한다(다른 두뇌의 같은 이름 스킬을 받지 않는다).
+	const bareName = (n) =>
+		n
+			.replace(/^[/$]+/, "")
+			.split(":")
+			.at(-1);
+	const prefixOf = (n) =>
+		n
+			.replace(/^[/$]+/, "")
+			.split(":")
+			.slice(0, -1)
+			.join(":");
+	const tokens = brains
+		.filter((b) => !missing.includes(b))
+		.flatMap((b) => [
+			...readFileSync(join(root, BRAINS_DIR, `${b}.md`), "utf8").matchAll(
+				/`([^`\s]+)`/g,
+			),
+		])
+		.map((m) => m[1]);
+	const names = new Set(tokens.map(bareName).filter((n) => !harness.test(n)));
+	const prefixes = new Set(tokens.map(prefixOf).filter(Boolean));
+	const brainName = (u) =>
+		names.has(bareName(u)) && (!prefixOf(u) || prefixes.has(prefixOf(u)));
 	// 추가 스킬은 이 프로젝트에 설치한(skills-lock.json) mattpocock 추가 스킬만 받는다.
 	const pool = readJson(join(root, "skills.manifest.json"))?.mattpocock?.pool;
 	const extras = new Set(
@@ -581,6 +643,7 @@ function brainProblem(root, config) {
 			(n) => !pool || pool.includes(n),
 		),
 	);
+	const logged = skillsLogged(root, active);
 	const how = `사용: <${BRAINS_DIR}/${brains[0]}.md에 백틱으로 적힌 이름>, 사용: <스킬>(추가 스킬), 사용: 내장(<단계>): <사유> 중 하나로 적는다`;
 	return (r) => {
 		if (!STAGE_RE.test(r.text)) return null;
@@ -594,24 +657,257 @@ function brainProblem(root, config) {
 		const extra = [
 			...value.matchAll(/사용:\s*`?([^\s,;`()]+)`?\s*\(추가 스킬\)/g),
 		].map((m) => m[1]);
-		if (
-			used.some((u) => names.has(u)) ||
-			extra.some((u) => extras.has(u)) ||
-			/사용:\s*내장\([^)]+\)\s*:\s*\S/.test(value)
-		)
-			return null;
-		return `두뇌(${brains.join(", ")})를 골랐으면 단계 행 증거에 그 방법을 ${how}`;
+		const hits = [
+			...used.filter(brainName),
+			...extra.filter((u) => extras.has(u)),
+		];
+		if (hits.length) {
+			const miss = logged && hits.filter((u) => !logged.has(bareName(u)));
+			return miss && miss.length === hits.length
+				? `증거의 ${hits.join(", ")}를 이 라운드에서 부른 기록이 없다(${SKILL_LOG}). ${LOG_HINT}`
+				: null;
+		}
+		const reason = value.match(/사용:\s*내장\([^)]+\)\s*:\s*(\S.*)/)?.[1];
+		if (reason === undefined)
+			return `두뇌(${brains.join(", ")})를 골랐으면 단계 행 증거에 그 방법을 ${how}`;
+		// 두뇌가 맡는 단계는 내장으로 넘기지 않는다. 그 스킬을 쓸 수 없으면 blocked다.
+		const cover = brainStageSkills(root, now, r.text);
+		if (cover)
+			return `이 단계는 두뇌 ${cover.brain}이 맡는다(${cover.names.join(", ")}). 작은 변경이어도 그 스킬을 불러(Claude Code는 Skill 도구, 다른 도구는 SKILL.md를 읽는다) 사용: <이름>으로 적고, 쓸 수 없으면 blocked: 사유로 적는다`;
+		// 두뇌 스킬의 방법을 쓰고 내장이라고 적지 않는다.
+		const named = [...names].filter(
+			(n) =>
+				/^[a-z][a-z0-9-]{3,}$/.test(n) &&
+				new RegExp(`(^|[^a-z0-9-])${n}([^a-z0-9-]|$)`).test(reason),
+		);
+		return named.length
+			? `내장 사유에 두뇌 스킬 이름(${named.join(", ")})이 있다. 그 방법을 썼으면 스킬을 불러 사용: <이름>으로 적는다`
+			: null;
+	};
+}
+
+// 열린 라운드 중의 스킬 구성 전환(pnpm skills:setup). 설치기가 마커에 brains(라운드 동안 고른 두뇌)와 skills=true를 적고
+// 메모 한 줄을 남긴다. 그 라운드의 케이스 판정은 설치기가 바꾼 파일을 빼고, 단계 행은 전환 전 두뇌 이름도 받는다.
+// 설치기가 다루는 것만 뺀다: skills-lock.json에 기록됐거나 skills.manifest.json에 있는 스킬 폴더, 두뇌 도구(init)가 만드는
+// 스킬(openspec-*, speckit-*), OMX가 만드는 .codex 파일. 이름이 없는 손으로 만든 스킬과 prokit-*는 그대로 하네스 변경이다.
+function installerNames(root) {
+	const m = readJson(join(root, "skills.manifest.json")) ?? {};
+	const groups = [
+		...(m.skills ?? []),
+		...Object.values(m.optional ?? {}).flatMap((o) => o.skills ?? []),
+		...[m.brains, m.simplicity].flatMap((c) =>
+			Object.values(c ?? {}).flatMap((i) => i.skills ?? []),
+		),
+	];
+	const skills = new Set([
+		...groups.flatMap((g) => g.skills ?? []),
+		...(m.mattpocock?.pool ?? []),
+		...Object.keys(readJson(join(root, "skills-lock.json"))?.skills ?? {}),
+	]);
+	const items = [
+		m,
+		...[m.brains, m.simplicity].flatMap((c) => Object.values(c ?? {})),
+	];
+	const plugins = new Set(items.flatMap((i) => i.claude?.plugins ?? []));
+	const markets = new Set(
+		items.flatMap((i) => Object.keys(i.claude?.marketplaces ?? {})),
+	);
+	// init 정리 명령의 `.claude/skills/openspec-*` 꼴에서 접두어를 뽑는다
+	const initPrefixes = Object.values(m.brains ?? {}).flatMap((b) =>
+		[
+			...(b.init?.remove ?? "").matchAll(/\.claude\/skills\/([a-z0-9-]+)-\*/g),
+		].map((x) => x[1]),
+	);
+	return {
+		skills,
+		plugins,
+		markets,
+		initPrefixes,
+		omx: Boolean(m.brains?.["oh-my"]?.omx),
+	};
+}
+function installerFile(root, base, file, names) {
+	const dir = file.match(
+		/^(?:\.agents|\.claude|\.codex)\/skills\/([^/]+)(?:\/|$)/,
+	)?.[1];
+	if (dir)
+		return (
+			!dir.startsWith("prokit-") &&
+			(names.skills.has(dir) ||
+				names.initPrefixes.some((x) => dir.startsWith(`${x}-`)))
+		);
+	if (file === "skills-lock.json") return true;
+	if (
+		/^\.codex\/(prompts\/|agents\/(?!prokit-|specialist-reviewer))/.test(file)
+	)
+		return names.omx;
+	const keys = {
+		".claude/settings.json": ["enabledPlugins", "extraKnownMarketplaces"],
+		".dev-cycle.json": ["brain", "simplicity"],
+	}[file];
+	if (!keys || !base) return false;
+	try {
+		const now = JSON.parse(readFileSync(join(root, file), "utf8"));
+		// `./`: 상위 저장소의 하위 폴더에서도 현재 폴더 기준 경로로 읽는다
+		const then = JSON.parse(git(root, ["show", `${base}:./${file}`]));
+		// 플러그인·마켓플레이스 키는 매니페스트에 있는 이름만 받는다(손으로 더한 마켓플레이스는 하네스 변경)
+		if (file === ".claude/settings.json") {
+			const ok = (k, set) =>
+				Object.keys(now[k] ?? {}).every(
+					(x) => set.has(x) || isDeepStrictEqual(now[k][x], then[k]?.[x]),
+				);
+			if (
+				!ok("enabledPlugins", names.plugins) ||
+				!ok("extraKnownMarketplaces", names.markets)
+			)
+				return false;
+		}
+		for (const k of keys) {
+			delete now[k];
+			delete then[k];
+		}
+		return isDeepStrictEqual(now, then);
+	} catch {
+		return false;
+	}
+}
+const roundFiles = (root, active) => {
+	const files = changedFiles(root, active?.meta.base ?? null);
+	if (active?.meta.skills !== "true") return files;
+	const names = installerNames(root);
+	return files.filter((f) => !installerFile(root, active.meta.base, f, names));
+};
+
+export function noteSkillsChange(root, config, { before, after }) {
+	const p = join(root, config.todoPath);
+	const md = existsSync(p) ? readFileSync(p, "utf8") : "";
+	const active = md && parseActive(md);
+	if (!active) return false;
+	const list = (v) => [v ?? "none"].flat().filter((b) => b && b !== "none");
+	const brains = [
+		...new Set([
+			...(active.meta.brains?.split(",") ?? list(before.brain)),
+			...list(after.brain),
+		]),
+	];
+	const label = (v) => [v ?? "none"].flat().join(",") || "none";
+	const change = [
+		label(before.brain) !== label(after.brain) &&
+			`두뇌 ${label(before.brain)} → ${label(after.brain)}`,
+		(before.simplicity ?? "none") !== (after.simplicity ?? "none") &&
+			`과설계 방지 ${before.simplicity ?? "none"} → ${after.simplicity ?? "none"}`,
+	].filter(Boolean);
+	const note = `스킬 구성 변경(${archiveDay(new Date())}): ${change.join(", ") || "추가 스킬·선택 묶음"}. 이 라운드의 남은 단계 행은 새 구성으로 한다(Claude Code는 /reload-plugins로 다시 불러온다)`;
+	const head = md
+		.slice(active.start)
+		.match(START_RE)[0]
+		.replace(/ (brains|skills)=\S+/g, "")
+		.replace(
+			" -->",
+			`${brains.length ? ` brains=${brains.join(",")}` : ""} skills=true -->`,
+		);
+	const block = md.slice(active.start, active.end).replace(START_RE, head);
+	const at = block.lastIndexOf(END_TAG);
+	if (block.includes(note)) {
+		writeFileSync(p, md.slice(0, active.start) + block + md.slice(active.end));
+		return true;
+	}
+	writeFileSync(
+		p,
+		md.slice(0, active.start) +
+			`${block.slice(0, at)}${note}\n${block.slice(at)}` +
+			md.slice(active.end),
+	);
+	return true;
+}
+
+// 부른 스킬 기록: Claude Code 훅이 Skill 호출과 SKILL.md Read를 .prokit/skills-used.jsonl에 남긴다(git이 무시하는 폴더).
+// 기록 파일이 있으면 audit이 단계 행·리뷰 행 증거의 스킬 이름을 이 라운드의 기록과 대조한다. 없으면(Codex 등) 자기 신고다.
+export const SKILL_LOG = ".prokit/skills-used.jsonl";
+export function logSkill(root, input) {
+	const e = JSON.parse(input);
+	const t = e.tool_input ?? {};
+	const name =
+		e.tool_name === "Skill"
+			? t.skill
+			: e.tool_name === "Read"
+				? String(t.file_path ?? "").match(/([^/\\]+)[/\\]SKILL\.md$/)?.[1]
+				: null;
+	if (!name) return;
+	mkdirSync(join(root, ".prokit"), { recursive: true });
+	appendFileSync(
+		join(root, SKILL_LOG),
+		`${JSON.stringify({ t: new Date().toISOString(), skill: String(name) })}\n`,
+	);
+}
+// 라운드를 연 날(KST) 이후 기록의 스킬 이름(접두어·`/` 없이). 기록 파일이 없으면 null.
+function skillsLogged(root, active) {
+	const p = join(root, SKILL_LOG);
+	if (!existsSync(p)) return null;
+	const since = Date.parse(
+		`${active?.meta.opened ?? "1970-01-01"}T00:00:00+09:00`,
+	);
+	const out = new Set();
+	for (const line of readFileSync(p, "utf8").split("\n")) {
+		try {
+			const e = JSON.parse(line);
+			if (Date.parse(e.t) >= since)
+				out.add(
+					String(e.skill)
+						.replace(/^[/$]+/, "")
+						.split(":")
+						.at(-1),
+				);
+		} catch {}
+	}
+	return out;
+}
+const LOG_HINT =
+	"Claude Code는 Skill 도구로 부르거나(사용자 호출 전용이면 그 SKILL.md를 Read로 읽는다) 다시 진행한 뒤 적는다. Bash cat으로 읽은 것은 기록되지 않는다";
+
+// 고른 과설계 방지 스킬의 구현 diff 보완 검토는 prokit-reviewer(code) 행 증거 뒤에 덧붙인다(process-routing 규칙 6).
+const SIMPLICITY_LABEL = {
+	ponytail: {
+		re: /ponytail-review\s*:/,
+		label: "ponytail-review: …",
+		skill: "ponytail-review",
+	},
+	caveman: {
+		re: /caveman-review\s*:/,
+		label: "caveman-review: …",
+		skill: "caveman-review",
+	},
+	karpathy: {
+		re: /karpathy/i,
+		label: "간결성(karpathy 기준, prokit-reviewer focus): …",
+	},
+};
+function simplicityProblem(root, config, active) {
+	const want = SIMPLICITY_LABEL[config.simplicity];
+	if (!want) return () => null;
+	const logged = skillsLogged(root, active);
+	return (r) => {
+		if (!/^\[review\] prokit-reviewer\(code\)/.test(r.text)) return null;
+		const value = bare(r.evidence);
+		if (!value || /^(blocked|미실행|n\/a)\s*:/i.test(value)) return null;
+		if (!want.re.test(value))
+			return `고른 과설계 방지(${config.simplicity})의 보완 검토 결과를 덧붙인다: ${want.label}`;
+		if (want.skill && logged && !logged.has(want.skill))
+			return `${want.skill}를 이 라운드에서 부른 기록이 없다(${SKILL_LOG}). ${LOG_HINT}`;
+		return null;
 	};
 }
 
 // audit과 status가 같은 판정을 쓴다. 진행 계획 라운드의 확인 행은 지문까지 본다.
 const roundRowProblem = (root, config, active) => {
 	const planRound = isPlanRound(active);
-	const brain = brainProblem(root, config);
+	const brain = brainProblem(root, config, active);
+	const simplicity = simplicityProblem(root, config, active);
 	return (r) =>
 		rowProblem(r) ??
 		uiRecordProblem(root, active.meta, r) ??
 		brain(r) ??
+		simplicity(r) ??
 		(planRound && isConfirm(r.text)
 			? planConfirmProblem(root, config, r.evidence)
 			: null);
@@ -822,7 +1118,10 @@ export function writeTable(
 			? `경고: 진행 계획에 끝나지 않은 Task가 있다(${pending.id} ${pending.state}). 이 라운드가 그 Task의 일이면 ${active ? "열린 라운드를 닫은 뒤 " : ""}--task ${pending.id}로 연다. 버그 수정·하네스 변경이면 그대로 진행한다`
 			: unplanned && `경고: ${unplanned}`;
 	const base = active ? active.meta.base : resolveBase(root, config);
-	const cls = classify(changedFiles(root, base), config);
+	const cls = classify(
+		active ? roundFiles(root, active) : changedFiles(root, base),
+		config,
+	);
 	const key = caseKey ?? cls.pathCase;
 	if (!CASES.includes(key))
 		throw new UsageError(
@@ -914,6 +1213,8 @@ export function writeTable(
 		title: title ?? active?.title ?? "제목 없음",
 		task: task ?? active?.meta.task,
 		notask: noTask || active?.meta.notask === "true",
+		brains: active?.meta.brains,
+		skills: active?.meta.skills === "true",
 	};
 	const block = renderBlock(meta, rows, upgrade ? extra : []);
 	if (write) {
@@ -1153,7 +1454,7 @@ export function audit(
 			);
 	});
 	const X = active.meta.case;
-	const cls = classify(changedFiles(root, active.meta.base), config);
+	const cls = classify(roundFiles(root, active), config);
 	if (!["C", "F"].includes(X) && ![X, "A"].includes(cls.pathCase)) {
 		problems.push(
 			`케이스 상향 필요: 현재 diff 판정은 ${cls.pathCase} → pnpm dev-cycle table ${cls.pathCase} --write --upgrade`,
@@ -1290,6 +1591,21 @@ const brainLine = (config) => {
 		: "두뇌: 없음(기본 칸)";
 };
 
+// table --write 출력: 단계 행마다 부를 두뇌 스킬
+function stageGuide(root, config) {
+	const brains = brainsOf(config);
+	const md = brains.length && readTodo(root, config);
+	const active = md && parseActive(md);
+	if (!active) return "";
+	const lines = active.rows
+		.map((r, i) => [i + 1, brainStageSkills(root, brains, r.text)])
+		.filter(([, c]) => c)
+		.map(([n, c]) => `  #${n}: ${c.names.join(", ")} (${c.brain})`);
+	return lines.length
+		? `\n단계 행에서 먼저 부를 두뇌 스킬(Claude Code는 Skill 도구, 다른 도구는 SKILL.md):\n${lines.join("\n")}`
+		: "";
+}
+
 export function status(root, config) {
 	const s = statusOfRound(root, config);
 	const extra = planLines(root, config, s.active ? { task: s.task } : null);
@@ -1309,7 +1625,8 @@ function statusOfRound(root, config) {
 	const problemOf = roundRowProblem(root, config, active);
 	const filled = active.rows.filter((r) => !problemOf(r)).length;
 	const next = active.rows.find(problemOf)?.text ?? null;
-	const line = `라운드 ${active.meta.case}${active.meta.task ? `(${active.meta.task})` : active.meta.notask === "true" ? "(--no-task)" : ""} "${active.title}" — ${filled}/${active.rows.length}칸 — 다음: ${next ?? "audit 후 close"}${next && isConfirm(next) && isPlanRound(active) ? ` — ${PLAN_CONFIRM_NOTE}` : ""}`;
+	const cover = next && brainStageSkills(root, brainsOf(config), next);
+	const line = `라운드 ${active.meta.case}${active.meta.task ? `(${active.meta.task})` : active.meta.notask === "true" ? "(--no-task)" : ""} "${active.title}" — ${filled}/${active.rows.length}칸 — 다음: ${next ?? "audit 후 close"}${next && isConfirm(next) && isPlanRound(active) ? ` — ${PLAN_CONFIRM_NOTE}` : ""}${cover ? ` — 이 행은 두뇌 ${cover.brain}의 ${cover.names.join(", ")}를 먼저 불러서 한다` : ""}`;
 	return {
 		active: true,
 		case: active.meta.case,
@@ -2621,6 +2938,13 @@ export function main(argv, root = process.cwd()) {
 			(titleAt < 0 || i !== titleAt + 1) &&
 			(taskAt < 0 || i !== taskAt + 1),
 	);
+	// Claude Code PostToolUse 훅(Skill|Read). 어떤 오류도 세션을 막지 않게 조용히 끝낸다.
+	if (cmd === "skill-log") {
+		try {
+			logSkill(process.env.CLAUDE_PROJECT_DIR || root, readFileSync(0, "utf8"));
+		} catch {}
+		return 0;
+	}
 	const config = loadConfig(root);
 	const print = (obj, text) =>
 		console.log(json ? JSON.stringify(obj, null, 2) : text);
@@ -2629,7 +2953,10 @@ export function main(argv, root = process.cwd()) {
 			const md = readTodo(root, config);
 			const active = md && parseActive(md);
 			const base = active ? active.meta.base : resolveBase(root, config);
-			const cls = classify(changedFiles(root, base), config);
+			const cls = classify(
+				active ? roundFiles(root, active) : changedFiles(root, base),
+				config,
+			);
 			const head = `${cls.pathCase}${cls.auth ? " (+auth: security 리뷰 행 추가)" : ""}${cls.harness && cls.pathCase !== "H" ? " (+H)" : ""} — base ${base ?? "none"}`;
 			const lines = cls.evidence.map(
 				(e) =>
@@ -2653,7 +2980,7 @@ export function main(argv, root = process.cwd()) {
 				noTask: rest.includes("--no-task"),
 			});
 			const text = rest.includes("--write")
-				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}`
+				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}${stageGuide(root, config)}`
 				: r.block;
 			print(r, r.warning ? `${text}\n${r.warning}` : text);
 			return 0;

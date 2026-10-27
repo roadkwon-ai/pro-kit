@@ -11,11 +11,12 @@ github/spec-kit. 헌법(프로젝트 원칙) → 스펙 → 명확화 → 계획
 |---|---|---|
 | 원칙(프로젝트당 1회) | `/speckit-constitution`으로 `.specify/memory/constitution.md`를 쓴다. `AGENTS.md`·`prokit-*` 규칙과 부딪히는 원칙은 넣지 않는다 | `speckit-constitution` |
 | 요구 명확화 | `/speckit-specify`로 `specs/<번호>-<이름>/spec.md`를 쓰고, 모호하면 `/speckit-clarify` | `speckit-specify`, `speckit-clarify` |
-| 계획 | `/speckit-plan`(`plan.md`, `research.md`, `data-model.md`), `/speckit-tasks`(`tasks.md`), 품질 점검 `/speckit-checklist`, 일관성 확인 `/speckit-analyze` | 같은 이름 |
+| 계획 | `/speckit-plan`(`plan.md`, `research.md`, `data-model.md`), `/speckit-tasks`(`tasks.md`), 품질 점검 `/speckit-checklist`, 일관성 확인 `/speckit-analyze` | `speckit-plan`, `speckit-tasks`, `speckit-checklist`, `speckit-analyze` |
 | 구현 | `/speckit-implement`로 `tasks.md`를 차례로 처리한다. 위임은 `prokit-implementer`로 하고 행마다 대조표 증거를 남긴다 | `speckit-implement`. Codex는 네이티브 `prokit-implementer` |
 | 남은 일 확인 | `/speckit-converge`가 코드와 스펙을 비교해 남은 일을 `tasks.md`에 더한다. 리뷰 행을 대신하지 않는다 | `speckit-converge` |
 
 - 맡지 않는 단계(디버깅, 리뷰 추가 관점, QA, 검증)는 기본 칸이다. 용어·설계 질문은 `grilling`·`domain-modeling`이다.
+- `/speckit-specify`는 질문을 3개로 줄이고 나머지를 가정으로 채운다. 가정 가운데 결과를 바꾸는 것은 `/speckit-clarify`나 `grilling`으로 확인한다. `/speckit-plan`이 연구 서브에이전트를 띄우려 하면 메인이 직접 조사한다. `/speckit-implement`가 `.gitignore` 등 범위 밖 파일을 고치려 하면 하지 않는다.
 - `/speckit-taskstoissues`는 쓰지 않는다. 작업을 GitHub 이슈로 게시하는데, 프로킷은 진행을 대조표와 `tasks/plan.md`에 둔다.
 - `git` 확장(기능 브랜치 자동 생성)은 설치하지 않는다. 브랜치와 커밋은 `prokit-dev-cycle` 5절을 따른다.
 - 프로킷 스펙·계획 경로 대신 `specs/<번호>-<이름>/`을 써도 된다. 대조표 증거에 그 경로를 적는다. 진행 계획의 Task 하나가 스펙 하나가 되게 나누면 추적이 쉽다.

@@ -16,7 +16,9 @@ obra/superpowers. 설계 합의, 계획, 테스트 먼저, 작업별 리뷰를 �
 - 세션 시작 훅이 "모든 일에 스킬을 먼저 쓰라"고 해도 `AGENTS.md`와 `prokit-dev-cycle`의 순서(대조표, 위임 검증, 리뷰 게이트)가 우선한다.
 - 스펙과 계획은 스킬 기본 경로(`docs/superpowers/specs/`, `docs/superpowers/plans/`)에 써도 되고, 대조표 증거에 경로를 적는다.
 - 구현 스킬이 끝에서 `finishing-a-development-branch`를 불러도 라운드 끝이 아니다(라우팅 규칙 4).
-- 태스크 리뷰 원장은 `subagent-driven-development`의 원장이다. 요약은 구현 방식 행에 적는다(규칙 6 리뷰).
+- 태스크 리뷰 원장은 `subagent-driven-development`의 원장이다. 요약은 구현 방식 행에 적는다(규칙 6 리뷰). 태스크 리뷰 패키지(`review-package`)와 원장은 커밋 범위(`BASE..HEAD`)를 전제하므로 규칙 6의 스냅샷 diff로 바꾸고, 원장에는 커밋 SHA 대신 스냅샷 이름을 적는다.
+- `writing-plans`·`executing-plans`가 끝에 묻는 실행 방식에서 Native(이 세션이 직접 구현)는 고르지 않는다. 구현은 `subagent-driven-development`로 `prokit-implementer`에 맡긴다.
+- 구현 틀과 계획의 Commit 단계, `brainstorming`의 스펙 커밋은 하지 않는다. 위임 지시에 "커밋하지 않는다"를 넣는다. `using-git-worktrees`로 worktree·브랜치를 만들지 않고 지금 작업 트리에서 진행한다(라우팅 규칙 3).
 - 같은 이름의 `test-driven-development`가 agent-skills에도 있다. 두뇌를 바꿀 때 설치기는 `skills-lock.json` 출처로 구분해 지운다.
 
 ## 에이전트
