@@ -874,6 +874,7 @@ test("편집 전 확인: 열린 라운드 없이 코드·하네스 파일을 Edi
   for (const ok of [join(root, "docs/notes.md"), join(root, "tasks/todo.md"), join(tmpdir(), "elsewhere/page.tsx")]) assert.equal(edit(ok).status, 0, ok);
   assert.equal(hook("깨진 입력").status, 0);
   assert.deepEqual(JSON.parse(hook('{"toolCall": 깨짐').stdout), { decision: "allow" }, "Antigravity는 깨진 입력에도 허용을 낸다");
+  assert.equal(hook({ tool_name: "Edit", tool_input: { file_path: join(root, "apps/web/src/app/page.tsx"), old_string: "toolCall", new_string: "x" } }).status, 2, "편집 글이 toolCall이어도 Claude 입력은 exit 2로 막는다");
   assert.equal(hook({ tool_name: "Edit", tool_input: {} }).status, 0);
   assert.equal(hook({ tool_name: "Edit", cwd: join(root, "apps/web"), tool_input: { file_path: "src/app/page.tsx" } }).status, 2, "상대 경로는 훅 입력의 cwd 기준");
   assert.equal(edit(join(root, "..hidden/page.tsx")).status, 0, "이름이 ..로 시작해도 프로젝트 안으로 본다(규칙 밖이라 A)");

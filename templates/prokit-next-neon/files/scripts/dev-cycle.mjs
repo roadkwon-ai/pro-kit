@@ -3064,7 +3064,8 @@ export function main(argv, root = process.cwd()) {
 			input = JSON.parse(raw);
 			why = editGuard(hookRoot, loadConfig(hookRoot), input);
 		} catch {}
-		if (input?.toolCall || raw.includes('"toolCall"')) {
+		// 문자열 검사는 깨진 입력에만 쓴다. 읽힌 Claude 입력의 편집 글에 "toolCall"이 있어도 Antigravity로 보지 않는다.
+		if (input ? input.toolCall : raw.includes('"toolCall"')) {
 			console.log(
 				JSON.stringify(
 					why ? { decision: "deny", reason: why } : { decision: "allow" },
