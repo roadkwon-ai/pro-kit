@@ -9,7 +9,8 @@ export function rowsOf(md) {
 	const block = md.match(/<!-- dev-cycle:start[\s\S]*?<!-- dev-cycle:end -->/)?.[0] ?? "";
 	return block
 		.split("\n")
-		.map((l) => l.match(/^\|\s*(\d+)\s*\|(.*)\|(.*)\|\s*$/))
+		// 칸 안의 \|는 구분자가 아니다
+		.map((l) => l.match(/^\|\s*(\d+)\s*\|((?:[^|\\]|\\.)*)\|((?:[^|\\]|\\.)*)\|\s*$/))
 		.filter(Boolean)
 		.map((m) => ({ n: Number(m[1]), text: m[2].trim(), evidence: m[3].trim() }));
 }
@@ -90,7 +91,7 @@ export function grade({ sc, meta, runDir }) {
 		} else {
 			for (const r of stage) {
 				const used = [...r.evidence.matchAll(/사용:\s*`?([^\s,;`()]+)`?/g)].map((m) => m[1]);
-				const brainUsed = used.filter((u) => names.has(u));
+				const brainUsed = used.filter((u) => names.has(u) || [...names].some((n) => base(n) === base(u)));
 				const extra = used.filter((u) => lock.includes(u) && /\(추가 스킬\)/.test(r.evidence));
 				const real = [...brainUsed, ...extra].filter((u) => calls.has(u) || calls.has(base(u)));
 				const builtin = /사용:\s*내장\([^)]+\)\s*:\s*\S/.test(r.evidence);
@@ -129,7 +130,8 @@ export function grade({ sc, meta, runDir }) {
 		add("fix", "빈 목록에서 0을 돌려주게 고쳤다", /length\s*===\s*0|!todos\.length|todos\.length\s*\?|length\s*==\s*0/.test(t), t.slice(0, 300));
 		const test = read(join(copy, "packages/api/src/lib/completion.test.ts"));
 		add("regression-test", "빈 목록 회귀 테스트를 더했다", /\[\]\)/.test(test) || /빈|empty/i.test(test), test.slice(0, 300));
-		add("audit-confirm-only", "audit에 [confirm] 말고 남은 문제가 없다", /confirm/.test(audit) && !rows.some((r) => !r.text.startsWith("[confirm]") && !r.evidence), audit.slice(0, 400));
+		const fails = audit.split("\n").filter((l) => l.includes("❌"));
+		add("audit-confirm-only", "audit에 [confirm] 말고 남은 문제가 없다", fails.length > 0 && fails.every((l) => l.includes("[confirm]")), audit.slice(0, 400));
 	}
 	if (sc.id === 3) {
 		add("taste-ref", "prokit-ui의 taste 안내를 읽었다", tools.some((t) => /prokit-ui\/references\/taste\.md/.test(String(t.input?.file_path ?? ""))), "references/taste.md");

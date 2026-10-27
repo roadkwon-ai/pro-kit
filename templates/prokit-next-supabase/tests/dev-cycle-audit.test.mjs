@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -264,6 +264,9 @@ test("[confirm] 행: N/A·PASS·blocked 같은 건너뛰기는 거부하고 실�
   assert.equal(confirmProblem(row(CONFIRM, "사용자가 /login 화면을 확인했다(2026-09-29)")), null);
   assert.equal(confirmProblem(row(CONFIRM, "NAS 백업 화면을 사용자가 확인(2026-09-29)")), null);
   assert.equal(confirmProblem(row(CONFIRM, "Passkey 로그인을 사용자가 써 보고 확인(2026-09-29)")), null);
+  for (const v of ["2026-10-27 사용자가 수정 결과 보고를 보고 추천대로 진행하라고 지시(빈 목록 0 확인)", "사용자: 진행해 줘(2026-10-27)", "사용자가 계속하라고 함"])
+    assert.match(confirmProblem(row(CONFIRM, v)) ?? "", /진행 지시/, v);
+  for (const v of ["사용자가 화면을 확인했고 추천대로 진행하라고 함(2026-10-27)", "사용자: 확인 없이 닫는다, 진행해(2026-10-27)"]) assert.equal(confirmProblem(row(CONFIRM, v)), null, v);
   assert.equal(confirmProblem(row("수동 행 [confirm] 문구가 중간에 있다", "N/A: x")), null);
   assert.equal(confirmProblem(row("[verify] 타입·린트 검사 → 명령과 결과", "N/A: 문서만 바뀜")), null);
   assert.equal(confirmProblem(row("문서 영향 확인 → 갱신 내역 또는 N/A: 사유", "N/A: 문서 영향 없음")), null);
@@ -792,6 +795,46 @@ test("부른 스킬 기록: skill-log 훅이 Skill 호출과 SKILL.md Read를 �
   hook({ tool_name: "Skill", tool_input: { skill: "ponytail:ponytail-review" } });
   assert.deepEqual(mine(), []);
   assert.equal(readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").length, 3);
+});
+
+test("편집 전 확인: 열린 라운드 없이 코드·하네스 파일을 Edit·Write로 고치면 edit-guard 훅이 exit 2로 막고, 문서·프로젝트 밖·깨진 입력은 막지 않는다", () => {
+  const { root } = makeRepo();
+  const hook = (input) => spawnSync(process.execPath, [CLI, "edit-guard"], { cwd: tmpdir(), input: typeof input === "string" ? input : JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const edit = (file, tool = "Edit") => hook({ tool_name: tool, tool_input: tool === "NotebookEdit" ? { notebook_path: file } : { file_path: file } });
+  let r = edit(join(root, "apps/web/src/app/page.tsx"));
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /열린 라운드 없이 apps\/web\/src\/app\/page\.tsx\(케이스 B 경로\)/);
+  assert.equal(edit("packages/api/src/routers/index.ts", "Write").status, 2, "상대 경로도 프로젝트 기준으로 본다");
+  assert.equal(edit(join(root, ".agents/skills/x/SKILL.md"), "MultiEdit").status, 2, "하네스(H)도 라운드가 필요하다");
+  for (const ok of [join(root, "docs/notes.md"), join(root, "tasks/todo.md"), join(tmpdir(), "elsewhere/page.tsx")]) assert.equal(edit(ok).status, 0, ok);
+  assert.equal(hook("깨진 입력").status, 0);
+  assert.equal(hook({ tool_name: "Edit", tool_input: {} }).status, 0);
+  assert.equal(hook({ tool_name: "Edit", cwd: join(root, "apps/web"), tool_input: { file_path: "src/app/page.tsx" } }).status, 2, "상대 경로는 훅 입력의 cwd 기준");
+  assert.equal(edit(join(root, "..hidden/page.tsx")).status, 0, "이름이 ..로 시작해도 프로젝트 안으로 본다(규칙 밖이라 A)");
+  // 프로젝트를 심볼릭 링크로 열었고 아직 없는 폴더에 새 파일을 쓸 때
+  const link = `${root}-link`;
+  symlinkSync(root, link);
+  const viaLink = (projectDir, file) => spawnSync(process.execPath, [CLI, "edit-guard"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Write", tool_input: { file_path: file } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir } }).status;
+  assert.equal(viaLink(root, join(link, "apps/web/src/app/new/page.tsx")), 2);
+  assert.equal(viaLink(link, join(root, "apps/web/src/app/new/page.tsx")), 2);
+  writeTable(root, loadConfig(root), "B", { write: true, title: "화면" });
+  assert.equal(edit(join(root, "apps/web/src/app/page.tsx")).status, 0, "열린 라운드가 있으면 통과");
+});
+
+test("evidence: 행을 채울 때 케이스 상향·빠진 필수 행·그 행의 audit 거부를 바로 알린다", () => {
+  const { root, write } = makeRepo();
+  writeTable(root, loadConfig(root), "A", { write: true, title: "가벼운 케이스로 연 버그 수정" });
+  write("packages/api/src/lib/x.ts", "export const x = 1;\n");
+  write("tasks/evidence/1.txt", "biome check 통과\n");
+  let r = run(root, "evidence", "1", "--file", "tasks/evidence/1.txt");
+  assert.equal(r.status, 0);
+  assert.match(r.stdout, /먼저 할 일: 케이스 상향 필요: 현재 diff 판정은 D → pnpm dev-cycle table D --write --upgrade/);
+  assert.equal(run(root, "table", "D", "--write", "--upgrade").status, 0);
+  // 상향하면 1행은 설계 행이 된다. 방금 채운 행을 audit이 거부하면 그 행만 알린다
+  r = run(root, "evidence", "1", "--file", "tasks/evidence/1.txt");
+  assert.doesNotMatch(r.stdout, /케이스 상향|필수 행 누락/);
+  assert.match(r.stdout, /먼저 할 일: #1 \[design\]/);
+  assert.equal(r.stdout.match(/먼저 할 일/g).length, 1, r.stdout);
 });
 
 test("두뇌가 여럿이면 고른 어느 두뇌 파일의 이름이든 받고, 파일이 없는 두뇌는 예외 대신 문제로 알린다", () => {

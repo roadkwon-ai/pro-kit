@@ -195,9 +195,9 @@ async function behavior(iter) {
 			if (r.stop || !session || reached(copy, sc.stop) || r.result?.subtype === "error_max_budget_usd") break;
 		}
 		spawnSync("pkill", ["-f", copy]);
-		await serial(() => { for (const id of plugins) sh(copy, "claude", ["plugin", "uninstall", id, "--scope", "project"]); });
 		const events = turns.flatMap((r) => r.events);
 		const tools = events.flatMap((e) => (e.type === "assistant" ? (e.message?.content ?? []) : []).filter((c) => c.type === "tool_use").map((c) => ({ name: c.name, input: c.input })));
+		// audit·diff는 등록을 지우기 전에 남긴다. 해제가 .claude/settings.json의 enabledPlugins를 바꾼다
 		const audit = sh(copy, "node", ["scripts/dev-cycle.mjs", "audit"]);
 		mkdirSync(join(runDir, "outputs"), { recursive: true });
 		writeFileSync(join(runDir, "outputs", "response.md"), turns.map((r, i) => `## 턴 ${i + 1}\n\n${r.result?.result ?? "(응답 없음)"}`).join("\n\n"));
@@ -206,6 +206,7 @@ async function behavior(iter) {
 		writeFileSync(join(runDir, "outputs", "audit.txt"), `exit ${audit.status}\n${audit.stdout}${audit.stderr}`);
 		git(copy, "add", "-A", "-N");
 		writeFileSync(join(runDir, "outputs", "changes.diff"), git(copy, "diff", baseSha, "--", ".", ":!.omc", ":!.omx", ":!node_modules") || "(바뀐 파일 없음)\n");
+		await serial(() => { for (const id of plugins) sh(copy, "claude", ["plugin", "uninstall", id, "--scope", "project"]); });
 		writeFileSync(join(runDir, "transcript.jsonl"), events.map((e) => JSON.stringify(e)).join("\n"));
 		writeFileSync(join(runDir, "transcript.md"), [`## Eval Prompt\n\n${sc.prompt}\n\n## Tool calls\n`, ...tools.map((x) => `- ${x.name}: ${JSON.stringify(x.input).slice(0, 400)}`), "\n## Final response\n", turns.at(-1)?.result?.result ?? "(없음)"].join("\n"));
 		const cost = turns.reduce((s, r) => s + (r.result?.total_cost_usd ?? 0), 0);

@@ -20,7 +20,15 @@ import {
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, relative, resolve, sep } from "node:path";
+import {
+	basename,
+	dirname,
+	isAbsolute,
+	join,
+	relative,
+	resolve,
+	sep,
+} from "node:path";
 import { fileURLToPath } from "node:url";
 import { isDeepStrictEqual } from "node:util";
 
@@ -1393,11 +1401,19 @@ export function evidenceProblem(e) {
 const SKIP_RE =
 	/^(?:(?:n\s*\/?\s*a|pass|blocked|todo|tbd|pending)(?![a-z])|skip|미실행|생략|해당\s*없|대기)|대기(?:\s*중)?$/i;
 
+// "진행해", "추천대로 해" 같은 진행 지시만 적은 확인. 결과를 봤다는 말이나 확인 없이 닫자는 말이 같이 있으면 받는다
+const GO_ONLY_RE =
+	/추천(?:한)?\s*대로|진행(?:하라|해\s*줘|해라|하자)|계속(?:하라|해\s*줘|해라)/;
+const SEEN_RE = /확인\s*없이|확인했|확인함|써\s*보고|써\s*봤|봤다|봤음/;
+
 export function confirmProblem(row) {
 	if (!/^\[confirm\]/i.test(row.text)) return null;
-	return SKIP_RE.test(bare(row.evidence).replace(/^[*_(\s]+/, ""))
-		? "사용자 확인 행은 N/A·PASS·blocked·미실행으로 넘길 수 없다 (사용자가 확인한 내용과 날짜)"
-		: null;
+	const value = bare(row.evidence);
+	if (SKIP_RE.test(value.replace(/^[*_(\s]+/, "")))
+		return "사용자 확인 행은 N/A·PASS·blocked·미실행으로 넘길 수 없다 (사용자가 확인한 내용과 날짜)";
+	if (GO_ONLY_RE.test(value) && !SEEN_RE.test(value))
+		return "진행 지시(진행해·추천대로)는 확인이 아니다. 결과를 보여 주고 사용자가 확인한 내용, 또는 확인 없이 닫자는 말과 날짜를 적는다";
+	return null;
 }
 
 const rowProblem = (r) => {
@@ -2126,6 +2142,38 @@ export function guard(root, config, since) {
 		pathCase: cls.pathCase,
 		files: cls.evidence.map((e) => e.file),
 	};
+}
+
+// 편집 전 확인(Claude Code PreToolUse 훅): 열린 라운드 없이 코드·하네스 파일을 고치려 하면 막을 사유, 아니면 null.
+// pre-commit guard는 커밋할 때에야 알려서, 라운드를 건너뛰고 다 고친 뒤에 알게 된다. Bash로 고치는 것은 보지 않는다.
+export function editGuard(root, config, input) {
+	const t = input?.tool_input ?? {};
+	const file = t.file_path ?? t.notebook_path;
+	if (typeof file !== "string" || !file) return null;
+	const abs = resolve(input.cwd ?? root, file);
+	// 있는 가장 가까운 상위 폴더까지 실제 경로로 바꾼다. 프로젝트 폴더가 심볼릭 링크 너머여도(macOS /var 등) 같은 파일로 본다
+	const real = (p) => {
+		for (
+			let d = p, rest = "";
+			;
+			rest = join(basename(d), rest), d = dirname(d)
+		) {
+			try {
+				return join(realpathSync(d), rest);
+			} catch {
+				if (dirname(d) === d) return p;
+			}
+		}
+	};
+	const rel = [relative(root, abs), relative(real(root), real(abs))].find(
+		(r) => r && !/^\.\.([/\\]|$)/.test(r) && !isAbsolute(r),
+	);
+	if (!rel) return null;
+	const cls = classify([rel.split(sep).join("/")], config);
+	if (cls.pathCase === "A" && !cls.auth) return null;
+	const md = readTodo(root, config);
+	if (md && parseActive(md)) return null;
+	return `dev-cycle: 열린 라운드 없이 ${rel}(케이스 ${cls.pathCase} 경로)를 고치려 한다. prokit-dev-cycle대로 pnpm dev-cycle status를 보고 pnpm dev-cycle table <케이스> --write --title "<요약>"로 라운드를 연 뒤 고친다. 코드를 바꾸지 않는 요청이면 이 파일을 고치지 않는다.`;
 }
 
 const USAGE =
@@ -2945,6 +2993,21 @@ export function main(argv, root = process.cwd()) {
 		} catch {}
 		return 0;
 	}
+	// Claude Code PreToolUse 훅(Edit|Write|MultiEdit|NotebookEdit). exit 2는 그 편집을 막고 stderr를 에이전트에게 보인다.
+	// 입력이 깨졌거나 프로킷 설정을 읽지 못하면 막지 않는다.
+	if (cmd === "edit-guard") {
+		let why = null;
+		try {
+			const dir = process.env.CLAUDE_PROJECT_DIR || root;
+			why = editGuard(
+				dir,
+				loadConfig(dir),
+				JSON.parse(readFileSync(0, "utf8")),
+			);
+		} catch {}
+		if (why) console.error(why);
+		return why ? 2 : 0;
+	}
 	const config = loadConfig(root);
 	const print = (obj, text) =>
 		console.log(json ? JSON.stringify(obj, null, 2) : text);
@@ -2996,7 +3059,19 @@ export function main(argv, root = process.cwd()) {
 					"사용법: dev-cycle evidence <행 번호> --file <증거 파일> [--json]",
 				);
 			const r = setEvidence(root, config, Number(rest[0]), rest[2]);
-			print(r, `행 ${r.row} 증거를 갱신했다`);
+			// 행을 채울 때마다 이 행의 audit 거부, 케이스 상향, 빠진 필수 행을 알린다. [confirm]을 묻기 전에 고쳐야 한다
+			const first = audit(root, config).problems.filter(
+				(p) =>
+					p.startsWith(`#${r.row} `) ||
+					/^(케이스 상향 필요|필수 행 누락)/.test(p),
+			);
+			print(
+				{ ...r, first },
+				[
+					`행 ${r.row} 증거를 갱신했다`,
+					...first.map((p) => `먼저 할 일: ${p}`),
+				].join("\n"),
+			);
 			return 0;
 		}
 		case "status": {
