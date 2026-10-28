@@ -13,7 +13,7 @@ description: >-
 
 ## 먼저 읽기
 1. `apps/web/AGENTS.md`를 매번 읽는다. 작업이 작아도 읽는다. Next.js가 생성하는 규칙이고, 이 프로젝트의 Next 버전은 학습 데이터와 다를 수 있다고 알려 준다.
-2. 쓰거나 바꾸는 Next API(`page`/`layout`, `redirect`, `headers`, `params`, `Link`, 캐시, `loading`/`error` 파일 등)의 문서를 `apps/web/node_modules/next/dist/docs/`에서 찾아 읽는다. 예: `grep -rl "redirect" apps/web/node_modules/next/dist/docs/01-app | head`. 읽은 문서 경로는 보고나 대조표 증거에 적는다.
+2. 쓰거나 바꾸는 Next API(`page`/`layout`, `redirect`, `headers`, `params`, `Link`, 캐시, `loading`/`error` 파일 등)의 문서를 `apps/web/node_modules/next/dist/docs/`에서 찾아 읽는다. 예: `grep -rl "redirect" apps/web/node_modules/next/dist/docs/01-app | head`. 문서는 Read로 읽고(audit이 기록과 대조한다) 경로를 `prokit-web`을 적은 행의 증거에 적는다(예: `사용: prokit-web(apps/web/node_modules/next/dist/docs/01-app/…/redirect.md)`). 쓰거나 바꾼 Next API가 없으면 `Next 문서: N/A: 사유`로 적는다.
 3. 바꿀 경로 주변 파일, `apps/web/src/utils/orpc.ts`, 보호 페이지 예시인 `apps/web/src/app/dashboard/page.tsx`.
 
 ## 공식 스킬 연결

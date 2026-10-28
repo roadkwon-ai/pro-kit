@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
-  audit, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, noteSkillsChange, parseActive, renderBlock, status, writeTable,
+  audit, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, noteSkillsChange, parseActive, renderBlock, status, usedSkills, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
 import { captureSnapshot } from "../files/scripts/delegation.mjs";
 import { auditRecord, critiqueRecord, makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
@@ -819,7 +819,7 @@ test("부른 스킬 기록: skill-log 훅이 Skill 호출과 SKILL.md Read를 �
   set(review, "prokit-reviewer(code): approve, max=low; ponytail-review: 반영 1");
   let p = mine();
   assert.equal(p.length, 2, p.join("\n"));
-  assert.ok(p.some((x) => x.includes("agent-skills:planning-and-task-breakdown를 이 라운드에서 부른 기록이 없다")));
+  assert.ok(p.some((x) => x.includes("agent-skills:planning-and-task-breakdown를 이 라운드에서 부르거나 읽은 기록이 없다")));
   assert.ok(p.some((x) => x.includes("ponytail-review를 이 라운드에서 부른 기록이 없다")));
   hook({ tool_name: "Read", tool_input: { file_path: "/home/u/.claude/plugins/cache/addy/agent-skills/0.6/skills/planning-and-task-breakdown/SKILL.md" } });
   hook({ tool_name: "Skill", tool_input: { skill: "ponytail:ponytail-review" } });
@@ -827,8 +827,12 @@ test("부른 스킬 기록: skill-log 훅이 Skill 호출과 SKILL.md Read를 �
   assert.equal(readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").length, 3);
   // 다음 라운드를 기록 없이(Codex 등) 진행하면 앞 라운드 기록과 대조하지 않고 자기 신고로 본다
   write("tasks/todo.md", "# 할 일\n");
+  // 새 라운드를 열 때 30일 지난 줄과 깨진 줄은 지운다(감사용으로 한 달만 남긴다)
+  write(".prokit/skills-used.jsonl", `{"t":"2000-01-01T00:00:00.000Z","skill":"old"}\n깨진 줄\n${readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8")}`);
   writeTable(root, config, "D", { write: true, title: "Codex 라운드" });
-  assert.match(readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").at(-1), /"round":"Codex 라운드"/);
+  const kept = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n");
+  assert.equal(kept.length, 4, "앞 라운드 3줄 + 새 라운드 시작 줄");
+  assert.match(kept.at(-1), /"round":"Codex 라운드"/);
   const rows2 = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
   set(rows2.findIndex((r) => /구현 단계/.test(r.text)), "사용: agent-skills:incremental-implementation → 위임");
   set(rows2.findIndex((r) => /^\[review\] prokit-reviewer\(code\)/.test(r.text)), "prokit-reviewer(code): approve, max=low; ponytail-review: 반영 0");
@@ -836,6 +840,9 @@ test("부른 스킬 기록: skill-log 훅이 Skill 호출과 SKILL.md Read를 �
   // 이 라운드에 기록이 생기면 다시 대조한다
   hook({ tool_name: "Skill", tool_input: { skill: "prokit-verify" } });
   assert.ok(mine().some((x) => x.includes("ponytail-review를 이 라운드에서 부른 기록이 없다")), mine().join("\n"));
+  // 목록 꼴이 아닌 단계 스킬(`사용: <이름>으로 …`)도 기록과 대조한다
+  set(rows2.findIndex((r) => /구현 단계/.test(r.text)), "사용: agent-skills:planning-and-task-breakdown으로 조각 구현");
+  assert.ok(mine().some((x) => x.includes("agent-skills:planning-and-task-breakdown를 이 라운드에서 부르거나 읽은 기록이 없다")), mine().join("\n"));
 });
 
 test("karpathy를 골랐으면 코드 리뷰 행은 karpathy 간결성 결과와 karpathy-guidelines를 부른 기록을 요구한다", () => {
@@ -911,11 +918,66 @@ test("부른 스킬 기록: Codex는 Bash 명령 속 SKILL.md 경로를, Antigra
   const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
   assert.equal(hook({ tool_name: "Bash", tool_input: { command: "cat .agents/skills/prokit-verify/SKILL.md '/x/agent-skills/skills/debugging-and-error-recovery/SKILL.md'; ls .agents/skills/*/SKILL.md x/SKILL.md.bak" } }).stdout, "");
   hook({ tool_name: "Bash", tool_input: { command: "ls .agents/skills" } });
+  hook({ tool_name: "Bash", tool_input: { command: "cat .agents/skills/prokit-dev-cycle/references/reuse-design.md .agents/skills/prokit-dev-cycle/SKILL.md" } });
   assert.equal(hook({ toolCall: { name: "read_file", args: { Path: "/p/.agents/skills/ponytail-review/SKILL.md" } } }).stdout.trim(), "{}", "Antigravity에는 JSON 객체로 답한다");
   hook({ toolCall: { name: "view_file", args: { AbsolutePath: "/p/.agents/skills/grilling/SKILL.md" } } });
   hook({ toolCall: { name: "edit_file", args: { Path: "/p/.agents/skills/x/SKILL.md" } } });
   const skills = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l).skill);
-  assert.deepEqual(skills, ["prokit-verify", "debugging-and-error-recovery", "ponytail-review", "grilling"]);
+  assert.deepEqual(skills, ["prokit-verify", "debugging-and-error-recovery", "prokit-dev-cycle", "ponytail-review", "grilling"]);
+});
+
+test("부른 스킬 기록: 모든 행의 사용: 목록, 행 문구의 prokit-* 계층 스킬, prokit-web의 Next 문서를 기록과 대조한다", () => {
+  const { root, write } = makeRepo();
+  for (const s of ["prokit-ui", "prokit-web", "shadcn", "vercel-react-best-practices"]) write(`.agents/skills/${s}/SKILL.md`);
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const impl = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^구현 \(구현 단계, prokit-ui, prokit-web,/.test(r.text));
+  assert.ok(impl >= 0, "B 구현 행");
+  const set = (v) => {
+    mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(impl + 1), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  const mine = () => audit(root, config).problems.filter((p) => p.startsWith(`#${impl + 1} `)).map((p) => p.replace(/^#\d+ .*?: /, ""));
+  const doc = "apps/web/node_modules/next/dist/docs/01-app/03-api-reference/04-functions/redirect.md";
+  // 기록이 없으면 이름만 본다: 계층 스킬이 빠졌거나, prokit-web인데 Next 문서가 없으면 거부한다
+  set("사용: prokit-ui(좁은 개선). 변경: a.tsx");
+  assert.match(mine()[0] ?? "", /행 문구의 prokit-web를 읽고/);
+  set("사용: agent-skills:incremental-implementation, prokit-ui(포커스), prokit-web, shadcn은 새 부품 없음(기존 그대로). 변경: a.tsx");
+  assert.match(mine()[0] ?? "", /Next 번들 문서 경로/);
+  set("사용: prokit-ui, prokit-web, vercel-react-best-practices(bundle-conditional). Next 문서: N/A: Next API 변경 없음");
+  assert.deepEqual(mine(), []);
+  set(`사용: prokit-ui, prokit-web(${doc}), vercel-react-best-practices. 변경: a.tsx`);
+  assert.deepEqual(mine(), []);
+  // 기록이 생기면 사용: 목록의 스킬(프로젝트 스킬·플러그인 접두어)과 적은 문서를 읽은 기록이 있어야 한다. ego-browser처럼 프로젝트 스킬이 아닌 이름과 문장 속 shadcn은 보지 않는다
+  const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  hook({ tool_name: "Skill", tool_input: { skill: "agent-skills:incremental-implementation" } });
+  set(`사용: agent-skills:incremental-implementation, prokit-ui, prokit-web(${doc}), vercel-react-best-practices, ego-browser, shadcn은 새 부품 없음. 변경: a.tsx`);
+  assert.equal(mine().length, 1);
+  assert.match(mine()[0], new RegExp(`증거의 prokit-ui, prokit-web, vercel-react-best-practices, next/dist/docs/01-app/03-api-reference/04-functions/redirect\\.md를 이 라운드에서 부르거나 읽은 기록이 없다`));
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/prokit-ui/SKILL.md") } });
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/prokit-web/SKILL.md") } });
+  // 스킬 폴더 안의 참조 파일도 그 스킬을 읽은 기록이다
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/vercel-react-best-practices/rules/bundle.md") } });
+  assert.match(mine()[0] ?? "", /증거의 next\/dist\/docs\/.*redirect\.md를/);
+  // 문서 폴더 맨 위만 적어도 문서 하나는 읽은 기록이 있어야 한다
+  set("사용: prokit-ui, prokit-web(apps/web/node_modules/next/dist/docs/), vercel-react-best-practices. 변경: a.tsx");
+  assert.match(mine()[0] ?? "", /증거의 next\/dist\/docs\/를/);
+  // 괄호 안에 적은 사용: 도 목록이다
+  assert.deepEqual(usedSkills("계약을 정한다(사용: prokit-api)"), ["prokit-api"]);
+  assert.deepEqual(usedSkills("사용: prokit-ui(포커스(키보드)), prokit-web."), ["prokit-ui", "prokit-web"]);
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, doc) } });
+  assert.deepEqual(mine(), []);
+  // 문서 폴더를 적으면 그 아래를 읽은 기록으로 충분하다. Codex는 셸 명령 속 문서 경로가 기록이다
+  set("사용: prokit-ui, prokit-web(apps/web/node_modules/next/dist/docs/01-app/). 변경: a.tsx");
+  assert.deepEqual(mine(), []);
+  set("사용: prokit-ui, prokit-web(next/dist/docs/01-app/…/redirect.md). 변경: a.tsx");
+  assert.deepEqual(mine(), []);
+  set("사용: prokit-ui, prokit-web(next/dist/docs/01-app/…/headers.md). 변경: a.tsx");
+  assert.match(mine()[0] ?? "", /증거의 next\/dist\/docs\/01-app\/…\/headers\.md를/);
+  hook({ tool_name: "Bash", tool_input: { command: "cat apps/web/node_modules/next/dist/docs/01-app/02-guides/caching.mdx | head" } });
+  const log = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l));
+  assert.deepEqual(log.filter((e) => e.doc).map((e) => e.doc), [doc.replace("apps/web/node_modules/", ""), "next/dist/docs/01-app/02-guides/caching.mdx"]);
 });
 
 test("evidence: 행을 채울 때 케이스 상향·빠진 필수 행·그 행의 audit 거부를 바로 알린다", () => {

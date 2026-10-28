@@ -32,6 +32,10 @@ function resolveSkillCreator() {
 }
 
 const SKILL_CREATOR = resolveSkillCreator();
+// quick_validate.py는 PyYAML이 필요하다. python3에 없으면 전역 설치 없이 uv 임시 환경으로 돌린다
+const PYTHON = spawnSync("python3", ["-c", "import yaml"]).status === 0
+  ? ["python3"]
+  : ["uv", "run", "-q", "--no-project", "--with", "pyyaml", "python"];
 
 function load(name) {
   const md = readFileSync(join(SKILLS_DIR, name, "SKILL.md"), "utf8");
@@ -43,8 +47,8 @@ function load(name) {
 for (const name of EXPECTED) {
   test(`${name}: skill-creator quick_validate 통과`, () => {
     assert.ok(SKILL_CREATOR, "skill-creator를 찾지 못했다 — SKILL_CREATOR_DIR로 경로를 지정한다");
-    const r = spawnSync("python3", [join(SKILL_CREATOR, "scripts/quick_validate.py"), join(SKILLS_DIR, name)], { encoding: "utf8" });
-    assert.equal(r.status, 0, `${r.stdout}${r.stderr}`);
+    const r = spawnSync(PYTHON[0], [...PYTHON.slice(1), join(SKILL_CREATOR, "scripts/quick_validate.py"), join(SKILLS_DIR, name)], { encoding: "utf8" });
+    assert.equal(r.status, 0, `${r.stdout}${r.stderr}${r.error ? `${r.error.message} (PyYAML이 있는 python3 또는 uv가 필요하다)` : ""}`);
   });
 
   test(`${name}: 이름·범위·길이·링크 규칙`, () => {

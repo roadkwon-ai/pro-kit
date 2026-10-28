@@ -14,7 +14,7 @@
 | 스크린샷 | `<경로들>` | `tasks/evidence/todo-list/desktop.png, mobile.png` |
 | 리뷰 | `prokit-reviewer(<focus>): <verdict>, max=<등급>, 지적 <n> (반영 <a>, 기각 <b>: 사유)` | `prokit-reviewer(db): approve, max=none, 지적 0` |
 | UI 평가 | `critique <점수>/<만점>, P0 <n>, P1 <n>, <기록 파일>` / `audit <점수>/20, 접근성 <점수>/4, <보고서>` | `critique 31/40, P0 0, P1 2, .impeccable/critique/2026-10-22T12-30-00Z__apps-web-src-app-todos.md`, `audit 17/20, 접근성 4/4, tasks/evidence/ui-audit-20261022-1230.md` |
-| 스킬 사용 | `사용: <스킬 또는 내장(단계)> → <산출물>` | `사용: 내장(요구 명확화) → docs/specs/2026-10-01-todo-due.md`, `사용: superpowers:brainstorming → docs/superpowers/specs/2026-10-01-todo-due.md`, `사용: tdd(추가 스킬) → todo.test.ts` |
+| 스킬 사용 | `사용: <스킬 또는 내장(단계)>[, <스킬>(적용한 규칙)…] → <산출물>`. 여러 스킬은 한 `사용:` 뒤에 쉼표로 적는다(audit이 이 목록만 기록과 대조한다) | <!-- edition:pro -->`사용: prokit-ui, prokit-web(apps/web/node_modules/next/dist/docs/01-app/…/redirect.md), vercel-react-best-practices(bundle-conditional) → components/a.tsx`, <!-- /edition -->`사용: 내장(요구 명확화) → docs/specs/2026-10-01-todo-due.md`, `사용: superpowers:brainstorming → docs/superpowers/specs/2026-10-01-todo-due.md`, `사용: tdd(추가 스킬) → todo.test.ts` |
 | 외부 스킬 | `사용: <스킬>(<적용한 규칙>)` | `사용: vercel-react-best-practices(async-parallel), shadcn` |
 | 대안 사용 | `대안: <스킬·도구> (<1순위> 없음) → <산출물>` | `대안: 내장(계획) (oh-my-claudecode:omc-plan 없음) → docs/plans/todo.md`, `대안: agent-browser (ego-browser 창 표시 불가) → tasks/evidence/todo-list/` |
 | 사용자 확인 (`[confirm]` 행) | `<사용자가 확인한 내용>(<날짜>)` | `사용자가 /todos에서 마감일을 넣고 지난 항목 표시를 확인(2026-10-01)` |

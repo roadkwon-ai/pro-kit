@@ -547,7 +547,8 @@ function uiRecordProblem(root, meta, r) {
 }
 
 // 두뇌를 고르면 단계 행은 그 두뇌의 방법으로 한다. 증거의 `사용:` 이름이 고른 두뇌 파일에 백틱으로 적혀 있거나,
-// 추가 스킬이거나, 사유가 있는 내장이어야 한다. 이름만 본다(실제로 불렀는지는 보지 않는 자기 신고다).
+// 추가 스킬이거나, 사유가 있는 내장이어야 한다. 여기서 찾은 이름(`사용: <이름>으로 …` 꼴 포함)은 이 라운드 기록과 대조하고,
+// `사용:` 쉼표 목록의 다른 스킬은 usageProblem이 대조한다.
 const STAGE_RE =
 	/요구 명확화 단계|계획 단계|구현 단계|디버깅 단계|고른 두뇌의 계획 방법/;
 export const BRAINS_DIR = ".agents/skills/prokit-dev-cycle/references/brains";
@@ -673,10 +674,11 @@ function brainProblem(root, config, active) {
 			...used.filter(brainName),
 			...extra.filter((u) => extras.has(u)),
 		];
+		// `사용: <이름>으로 …`처럼 목록 꼴이 아닌 단계 스킬도 기록과 대조한다(목록 꼴은 usageProblem이 모든 행에 한다).
 		if (hits.length) {
 			const miss = logged && hits.filter((u) => !logged.has(bareName(u)));
-			return miss && miss.length === hits.length
-				? `증거의 ${hits.join(", ")}를 이 라운드에서 부른 기록이 없다(${SKILL_LOG}). ${LOG_HINT}`
+			return miss?.length
+				? `증거의 ${miss.join(", ")}를 이 라운드에서 부르거나 읽은 기록이 없다(${SKILL_LOG}). ${LOG_HINT}`
 				: null;
 		}
 		const reason = value.match(/사용:\s*내장\([^)]+\)\s*:\s*(\S.*)/)?.[1];
@@ -833,45 +835,65 @@ export function noteSkillsChange(root, config, { before, after }) {
 	return true;
 }
 
-// 부른 스킬 기록: 훅이 스킬 호출과 SKILL.md 읽기를 .prokit/skills-used.jsonl에 남긴다(git이 무시하는 폴더).
-// Claude Code는 Skill·Read, Codex는 Bash(SKILL.md를 셸로 읽는다), Antigravity는 read_file·view_file이다.
-// 이 라운드의 기록이 있으면 audit이 단계 행·리뷰 행 증거의 스킬 이름을 그 기록과 대조한다. 없으면(훅이 없거나 신뢰 전) 자기 신고다.
+// 부른 스킬 기록: 훅이 스킬 호출, 스킬 파일 읽기, Next 번들 문서 읽기를 .prokit/skills-used.jsonl에 남긴다(git이 무시하는 폴더).
+// Claude Code는 Skill·Read, Codex는 Bash(SKILL.md·문서를 셸로 읽는다), Antigravity는 read_file·view_file이다.
+// 이 라운드의 기록이 있으면 audit이 증거의 `사용:` 이름·Next 문서 경로·리뷰 행을 그 기록과 대조한다. 없으면(훅이 없거나 신뢰 전) 자기 신고다.
 export const SKILL_LOG = ".prokit/skills-used.jsonl";
+// 지난 라운드 기록을 감사용으로 남겨 두는 기간(일)
+const SKILL_LOG_DAYS = 30;
 // 훅 입력: Claude Code·Codex는 tool_name·tool_input, Antigravity는 toolCall.name·args다.
 const hookCall = (e) => ({
 	name: e?.tool_name ?? e?.toolCall?.name,
 	t: e?.tool_input ?? e?.toolCall?.args ?? {},
 });
+const NEXT_DOC_RE = /next[/\\]dist[/\\]docs[/\\][^\s'"*;|&]+\.mdx?/g;
 export function logSkill(root, input) {
 	const { name, t } = hookCall(JSON.parse(input));
+	const path = String(t.file_path ?? t.Path ?? t.AbsolutePath ?? "");
+	const cmd = String(t.command ?? "");
+	const read = ["Read", "read_file", "view_file"].includes(name);
 	const names =
 		name === "Skill"
 			? [t.skill]
 			: // shortcut: 명령에 경로만 나와도(ls·test -f 등) 읽은 것으로 남긴다. 셸 명령은 해석하지 않는다
 				name === "Bash"
 				? [
-						...String(t.command ?? "").matchAll(
-							/([^\s/\\'"*]+)[/\\]SKILL\.md(?![\w.])/g,
+						...new Set(
+							[
+								...cmd.matchAll(/([^\s/\\'"*]+)[/\\]SKILL\.md(?![\w.])/g),
+								...cmd.matchAll(
+									/(?:^|[/\\\s'"])\.(?:agents|claude)[/\\]skills[/\\]([^/\\\s'"*]+)[/\\][^\s'"*]/g,
+								),
+							].map((m) => m[1]),
 						),
-					].map((m) => m[1])
-				: ["Read", "read_file", "view_file"].includes(name)
+					]
+				: read
 					? [
-							String(t.file_path ?? t.Path ?? t.AbsolutePath ?? "").match(
-								/([^/\\]+)[/\\]SKILL\.md$/,
-							)?.[1],
+							// 스킬 폴더 안의 참조 파일(impeccable reference/ 등)도 그 스킬을 읽은 것이다
+							path.match(/([^/\\]+)[/\\]SKILL\.md$/)?.[1] ??
+								path.match(
+									/(?:^|[/\\])\.(?:agents|claude)[/\\]skills[/\\]([^/\\]+)[/\\]/,
+								)?.[1],
 						]
 					: [];
-	const lines = names
-		.filter(Boolean)
-		.map(
-			(skill) =>
-				`${JSON.stringify({ t: new Date().toISOString(), skill: String(skill) })}\n`,
-		);
+	const docs =
+		name === "Bash" || read
+			? [...(read ? path : cmd).matchAll(NEXT_DOC_RE)].map((m) =>
+					m[0].replaceAll("\\", "/"),
+				)
+			: [];
+	const at = new Date().toISOString();
+	const lines = [
+		...names
+			.filter(Boolean)
+			.map((skill) => JSON.stringify({ t: at, skill: String(skill) })),
+		...docs.map((doc) => JSON.stringify({ t: at, doc })),
+	].map((l) => `${l}\n`);
 	if (!lines.length) return;
 	mkdirSync(join(root, ".prokit"), { recursive: true });
 	appendFileSync(join(root, SKILL_LOG), lines.join(""));
 }
-// 이 라운드(마지막 라운드 시작 줄, 없으면 연 날 KST 이후) 기록의 스킬 이름(접두어·`/` 없이).
+// 이 라운드(마지막 라운드 시작 줄, 없으면 연 날 KST 이후) 기록의 스킬 이름(접두어·`/` 없이)과 Next 문서 경로(next/dist/docs/…).
 // 기록 파일이 없거나 이 라운드 기록이 하나도 없으면(훅이 없거나 아직 신뢰하지 않은 도구로 진행한 라운드) null이라 자기 신고다.
 function skillsLogged(root, active) {
 	const p = join(root, SKILL_LOG);
@@ -886,10 +908,11 @@ function skillsLogged(root, active) {
 			if ("round" in e) out = new Set();
 			else if (Date.parse(e.t) >= since)
 				out.add(
-					String(e.skill)
-						.replace(/^[/$]+/, "")
-						.split(":")
-						.at(-1),
+					e.doc ??
+						String(e.skill)
+							.replace(/^[/$]+/, "")
+							.split(":")
+							.at(-1),
 				);
 		} catch {}
 	}
@@ -897,6 +920,112 @@ function skillsLogged(root, active) {
 }
 const LOG_HINT =
 	"Claude Code는 Skill 도구로 부르거나(사용자 호출 전용이면 그 SKILL.md를 Read로 읽는다. Bash cat은 기록되지 않는다), Codex는 그 SKILL.md 경로를 그대로 cat으로, Antigravity는 read_file로 읽어 다시 진행한 뒤 적는다";
+
+// 증거의 `사용:` 목록: `사용:` 뒤에 쉼표로 이어 적은 이름(뒤에 괄호 설명 가능)이다. →·;·|·문장 끝 마침표에서 끝난다.
+// 이름 꼴이 아닌 항목(내장(계획), 파일 경로, "shadcn은 …" 같은 문장)은 뺀다.
+export function usedSkills(value) {
+	const items = [];
+	for (const m of value.matchAll(/사용:\s*/g)) {
+		let depth = 0;
+		let item = "";
+		for (let i = m.index + m[0].length; i <= value.length; i++) {
+			const c = value[i] ?? "|";
+			// 괄호 안에 적은 `(사용: prokit-api)`는 바깥 닫는 괄호에서 끝난다
+			const outer = c === ")" && depth === 0;
+			if (c === "(") depth++;
+			if (c === ")" && depth > 0) depth--;
+			const end =
+				outer ||
+				(depth === 0 &&
+					(/[;→|]/.test(c) ||
+						(c === "." && /^\s|^$/.test(value[i + 1] ?? ""))));
+			if (depth === 0 && (c === "," || end)) {
+				items.push(item);
+				item = "";
+				if (end) break;
+			} else item += c;
+		}
+	}
+	return items
+		.map(
+			(s) =>
+				s
+					.trim()
+					.match(
+						/^`?([/$]?[a-z][a-z0-9-]*(?::[a-z0-9-]+)?)`?\s*(\(.*\))?$/s,
+					)?.[1],
+		)
+		.filter(Boolean);
+}
+const skillName = (n) =>
+	n
+		.replace(/^[/$]+/, "")
+		.split(":")
+		.at(-1);
+const isProjectSkill = (root, n) =>
+	[".agents/skills", ".claude/skills"].some((d) =>
+		existsSync(join(root, d, n, "SKILL.md")),
+	);
+// 행 문구 첫 괄호에 이름만 적힌 prokit-* 계층 스킬(예: "구현 (구현 단계, prokit-ui, prokit-web, …)")은 그 행에서 쓴다.
+function rowLayerSkills(text) {
+	const open = text.indexOf("(");
+	if (open < 0) return [];
+	let depth = 0;
+	let end = open;
+	for (; end < text.length; end++) {
+		if (text[end] === "(") depth++;
+		if (text[end] === ")" && --depth === 0) break;
+	}
+	return text
+		.slice(open + 1, end)
+		.split(",")
+		.map((s) => s.trim())
+		.filter((s) => /^prokit-[a-z-]+$/.test(s));
+}
+// 모든 행: 행 문구의 계층 스킬은 `사용:`에 있어야 하고, prokit-web을 썼으면 읽은 Next 번들 문서를 적는다.
+// 이 라운드의 기록이 있으면 `사용:`의 스킬(프로젝트 스킬이나 플러그인 접두어)과 적은 Next 문서를 읽은 기록이 있어야 한다.
+function usageProblem(root, active) {
+	const logged = skillsLogged(root, active);
+	return (r) => {
+		const value = bare(r.evidence);
+		if (!value || /^(blocked|미실행|n\/a)\s*:/i.test(value)) return null;
+		const used = usedSkills(value);
+		const names = new Set(used.map(skillName));
+		const need = rowLayerSkills(r.text).filter(
+			(n) => !names.has(n) && isProjectSkill(root, n),
+		);
+		if (need.length)
+			return `행 문구의 ${need.join(", ")}를 읽고 따른 뒤 증거에 사용: ${need.join(", ")}처럼 적는다`;
+		if (
+			names.has("prokit-web") &&
+			!/next\/dist\/docs\/|Next 문서:\s*N\/A:\s*\S/.test(value)
+		)
+			return "prokit-web을 썼으면 읽은 Next 번들 문서 경로(apps/web/node_modules/next/dist/docs/…)를 적는다. 쓰거나 바꾼 Next API가 없으면 Next 문서: N/A: 사유로 적는다";
+		if (!logged) return null;
+		const docs = [
+			...value.matchAll(/next\/dist\/docs\/(?:[^\s,;)|`'"]*[^\s,;)|`'".])?/g),
+		]
+			.map((m) => m[0])
+			// 폴더를 적으면 그 아래를 읽은 기록, 가운데를 …로 줄이면 앞뒤가 맞는 기록이면 된다
+			.filter((d) => {
+				const [head, tail = ""] = d.split("…");
+				return ![...logged].some(
+					(l) =>
+						l.startsWith(head) &&
+						l.endsWith(tail) &&
+						l.length >= head.length + tail.length,
+				);
+			});
+		const miss = used.filter(
+			(u) =>
+				(u.includes(":") || isProjectSkill(root, skillName(u))) &&
+				!logged.has(skillName(u)),
+		);
+		return miss.length || docs.length
+			? `증거의 ${[...miss, ...docs].join(", ")}를 이 라운드에서 부르거나 읽은 기록이 없다(${SKILL_LOG}). ${LOG_HINT}`
+			: null;
+	};
+}
 
 // 고른 과설계 방지 스킬의 구현 diff 보완 검토는 prokit-reviewer(code) 행 증거 뒤에 덧붙인다(process-routing 규칙 6).
 const SIMPLICITY_LABEL = {
@@ -937,11 +1066,13 @@ const roundRowProblem = (root, config, active) => {
 	const planRound = isPlanRound(active);
 	const brain = brainProblem(root, config, active);
 	const simplicity = simplicityProblem(root, config, active);
+	const usage = usageProblem(root, active);
 	return (r) =>
 		rowProblem(r) ??
 		uiRecordProblem(root, active.meta, r) ??
 		brain(r) ??
 		simplicity(r) ??
+		usage(r) ??
 		(planRound && isConfirm(r.text)
 			? planConfirmProblem(root, config, r.evidence)
 			: null);
@@ -1260,11 +1391,26 @@ export function writeTable(
 		mkdirSync(dirname(p), { recursive: true });
 		writeFileSync(p, next);
 		// 새 라운드의 시작 줄. 그 뒤 기록만 이 라운드의 것으로 본다(앞 라운드를 Claude Code로 한 뒤 Codex로 연 라운드 등).
-		if (!active && existsSync(join(root, SKILL_LOG)))
-			appendFileSync(
-				join(root, SKILL_LOG),
-				`${JSON.stringify({ t: now.toISOString(), round: meta.title })}\n`,
+		// audit은 이 라운드 기록만 보므로, 열 때 SKILL_LOG_DAYS일 지난 줄은 지워 파일이 계속 커지지 않게 한다.
+		const log = join(root, SKILL_LOG);
+		if (!active && existsSync(log)) {
+			const since = now.getTime() - SKILL_LOG_DAYS * 86_400_000;
+			const kept = readFileSync(log, "utf8")
+				.split("\n")
+				.filter((l) => {
+					try {
+						return Date.parse(JSON.parse(l).t) >= since;
+					} catch {
+						return false;
+					}
+				});
+			writeFileSync(
+				log,
+				[...kept, JSON.stringify({ t: now.toISOString(), round: meta.title })]
+					.map((l) => `${l}\n`)
+					.join(""),
 			);
+		}
 	}
 	return {
 		case: key,
