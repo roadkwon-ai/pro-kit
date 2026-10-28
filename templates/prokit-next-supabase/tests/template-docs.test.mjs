@@ -185,7 +185,7 @@ test("두뇌·과설계 방지: 카탈로그와 매니페스트, 역할 표, 고
   assert.match(routing, /\$ponytail:ponytail-review.*먼저/);
   assert.match(routing, /같은 diff에 함께 쓰지 않으며.*off.*다시 켜지 않는다/);
   assert.match(cycle, /trusted 프로젝트에서 `\/hooks` 허용과 새 세션/);
-  assert.match(read("CLAUDE.md"), /Skill 도구 또는 `\/ponytail-review`로 한 번만/);
+  assert.match(read("CLAUDE.md"), /행마다 Skill 도구 또는 `\/ponytail-review`로 부른다\(F는 코드 리뷰 행과 공통화 점검 행에서 각각\)/);
   assert.match(read("CLAUDE.md"), /일회성이며 세션을 영구 review 모드로 바꾸지 않는다/);
   assert.match(read("CLAUDE.md"), /`\/caveman`[^\n]*대화 응답에만/);
   assert.match(update, /marketplace를 갱신하기 전에.*`hooks\/`와 코드를 검토/);

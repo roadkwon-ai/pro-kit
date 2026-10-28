@@ -65,7 +65,7 @@
 - 구현 계획 (계획 단계, 바꿀 계층의 prokit-* 스킬과 그 공식 스킬 연결 표를 읽고 계획의 스키마·API·화면 결정에 반영) → 사용한 스킬과 계획 경로
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
 - [review] prokit-reviewer(plan) 계획 리뷰 (간결성 사다리와 고른 과설계 방지 스킬의 계획 기준 적용, 재사용·설정 결정 검토. 고른 두뇌에 계획 리뷰가 있으면 보강) → prokit-reviewer(plan): approve, max=none|low|medium, 반영·기각 내역. N/A 불가
-- 구현 방식 (구현 단계: prokit-implementer 위임과 테스트 먼저, 고른 과설계 방지 스킬의 간결성 규칙) → 사용한 스킬, provider 검증, snapshot·evidence packet hash, reviewCoverage와 위임 내역
+- 구현 방식 (구현 단계: prokit-implementer 위임(Main이 직접 하면 증거에 사유)과 테스트 먼저, 고른 과설계 방지 스킬의 간결성 규칙) → 사용한 스킬, provider 검증, snapshot·evidence packet hash, reviewCoverage와 위임 내역
 - @include E D B
 - [verify] next-dev-loop 통합 런타임 확인 → 확인한 경로와 결과
 - 공통화·리팩토링·최적화 점검 (이번 라운드가 바꾼 파일과 같은 디렉터리·계획에서 확인한 공통 모듈의 소비자에 간결성 검토(고른 과설계 방지 스킬의 공통화 점검, 없으면 prokit-reviewer(code) focus), 한쪽이 이번 diff이고 같은 책임으로 함께 바뀌는 반복 코드·UI만 적절한 위치로 추출하고 나머지는 백로그로, 필요 없는 추상화는 걷어 냄, 빌드 출력의 라우트 크기와 새 의존성·글꼴·이미지 확인) → 반영 내역, 영향 재확인(타입·린트·테스트·화면) 결과, 미룬 항목과 기록 위치

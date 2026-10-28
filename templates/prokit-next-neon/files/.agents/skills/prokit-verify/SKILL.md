@@ -35,6 +35,8 @@ description: >-
 
 `commands.lint`는 파일을 고치지 않는 검사(`pnpm exec biome check .`)다. `pnpm check`는 `--write`로 파일을 고치므로 검증 증거로 쓰지 않는다. 설치 절차에서 Better-T-Stack이 만든 코드를 한 번 정리하고, 다시 생성되는 파일(<!-- edition:pro -->마이그레이션, `schema/auth.ts`, <!-- /edition -->varlock의 `src/env.ts`)은 `biome.json`에서 빼므로 전체 lint는 exit 0에서 시작한다. 전체 lint가 실패하면 이번 변경이 만든 지적으로 보고 고친다. 설치 뒤 정리를 하지 않아 기존 지적이 남은 프로젝트라면 이번에 바꾼 파일만 `pnpm exec biome check <파일들>`로 다시 검사해 그 결과를 증거로 적고, 전체 결과는 기준과 비교해 `전체 exit 1: 기존 지적 N건(기준과 같음)`처럼 함께 적는다. 기준 수는 라운드를 열 때 전체 lint를 한 번 돌려 블록 메모에 적어 둔다. 비교하려고 작업 트리를 `git stash`로 되돌리지 않는다. 이번 변경이 만든 지적은 고친다. 바꾼 파일에 원래 있던 지적(Better-T-Stack이 만든 JSON 포맷 등)은 그대로 두고 기준과 같은 수인지만 적는다. 한꺼번에 고치면 변경과 무관한 diff가 섞인다.
 
+외부 서비스의 API(OAuth 제공자의 토큰 취소·연결 끊기, 결제, 메일 등)를 부르는 코드는 응답을 흉내 낸 테스트만으로는 실제 동작을 증명하지 못한다. 공식 문서의 요청·응답 꼴과 대조하고, 실제 응답을 한 번 본다(사용자가 동의한 테스트 계정으로 부르거나, `[confirm]` 시나리오에 사용자가 직접 해 볼 순서로 넣는다). 보지 못했으면 증거와 `[confirm]` 보고에 `실제 응답 미확인: <API>`로 적는다. 예: 로그인 권한만 받은 Google 액세스 토큰은 취소 API가 400 `Token is not revocable`로 거부한다. 흉내 테스트는 통과했지만 실제로는 연결이 끊기지 않았다.
+
 ## 런타임과 브라우저
 - `pnpm dev`(web은 포트 3001. 띄우기 전 포트 확인은 [references/browser.md](references/browser.md)의 준비)를 띄우고, `next-dev-loop` 스킬의 `/_next/mcp` 절차로 Next 진단을 본다. ego-browser를 쓸 때는 next-dev-loop의 agent-browser 요구 사항, preflight 1단계(agent-browser 열기), 종료 절차를 건너뛰고 `/_next/mcp` 확인과 도구만 쓴다. `get_errors`·`get_page_metadata`에 필요한 브라우저 세션은 ego-browser로 연 페이지가 채운다. 이 경우 agent-browser가 없는 것은 blocked 사유가 아니다. Next.js 16.3 이상(Turbopack)이 필요하다. 못 맞추면 `blocked: next-dev-loop 요구 미달(Next 16.2)`처럼 적는다. 업그레이드는 사용자가 요청할 때만 한다.
 - 실제 화면은 **ego-browser**로 확인한다. 절차는 [references/browser.md](references/browser.md).

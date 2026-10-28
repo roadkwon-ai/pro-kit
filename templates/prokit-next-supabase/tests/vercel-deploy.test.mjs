@@ -41,7 +41,7 @@ case "$1" in
     if [ "$2" = ls ]; then [ "$3" = preview ] && printf '%s' "$STUB_ENV_preview" || printf '%s' "$STUB_ENV_production"; fi
     if [ "$2" = run ]; then [ "$4" = preview ] && echo "\${BETTER_AUTH_URL:-$STUB_URL_preview}" || echo "\${BETTER_AUTH_URL:-$STUB_URL_production}"; fi ;;
   ls) [ "$3" = preview ] && printf '%s' "$STUB_LS_preview" || printf '%s' "$STUB_LS_production" ;;
-  inspect) [ -e "$STUB_LOG.deployed" ] && printf '%s' "$STUB_AFTER" || printf '%s' "$STUB_CURRENT" ;;
+  inspect) if [ "$3" = --wait ]; then printf '%s' "$STUB_WAIT"; elif [ -e "$STUB_LOG.deployed" ]; then printf '%s' "$STUB_AFTER"; else printf '%s' "$STUB_CURRENT"; fi ;;
   deploy) touch "$STUB_LOG.deployed"; printf '%s' "$STUB_DEPLOY"; exit "\${STUB_DEPLOY_EXIT:-0}" ;;
   alias) exit "\${STUB_ALIAS_EXIT:-0}" ;;
 esac
@@ -356,6 +356,31 @@ test("production: --prod로 배포하고 alias는 붙이지 않는다. 주소가
 	assert.ok(!s.calls().some((c) => c.startsWith("vercel alias")));
 	assert.match(r.stderr, /경고: app\.vercel\.app가 이 배포를 가리키지 않는다\(지금 app-prev-team\.vercel\.app\).*vercel promote/);
 	assert.match(r.stdout, /되돌리기: vercel rollback app-prev-team\.vercel\.app/);
+});
+
+test("배포 검사(Neon 통합 등)만 실패하면 CLI가 checks_failed로 끝나도 develop은 빌드 완료(READY)를 기다려 경고하고 이어 간다. production·빌드 실패는 exit 2", () => {
+	// CLI 65.2 실측: status error, reason checks_failed, exit 1, 배포는 아직 QUEUED
+	const failed = (target) => JSON.stringify({ status: "error", reason: "checks_failed", message: "Running Checks: 1 failed", deployment: { id: "dpl_new", url: "https://app-new-team.vercel.app", target, readyState: "QUEUED" } });
+	const s = setup();
+	const r = s.exec(["develop"], {
+		...prevAt("preview", ""),
+		STUB_DEPLOY: failed(null),
+		STUB_DEPLOY_EXIT: "1",
+		STUB_WAIT: JSON.stringify({ url: "app-new-team.vercel.app", target: "preview", readyState: "READY" }),
+		STUB_AFTER: JSON.stringify({ url: "app-new-team.vercel.app" }),
+	});
+	assert.equal(r.status, 0, r.stderr);
+	assert.ok(s.calls().includes("vercel inspect https://app-new-team.vercel.app --wait --timeout 10m --format json"));
+	assert.ok(s.calls().includes("vercel alias set https://app-new-team.vercel.app app-develop.vercel.app"));
+	assert.match(r.stderr, /경고: 배포 검사 실패\(Running Checks: 1 failed\)/);
+	const broken = setup().exec(["develop"], { STUB_DEPLOY: failed(null), STUB_DEPLOY_EXIT: "1", STUB_WAIT: JSON.stringify({ readyState: "ERROR" }) });
+	assert.equal(broken.status, 2);
+	assert.match(broken.stderr, /배포 실패/);
+	const prod = setup().exec(["production"], { ...prevAt("production", ""), STUB_DEPLOY: failed("production"), STUB_DEPLOY_EXIT: "1", STUB_WAIT: JSON.stringify({ readyState: "READY" }) });
+	assert.equal(prod.status, 2);
+	assert.match(prod.stderr, /배포 검사 실패\(Running Checks: 1 failed\) → vercel api \/v1\/deployments\/dpl_new\/checks.*production/);
+	// 배포는 이미 만들어졌으니 운영 주소를 확인하고 되돌릴 방법을 준다
+	assert.match(prod.stderr, /배포 URL: https:\/\/app-new-team\.vercel\.app.*vercel inspect app\.vercel\.app.*되돌리기: vercel rollback app-prev-team\.vercel\.app/s);
 });
 
 test("배포 실패, 대상 불일치, alias 실패는 exit 2", () => {

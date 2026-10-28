@@ -842,13 +842,15 @@ export const SKILL_LOG = ".prokit/skills-used.jsonl";
 // 지난 라운드 기록을 감사용으로 남겨 두는 기간(일)
 const SKILL_LOG_DAYS = 30;
 // 훅 입력: Claude Code·Codex는 tool_name·tool_input, Antigravity는 toolCall.name·args다.
+// Claude Code는 서브에이전트 안의 호출에 agent_id를 붙인다. 리뷰어가 읽은 스킬을 Main이 읽은 것으로 세지 않게 남긴다.
 const hookCall = (e) => ({
 	name: e?.tool_name ?? e?.toolCall?.name,
 	t: e?.tool_input ?? e?.toolCall?.args ?? {},
+	agent: e?.agent_id,
 });
 const NEXT_DOC_RE = /next[/\\]dist[/\\]docs[/\\][^\s'"*;|&]+\.mdx?/g;
 export function logSkill(root, input) {
-	const { name, t } = hookCall(JSON.parse(input));
+	const { name, t, agent } = hookCall(JSON.parse(input));
 	const path = String(t.file_path ?? t.Path ?? t.AbsolutePath ?? "");
 	const cmd = String(t.command ?? "");
 	const read = ["Read", "read_file", "view_file"].includes(name);
@@ -882,41 +884,63 @@ export function logSkill(root, input) {
 					m[0].replaceAll("\\", "/"),
 				)
 			: [];
+	// 스킬 폴더의 참조 파일(SKILL.md 말고)은 폴더 안 경로도 남긴다. 사용: 괄호에 적은 참조와 대조한다
+	const ref = read
+		? path
+				.replaceAll("\\", "/")
+				.match(/(?:^|\/)\.(?:agents|claude)\/skills\/[^/]+\/(.+)$/)?.[1]
+		: undefined;
+	const extra = {
+		...(ref && ref !== "SKILL.md" ? { ref } : {}),
+		...(agent ? { agent: String(agent) } : {}),
+	};
 	const at = new Date().toISOString();
 	const lines = [
 		...names
 			.filter(Boolean)
-			.map((skill) => JSON.stringify({ t: at, skill: String(skill) })),
-		...docs.map((doc) => JSON.stringify({ t: at, doc })),
+			.map((skill) =>
+				JSON.stringify({ t: at, skill: String(skill), ...extra }),
+			),
+		...docs.map((doc) => JSON.stringify({ t: at, doc, ...extra })),
 	].map((l) => `${l}\n`);
 	if (!lines.length) return;
 	mkdirSync(join(root, ".prokit"), { recursive: true });
 	appendFileSync(join(root, SKILL_LOG), lines.join(""));
 }
-// 이 라운드(마지막 라운드 시작 줄, 없으면 연 날 KST 이후) 기록의 스킬 이름(접두어·`/` 없이)과 Next 문서 경로(next/dist/docs/…).
-// 기록 파일이 없거나 이 라운드 기록이 하나도 없으면(훅이 없거나 아직 신뢰하지 않은 도구로 진행한 라운드) null이라 자기 신고다.
-function skillsLogged(root, active) {
+// 이 라운드(마지막 라운드 시작 줄, 없으면 연 날 KST 이후) Main의 기록: 읽은 것(uses: 스킬 이름(접두어·`/` 없이)이나
+// Next 문서 경로 next/dist/docs/…, 참조 경로 ref, 시각)과 evidence가 행을 채운 시각(fills). 서브에이전트(agent) 줄은 세지 않는다.
+// 기록 파일이 없거나 이 라운드에 읽은 기록이 하나도 없으면(훅이 없거나 아직 신뢰하지 않은 도구로 진행한 라운드) null이라 자기 신고다.
+function skillLog(root, active) {
 	const p = join(root, SKILL_LOG);
 	if (!existsSync(p)) return null;
 	const since = Date.parse(
 		`${active?.meta.opened ?? "1970-01-01"}T00:00:00+09:00`,
 	);
-	let out = new Set();
+	let uses = [];
+	let fills = [];
 	for (const line of readFileSync(p, "utf8").split("\n")) {
 		try {
 			const e = JSON.parse(line);
-			if ("round" in e) out = new Set();
-			else if (Date.parse(e.t) >= since)
-				out.add(
-					e.doc ??
-						String(e.skill)
-							.replace(/^[/$]+/, "")
-							.split(":")
-							.at(-1),
-				);
+			const t = Date.parse(e.t);
+			if ("round" in e) {
+				uses = [];
+				fills = [];
+			} else if (t >= since && !e.agent) {
+				if ("row" in e) fills.push({ t, row: e.row, text: e.text });
+				else
+					uses.push({
+						t,
+						name: e.doc ?? skillName(String(e.skill)),
+						ref: e.ref,
+					});
+			}
 		} catch {}
 	}
-	return out.size ? out : null;
+	return uses.length ? { uses, fills } : null;
+}
+function skillsLogged(root, active) {
+	const log = skillLog(root, active);
+	return log && new Set(log.uses.map((u) => u.name));
 }
 const LOG_HINT =
 	"Claude Code는 Skill 도구로 부르거나(사용자 호출 전용이면 그 SKILL.md를 Read로 읽는다. Bash cat은 기록되지 않는다), Codex는 그 SKILL.md 경로를 그대로 cat으로, Antigravity는 read_file로 읽어 다시 진행한 뒤 적는다";
@@ -924,6 +948,10 @@ const LOG_HINT =
 // 증거의 `사용:` 목록: `사용:` 뒤에 쉼표로 이어 적은 이름(뒤에 괄호 설명 가능)이다. →·;·|·문장 끝 마침표에서 끝난다.
 // 이름 꼴이 아닌 항목(내장(계획), 파일 경로, "shadcn은 …" 같은 문장)은 뺀다.
 export function usedSkills(value) {
+	return usedItems(value).map((x) => x.name);
+}
+// 사용: 목록의 이름과 그 뒤 괄호 설명
+function usedItems(value) {
 	const items = [];
 	for (const m of value.matchAll(/사용:\s*/g)) {
 		let depth = 0;
@@ -947,15 +975,13 @@ export function usedSkills(value) {
 		}
 	}
 	return items
-		.map(
-			(s) =>
-				s
-					.trim()
-					.match(
-						/^`?([/$]?[a-z][a-z0-9-]*(?::[a-z0-9-]+)?)`?\s*(\(.*\))?$/s,
-					)?.[1],
+		.map((s) =>
+			s
+				.trim()
+				.match(/^`?([/$]?[a-z][a-z0-9-]*(?::[a-z0-9-]+)?)`?\s*(\(.*\))?$/s),
 		)
-		.filter(Boolean);
+		.filter(Boolean)
+		.map((m) => ({ name: m[1], note: m[2] ?? "" }));
 }
 const skillName = (n) =>
 	n
@@ -966,8 +992,20 @@ const isProjectSkill = (root, n) =>
 	[".agents/skills", ".claude/skills"].some((d) =>
 		existsSync(join(root, d, n, "SKILL.md")),
 	);
-// 행 문구 첫 괄호에 이름만 적힌 prokit-* 계층 스킬(예: "구현 (구현 단계, prokit-ui, prokit-web, …)")은 그 행에서 쓴다.
-function rowLayerSkills(text) {
+// 행 문구 첫 괄호에 이름만 적힌 스킬(예: "구현 (구현 단계, prokit-ui, prokit-web, …)", "(neon-postgres-branches)")은 그 행에서 쓴다.
+// "바꿀 계층의 prokit-*"는 이 라운드 diff의 계층(B·D·E)으로 정한다. 조건이 붙은 이름("…는 shadcn")은 그 상황일 때만이라 보지 않는다.
+const LAYER_SKILLS = {
+	B: ["prokit-web", "prokit-ui"],
+	D: ["prokit-api"],
+	E: ["prokit-db"],
+};
+function rowSkills(text, layers) {
+	const named = text.includes("바꿀 계층의 prokit-*")
+		? layers.flatMap((c) => LAYER_SKILLS[c] ?? [])
+		: [];
+	return [...new Set([...rowNamedSkills(text), ...named])];
+}
+function rowNamedSkills(text) {
 	const open = text.indexOf("(");
 	if (open < 0) return [];
 	let depth = 0;
@@ -980,20 +1018,24 @@ function rowLayerSkills(text) {
 		.slice(open + 1, end)
 		.split(",")
 		.map((s) => s.trim())
-		.filter((s) => /^prokit-[a-z-]+$/.test(s));
+		.filter((s) => /^[a-z][a-z0-9-]*$/.test(s));
 }
-// 모든 행: 행 문구의 계층 스킬은 `사용:`에 있어야 하고, prokit-web을 썼으면 읽은 Next 번들 문서를 적는다.
-// 이 라운드의 기록이 있으면 `사용:`의 스킬(프로젝트 스킬이나 플러그인 접두어)과 적은 Next 문서를 읽은 기록이 있어야 한다.
-function usageProblem(root, active) {
-	const logged = skillsLogged(root, active);
+// 모든 행: 행 문구의 스킬은 `사용:`에 있어야 하고, prokit-web을 썼으면 읽은 Next 번들 문서를 적는다.
+// 이 라운드의 기록이 있으면 `사용:`의 스킬(프로젝트 스킬이나 플러그인 접두어)·괄호에 적은 그 스킬의 참조 파일·적은 Next 문서를
+// 읽은 기록이 있어야 하고, 행 문구의 스킬은 앞 행(다른 행)을 마지막으로 채운 뒤 읽은 기록이어야 한다("그 행을 할 때 부른다").
+function usageProblem(root, config, active) {
+	const log = skillLog(root, active);
+	const logged = log && new Set(log.uses.map((u) => u.name));
+	const { layers } = classify(roundFiles(root, active), config);
 	return (r) => {
 		const value = bare(r.evidence);
 		if (!value || /^(blocked|미실행|n\/a)\s*:/i.test(value)) return null;
 		const used = usedSkills(value);
 		const names = new Set(used.map(skillName));
-		const need = rowLayerSkills(r.text).filter(
-			(n) => !names.has(n) && isProjectSkill(root, n),
+		const rowNeed = rowSkills(r.text, layers).filter((n) =>
+			isProjectSkill(root, n),
 		);
+		const need = rowNeed.filter((n) => !names.has(n));
 		if (need.length)
 			return `행 문구의 ${need.join(", ")}를 읽고 따른 뒤 증거에 사용: ${need.join(", ")}처럼 적는다`;
 		if (
@@ -1021,8 +1063,39 @@ function usageProblem(root, active) {
 				(u.includes(":") || isProjectSkill(root, skillName(u))) &&
 				!logged.has(skillName(u)),
 		);
-		return miss.length || docs.length
-			? `증거의 ${[...miss, ...docs].join(", ")}를 이 라운드에서 부르거나 읽은 기록이 없다(${SKILL_LOG}). ${LOG_HINT}`
+		// `impeccable(reference/craft-floor.md)`처럼 괄호에 그 스킬 폴더의 파일을 적었으면 그 파일을 읽은 기록이 있어야 한다
+		const refs = usedItems(value).flatMap(({ name: u, note }) => {
+			const n = skillName(u);
+			return [...note.matchAll(/[\w.-]+(?:\/[\w.-]+)*\.md\b/g)]
+				.map((m) => m[0])
+				.filter(
+					(f) =>
+						f !== "SKILL.md" &&
+						[".agents/skills", ".claude/skills"].some((d) =>
+							existsSync(join(root, d, n, f)),
+						) &&
+						!log.uses.some(
+							(x) => x.name === n && (x.ref === f || x.ref?.endsWith(`/${f}`)),
+						),
+				)
+				.map((f) => `${u}(${f})`);
+		});
+		if (miss.length || docs.length || refs.length)
+			return `증거의 ${[...miss, ...refs, ...docs].join(", ")}를 이 라운드에서 부르거나 읽은 기록이 없다(${SKILL_LOG}). ${LOG_HINT}`;
+		// 행 문구의 스킬: 다른 행을 마지막으로 채운 시각(이 행을 채운 시각 전) 뒤에 읽어야 한다. 채운 기록이 없으면 보지 않는다.
+		// 채운 기록은 행 문구로 짝짓는다(--upgrade가 번호를 바꾼다. 문구가 없는 옛 줄만 번호로).
+		// 상한은 두지 않는다: audit이 거부한 뒤 다시 읽으면 다시 채우지 않아도 통과한다(행을 채울 때 evidence가 바로 알린다)
+		const row = active.rows.indexOf(r) + 1;
+		const own = (x) => (x.text ? x.text === r.text : x.row === row);
+		const mine = log.fills.filter(own).at(-1)?.t;
+		if (mine === undefined) return null;
+		const prev = log.fills.filter((x) => !own(x) && x.t < mine).at(-1);
+		if (!prev) return null;
+		const stale = rowNeed.filter(
+			(n) => !log.uses.some((u) => u.name === n && u.t > prev.t),
+		);
+		return stale.length
+			? `행 문구의 ${stale.join(", ")}를 이 행을 하면서 읽은 기록이 없다(#${active.rows.findIndex((x) => x.text === prev.text) + 1 || prev.row}을 채운 뒤). 앞 행 때 읽은 기록은 세지 않는다. 다시 읽고 따른 뒤 적는다. ${LOG_HINT}`
 			: null;
 	};
 }
@@ -1066,7 +1139,7 @@ const roundRowProblem = (root, config, active) => {
 	const planRound = isPlanRound(active);
 	const brain = brainProblem(root, config, active);
 	const simplicity = simplicityProblem(root, config, active);
-	const usage = usageProblem(root, active);
+	const usage = usageProblem(root, config, active);
 	return (r) =>
 		rowProblem(r) ??
 		uiRecordProblem(root, active.meta, r) ??
@@ -1549,6 +1622,12 @@ export function setEvidence(root, config, row, evidenceFile) {
 		join(root, config.todoPath),
 		`${md.slice(0, replaceAt)}${replaced}${md.slice(replaceAt + line.length)}`,
 	);
+	// 행을 채운 시각: audit이 행 문구의 스킬을 그 행을 하면서(앞 행을 채운 뒤) 읽었는지 본다
+	mkdirSync(join(root, ".prokit"), { recursive: true });
+	appendFileSync(
+		join(root, SKILL_LOG),
+		`${JSON.stringify({ t: new Date().toISOString(), row, text: active.rows[row - 1]?.text })}\n`,
+	);
 	return { row, evidence };
 }
 
@@ -1619,7 +1698,7 @@ const rowProblem = (r) => {
 			new RegExp(`(?:^|;\\s*)${field}:\\s*[^;\\s]`).test(value),
 		)
 	)
-		return "설계 증거에 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사를 적는다";
+		return "설계 증거에 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사를 적는다. 각 필드는 증거 맨 앞이나 ; 뒤에서 시작한다(사용: …. 기존: …처럼 다른 말 뒤에 두면 읽지 못한다. 사용:은 검증: 뒤에 적는다)";
 	return null;
 };
 
@@ -1796,7 +1875,7 @@ function stageGuide(root, config) {
 		.filter(([, c]) => c)
 		.map(([n, c]) => `  #${n}: ${c.names.join(", ")} (${c.brain})`);
 	return lines.length
-		? `\n단계 행에서 먼저 부를 두뇌 스킬(Claude Code는 Skill 도구, 다른 도구는 SKILL.md):\n${lines.join("\n")}`
+		? `\n단계 행에서 먼저 부를 두뇌 스킬(Claude Code는 Skill 도구, 다른 도구는 SKILL.md. 여럿이면 두뇌 파일의 그 단계 칸을 보고 맞는 것을 부른다. /로 시작하는 이름은 같은 스킬의 명령이다):\n${lines.join("\n")}`
 		: "";
 }
 

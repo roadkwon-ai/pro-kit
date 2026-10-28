@@ -407,7 +407,42 @@ export function main(argv, root = process.cwd()) {
 		],
 		{ stdio: ["ignore", "pipe", "inherit"] },
 	);
-	const dep = json(d)?.deployment;
+	const out = json(d);
+	const dep = out?.deployment;
+	// 배포 검사(Neon 통합의 브랜치 만들기 등)만 실패하면 CLI는 checks_failed로 exit 1을 내지만 빌드는 계속된다(CLI 65.2 실측).
+	// develop은 빌드가 끝나기를 기다려 READY면 경고하고 이어 간다. production은 검사 실패가 운영 주소 옮기기를 막을 수 있어 멈춘다.
+	if (d.status !== 0 && out?.reason === "checks_failed" && dep?.url) {
+		const warn = `배포 검사 실패(${out.message}) → vercel api /v1/deployments/${dep.id ?? "<배포 id>"}/checks로 어느 검사인지 본다`;
+		if (name === "production") {
+			// 배포는 이미 만들어졌다. 검사가 운영 주소 옮기기를 막지 않았을 수 있으니 확인과 되돌리기를 함께 준다
+			console.error(
+				[
+					`${warn}. production은 이어 가지 않는다`,
+					`배포 URL: ${dep.url}`,
+					`운영 주소가 이 배포로 옮겨졌는지 vercel inspect ${host}로 본다`,
+					...(prevUrl
+						? [`옮겨졌으면 되돌리기: vercel rollback ${prevUrl}`]
+						: []),
+				].join("\n"),
+			);
+			return 2;
+		}
+		const done = json(
+			vercel([
+				"inspect",
+				dep.url,
+				"--wait",
+				"--timeout",
+				"10m",
+				"--format",
+				"json",
+			]),
+		);
+		if (done?.readyState === "READY") {
+			console.error(`경고: ${warn}`);
+			d.status = 0;
+		}
+	}
 	if (d.status !== 0 || !dep?.url) {
 		console.error(
 			`배포 실패 → 빌드 로그: vercel inspect ${dep?.url ?? "<배포 URL>"} --logs`,
