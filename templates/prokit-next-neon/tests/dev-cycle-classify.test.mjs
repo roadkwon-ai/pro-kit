@@ -20,7 +20,7 @@ test("경로별 케이스: 첫 일치 규칙 하나만 적용한다", () => {
   for (const f of ["skills.manifest.json", ".claude/settings.json", ".agents/hooks.json", ".codex/hooks.json", ".codex/skills/plan/SKILL.md", ".codex/prompts/x.md", ".agents/agents/prokit-reviewer.md", "scripts/skills-setup.mjs"]) {
     assert.equal(classify([f], c).pathCase, "H", f);
   }
-  for (const f of ["scripts/resource-guard.mjs", "scripts/delegation.mjs", "scripts/export-html.mjs", "scripts/load-keys.mjs"]) {
+  for (const f of ["scripts/release.mjs", "scripts/resource-guard.mjs", "scripts/delegation.mjs", "scripts/export-html.mjs", "scripts/load-keys.mjs"]) {
     assert.equal(classify([f], c).pathCase, "H", f);
   }
   for (const f of ["apps/web/next.config.ts", "apps/web/next.config.mts", "vercel.json", "apps/web/vercel.ts", ".github/workflows/ci.yml", ".github/actions/setup/action.yml", "turbo.json", "apps/web/turbo.json"]) {
