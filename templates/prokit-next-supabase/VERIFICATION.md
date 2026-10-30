@@ -4,6 +4,16 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 마크다운을 Biome 검사에서 빼기, 릴리스 스크립트를 하네스로 (2026-10-30)
+
+Biome 2.6부터 마크다운도 포맷한다. 표를 칸 너비로 맞추고 제목 뒤에 빈 줄을 넣는다. 그래서 dev-cycle이 `tasks/todo.md`에 쓰는 대조표가 행을 채울 때마다 `biome check .`에 걸렸다. `AGENTS.md` 표 줄 끝의 `<!-- edition:pro -->` 주석은 칸 하나로 읽혀 `| <!-- edition:pro --> |`로 바뀌었다.
+
+- 설치기의 `biome.json` 제외 목록에 `!**/*.md`를 더했다. 마크다운 문장과 표는 `prokit-writing`이 맡는다. adopt는 그 프로젝트의 마크다운을 그대로 두고 대조표가 있는 `!tasks`만 뺀다. `tests/install.test.mjs`의 기대값도 맞췄다.
+- `.dev-cycle.json` 하네스 규칙에 `scripts/release.mjs`를 더했다. 전에는 릴리스 스크립트를 고친 변경이 A로 판정됐다. `tests/dev-cycle-classify.test.mjs`에 같은 경우를 더했다.
+- 재현(Biome 2.6.4): 단독 폴더에서 템플릿 `AGENTS.md`와 대조표만 든 `tasks/todo.md`가 각각 포맷 오류 1건이었다. `!**/*.md`를 넣으면 두 파일 모두 검사하지 않았고, Biome 2.5.15도 같은 설정을 받았다.
+- 실측(Better-T-Stack 최신, Biome 2.6.4, neon 생성 명령 그대로, `--brain none --simplicity none`): 설치 exit 0, `biome.json`에 `!**/*.md`가 들어갔다. README 순서대로 `pnpm check`를 한 뒤 `biome check .`는 exit 0이었다. `dev-cycle table B --write`로 대조표를 쓰고 행 하나를 채운 뒤에도 `biome check .`는 exit 0이었다. 확인용 project scope 플러그인(skill-creator)은 지웠고 DB 컨테이너는 띄우지 않았다.
+- 이미 설치한 프로젝트는 `install.sh <프로젝트> --skip-skills`가 `biome.json`에 항목만 더한다. `.dev-cycle.json`의 하네스 규칙은 템플릿 갱신 반영 때 맞춘다.
+
 ## 고른 스킬 실사용 검수와 자유로운 전환 (2026-10-27)
 
 두뇌 9개, 과설계 방지 3개, 화면 선택 묶음(taste, motion)을 실제로 설치한 프로젝트에서 dev-cycle이 그 스킬을 단계마다 부르는지 확인했다. 구성을 언제든 바꾸고 빼는 경로(순수 AI 포함)도 확인했다. 계획은 [고른 스킬 실사용 검수 계획](../../docs/plans/2026-10-27-selected-skills-eval.md)이고, 실행기는 저장소 `evals/selected-skills/`(`run.mjs`, `checks.mjs`, `switch.mjs`, 시드)다.

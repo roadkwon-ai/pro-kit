@@ -440,11 +440,12 @@ const gitHookLines = (h, dryRun) =>
 // biome.json은 vcs.useIgnoreFile이 꺼져 있어 .gitignore만으로는 빠지지 않는다.
 // 마이그레이션(drizzle-kit), schema/auth.ts(`auth:generate`), src/env.ts(varlock이 설치·실행 때마다 다시 씀)는 생성물이라
 // 포맷해도 다시 생성하면 지적이 돌아온다. html/(pnpm export:html이 만든 정적 사이트)은 빌드 결과물이다.
+// 마크다운: Biome 2.6부터 표를 칸 너비로 맞추는데, dev-cycle이 tasks/todo.md에 쓰는 대조표와 AGENTS.md 표의 edition 주석 칸이 매번 다시 바뀌어 lint가 실패한다.
 const BIOME_IGNORES = [
   "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!.claude", "!.codex",
   "!tasks/evidence",
   "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
-  "!html",
+  "!html", "!**/*.md",
 ];
 // shadcn의 label.tsx·input-group.tsx는 upstream 코드라 Better-T-Stack 생성 직후부터 a11y 오류 4건이 난다(범용 Label 래퍼,
 // role="group", 애드온 클릭 포커스). 고쳐 써도 `shadcn add --overwrite`가 되돌리므로 이 두 파일에서만 세 규칙을 끈다.
@@ -528,7 +529,7 @@ export function ensureEslintIgnores(target, { dryRun = false } = {}) {
 const ESLINT_MANUAL = `ESLint 설정에 무시 경로(${ESLINT_IGNORES.join(", ")})를 직접 추가하세요 (벤더 스킬과 하네스 스크립트를 검사하면 lint가 실패한다)`;
 
 // adopt에서 프로젝트 Biome이 검사하지 않게 할 하네스·벤더 파일(설치기가 복사하고 Biome 형식이 그 프로젝트와 다를 수 있다).
-const BIOME_ADOPT_IGNORES = ["!.agents", "!.claude", "!.codex", "!skills-lock.json", "!skills.manifest.json", "!.dev-cycle.json", ...ADOPT_SCRIPTS.map((s) => `!scripts/${s}.mjs`)];
+const BIOME_ADOPT_IGNORES = ["!.agents", "!.claude", "!.codex", "!skills-lock.json", "!skills.manifest.json", "!.dev-cycle.json", "!tasks", ...ADOPT_SCRIPTS.map((s) => `!scripts/${s}.mjs`)];
 const adoptBiomeWarning = (target, biome) =>
   biome === "manual" || (biome === null && existsSync(join(target, "biome.jsonc")))
     ? [`경고: Biome 설정의 검사 대상에서 하네스·벤더 파일(${BIOME_ADOPT_IGNORES.map((g) => g.slice(1)).join(", ")})을 직접 빼세요 (그대로 두면 설치만으로 lint가 실패한다)`]

@@ -196,7 +196,7 @@ test("biome.json: 벤더 스킬, 도구 상태 파일, 생성물을 빼고 shadc
     "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!.claude", "!.codex",
     "!tasks/evidence",
     "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
-    "!html",
+    "!html", "!**/*.md",
   ];
   const override = "overrides(shadcn label.tsx·input-group.tsx a11y 3개 끔)";
   const shadcn = ["packages/ui/src/components/label.tsx", "packages/ui/src/components/input-group.tsx"];
@@ -585,6 +585,7 @@ test("adopt: Better-T-Stack이 아닌 Next.js 프로젝트에 하네스만 더�
   const biome = JSON.parse(readFileSync(join(root, "biome.json"), "utf8"));
   assert.deepEqual(biome.files.includes.slice(0, 4), ["**", "!.agents", "!.claude", "!.codex"], "하네스·벤더 파일만 그 프로젝트 Biome 검사에서 뺀다");
   assert.ok(biome.files.includes.includes("!scripts/dev-cycle.mjs"));
+  assert.ok(biome.files.includes.includes("!tasks"), "dev-cycle이 쓰는 대조표는 Biome 2.6 마크다운 포맷에서 뺀다");
   assert.equal("overrides" in biome, false, "그 밖의 Biome 설정은 바꾸지 않는다");
   assert.notEqual(before.biome, "");
   assert.match(readFileSync(join(root, "eslint.config.mjs"), "utf8"), /globalIgnores\(\["\.agents\/\*\*", /, "벤더 스킬은 프로젝트 lint에서 뺀다");
