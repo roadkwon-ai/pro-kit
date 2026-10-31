@@ -501,6 +501,32 @@ export function ensureTurboAgentGuidance(target, { dryRun = false } = {}) {
   return "added";
 }
 
+// turbo의 엄격 환경 변수 모드는 프록시 변수를 작업에 넘기지 않는다(2.11.7 실측: HTTPS_PROXY가 작업 안에서 비어 있음).
+// 프록시 뒤(회사망, Codex 샌드박스)에서 빌드의 next/font/google 받기가 실패하므로 globalPassThroughEnv에 넣는다. 통과 변수는 캐시 해시에 들어가지 않는다.
+// 이미 globalPassThroughEnv가 있으면 사용자 목록이라 고치지 않고, 프록시 변수가 빠졌으면 "manual"로 알린다. 반환은 ensureTurboAgentGuidance와 같다.
+export const TURBO_PROXY_ENV = ["HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "http_proxy", "https_proxy", "no_proxy"];
+export function ensureTurboProxyEnv(target, { dryRun = false } = {}) {
+  const p = join(target, "turbo.json");
+  if (!existsSync(p)) return null;
+  const text = readFileSync(p, "utf8");
+  let cfg;
+  try {
+    cfg = JSON.parse(text);
+  } catch {
+    return "manual";
+  }
+  if ("globalPassThroughEnv" in cfg) return TURBO_PROXY_ENV.every((v) => cfg.globalPassThroughEnv?.includes?.(v)) ? null : "manual";
+  const next = text.replace(/^([ \t]*)"\$schema"[^\r\n]*,(\r?\n)/m, `$&$1"globalPassThroughEnv": ${JSON.stringify(TURBO_PROXY_ENV)},$2`);
+  let top = false;
+  try {
+    top = JSON.stringify(JSON.parse(next).globalPassThroughEnv) === JSON.stringify(TURBO_PROXY_ENV);
+  } catch {}
+  if (!top) return "manual";
+  if (!dryRun) writeFileSync(p, next);
+  return "added";
+}
+
+const TURBO_PROXY_MANUAL = `turbo.json globalPassThroughEnv에 ${TURBO_PROXY_ENV.join(", ")}를 직접 더하세요 (프록시 뒤에서 빌드가 글꼴을 받게)`;
 const TURBO_MANUAL = 'turbo.json에 "agentGuidance": false를 직접 추가하세요 (turbo가 AGENTS.md에 규칙 블록을 쓰지 않게)';
 
 // adopt: 프로젝트의 ESLint가 벤더 스킬(upstream 원본)과 하네스 스크립트까지 검사하면 설치만으로 `lint`가 실패한다.
@@ -667,6 +693,7 @@ export function main(argv) {
     // 미리 보기: 파일을 쓰지 않고 차이와 더할 항목만 보여 준다. 반영은 그 프로젝트의 dev-cycle 라운드에서 한다.
     const biome = ensureBiomeConfig(target, { dryRun: true, extra: adopt ? [] : biomeExtra, adopt });
     const turbo = adopt ? null : ensureTurboAgentGuidance(target, { dryRun: true });
+    const proxy = adopt ? null : ensureTurboProxyEnv(target, { dryRun: true });
     const eslint = adopt ? ensureEslintIgnores(target, { dryRun: true }) : null;
     const hook = ensureClaudeHook(target, { dryRun: true });
     const gitHook = ensureGitHook(target, { dryRun: true });
@@ -681,13 +708,14 @@ export function main(argv) {
       `.gitignore 추가 예정: ${ensureGitignore(target, { dryRun: true, adopt }).join(", ") || "없음"}`,
       `biome.json 추가 예정: ${Array.isArray(biome) ? biome.join(", ") || "없음" : "없음"}`,
       ...(adopt ? adoptBiomeWarning(target, biome) : jsoncWarning(target, biome)),
-      `turbo.json 추가 예정: ${turbo === "added" ? '"agentGuidance": false' : "없음"}`,
+      `turbo.json 추가 예정: ${[turbo === "added" && '"agentGuidance": false', proxy === "added" && "globalPassThroughEnv(프록시 변수)"].filter(Boolean).join(", ") || "없음"}`,
       ...(Array.isArray(eslint) ? [`ESLint 무시 추가 예정: ${eslint.join(", ") || "없음"}`] : []),
       ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
       `.claude/settings.json 추가 예정: ${hook ? "SessionStart 훅(scripts/load-keys.mjs), PostToolUse 훅(부른 스킬 기록), PreToolUse 훅(라운드 없는 편집 막기)" : "없음"}`,
       ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
       ...gitHookLines(gitHook, true),
       ...(turbo === "manual" ? [`경고: ${TURBO_MANUAL}`] : []),
+      ...(proxy === "manual" ? [`경고: ${TURBO_PROXY_MANUAL}`] : []),
       ...legacyWarning(target),
       ...(choices.length ? [`.dev-cycle.json 기록 예정: ${choices.join(", ")} (고르지 않은 설치본 정리는 반영할 때 skills-setup이 한다)`] : []),
       ...(project.length ? [`.dev-cycle.json 기록 예정: ${project.join(", ")}`] : []),
@@ -706,6 +734,7 @@ export function main(argv) {
   const gitignore = ensureGitignore(target, { adopt });
   const biomeConfig = ensureBiomeConfig(target, { extra: adopt ? [] : biomeExtra, adopt });
   const turbo = adopt ? null : ensureTurboAgentGuidance(target);
+  const proxy = adopt ? null : ensureTurboProxyEnv(target);
   const eslint = adopt ? ensureEslintIgnores(target) : null;
   const hook = ensureClaudeHook(target);
   const gitHook = ensureGitHook(target);
@@ -745,6 +774,8 @@ export function main(argv) {
     ...(adopt ? adoptBiomeWarning(target, biomeConfig) : jsoncWarning(target, biomeConfig)),
     ...(turbo === "added" ? ['turbo.json: "agentGuidance": false 추가 (turbo가 AGENTS.md에 규칙 블록을 쓰지 않게)'] : []),
     ...(turbo === "manual" ? [`경고: ${TURBO_MANUAL}`] : []),
+    ...(proxy === "added" ? [`turbo.json: globalPassThroughEnv에 ${TURBO_PROXY_ENV.join(", ")} 추가 (프록시 뒤에서 빌드가 글꼴을 받게)`] : []),
+    ...(proxy === "manual" ? [`경고: ${TURBO_PROXY_MANUAL}`] : []),
     ...(Array.isArray(eslint) && eslint.length ? [`ESLint 무시 추가: ${eslint.join(", ")} (벤더 스킬과 하네스 스크립트는 프로젝트 lint에서 뺀다)`] : []),
     ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
     ...(hook ? [".claude/settings.json: SessionStart 훅(scripts/load-keys.mjs: .env의 이미지 키와 배포 토큰을 세션에 불러온다)과 PostToolUse 훅(dev-cycle skill-log: 부른 스킬을 .prokit/skills-used.jsonl에 남겨 audit이 단계 행 증거와 대조한다), PreToolUse 훅(dev-cycle edit-guard: 열린 라운드 없이 코드·하네스 파일을 고치지 못하게 한다) 중 없는 것을 더함"] : []),

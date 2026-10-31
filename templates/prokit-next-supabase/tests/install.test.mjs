@@ -5,7 +5,7 @@ import { chmodSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, 
 import { tmpdir } from "node:os";
 import { basename, dirname, join, relative } from "node:path";
 import { test } from "node:test";
-import { ADOPT_AUTH, ESLINT_IGNORES, ensureBiomeConfig, ensureClaudeHook, ensureEslintIgnores, ensureGitignore, ensureTurboAgentGuidance, formatWithBiome, preflight } from "../install.mjs";
+import { ADOPT_AUTH, ESLINT_IGNORES, ensureBiomeConfig, ensureClaudeHook, ensureEslintIgnores, ensureGitignore, ensureTurboAgentGuidance, ensureTurboProxyEnv, formatWithBiome, TURBO_PROXY_ENV, preflight } from "../install.mjs";
 import { TEMPLATE, TEMPLATE_FILES } from "./helpers.mjs";
 
 function fakeBts(prefix = "prokit-") {
@@ -254,6 +254,28 @@ test("turbo.json: 설치된 turbo가 agentGuidance를 알 때만 $schema 뒤에 
   for (const text of ['{\n  "tasks": {}\n}\n', '{\n  // 주석\n  "$schema": "x",\n  "tasks": {}\n}\n', '{\n  "tasks": {\n    "$schema": "x",\n    "build": {}\n  },\n  "$schema": "y"\n}\n']) {
     writeFileSync(p, text);
     assert.equal(ensureTurboAgentGuidance(root), "manual", text);
+    assert.equal(readFileSync(p, "utf8"), text);
+  }
+});
+
+test("turbo.json: 프록시 변수를 globalPassThroughEnv로 한 번 넘기고, 사용자 목록은 고치지 않는다", () => {
+  const root = mkdtempSync(join(tmpdir(), "turbo-proxy-"));
+  const p = join(root, "turbo.json");
+  assert.equal(ensureTurboProxyEnv(root), null, "turbo.json 없음");
+  const TURBO = '{\n  "$schema": "https://turbo.build/schema.json",\n  "ui": "tui",\n  "tasks": {}\n}\n';
+  writeFileSync(p, TURBO);
+  assert.equal(ensureTurboProxyEnv(root, { dryRun: true }), "added");
+  assert.equal(readFileSync(p, "utf8"), TURBO, "dryRun은 쓰지 않는다");
+  assert.equal(ensureTurboProxyEnv(root), "added");
+  assert.deepEqual(JSON.parse(readFileSync(p, "utf8")).globalPassThroughEnv, TURBO_PROXY_ENV);
+  assert.equal(ensureTurboProxyEnv(root), null, "두 번째는 그대로");
+  const mine = '{\n  "$schema": "x",\n  "globalPassThroughEnv": ["FOO"],\n  "tasks": {}\n}\n';
+  writeFileSync(p, mine);
+  assert.equal(ensureTurboProxyEnv(root), "manual", "사용자 목록에 프록시가 없으면 알리기만 한다");
+  assert.equal(readFileSync(p, "utf8"), mine);
+  for (const text of ['{\n  "tasks": {}\n}\n', '{\n  // 주석\n  "$schema": "x",\n  "tasks": {}\n}\n']) {
+    writeFileSync(p, text);
+    assert.equal(ensureTurboProxyEnv(root), "manual", text);
     assert.equal(readFileSync(p, "utf8"), text);
   }
 });
