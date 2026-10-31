@@ -4,7 +4,7 @@ AI 내레이션 스튜디오예요. 유튜브나 팟캐스트를 혼자 만드�
 
 ![울림 첫 화면](assets/ullim-home-desktop.webp)
 
-[프리셋 사이트 열기](https://prokit-web.vercel.app/pro-kit/ullim/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit-web.vercel.app/work/ullim/)
+[프리셋 사이트 열기](https://prokit.highvalue.kr/pro-kit/ullim/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit.highvalue.kr/work/ullim/)
 
 | 항목 | 내용 |
 |---|---|

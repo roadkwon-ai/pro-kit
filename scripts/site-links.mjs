@@ -3,7 +3,7 @@
 // 주소가 바뀌면(도메인 구입, 계정 이전) 이 명령 하나로 추적 파일 전체와 site-links.json을 바꾼다.
 // 사용법: node scripts/site-links.mjs set <키> <새 주소> (AI 서버: aiService)
 //   그 주소 아래 경로인 다른 키(pages = home/pro-kit)도 함께 바뀐다.
-//   https 주소, 스킴 없는 주소, GitHub이면 owner/name 꼴까지 바꾼다. 이름이 이어지는 주소(pro-kit → pro-kit-packs)와 release/ 옛 노트는 그대로 둔다.
+//   https 주소, 스킴 없는 주소, GitHub이면 owner/name 꼴까지 바꾼다. 이름이 이어지는 주소(pro-kit → pro-kit-packs), release/ 옛 노트, docs/superpowers/ 기록, scripts/*.test.mjs 시험 글은 그대로 둔다.
 //   두 템플릿의 PROKIT_LINKS도 같은 값으로 바뀐다. 바꾼 뒤 저장소 밖에서 할 일(이 명령이 바꾸지 않는다):
 //   프리셋 작업공간의 prokit-credit.tsx에 복사한다(AGENTS.md 템플릿 수정 규칙). ../pro-kit-web은 `pnpm tutorials:sync`로
 //   이 파일의 사본(apps/web/content/site-links.json)을 받는다. 도메인을 바꿀 때는 web의 `pnpm domain <주소> --apply`가
@@ -34,7 +34,8 @@ const swap = (m) => to[from.indexOf(m)];
 
 let total = 0;
 for (const f of execFileSync("git", ["ls-files"], { encoding: "utf8" }).split("\n")) {
-  if (!f || f.startsWith("release/") || f === FILE) continue;
+  // 지난 기록(release/, docs/superpowers/)과 주소 치환을 시험하는 글(scripts/*.test.mjs)은 바꾸지 않는다
+  if (!f || f === FILE || /^(release|docs\/superpowers)\//.test(f) || /^scripts\/.*\.test\.mjs$/.test(f)) continue;
   let s;
   try {
     s = readFileSync(f, "utf8");

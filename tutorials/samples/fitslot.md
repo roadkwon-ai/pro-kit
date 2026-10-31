@@ -4,7 +4,7 @@
 
 ![핏슬롯 첫 화면](assets/fitslot-home-desktop.webp)
 
-[프리셋 사이트 열기](https://prokit-web.vercel.app/pro-kit/fitslot/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit-web.vercel.app/work/fitslot/)
+[프리셋 사이트 열기](https://prokit.highvalue.kr/pro-kit/fitslot/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit.highvalue.kr/work/fitslot/)
 
 | 항목 | 내용 |
 |---|---|

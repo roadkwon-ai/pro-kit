@@ -121,7 +121,7 @@ Codex와 Antigravity 시험에서 찾아 고친 것은 이래요.
 | 시각 자산 | 서체는 프리셋 <!-- v:presets.screen.count -->14<!-- /v -->개 모두 파일로 받아 프로젝트에 직접 넣었어요(자체 호스팅: Pretendard, Wanted Sans, SUIT, JetBrains Mono, Black Han Sans, Hahmlet, Paperlogy, Outfit, Noto Sans KR, MaruBuri). 사진과 일러스트는 AI로 만들었고, 아이콘은 lucide예요. 사람이 나오는 사진은 원본 크기로 팔다리와 손을 확인해 이상한 사진을 다시 만들었어요. 모션은 마루빌드를 뺀 프리셋 모두 reduced-motion(움직임 줄이기) 설정에서 꺼져요. 마루빌드의 움직임 줄이기는 확인하지 않았어요 |
 | 비용 (추천부터 모든 페이지 확인까지) | 에이전트 비용은 프리셋당 $68\~$181, 모두 약 $1,090예요(중간에 작업공간을 기록으로 되살린 세션 포함). OpenAI 이미지 비용은 따로 청구돼요 |
 
-클론 코딩까지 프리셋 <!-- v:presets.count -->16<!-- /v -->개는 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지를 열어 볼 수 있어요.
+클론 코딩까지 프리셋 <!-- v:presets.count -->16<!-- /v -->개는 [프로킷 사이트](https://prokit.highvalue.kr/)에서 모든 페이지를 열어 볼 수 있어요.
 
 ### 측정 보고서
 

@@ -139,7 +139,7 @@ flowchart LR
 
 ### 만들어 둔 화면 프리셋
 
-기존 제작 흐름으로 만든 화면 프리셋 <!-- v:presets.screen.count -->14<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->9<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개, 모두 <!-- v:presets.screen.pages -->373<!-- /v -->페이지)를 [프로킷 사이트](https://prokit-web.vercel.app/)에서 볼 수 있어요. 스타일 추천을 거친 프리셋은 추천 순위, comp, 사이트맵을 에이전트가 제안했고, 고르기와 수정 요청은 사용자가 직접 했어요.
+기존 제작 흐름으로 만든 화면 프리셋 <!-- v:presets.screen.count -->14<!-- /v -->개(랜딩페이지 <!-- v:presets.landing.count -->9<!-- /v -->개, 앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개, 모두 <!-- v:presets.screen.pages -->373<!-- /v -->페이지)를 [프로킷 사이트](https://prokit.highvalue.kr/)에서 볼 수 있어요. 스타일 추천을 거친 프리셋은 추천 순위, comp, 사이트맵을 에이전트가 제안했고, 고르기와 수정 요청은 사용자가 직접 했어요.
 
 - **앱 화면 <!-- v:presets.app.count -->5<!-- /v -->개**(<!-- v:preset.goru.title -->고루<!-- /v -->, <!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->, <!-- v:preset.uptrail.title -->Uptrail<!-- /v -->, <!-- v:preset.studyday.title -->하루공부<!-- /v -->, <!-- v:preset.olgot.title -->올곧<!-- /v -->): 분야가 다른 서비스를 사이트맵의 모든 페이지까지 만들었어요. 올곧을 뺀 넷은 템플릿을 설치한 프로젝트에서 `prokit-ui`의 흐름을 그대로 따랐어요.
   1. 이전 시안을 critique(디자인 리뷰)했어요.

@@ -39,7 +39,7 @@ const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const PARTICLE = { 을: "를", 은: "는", 이: "가", 과: "와", 으로: "로", 이에요: "예요", 이면: "면", 이나: "나", 이란: "란", 이라: "라" };
 
 // 저장소 이름 바꾸기(ed.rename = [pro-kit, pro-kit-ui]): 받을 저장소·폴더·파일 주소가 판을 가리키게 하고, 뒤 조사를 맞춘다.
-// 주석 안(판 글 주석 포함), "Pro 스킬셋(`pro-kit`)" 안내, 도메인 바로 뒤의 경로(프리셋 사이트 prokit-web.vercel.app/pro-kit/)는 그대로 둔다.
+// 주석 안(판 글 주석 포함), "Pro 스킬셋(`pro-kit`)" 안내, 도메인 바로 뒤의 경로(프리셋 사이트 prokit.highvalue.kr/pro-kit/)는 그대로 둔다.
 export function rename(text, from, to) {
   // 코드 표시(`pro-kit`이) 뒤 조사도 맞춘다. "이"는 뒤가 띄어쓰기·문장부호일 때만 조사로 본다(이름, 이미, 이다는 그대로). 띄어 쓴 조사는 주소 뒤에 온다("…/pro-kit 을 이 폴더에"). 띄어 쓴 "이"는 "이 폴더"일 수 있어 보지 않는다.
   const re = new RegExp(`(?<![\\w-]|\\.[a-z]{2,}/|Pro 스킬셋\\(\`?)${esc(from)}(?![\\w-])(\`?)(?:(으로|을|은|과|이에요|이면|이나|이란|이라|이(?=[\\s.,;:!?)\\]]|$))|( )(으로|을|은|과)(?=\\s))?`, "g");
@@ -196,7 +196,7 @@ function anchors(md) {
 // 이름 없이 Pro 절차를 말하는 글(ed.proTerms의 말. 허용 목록 ed.allow에 이유와 줄 수를 적은 것만 둔다)을 찾는다.
 export function check(ed, out, root = ROOT) {
   const problems = [];
-  // 뒤에 ".영문"이 오면 도메인(prokit-web.vercel.app)이라 이름으로 보지 않는다.
+  // 뒤에 ".영문"이 오면 도메인(prokit.highvalue.kr)이라 이름으로 보지 않는다.
   const missing = new RegExp(`(?<![\\w-])(?:${ed.missing.map(esc).join("|")})(?![\\w-]|\\.\\w)`);
   const terms = (ed.proTerms ?? []).map((t) => [t, new RegExp(`(?<![\\w-])${esc(t)}(?![\\w-])`, "i")]);
   const allow = readAllow(ed, root);

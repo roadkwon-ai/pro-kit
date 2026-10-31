@@ -4,7 +4,7 @@
 
 ![고루 첫 화면](assets/goru-home-desktop.webp)
 
-[프리셋 사이트 열기](https://prokit-web.vercel.app/pro-kit/goru/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit-web.vercel.app/work/goru/)
+[프리셋 사이트 열기](https://prokit.highvalue.kr/pro-kit/goru/) · [프로킷 사이트에서 모든 페이지 보기](https://prokit.highvalue.kr/work/goru/)
 
 | 항목 | 내용 |
 |---|---|

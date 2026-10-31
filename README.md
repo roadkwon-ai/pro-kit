@@ -1,4 +1,4 @@
-<p align="center"><a href="https://prokit-web.vercel.app/"><img src="docs/assets/brand/banner.png" alt="프로킷. AI 시대, 누구나 프로처럼." width="840"></a></p>
+<p align="center"><a href="https://prokit.highvalue.kr/"><img src="docs/assets/brand/banner.png" alt="프로킷. AI 시대, 누구나 프로처럼." width="840"></a></p>
 
 <h1 align="center">pro-kit</h1>
 
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://prokit-web.vercel.app/"><strong>프로킷 사이트 보기 →</strong></a><br>
+  <a href="https://prokit.highvalue.kr/"><strong>프로킷 사이트 보기 →</strong></a><br>
   <sub>이 키트로 만든 사이트 <!-- v:presets.count -->16<!-- /v -->개를 모든 페이지까지 열어 볼 수 있습니다.</sub>
 </p>
 
@@ -137,16 +137,16 @@ claude
 
 <table>
 <tr>
-<td width="50%" valign="top"><a href="https://prokit-web.vercel.app/pro-kit/goru/"><img src="docs/assets/design-samples/goru.webp" alt="고루 9월 살림 홈 화면, 데스크톱과 모바일"></a><br><strong><!-- v:preset.goru.title -->고루<!-- /v --></strong> · <!-- v:preset.goru.kindLabel -->앱 화면<!-- /v --> · <!-- v:preset.goru.field -->공동 생활비 정산<!-- /v --> · 페이지 <!-- v:preset.goru.pages -->7<!-- /v -->개 · <a href="https://prokit-web.vercel.app/pro-kit/goru/">HTML</a> · <a href="tutorials/samples/goru.md">만들어 보기</a><br><sub>위 "화면만 만들기" 프롬프트와 같은 생활비 정산 컨셉으로 실제로 만든 앱</sub></td>
-<td width="50%" valign="top"><a href="https://prokit-web.vercel.app/pro-kit/olgot/"><img src="docs/assets/design-samples/olgot.webp" alt="올곧 첫 화면, 데스크톱과 모바일"></a><br><strong><!-- v:preset.olgot.title -->올곧<!-- /v --></strong> · <!-- v:preset.olgot.kindLabel -->앱 화면<!-- /v --> · <!-- v:preset.olgot.field -->입시학원 수강 신청·상담<!-- /v --> · 페이지 <!-- v:preset.olgot.pages -->203<!-- /v -->개(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종) · <a href="https://prokit-web.vercel.app/pro-kit/olgot/">HTML</a> · <a href="tutorials/samples/olgot.md">만들어 보기</a><br><sub>이만큼 큰 사이트도 모든 페이지를 같은 흐름으로 만들고 검사합니다</sub></td>
+<td width="50%" valign="top"><a href="https://prokit.highvalue.kr/pro-kit/goru/"><img src="docs/assets/design-samples/goru.webp" alt="고루 9월 살림 홈 화면, 데스크톱과 모바일"></a><br><strong><!-- v:preset.goru.title -->고루<!-- /v --></strong> · <!-- v:preset.goru.kindLabel -->앱 화면<!-- /v --> · <!-- v:preset.goru.field -->공동 생활비 정산<!-- /v --> · 페이지 <!-- v:preset.goru.pages -->7<!-- /v -->개 · <a href="https://prokit.highvalue.kr/pro-kit/goru/">HTML</a> · <a href="tutorials/samples/goru.md">만들어 보기</a><br><sub>위 "화면만 만들기" 프롬프트와 같은 생활비 정산 컨셉으로 실제로 만든 앱</sub></td>
+<td width="50%" valign="top"><a href="https://prokit.highvalue.kr/pro-kit/olgot/"><img src="docs/assets/design-samples/olgot.webp" alt="올곧 첫 화면, 데스크톱과 모바일"></a><br><strong><!-- v:preset.olgot.title -->올곧<!-- /v --></strong> · <!-- v:preset.olgot.kindLabel -->앱 화면<!-- /v --> · <!-- v:preset.olgot.field -->입시학원 수강 신청·상담<!-- /v --> · 페이지 <!-- v:preset.olgot.pages -->203<!-- /v -->개(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종) · <a href="https://prokit.highvalue.kr/pro-kit/olgot/">HTML</a> · <a href="tutorials/samples/olgot.md">만들어 보기</a><br><sub>이만큼 큰 사이트도 모든 페이지를 같은 흐름으로 만들고 검사합니다</sub></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="https://prokit-web.vercel.app/pro-kit/pacecrew/"><img src="docs/assets/landing-samples/pacecrew.webp" alt="PACECREW 랜딩페이지 첫 화면, 데스크톱과 모바일"></a><br><strong><!-- v:preset.pacecrew.title -->PACECREW<!-- /v --></strong> · <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> · <!-- v:preset.pacecrew.field -->동네 러닝 크루 매칭<!-- /v --> · 페이지 <!-- v:preset.pacecrew.pages -->22<!-- /v -->개 · <a href="https://prokit-web.vercel.app/pro-kit/pacecrew/">HTML</a> · <a href="tutorials/samples/pacecrew.md">만들어 보기</a></td>
-<td width="50%" valign="top"><a href="https://prokit-web.vercel.app/pro-kit/nextflix/"><img src="tutorials/01-nextflix/assets/nextflix-home-desktop.webp" alt="Nextflix 홈 화면, 데스크톱"></a><br><strong><!-- v:preset.nextflix.title -->Nextflix<!-- /v --></strong> · <!-- v:preset.nextflix.kindLabel -->클론 튜토리얼<!-- /v --> · <!-- v:preset.nextflix.field -->영상 구독 서비스<!-- /v --> · <a href="https://prokit-web.vercel.app/pro-kit/nextflix/">HTML</a> · <a href="tutorials/01-nextflix/README.md">튜토리얼</a><br><sub>유명 서비스를 본뜬 연습용. 화면을 다 만든 뒤 로그인, DB, 기능을 붙여 배포합니다</sub></td>
+<td width="50%" valign="top"><a href="https://prokit.highvalue.kr/pro-kit/pacecrew/"><img src="docs/assets/landing-samples/pacecrew.webp" alt="PACECREW 랜딩페이지 첫 화면, 데스크톱과 모바일"></a><br><strong><!-- v:preset.pacecrew.title -->PACECREW<!-- /v --></strong> · <!-- v:preset.pacecrew.kindLabel -->랜딩페이지<!-- /v --> · <!-- v:preset.pacecrew.field -->동네 러닝 크루 매칭<!-- /v --> · 페이지 <!-- v:preset.pacecrew.pages -->22<!-- /v -->개 · <a href="https://prokit.highvalue.kr/pro-kit/pacecrew/">HTML</a> · <a href="tutorials/samples/pacecrew.md">만들어 보기</a></td>
+<td width="50%" valign="top"><a href="https://prokit.highvalue.kr/pro-kit/nextflix/"><img src="tutorials/01-nextflix/assets/nextflix-home-desktop.webp" alt="Nextflix 홈 화면, 데스크톱"></a><br><strong><!-- v:preset.nextflix.title -->Nextflix<!-- /v --></strong> · <!-- v:preset.nextflix.kindLabel -->클론 튜토리얼<!-- /v --> · <!-- v:preset.nextflix.field -->영상 구독 서비스<!-- /v --> · <a href="https://prokit.highvalue.kr/pro-kit/nextflix/">HTML</a> · <a href="tutorials/01-nextflix/README.md">튜토리얼</a><br><sub>유명 서비스를 본뜬 연습용. 화면을 다 만든 뒤 로그인, DB, 기능을 붙여 배포합니다</sub></td>
 </tr>
 </table>
 
-전체 <!-- v:presets.count -->16<!-- /v -->개(화면 <!-- v:presets.screen.count -->14<!-- /v -->개, 클론 <!-- v:presets.clone.count -->2<!-- /v -->개)는 [프로킷 사이트](https://prokit-web.vercel.app/)에서 모든 페이지까지 열어 보고, 화면은 [컨셉으로 화면 만들기 목록](tutorials/samples/README.md), 클론은 [튜토리얼](tutorials/README.md)에서 만들어 봅니다.
+전체 <!-- v:presets.count -->16<!-- /v -->개(화면 <!-- v:presets.screen.count -->14<!-- /v -->개, 클론 <!-- v:presets.clone.count -->2<!-- /v -->개)는 [프로킷 사이트](https://prokit.highvalue.kr/)에서 모든 페이지까지 열어 보고, 화면은 [컨셉으로 화면 만들기 목록](tutorials/samples/README.md), 클론은 [튜토리얼](tutorials/README.md)에서 만들어 봅니다.
 
 ## 얼마나 걸리고 얼마 드나요
 <!-- v:limit.pro5h.plans -->Claude Pro · ChatGPT Plus(Codex)<!-- /v --> 같은 구독 요금제로 만들 수 있습니다. 사용량이 <!-- v:limit.window -->5시간<!-- /v --> 한도에 걸리면 안내된 시간이 지난 뒤 "하던 작업 이어서 해줘"로 이어 갑니다. 위 예시를 만드는 데 걸리는 시간은 이렇습니다.
@@ -188,7 +188,7 @@ git clone https://github.com/roadkwon-ai/pro-kit
 | 어디 | 무엇이 있나요 |
 |---|---|
 | [문서(handbook)](handbook/README.md) | 묶음 <!-- v:handbook.sections.count -->7<!-- /v -->개, 쪽 <!-- v:handbook.pages.count -->47<!-- /v -->개. [시작하기](handbook/start/README.md), [핵심 개념](handbook/concepts/README.md), [템플릿](handbook/templates/README.md), [스킬과 에이전트](handbook/skills/README.md), [디자인](handbook/design/README.md), [배포와 릴리스](handbook/deploy/README.md), [레퍼런스](handbook/reference/README.md) |
-| [튜토리얼](tutorials/README.md) | 코드를 몰라도 프롬프트를 붙여 넣으며 화면을 만드는 단계별 안내. [시작하기](tutorials/start/README.md), [컨셉으로 화면 만들기](tutorials/samples/README.md), [Nextflix](tutorials/01-nextflix/README.md), [Claudle](tutorials/02-claudle/README.md), 비용과 키·배포·용어·문제 해결·Windows 가이드. [프로킷 사이트](https://prokit-web.vercel.app/tutorials/)에서도 읽을 수 있습니다 |
+| [튜토리얼](tutorials/README.md) | 코드를 몰라도 프롬프트를 붙여 넣으며 화면을 만드는 단계별 안내. [시작하기](tutorials/start/README.md), [컨셉으로 화면 만들기](tutorials/samples/README.md), [Nextflix](tutorials/01-nextflix/README.md), [Claudle](tutorials/02-claudle/README.md), 비용과 키·배포·용어·문제 해결·Windows 가이드. [프로킷 사이트](https://prokit.highvalue.kr/tutorials/)에서도 읽을 수 있습니다 |
 | 템플릿 README와 검증 기록 | 명령과 옵션의 정본은 템플릿 README([neon](templates/prokit-next-neon/README.md) · [supabase](templates/prokit-next-supabase/README.md)), 검증 결과와 한계는 VERIFICATION.md([neon](templates/prokit-next-neon/VERIFICATION.md) · [supabase](templates/prokit-next-supabase/VERIFICATION.md)) |
 | [AGENTS.md](AGENTS.md) | 에이전트가 새 프로젝트를 만들거나 기존 프로젝트에 도입할 때 따르는 절차와 이 저장소의 규칙 |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 저장소 관리자용. 저장소 구조, 템플릿 수정, 테스트, 공통 값, 릴리스, 프리셋 팩 인덱스 |

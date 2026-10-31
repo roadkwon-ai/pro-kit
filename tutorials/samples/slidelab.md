@@ -4,7 +4,7 @@ AI·PPT 교육을 소개하는 한 페이지 프리셋이에요. 과정과 교�
 
 ![슬라이드랩 제작 검수에서 촬영한 첫 화면](assets/slidelab-home-desktop.webp)
 
-[프리셋 사이트 열기](https://prokit-web.vercel.app/pro-kit/slidelab/) · [프로킷 사이트에서 보기](https://prokit.highvalue.kr/work/slidelab/)
+[프리셋 사이트 열기](https://prokit.highvalue.kr/pro-kit/slidelab/) · [프로킷 사이트에서 보기](https://prokit.highvalue.kr/work/slidelab/)
 
 | 항목 | 내용 |
 |---|---|

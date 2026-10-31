@@ -7,7 +7,7 @@
 질문을 보내면 실제 AI 대신 프리셋 팩에 미리 써 둔 답을 골라 글자씩 흘려 보여 줘요([모의 응답](../reference/glossary.md#만들기)). 그래서 AI 키가 없어도 대화가 어떻게 흐르는지 볼 수 있어요.
 
 <!-- b:clone-screens-preset-site name=claudle -->
-[프리셋 사이트](https://prokit-web.vercel.app/pro-kit/claudle/)가 이 장의 완성 예시예요. 가장 오래 걸리는 장이에요.
+[프리셋 사이트](https://prokit.highvalue.kr/pro-kit/claudle/)가 이 장의 완성 예시예요. 가장 오래 걸리는 장이에요.
 <!-- /b -->
 
 ## 1. 모든 페이지 만들기

@@ -4,7 +4,7 @@ import { useId } from "react";
 
 // 프로킷 주소는 여기에만 있다. 홈페이지 주소가 바뀌면 PROKIT_LINKS만 고친다(프로젝트마다 같은 파일이라 그대로 복사해도 된다).
 export const PROKIT_LINKS = {
-	site: "https://prokit-web.vercel.app/",
+	site: "https://prokit.highvalue.kr/",
 	github: "https://github.com/roadkwon-ai/pro-kit",
 };
 

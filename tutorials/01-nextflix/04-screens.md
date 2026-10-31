@@ -5,7 +5,7 @@
 사이트맵의 모든 페이지를 [프리셋 팩](../reference/glossary.md#만들기)(<!-- v:gloss.clonePack -->만들 서비스의 화면 구성, 기능 규칙, 디자인 노트, 예시 데이터, 그림을 묶어 둔 폴더<!-- /v -->)의 [예시 데이터](../reference/glossary.md#만들기)(화면을 먼저 보기 위해 넣어 두는 가짜 데이터)와 그림으로 만들어요. **로그인과 저장 같은 기능은 아직 없고 화면만 있어요.** 찜이나 평가 버튼은 눌러도 화면에서만 바뀌고, 새로고침하면 처음으로 돌아가요.
 
 <!-- b:clone-screens-preset-site name=nextflix -->
-[프리셋 사이트](https://prokit-web.vercel.app/pro-kit/nextflix/)가 이 장의 완성 예시예요. 가장 오래 걸리는 장이에요.
+[프리셋 사이트](https://prokit.highvalue.kr/pro-kit/nextflix/)가 이 장의 완성 예시예요. 가장 오래 걸리는 장이에요.
 <!-- /b -->
 
 ## 1. 모든 페이지 만들기
