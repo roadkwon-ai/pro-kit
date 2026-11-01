@@ -2803,8 +2803,7 @@ export function editGuard(root, config, input) {
 				]),
 			].filter((a) => a && agents.includes(a));
 		if (agent) {
-			// 계층 에이전트는 자기 계층 파일만 고친다. 병렬로 맡겨도 누가 어느 파일을 고쳤는지 계층으로 나뉜다
-			if (!Object.values(LAYER_AGENTS).includes(agentType)) return null;
+			// 계층 파일은 그 계층 에이전트만 고친다(prokit-implementer 등 다른 서브에이전트도). 병렬로 맡겨도 누가 어느 파일을 고쳤는지 계층으로 나뉜다
 			const foreign = rels.filter((f) => {
 				const own = owners(classify([f], config));
 				return own.length && !own.includes(agentType);

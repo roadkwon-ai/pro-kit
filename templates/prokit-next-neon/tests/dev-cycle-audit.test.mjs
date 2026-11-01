@@ -1486,7 +1486,7 @@ test("degraded: 서브에이전트를 구별하지 못한 라운드에서만 Mai
   assert.deepEqual(audit(r2, c2).problems.filter((p) => p.startsWith(`#${dbImpl} `) && /degraded|리뷰/.test(p)), []);
 });
 
-test("계층 에이전트는 다른 계층 파일을 편집하지 못하고(인증 파일은 서버 몫), 자기 계층과 계층 밖 수행자는 막지 않는다", () => {
+test("계층 파일은 그 계층 에이전트만 편집하고(인증 파일은 서버 몫), 계층 밖 수행자는 계층 밖 파일만 고친다", () => {
   const { root, write } = makeRepo();
   write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-api-builder", "prokit-db-builder", "prokit-implementer"], skills: {} } }));
   const config = loadConfig(root);
@@ -1498,7 +1498,10 @@ test("계층 에이전트는 다른 계층 파일을 편집하지 못하고(인�
   assert.match(ui.stderr, /prokit-ui-builder는 다른 계층 에이전트가 맡는 파일\(packages\/db\/src\/schema\/todo\.ts\)을 고치지 않는다.*prokit-db-builder/);
   assert.equal(guard("prokit-db-builder", schema).status, 0);
   assert.equal(guard("prokit-ui-builder", "apps/web/src/app/page.tsx").status, 0);
-  assert.equal(guard("prokit-implementer", schema).status, 0, "계층 밖 수행자는 계층으로 막지 않는다");
+  const impl = guard("prokit-implementer", schema);
+  assert.equal(impl.status, 2, "계층 밖 수행자도 계층 파일은 고치지 못한다");
+  assert.match(impl.stderr, /prokit-implementer는 .*prokit-db-builder/);
+  assert.equal(guard("prokit-implementer", "AGENTS.md").status, 0, "계층 밖 파일은 계층 밖 수행자가 고친다");
   // 인증 파일은 계층 규칙 밖이어도 서버 에이전트 몫이다
   assert.equal(guard("prokit-api-builder", "apps/web/src/lib/auth-client.ts").status, 0);
   assert.equal(guard("prokit-ui-builder", "apps/web/src/lib/auth-client.ts").status, 2);

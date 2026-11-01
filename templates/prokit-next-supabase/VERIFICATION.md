@@ -9,6 +9,7 @@
 공통 변경(`scripts/dev-cycle.mjs`, `delegation.md`, 공통 테스트)과 판단은 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#계층별-위임-계층-편집-경계-훅-없는-호스트의-degraded-2026-11-01)에 있다. supabase만 다른 파일은 `docs/dev-workflow.md`의 같은 문장이다.
 
 - 테스트: 템플릿 전체 397 통과·3 실패다. 실패는 바꾸기 전부터 실패하던 자원 guard 검사다.
+- 같은 날 리뷰 보완(계층 파일은 그 계층 에이전트만 고친다) 뒤에는 396 통과·4 실패였다. 실패는 evidence setter와 자원 guard의 기존 건이다. 세 도구 실측은 neon 절에 있다.
 
 ## Codex·Antigravity에서도 위임 기록과 Main 편집 막기 (2026-11-01)
 

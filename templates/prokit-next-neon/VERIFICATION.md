@@ -20,9 +20,14 @@
 - 테스트:
   - 새 테스트 세 개(F 계층별 위임, degraded, 계층 편집 경계)를 더했다.
   - 규칙마다 고친 줄을 되돌리면 해당 테스트가 실패하는 것을 확인했다.
-  - 두 템플릿 전체 결과는 neon 396 통과·4 실패, supabase 397 통과·3 실패다. 실패는 모두 바꾸기 전부터 실패하던 evidence setter와 자원 guard 검사다.
+  - 두 템플릿 전체 결과는 neon 396 통과·4 실패, supabase 397 통과·3 실패다. 실패는 모두 바꾸기 전부터 실패하던 evidence setter와 자원 guard 검사다. 리뷰 보완 뒤에는 두 템플릿 모두 396 통과·4 실패였고, 실패한 4건은 같은 기존 건이다.
+- 커밋 뒤 독립 리뷰(같은 날)의 지적으로 고친 것: 계층 밖 서브에이전트(`prokit-implementer` 등)는 계층 파일을 막지 않고 통과시켰다. 그래서 계층 에이전트에는 스킬만 읽히고 코드는 `prokit-implementer`가 고쳐도 audit이 받았다. 이제 열린 라운드에서 계층 파일은 그 계층 에이전트만 고친다. 계층 밖 파일(예: `AGENTS.md`)은 그대로 `prokit-implementer`가 고친다. 테스트 단언을 바꿨다. 리뷰의 다른 두 지적은 실측과 맞지 않아 고치지 않았다. 하나는 Antigravity `invoke_subagent`가 서브에이전트가 끝난 뒤에야 기록된다는 지적이다. 실측에서 호출은 기다리지 않고 바로 돌아왔고, call 줄은 서브에이전트 대화보다 먼저 남았다. 다른 하나는 Codex가 `agent_id` 없이 `agent_type`만 보낼 수 있다는 지적이다. 실측한 모든 서브에이전트 입력에 둘이 함께 있었다.
+- 실측(Claude Code 2.1.316, Codex CLI 0.166.0, Antigravity CLI 1.4.12, Better-T-Stack 최신 neon 생성 명령 그대로, `--brain none --simplicity none`): 설치 exit 0, `pnpm check`, `biome check .`, `skills:check`, `agents:check`가 exit 0이었다. 설치 커밋 뒤 위 보강 파일을 넣고 F 라운드를 열었다. 이때 라운드 없이 하네스 파일을 커밋하려 한 것은 `dev-cycle guard`가 막았다. 같은 프로젝트를 셋으로 복사해 세 도구에서 같은 지시로 돌렸다. 지시는 `prokit-db-builder`·`prokit-api-builder`·`prokit-ui-builder`·`prokit-implementer`를 차례로 부르는 것이다. 앞의 셋은 맡은 공식 스킬을 읽고 자기 계층 파일을 고친다. `prokit-ui-builder`는 DB 스키마 파일도, `prokit-implementer`는 API 라우터도 고치려 한다.
+  - 세 도구 모두 같았다. 계층 에이전트 셋의 읽기와 편집이 각자 `agentType`으로 남았다(Claude Code `Read`·`Edit`, Codex `Bash`·`apply_patch`와 `seen`, Antigravity `read_file`·`edit_file`과 `seen`). `prokit-ui-builder`의 DB 편집과 `prokit-implementer`의 API 편집은 편집 훅이 막았고 파일에 들어가지 않았다. `model: inherit`로 바꾼 `prokit-api-builder`·`prokit-db-builder`도 Claude Code에서 떠서 일했다.
+  - Antigravity는 네 서브에이전트 대화를 모두 부른 이름에 묶었다. 부른 뒤 묶기까지 0.2\~0.4초였고, `prokit-api-builder`만 9.6초 걸렸다.
+  - 세 도구의 실제 기록에 행을 채운 기록을 F 순서대로 더해 audit을 돌렸다(DB 일 → 6·7행 → 8\~13행 → API 일 → 14행 → 15\~19행 → 화면 일 → 20행). 채운 기록의 시각은 손으로 맞췄고, 일한 기록은 호스트가 남긴 그대로 썼다. 세 도구 모두 6행(계층별 위임)은 통과했다. 7·14·20행에는 Main이 `prokit-db`·`prokit-api`·`prokit-ui`를 읽은 기록이 없다는 지적만 남았다. 시험 지시에서 Main이 읽지 않았기 때문이다. 6행에 `prokit-ui-builder`만 적으면 세 도구 모두 DB·API 에이전트의 `위임:`이 빠졌다고 받지 않았다. 20행을 `degraded: Main 직접(Grok Build)`로 적으면 세 도구 모두 "이 라운드는 훅 기록이 있다"로 받지 않았다.
 - 한계:
-  - 실제 호스트 세션으로 다시 재지 않았다.
+  - 실측은 짧은 시험 지시로 했다. 실제 기능 요청에서 Main이 스스로 계층마다 맡기는지는 재지 않았다.
   - 훅 기록이 하나도 없는 라운드는 `위임:`과 마찬가지로 자기 신고다.
   - Grok Build가 이 템플릿의 Claude Code 훅을 읽는지 확인하지 않았다. 읽는다면 Grok에서도 `degraded`가 거부되고 `blocked`만 남는다.
   - 셸 편집은 계층 편집 경계가 보지 않는다.
