@@ -4,6 +4,13 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## Codex·Antigravity에서도 위임 기록과 Main 편집 막기 (2026-11-01)
+
+공통 변경(Codex `agent_type`, Antigravity 대화 묶기, Antigravity 쓰기 에이전트 `tools`, `.agents/hooks.json` matcher)과 세 도구 실측은 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#codexantigravity에서도-위임-기록과-main-편집-막기-2026-11-01)에 있다.
+
+- 테스트: 템플릿 전체 393 통과·4 실패였다. 실패한 4건(evidence setter 1건, 자원 guard 3건)은 바꾸기 전(HEAD)에도 같게 실패했다.
+- 한계: 실제 설치와 세 도구 확인은 neon으로만 했다. 바꾼 파일(`scripts/*.mjs`, `.agents/hooks.json`, 공통 테스트)은 neon과 바이트가 같다(`tests/shared-files.test.mjs`).
+
 ## 공식 스킬을 전문 에이전트에 맡기기 (2026-11-01)
 
 공통 변경(전문 수행 에이전트, `performers` 배치, `prokit-skills-assign`, audit의 위임 검사)과 실측은 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#공식-스킬을-전문-에이전트에-맡기기-2026-11-01)에 있다.

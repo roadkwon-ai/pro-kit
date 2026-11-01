@@ -56,18 +56,24 @@ export function toToml({ meta, body }) {
 }
 
 // Antigravity 서브에이전트(.agents/agents/<name>.md). 메인 에이전트로는 고르지 않는다(mainAgent: false).
-// 쓰기 도구가 없는 에이전트(Codex read-only와 같은 기준)는 공식 문서 예시의 세 도구만 준다. 문서에 도구 전체 목록이 없고
-// 틀린 이름은 서브에이전트를 멈추게 할 수 있어서 이름을 더하지 않는다. 쓰기 에이전트는 tools를 빼서 부모 도구를 그대로 쓴다.
+// tools를 빼면 도구가 하나도 없다(문서 기본값 []. CLI 1.4.8 실측에서 쓰기 도구 없이 "done"만 답했다). 그래서 늘 적는다.
+// 틀린 이름은 서브에이전트를 멈추게 할 수 있어 실측한 이름만 쓴다: 읽기 에이전트(Codex read-only와 같은 기준)는 공식 문서 예시의 세 도구,
+// 쓰기 에이전트는 그 셋에 CLI 1.4.8이 쓴 파일 읽기·쓰기·고치기 도구를 더한다.
 const AG_READ_TOOLS = ["view_file", "grep_search", "run_command"];
+const AG_WRITE_TOOLS = [
+	...AG_READ_TOOLS,
+	"read_file",
+	"write_file",
+	"edit_file",
+];
 export function toAntigravity({ meta, body }) {
 	return [
 		"---",
 		`name: ${meta.name}`,
 		`description: ${JSON.stringify(meta.description)}`,
 		"mainAgent: false",
-		...(writes(meta)
-			? []
-			: ["tools:", ...AG_READ_TOOLS.map((t) => `  - ${t}`)]),
+		"tools:",
+		...(writes(meta) ? AG_WRITE_TOOLS : AG_READ_TOOLS).map((t) => `  - ${t}`),
 		"---",
 		MD_HEADER,
 		"",

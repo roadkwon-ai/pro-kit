@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
-  audit, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, noteSkillsChange, parseActive, renderBlock, status, usedSkills, writeTable,
+  audit, bindSession, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, noteSkillsChange, parseActive, renderBlock, status, usedSkills, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
 import { captureSnapshot } from "../files/scripts/delegation.mjs";
 import { auditRecord, critiqueRecord, makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
@@ -1271,7 +1271,7 @@ test("부른 스킬 기록: Codex 셸 명령은 프로젝트 스킬 경로일 �
   assert.deepEqual(mine(), [], "Codex는 서브에이전트를 구별하지 못해 자기 신고로 받는다");
 });
 
-test("Main 편집 차단: 열린 라운드에서 Main이 Claude Code 편집 도구로 계층 코드를 고치면 막고, 서브에이전트·계층 밖 파일·Codex·옛 판은 막지 않으며, 허락한 편집을 기록한다", () => {
+test("Main 편집 차단: 열린 라운드에서 Main이 Claude Code·Codex 편집 도구로 계층 코드를 고치면 막고, 서브에이전트·계층 밖 파일·구별 값 없는 입력·옛 판은 막지 않으며, 허락한 편집을 기록한다", () => {
   const { root, write } = makeRepo();
   write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-implementer"], skills: {} } }));
   const config = loadConfig(root);
@@ -1281,18 +1281,60 @@ test("Main 편집 차단: 열린 라운드에서 Main이 Claude Code 편집 도�
   writeTable(root, config, "B", { write: true, title: "화면" });
   const main = guard({ tool_name: "Edit", tool_input: { file_path: page } });
   assert.equal(main.status, 2);
-  assert.match(main.stderr, /Main은 계층 코드\(apps\/web\/src\/app\/page\.tsx\)를 직접 고치지 않는다\. Agent 도구로 prokit-ui-builder에 맡긴다/);
+  assert.match(main.stderr, /Main은 계층 코드\(apps\/web\/src\/app\/page\.tsx\)를 직접 고치지 않는다\. 서브에이전트 도구\(Claude Code Agent.*\)로 prokit-ui-builder에 맡긴다/);
   assert.equal(guard({ tool_name: "Write", agent_id: "a1", agent_type: "prokit-ui-builder", tool_input: { file_path: page } }).status, 0);
   assert.equal(guard({ tool_name: "Write", tool_input: { file_path: join(root, "docs/note.md") } }).status, 0);
-  assert.equal(guard({ tool_name: "apply_patch", tool_input: { command: "*** Update File: apps/web/src/app/page.tsx\n" } }).status, 0, "Codex는 서브에이전트를 구별하지 못한다");
+  assert.equal(guard({ tool_name: "apply_patch", tool_input: { command: "*** Update File: apps/web/src/app/page.tsx\n" } }).status, 0, "turn_id가 없는 입력은 Main인지 모른다");
+  // Codex는 turn_id가 늘 있고, 서브에이전트 안의 호출에 agent_id·agent_type(.codex/agents의 name)을 붙인다
+  const codex = guard({ tool_name: "apply_patch", turn_id: "t1", cwd: root, tool_input: { command: "*** Update File: apps/web/src/app/page.tsx\n" } });
+  assert.equal(codex.status, 2);
+  assert.match(codex.stderr, /Codex spawn_agent.*prokit-ui-builder에 맡긴다/);
+  assert.equal(guard({ tool_name: "apply_patch", turn_id: "t2", agent_id: "c1", agent_type: "prokit-ui-builder", cwd: root, tool_input: { command: "*** Update File: apps/web/src/app/page.tsx\n" } }).status, 0);
   const log = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l));
   assert.deepEqual(log.filter((e) => e.edit).map((e) => [e.edit, e.agentType ?? null, e.tool]), [
     ["apps/web/src/app/page.tsx", "prokit-ui-builder", "Write"],
     ["docs/note.md", null, "Write"],
     ["apps/web/src/app/page.tsx", null, "apply_patch"],
+    ["apps/web/src/app/page.tsx", "prokit-ui-builder", "apply_patch"],
   ], "막은 편집은 남기지 않는다");
+  assert.deepEqual(log.filter((e) => e.edit).map((e) => e.seen === true), [false, false, false, true], "Codex 기록은 구별한 기록(seen)이다");
   rmSync(join(root, "skills.manifest.json"));
   assert.equal(guard({ tool_name: "Edit", tool_input: { file_path: page } }).status, 0, "performers가 없는 옛 판은 막지 않는다");
+});
+
+test("Antigravity 대화 묶기: invoke_subagent로 부른 이름을 다음에 시작한 대화에 묶어, 그 대화의 읽기·편집은 그 에이전트 몫으로 세고 묶지 않은 대화(Main)의 계층 편집은 막는다", () => {
+  const { root, write } = makeRepo();
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder"], skills: {} } }));
+  write(".agents/skills/shadcn/SKILL.md", "---\nname: shadcn\n---\n");
+  const config = loadConfig(root);
+  const cli = (cmd, input) => spawnSync(process.execPath, [CLI, cmd], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const page = join(root, "apps/web/src/app/page.tsx");
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const common = { workspacePaths: [root], transcriptPath: "/x", modelName: "m" };
+  assert.equal(cli("agent-start", { ...common, conversationId: "M", lastUserInput: "화면 고쳐줘" }).stdout.trim(), "{}");
+  assert.equal(cli("skill-log", { ...common, conversationId: "M", toolCall: { name: "invoke_subagent", args: { TypeName: "prokit-ui-builder", Prompt: "p" } } }).stdout.trim(), "{}");
+  // 사용자 요청이 있는 대화(Main)는 묶지 않고, 세션 시작 훅을 놓친 서브에이전트 대화는 첫 도구 호출에서 묶는다
+  cli("agent-start", { ...common, conversationId: "other", lastUserInput: "다른 세션" });
+  cli("agent-start", { ...common, conversationId: "M", lastUserInput: "화면 고쳐줘" });
+  const edit = (conv, lastUserInput = "") => JSON.parse(cli("edit-guard", { ...common, conversationId: conv, lastUserInput, toolCall: { name: "edit_file", args: { Path: page, Target: "a", Replacement: "b" } } }).stdout);
+  assert.deepEqual(edit("S"), { decision: "allow" });
+  assert.equal(edit("other", "다른 세션").decision, "deny", "묶지 않은 대화는 Main으로 본다");
+  const main = edit("M", "화면 고쳐줘");
+  assert.equal(main.decision, "deny");
+  assert.match(main.reason, /Antigravity invoke_subagent.*prokit-ui-builder에 맡긴다/);
+  cli("skill-log", { ...common, conversationId: "S", toolCall: { name: "view_file", args: { AbsolutePath: join(root, ".agents/skills/shadcn/SKILL.md") } } });
+  const log = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l));
+  assert.deepEqual(log.filter((e) => e.edit || e.skill).map((e) => [e.edit ?? e.skill, e.agentType ?? null, e.seen === true]), [
+    ["apps/web/src/app/page.tsx", "prokit-ui-builder", true],
+    ["shadcn", "prokit-ui-builder", true],
+  ]);
+  // 부른 지 AG_BIND_MS가 지난 call과 이미 묶은 call에는 묶지 않는다
+  cli("skill-log", { ...common, conversationId: "M", toolCall: { name: "invoke_subagent", args: { TypeName: "prokit-ui-builder" } } });
+  bindSession(root, { conversationId: "late" }, Date.now() + 10 * 60_000);
+  bindSession(root, { conversationId: "S2" });
+  bindSession(root, { conversationId: "S3" });
+  const bound = readFileSync(join(root, ".prokit/agent-sessions.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l)).filter((x) => x.conv).map((x) => x.conv);
+  assert.deepEqual(bound, ["S", "S2"]);
 });
 
 test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 바뀌면 받지 않고, 맡은 스킬은 그 행에서 위임한 에이전트가 읽은 기록만 세며, 일한 기록은 다른 에이전트에 맡긴 앞 행을 채운 뒤여야 한다", () => {

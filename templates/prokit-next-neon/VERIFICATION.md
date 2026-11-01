@@ -4,6 +4,32 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## Codex·Antigravity에서도 위임 기록과 Main 편집 막기 (2026-11-01)
+
+Claude Code에서만 돌던 서브에이전트 구별(읽기·편집 기록의 `agentType`, 열린 라운드의 Main 계층 편집 막기)을 Codex와 Antigravity에도 맞췄다. 바꾸기 전에 두 도구의 훅 입력을 실제 세션으로 쟀다.
+
+- 실측(Codex CLI 0.166.0, Antigravity CLI 1.4.8, 서브에이전트 하나에 파일 쓰기를 맡기고 Main도 직접 고치게 한 확인용 폴더):
+  - Codex: 서브에이전트 안의 `Bash`·`apply_patch` 훅 입력에 `agent_id`와 `agent_type`(`.codex/agents`의 `name`)이 있었고, Main 호출에는 없었다. 모든 입력에 `turn_id`가 있었다. `SubagentStart`·`SubagentStop`도 같은 `agent_type`으로 왔다.
+  - Antigravity: 훅 입력에 에이전트 이름이 없다. 서브에이전트는 자기 `conversationId`로 따로 돌고 그 안에서도 훅이 불렸다. Main의 `invoke_subagent` 인자 `TypeName`에 에이전트 이름이 있었고, 서브에이전트 대화의 `SessionStart`는 그 직후(0.3\~0.4초)에 왔다. Main 대화의 `lastUserInput`에는 요청이 있었고 서브에이전트 대화에서는 비어 있었다. `decision: deny`가 Main의 `edit_file`을 막았다.
+  - Antigravity 도구 이름은 `read_file`·`view_file`(읽기), `write_file`·`edit_file`(쓰기)이었다. 템플릿 matcher의 `write_to_file`·`replace_file_content`는 이 판에서 불리지 않았다.
+  - Antigravity 서브에이전트는 `tools`를 빼면 도구가 없다(문서 기본값 `[]`). 쓰기 도구 없이 "done"이라고 답했고 Main은 완료로 보고했다. `tools`에 실측한 이름을 적으니 `write_file`로 파일을 만들었다.
+- 바꾼 것:
+  - `scripts/dev-cycle.mjs`: Codex(`turn_id`)와 Antigravity(`conversationId`) 입력도 호스트가 구별한 기록(`seen`)으로 남긴다. Antigravity는 `invoke_subagent`의 `TypeName`을 `.prokit/agent-sessions.jsonl`에 적고, 다음에 시작한 대화(세션 시작 훅 `agent-start`나 첫 도구 호출)를 그 이름에 묶는다. 요청이 있는 대화와 call을 남긴 대화는 Main이라 묶지 않는다. 묶지 못한 서브에이전트는 Main으로 보여 막히는 쪽으로 틀린다. 편집 훅은 세 도구 모두 Main의 계층 편집을 막고 서브에이전트 도구 이름을 함께 알린다.
+  - `.agents/hooks.json`: `SessionStart`(`agent-start`)를 더하고, 편집 matcher에 `write_file|edit_file`, 읽기 matcher에 `invoke_subagent`를 더했다.
+  - `scripts/sync-agents.mjs`: Antigravity 쓰기 에이전트에 `view_file`, `grep_search`, `run_command`, `read_file`, `write_file`, `edit_file`을 적는다.
+  - 문서: `prokit-dev-cycle`, `delegation.md`, handbook 두 쪽의 "Claude Code에서만"과 "기록이 없는 도구(Codex 등)" 문장을 세 도구 기준으로 바꿨다.
+- 테스트: 마지막 실행에서 neon 394 통과·3 실패, supabase 393 통과·4 실패였다. 실패한 건(자원 guard 3건, supabase의 evidence setter 1건)은 바꾸기 전(HEAD)에도 같게 실패했다. evidence setter는 neon에서 이번에는 통과했다(따로 돌리면 통과하는 건이다). Codex 입력 구별, Antigravity 대화 묶기(늦게 묶기, Main 제외, 시간 창, 순서)를 새 테스트로 본다.
+- 실측(Better-T-Stack 최신, Biome 2.6.4, neon 생성 명령 그대로, `--brain none --simplicity none`): 설치 exit 0, `pnpm check`, `biome check .`, `skills:check`, `agents:check`, `check-types`가 exit 0이었고 설치한 `scripts/*.mjs`와 `.agents/hooks.json`이 템플릿과 바이트가 같았다. B 라운드를 열고 세 도구에서 같은 시나리오(Main이 `apps/web/src/app/page.tsx`를 고치려 한 뒤 `prokit-ui-builder`에 `shadcn` 읽기와 같은 파일 편집을 맡김)를 돌렸다.
+  - Claude Code: Main 편집이 막혔고, 읽기 `{"skill":"shadcn","agentType":"prokit-ui-builder","tool":"Read","project":true}`와 편집 `{"edit":"apps/web/src/app/page.tsx","agentType":"prokit-ui-builder","tool":"Edit"}`가 남았다.
+  - Codex: Main의 `apply_patch`가 막혔고, 읽기 `{"skill":"shadcn","agentType":"prokit-ui-builder","tool":"Bash","seen":true,"project":true}`와 편집 `{"edit":"apps/web/src/app/page.tsx","agentType":"prokit-ui-builder","tool":"apply_patch","seen":true}`가 남았다.
+  - Antigravity: Main의 `edit_file`이 막혔고, 서브에이전트 대화가 부른 지 0.3초 만에 묶여 읽기(`read_file`)와 편집(`edit_file`)이 `agentType: prokit-ui-builder`로 남았다. 첫 실행에서는 서브에이전트의 첫 읽기가 Main 몫으로 남았다(대화를 늦게 묶었다). 이 일로 첫 도구 호출에서 다시 묶게 했다. 확인용 project scope 플러그인(skill-creator)은 지웠고 DB 컨테이너는 띄우지 않았다.
+- 한계:
+  - Antigravity는 동시에 부른 서브에이전트를 부른 순서대로 묶고, 부른 지 2분 안에 온 대화만 묶는다. 호스트가 이름을 주지 않아서다.
+  - Antigravity IDE의 도구 이름이 CLI 1.4.8과 같은지는 확인하지 않았다. 틀린 이름을 `tools`에 적으면 서브에이전트가 멈출 수 있다는 문서 경고가 있어 실측한 이름만 넣었다.
+  - 첫 실행에서 묶기가 늦었던 까닭은 확인하지 못했다(대화 묶기 줄의 시각이 부른 시각보다 5분 뒤였다). 그 뒤 두 번은 바로 묶였다.
+  - 셸 명령으로 고친 파일은 세 도구 모두 편집 훅이 보지 않는다(Claude Code와 같다). Grok Build는 훅을 확인하지 않았다.
+  - Codex는 확인용 실행에서 `--dangerously-bypass-hook-trust`로 훅 신뢰를 건너뛰었다. 실제 프로젝트에서는 `/hooks`로 신뢰해야 돈다.
+
 ## 공식 스킬을 전문 에이전트에 맡기기 (2026-11-01)
 
 Main(`prokit-*` 스킬)은 위임, 감독, 검수만 하고 공식 스킬로 하는 일은 그 스킬을 맡은 에이전트가 하도록 바꿨다. 배치 정본은 `skills.manifest.json`의 `performers`다.
@@ -19,7 +45,7 @@ Main(`prokit-*` 스킬)은 위임, 감독, 검수만 하고 공식 스킬로 하
 - 테스트: 2차 보강 뒤 두 템플릿 전체가 각각 392 통과·4 실패였다(새 테스트 2건 포함). 실패한 evidence setter 1건과 자원 guard 3건은 바꾸기 전(HEAD)에도 같게 실패했다(384 통과·4 실패). 따로 돌리면 통과한다. 문서·판·값 검사(`handbook`, `doc-values`, `edition`) 80건과 `doc-values --check`는 통과했다.
 - 실측(Better-T-Stack 3.49.0, Biome 2.6.4, neon 생성 명령 그대로, `--brain none --simplicity none`): 설치 exit 0, 새 에이전트 4개를 포함한 정의 8개와 `prokit-skills-assign`이 들어갔다. 처음에는 `biome check .`가 `scripts/dev-cycle.mjs`의 `useDefaultParameterLast` 오류 1건으로 실패했다. Biome가 고친 판을 두 템플릿에 가져온 뒤 `pnpm check`, `biome check .`, `skills:check`, `agents:check`, `check-types`가 exit 0이었고, 설치한 `scripts/*.mjs`와 `skills.manifest.json`이 템플릿과 바이트가 같았다. `--adopt`(`next` 의존성만 든 저장소)도 exit 0이었고 `prokit-skills-assign`이 들어갔으며 `agents:check`가 통과했다. 확인용 project scope 플러그인(skill-creator)은 지웠고 DB 컨테이너는 띄우지 않았다.
 - 실제 Claude Code 세션(확인용 프로젝트에서 `claude -p`): 서브에이전트 `prokit-ui-builder`가 읽은 기록에 `agentType: prokit-ui-builder`, `tool: Read`, `project: true`가 찍혔고, 그 에이전트의 편집도 `agentType`과 함께 남았다. Main이 직접 고치려던 `apps/web` 파일 편집은 `edit-guard`가 막았다. 2차 보강 파일을 넣은 뒤에도 `agents:check`와 `biome check .`는 exit 0이었다.
-- 한계: 에이전트 정의의 `skills:` 미리 읽기는 실제 세션에서 확인하지 않았다(지금 정의는 본문 표와 위임 지시로 스킬 경로를 준다). Codex와 Antigravity는 서브에이전트를 구별하는 훅 입력이 없어 읽은 기록이 자기 신고이고, 편집 훅도 Main을 막지 못한다. 이미 열려 있던 라운드는 옛 기록(`tool`·`project` 칸과 편집 기록 없음)이 섞여 공식 스킬을 읽지 않은 것으로 판정될 수 있다. 그 라운드는 맡은 에이전트가 스킬을 다시 읽게 한다.
+- 한계: 에이전트 정의의 `skills:` 미리 읽기는 실제 세션에서 확인하지 않았다(지금 정의는 본문 표와 위임 지시로 스킬 경로를 준다). Codex와 Antigravity의 구별은 위 절(같은 날)에서 더했다. 이미 열려 있던 라운드는 옛 기록(`tool`·`project` 칸과 편집 기록 없음)이 섞여 공식 스킬을 읽지 않은 것으로 판정될 수 있다. 그 라운드는 맡은 에이전트가 스킬을 다시 읽게 한다.
 
 ## 마크다운을 Biome 검사에서 빼기, 릴리스 스크립트를 하네스로 (2026-10-30)
 

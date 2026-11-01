@@ -109,7 +109,7 @@ flowchart LR
 
 1. 열린 라운드를 닫아요.
 2. H 라운드에서 `install.sh --skip-skills`로 새 에이전트 정의와 `prokit-skills-assign` 스킬을 더해요.
-3. 템플릿의 `skills.manifest.json`에 있는 `performers`, `scripts/dev-cycle.mjs`, `scripts/sync-agents.mjs`, `docs/dev-workflow.md`의 행 문구, 바뀐 `prokit-*` 스킬과 에이전트 정의, `AGENTS.md`·`CLAUDE.md` 템플릿 블록을 직접 옮겨요. 설치기는 매니페스트를 덮어쓰지 않아요.
+3. 템플릿의 `skills.manifest.json`에 있는 `performers`, `scripts/dev-cycle.mjs`, `scripts/sync-agents.mjs`, `.agents/hooks.json`(Antigravity 훅), `docs/dev-workflow.md`의 행 문구, 바뀐 `prokit-*` 스킬과 에이전트 정의, `AGENTS.md`·`CLAUDE.md` 템플릿 블록을 직접 옮겨요. 설치기는 매니페스트를 덮어쓰지 않아요.
 4. `pnpm agents:sync`와 `pnpm agents:check`를 돌려요.
 
 `performers`가 없으면 audit은 위임과 맡은 에이전트의 기록을 보지 않고 예전처럼 검사해요. 그 프로젝트에만 있는 공식 스킬은 옮긴 뒤 `prokit-skills-assign`으로 맡을 에이전트를 정해요.

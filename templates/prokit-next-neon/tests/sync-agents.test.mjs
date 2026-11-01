@@ -31,7 +31,7 @@ test("템플릿 에이전트 여덟 개를 유효한 TOML(Codex)과 md(Antigravi
   assert.match(readFileSync(join(root, ".codex/agents/specialist-reviewer.toml"), "utf8"), /sandbox_mode = "read-only"/);
   for (const name of ["prokit-implementer", "prokit-ui-builder", "prokit-api-builder", "prokit-db-builder", "prokit-runtime-checker"])
     assert.match(readFileSync(join(root, `.codex/agents/${name}.toml`), "utf8"), /sandbox_mode = "workspace-write"/, `${name}은 파일을 쓴다(실행 확인은 tasks/evidence/에 기록)`);
-  // Antigravity(.agents/agents): 쓰기 도구가 없는 에이전트는 문서에 나온 읽기·검색·명령 도구만, 나머지는 도구를 제한하지 않는다
+  // Antigravity(.agents/agents): 쓰기 도구가 없는 에이전트는 문서에 나온 읽기·검색·명령 도구만, 쓰기 에이전트는 실측한 파일 읽기·쓰기·고치기 도구까지 적는다(빼면 도구가 없다)
   const reviewer = readFileSync(join(root, ".agents/agents/prokit-reviewer.md"), "utf8");
   assert.equal(parseAgent(reviewer).meta.name, "prokit-reviewer");
   assert.match(reviewer, /^mainAgent: false$/m);
@@ -39,7 +39,7 @@ test("템플릿 에이전트 여덟 개를 유효한 TOML(Codex)과 md(Antigravi
   const specialist = readFileSync(join(root, ".agents/agents/specialist-reviewer.md"), "utf8");
   assert.match(specialist, /^tools:\n {2}- view_file\n {2}- grep_search\n {2}- run_command$/m);
   const implementer = readFileSync(join(root, ".agents/agents/prokit-implementer.md"), "utf8");
-  assert.doesNotMatch(implementer, /^tools:/m);
+  assert.match(implementer, /^tools:\n {2}- view_file\n {2}- grep_search\n {2}- run_command\n {2}- read_file\n {2}- write_file\n {2}- edit_file$/m);
   const src = parseAgent(readFileSync(join(root, ".claude/agents/prokit-implementer.md"), "utf8"));
   assert.ok(implementer.includes(src.body));
   assert.deepEqual(sync(root, { check: true }), []);
@@ -73,10 +73,11 @@ test("--check: 정본 수정·누락·고아를 잡고 파일은 바꾸지 않�
   assert.equal(existsSync(join(root, ".agents/agents/mine.md")), true);
 });
 
-test("tools가 없으면 workspace-write, 본문에 ''' 는 거부, frontmatter 필수", () => {
+test("tools가 없으면 workspace-write(Antigravity는 쓰기 도구 목록), 본문에 ''' 는 거부, frontmatter 필수", () => {
   const a = parseAgent('---\nname: x\ndescription: "설명"\n---\n본문\n');
   assert.match(toToml(a), /workspace-write/);
-  assert.doesNotMatch(toAntigravity(a), /^tools:/m);
+  // Antigravity는 tools를 빼면 도구가 없어 쓰기 에이전트도 실측한 도구를 적는다
+  assert.match(toAntigravity(a), /^tools:\n {2}- view_file\n {2}- grep_search\n {2}- run_command\n {2}- read_file\n {2}- write_file\n {2}- edit_file\n---$/m);
   assert.equal(parseAgent(toAntigravity(a)).meta.description, "설명");
   // description은 YAML에서도 원문 그대로 읽히게 JSON 문자열로 쓴다(따옴표·콜론·#·백슬래시)
   const desc = 'a: "b" # c \\ d';
