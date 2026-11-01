@@ -29,7 +29,7 @@ description: >-
 | A | 문서나 설정처럼 규칙에 걸리지 않는 경미한 변경 |
 | B | 화면, 컴포넌트, 스타일, 화면 유틸 (`apps/web/src` 아래 서버·인증 경로 밖, `packages/ui`) |
 | C | 버그 수정. 경로와 상관없이 선언한다 |
-| D | 서버와 API (`packages/api`, `apps/web/src/app/api`) |
+| D | 서버와 API (`packages/api`, `apps/web/src/app/api`, 앱 폴더의 `route.ts`, `instrumentation.ts`) |
 | E | DB 스키마와 마이그레이션 (`packages/db`) |
 | F | 두 계층 이상에 걸친 신규 기능, 또는 새 기능으로 선언한 작업 |
 | H | 스킬, 에이전트, dev-cycle 자체 변경. 빌드·배포 설정(`next.config.*`, `vercel.json`, `turbo.json`, `.github/workflows/`)과 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`, `packages/config`)도 H다 |

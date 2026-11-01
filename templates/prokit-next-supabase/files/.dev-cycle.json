@@ -13,8 +13,8 @@
 		},
 		{
 			"case": "D",
-			"match": "^(packages/api/|apps/web/src/app/api/)",
-			"why": "서버·API"
+			"match": "^(packages/api/|apps/web/src/app/api/|apps/web/src/app/(.+/)?route\\.[jt]s$|apps/web/src/instrumentation\\.[jt]s$)",
+			"why": "서버·API(앱 폴더의 route 핸들러와 instrumentation 포함)"
 		},
 		{
 			"case": "B",

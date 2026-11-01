@@ -2249,7 +2249,13 @@ function shellEdits(root, config, active, files) {
 	if (!active.meta.base || !edits.some((e) => e.seen)) return [];
 	const edited = new Set(edits.map((e) => e.file));
 	const loose = files.filter((f) => {
-		if (edited.has(f) || /(^|\/)migrations\//.test(f)) return false;
+		// 생성 명령 결과(마이그레이션)와 편집 도구로 고칠 수 없는 바이너리 자산은 보지 않는다
+		if (
+			edited.has(f) ||
+			/(^|\/)migrations\//.test(f) ||
+			/\.(woff2?|ttf|otf|eot|png|jpe?g|gif|webp|avif|ico|mp4|webm)$/i.test(f)
+		)
+			return false;
 		const c = classify([f], config);
 		if (!c.layers.some((l) => LAYER_AGENTS[l]) && !c.auth) return false;
 		return (
@@ -2260,7 +2266,7 @@ function shellEdits(root, config, active, files) {
 	});
 	return loose.length
 		? [
-				`편집 기록이 없는 계층 파일: ${loose.join(", ")}. 셸로 고쳤으면 편집 훅의 계층 확인을 건너뛴 것이다. 그 계층 에이전트가 편집 도구(Edit·Write, Codex apply_patch)로 다시 고치게 한다. 사용자가 직접 고친 파일이면 그대로 둔다`,
+				`편집 기록이 없는 계층 파일: ${loose.join(", ")}. 셸로 고쳤으면 편집 훅의 계층 확인을 건너뛴 것이다. 그 계층 에이전트가 편집 도구(Edit·Write, Codex apply_patch)로 다시 고치게 한다. 사용자가 직접 고친 파일이나 생성 명령(shadcn add 등) 결과면 그대로 둔다`,
 			]
 		: [];
 }

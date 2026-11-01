@@ -20,6 +20,15 @@
 
 같은 실측에서 의도대로 막힌 것: Main의 `packages/api`·`packages/db` 편집, `prokit-ui-builder`와 `prokit-implementer`의 다른 계층 편집, 위임 없는 구현 행, 일하지 않은 에이전트를 적은 위임, Main이 공식 스킬을 썼다고 적은 증거, 위임한 에이전트가 맡지 않는 스킬, F 구현 방식 행의 계층 위임 누락, 훅 기록이 있는 라운드의 degraded. 두뇌 단계 검사가 위임 검사보다 먼저 나와 두뇌 스킬을 부르기 전에는 위임 판정이 가려지는 불편은 그대로 두었다(두 검사 모두 결국 보인다).
 
+고친 판(94726c20)을 같은 프로젝트 세션이 다시 H 라운드로 반영하고 실제 세션에서 쟀다(Claude Code). 편집은 모두 `prokit-implementer`가 Edit 도구로 했고 audit은 통과했다. 반영 전후 타입 검사·Biome·테스트 결과는 같았다.
+
+- Main의 `apps/web/src/utils/format.ts` Edit는 막히고 `prokit-ui-builder`에 맡기라는 안내가 나왔다.
+- `prokit-runtime-checker`의 Write는 `tasks/evidence/` 안에서만 통과했고 `AGENTS.md`와 새 파일 `docs/rc-probe.txt`는 막혔다.
+- 단계 문구를 옛 판으로 되돌린 표에 `--upgrade`하면 구현 행이 새 문구로 하나만 남고 증거가 옮겨졌다. 채운 시각 기록을 옮기는 경로는 그 표에서 돌지 않아 테스트로만 확인했다.
+- 셸(`printf >>`)로 고친 화면·서버·인증 파일 세 개가 audit 경고(실패 아님)로 나왔고, `services.ts`는 `+auth`로 화면 계층이 아니었다.
+
+그 세션이 남긴 한계 중 둘을 고쳤다. 화면 규칙을 `apps/web/src` 전체로 넓히면서 앱 폴더의 `route.ts`와 `instrumentation.ts`도 화면으로 판정되던 것을 서버(D) 규칙에 넣었다. 편집 도구로 고칠 수 없는 글꼴·이미지 같은 바이너리 자산은 셸 편집 경고에서 뺐고, 경고 문구에 생성 명령(`shadcn add` 등) 결과면 그대로 두라고 적었다. `"use server"` 파일(server action)은 이름으로 가릴 수 없어 여전히 화면으로 판정한다. 필요하면 프로젝트가 `.dev-cycle.json` 서버 규칙에 그 경로를 더한다. Codex·Antigravity 훅이 `prokit-runtime-checker`를 가리는지는 아직 재지 않았다.
+
 고친 뒤 두 템플릿 테스트는 동시에 돌려 모두 405 통과·0 실패였다(새 테스트: `--upgrade` 단계 이름 짝짓기, `prokit-runtime-checker` 쓰기 범위, 셸 편집 경고, 위임 안내 예시, 화면 유틸·인증 파일 분류, `--diff`의 프로젝트 소유 파일).
 
 ## 바쁜 기계에서만 실패하던 테스트 다섯 건 (2026-11-01)

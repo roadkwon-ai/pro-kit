@@ -15,6 +15,9 @@ test("경로별 케이스: 첫 일치 규칙 하나만 적용한다", () => {
   assert.equal(classify(["packages/ui/src/styles/globals.css"], c).pathCase, "B");
   assert.equal(classify(["apps/web/src/utils/format.ts"], c).pathCase, "B", "화면 유틸도 화면 계층");
   assert.equal(classify(["apps/web/src/index.css"], c).pathCase, "B");
+  assert.equal(classify(["apps/web/src/app/feed/route.ts"], c).pathCase, "D", "앱 폴더의 route 핸들러는 서버");
+  assert.equal(classify(["apps/web/src/instrumentation.ts"], c).pathCase, "D");
+  assert.equal(classify(["apps/web/src/app/feed/page.tsx"], c).pathCase, "B");
   assert.deepEqual(classify(["apps/web/src/lib/auth-client.ts"], c).layers, [], "인증 파일은 화면 계층으로 세지 않는다");
   assert.equal(classify(["packages/db/src/schema/todo.ts"], c).pathCase, "E");
   assert.equal(classify(["packages/db/drizzle.config.ts"], c).pathCase, "E");

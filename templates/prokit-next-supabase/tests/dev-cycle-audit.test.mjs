@@ -1542,6 +1542,7 @@ test("audit은 편집 기록이 없는 계층 파일(셸 편집)을 경고로만
   const { root, git, write } = makeRepo();
   write("packages/api/src/routers/todo.ts", "a\n");
   write("packages/api/src/routers/new.ts", "a\n");
+  write("apps/web/src/fonts/a.woff2", "a\n");
   git("add", "-A");
   git("commit", "-qm", "api");
   const config = loadConfig(root);
@@ -1549,6 +1550,7 @@ test("audit은 편집 기록이 없는 계층 파일(셸 편집)을 경고로만
   write("packages/api/src/routers/todo.ts", "b\n");
   write("packages/api/src/routers/new.ts", "b\n");
   write("packages/db/src/migrations/0001.sql", "x\n");
+  write("apps/web/src/fonts/a.woff2", "b\n");
   const edit = { t: new Date().toISOString(), edit: "packages/api/src/routers/new.ts", tool: "Edit", agentType: "prokit-api-builder", agent: "a1", seen: true };
   mkdirSync(join(root, ".prokit"), { recursive: true });
   writeFileSync(join(root, ".prokit/skills-used.jsonl"), `${JSON.stringify(edit)}\n`);

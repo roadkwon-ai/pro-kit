@@ -9,7 +9,7 @@
 | A | 문서나 설정처럼 규칙에 걸리지 않는 경미한 변경 | 아래 경로 밖 | 타입·린트 검사 |
 | B | 화면, 컴포넌트, 스타일, 화면 유틸 | `apps/web/src`(서버·인증 경로 밖: `app`, `components`, `utils`, `lib`, CSS), `packages/ui` | impeccable 화면 설계, 스크린샷과 오류 예산 0, critique·audit, 코드 리뷰(+간결성 검토) |
 | C | 버그 수정 | 경로와 상관없이 선언 | 재현 테스트 먼저 작성, 수정 뒤 통과 |
-| D | 서버와 API | `packages/api`, `apps/web/src/app/api` | zod 계약, 2계정 격리 테스트, 코드 리뷰 |
+| D | 서버와 API | `packages/api`, `apps/web/src/app/api`, 앱 폴더의 `route.ts`, `apps/web/src/instrumentation.ts` | zod 계약, 2계정 격리 테스트, 코드 리뷰 |
 | E | DB 스키마<!-- edition:pro -->와 마이그레이션<!-- /edition --> | `packages/db` | 생성 SQL 검토, 로컬 적용, 병합 전 원격 적용, DB 리뷰 |
 | F | 화면·API·DB 중 둘 이상에 걸친 새 기능 | 두 계층 이상, 또는 새 기능으로 선언 | 스펙(테스트 시나리오 포함)과 계획, 계획 리뷰, E·D·B 행 전체, 전체를 실제로 실행해 확인, 공통화·리팩토링, 최종 리뷰, 시나리오 QA와 발견 수정 |
 | H | 스킬, 에이전트, dev-cycle 자체와 빌드·배포·작업공간 설정 | `.agents/skills/`, `.agents/agents/`, `.claude/agents/`, `skills.manifest.json`, `scripts/dev-cycle.mjs`, `docs/dev-workflow.md`, `next.config.*`, 루트 `package.json` 등 | `agents:check`, `skills:check`, 빌드·검사, 스킬 eval |
