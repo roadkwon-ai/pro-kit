@@ -56,8 +56,10 @@ const leaseProcesses = (root) => {
 };
 // 다른 환경의 guard가 lease를 잇는 것처럼 파일을 계속 건드린다. 검사 쪽이 기다리는 동안에도
 // 돌도록 따로 띄운다.
-const touchEvery = (file) =>
-	spawn(
+// 처음 건드린 뒤에 돌려준다. 바쁜 기계에서 자식이 늦게 뜨면 그사이 lease가 끊긴 것으로 보이기 때문이다
+const touchEvery = async (file) => {
+	const before = lstatSync(file).mtimeMs;
+	const child = spawn(
 		process.execPath,
 		[
 			"-e",
@@ -65,6 +67,10 @@ const touchEvery = (file) =>
 		],
 		{ stdio: "ignore" },
 	);
+	while (lstatSync(file).mtimeMs === before)
+		await new Promise((resolveWait) => setTimeout(resolveWait, 10));
+	return child;
+};
 
 test("측정: 중첩 항목·하드 링크는 한 번만, 자식 심볼릭 링크는 따르지 않는다", async (t) => {
 	const root = scratch();
@@ -681,9 +687,9 @@ test("강제 종료로 끝을 적지 못한 compiler cache는 남은 자식 그�
 	const containerLock = join(records, "dev.lock");
 	writeFileSync(
 		containerLock,
-		JSON.stringify({ ...foreign, pid: 7, token: "container", lease: 100 }),
+		JSON.stringify({ ...foreign, pid: 7, token: "container", lease: 300 }),
 	);
-	const lease = touchEvery(containerLock);
+	const lease = await touchEvery(containerLock);
 	t.after(() => lease.kill("SIGKILL"));
 	assert.deepEqual((await cleanResources(root)).candidates, []);
 	process.kill(-orphan.pid, "SIGKILL");
@@ -751,28 +757,32 @@ test("CLI check는 컨테이너 엔진이 보고한 저장소 크기를 함께 �
 });
 
 test("신호나 시간 초과로 끈 명령은 끝난 뒤 예산을 넘어도 다시 실행하지 않는다", async (t) => {
-	const root = scratch();
-	t.after(() => rmSync(root, { recursive: true, force: true }));
-	mkdirSync(join(root, "apps/web"), { recursive: true });
-	const script = [
-		"const fs = require('node:fs');",
-		"fs.appendFileSync('runs', 'x');",
-		"fs.writeFileSync('apps/web/.next/cache/turbopack/payload', 'x'.repeat(2048));",
-		"setInterval(() => {}, 1000);",
-	].join(" ");
-	const result = await runGuarded(root, {
-		command: process.execPath,
-		args: ["-e", script],
-		kind: "build",
-		commandTimeoutMs: 500,
-		scanIntervalMs: 60_000,
-		policy: {
-			...DEFAULT_RESOURCE_POLICY,
-			cache: { warn: 100, block: 100 },
-			total: { warn: 2 ** 50, block: 2 ** 50 },
-			free: { warn: 0, block: 0 },
-		},
-	});
+	// node보다 빨리 뜨는 sh로 돌린다
+	const script =
+		"printf x >> runs; head -c 2048 /dev/zero > apps/web/.next/cache/turbopack/payload; exec sleep 1000";
+	let root;
+	let result;
+	// 아주 바쁜 기계에서는 시간 초과 전에 명령이 시작조차 못 할 수 있다. 시작한(runs를 쓴) 실행에서만 다시 실행 여부를 본다
+	for (let attempt = 0; attempt < 3; attempt += 1) {
+		root = scratch();
+		const made = root;
+		t.after(() => rmSync(made, { recursive: true, force: true }));
+		mkdirSync(join(root, "apps/web"), { recursive: true });
+		result = await runGuarded(root, {
+			command: "/bin/sh",
+			args: ["-c", script],
+			kind: "build",
+			commandTimeoutMs: 3000,
+			scanIntervalMs: 60_000,
+			policy: {
+				...DEFAULT_RESOURCE_POLICY,
+				cache: { warn: 100, block: 100 },
+				total: { warn: 2 ** 50, block: 2 ** 50 },
+				free: { warn: 0, block: 0 },
+			},
+		});
+		if (existsSync(join(root, "runs"))) break;
+	}
 	assert.equal(result.exitCode, 75);
 	assert.ok(result.events.includes("guard-timeout"));
 	assert.ok(!result.events.includes("resource-retry"));
@@ -1267,9 +1277,9 @@ test("죽은 프로세스가 남긴 lock은 회수하고, 정리 중에는 guard
 	// lease를 잇는 다른 환경의 lock은 실행 중으로 보고, lease가 끊기면 회수한다.
 	writeFileSync(
 		join(records, "dev.lock"),
-		JSON.stringify({ ...foreign, lease: 100 }),
+		JSON.stringify({ ...foreign, lease: 300 }),
 	);
-	const lease = touchEvery(join(records, "dev.lock"));
+	const lease = await touchEvery(join(records, "dev.lock"));
 	t.after(() => lease.kill("SIGKILL"));
 	await assert.rejects(
 		run(),

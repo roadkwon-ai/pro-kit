@@ -101,7 +101,8 @@ test("evidence setter는 regular·작은 파일과 실제 표 헤더 아래 행�
 	const fifoResult = spawnSync(
 		process.execPath,
 		[CLI, "evidence", "1", "--file", "tasks/evidence/input.fifo"],
-		{ cwd: root, encoding: "utf8", timeout: 250 },
+		// FIFO를 열어 멈추면 끊는다. 바쁜 기계에서 node가 뜨는 시간보다 넉넉히 준다
+		{ cwd: root, encoding: "utf8", timeout: 10_000 },
 	);
 	assert.equal(fifoResult.status, 2, fifoResult.stderr);
 	assert.match(fifoResult.stderr, /일반 파일/);

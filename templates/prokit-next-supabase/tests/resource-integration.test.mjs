@@ -216,7 +216,11 @@ function accept(root, options = {}) {
 		{
 			cwd: root,
 			encoding: "utf8",
-			env: { ...process.env, PATH: `${join(root, "bin")}:${process.env.PATH}` },
+			env: {
+				...process.env,
+				PATH: `${join(root, "bin")}:${process.env.PATH}`,
+				...options.env,
+			},
 		},
 	);
 }
@@ -383,17 +387,14 @@ test("남은 reviewer child가 있으면 임시 review output은 child 종료 �
 	writeFileSync(join(root, "src", "index.js"), "changed\n");
 	reviewer(root);
 	writeFileSync(join(root, "live-child"), "yes\n");
-	const before = new Set(
-		readdirSync(tmpdir()).filter((name) =>
-			name.startsWith("prokit-accept-review-"),
-		),
-	);
-	const result = accept(root);
+	// 이 실행만 쓰는 임시 폴더에서 센다. 공용 tmpdir에는 동시에 도는 다른 테스트의 review output도 생긴다
+	const tmp = mkdtempSync(join(tmpdir(), "prokit-review-tmp-"));
+	t.after(() => rmSync(tmp, { recursive: true, force: true }));
+	const result = accept(root, { env: { TMPDIR: tmp } });
 	assert.equal(result.status, 1);
-	const retained = readdirSync(tmpdir())
-		.filter((name) => name.startsWith("prokit-accept-review-"))
-		.filter((name) => !before.has(name));
+	const retained = readdirSync(tmp).filter((name) =>
+		name.startsWith("prokit-accept-review-"),
+	);
 	assert.equal(retained.length, 1, result.stdout);
 	await new Promise((done) => setTimeout(done, 2_100));
-	rmSync(join(tmpdir(), retained[0]), { recursive: true, force: true });
 });
