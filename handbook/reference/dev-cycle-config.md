@@ -53,7 +53,7 @@
 |---|---|---|
 | `packages/db/src/schema/todo.ts` | E (`^packages/db/`) | E |
 | `packages/api/src/routers/todo.ts` | D (`^(packages/api/\|apps/web/src/app/api/)`) | D |
-| `apps/web/src/components/todo-list.tsx` | B (`^(apps/web/src/(app\|components)/\|packages/ui/)`) | B |
+| `apps/web/src/components/todo-list.tsx` | B (`^(apps/web/src/\|packages/ui/)`) | B |
 
 - 한 계층(E, D, B 중 하나)만 바뀌면 그 글자가 케이스예요.
 - 계층이 둘 이상 바뀌면 케이스 F예요. 위 예시는 세 계층을 모두 건드려서 F예요.

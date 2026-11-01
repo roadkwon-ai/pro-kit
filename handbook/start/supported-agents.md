@@ -50,6 +50,7 @@
 
 - **Antigravity**는 Claude 플러그인 훅, Claude Code·Codex 전용 두뇌(OMC, OMX, gstack, pstack), impeccable 편집 훅을 쓰지 않아요. 그 자리는 Codex와 같은 대체 절차(설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`)가 맡고, 화면을 고친 뒤에는 critique의 detector로 확인해요.
 - **Grok Build**는 Claude 호환이 기본으로 켜져 있어 사용자 전역의 Claude 플러그인과 훅, `~/.claude/CLAUDE.md`, `~/.claude/skills`도 함께 불러와요. 신뢰한 폴더에서는 프로젝트 `.claude/settings.json`과 `settings.local.json`의 훅도 읽어요. 이 훅이 실제로 도는지는 확인하지 않았으므로, Grok Build에서도 화면을 고친 뒤 critique의 detector로 확인해요.
+- **위임 기록과 편집 훅**: Claude Code, Codex, Antigravity는 서브에이전트가 스킬을 읽고 파일을 고친 기록에 그 에이전트 이름을 남기고, 코디네이터나 다른 계층 에이전트가 계층 코드를 고치려 하면 막아요. 세 도구 모두 실제 세션으로 확인했어요. Grok Build는 이 훅이 도는지 확인하지 않았어요. 훅이 돌지 않으면 코디네이터가 직접 구현하고 증거를 `degraded: Main 직접(Grok Build)`로 적어요([위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md#공식-스킬은-맡은-에이전트가-읽어요)).
 
 <!-- edition:pro -->
 ### 확인한 범위
@@ -62,6 +63,9 @@
 | Grok Build | 1.0.46, 2026-10-08 | 규칙, 스킬, 에이전트를 읽고 대조표를 여는 데까지 확인했어요. 리뷰와 audit은 무료 사용량 한도에 걸려 확인하지 못했어요 |
 | Antigravity | CLI 1.4.5(Gemini 3.8 Flash), 2026-10-22 | 전환 프로젝트의 정밀 분석부터 첫 Task 세부 계획까지, 진행 계획 라운드, 계획 리뷰, 사용자 확인, 커밋, Task 라운드를 거쳤어요 |
 | Codex | CLI 0.163, 2026-10-22 | 같은 전환 시나리오를 했어요. 분석과 리뷰는 Codex 하위 에이전트로 떴고 기존 코드는 읽기만 했어요 |
+| Claude Code | 2.1.316, 2026-11-01 | 위임 기록과 편집 훅만 따로 시험했어요. 계층 에이전트 셋(DB, 서버·API, 화면)이 스킬을 읽고 고친 기록에 각자 이름이 남았고, 다른 계층 파일 편집은 막혔어요 |
+| Codex | CLI 0.166.0, 2026-11-01 | 위임 기록과 편집 훅만 따로 시험했어요. 계층 에이전트 셋(DB, 서버·API, 화면)이 스킬을 읽고 고친 기록에 각자 이름이 남았고, 다른 계층 파일 편집은 막혔어요 |
+| Antigravity | CLI 1.4.12, 2026-11-01 | 위임 기록과 편집 훅만 따로 시험했어요. 계층 에이전트 셋(DB, 서버·API, 화면)이 스킬을 읽고 고친 기록에 각자 이름이 남았고, 다른 계층 파일 편집은 막혔어요 |
 
 표 밖의 한계는 이래요.
 

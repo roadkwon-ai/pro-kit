@@ -30,11 +30,11 @@ pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 
 
 ![갱신 반영 순서예요. --diff로 차이를 보고, .dev-cycle.json을 직접 비교하고, 옮길 항목을 정리해 보고해요. 이어서 프로젝트 세션에서 옛 이름을 옮기고 H 라운드로 반영해요. 프로젝트가 스스로 고친 내용은 덮어쓰지 않아요.](assets/update-existing-steps.webp)
 
-1. **차이 보기**: `bash templates/<템플릿>/install.sh <프로젝트> --diff`로 차이를 봐요. 파일을 쓰지 않고, 템플릿과 다른 파일의 diff, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 줘요.
+1. **차이 보기**: `bash templates/<템플릿>/install.sh <프로젝트> --diff`로 차이를 봐요. 파일을 쓰지 않고, 템플릿과 다른 파일의 diff, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 줘요. 프로젝트가 채워 가는 파일(`GLOSSARY.md`, `docs/domain/project.md`, `tasks/todo.md`, `tasks/archive/README.md`)은 diff 없이 "프로젝트가 채우는 파일, 유지"로만 나와요.
 2. **`.dev-cycle.json` 따로 보기**: 설치기가 값을 채우는 파일이라 `--diff`에 나오지 않아요. 템플릿의 `files/.dev-cycle.json`과 직접 비교해요.
-3. **옮길 항목 정리**: 옮길 항목을 정리해 보고해요. 그 프로젝트가 스스로 고친 내용(예: `DB_PORT` 변수화)은 옮길 항목에서 빼요.
+3. **옮길 항목 정리**: 옮길 항목을 정리해 보고해요. 그 프로젝트가 스스로 고친 내용(예: `DB_PORT` 변수화)은 옮길 항목에서 빼요. 설치 커밋 뒤 한 번도 바뀌지 않은 파일(`git log --oneline <설치 커밋>.. -- <파일>`이 비어 있어요)은 템플릿 판으로 그대로 덮어써도 돼요.
 4. **옛 이름 옮기기** (프로젝트 세션): 아래 "옛 이름이 남아 있을 때"를 먼저 해요.
-5. **라운드로 반영** (프로젝트 세션): 실제 반영은 그 프로젝트에서 연 세션이 dev-cycle 케이스 H 라운드로 해요(도입한 프로젝트가 아직 진행 계획을 확정하지 않았으면 `--no-task`를 붙여 열어요). 라운드에서는 `install.sh <프로젝트> --skip-skills`로 없는 파일과 설정 항목을 더하고(템플릿 파일은 덮어쓰지 않고 설정 파일에는 항목만 더해요), 템플릿과 다른 파일은 직접 옮겨요.
+5. **라운드로 반영** (프로젝트 세션): 실제 반영은 그 프로젝트에서 연 세션이 dev-cycle 케이스 H 라운드로 해요(도입한 프로젝트가 아직 진행 계획을 확정하지 않았으면 `--no-task`를 붙여 열어요). 라운드에서는 `install.sh <프로젝트> --skip-skills`로 없는 파일과 설정 항목을 더하고(템플릿 파일은 덮어쓰지 않고 설정 파일에는 항목만 더해요), 템플릿과 다른 파일은 직접 옮겨요. 라운드를 연 뒤 `scripts/dev-cycle.mjs`를 옮겼으면 `pnpm dev-cycle table H --write --upgrade`로 열린 표의 행 문구를 새 판에 맞춰요(문구만 바뀐 행은 증거를 그대로 옮겨요). 위임하는 행이 있으면 설계 행(`[design]`)을 위임 전에 채워요.
 
 ```mermaid
 flowchart LR

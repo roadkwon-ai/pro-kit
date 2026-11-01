@@ -89,7 +89,7 @@ pnpm dev-cycle table F --write --title "할 일 마감일"
 
 **내가 하는 일**: 기다려요. 막히면 에이전트가 물어요. 상태가 궁금하면 "지금 어디까지 했어?"라고 물으세요.
 
-**에이전트가 하는 일**: 대조표 위에서부터 순서대로 DB, API, 화면을 만들어요. 행 하나를 끝낼 때마다 실제로 실행한 명령과 결과를 증거 칸에 적어요(`pnpm check-types → exit 0`처럼. [증거 적는 법](audit-and-confirm.md#증거-적는-법)). 구현을 맡길 수행자(`prokit-implementer`)에게는 고칠 파일을 정확히 지정해 줘요([위임 에이전트와 리뷰 에이전트](agent-roles.md)). 진행 상황은 `status`로 볼 수 있어요.
+**에이전트가 하는 일**: 대조표 위에서부터 순서대로 DB, API, 화면을 만들어요. 행 하나를 끝낼 때마다 실제로 실행한 명령과 결과를 증거 칸에 적어요(`pnpm check-types → exit 0`처럼. [증거 적는 법](audit-and-confirm.md#증거-적는-법)). 구현은 계층마다 그 계층 전문 에이전트(<!-- edition:pro -->DB `prokit-db-builder`, API `prokit-api-builder`, <!-- /edition -->화면 `prokit-ui-builder`)에게 DB, API, 화면 순서로 맡기고, 고칠 파일과 읽을 공식 스킬을 정확히 지정해 줘요([위임 에이전트와 리뷰 에이전트](agent-roles.md)).<!-- edition:pro --> 앞 계층이 바꾼 스키마 타입과 프로시저 입출력은 다음 지시에 넣어요.<!-- /edition --> 진행 상황은 `status`로 볼 수 있어요.
 
 > 화면 기록(예시, 숫자는 가짜): `라운드 F "할 일 마감일" — 11/20칸 — 다음: [verify] next-dev-loop 통합 런타임 확인`
 

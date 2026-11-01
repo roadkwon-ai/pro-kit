@@ -49,7 +49,7 @@ pro-kit 저장소는 새 프로젝트를 만들어 주는 생성기예요. 안�
 
 - 프로젝트 전용 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개
 - 에이전트 <!-- edition:pro -->세<!-- /edition --><!-- edition:ui 두 --> 종류
-  - 외부 전문 스킬을 연결해 구현을 맡는 수행 에이전트
+  - 화면<!-- edition:pro -->·서버·DB 계층별로<!-- /edition --> 구현과 실행 확인을 맡는 전문 수행 에이전트
   - 구현에 참여하지 않은 독립 리뷰 에이전트
   - 기존 프로젝트를 읽기만 하며 분석하는 정밀 분석 에이전트(`prokit-analyzer`) <!-- edition:pro -->
 - 빌드 캐시, 설치 패키지, Python 실행환경, 관리 임시 폴더를 감시하는 자원 보호 도구

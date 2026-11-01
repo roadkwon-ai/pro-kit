@@ -85,7 +85,7 @@
 
 대조표에서 두뇌를 쓰는 곳은 단계 행이에요. 행 문구에 `요구 명확화 단계`, `계획 단계`, `구현 단계`, `디버깅 단계`, `고른 두뇌의 계획 방법`이 들어간 행이에요. 화면(B)<!-- edition:pro -->, 서버(D), DB(E)<!-- /edition -->의 구현 행과 하네스(H)의 구현 행에도 `구현 단계`가 붙어요. 스킬이나 설치만 바꾸는 H는 이 행을 `N/A: 사유`로 채워요.
 
-- 에이전트는 이 행을 시작하기 전에 `.agents/skills/prokit-dev-cycle/references/brains/<두뇌>.md` 단계 표의 스킬을 불러요(Claude Code는 Skill 도구, 다른 도구는 `SKILL.md`를 읽어요). 작은 변경이어도 건너뛰지 않고 그 스킬 안에서 짧게 해요. 구현을 맡길 때는 그 스킬 이름을 `prokit-implementer`에게 주는 지시에 적어요.
+- 에이전트는 이 행을 시작하기 전에 `.agents/skills/prokit-dev-cycle/references/brains/<두뇌>.md` 단계 표의 스킬을 불러요(Claude Code는 Skill 도구, 다른 도구는 `SKILL.md`를 읽어요). 작은 변경이어도 건너뛰지 않고 그 스킬 안에서 짧게 해요. 구현을 맡길 때는 그 스킬 이름을 그 계층 수행 에이전트에게 주는 지시에 적어요.
 - 무엇을 부를지는 dev-cycle이 알려 줘요. `pnpm dev-cycle table --write`는 단계 행마다 부를 두뇌 스킬을 보여 주고, `pnpm dev-cycle status`는 다음 행이 단계 행이면 "이 행은 두뇌 …의 …를 먼저 불러서 한다"를 붙여요. 두뇌를 바꾸면 다음 출력부터 바뀐 두뇌로 나와요.
 - 증거 칸에는 `사용: <두뇌 파일에 적힌 이름>`, `사용: <스킬>(추가 스킬)`, `사용: 내장(<단계>): <사유>` 중 하나를 적어요. 내장은 두뇌가 맡지 않는 단계에만 써요(두뇌가 `none`이면 사유는 없어도 돼요). 두뇌 스킬을 쓸 수 없으면 `blocked: 사유`예요.
 - audit은 단계 행의 증거에서 이 이름들을 확인해요. 이름이 두뇌 파일에 없을 때, 두뇌가 맡는 단계를 내장으로 적었을 때, 내장 사유에 두뇌 스킬 이름이 있을 때(그 방법을 썼으면 그 스킬 이름을 적어야 해요) 막아요. 설치기가 넣은 훅이 스킬 호출과 `SKILL.md` 읽기를 `.prokit/skills-used.jsonl`(커밋하지 않는 파일)에 남겨요. Claude Code는 Skill 호출과 Read, Codex는 셸로 읽은 `SKILL.md` 경로, Antigravity는 `read_file`을 남겨요. 스킬 폴더 안 참조 파일과 Next 번들 문서를 읽은 것도 남아요. audit은 이 라운드에서 정말 부르거나 읽었는지 모든 행 증거의 `사용:` 목록에 적은 스킬<!-- edition:pro -->과 `prokit-web`을 쓴 행에 적은 Next 문서<!-- /edition -->까지 이 기록과 대조해요. 구현 행처럼 행 문구에 `prokit-ui`<!-- edition:pro -->·`prokit-web`<!-- /edition --> 같은 스킬 이름만 적혀 있으면 `사용:` 목록에 그 이름이 있어야 하고, 앞 행 때 읽은 기록이 아니라 그 행을 하면서(앞 행을 채운 뒤) 읽은 기록이어야 해요. 괄호에 스킬 폴더의 참조 파일을 적으면(`impeccable(reference/craft-floor.md)`) 그 파일을 읽은 기록도 봐요. 리뷰어 같은 서브에이전트가 읽은 기록은 세지 않아요. 고른 과설계 방지 스킬의 리뷰(`ponytail-review` 등)도 같아요. 훅이 돌지 않은 라운드(Codex에서 `/hooks`로 신뢰하기 전, 훅이 없는 도구)는 앞 라운드에 기록이 있어도 이름만 확인하는 자기 신고라, 리뷰와 내가 직접 보는 확인이 받쳐 줘요.
@@ -96,7 +96,7 @@
 두뇌 파일마다 "에이전트" 절이 있어서 그 두뇌가 주는 에이전트나 프롬프트 틀을 알려 줘요. 예를 들어 `agent-skills`는 `agent-skills:security-auditor`와 `agent-skills:test-engineer` 같은 에이전트를 줘요. `superpowers`와 `compound-engineering`은 에이전트 대신 스킬 안의 프롬프트 틀을 줘요. `gstack`, `mattpocock`, `openspec`, `spec-kit`은 없어요.
 
 - 두뇌의 에이전트는 **읽기 전용 보완 검토**로만 써요. 파일을 쓰지 않게 지시하고, 부르기 전과 후의 작업 트리를 비교해서 쓰기가 없었는지 확인해요. 쓴 것이 있으면 그 결과를 버리고 `blocked`로 남겨요.
-- 결과는 최종 `prokit-reviewer` 리뷰의 입력이에요. 리뷰를 대신하지 않아요. 구현은 늘 `prokit-implementer`가 해요.
+- 결과는 최종 `prokit-reviewer` 리뷰의 입력이에요. 리뷰를 대신하지 않아요. 구현은 늘 그 계층 수행 에이전트(`prokit-ui-builder`<!-- edition:pro -->·`prokit-api-builder`·`prokit-db-builder`<!-- /edition -->, 하네스·계층 밖은 `prokit-implementer`)가 해요.
 
 ## 준비물과 전역 설치
 
