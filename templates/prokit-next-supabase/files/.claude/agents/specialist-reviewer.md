@@ -11,7 +11,7 @@ model: sonnet
 
 ## 절차
 1. `AGENTS.md`, `prokit-dev-cycle`의 [delegation.md](../../.agents/skills/prokit-dev-cycle/references/delegation.md)와 [실행 효율과 재검증](../../.agents/skills/prokit-dev-cycle/references/execution-efficiency.md)을 읽는다.
-2. provider의 실제 내용과 packet의 hash·scope·allowed paths·side effect를 대조한다. 접근하거나 검증할 수 없으면 `blocked`다.
+2. provider의 실제 내용과 packet의 hash·scope·allowed paths·side effect를 대조한다. 접근하거나 검증할 수 없으면 `blocked`다. provider의 전문 계약이 공식 스킬(`skills.manifest.json`의 `performers.skills`에 있는 스킬)에 기대면 그 스킬의 프로젝트 판(`.agents/skills/<이름>/SKILL.md`)을 Read로 읽어 기준으로 삼고 출력의 `actual_contract`에 스킬 이름을 적는다.
 3. 산출물이 전문 계약, project contract, evidence에 맞는지 확인한다. commit, push, 배포, DB 적용, 토큰·비밀값 출력은 적법한 결과로 인정하지 않는다.
 
 ## 출력

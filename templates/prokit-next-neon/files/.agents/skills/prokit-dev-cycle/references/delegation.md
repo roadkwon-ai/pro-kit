@@ -28,7 +28,16 @@ exact native 이름은 현재 task/run의 accepted runtime receipt가 같은 `ag
 
 실행 뒤에만 수행자가 `baseline`, `selectedProviders`, 실제 `changes`, `status`, `environmentFingerprint`, `evidence`, `reviewCoverage`, `sideEffects`, `nextAction`을 담은 패킷을 넘긴다. `evidence`에는 실행 명령·exit와 Main runner receipt, artifact hash, coverage·focus·limitations·기준 snapshot이 있어야 한다. `commands`에는 완료를 뒷받침하는 검사만 넣고 모두 exit 0이어야 한다. TDD에서 먼저 실패시킨 실행은 `report`에 적는다. `validateDelegationPacket`은 이를 Main의 baseline·approvedPaths·runner receipt와 실제 delta에 대조한다. 이 CLI JSON 검증은 최종 승인이 아니다. 신뢰한 Main 런타임이 receipt와 authority를 현재 task·run·제품·증거·provider·환경에 묶어 final inspection해야 하며, 확인할 수 없으면 `blocked`다.
 
-`prokit-implementer`는 선택된 전문 스킬 수행자를 연결하는 얇은 어댑터다. `AGENTS.md`, `.dev-cycle.json`, `package.json`, 루트 설정은 메인이 맡되, 메인이 파일을 명시해 배정하면 그 루트 설정 파일만 수행자가 고칠 수 있다. commit, push, 배포, 토큰이나 비밀값 출력은 어느 위임 패킷에도 넣지 않는다.
+구현 수행자(계층 전문 에이전트와 `prokit-implementer`)는 선택된 전문 스킬 수행자를 연결하는 어댑터다. `AGENTS.md`, `.dev-cycle.json`, `package.json`, 루트 설정은 메인이 파일을 명시해 `prokit-implementer`에 배정하고, 배정한 파일만 수행자가 고친다. commit, push, 배포, 토큰이나 비밀값 출력은 어느 위임 패킷에도 넣지 않는다.
+
+## 공식 스킬 위임
+공식 스킬(`skills.manifest.json`의 `skills`)로 하는 일은 Main이 직접 하지 않는다. 배치의 정본은 `skills.manifest.json`의 `performers`다. `performers.agents`는 대조표 행에서 위임받는 전문 에이전트, `performers.skills`는 공식 스킬마다 그 스킬을 읽고 일하는 에이전트다. 여기에 없는 공식 스킬(사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일)만 Main이 읽는다.
+
+1. **배정**: 행 문구와 계층 `prokit-*`의 "공식 스킬 연결" 표로 맡을 에이전트와 읽을 공식 스킬을 정한다. 한 작업 단위에는 에이전트 하나를 두고, 계층이 여럿이면 계층마다 나누어 파일이 겹치지 않게 맡긴다.
+2. **위임 지시**: 아래 패킷 항목에 더해 읽을 공식 스킬의 이름과 프로젝트 경로(`.agents/skills/<이름>/SKILL.md`), 상위 스킬(스킬 머리의 `parent`), 이번 일에 맞는 규칙 파일, "Main 검수" 칸의 기준을 적는다. 스킬 본문을 지시에 옮겨 적지 않는다. 에이전트가 직접 읽어야 판이 맞는다.
+3. **감독**: 에이전트는 공식 스킬을 Read로 읽는다(Skill 도구는 이름이 같은 개인 스킬을 먼저 불러온다). 보고의 "읽은 스킬"에 `이름(적용한 규칙)`이 없거나, 지시한 스킬을 읽지 않았거나, 상위 스킬을 건너뛰었으면 그 결과를 받지 않고 다시 지시한다(최대 두 번. 그래도 안 되면 `blocked`).
+4. **검수와 통합**: Main은 "Main 검수" 칸과 변경 diff로 결과를 확인하고, 대조표 증거에 `위임: <에이전트>(사용: <에이전트가 읽은 공식 스킬>(<적용한 규칙>)) → 결과`로 적는다. Claude Code는 훅이 서브에이전트의 읽기 기록에 `agentType`을 남기고, audit은 그 공식 스킬을 맡은 에이전트가 프로젝트 판을 읽은 기록만 센다. Main이 대신 읽은 기록, Skill 도구로 부른 기록, 그 행에서 위임하지 않은 에이전트가 읽은 기록은 세지 않는다. 위임한 에이전트는 같은 에이전트에 맡기지 않은 앞 행을 채운 뒤 일한 기록(스킬 읽기나 편집)이 있어야 한다. 구현 행을 `N/A`나 `blocked`로 두었는데 이 라운드 diff에 계층 코드가 있으면 받지 않는다. 열린 라운드에서 Main이 계층 코드(화면<!-- edition:pro -->·서버·DB<!-- /edition -->)를 Edit·Write로 고치려 하면 편집 훅이 막는다. 기록이 없는 도구(Codex 등)는 자기 신고다.
+5. **배치 바꾸기**: 공식 스킬이 더해지거나 바뀌거나 빠지면 `prokit-skills-assign`으로 다시 배치한다. 배치를 손으로 고치면 `pnpm agents:check`가 이름과 함께 에이전트 정의의 공식 스킬 표, `prokit-*` 연결 표의 맡는 에이전트 칸이 `performers`와 같은지 양쪽으로 본다.
 
 ## 실패와 통합
 

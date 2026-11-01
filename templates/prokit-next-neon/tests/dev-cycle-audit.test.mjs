@@ -1187,3 +1187,160 @@ test("두뇌를 고른 H 라운드: 설치만 바꾼 구현 행의 N/A는 받고
   fill(root, "N/A: 스킬 구성만 변경");
   assert.deepEqual(stageProblems(root, config), []);
 });
+
+test("공식 스킬 위임: 구현 단계 행은 위임 증거와 그 에이전트가 일한 기록을 요구하고, 맡은 공식 스킬은 그 에이전트가 프로젝트 판을 읽은 기록만 센다", () => {
+  const { root, write } = makeRepo();
+  for (const s of ["prokit-ui", "prokit-web", "vercel-react-best-practices", "neon"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n---\n`);
+  write(".agents/skills/neon-postgres/SKILL.md", "---\nname: neon-postgres\nmetadata:\n  parent: neon\n---\n");
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["vercel-react-best-practices", "neon", "neon-postgres"] }], performers: { agents: ["prokit-ui-builder", "prokit-db-builder", "prokit-implementer"], skills: { "vercel-react-best-practices": ["prokit-ui-builder"], "neon-postgres": ["prokit-db-builder"] } } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const impl = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^구현 \(구현 단계, prokit-ui, prokit-web,/.test(r.text));
+  assert.ok(impl >= 0);
+  const set = (v) => {
+    mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(impl + 1), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  const mine = () => audit(root, config).problems.filter((p) => p.startsWith(`#${impl + 1} `)).map((p) => p.replace(/^#\d+ .*?: /, ""));
+  const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const read = (s, agent) => hook({ tool_name: "Read", ...(agent ? { agent_id: `id-${agent}`, agent_type: agent } : {}), tool_input: { file_path: join(root, `.agents/skills/${s}/SKILL.md`) } });
+  // 기록이 없어도(자기 신고) 행 문구의 에이전트에 맡긴 증거가 있어야 한다. Main이 직접 하면 blocked로 남긴다
+  set("사용: prokit-ui, prokit-web. Next 문서: N/A: 없음");
+  assert.match(mine()[0] ?? "", /이 행은 prokit-ui-builder에 맡긴다.*blocked: 사유/);
+  set("blocked: 맡길 에이전트 없음");
+  assert.deepEqual(mine(), []);
+  const done = "사용: prokit-ui, prokit-web; 위임: prokit-ui-builder(사용: vercel-react-best-practices(rerender-memo)). Next 문서: N/A: 없음";
+  set(done);
+  assert.deepEqual(mine(), []);
+  // 기록이 생기면: Main이 읽은 계층 스킬은 세고, 위임한 에이전트가 일한 기록이 있어야 한다
+  read("prokit-ui");
+  read("prokit-web");
+  read("vercel-react-best-practices");
+  assert.match(mine()[0] ?? "", /prokit-ui-builder가 이 라운드에서 일한 기록이 없다/);
+  // 에이전트가 일했어도 맡은 공식 스킬을 Main이 대신 읽은 기록은 세지 않는다
+  read("prokit-ui", "prokit-ui-builder");
+  assert.match(mine()[0] ?? "", /vercel-react-best-practices를 이 라운드에서 부르거나 읽은 기록이 없다.*prokit-ui-builder가 읽고 따르는 공식 스킬이라 Main이 읽은 기록은 세지 않는다/);
+  // Skill 도구 호출(개인 스킬일 수 있다)과 다른 에이전트가 읽은 기록도 세지 않는다
+  hook({ tool_name: "Skill", agent_id: "u", agent_type: "prokit-ui-builder", tool_input: { skill: "vercel-react-best-practices" } });
+  read("vercel-react-best-practices", "prokit-implementer");
+  assert.match(mine()[0] ?? "", /vercel-react-best-practices를 이 라운드에서/);
+  read("vercel-react-best-practices", "prokit-ui-builder");
+  assert.deepEqual(mine(), []);
+  // 하위 스킬은 맡은 쪽이 상위 스킬(parent)도 읽어야 한다. Main이 읽은 상위 스킬은 세지 않는다
+  set(`${done}; 위임: prokit-db-builder(사용: neon-postgres)`);
+  read("neon-postgres", "prokit-db-builder");
+  read("neon");
+  assert.match(mine()[0] ?? "", /neon-postgres는 상위 스킬 neon부터 읽는다\(SKILL\.md의 parent\)\. prokit-db-builder가 neon 스킬을 읽은 기록이 없다/);
+  read("neon", "prokit-db-builder");
+  assert.deepEqual(mine(), []);
+  // 배치에 없는 상위 스킬은 하위 스킬을 맡은 에이전트가 읽은 기록도 센다(사용:에 neon을 적어도 된다)
+  set(`${done}; 위임: prokit-db-builder(사용: neon-postgres, neon)`);
+  assert.deepEqual(mine(), []);
+  const log = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l));
+  assert.ok(log.some((e) => e.skill === "vercel-react-best-practices" && e.agentType === "prokit-ui-builder" && e.project === true && e.tool === "Read"));
+  assert.ok(log.some((e) => e.skill === "vercel-react-best-practices" && e.tool === "Skill" && !e.project));
+});
+
+test("부른 스킬 기록: Codex 셸 명령은 프로젝트 스킬 경로일 때만 프로젝트 판으로 남기고, 서브에이전트를 구별하지 못하는 도구의 기록은 자기 신고로 받는다", () => {
+  const { root, write } = makeRepo();
+  for (const s of ["prokit-ui", "prokit-web", "vercel-react-best-practices"]) write(`.agents/skills/${s}/SKILL.md`);
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["vercel-react-best-practices"] }], performers: { agents: ["prokit-ui-builder"], skills: { "vercel-react-best-practices": ["prokit-ui-builder"] } } }));
+  const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  hook({ tool_name: "Bash", tool_input: { command: `cat ~/.claude/skills/vercel-react-best-practices/SKILL.md ${root}/.agents/skills/prokit-ui/SKILL.md .agents/skills/prokit-web/SKILL.md` } });
+  const log = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l));
+  assert.deepEqual(log.map((e) => [e.skill, e.project === true]), [["vercel-react-best-practices", false], ["prokit-ui", true], ["prokit-web", true]]);
+  // ./·../·$PWD로 시작한 상대 경로도 프로젝트 판이다. 상대 Path는 훅 입력의 cwd 기준이다
+  const before = log.length;
+  hook({ tool_name: "Bash", tool_input: { command: 'cat ./.agents/skills/prokit-ui/SKILL.md "$PWD/.agents/skills/prokit-web/SKILL.md" ../x/.agents/skills/vercel-react-best-practices/SKILL.md' } });
+  hook({ tool_name: "Read", cwd: join(root, "apps/web"), tool_input: { file_path: "../../.agents/skills/vercel-react-best-practices/SKILL.md" } });
+  hook({ tool_name: "Read", cwd: join(root, "apps/web"), tool_input: { file_path: ".agents/skills/prokit-ui/SKILL.md" } });
+  const more = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l)).slice(before);
+  assert.deepEqual(more.map((e) => [e.skill, e.project === true]), [["prokit-ui", true], ["prokit-web", true], ["vercel-react-best-practices", false], ["vercel-react-best-practices", true], ["prokit-ui", false]]);
+  writeFileSync(join(root, ".prokit/skills-used.jsonl"), log.map((e) => JSON.stringify(e)).join("\n") + "\n");
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "Codex 화면" });
+  const impl = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^구현 \(구현 단계, prokit-ui, prokit-web,/.test(r.text));
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  writeFileSync(join(root, "tasks/evidence/e.txt"), "사용: prokit-ui, prokit-web; 위임: prokit-ui-builder(사용: vercel-react-best-practices). Next 문서: N/A: 없음\n");
+  assert.equal(run(root, "evidence", String(impl + 1), "--file", "tasks/evidence/e.txt").status, 0);
+  const mine = () => audit(root, config).problems.filter((p) => p.startsWith(`#${impl + 1} `));
+  hook({ tool_name: "Bash", tool_input: { command: "cat .agents/skills/prokit-ui/SKILL.md .agents/skills/prokit-web/SKILL.md" } });
+  assert.match(mine()[0] ?? "", /vercel-react-best-practices를 이 라운드에서/, "개인 판(~/.claude/skills)을 읽은 기록은 세지 않는다");
+  hook({ tool_name: "Bash", tool_input: { command: "cat .agents/skills/vercel-react-best-practices/SKILL.md" } });
+  assert.deepEqual(mine(), [], "Codex는 서브에이전트를 구별하지 못해 자기 신고로 받는다");
+});
+
+test("Main 편집 차단: 열린 라운드에서 Main이 Claude Code 편집 도구로 계층 코드를 고치면 막고, 서브에이전트·계층 밖 파일·Codex·옛 판은 막지 않으며, 허락한 편집을 기록한다", () => {
+  const { root, write } = makeRepo();
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-implementer"], skills: {} } }));
+  const config = loadConfig(root);
+  const guard = (input) => spawnSync(process.execPath, [CLI, "edit-guard"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const page = join(root, "apps/web/src/app/page.tsx");
+  assert.match(guard({ tool_name: "Edit", tool_input: { file_path: page } }).stderr, /열린 라운드 없이/);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const main = guard({ tool_name: "Edit", tool_input: { file_path: page } });
+  assert.equal(main.status, 2);
+  assert.match(main.stderr, /Main은 계층 코드\(apps\/web\/src\/app\/page\.tsx\)를 직접 고치지 않는다\. Agent 도구로 prokit-ui-builder에 맡긴다/);
+  assert.equal(guard({ tool_name: "Write", agent_id: "a1", agent_type: "prokit-ui-builder", tool_input: { file_path: page } }).status, 0);
+  assert.equal(guard({ tool_name: "Write", tool_input: { file_path: join(root, "docs/note.md") } }).status, 0);
+  assert.equal(guard({ tool_name: "apply_patch", tool_input: { command: "*** Update File: apps/web/src/app/page.tsx\n" } }).status, 0, "Codex는 서브에이전트를 구별하지 못한다");
+  const log = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l));
+  assert.deepEqual(log.filter((e) => e.edit).map((e) => [e.edit, e.agentType ?? null, e.tool]), [
+    ["apps/web/src/app/page.tsx", "prokit-ui-builder", "Write"],
+    ["docs/note.md", null, "Write"],
+    ["apps/web/src/app/page.tsx", null, "apply_patch"],
+  ], "막은 편집은 남기지 않는다");
+  rmSync(join(root, "skills.manifest.json"));
+  assert.equal(guard({ tool_name: "Edit", tool_input: { file_path: page } }).status, 0, "performers가 없는 옛 판은 막지 않는다");
+});
+
+test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 바뀌면 받지 않고, 맡은 스킬은 그 행에서 위임한 에이전트가 읽은 기록만 세며, 일한 기록은 다른 에이전트에 맡긴 앞 행을 채운 뒤여야 한다", () => {
+  const { root, write } = makeRepo();
+  for (const s of ["prokit-ui", "prokit-web", "vercel-react-best-practices", "agent-browser"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n---\n`);
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["vercel-react-best-practices", "agent-browser"] }], performers: { agents: ["prokit-ui-builder", "prokit-runtime-checker", "prokit-implementer"], skills: { "vercel-react-best-practices": ["prokit-ui-builder", "prokit-reviewer"], "agent-browser": ["prokit-runtime-checker"] } } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
+  const at = (re) => rows.findIndex((r) => re.test(r.text)) + 1;
+  const impl = at(/^구현 \(구현 단계,/);
+  const runtime = at(/^\[verify\] next-dev-loop 런타임 확인/);
+  const scroll = at(/^\[verify\] 휴대폰 스크롤 측정/);
+  const types = at(/^\[verify\] 타입·린트·빌드/);
+  assert.ok(impl && runtime && scroll && types);
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  const set = (n, v) => {
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(n), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  const mine = (n) => audit(root, config).problems.filter((p) => p.startsWith(`#${n} `)).map((p) => p.replace(/^#\d+ .*?: /, ""));
+  const hook = (cmd, input) => spawnSync(process.execPath, [CLI, cmd], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const read = (s, agent) => hook("skill-log", { tool_name: "Read", ...(agent ? { agent_id: `id-${agent}`, agent_type: agent } : {}), tool_input: { file_path: join(root, `.agents/skills/${s}/SKILL.md`) } });
+  // 계층 코드가 바뀌었는데 구현 행을 건너뛰면 받지 않는다
+  write("apps/web/src/app/page.tsx", "export default 1\n");
+  set(impl, "N/A: 바꿀 것 없음");
+  assert.match(mine(impl)[0] ?? "", /구현 행인데 이 라운드 diff에 계층 코드\(케이스 B\)가 있어 N\/A로 둘 수 없다/);
+  set(impl, "blocked: 맡길 에이전트 없음");
+  assert.match(mine(impl)[0] ?? "", /blocked로 둘 수 없다/);
+  // 맡은 스킬을 그 행에서 위임하지 않은 에이전트(리뷰어)가 읽은 기록은 세지 않는다. 편집도 일한 기록이다
+  read("prokit-ui");
+  read("prokit-web");
+  read("vercel-react-best-practices", "prokit-reviewer");
+  hook("edit-guard", { tool_name: "Edit", agent_id: "u1", agent_type: "prokit-ui-builder", tool_input: { file_path: join(root, "apps/web/src/app/page.tsx") } });
+  set(impl, "사용: prokit-ui, prokit-web; 위임: prokit-ui-builder(사용: vercel-react-best-practices). Next 문서: N/A: 없음");
+  assert.match(mine(impl)[0] ?? "", /vercel-react-best-practices를 이 라운드에서.*이 행에서 위임하지 않은 에이전트가 읽은 기록은 세지 않는다/);
+  read("vercel-react-best-practices", "prokit-ui-builder");
+  assert.deepEqual(mine(impl), []);
+  // 같은 에이전트에 한 번 맡겨 이어진 두 행을 채우면 그 일을 함께 센다
+  const idle = (n) => mine(n).filter((p) => /일한 기록이 없다/.test(p));
+  read("agent-browser", "prokit-runtime-checker");
+  set(runtime, "위임: prokit-runtime-checker(사용: agent-browser) → 오류 0건");
+  set(scroll, "위임: prokit-runtime-checker(사용: agent-browser) → 측정 결과");
+  assert.deepEqual(idle(scroll), []);
+  // 다른 행을 채운 뒤 다시 채우면 그 뒤에 일한 기록이 있어야 한다
+  set(types, "pnpm check-types exit 0");
+  set(scroll, "위임: prokit-runtime-checker(사용: agent-browser) → 측정 결과");
+  assert.match(idle(scroll)[0] ?? "", /prokit-runtime-checker가 이 행을 하면서 일한 기록이 없다\(앞 행을 채운 뒤/);
+  read("agent-browser", "prokit-runtime-checker");
+  assert.deepEqual(idle(scroll), []);
+});

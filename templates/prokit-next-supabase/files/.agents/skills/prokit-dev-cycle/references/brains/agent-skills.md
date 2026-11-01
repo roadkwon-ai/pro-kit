@@ -6,7 +6,7 @@ addyosmani/agent-skills. 스펙부터 출시까지 보안·성능·접근성 기
 |---|---|---|
 | 요구 명확화 | `agent-skills:spec-driven-development`(`/spec`). 아이디어가 흐리면 `idea-refine`, 인터뷰는 `interview-me` | `spec-driven-development`, `idea-refine`, `interview-me` |
 | 계획 | `agent-skills:planning-and-task-breakdown`(`/plan`). 인터페이스는 `api-and-interface-design` | 같은 이름 |
-| 구현 | `agent-skills:incremental-implementation`(`/build`) + `test-driven-development`(`/test`). 위임은 `prokit-implementer` | 같은 이름. Codex는 네이티브 `prokit-implementer` |
+| 구현 | `agent-skills:incremental-implementation`(`/build`) + `test-driven-development`(`/test`). 위임은 구현 수행자 | 같은 이름. Codex는 네이티브 구현 수행자 |
 | 디버깅 (C) | `agent-skills:debugging-and-error-recovery` | `debugging-and-error-recovery` |
 | 리뷰 추가 관점 | `code-review-and-quality`(`/review`), 보안 `security-and-hardening`, 성능 `performance-optimization` | 같은 이름 |
 | QA 보조 | `browser-testing-with-devtools` | 같은 이름 |
@@ -26,7 +26,7 @@ addyosmani/agent-skills. 스펙부터 출시까지 보안·성능·접근성 기
 - Claude Code 플러그인이 에이전트 4개를 준다: `agent-skills:code-reviewer`, `agent-skills:security-auditor`, `agent-skills:test-engineer`, `agent-skills:web-performance-auditor`. 앞머리에 `tools:`가 없어 모든 도구를 받으므로 아래 쓰는 방법을 꼭 지킨다.
 - Codex·Antigravity·Grok Build: 에이전트 없음. 같은 관점의 스킬(`code-review-and-quality`, `security-and-hardening`, `test-driven-development`, `performance-optimization`)을 읽어 적용한다.
 - `agent-skills:security-auditor`: `prokit-reviewer(security)` 행의 보완 관점이다.
-- `agent-skills:test-engineer`: 테스트 먼저 단계의 테스트 설계 메모만 맡는다. 테스트 파일은 `prokit-implementer`가 쓴다.
+- `agent-skills:test-engineer`: 테스트 먼저 단계의 테스트 설계 메모만 맡는다. 테스트 파일은 구현 수행자가 쓴다.
 - `agent-skills:web-performance-auditor`: 성능 확인 행의 보완 관점이다.
 - `agent-skills:code-reviewer`: 과설계 방지 스킬의 검토와 겹친다. 둘 중 하나만 쓴다.
 - 쓰는 방법은 `process-routing.md`의 두뇌 에이전트 규칙을 따른다.

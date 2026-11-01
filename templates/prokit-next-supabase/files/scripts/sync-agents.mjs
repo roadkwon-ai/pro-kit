@@ -134,6 +134,118 @@ export function sync(root, { check = false } = {}) {
 	return diffs;
 }
 
+// skills.manifest.json의 performers(일을 맡는 에이전트, 공식 스킬마다 맡는 에이전트)가 실제 에이전트 정의와 설치 스킬을 가리키는지 본다.
+// 틀린 이름은 audit이 위임 기록을 찾지 못하게 하고, 지운 스킬이 남으면 배치가 낡는다(고치는 일은 prokit-skills-assign).
+export function assignProblems(root) {
+	let m;
+	try {
+		m = JSON.parse(readFileSync(join(root, "skills.manifest.json"), "utf8"));
+	} catch {
+		return [];
+	}
+	const p = m.performers;
+	if (!p) return [];
+	const has = (a) => existsSync(join(root, ".claude/agents", `${a}.md`));
+	const known = new Set([
+		...m.skills.flatMap((s) => s.skills),
+		...(m.mattpocock?.pool ?? []),
+		...Object.values(m.optional ?? {}).flatMap((o) =>
+			o.skills.flatMap((s) => s.skills),
+		),
+	]);
+	const out = [];
+	for (const a of p.agents ?? [])
+		if (!has(a))
+			out.push(`performers.agents의 ${a}: .claude/agents/${a}.md가 없다`);
+	for (const [skill, agents] of Object.entries(p.skills ?? {})) {
+		if (!known.has(skill))
+			out.push(
+				`performers.skills의 ${skill}: skills.manifest.json에 없는 스킬이다`,
+			);
+		for (const a of agents)
+			if (!has(a))
+				out.push(`performers.skills의 ${skill}: .claude/agents/${a}.md가 없다`);
+	}
+	// 배치를 적은 다른 곳과 양방향 대조: 에이전트 정의의 공식 스킬 표, prokit-* 스킬의 "공식 스킬 연결" 표
+	const map = p.skills ?? {};
+	const agentNames = new Set([
+		...(p.agents ?? []),
+		...Object.values(map).flat(),
+	]);
+	const ticks = (s) => [...s.matchAll(/`([a-z][a-z0-9-]*)`/g)].map((x) => x[1]);
+	for (const a of agentNames) {
+		if (!has(a)) continue;
+		const md = readFileSync(join(root, ".claude/agents", `${a}.md`), "utf8");
+		const table = tableRows(md, /^## (맡는|focus별) 공식 스킬/m);
+		if (!table) continue;
+		const listed = new Set(table.flatMap(ticks));
+		for (const [skill, agents] of Object.entries(map)) {
+			if (agents.includes(a) && !listed.has(skill))
+				out.push(
+					`${a}.md의 공식 스킬 표에 없다: ${skill}(performers.skills가 ${a}에 맡긴다)`,
+				);
+			if (!agents.includes(a) && listed.has(skill))
+				out.push(
+					`${a}.md의 공식 스킬 표에 있지만 performers.skills가 ${a}에 맡기지 않는다: ${skill}`,
+				);
+		}
+	}
+	const skillsDir = join(root, ".agents/skills");
+	const prokit = existsSync(skillsDir)
+		? readdirSync(skillsDir).filter((d) => d.startsWith("prokit-"))
+		: [];
+	for (const s of prokit) {
+		const f = join(skillsDir, s, "SKILL.md");
+		if (!existsSync(f)) continue;
+		const rows = tableRows(
+			readFileSync(f, "utf8"),
+			/^\| 상황 \| 공식 스킬 \| 맡는 에이전트 \|/m,
+			true,
+		);
+		for (const row of rows ?? []) {
+			const [, , skillCell = "", agentCell = ""] = row.split("|");
+			const named = [...agentCell.matchAll(/prokit-[a-z-]+/g)]
+				.map((x) => x[0])
+				.filter((x) => agentNames.has(x));
+			const mapped = ticks(skillCell).filter((x) => map[x]);
+			for (const skill of mapped) {
+				if (!named.length)
+					out.push(
+						`${s}의 공식 스킬 연결 표: ${skill} 행에 맡는 에이전트가 없다`,
+					);
+				for (const x of named.filter((x) => !map[skill].includes(x)))
+					out.push(
+						`${s}의 공식 스킬 연결 표: ${skill} 행이 ${x}에 맡기지만 performers.skills는 ${map[skill].join("·")}에 맡긴다`,
+					);
+			}
+			const unmapped = ticks(skillCell).filter((x) => known.has(x) && !map[x]);
+			if (!mapped.length && named.length)
+				for (const skill of unmapped)
+					out.push(
+						`${s}의 공식 스킬 연결 표: ${skill} 행이 ${named.join("·")}에 맡기지만 performers.skills에 없는 스킬이라 Main이 읽는다`,
+					);
+		}
+	}
+	return out;
+}
+// 제목(head) 바로 아래 표나 머리 행이 head인 표(isHeader)의 본문 행. 머리 행이 head인 표는 모두 모은다. 표가 없으면 null
+function tableRows(md, head, isHeader = false) {
+	const lines = md.split("\n");
+	const rows = [];
+	let found = false;
+	for (let i = 0; i < lines.length; i++) {
+		if (!head.test(lines[i])) continue;
+		found = true;
+		let j = isHeader ? i : i + 1;
+		while (j < lines.length && !lines[j].startsWith("|")) j++;
+		// 머리 행과 구분 행을 건너뛴다
+		for (j += 2; j < lines.length && lines[j].startsWith("|"); j++)
+			rows.push(lines[j]);
+		if (!isHeader) break;
+	}
+	return found ? rows : null;
+}
+
 // 실재 경로로 비교한다. 심볼릭 링크 경로(macOS /tmp 등)로 실행하면 argv와 import.meta.url이 달라진다.
 const isMain = () => {
 	try {
@@ -146,6 +258,16 @@ if (isMain()) {
 	const check = process.argv.includes("--check");
 	try {
 		const diffs = sync(process.cwd(), { check });
+		const assign = assignProblems(process.cwd());
+		if (assign.length) {
+			console.log(
+				[
+					"공식 스킬 배치(skills.manifest.json의 performers)가 에이전트 정의와 맞지 않는다 (prokit-skills-assign):",
+					...assign.map((d) => `  ${d}`),
+				].join("\n"),
+			);
+			process.exitCode = 1;
+		}
 		if (check && diffs.length) {
 			console.log(
 				[
@@ -155,11 +277,12 @@ if (isMain()) {
 			);
 			process.exitCode = 1;
 		} else {
-			console.log(
-				diffs.length
-					? diffs.map((d) => `갱신 — ${d}`).join("\n")
-					: "에이전트 정의 일치",
-			);
+			if (diffs.length || !assign.length)
+				console.log(
+					diffs.length
+						? diffs.map((d) => `갱신 — ${d}`).join("\n")
+						: "에이전트 정의 일치",
+				);
 		}
 	} catch (e) {
 		console.error(e.message);

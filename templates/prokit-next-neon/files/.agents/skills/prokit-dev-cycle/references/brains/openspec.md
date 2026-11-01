@@ -12,7 +12,7 @@ Fission-AI/OpenSpec. 변경마다 제안(무엇을, 왜), 설계, 작업 목록�
 |---|---|---|
 | 요구 명확화 | 생각이 흐리면 `/opsx:explore`, 정리되면 `/opsx:propose <이름>`으로 `openspec/changes/<이름>/`에 `proposal.md`·`design.md`·`tasks.md`와 스펙 변경분을 만든다 | `openspec-explore`, `openspec-propose` |
 | 계획 | 같은 변경의 `design.md`와 `tasks.md`. 고칠 때는 `/opsx:update` | `openspec-update-change` |
-| 구현 | `/opsx:apply`로 `tasks.md`를 차례로 처리한다. 위임은 `prokit-implementer`로 하고 행마다 대조표 증거를 남긴다 | `openspec-apply-change`. Codex는 네이티브 `prokit-implementer` |
+| 구현 | `/opsx:apply`로 `tasks.md`를 차례로 처리한다. 위임은 구현 수행자로 하고 행마다 대조표 증거를 남긴다 | `openspec-apply-change`. Codex는 네이티브 구현 수행자 |
 | 완료 기록 | 라운드를 닫기 전에 `/opsx:archive`로 변경을 `openspec/changes/archive/`로 옮기고 스펙(`openspec/specs/`)에 반영한다. 스펙만 맞출 때는 `/opsx:sync` | `openspec-archive-change`, `openspec-sync-specs` |
 
 - 맡지 않는 단계(디버깅, 리뷰 추가 관점, QA, 검증)는 기본 칸이다. 용어·설계 질문은 `grilling`·`domain-modeling`이다.

@@ -96,6 +96,49 @@
 			"skills": ["skill-creator"]
 		}
 	],
+	"performers": {
+		"description": "공식 스킬로 일하는 전문 에이전트. agents는 대조표에서 위임받는 에이전트, skills는 공식 스킬마다 그 스킬을 읽고 일하는 에이전트다. 여기에 없는 공식 스킬은 Main이 읽는다. 바꾸는 일은 prokit-skills-assign",
+		"agents": [
+			"prokit-ui-builder",
+			"prokit-api-builder",
+			"prokit-db-builder",
+			"prokit-runtime-checker",
+			"prokit-implementer"
+		],
+		"skills": {
+			"shadcn": ["prokit-ui-builder", "prokit-reviewer"],
+			"vercel-react-best-practices": ["prokit-ui-builder", "prokit-reviewer"],
+			"vercel-composition-patterns": ["prokit-ui-builder", "prokit-reviewer"],
+			"next-cache-components-adoption": ["prokit-ui-builder"],
+			"next-cache-components-optimizer": ["prokit-ui-builder"],
+			"next-partial-prefetching-adoption": ["prokit-ui-builder"],
+			"next-partial-prefetching-optimizer": ["prokit-ui-builder"],
+			"web-design-guidelines": ["prokit-reviewer"],
+			"next-dev-loop": ["prokit-runtime-checker", "prokit-ui-builder"],
+			"agent-browser": ["prokit-runtime-checker"],
+			"better-auth-best-practices": ["prokit-api-builder", "prokit-reviewer"],
+			"better-auth-security-best-practices": [
+				"prokit-api-builder",
+				"prokit-reviewer"
+			],
+			"email-and-password-best-practices": [
+				"prokit-api-builder",
+				"prokit-reviewer"
+			],
+			"turborepo": [
+				"prokit-ui-builder",
+				"prokit-api-builder",
+				"prokit-implementer",
+				"prokit-reviewer"
+			],
+			"supabase-postgres-best-practices": [
+				"prokit-db-builder",
+				"prokit-reviewer"
+			],
+			"neon-postgres": ["prokit-db-builder", "prokit-reviewer"],
+			"neon-postgres-egress-optimizer": ["prokit-db-builder", "prokit-reviewer"]
+		}
+	},
 	"mattpocock": {
 		"source": "mattpocock/skills",
 		"agents": ["claude-code", "codex"],

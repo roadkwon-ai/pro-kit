@@ -389,9 +389,9 @@
 | `process.olgot.work` | 7시간 35분 | 올곧 라운드 합에서 백그라운드 기다림을 뺀 일한 시간(5분 단위) | 계산: process.olgot.total − doc-values.json process.olgot.wait | `doc-values.json`을 고친다 | 1 |
 | `templates.count` | 2 | 템플릿 수 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 16 |
-| `prokit.skills.count` | 10 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
-| `prokit.skills.count.ko` | 열 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `prokit.agents.count` | 4 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |
+| `prokit.skills.count` | 11 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 17 |
+| `prokit.skills.count.ko` | 열한 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `prokit.agents.count` | 8 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |
 | `devCycle.cases.count` | 7 | dev-cycle 케이스 수 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.count.ko` | 일곱 | dev-cycle 케이스 수의 한글 수 관형사 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.list` | A, B, C, D, E, F, H | dev-cycle 케이스 목록 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 0 |

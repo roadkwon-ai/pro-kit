@@ -13,7 +13,7 @@
 
 ### 2. Subagent Strategy
 - 한 작업 단위에는 검증한 수행 흐름 하나만 쓴다. 전문 스킬·수행자 선택과 evidence packet은 `prokit-dev-cycle`의 위임 프로토콜을 따른다.
-- 메인은 대조표와 런타임만 관리한다. 외부 수행자는 commit, push, 배포, DB 적용, 토큰·비밀값 출력을 맡지 않는다.
+- 메인은 오케스트레이터다. 대조표와 런타임을 관리하며 계획, 배정, 감독, 검수, 통합만 하고, 구현과 실행 확인, 공식 스킬로 하는 일은 그 일의 전문 에이전트에 위임한다(아래 "에이전트"). 맡길 에이전트가 없으면 직접 하지 않고 `blocked`로 남긴다. 외부 수행자는 commit, push, 배포, DB 적용, 토큰·비밀값 출력을 맡지 않는다.
 
 ### 3. Self-Improvement Loop
 - After ANY correction from the user: update `tasks/lessons.md` with the pattern
@@ -75,7 +75,7 @@
 | 검사 선택, 증거 기록, 런타임 확인 | `prokit-verify` |
 | Vercel 배포(develop, production), production 릴리스(버전, 노트, GitHub Release), 배포 환경변수, 되돌리기 | `prokit-deploy` |
 
-전역이나 이 프로젝트에 같은 분야 스킬(예: `nextjs`, `supabase`, 배포의 `deploy-to-vercel`)이 있어도 이 프로젝트에서는 위 `prokit-*`를 먼저 따른다. `prokit-*`가 읽으라고 하는 외부 스킬(공식 스킬 연결 표, `impeccable` 등)은 그 상황이 오면 실제로 읽고, 이 프로젝트에 설치된 판(`.agents/skills/<이름>/SKILL.md`)을 읽는다. 읽은 스킬은 그 행의 증거에 적는다. 설계, 계획, 디버깅, 리뷰, QA에 쓸 프로세스 스킬은 `prokit-dev-cycle`의 라우팅 표를 따른다.
+전역이나 이 프로젝트에 같은 분야 스킬(예: `nextjs`, `supabase`, 배포의 `deploy-to-vercel`)이 있어도 이 프로젝트에서는 위 `prokit-*`를 먼저 따른다. `prokit-*`의 "공식 스킬 연결" 표에서 맡는 에이전트가 정해진 공식 스킬은 메인이 읽지 않는다. 그 상황이 오면 위임 지시에 스킬 이름과 경로를 넣어 맡는 에이전트가 읽고 따르게 하고, 메인은 보고와 스킬 기록으로 검수한다(배치 정본은 `skills.manifest.json`의 `performers`, 바꾸는 일은 `prokit-skills-assign`). 메인이 읽는 공식 스킬(`impeccable` 등)이든 에이전트가 읽는 공식 스킬이든 이 프로젝트에 설치된 판(`.agents/skills/<이름>/SKILL.md`)을 읽는다. 읽은 스킬은 그 행의 증거에 적는다. 설계, 계획, 디버깅, 리뷰, QA에 쓸 프로세스 스킬은 `prokit-dev-cycle`의 라우팅 표를 따른다.
 
 선택 스킬 묶음(`skills.manifest.json`의 `optional`)은 기본으로 설치하지 않는다. 요청이 아래 분야인데 스킬이 없으면(`pnpm skills:check`가 묶음별 상태를 보여 준다) 사용자에게 `pnpm skills:setup --optional <묶음>` 설치를 제안한다. 설치해도 위 `prokit-*`를 먼저 따른다.
 
@@ -100,10 +100,10 @@
 
 ## 에이전트
 - `prokit-analyzer`: 읽기 전용 정밀 분석. 기존 프로젝트를 들일 때와 진행 계획을 세우기 전에 쓴다.
-- `prokit-implementer`: 코디네이터가 지정한 파일만 구현한다.
-- `prokit-reviewer`: 읽기 전용 통합 리뷰. focus는 plan, code, security, db이고 실제 계약·evidence hash·통합 수용 여부를 JSON으로 응답한다.
+- 전문 수행 에이전트: 코디네이터(메인)가 위임 지시로 지정한 파일과 확인만 하고, 맡은 공식 스킬(정의의 "맡는 공식 스킬" 표)을 반드시 읽고 따른 뒤 읽은 스킬과 적용한 규칙을 보고한다. 화면 `prokit-ui-builder`, 서버·API `prokit-api-builder`, DB `prokit-db-builder`(마이그레이션 적용은 메인), 실행 확인 `prokit-runtime-checker`(코드를 고치지 않는다), 하네스와 계층 밖 파일 `prokit-implementer`(공통 규칙의 정본)다.
+- `prokit-reviewer`: 읽기 전용 통합 리뷰. focus는 plan, code, ui, security, db이고 실제 계약·evidence hash·통합 수용 여부를 JSON으로 응답한다.
 - `specialist-reviewer`: provider에 내장 리뷰가 없을 때만 전문 산출물을 읽기 전용으로 검토한다. 일반 코드 리뷰를 반복하지 않는다.
 - 리뷰는 구현한 쪽이 아니라 `prokit-reviewer`가 한다. Codex는 `spawn_agent`의 `agent_type`으로 부른다. `prokit-analyzer`·`prokit-reviewer`·`specialist-reviewer`는 `fork_turns: "none"`으로 띄워 메인 대화를 넘기지 않고(독립 분석·리뷰), 필요한 입력(초점, 기준 SHA, 파일 목록, evidence packet hash)은 메시지에 모두 넣는다. 고른 두뇌 파일(`references/brains/<이름>.md`)의 "에이전트" 절에 있는 에이전트는 읽기 전용 보완 검토로만 쓴다. 쓰는 쪽이 아니고 최종 게이트는 `prokit-reviewer`다.
 - 배포, 릴리스, 운영 DB 적용은 서브에이전트에 맡기지 않는다. 라운드 끝 마무리 선택, 릴리스 발행 동의, 운영 DB 적용 동의처럼 중간에 사용자 확인이 필요하다.
-- 스킬이나 플러그인이 없다고 나오면 `pnpm skills:check`로 확인해 보고한다. 설치(`pnpm skills:setup`, 네트워크와 설정 파일 변경)는 사용자가 요청할 때 한다. 목록 정본은 `skills.manifest.json`이다. 외부 스킬의 새 버전 확인과 업데이트(`pnpm skills:update`)는 `prokit-skills-update`를 따른다. 진행 중인 라운드가 없으면 `pnpm dev-cycle status`가 하루 한 번 확인한다.
+- 스킬이나 플러그인이 없다고 나오면 `pnpm skills:check`로 확인해 보고한다. 설치(`pnpm skills:setup`, 네트워크와 설정 파일 변경)는 사용자가 요청할 때 한다. 목록 정본은 `skills.manifest.json`이다. 외부 스킬의 새 버전 확인과 업데이트(`pnpm skills:update`)는 `prokit-skills-update`, 공식 스킬을 맡는 에이전트의 배치(더하기·바꾸기·빼기)는 `prokit-skills-assign`을 따른다. 진행 중인 라운드가 없으면 `pnpm dev-cycle status`가 하루 한 번 확인한다.
 <!-- prokit-template:end -->

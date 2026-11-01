@@ -28,7 +28,7 @@ const BOOL_FLAGS = new Set(["--diff", "--skip-skills", "--with-global", "--adopt
 export const PROJECT_TYPES = ["new", "early", "operating", "migration"];
 // --adopt: Better-T-Stack 구조가 아닌 Next.js 프로젝트에는 하네스만 복사한다. AGENTS.md·CLAUDE.md 블록은 adopt/에서 가져온다.
 const ADOPT_DIR = join(TEMPLATE_DIR, "adopt");
-const ADOPT_SKILLS = ["prokit-dev-cycle", "prokit-verify", "prokit-web", "prokit-ui", "prokit-skills-update", "prokit-skills-manage"];
+const ADOPT_SKILLS = ["prokit-dev-cycle", "prokit-verify", "prokit-web", "prokit-ui", "prokit-skills-update", "prokit-skills-manage", "prokit-skills-assign"];
 const ADOPT_SCRIPTS = ["dev-cycle", "delegation", "resource-guard", "skills-setup", "sync-agents", "load-keys"];
 const ADOPT_ONLY = new Set(["AGENTS.md", "CLAUDE.md", ".dev-cycle.json", "skills.manifest.json", "GLOSSARY.md", "docs/dev-workflow.md", "docs/domain/project.md"]);
 export function adoptFile(rel) {

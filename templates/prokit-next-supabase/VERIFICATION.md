@@ -4,6 +4,14 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 공식 스킬을 전문 에이전트에 맡기기 (2026-11-01)
+
+공통 변경(전문 수행 에이전트, `performers` 배치, `prokit-skills-assign`, audit의 위임 검사)과 실측은 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#공식-스킬을-전문-에이전트에-맡기기-2026-11-01)에 있다.
+
+- supabase만 다른 배치: `supabase`와 `supabase-postgres-best-practices`는 `prokit-db-builder`와 `prokit-reviewer`(db)가 읽는다. 대조표의 advisors 행에서 `supabase` 스킬의 보안 체크리스트 대조는 `prokit-reviewer`(db)가 한다.
+- 테스트: 2차 보강(편집 훅, 행 단위 증거, N/A 규칙, 양방향 `agents:check`) 뒤 템플릿 전체 392 통과·4 실패였다. 실패한 4건(evidence setter 1건, 자원 guard 3건)은 바꾸기 전(HEAD)에도 같게 실패했다.
+- 한계: 실제 설치 확인은 neon으로만 했다. supabase는 공유 파일(`install.mjs`, `scripts/*.mjs`)이 neon과 바이트가 같고(`tests/shared-files.test.mjs`), 다른 것은 매니페스트와 문서뿐이다.
+
 ## 마크다운을 Biome 검사에서 빼기, 릴리스 스크립트를 하네스로 (2026-10-30)
 
 Biome 2.6부터 마크다운도 포맷한다. 표를 칸 너비로 맞추고 제목 뒤에 빈 줄을 넣는다. 그래서 dev-cycle이 `tasks/todo.md`에 쓰는 대조표가 행을 채울 때마다 `biome check .`에 걸렸다. `AGENTS.md` 표 줄 끝의 `<!-- edition:pro -->` 주석은 칸 하나로 읽혀 `| <!-- edition:pro --> |`로 바뀌었다.

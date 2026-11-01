@@ -27,7 +27,7 @@
 > **사용 전에**: 프로킷 자체 코드·스킬·문서는 [MIT License](LICENSE)로 제공합니다. 상업적 이용, 유료 고객 개발, 수정·재판매와 비공개 제품 개발을 허용하며, 재배포할 때 저작권 표시와 허가문을 함께 유지해야 합니다. 외부 스킬에는 [원래 조건](THIRD_PARTY_NOTICES.md)이 적용됩니다.
 
 <p align="center">
-  <strong>PRD로 스킬 추천 &middot; 기존 프로젝트 도입·전환 &middot; 템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개 &middot; 구현·리뷰·분석 에이전트 <!-- v:prokit.agents.count -->4<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->7<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
+  <strong>PRD로 스킬 추천 &middot; 기존 프로젝트 도입·전환 &middot; 템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->11<!-- /v -->개 &middot; 구현·리뷰·분석 에이전트 <!-- v:prokit.agents.count -->8<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->7<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
 </p>
 
 <p align="center">
@@ -69,7 +69,7 @@ flowchart LR
 | 하네스를 이루는 것 | 하는 일 |
 |---|---|
 | 규칙 문서 | 에이전트가 시작할 때 `AGENTS.md`, 용어집, 프로젝트 소개를 읽어 새 세션도 같은 원칙으로 일합니다 |
-| 스킬 | 전용 스킬 <!-- v:prokit.skills.count -->10<!-- /v -->개가 프로젝트 계약을 지키며 공식·사용자 지정 전문 스킬에 작업을 맡기고 결과를 검수합니다. 필요하면 선택 스킬 묶음을 더합니다. [prokit 스킬](handbook/skills/prokit-skills.md) · [공식 스킬과 연결](handbook/skills/official-skills.md) |
+| 스킬 | 전용 스킬 <!-- v:prokit.skills.count -->11<!-- /v -->개가 프로젝트 계약을 지키며 공식·사용자 지정 전문 스킬에 작업을 맡기고 결과를 검수합니다. 필요하면 선택 스킬 묶음을 더합니다. [prokit 스킬](handbook/skills/prokit-skills.md) · [공식 스킬과 연결](handbook/skills/official-skills.md) |
 | 역할 나누기 | 수행자가 전문 작업을 맡고, 필요한 전문 리뷰와 프로킷의 최종 검수를 분리합니다. 기존 프로젝트는 계획을 세우기 전에 읽기 전용 분석 에이전트가 정밀 분석합니다. [위임 에이전트와 리뷰 에이전트](handbook/concepts/agent-roles.md) |
 | 대조표와 audit | 작업을 케이스로 나눠 대조표를 열고, 모든 칸에 실행한 증거가 있어야 라운드를 닫습니다. 화면 리뷰 점수는 리뷰 기록 파일과 맞춰 봅니다. 큰 일은 진행 계획을 Task로 나눠 앞 Task가 끝나야 다음 Task를 엽니다. [dev-cycle 라운드](handbook/concepts/dev-cycle.md) · [케이스와 대조표](handbook/concepts/cases.md) · [정밀 분석과 진행 계획](handbook/concepts/project-plan.md) |
 | 자동 검사 | 타입, 린트, 빌드, 테스트, 화면 디자인, 커밋 전 비밀값, 배포 준비를 명령으로 확인합니다. 독립 검사는 병렬로 진행하고, 영향이 없는 통과 증거는 조건을 확인해 재사용합니다. [검사 배정과 재사용](handbook/concepts/delegation-and-resources.md#독립-작업을-나눠서-확인하기) |

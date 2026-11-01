@@ -17,18 +17,20 @@ description: >-
 3. 바꿀 경로 주변 파일, `apps/web/src/utils/orpc.ts`, 보호 페이지 예시인 `apps/web/src/app/dashboard/page.tsx`.
 
 ## 공식 스킬 연결
-| 상황 | 읽을 스킬 |
-|---|---|
-| 컴포넌트와 훅 작성, 리렌더, 번들 크기, 요청 워터폴 | `vercel-react-best-practices` |
-| 재사용할 컴포넌트 API, props가 불어나는 컴포넌트, 합성 설계 | `vercel-composition-patterns` |
-| `use cache`와 Cache Components 도입 또는 점검 | `next-cache-components-adoption`, `next-cache-components-optimizer` |
-| 링크 프리패치 전략: Partial Prefetching 도입, 도입 뒤 링크별 조정 | `next-partial-prefetching-adoption`, `next-partial-prefetching-optimizer` |
-| 바꾼 동작이 실제 앱에서 도는지 확인 | `next-dev-loop` (절차는 `prokit-verify`) |
-| turbo 태스크·패키지 의존·환경 변수 캐시 입력 | `turborepo` |
+이 스킬은 Main이 화면 계층(라우팅, RSC 경계, 데이터 패칭, 캐시, 성능) 일을 나누고 맡기고 검수할 때 쓴다. 표의 공식 스킬은 Main이 읽지 않는다. 위임 지시(packet)에 스킬 이름과 경로(`.agents/skills/<이름>/SKILL.md`)를 넣어 맡는 에이전트가 읽고 따르게 하고, 보고의 "읽은 스킬"과 스킬 기록으로 실제로 읽었는지 본 뒤 "Main 검수" 칸을 확인한다. 배치의 정본은 `skills.manifest.json`의 `performers`이고 바꾸는 일은 `prokit-skills-assign`이 맡는다(절차는 `prokit-dev-cycle`의 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md) "공식 스킬 위임").
+
+| 상황 | 공식 스킬 | 맡는 에이전트 | Main 검수 |
+|---|---|---|---|
+| 컴포넌트와 훅 작성, 리렌더, 번들 크기, 요청 워터폴 | `vercel-react-best-practices` | `prokit-ui-builder`. 리뷰는 `prokit-reviewer`(code) | 보고에 적은 규칙 이름(async-parallel, rerender-memo 등)이 바뀐 코드와 맞는지 |
+| 재사용할 컴포넌트 API, props가 불어나는 컴포넌트, 합성 설계 | `vercel-composition-patterns` | `prokit-ui-builder`. 리뷰는 `prokit-reviewer`(plan·code) | 합성 결정이 계획·브리프의 재사용 결정과 같은지 |
+| `use cache`와 Cache Components 도입 또는 점검 | `next-cache-components-adoption`, `next-cache-components-optimizer` | `prokit-ui-builder` | 캐시 경계와 읽은 Next 번들 문서 경로가 보고에 있는지 |
+| 링크 프리패치 전략: Partial Prefetching 도입, 도입 뒤 링크별 조정 | `next-partial-prefetching-adoption`, `next-partial-prefetching-optimizer` | `prokit-ui-builder` | 링크별 결정과 확인 결과가 보고에 있는지 |
+| 바꾼 동작이 실제 앱에서 도는지 확인 | `next-dev-loop` (절차는 `prokit-verify`) | `prokit-runtime-checker` | 확인한 경로, 오류 예산 0 |
+| turbo 태스크·패키지 의존·환경 변수 캐시 입력 | `turborepo` | 그 계층의 수행자, `turbo.json`은 `prokit-implementer`. 리뷰는 `prokit-reviewer` | 바뀐 환경 변수가 캐시 입력에 들어갔는지 |
 
 이 스킬들의 지침이 번들 문서(`apps/web/node_modules/next/dist/docs/`)와 다르면 번들 문서를 따르고, 어긋난 곳을 보고에 적는다. 외부 스킬은 설치한 Next 버전보다 늦게 갱신될 수 있다.
 
-느림, 깜빡임, 번들 크기, 캐시, 프리패치를 다루면 원인 분석이나 개선안을 쓰기 전에 `vercel-react-best-practices`를 읽고, 캐시면 `next-cache-components-*`, 링크 이동이면 `next-partial-prefetching-*`도 읽는다(`.agents/skills/<이름>/SKILL.md`). 원인과 개선안에는 해당 규칙 이름(예: async-parallel, rerender-memo)을 붙이고, 개발 서버의 동작은 `next-dev-loop`의 `/_next/mcp`로 본다.
+느림, 깜빡임, 번들 크기, 캐시, 프리패치를 다루면 원인 분석이나 개선안도 `prokit-ui-builder`에 맡긴다. 위임 지시에 `vercel-react-best-practices`, 캐시면 `next-cache-components-*`, 링크 이동이면 `next-partial-prefetching-*`를 넣는다. 원인과 개선안에는 해당 규칙 이름(예: async-parallel, rerender-memo)을 붙여 보고받고, 개발 서버의 동작은 `prokit-runtime-checker`가 `next-dev-loop`의 `/_next/mcp`로 본다.
 
 ## 재사용과 설정 결정
 

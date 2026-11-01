@@ -8,7 +8,7 @@ mattpocock/skills를 두뇌로 쓴다. 따로 설치하는 플러그인이나 �
 |---|---|
 | 요구 명확화 | `grilling`(묶음별 질문과 추천 답)으로 인터뷰하고 결과를 스펙에 적는다. 사용자가 직접 하려면 `/grill-with-docs`, 결정권자가 따로 있으면 `/to-questionnaire`를 제안한다 |
 | 계획 | `codebase-design`(모듈 경계·인터페이스), `prototype`(버리는 시안으로 상태·화면 확인), `research`(외부 API·규정 조사를 문서로) |
-| 구현 | `tdd`(테스트 먼저)를 `prokit-implementer` 위임 지시에 넣는다 |
+| 구현 | `tdd`(테스트 먼저)를 구현 수행자 위임 지시에 넣는다 |
 | 디버깅 (C) | `diagnosing-bugs` |
 | 리뷰 추가 관점 | `code-review`(스펙 축). `prokit-reviewer` 게이트를 대신하지 않는다 |
 | F 공통화 | `/improve-codebase-architecture`로 구조 개선 후보를 제안한다 |

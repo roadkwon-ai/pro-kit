@@ -206,7 +206,7 @@ test("검증 보강: 오류 예산 0, QA 시나리오와 발견 수정, 공통�
   assert.match(b, /^- \[review\] prokit-reviewer\(code\) →/m);
   assert.match(f, /인수 조건·테스트 시나리오 절/);
   assert.match(f, /^- 공통화·리팩토링·최적화 점검 \(/m);
-  assert.match(f, /^- \[verify\] 사용자 흐름 QA \(스펙의 테스트 시나리오 전부/m);
+  assert.match(f, /^- \[verify\] 사용자 흐름 QA \(prokit-runtime-checker에 위임\. 스펙의 테스트 시나리오 전부/m);
   assert.match(f, /^- QA 발견 수정과 재QA \(/m);
   assert.match(f, /QA 발견 수정과 재QA \([^\n]*타입·린트·빌드·테스트[^\n]*prokit-reviewer\(code\)와 간결성 검토/, "QA 뒤 수정도 재검사·재리뷰");
   assert.match(f, /공통화·리팩토링·최적화 점검 \(이번 라운드가 바꾼 파일과 같은 디렉터리/, "공통화 범위는 바꾼 파일의 디렉터리");
@@ -244,7 +244,7 @@ test("스킬 연결: 행이 외부 스킬을 이름으로 부르고, 외부 스�
   assert.match(cycle, /`domain-modeling`을 읽고 그 형식/);
   assert.match(cycle, /`turbo\.json`은 `turborepo` 스킬/);
   assert.match(cycle, /고른 두뇌의 검증 스킬\(superpowers `verification-before-completion` 등\)을 불러/);
-  assert.match(read(".agents/skills/prokit-web/SKILL.md"), /느림, 깜빡임, 번들 크기, 캐시, 프리패치를 다루면[^\n]*`vercel-react-best-practices`를 읽고/);
+  assert.match(read(".agents/skills/prokit-web/SKILL.md"), /느림, 깜빡임, 번들 크기, 캐시, 프리패치를 다루면[^\n]*`prokit-ui-builder`에 맡긴다[^\n]*`vercel-react-best-practices`/);
   assert.match(read(".claude/agents/prokit-reviewer.md"), /"skills_read":\[/);
   assert.match(read(".claude/agents/prokit-implementer.md"), /^- 읽은 스킬: /m);
 });

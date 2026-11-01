@@ -14,7 +14,7 @@
 |---|---|---|
 | 요구 명확화 | 요청을 한 문장으로 다시 쓰고 결과를 바꾸는 모호함만 묻는다. Claude Code는 AskUserQuestion으로 한 번에 1~4개, 다른 도구는 대화로 묻는다. 묻는 형식은 `grilling`이다. 간결성 사다리(규칙 6)로 범위를 줄이고 새 용어는 `domain-modeling` 형식으로 바로 적는다 | `docs/specs/YYYY-MM-DD-<주제>.md`(목표, 만들지 않는 것, 인수 조건, 테스트 시나리오) |
 | 계획 | 파일별 단계, 위임 단위(파일이 겹치지 않게), 단계별 검사를 쓴다. 재사용·설정 결정은 [reuse-design.md](reuse-design.md)를 따른다. Claude Code는 plan mode를 쓸 수 있다. 필수 계획 리뷰는 `prokit-reviewer(plan)`이다 | `docs/plans/YYYY-MM-DD-<주제>.md` |
-| 구현 | 네이티브 서브에이전트 `prokit-implementer`에 대조표 행 단위로 위임한다. 위임 지시에 그 단계의 두뇌 스킬(위 두뇌 파일의 구현 칸)을 적는다. 테스트가 있으면 먼저 쓰고 실패를 확인한 뒤 구현한다. 검증한 수행자가 없으면 `blocked`로 남기고 Main이 직접 구현하지 않는다 | 위임 packet, snapshot diff |
+| 구현 | 네이티브 서브에이전트인 구현 수행자에게 대조표 행 단위로 위임한다. 구현 수행자는 계층 전문 에이전트(`prokit-ui-builder`<!-- edition:pro -->, `prokit-api-builder`, `prokit-db-builder`<!-- /edition -->)이고, 하네스·계층 밖 파일은 `prokit-implementer`다(`skills.manifest.json`의 `performers.agents`). 위임 지시에 그 단계의 두뇌 스킬(위 두뇌 파일의 구현 칸)과 그 계층의 공식 스킬 이름·경로를 적는다. 테스트가 있으면 먼저 쓰고 실패를 확인한 뒤 구현한다. 검증한 수행자가 없으면 `blocked`로 남기고 Main이 직접 구현하지 않는다 | 위임 packet, snapshot diff |
 | 디버깅 (C) | 재현(실패하는 테스트나 브라우저 재현) → 가설을 하나씩 확인 → 근본 원인 수정 → 회귀 테스트. 같은 가설로 세 번 실패하면 멈추고 보고한다 | 재현 테스트 이름, 원인 한 줄 |
 | 리뷰 | **`prokit-reviewer` 계약 게이트(필수)** + 규칙 6 역할 표의 구현 diff 보완 검토. provider 내장 review coverage를 재사용하고 빈 계약만 보완한다 | 리뷰 행 증거 |
 | QA | `ego-browser`로 스펙의 테스트 시나리오 전부 확인(F, 보고만. 발견은 다음 행에서 고치고 다시 확인한다. 절차는 `prokit-verify`의 `references/browser.md`). ego-browser가 없으면 `agent-browser`로 같은 흐름을 확인하고 대안으로 적는다 | 시나리오별 결과 |

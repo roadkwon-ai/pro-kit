@@ -119,7 +119,7 @@ impeccable을 대신하지 않는다. 화면 작업 순서, `DESIGN.md`, critiqu
 설치하지 않는 스킬과 이유:
 - `grill-me`: `grilling`을 부르는 한 줄짜리 명령이다. `grilling`이 "grill" 요청 문구로 바로 불린다.
 - `to-spec`, `to-tickets`, `wayfinder`, `triage`, `setup-matt-pocock-skills`: 이슈 트래커에 스펙·티켓을 게시하고 저장소 설정(`docs/agents/`)을 만든다. 프로킷은 스펙·계획을 `docs/specs`·`docs/plans`에, 진행을 `tasks/todo.md` 대조표에 둔다.
-- `implement`, `implement-spec`: 자체 구현 루프(작업별 worktree 병렬)다. 프로킷 구현은 대조표 행 단위 `prokit-implementer` 위임과 snapshot 대조다.
+- `implement`, `implement-spec`: 자체 구현 루프(작업별 worktree 병렬)다. 프로킷 구현은 대조표 행 단위 구현 수행자(`process-routing.md`의 구현 칸) 위임과 snapshot 대조다.
 - `retro`: 회고 기록이 `tasks/lessons.md`와 겹친다.
 - `ask-matt`: matt 스킬 전체 라우터라 설치하지 않은 스킬과 제외한 흐름으로 안내한다.
 - 저장소의 `in-progress`·`misc` 폴더 스킬: 원본 `plugin.json`에 없는 작업 중 스킬이다.

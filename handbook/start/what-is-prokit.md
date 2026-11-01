@@ -47,7 +47,7 @@ pro-kit 저장소는 새 프로젝트를 만들어 주는 생성기예요. 안�
 
 템플릿은 [Better-T-Stack](../templates/what-it-adds.md)으로 만든 Next.js 풀스택 앱 위에 설치돼요. 설치하면 앱 뼈대에 다음이 더해져요.
 
-- 프로젝트 전용 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->10<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개
+- 프로젝트 전용 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개
 - 에이전트 <!-- edition:pro -->세<!-- /edition --><!-- edition:ui 두 --> 종류
   - 외부 전문 스킬을 연결해 구현을 맡는 수행 에이전트
   - 구현에 참여하지 않은 독립 리뷰 에이전트
@@ -81,7 +81,8 @@ my-app/
 ├── .dev-cycle.json                dev-cycle 설정(두뇌·과설계 방지 스킬 기록 포함)
 ├── skills.manifest.json           설치할 스킬과 플러그인 목록
 ├── .agents/skills/prokit-*        프로젝트 전용 스킬
-├── .claude/agents/                prokit-implementer · prokit-reviewer · specialist-reviewer · prokit-analyzer
+├── .claude/agents/                계층별 수행자(ui·api·db-builder) · prokit-runtime-checker · prokit-implementer
+│                                  · prokit-reviewer · specialist-reviewer · prokit-analyzer
 ├── scripts/                       dev-cycle, 자원 보호, 배포(vercel-deploy), 릴리스, HTML 내보내기 같은 도구
 ├── docs/                          dev-workflow.md(케이스별 절차), domain/project.md, adr/
 └── tasks/                         todo.md(백로그), archive/(끝난 라운드 기록)
@@ -95,7 +96,8 @@ my-app/
 ├── .dev-cycle.json                dev-cycle 설정(두뇌·과설계 방지 스킬 기록 포함)
 ├── skills.manifest.json           설치할 스킬과 플러그인 목록
 ├── .agents/skills/prokit-*        프로젝트 전용 스킬
-├── .claude/agents/                prokit-implementer · prokit-reviewer · specialist-reviewer
+├── .claude/agents/                prokit-ui-builder · prokit-runtime-checker · prokit-implementer
+│                                  · prokit-reviewer · specialist-reviewer
 ├── scripts/                       dev-cycle, 자원 보호, 배포(vercel-deploy), 릴리스, HTML 내보내기 같은 도구
 ├── docs/                          dev-workflow.md(케이스별 절차), domain/project.md, adr/
 └── tasks/                         todo.md(백로그), archive/(끝난 라운드 기록)

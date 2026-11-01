@@ -40,6 +40,8 @@
 			"templates/prokit-next-neon/files/.agents/skills/prokit-deploy",
 			"templates/prokit-next-neon/files/.agents/skills/prokit-web",
 			"templates/prokit-next-neon/files/.claude/agents/prokit-analyzer.md",
+			"templates/prokit-next-neon/files/.claude/agents/prokit-api-builder.md",
+			"templates/prokit-next-neon/files/.claude/agents/prokit-db-builder.md",
 			"handbook/start/quickstart-service.md",
 			"handbook/start/adopt.md",
 			"handbook/concepts/project-plan.md",
@@ -56,7 +58,9 @@
 			"prokit-web",
 			"prokit-next-supabase",
 			"existing-project.md",
-			"prokit-analyzer"
+			"prokit-analyzer",
+			"prokit-api-builder",
+			"prokit-db-builder"
 		],
 		"proPacks": [
 			"nextflix",

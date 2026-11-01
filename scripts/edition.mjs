@@ -138,6 +138,19 @@ function copy(root, rel, out, dstRel, { problems, isPro, names, proValues = [], 
     for (const p of proPacks) if (p in packs) delete packs[p];
     else problems.push(`${rel}: proPacks의 ${p}가 팩 목록에 없다`);
     writeFileSync(dst, `${JSON.stringify(packs, null, 2)}\n`);
+  } else if (rel.endsWith("/skills.manifest.json")) {
+    // 판에 없는 에이전트(Pro 전용 정의)는 공식 스킬 배치(performers)에서 뺀다. 남기면 판의 agents:check가 없는 정의를 알린다.
+    const m = JSON.parse(readFileSync(src, "utf8"));
+    const agent = (a) => !isPro(join(dirname(rel), ".claude/agents", `${a}.md`));
+    const p = m.performers;
+    if (!p || [...(p.agents ?? []), ...Object.values(p.skills ?? {}).flat()].every(agent)) copyFileSync(src, dst);
+    else {
+      p.agents = (p.agents ?? []).filter(agent);
+      // 맡을 에이전트가 모두 빠진 스킬은 Main이 읽는 스킬이 된다
+      for (const [s, as] of Object.entries(p.skills ?? {})) if (as.some(agent)) p.skills[s] = as.filter(agent);
+      else delete p.skills[s];
+      writeFileSync(dst, `${JSON.stringify(m, null, "\t")}\n`);
+    }
   } else copyFileSync(src, dst);
   chmodSync(dst, statSync(src).mode);
 }

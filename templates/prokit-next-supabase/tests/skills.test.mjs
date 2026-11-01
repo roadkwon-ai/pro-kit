@@ -7,7 +7,7 @@ import { test } from "node:test";
 import { TEMPLATE, TEMPLATE_FILES } from "./helpers.mjs";
 
 const SKILLS_DIR = join(TEMPLATE_FILES, ".agents/skills");
-const EXPECTED = ["prokit-dev-cycle", "prokit-web", "prokit-api", "prokit-db", "prokit-ui", "prokit-verify", "prokit-deploy", "prokit-skills-update", "prokit-skills-manage", "prokit-pack-use"];
+const EXPECTED = ["prokit-dev-cycle", "prokit-web", "prokit-api", "prokit-db", "prokit-ui", "prokit-verify", "prokit-deploy", "prokit-skills-update", "prokit-skills-manage", "prokit-skills-assign", "prokit-pack-use"];
 
 function resolveSkillCreator() {
   if (process.env.SKILL_CREATOR_DIR) {
@@ -75,7 +75,9 @@ test("공식 스킬 연결 표의 스킬은 skills.manifest.json이 설치한다
   const installed = new Set([...manifest.skills, ...optional].flatMap((g) => g.skills));
   for (const name of EXPECTED) {
     const table = load(name).body.split("## 공식 스킬 연결")[1]?.split("\n## ")[0] ?? "";
-    for (const [, s] of table.matchAll(/`([a-z][a-z0-9-]+)`/g)) {
+    // 표 행만 본다(표 앞 설명의 `performers` 같은 이름은 스킬이 아니다)
+    const rows = table.split("\n").filter((l) => l.startsWith("|")).join("\n");
+    for (const [, s] of rows.matchAll(/`([a-z][a-z0-9-]+)`/g)) {
       // 선택 묶음 이름(`ops` 등)도 적을 수 있다
       if (!s.startsWith("prokit-") && !(s in (manifest.optional ?? {}))) assert.ok(installed.has(s), `${name}: ${s}가 매니페스트에 없다`);
     }

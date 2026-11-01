@@ -10,7 +10,7 @@ EveryInc/compound-engineering-plugin. "일 하나가 다음 일을 더 쉽게 �
 |---|---|---|
 | 요구 명확화 | `/ce-brainstorm`. 아이디어 고르기는 `/ce-ideate` | `ce-brainstorm`, `ce-ideate` |
 | 계획 | `/ce-plan`(이전 `docs/solutions/` 기록을 읽는다). 문서 검토는 `/ce-doc-review` | `ce-plan`, `ce-doc-review` |
-| 구현 | `/ce-work`. 위임은 `prokit-implementer`로 하고 행마다 대조표 증거를 남긴다. 시안은 `/ce-prototype` | `ce-work`, `ce-prototype`. Codex는 네이티브 `prokit-implementer` |
+| 구현 | `/ce-work`. 위임은 구현 수행자로 하고 행마다 대조표 증거를 남긴다. 시안은 `/ce-prototype` | `ce-work`, `ce-prototype`. Codex는 네이티브 구현 수행자 |
 | 디버깅 (C) | `/ce-debug` | `ce-debug` |
 | 리뷰 추가 관점 | `/ce-code-review`, 간결화 `/ce-simplify-code`, 성능 `/ce-optimize` | 같은 이름 |
 | QA 보조 | `/ce-test-browser`(보고만) | `ce-test-browser` |
@@ -27,6 +27,6 @@ EveryInc/compound-engineering-plugin. "일 하나가 다음 일을 더 쉽게 �
 
 ## 에이전트
 - 에이전트는 없다(플러그인이 일부러 뺐다). 스킬 안의 `references/agents/*.md`(예: `ce-plan`의 조사 에이전트 틀)와 `references/personas/*.md`(예: `ce-code-review`의 리뷰어 관점)를 서브에이전트에 넘긴다.
-- 조사 틀은 계획 단계의 읽기 전용 조사(Claude Code는 `Explore` 에이전트)에, 리뷰어 관점은 `specialist-reviewer`의 위임 지시에 넣는다. 구현은 `prokit-implementer`가 한다.
+- 조사 틀은 계획 단계의 읽기 전용 조사(Claude Code는 `Explore` 에이전트)에, 리뷰어 관점은 `specialist-reviewer`의 위임 지시에 넣는다. 구현은 구현 수행자가 한다.
 - Codex·Antigravity·Grok Build: 스킬과 함께 틀이 오므로 같은 방식으로 읽어 넣는다.
 - 쓰는 방법은 `process-routing.md`의 두뇌 에이전트 규칙을 따른다.

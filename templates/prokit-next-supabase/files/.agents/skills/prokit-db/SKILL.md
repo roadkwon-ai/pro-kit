@@ -20,10 +20,12 @@ description: >-
 - Supabase Auth(`auth` 스키마), supabase-js, Data API는 쓰지 않는다. 인증은 Better Auth의 `public.user` 등이다.
 
 ## 공식 스킬 연결
-| 상황 | 읽을 스킬 |
-|---|---|
-| 컬럼 타입, 제약, 인덱스, RLS, 쿼리 작성과 튜닝 | `supabase-postgres-best-practices` |
-| Supabase CLI, 로컬 스택, 연결 문자열, advisors, 보안 체크리스트 | `supabase` (supabase-js·Supabase Auth 예시는 이 프로젝트에 적용하지 않는다) |
+이 스킬은 Main이 DB 계층(스키마, 마이그레이션, 로컬·원격 DB) 일을 나누고 맡기고 검수할 때 쓴다. 표의 공식 스킬 가운데 맡는 에이전트가 있는 것은 Main이 읽지 않는다. 위임 지시(packet)에 스킬 이름과 경로(`.agents/skills/<이름>/SKILL.md`)를 넣어 그 에이전트가 읽고 따르게 하고, 보고의 "읽은 스킬"과 스킬 기록으로 실제로 읽었는지 본 뒤 "Main 검수" 칸을 확인한다. 맡는 에이전트가 Main인 스킬은 외부 DB에 적용하는 일이라 Main이 직접 읽고 한다. 배치의 정본은 `skills.manifest.json`의 `performers`이고 바꾸는 일은 `prokit-skills-assign`이 맡는다(절차는 `prokit-dev-cycle`의 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md) "공식 스킬 위임").
+
+| 상황 | 공식 스킬 | 맡는 에이전트 | Main 검수 |
+|---|---|---|---|
+| 컬럼 타입, 제약, 인덱스, RLS, 쿼리 작성과 튜닝 | `supabase-postgres-best-practices` | `prokit-db-builder`. 리뷰는 `prokit-reviewer`(db) | 새 public 스키마 테이블의 RLS(`pgTable.withRLS`)와 생성 SQL 검토가 보고에 있는지 |
+| Supabase CLI, 로컬 스택, 연결 문자열, advisors, 보안 체크리스트 | `supabase` (supabase-js·Supabase Auth 예시는 이 프로젝트에 적용하지 않는다) | `prokit-db-builder`, advisors 결과 대조는 `prokit-reviewer`(db). CLI로 로컬·원격 DB에 적용하는 일은 Main | advisors 결과가 `No issues found`이거나 남은 지적에 사유가 있는지 |
 
 ## 위임
 외부 전문 스킬이나 수행자에게 DB 작업을 넘길 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 실제 provider의 scope·의존성·side effect를 확인하고, Drizzle 마이그레이션·RLS·Supabase 운영 계약은 유지한다.

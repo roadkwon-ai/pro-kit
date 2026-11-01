@@ -8,7 +8,7 @@ cursor/plugins의 pstack. React 코어팀 poteto가 쓰는 엄격한 엔지니�
 |---|---|
 | 요구 확인 | 목표와 문제를 되짚을 때 `in-your-own-words`. 용어·설계 질문은 `grilling`이다 |
 | 계획 | `poteto-mode`의 Feature(데이터 모양부터)·Multi-phase plan 플레이북. 함수 경계를 넘는 코드는 `architect`(호출부·타입·모듈 모양 먼저), 기존 흐름 파악은 `how` |
-| 구현 | `poteto-mode` 플레이북의 구현 단계를 `prokit-implementer` 위임 지시에 넣는다. 값싼 로컬 테스트가 있으면 `tdd`, TypeScript 파일이면 `typescript-best-practices`도 넣는다 |
+| 구현 | `poteto-mode` 플레이북의 구현 단계를 구현 수행자 위임 지시에 넣는다. 값싼 로컬 테스트가 있으면 `tdd`, TypeScript 파일이면 `typescript-best-practices`도 넣는다 |
 | 디버깅 (C) | `poteto-mode`의 Bug fix·Perf 플레이북(재현과 실행 증거부터). 측정값은 `benchmark-checklist`로 확인한다 |
 | 리뷰 추가 관점 | `interrogate`(여러 모델이 diff를 깨 보려 한다), 작은 변경의 영향은 `blast-radius` |
 | 설명 | 마지막 설명이 와닿지 않으면 `bro`, 이해가 목적이면 `teach` |
@@ -16,7 +16,7 @@ cursor/plugins의 pstack. React 코어팀 poteto가 쓰는 엄격한 엔지니�
 - 맡지 않는 단계(QA, 검증, 마무리)는 기본 칸이다.
 - 단계 행은 `poteto-mode`의 `SKILL.md`와 맞는 플레이북 파일(같은 폴더의 `playbooks/`)을 위 경로에서 실제로 읽고 한다. 읽지 않고 이름만 적지 않는다.
 - `poteto-mode`의 Never Block on the Human·Autonomy(묻지 않고 진행)는 쓰지 않는다. 결과를 바꾸는 갈림길과 `[confirm]`은 사용자에게 묻는다. 답 형식(Writing the reply)보다 프로킷 보고 형식과 `prokit-writing`이 우선한다.
-- `architect`는 `arena` 병렬 탐색(worktree)을 건너뛰고 호출부·타입 스케치만 한다. `poteto-mode`의 `poteto-agent` 코드 위임과 worktree 격리는 `prokit-implementer` 위임으로 바꾼다.
+- `architect`는 `arena` 병렬 탐색(worktree)을 건너뛰고 호출부·타입 스케치만 한다. `poteto-mode`의 `poteto-agent` 코드 위임과 worktree 격리는 구현 수행자 위임으로 바꾼다.
 - 플레이북의 commit·rebase·PR 단계와 커밋 전 `deslop`은 건너뛴다. Multi-phase plan은 PR 부분을 빼고 `docs/plans/`에 쓰며 Task 표는 dev-cycle 형식을 따른다.
 - `comment-sicko`·`no-comments`가 지우자는 주석 가운데 `shortcut:`·`ponytail:` 주석은 남긴다.
 - `poteto-mode`의 Opening a PR, Babysit, Shipping, Autonomous run, Orchestrate, Autopilot, Worktree cleanup 플레이북은 쓰지 않는다. 커밋·push는 `prokit-dev-cycle` 5절이고, 라운드는 `[confirm]`에서 사용자 확인을 기다린다.

@@ -4,6 +4,23 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 공식 스킬을 전문 에이전트에 맡기기 (2026-11-01)
+
+Main(`prokit-*` 스킬)은 위임, 감독, 검수만 하고 공식 스킬로 하는 일은 그 스킬을 맡은 에이전트가 하도록 바꿨다. 배치 정본은 `skills.manifest.json`의 `performers`다.
+
+- 계층 수행자 `prokit-ui-builder`·`prokit-api-builder`·`prokit-db-builder`와 실행 확인 `prokit-runtime-checker`를 더했다. `prokit-implementer`는 하네스와 계층 밖 일을 맡고, `prokit-reviewer`는 focus마다 읽을 공식 스킬을 둔다(`ui` focus 추가).
+- 배치를 더하고 바꾸고 빼는 스킬 `prokit-skills-assign`을 더했다. `prokit-skills-update`는 업데이트 뒤 배치 점검을 이 스킬로 넘긴다. `pnpm agents:check`는 `performers`의 에이전트와 스킬 이름이 실제 정의와 매니페스트를 가리키는지 본다.
+- audit: 맡은 에이전트가 프로젝트 판(`.agents/skills/<이름>/SKILL.md`)을 읽은 기록만 센다. Claude Code에서 Main이 읽은 기록, 맡지 않은 에이전트의 기록, Skill 도구 호출은 세지 않는다. 행 문구가 에이전트를 가리키면 증거에 `위임: <에이전트>`가 있어야 하고, 그 라운드에 그 에이전트가 일한 기록이 있어야 한다. 상위 스킬(`parent`)도 같은 쪽이 읽어야 한다.
+- 2차 보강(같은 날 설계 재검토 뒤):
+  - 편집 훅: 열린 라운드에서 Main이 Claude Code 편집 도구로 계층 코드(화면·서버·DB)를 고치면 `edit-guard`가 막고 맡을 에이전트를 알린다. 막지 않은 편집은 `.prokit/skills-used.jsonl`에 파일, 에이전트, 도구로 남긴다.
+  - 행 단위 증거: 맡은 공식 스킬은 그 행에서 위임한 에이전트가 읽은 기록만 센다. 일한 기록(스킬 읽기나 편집)은 그 에이전트에 맡기지 않은 앞 행을 채운 뒤의 것이어야 한다. 배치에 없는 상위 스킬은 하위 스킬을 맡은 에이전트가 읽어도 센다.
+  - 구현 행을 `N/A`·`blocked`·`미실행`으로 두었는데 그 라운드 diff에 계층 코드가 있으면 audit이 받지 않는다.
+  - `agents:check`는 `performers`와 에이전트 정의의 공식 스킬 표, `prokit-*`의 공식 스킬 연결 표를 양쪽으로 대조한다. 에이전트 description의 스킬 목록은 본문 표를 가리키게 바꿨다. `prokit-ui` 마감 행과 B 대조표의 polish 행은 수정을 `prokit-ui-builder`에 맡긴다.
+- 테스트: 2차 보강 뒤 두 템플릿 전체가 각각 392 통과·4 실패였다(새 테스트 2건 포함). 실패한 evidence setter 1건과 자원 guard 3건은 바꾸기 전(HEAD)에도 같게 실패했다(384 통과·4 실패). 따로 돌리면 통과한다. 문서·판·값 검사(`handbook`, `doc-values`, `edition`) 80건과 `doc-values --check`는 통과했다.
+- 실측(Better-T-Stack 3.49.0, Biome 2.6.4, neon 생성 명령 그대로, `--brain none --simplicity none`): 설치 exit 0, 새 에이전트 4개를 포함한 정의 8개와 `prokit-skills-assign`이 들어갔다. 처음에는 `biome check .`가 `scripts/dev-cycle.mjs`의 `useDefaultParameterLast` 오류 1건으로 실패했다. Biome가 고친 판을 두 템플릿에 가져온 뒤 `pnpm check`, `biome check .`, `skills:check`, `agents:check`, `check-types`가 exit 0이었고, 설치한 `scripts/*.mjs`와 `skills.manifest.json`이 템플릿과 바이트가 같았다. `--adopt`(`next` 의존성만 든 저장소)도 exit 0이었고 `prokit-skills-assign`이 들어갔으며 `agents:check`가 통과했다. 확인용 project scope 플러그인(skill-creator)은 지웠고 DB 컨테이너는 띄우지 않았다.
+- 실제 Claude Code 세션(확인용 프로젝트에서 `claude -p`): 서브에이전트 `prokit-ui-builder`가 읽은 기록에 `agentType: prokit-ui-builder`, `tool: Read`, `project: true`가 찍혔고, 그 에이전트의 편집도 `agentType`과 함께 남았다. Main이 직접 고치려던 `apps/web` 파일 편집은 `edit-guard`가 막았다. 2차 보강 파일을 넣은 뒤에도 `agents:check`와 `biome check .`는 exit 0이었다.
+- 한계: 에이전트 정의의 `skills:` 미리 읽기는 실제 세션에서 확인하지 않았다(지금 정의는 본문 표와 위임 지시로 스킬 경로를 준다). Codex와 Antigravity는 서브에이전트를 구별하는 훅 입력이 없어 읽은 기록이 자기 신고이고, 편집 훅도 Main을 막지 못한다. 이미 열려 있던 라운드는 옛 기록(`tool`·`project` 칸과 편집 기록 없음)이 섞여 공식 스킬을 읽지 않은 것으로 판정될 수 있다. 그 라운드는 맡은 에이전트가 스킬을 다시 읽게 한다.
+
 ## 마크다운을 Biome 검사에서 빼기, 릴리스 스크립트를 하네스로 (2026-10-30)
 
 Biome 2.6부터 마크다운도 포맷한다. 표를 칸 너비로 맞추고 제목 뒤에 빈 줄을 넣는다. 그래서 dev-cycle이 `tasks/todo.md`에 쓰는 대조표가 행을 채울 때마다 `biome check .`에 걸렸다. `AGENTS.md` 표 줄 끝의 `<!-- edition:pro -->` 주석은 칸 하나로 읽혀 `| <!-- edition:pro --> |`로 바뀌었다.

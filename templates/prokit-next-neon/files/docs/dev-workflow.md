@@ -11,6 +11,7 @@
 - 인증 민감 경로(`.dev-cycle.json`의 `authPaths`)를 건드리면 러너가 `[review] prokit-reviewer(security)` 행을 자동으로 붙인다.
 - 러너가 맨 앞에 붙이는 행도 있다. D·E·F 표는 그 계층 패키지(`packages/api`, E는 `packages/db`)에 `test` 스크립트가 없으면 `vitest 도입(최초 1회)` 행<!-- edition:pro -->, `--task`로 연 라운드는 Task 세부 계획과 그 리뷰 행, `--plan`으로 연 라운드는 정밀 분석(기존 프로젝트만)·진행 계획 문서·계획 리뷰 행<!-- /edition -->이다. 이 행들은 이 문서에 적지 않는다.
 - `[confirm]` 행(사용자 확인)은 증거 칸을 N/A·PASS·blocked·미실행·대기 같은 건너뛰기 표시로 채울 수 없다. audit이 거부하고 `close --partial`로도 닫히지 않는다. 라운드를 닫은 뒤의 커밋·push, 릴리스, 배포는 `prokit-dev-cycle`의 "5. 종료"를 따른다.
+- 구현 단계 행과 행 문구에 전문 에이전트(`skills.manifest.json`의 `performers.agents`)가 적힌 행은 그 에이전트에 맡긴다. 증거에 `위임: <에이전트>(사용: <그 에이전트가 읽은 공식 스킬>)`를 적는다. Main은 직접 구현하거나 확인하지 않고, 맡길 에이전트가 없으면 `blocked: 사유`로 남긴다. 공식 스킬(`performers.skills`)은 맡은 에이전트가 프로젝트 판을 읽은 기록만 audit이 센다.
 - 위임은 `prokit-dev-cycle`의 `references/delegation.md`를 따른다. provider의 실제 내용·hash·scope·의존성·capability·side effect와 snapshot·evidence packet을 확인한 뒤 한 작업 단위에 한 수행 흐름만 둔다. 고위험 미검사는 parked 또는 degraded로 남기며 PASS로 적지 않는다.
 
 검사의 배정·재사용·재시도는 `prokit-dev-cycle/references/execution-efficiency.md`를 따른다. 구현자는 배정된 회귀 검사를 하고 전역 타입·린트·빌드는 통합 담당자가 실행한다. 이후 수정에서는 실패한 검사와 입력·공통 소비자가 바뀐 검사만 다시 확인하며, 전문 리뷰 증거를 재사용해도 `prokit-reviewer`의 현재 결과 최종 검수는 생략하지 않는다.
@@ -26,13 +27,13 @@
 - impeccable context 실행, PRODUCT.md·DESIGN.md 확인 (새 작업이면: PRODUCT.md가 없을 때 impeccable init, <!-- edition:pro -->기존 프로젝트면 prokit-ui 2번의 디자인 방향(기존 디자인 근거가 있을 때만 한 번 묻고, 유지면 기존 디자인으로 DESIGN.md 작성), <!-- /edition -->DESIGN.md가 없고 Better-T-Stack 기본 화면뿐이거나 리디자인이면 디자인 카탈로그 스타일 1~3위와 직접 정하기 중 사용자 선택. 카탈로그는 use-design-md로 받고, 직접 정하면 마감에서 기록) → 출력 요약, <!-- edition:pro -->디자인 방향(기존 프로젝트), <!-- /edition -->고른 스타일, DESIGN.md lint 결과
 - impeccable shape 브리프 확정 (좁은 개선이면 N/A: 사유) → 브리프 경로
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
-- 구현 (구현 단계, prokit-ui<!-- edition:pro -->, prokit-web<!-- /edition -->, 컴포넌트 조합·추가는 shadcn, 컴포넌트·훅 작성은 vercel-react-best-practices) → 변경 파일 요약, 사용한 스킬
+- 구현 (구현 단계, prokit-ui<!-- edition:pro -->, prokit-web<!-- /edition -->, 컴포넌트 조합·추가는 shadcn, 컴포넌트·훅 작성은 vercel-react-best-practices. prokit-ui-builder에 위임하고 공식 스킬은 그 에이전트가 읽는다) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 변경 파일 요약, 사용한 스킬
 - [verify] 타입·린트·빌드 → 명령과 결과
-- [verify] next-dev-loop 런타임 확인과 ego-browser(없으면 agent-browser)로 desktop·mobile 스크린샷 → 확인한 경로, 오류 예산(콘솔·개발 오버레이·get_errors·서버 로그, 환경 탓도 빼지 않음) 수, tasks/evidence/ 경로
-- [verify] 휴대폰 스크롤 측정 (prokit-verify의 references/browser.md "휴대폰 스크롤 측정". 스크롤 모션·긴 쪽·반복해서 다시 그리는 요소를 바꾸지 않았으면 N/A: 사유) → 고치기 전·뒤의 50ms 넘는 프레임 수, 스크롤 모션 수, 레이어 수
+- [verify] next-dev-loop 런타임 확인과 ego-browser(없으면 agent-browser)로 desktop·mobile 스크린샷 (prokit-runtime-checker에 위임) → 위임: prokit-runtime-checker(사용: next-dev-loop), 확인한 경로, 오류 예산(콘솔·개발 오버레이·get_errors·서버 로그, 환경 탓도 빼지 않음) 수, tasks/evidence/ 경로
+- [verify] 휴대폰 스크롤 측정 (prokit-runtime-checker에 위임. prokit-verify의 references/browser.md "휴대폰 스크롤 측정". 스크롤 모션·긴 쪽·반복해서 다시 그리는 요소를 바꾸지 않았으면 N/A: 사유) → 위임: prokit-runtime-checker, 고치기 전·뒤의 50ms 넘는 프레임 수, 스크롤 모션 수, 레이어 수
 - [review] impeccable critique (대상은 화면 경로나 주소) → Design Health 점수, P0/P1 목록, .impeccable/critique/ 기록 파일 경로
-- [review] impeccable audit과 web-design-guidelines 코드 검사 (두 결과를 tasks/evidence/ui-audit-<시각>.md에 저장) → 점수(/20), 접근성 점수, web-design-guidelines 위반 수, 보고서 경로
-- 수정과 impeccable polish를 한 번에 → 반영 내역
+- [review] impeccable audit과 web-design-guidelines 코드 검사 (impeccable audit은 Main이, web-design-guidelines는 prokit-reviewer(ui)가 하고 두 결과를 tasks/evidence/ui-audit-<시각>.md에 저장) → 점수(/20), 접근성 점수, web-design-guidelines 위반 수, 보고서 경로
+- 수정과 impeccable polish를 한 번에 (Main이 고칠 것을 모으고 수정은 prokit-ui-builder에 맡긴다. 고칠 것이 없으면 N/A: 사유) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 반영 내역
 - [verify] 재확인 1회 → 스크린샷 경로와 점수
 - [review] prokit-reviewer(code) → verdict, max_severity, 반영·기각 내역
 - DESIGN.md 갱신 여부 (impeccable document. 카탈로그에서 들여온 파일은 merge와 diff 확인) → 갱신 내역과 lint 결과 또는 N/A: 사유
@@ -46,14 +47,14 @@
 ### D. 서버·API
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
 - zod 입출력 계약 정의<!-- edition:pro --> (prokit-api)<!-- /edition --> → 프로시저 이름과 스키마 위치
-- 구현 (구현 단계, protectedProcedure, 세션 기반 소유자, 테스트 먼저(격리 테스트부터), Better Auth 설정은 better-auth-best-practices) → 변경 파일 요약, 사용한 스킬
+- 구현 (구현 단계, protectedProcedure, 세션 기반 소유자, 테스트 먼저(격리 테스트부터), Better Auth 설정은 better-auth-best-practices<!-- edition:pro -->. prokit-api-builder에 위임하고 공식 스킬은 그 에이전트가 읽는다<!-- /edition -->) → 위임: <에이전트>(사용: 읽은 공식 스킬), 변경 파일 요약, 사용한 스킬
 - [verify] 2계정 격리 테스트 → 테스트 이름과 통과 출력
 - [verify] 타입·린트·테스트 → 명령과 결과
 - [review] prokit-reviewer(code) → verdict, max_severity, 반영·기각 내역
 
 ### E. DB
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
-- 스키마 수정 + dbGenerate, 생성 SQL 검토 (구현 단계, <!-- edition:pro -->prokit-db, <!-- /edition -->컬럼 타입·제약·인덱스는 supabase-postgres-best-practices) → 마이그레이션 파일 경로와 요약, 사용한 스킬
+- 스키마 수정 + dbGenerate, 생성 SQL 검토 (구현 단계, <!-- edition:pro -->prokit-db, <!-- /edition -->컬럼 타입·제약·인덱스는 supabase-postgres-best-practices<!-- edition:pro -->. prokit-db-builder에 위임하고 공식 스킬은 그 에이전트가 읽는다<!-- /edition -->) → 위임: <에이전트>(사용: 읽은 공식 스킬), 마이그레이션 파일 경로와 요약, 사용한 스킬
 - [verify] 타입·린트 검사 (commands.typecheck, commands.lint) → 명령과 결과 요약
 - [verify] 로컬 개발 DB에 dbMigrate 적용 → 호스트:포트와 출력 요약
 - [verify] 병합 전 Neon 개발 브랜치에 dbMigrate 적용 (neon-postgres-branches) → 브랜치 이름과 출력 요약 또는 N/A: Neon 미연결(.neon 없음)
@@ -65,17 +66,17 @@
 - 구현 계획 (계획 단계, 바꿀 계층의 prokit-* 스킬과 그 공식 스킬 연결 표를 읽고 계획의 스키마·API·화면 결정에 반영) → 사용한 스킬과 계획 경로
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
 - [review] prokit-reviewer(plan) 계획 리뷰 (간결성 사다리와 고른 과설계 방지 스킬의 계획 기준 적용, 재사용·설정 결정 검토. 고른 두뇌에 계획 리뷰가 있으면 보강) → prokit-reviewer(plan): approve, max=none|low|medium, 반영·기각 내역. N/A 불가
-- 구현 방식 (구현 단계: prokit-implementer 위임(Main이 직접 하면 증거에 사유)과 테스트 먼저, 고른 과설계 방지 스킬의 간결성 규칙) → 사용한 스킬, provider 검증, snapshot·evidence packet hash, reviewCoverage와 위임 내역
+- 구현 방식 (구현 단계: 계층 전문 에이전트(prokit-ui-builder<!-- edition:pro -->·prokit-api-builder·prokit-db-builder<!-- /edition -->)와 prokit-implementer에 계층별로 위임하고 Main은 직접 구현하지 않는다. 맡길 에이전트가 없으면 blocked. 테스트 먼저, 고른 과설계 방지 스킬의 간결성 규칙) → 위임: <에이전트>(사용: 읽은 공식 스킬), 사용한 스킬, provider 검증, snapshot·evidence packet hash, reviewCoverage와 위임 내역
 - @include E D B
-- [verify] next-dev-loop 통합 런타임 확인 → 확인한 경로와 결과
+- [verify] next-dev-loop 통합 런타임 확인 (prokit-runtime-checker에 위임) → 위임: prokit-runtime-checker(사용: next-dev-loop), 확인한 경로와 결과
 - 공통화·리팩토링·최적화 점검 (이번 라운드가 바꾼 파일과 같은 디렉터리·계획에서 확인한 공통 모듈의 소비자에 간결성 검토(고른 과설계 방지 스킬의 공통화 점검, 없으면 prokit-reviewer(code) focus), 한쪽이 이번 diff이고 같은 책임으로 함께 바뀌는 반복 코드·UI만 적절한 위치로 추출하고 나머지는 백로그로, 필요 없는 추상화는 걷어 냄, 빌드 출력의 라우트 크기와 새 의존성·글꼴·이미지 확인) → 반영 내역, 영향 재확인(타입·린트·테스트·화면) 결과, 미룬 항목과 기록 위치
 - [review] prokit-reviewer(code) 전체 diff 최종 리뷰 → verdict, max_severity, 반영·기각 내역
-- [verify] 사용자 흐름 QA (스펙의 테스트 시나리오 전부를 ego-browser(없으면 agent-browser)로, 오류 예산은 깨끗한 프로필(agent-browser)로도, 보고만) → 시나리오별 통과·실패, 오류 예산 수
-- QA 발견 수정과 재QA (문제와 개선점을 고친 뒤 실패한 검사와 입력·공통 소비자가 바뀐 타입·린트·빌드·테스트를 다시 돌리고, 수정 diff에 fresh prokit-reviewer(code)와 간결성 검토를 받되 같은 검토를 중복 호출하지 않으며, 실패한 시나리오와 오류 예산을 다시 확인. 발견이 없으면 N/A: 사유) → 수정 내역, 영향 재검사·재리뷰·재QA 결과
+- [verify] 사용자 흐름 QA (prokit-runtime-checker에 위임. 스펙의 테스트 시나리오 전부를 ego-browser(없으면 agent-browser)로, 오류 예산은 깨끗한 프로필(agent-browser)로도, 보고만) → 위임: prokit-runtime-checker, 시나리오별 통과·실패, 오류 예산 수
+- QA 발견 수정과 재QA (문제와 개선점은 그 계층 전문 에이전트에 맡겨 고치고 재QA는 prokit-runtime-checker에 맡긴다. 고친 뒤 실패한 검사와 입력·공통 소비자가 바뀐 타입·린트·빌드·테스트를 다시 돌리고, 수정 diff에 fresh prokit-reviewer(code)와 간결성 검토를 받되 같은 검토를 중복 호출하지 않으며, 실패한 시나리오와 오류 예산을 다시 확인. 발견이 없으면 N/A: 사유) → 수정 내역, 영향 재검사·재리뷰·재QA 결과
 
 ### H. 하네스
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
-- 구현 (구현 단계: 스킬·스크립트·설정을 바꾸는 방법과 위임. 스킬 설치·업데이트만 했으면 N/A: 사유) → 사용한 스킬과 변경 파일 요약 또는 N/A: 사유
+- 구현 (구현 단계: 스킬·스크립트·설정을 바꾸는 방법과 prokit-implementer 위임. 스킬 설치·업데이트만 했으면 N/A: 사유) → 위임: prokit-implementer(사용: 읽은 스킬), 변경 파일 요약 또는 N/A: 사유
 - [verify] pnpm agents:check → 출력
 - [verify] pnpm skills:check → 출력
 - [verify] pnpm dev-cycle case·status 실행 확인 → 출력 요약

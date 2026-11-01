@@ -6,13 +6,13 @@
 |---|---|---|
 | 요구 명확화 | `oh-my-claudecode:deep-interview` | `deep-interview` |
 | 계획 | `oh-my-claudecode:omc-plan`, 합의 계획은 `oh-my-claudecode:ralplan` | `plan`, `ralplan` |
-| 구현 | 기본은 `prokit-implementer` 위임. 대규모 병렬만 `team`, 끝까지 반복은 `ralph` | 네이티브 `prokit-implementer`. `team`은 tmux 런타임이 있을 때만 |
+| 구현 | 기본은 구현 수행자 위임. 대규모 병렬만 `team`, 끝까지 반복은 `ralph` | 네이티브 구현 수행자. `team`은 tmux 런타임이 있을 때만 |
 | 디버깅 (C) | `oh-my-claudecode:trace` | `analyze`(읽기 전용 조사) |
 | 리뷰 추가 관점 | `oh-my-claudecode:omc-review` | `code-review` |
 | 검증 | `oh-my-claudecode:verify` + `prokit-verify` | `prokit-verify` |
 
 - 맡지 않는 단계(QA, 마무리)는 기본 칸이다. 용어·설계 질문은 `grilling`·`domain-modeling`이다.
-- `omc-plan`·`ralplan`·`deep-interview`가 승인 뒤 `ralph`·`team`·`autopilot`으로 넘기려 해도 고르지 않고 계획 산출물에서 멈춘다. 구현은 대조표의 구현 행에서 `prokit-implementer`로 한다. 산출물(`.omc/specs/`, `.omc/plans/`)은 확정본을 `docs/specs`·`docs/plans`에 두고 증거에 그 경로를 적는다.
+- `omc-plan`·`ralplan`·`deep-interview`가 승인 뒤 `ralph`·`team`·`autopilot`으로 넘기려 해도 고르지 않고 계획 산출물에서 멈춘다. 구현은 대조표의 구현 행에서 구현 수행자로 한다. 산출물(`.omc/specs/`, `.omc/plans/`)은 확정본을 `docs/specs`·`docs/plans`에 두고 증거에 그 경로를 적는다.
 - `trace`는 Claude 내장 team 모드로 경쟁 가설을 돌린다. 한 번만 쓰고 끝나면 `oh-my-claudecode:cancel`로 정리한다.
 - 모드(`autopilot`, `ralph`, `team`, `ultragoal` 등)의 완료 보고는 증거가 아니다. 완료 판정은 `pnpm dev-cycle audit`만 한다. 모드가 커밋, push, 배포를 하게 두지 않는다.
 - 라운드를 닫을 때 실제로 쓴 모드를 취소한다(Claude `oh-my-claudecode:cancel`, Codex `cancel`). 켜져 있으면 사용자 답을 기다리지 못한다.
@@ -27,5 +27,5 @@
 ## 에이전트
 - Claude Code(OMC): 에이전트 19개가 온다. Codex(OMX)는 `.codex/agents`에 만들어진다. Antigravity·Grok Build는 없다.
 - 쓰기 도구가 막힌 에이전트(`disallowedTools: Write, Edit`)를 보완 검토에 쓴다: `oh-my-claudecode:code-reviewer`, `oh-my-claudecode:security-reviewer`, `oh-my-claudecode:architect`, `oh-my-claudecode:critic`, `oh-my-claudecode:verifier`. `debugger`·`tracer`·`test-engineer`·`executor`는 제한이 없다. 막힌 에이전트도 Bash로는 쓸 수 있으니 두뇌 에이전트 규칙의 diff 확인은 똑같이 한다.
-- 구현은 위 구현 칸의 `team` 예외(대규모 병렬)를 따른다. 그 밖의 OMC 에이전트는 읽기 전용 보완 검토나 조사로만 쓰고, 구현은 `prokit-implementer`가 한다.
+- 구현은 위 구현 칸의 `team` 예외(대규모 병렬)를 따른다. 그 밖의 OMC 에이전트는 읽기 전용 보완 검토나 조사로만 쓰고, 구현은 구현 수행자가 한다.
 - 쓰는 방법은 `process-routing.md`의 두뇌 에이전트 규칙을 따른다.

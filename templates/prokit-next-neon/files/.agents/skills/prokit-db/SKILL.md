@@ -18,13 +18,15 @@ description: >-
 - 개발 DB: `packages/db/docker-compose.yml`의 로컬 Postgres. `apps/web/.env`의 `DATABASE_URL`은 이 로컬 DB를 가리킨다. 띄우는 법과 포트 충돌은 [references/migration-flow.md](references/migration-flow.md)의 로컬 DB 절.
 
 ## 공식 스킬 연결
-| 상황 | 읽을 스킬 |
-|---|---|
-| 컬럼 타입, 제약, 인덱스, 쿼리 작성과 튜닝 | `supabase-postgres-best-practices` (서비스와 무관한 Postgres 규칙) |
-| 연결(pooled와 direct), 마이그레이션 운영, 검색 | `neon-postgres` (먼저 상위 `neon`) |
-| 병합 전 검증용 브랜치 만들기와 리셋 | `neon-postgres-branches` |
-| DB 비용, 데이터 전송량(egress), 과다 조회 점검 | `neon-postgres-egress-optimizer` (운영 DB 통계 조회와 `pg_stat_statements` 설치·초기화는 사용자가 요청할 때만 한다) |
-| Neon 부가 기능: 오래 도는 함수, 파일 저장, LLM 호출 | `neon-functions`, `neon-object-storage`, `neon-ai-gateway` (선택 묶음 `ops`. 새 서비스 의존이 생기므로 도입 전에 사용자에게 묻고 `docs/adr/`에 남긴다) |
+이 스킬은 Main이 DB 계층(스키마, 마이그레이션, 로컬·원격 DB) 일을 나누고 맡기고 검수할 때 쓴다. 표의 공식 스킬 가운데 맡는 에이전트가 있는 것은 Main이 읽지 않는다. 위임 지시(packet)에 스킬 이름과 경로(`.agents/skills/<이름>/SKILL.md`)를 넣어 그 에이전트가 읽고 따르게 하고, 보고의 "읽은 스킬"과 스킬 기록으로 실제로 읽었는지 본 뒤 "Main 검수" 칸을 확인한다. 맡는 에이전트가 Main인 스킬은 외부 DB에 적용하는 일이라 Main이 직접 읽고 한다. 배치의 정본은 `skills.manifest.json`의 `performers`이고 바꾸는 일은 `prokit-skills-assign`이 맡는다(절차는 `prokit-dev-cycle`의 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md) "공식 스킬 위임").
+
+| 상황 | 공식 스킬 | 맡는 에이전트 | Main 검수 |
+|---|---|---|---|
+| 컬럼 타입, 제약, 인덱스, 쿼리 작성과 튜닝 | `supabase-postgres-best-practices` (서비스와 무관한 Postgres 규칙) | `prokit-db-builder`. 리뷰는 `prokit-reviewer`(db) | 생성 SQL 검토(데이터 손실, 파괴적 변경)와 FK 인덱스가 보고에 있는지 |
+| 연결(pooled와 direct), 마이그레이션 운영, 검색 | `neon-postgres` (먼저 상위 `neon`) | `prokit-db-builder`. 리뷰는 `prokit-reviewer`(db) | 상위 `neon`도 읽었는지, 연결 문자열이 출력·파일에 없는지 |
+| 병합 전 검증용 브랜치 만들기와 리셋 | `neon-postgres-branches` (먼저 상위 `neon`) | Main(원격 브랜치에 적용하는 일) | 브랜치 이름과 적용 출력 |
+| DB 비용, 데이터 전송량(egress), 과다 조회 점검 | `neon-postgres-egress-optimizer` (먼저 상위 `neon`. 운영 DB 통계 조회와 `pg_stat_statements` 설치·초기화는 사용자가 요청할 때만 한다) | `prokit-db-builder`. 리뷰는 `prokit-reviewer`(db) | 개선안에 규칙 이름과 바뀐 쿼리가 있는지 |
+| Neon 부가 기능: 오래 도는 함수, 파일 저장, LLM 호출 | `neon-functions`, `neon-object-storage`, `neon-ai-gateway` (선택 묶음 `ops`. 새 서비스 의존이 생기므로 도입 전에 사용자에게 묻고 `docs/adr/`에 남긴다) | 도입을 정한 뒤 `prokit-skills-assign`으로 배치한다 | `docs/adr/` 기록 |
 
 ## 위임
 외부 전문 스킬이나 수행자에게 DB 작업을 넘길 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 실제 provider의 scope·의존성·side effect를 확인하고, Drizzle 마이그레이션과 DB별 운영 계약은 유지한다.

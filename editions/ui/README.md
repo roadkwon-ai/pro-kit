@@ -141,7 +141,7 @@ UI 스킬셋은 [Pro 스킬셋(pro-kit)](<!-- v:link.repo -->https://github.com/
 |---|---|---|
 | 만드는 것 | 예시 데이터로 채운 화면, HTML 파일 | 화면과 함께 로그인·저장이 되는 실제 서비스 |
 | 템플릿 | `prokit-next-neon`(화면만) | Neon, Supabase 템플릿 두 개 |
-| 프로킷 스킬 | 첫 설정(`prokit-init`), 진행(`prokit-dev-cycle`), 화면(`prokit-ui`), 검사(`prokit-verify`), 팩 활용(`prokit-pack-use`), 스킬 구성 변경(`prokit-skills-manage`), 스킬 갱신(`prokit-skills-update`) | UI 스킬셋의 스킬과 화면 동작·API·DB·배포 스킬 |
+| 프로킷 스킬 | 첫 설정(`prokit-init`), 진행(`prokit-dev-cycle`), 화면(`prokit-ui`), 검사(`prokit-verify`), 팩 활용(`prokit-pack-use`), 스킬 구성 변경(`prokit-skills-manage`), 스킬 갱신(`prokit-skills-update`), 공식 스킬 배치(`prokit-skills-assign`) | UI 스킬셋의 스킬과 화면 동작·API·DB·배포 스킬 |
 | 화면 프리셋 팩 | 쓸 수 있습니다 | 쓸 수 있습니다 |
 | 올리는 곳 | GitHub Pages, Vercel(정적 HTML) | 화면은 같고, 서비스는 Vercel의 개발·운영 환경에 버전 릴리스와 함께 올립니다 |
 | 클론 코딩 튜토리얼, 기존 프로젝트 도입 | 없습니다 | 있습니다 |

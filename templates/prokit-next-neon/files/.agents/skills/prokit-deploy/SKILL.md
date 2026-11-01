@@ -99,10 +99,12 @@ production은 릴리스한 커밋만 배포한다. 배포 스크립트가 `origi
 - git 연결(push마다 자동 배포)은 사용자가 요청할 때만 한다. 연결하면 기본 브랜치 push(릴리스의 `--publish` 포함)가 곧 production 배포가 되어, 이 스크립트의 검사(릴리스, 환경변수)와 "DB 먼저" 순서를 거치지 않는다. 연결하기 전에 이것을 알리고, 연결하면 push 배포를 끌지(Vercel 프로젝트의 Git 설정. API의 `gitProviderOptions.createDeployments`가 `disabled`) 사용자와 정한다. 연결과 자동 배포 결정은 `docs/adr/`에 남긴다. push 배포가 켜져 있으면 `production --check`가 `Git 자동 배포`로 보고하고, 라운드 끝(`prokit-dev-cycle` 5절)과 릴리스 발행은 push하지 않는다. 스크립트가 인정하는 끄는 방법은 Vercel 프로젝트의 Git 설정뿐이다. `vercel.json`의 `git.deploymentEnabled`나 Ignored Build Step으로 끈 프로젝트도 준비 안 됨으로 나오므로 연결을 끊는다. push마다 production에 배포하는 방식은 이 템플릿의 릴리스·배포 절차와 함께 쓰지 않는다.
 
 ## 공식 스킬 연결
-| 상황 | 읽을 스킬 |
-|---|---|
-| CLI 설치, 로그인, 팀 고르기 | `deploy-to-vercel` (위에서 따르지 않는다고 한 부분은 빼고) |
-| 토큰 인증, 환경변수·도메인·로그 명령 | `vercel-cli-with-tokens` |
-| 배포 보호가 걸린 Preview 확인 | `access-protected-vercel-deployment` |
-| 배포한 프로젝트의 비용·성능 점검(Vercel 지표 기반) | `vercel-optimize` (선택 묶음 `ops`. 경로별 권고에는 유료 Observability Plus가 필요하다) |
-| 서버리스 연결과 prepared statement | `prokit-db` (그 안의 Neon·Supabase·Postgres 스킬 연결) |
+배포, 릴리스, 배포 환경변수는 외부 서비스에 적용하고 중간에 사용자 동의가 필요하므로 서브에이전트에 맡기지 않는다(`AGENTS.md` "에이전트"). 그래서 아래 배포 스킬은 Main이 직접 읽고 따른다(`skills.manifest.json`의 `performers.skills`에 넣지 않는다). 배포한 화면을 브라우저로 확인하는 일은 `prokit-runtime-checker`에 맡길 수 있다.
+
+| 상황 | 공식 스킬 | 맡는 쪽 |
+|---|---|---|
+| CLI 설치, 로그인, 팀 고르기 | `deploy-to-vercel` (위에서 따르지 않는다고 한 부분은 빼고) | Main |
+| 토큰 인증, 환경변수·도메인·로그 명령 | `vercel-cli-with-tokens` | Main |
+| 배포 보호가 걸린 Preview 확인 | `access-protected-vercel-deployment` | Main. 우회 주소를 받은 뒤 화면 확인은 `prokit-runtime-checker` |
+| 배포한 프로젝트의 비용·성능 점검(Vercel 지표 기반) | `vercel-optimize` (선택 묶음 `ops`. 경로별 권고에는 유료 Observability Plus가 필요하다) | 지표 읽기는 Main, 코드 개선은 그 계층 수행자(`prokit-skills-assign`으로 배치) |
+| 서버리스 연결과 prepared statement | `prokit-db` (그 안의 Neon·Supabase·Postgres 스킬 연결) | `prokit-db`의 표 |

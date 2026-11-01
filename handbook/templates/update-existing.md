@@ -103,6 +103,17 @@ flowchart LR
 
 화면 디자인 보조 선택 묶음 `taste`(2026-10-20)를 쓰려면 H 라운드에서 템플릿의 `skills.manifest.json`과 `prokit-ui`(`SKILL.md`, `references/taste.md`)를 옮긴 뒤 `pnpm skills:setup --optional taste`로 설치해요. `install.sh --skip-skills`가 `.gitignore`에 `/.taste-skill/`을 더해요([화면 디자인 보조](../skills/brains.md#화면-디자인-보조)).
 
+### 공식 스킬을 전문 에이전트에 맡기게 된 판 이전
+
+이 판부터 공식 스킬은 그 일을 맡은 전문 에이전트(`prokit-ui-builder`<!-- edition:pro -->, `prokit-api-builder`, `prokit-db-builder`<!-- /edition -->, `prokit-runtime-checker` 등)가 읽고 따르고, 메인 세션은 맡기고 검수해요([공식 스킬과 연결](../skills/official-skills.md#누가-읽고-따르나)). 이렇게 옮겨요.
+
+1. 열린 라운드를 닫아요.
+2. H 라운드에서 `install.sh --skip-skills`로 새 에이전트 정의와 `prokit-skills-assign` 스킬을 더해요.
+3. 템플릿의 `skills.manifest.json`에 있는 `performers`, `scripts/dev-cycle.mjs`, `scripts/sync-agents.mjs`, `docs/dev-workflow.md`의 행 문구, 바뀐 `prokit-*` 스킬과 에이전트 정의, `AGENTS.md`·`CLAUDE.md` 템플릿 블록을 직접 옮겨요. 설치기는 매니페스트를 덮어쓰지 않아요.
+4. `pnpm agents:sync`와 `pnpm agents:check`를 돌려요.
+
+`performers`가 없으면 audit은 위임과 맡은 에이전트의 기록을 보지 않고 예전처럼 검사해요. 그 프로젝트에만 있는 공식 스킬은 옮긴 뒤 `prokit-skills-assign`으로 맡을 에이전트를 정해요.
+
 ## 관련 문서
 
 - [기존 프로젝트에 도입하기](../start/adopt.md)
