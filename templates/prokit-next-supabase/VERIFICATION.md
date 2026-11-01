@@ -4,6 +4,12 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 계층별 위임, 계층 편집 경계, 훅 없는 호스트의 degraded (2026-11-01)
+
+공통 변경(`scripts/dev-cycle.mjs`, `delegation.md`, 공통 테스트)과 판단은 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#계층별-위임-계층-편집-경계-훅-없는-호스트의-degraded-2026-11-01)에 있다. supabase만 다른 파일은 `docs/dev-workflow.md`의 같은 문장이다.
+
+- 테스트: 템플릿 전체 397 통과·3 실패다. 실패는 바꾸기 전부터 실패하던 자원 guard 검사다.
+
 ## Codex·Antigravity에서도 위임 기록과 Main 편집 막기 (2026-11-01)
 
 공통 변경(Codex `agent_type`, Antigravity 대화 묶기, Antigravity 쓰기 에이전트 `tools`, `.agents/hooks.json` matcher), 세 도구 실측, 독립 리뷰로 고친 대화 묶기 세 가지는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#codexantigravity에서도-위임-기록과-main-편집-막기-2026-11-01)에 있다.

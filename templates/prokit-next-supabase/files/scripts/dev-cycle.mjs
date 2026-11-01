@@ -1240,7 +1240,22 @@ function usageProblem(root, config, active) {
 		agents: performerAgents,
 		skills: skillAgents,
 	} = performers(root);
-	const { layers } = classify(roundFiles(root, active), config);
+	const { layers, auth } = classify(roundFiles(root, active), config);
+	// 계층 에이전트가 맡는 계층: 인증 파일은 서버(D) 몫이다(editGuard와 같다)
+	const agentLayers = [...new Set([...layers, ...(auth ? ["D"] : [])])].filter(
+		(c) => LAYER_AGENTS[c],
+	);
+	// 행 문구에 이름이 있는 계층 에이전트의 계층. 없으면(H·F 구현 방식 밖의 일반 행) 모든 계층이다
+	const namedLayers = (text) =>
+		Object.keys(LAYER_AGENTS).filter((c) => text.includes(LAYER_AGENTS[c]));
+	// 호스트 훅이 Main과 서브에이전트를 구별한 기록이 있는 라운드인지
+	const seenHost = Boolean(log) && [...all, ...log.edits].some((u) => u.seen);
+	// 훅 기록(스킬 읽기·편집)이 하나라도 있는 라운드. 훅을 설치한 호스트(Claude Code·Codex·Antigravity)는 모두 서브에이전트를 구별한다
+	const hooked = Boolean(log);
+	// 이 라운드의 코드·DB 리뷰 행(B·D·F는 code, E는 db, H는 하네스 변경 리뷰의 code)
+	const codeReview = active.rows.find((x) =>
+		/^\[review\].*prokit-reviewer\((code|db)\)/.test(x.text),
+	);
 	// 배치에 없는 상위 스킬(parent)은 하위 스킬을 맡은 에이전트도 읽는다(neon-postgres를 맡은 쪽이 neon도). Main도 읽을 수 있다
 	const parentAgents = {};
 	for (const [c, a] of Object.entries(skillAgents)) {
@@ -1299,10 +1314,12 @@ function usageProblem(root, config, active) {
 		if (!value) return null;
 		const skip = value.match(/^(blocked|미실행|n\/a)\s*:/i)?.[1];
 		if (skip) {
-			// 구현 행을 건너뛰었는데 계층 코드가 바뀌었으면 누군가(대개 Main) 직접 고친 것이다
+			// 구현 행을 건너뛰었는데 그 행의 계층 코드가 바뀌었으면 누군가(대개 Main) 직접 고친 것이다.
+			// F의 계층별 구현 행(B·D·E)은 그 계층만 본다: 화면만 바꾼 F에서 DB 구현 행은 N/A로 둔다
+			const own = namedLayers(r.text);
 			const code =
 				performerAgents.length && /구현 단계/.test(r.text)
-					? layers.filter((c) => LAYER_AGENTS[c])
+					? agentLayers.filter((c) => !own.length || own.includes(c))
 					: [];
 			return code.length
 				? `구현 행인데 이 라운드 diff에 계층 코드(케이스 ${code.join("·")})가 있어 ${skip}로 둘 수 없다. 그 계층 에이전트가 구현했으면 위임: <에이전트>(사용: …)로 적고, 맡길 에이전트가 없어 blocked로 남기려면 바꾼 계층 코드를 되돌린다`
@@ -1328,8 +1345,28 @@ function usageProblem(root, config, active) {
 			.map((m) => m[1])
 			.filter((a) => performerAgents.includes(a));
 		const said = delegated.filter((a) => want.includes(a));
-		if (want.length && !said.length)
-			return `이 행은 ${want.join("·")}에 맡긴다. 증거에 위임: ${want[0]}(사용: <그 에이전트가 읽은 공식 스킬>) → 결과처럼 적는다. 맡길 에이전트가 없으면 Main이 직접 하지 않고 blocked: 사유로 남긴다`;
+		// 서브에이전트를 구별하지 못하는 호스트(훅 기록에 구별 값이 없다)에서는 Main이 직접 하고 자기 신고로 적는다
+		if (/^degraded\s*:/i.test(value)) {
+			if (hooked)
+				return "이 라운드는 훅 기록이 있다(훅을 설치한 Claude Code·Codex·Antigravity는 서브에이전트를 구별한다). degraded로 Main이 직접 하지 않고 위임: <에이전트>로 맡긴다";
+			if (
+				!codeReview ||
+				/^(blocked|미실행|n\/a|degraded)\s*:/i.test(bare(codeReview.evidence))
+			)
+				return "degraded(Main 직접)는 fresh prokit-reviewer(code·db) 리뷰를 받은 라운드에서만 받는다. 대조표에 그 리뷰 행이 있고 실제로 리뷰해야 한다";
+		} else {
+			if (want.length && !said.length)
+				return `이 행은 ${want.join("·")}에 맡긴다. 증거에 위임: ${want[0]}(사용: <그 에이전트가 읽은 공식 스킬>) → 결과처럼 적는다. 맡길 에이전트가 없으면 Main이 직접 하지 않고 blocked: 사유로 남긴다. 호스트가 서브에이전트를 구별하지 못하면 degraded: Main 직접(<호스트>)으로 적는다`;
+			// 계층 에이전트 여럿을 적은 행(F 구현 방식)은 이 라운드 diff의 계층마다 그 에이전트에 맡긴다
+			const lack =
+				namedLayers(r.text).length > 1
+					? agentLayers
+							.map((c) => LAYER_AGENTS[c])
+							.filter((a) => performerAgents.includes(a) && !said.includes(a))
+					: [];
+			if (lack.length)
+				return `이 라운드 diff의 계층은 계층마다 그 에이전트에 맡긴다. ${lack.join("·")}의 위임: <에이전트>(사용: …)도 적는다(DB, 서버, 화면 순서로 맡기고 앞 계층이 바꾼 계약을 다음 지시에 넣는다)`;
+		}
 		if (!log) return null;
 		// 이 행을 채운 기록과 그보다 앞서 채운 다른 행. 채운 기록은 행 문구로 짝짓는다(--upgrade가 번호를 바꾼다. 문구가 없는 옛 줄만 번호로)
 		const row = active.rows.indexOf(r) + 1;
@@ -1344,7 +1381,7 @@ function usageProblem(root, config, active) {
 		// 호스트가 Main과 서브에이전트를 구별한 기록(seen)이 있는 라운드는 위임한 에이전트가 이 행을 하며 일했는지 본다.
 		// 같은 에이전트에 맡기지 않은 앞 행을 채운 뒤의 기록(스킬 읽기나 편집)이어야 한다. 한 번 맡겨 이어진 행 여럿을 채운 것은 센다
 		const work = [...all, ...log.edits];
-		const cc = work.some((u) => u.seen);
+		const cc = seenHost;
 		const since = (a) =>
 			before
 				.filter(
@@ -1987,6 +2024,8 @@ export function evidenceProblem(e) {
 		return /^(blocked|미실행)\s*:\s*\S/i.test(v)
 			? null
 			: "blocked·미실행에 사유가 없다 (blocked: 사유)";
+	if (/^degraded(?![a-z])/i.test(v) && !/^degraded\s*:\s*\S/i.test(v))
+		return "degraded에 사유가 없다 (degraded: Main 직접(<호스트>))";
 	if (PLACEHOLDERS.has(v.toLowerCase()) || v.replace(/\s/g, "").length < 4)
 		return "형식만 채운 증거다";
 	return null;
@@ -2747,21 +2786,34 @@ export function guard(root, config, since) {
 // 열린 라운드에서는 Main(호스트가 서브에이전트가 아니라고 알려 준 호출)이 계층 코드를 고치려 하면 막는다.
 // 계층 코드는 그 계층 전문 에이전트가 고친다. performers가 없는 옛 판과 구별 값이 없는 입력은 막지 않는다.
 export function editGuard(root, config, input) {
-	const { name, agent, seen } = hookCall(input, root);
+	const { name, agent, agentType, seen } = hookCall(input, root);
 	const rels = editFiles(root, input);
 	if (!rels.length) return null;
 	const cls = classify(rels, config);
 	if (cls.pathCase === "A" && !cls.auth) return null;
 	const md = readTodo(root, config);
 	if (md && parseActive(md)) {
-		if (!(CC_EDIT_TOOLS.has(name) || seen) || agent) return null;
+		if (!(CC_EDIT_TOOLS.has(name) || seen)) return null;
 		const { agents } = performers(root);
-		const who = [
-			...new Set([
-				...cls.layers.map((c) => LAYER_AGENTS[c]),
-				...(cls.auth ? [LAYER_AGENTS.D] : []),
-			]),
-		].filter((a) => a && agents.includes(a));
+		const owners = (c) =>
+			[
+				...new Set([
+					...c.layers.map((l) => LAYER_AGENTS[l]),
+					...(c.auth ? [LAYER_AGENTS.D] : []),
+				]),
+			].filter((a) => a && agents.includes(a));
+		if (agent) {
+			// 계층 에이전트는 자기 계층 파일만 고친다. 병렬로 맡겨도 누가 어느 파일을 고쳤는지 계층으로 나뉜다
+			if (!Object.values(LAYER_AGENTS).includes(agentType)) return null;
+			const foreign = rels.filter((f) => {
+				const own = owners(classify([f], config));
+				return own.length && !own.includes(agentType);
+			});
+			return foreign.length
+				? `dev-cycle: ${agentType}는 다른 계층 에이전트가 맡는 파일(${foreign.join(", ")})을 고치지 않는다. 고칠 일이 있으면 보고에 적어 Main이 그 계층 에이전트(${owners(classify(foreign, config)).join("·")})에 맡기게 한다.`
+				: null;
+		}
+		const who = owners(cls);
 		return who.length
 			? `dev-cycle: Main은 계층 코드(${rels.join(", ")})를 직접 고치지 않는다. 서브에이전트 도구(Claude Code Agent, Codex spawn_agent, Antigravity invoke_subagent)로 ${who.join("·")}에 맡긴다. 위임 지시에 바꿀 파일, 읽을 공식 스킬(.agents/skills/<이름>/SKILL.md), 돌릴 검사를 넣는다(prokit-dev-cycle의 references/delegation.md "공식 스킬 위임").`
 			: null;

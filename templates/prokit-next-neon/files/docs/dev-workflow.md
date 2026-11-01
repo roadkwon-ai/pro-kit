@@ -11,7 +11,7 @@
 - 인증 민감 경로(`.dev-cycle.json`의 `authPaths`)를 건드리면 러너가 `[review] prokit-reviewer(security)` 행을 자동으로 붙인다.
 - 러너가 맨 앞에 붙이는 행도 있다. D·E·F 표는 그 계층 패키지(`packages/api`, E는 `packages/db`)에 `test` 스크립트가 없으면 `vitest 도입(최초 1회)` 행<!-- edition:pro -->, `--task`로 연 라운드는 Task 세부 계획과 그 리뷰 행, `--plan`으로 연 라운드는 정밀 분석(기존 프로젝트만)·진행 계획 문서·계획 리뷰 행<!-- /edition -->이다. 이 행들은 이 문서에 적지 않는다.
 - `[confirm]` 행(사용자 확인)은 증거 칸을 N/A·PASS·blocked·미실행·대기 같은 건너뛰기 표시로 채울 수 없다. audit이 거부하고 `close --partial`로도 닫히지 않는다. 라운드를 닫은 뒤의 커밋·push, 릴리스, 배포는 `prokit-dev-cycle`의 "5. 종료"를 따른다.
-- 구현 단계 행과 행 문구에 전문 에이전트(`skills.manifest.json`의 `performers.agents`)가 적힌 행은 그 에이전트에 맡긴다. 증거에 `위임: <에이전트>(사용: <그 에이전트가 읽은 공식 스킬>)`를 적는다. Main은 직접 구현하거나 확인하지 않고, 맡길 에이전트가 없으면 `blocked: 사유`로 남긴다. 공식 스킬(`performers.skills`)은 맡은 에이전트가 프로젝트 판을 읽은 기록만 audit이 센다.
+- 구현 단계 행과 행 문구에 전문 에이전트(`skills.manifest.json`의 `performers.agents`)가 적힌 행은 그 에이전트에 맡긴다. 증거에 `위임: <에이전트>(사용: <그 에이전트가 읽은 공식 스킬>)`를 적는다. Main은 직접 구현하거나 확인하지 않고, 맡길 에이전트가 없으면 `blocked: 사유`로 남긴다. 훅을 설치하지 않는 호스트(Grok Build)나 서브에이전트 도구가 없는 호스트면 Main이 하고 `degraded: Main 직접(<호스트>)`로 적은 뒤 그 라운드의 fresh 리뷰(`prokit-reviewer(code)`, E는 `prokit-reviewer(db)`)를 받는다. 훅 기록이 있는 라운드는 서브에이전트를 구별하는 호스트라 받지 않는다. F처럼 계층이 여럿이면 계층마다 그 계층 에이전트에 맡기고, 그 라운드가 바꾸지 않은 계층의 구현 행은 `N/A: 사유`로 둔다. 공식 스킬(`performers.skills`)은 맡은 에이전트가 프로젝트 판을 읽은 기록만 audit이 센다.
 - 위임은 `prokit-dev-cycle`의 `references/delegation.md`를 따른다. provider의 실제 내용·hash·scope·의존성·capability·side effect와 snapshot·evidence packet을 확인한 뒤 한 작업 단위에 한 수행 흐름만 둔다. 고위험 미검사는 parked 또는 degraded로 남기며 PASS로 적지 않는다.
 
 검사의 배정·재사용·재시도는 `prokit-dev-cycle/references/execution-efficiency.md`를 따른다. 구현자는 배정된 회귀 검사를 하고 전역 타입·린트·빌드는 통합 담당자가 실행한다. 이후 수정에서는 실패한 검사와 입력·공통 소비자가 바뀐 검사만 다시 확인하며, 전문 리뷰 증거를 재사용해도 `prokit-reviewer`의 현재 결과 최종 검수는 생략하지 않는다.

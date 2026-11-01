@@ -1408,3 +1408,98 @@ test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 �
   read("agent-browser", "prokit-runtime-checker");
   assert.deepEqual(idle(scroll), []);
 });
+
+test("F 계층별 위임: 계층별 구현 행의 N/A는 그 계층 코드만 보고, 계층 에이전트 여럿을 적은 구현 방식 행은 diff의 계층마다 위임을 요구한다", () => {
+  const { root, write } = makeRepo();
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-api-builder", "prokit-db-builder", "prokit-implementer"], skills: {} } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "F", { write: true, title: "기능" });
+  const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
+  const at = (re) => rows.findIndex((r) => re.test(r.text)) + 1;
+  const db = at(/^스키마 수정 \+ dbGenerate/);
+  const ui = at(/^구현 \(구현 단계, prokit-ui/);
+  const method = at(/^구현 방식 \(구현 단계/);
+  assert.ok(db && ui && method);
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  const set = (n, v) => {
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(n), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  const mine = (n) => audit(root, config).problems.filter((p) => p.startsWith(`#${n} `)).map((p) => p.replace(/^#\d+ .*?: /, ""));
+  // 화면만 바꾼 F: DB 구현 행은 N/A로 두고, 화면 구현 행은 N/A로 둘 수 없다
+  write("apps/web/src/app/page.tsx", "export default 1\n");
+  set(db, "N/A: 스키마를 바꾸지 않음");
+  assert.deepEqual(mine(db).filter((p) => /둘 수 없다/.test(p)), []);
+  set(ui, "N/A: 없음");
+  assert.match(mine(ui)[0] ?? "", /계층 코드\(케이스 B\)가 있어 N\/A로 둘 수 없다/);
+  set(method, "위임: prokit-ui-builder → 화면");
+  assert.deepEqual(mine(method).filter((p) => /계층마다/.test(p)), []);
+  // 서버 코드도 바꾸면 구현 방식 행에 서버 에이전트 위임도 있어야 하고, DB 행 N/A는 그대로 받는다
+  write("packages/api/src/routers/todo.ts", "export const x = 1\n");
+  assert.match(mine(method)[0] ?? "", /prokit-api-builder의 위임: <에이전트>.*DB, 서버, 화면 순서/);
+  assert.deepEqual(mine(db).filter((p) => /둘 수 없다/.test(p)), []);
+  set(method, "위임: prokit-api-builder → 서버; 위임: prokit-ui-builder → 화면");
+  assert.deepEqual(mine(method).filter((p) => /계층마다/.test(p)), []);
+});
+
+test("degraded: 서브에이전트를 구별하지 못한 라운드에서만 Main 직접을 받고, 코드 리뷰를 건너뛰면 받지 않으며, 사유가 없으면 형식 오류다", () => {
+  const { root, write } = makeRepo();
+  for (const s of ["prokit-ui", "prokit-web"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n---\n`);
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-implementer"], skills: {} } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
+  const at = (re) => rows.findIndex((r) => re.test(r.text)) + 1;
+  const impl = at(/^구현 \(구현 단계,/);
+  const review = at(/^\[review\] prokit-reviewer\(code\)/);
+  assert.ok(impl && review);
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  const set = (n, v) => {
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    return run(root, "evidence", String(n), "--file", "tasks/evidence/e.txt").status;
+  };
+  const mine = (n) => audit(root, config).problems.filter((p) => p.startsWith(`#${n} `)).map((p) => p.replace(/^#\d+ .*?: /, ""));
+  write("apps/web/src/app/page.tsx", "export default 1\n");
+  assert.match(evidenceProblem("degraded"), /degraded에 사유가 없다/);
+  assert.equal(evidenceProblem("degraded: Main 직접(Grok Build)"), null);
+  // 훅 기록이 없는 라운드(구별하지 못한 호스트)는 받는다
+  set(impl, "degraded: Main 직접(Grok Build); 사용: prokit-ui, prokit-web. Next 문서: N/A: 없음");
+  assert.deepEqual(mine(impl), []);
+  // 코드 리뷰를 건너뛰면 받지 않는다
+  set(review, "N/A: 생략");
+  assert.match(mine(impl)[0] ?? "", /fresh prokit-reviewer\(code·db\) 리뷰를 받은 라운드에서만/);
+  set(review, "prokit-reviewer(code): approve, max=none");
+  assert.deepEqual(mine(impl), []);
+  // 훅 기록이 있는 라운드는 받지 않는다. 구별 값이 없는 셸 읽기(Claude Code Bash)여도 훅을 설치한 호스트다
+  spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Bash", tool_input: { command: "cat .agents/skills/prokit-ui/SKILL.md" } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  assert.match(mine(impl)[0] ?? "", /이 라운드는 훅 기록이 있다/);
+  // 리뷰 행이 code가 아닌 db(E)나 하네스 변경 리뷰(H)여도 그 리뷰를 센다
+  const { root: r2, write: w2 } = makeRepo();
+  w2("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-db-builder", "prokit-implementer"], skills: {} } }));
+  const c2 = loadConfig(r2);
+  writeTable(r2, c2, "E", { write: true, title: "DB" });
+  const e2 = parseActive(readFileSync(join(r2, "tasks/todo.md"), "utf8")).rows;
+  const dbImpl = e2.findIndex((r) => /^스키마 수정 \+ dbGenerate/.test(r.text)) + 1;
+  w2("packages/db/src/schema/todo.ts", "export const x = 1\n");
+  writeFileSync(join(r2, "tasks/evidence.txt"), "degraded: Main 직접(Grok Build)\n");
+  assert.equal(run(r2, "evidence", String(dbImpl), "--file", "tasks/evidence.txt").status, 0);
+  assert.deepEqual(audit(r2, c2).problems.filter((p) => p.startsWith(`#${dbImpl} `) && /degraded|리뷰/.test(p)), []);
+});
+
+test("계층 에이전트는 다른 계층 파일을 편집하지 못하고(인증 파일은 서버 몫), 자기 계층과 계층 밖 수행자는 막지 않는다", () => {
+  const { root, write } = makeRepo();
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-api-builder", "prokit-db-builder", "prokit-implementer"], skills: {} } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "F", { write: true, title: "기능" });
+  const guard = (agent, file) => spawnSync(process.execPath, [CLI, "edit-guard"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Edit", agent_id: `id-${agent}`, agent_type: agent, tool_input: { file_path: join(root, file) } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const schema = "packages/db/src/schema/todo.ts";
+  const ui = guard("prokit-ui-builder", schema);
+  assert.equal(ui.status, 2);
+  assert.match(ui.stderr, /prokit-ui-builder는 다른 계층 에이전트가 맡는 파일\(packages\/db\/src\/schema\/todo\.ts\)을 고치지 않는다.*prokit-db-builder/);
+  assert.equal(guard("prokit-db-builder", schema).status, 0);
+  assert.equal(guard("prokit-ui-builder", "apps/web/src/app/page.tsx").status, 0);
+  assert.equal(guard("prokit-implementer", schema).status, 0, "계층 밖 수행자는 계층으로 막지 않는다");
+  // 인증 파일은 계층 규칙 밖이어도 서버 에이전트 몫이다
+  assert.equal(guard("prokit-api-builder", "apps/web/src/lib/auth-client.ts").status, 0);
+  assert.equal(guard("prokit-ui-builder", "apps/web/src/lib/auth-client.ts").status, 2);
+});
