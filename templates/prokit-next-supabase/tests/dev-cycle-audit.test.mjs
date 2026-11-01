@@ -1506,3 +1506,67 @@ test("계층 파일은 그 계층 에이전트만 편집하고(인증 파일은 
   assert.equal(guard("prokit-api-builder", "apps/web/src/lib/auth-client.ts").status, 0);
   assert.equal(guard("prokit-ui-builder", "apps/web/src/lib/auth-client.ts").status, 2);
 });
+
+test("--upgrade는 판이 바뀌어 문구만 달라진 행을 단계 이름으로 짝지어 증거와 채운 시각을 옮긴다", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "H", { write: true, title: "갱신" });
+  const p = join(root, config.todoPath);
+  const impl = parseActive(readFileSync(p, "utf8")).rows.findIndex((r) => r.text.startsWith("구현 (")) + 1;
+  write("tasks/evidence.txt", "위임: prokit-implementer(사용: 없음) → 스크립트 반영\n");
+  assert.equal(run(root, "evidence", String(impl), "--file", "tasks/evidence.txt").status, 0);
+  // 옛 판으로 연 표: 구현 행 문구가 지금 판과 다르다
+  const active = parseActive(readFileSync(p, "utf8"));
+  const newText = active.rows[impl - 1].text;
+  const oldText = "구현 (옛 판 문구) → 사용한 스킬과 변경 파일 요약 또는 N/A: 사유";
+  writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, active.rows.map((r, i) => (i === impl - 1 ? { ...r, text: oldText } : r))));
+  const log = join(root, ".prokit/skills-used.jsonl");
+  writeFileSync(log, readFileSync(log, "utf8").replace(JSON.stringify(newText), JSON.stringify(oldText)));
+  assert.equal(run(root, "table", "H", "--write", "--upgrade").status, 0);
+  const rows = parseActive(readFileSync(p, "utf8")).rows;
+  assert.equal(rows.filter((r) => r.text.startsWith("구현 (")).length, 1, "구현 행이 둘이 되지 않는다");
+  assert.match(rows.find((r) => r.text === newText).evidence, /prokit-implementer/);
+  assert.ok(readFileSync(log, "utf8").includes(JSON.stringify(newText)), "새 문구로 채운 시각을 남긴다");
+});
+
+test("prokit-runtime-checker는 tasks/evidence/에만 쓴다", () => {
+  const { root } = makeRepo();
+  const guard = (file) => spawnSync(process.execPath, [CLI, "edit-guard"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Write", agent_id: "id-rc", agent_type: "prokit-runtime-checker", tool_input: { file_path: join(root, file) } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  assert.equal(guard("tasks/evidence/run.md").status, 0);
+  const out = guard("AGENTS.md");
+  assert.equal(out.status, 2);
+  assert.match(out.stderr, /prokit-runtime-checker는 tasks\/evidence\/에 확인 기록과 스크린샷만 쓴다\(AGENTS\.md\)/);
+});
+
+test("audit은 편집 기록이 없는 계층 파일(셸 편집)을 경고로만 알린다", () => {
+  const { root, git, write } = makeRepo();
+  write("packages/api/src/routers/todo.ts", "a\n");
+  write("packages/api/src/routers/new.ts", "a\n");
+  git("add", "-A");
+  git("commit", "-qm", "api");
+  const config = loadConfig(root);
+  writeTable(root, config, "D", { write: true, title: "api" });
+  write("packages/api/src/routers/todo.ts", "b\n");
+  write("packages/api/src/routers/new.ts", "b\n");
+  write("packages/db/src/migrations/0001.sql", "x\n");
+  const edit = { t: new Date().toISOString(), edit: "packages/api/src/routers/new.ts", tool: "Edit", agentType: "prokit-api-builder", agent: "a1", seen: true };
+  mkdirSync(join(root, ".prokit"), { recursive: true });
+  writeFileSync(join(root, ".prokit/skills-used.jsonl"), `${JSON.stringify(edit)}\n`);
+  const r = audit(root, config);
+  assert.equal(r.warnings?.length, 1);
+  assert.match(r.warnings[0], /^편집 기록이 없는 계층 파일: packages\/api\/src\/routers\/todo\.ts\./);
+  assert.ok(!r.problems.some((p) => p.includes("편집 기록이 없는")), "막지 않는다");
+});
+
+test("위임 안내 예시는 계층 파일이 없는 H 라운드에서 prokit-implementer를 보인다", () => {
+  const { root, write } = makeRepo();
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-api-builder", "prokit-db-builder", "prokit-implementer"], skills: {} } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "H", { write: true, title: "하네스" });
+  write(".prokit/skills-used.jsonl", `${JSON.stringify({ t: new Date().toISOString(), skill: "prokit-dev-cycle", tool: "Skill" })}\n`);
+  const impl = parseActive(readFileSync(join(root, config.todoPath), "utf8")).rows.findIndex((r) => r.text.startsWith("구현 (")) + 1;
+  write("tasks/evidence.txt", "스크립트 반영\n");
+  run(root, "evidence", String(impl), "--file", "tasks/evidence.txt");
+  const p = audit(root, config).problems.find((x) => x.startsWith(`#${impl} `));
+  assert.match(p, /증거에 위임: prokit-implementer\(사용:/);
+});

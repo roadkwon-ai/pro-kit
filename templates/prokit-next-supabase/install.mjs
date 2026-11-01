@@ -19,6 +19,8 @@ const MERGE_MD = new Set(["AGENTS.md", "CLAUDE.md"]);
 const IGNORE = new Set([".DS_Store", ".omc"]);
 // 설치기가 첫 복사 뒤 프로젝트 값으로 채우는 파일. 템플릿과 늘 다르므로 "유지(템플릿과 다름)"·--diff에서 뺀다.
 const FILLED = new Set([".dev-cycle.json"]);
+// 프로젝트가 채워 가는 파일(용어집, 서비스 문서, 할 일과 기록 목록). 템플릿은 빈 틀이라 다르면 프로젝트 쪽이 맞다. --diff에서 diff를 보이지 않는다.
+const OWNED = new Set(["GLOSSARY.md", "docs/domain/project.md", "tasks/todo.md", "tasks/archive/README.md"]);
 // 값을 받는 인자. 그대로 skills-setup.mjs에 넘긴다.
 const VALUE_FLAGS = new Set(["--brain", "--simplicity", "--matt", "--optional"]);
 // 설치기만 쓰는 값 인자. .dev-cycle.json에 기록한다(projectType, legacy.path).
@@ -128,7 +130,7 @@ function walk(dir, base = dir) {
 // 운영 중인 프로젝트에는 앱 폴더에 파일을 더하지 않는다(쓰지 않는 제작 표시 컴포넌트).
 const APP_CREDIT = "apps/web/src/components/prokit-credit.tsx";
 export function copyFiles(target, { diff = false, adopt = false, operating = false } = {}) {
-  const r = { copied: [], appended: [], same: [], kept: [], filled: [] };
+  const r = { copied: [], appended: [], same: [], kept: [], filled: [], owned: [] };
   for (const rel of walk(FILES_DIR).filter((f) => (!adopt || adoptFile(f)) && !(operating && f === APP_CREDIT))) {
     const src = adopt && MERGE_MD.has(rel) ? join(ADOPT_DIR, rel) : join(FILES_DIR, rel);
     const dest = join(target, rel);
@@ -148,6 +150,10 @@ export function copyFiles(target, { diff = false, adopt = false, operating = fal
     }
     if (FILLED.has(rel)) {
       r.filled.push(rel);
+      continue;
+    }
+    if (OWNED.has(rel)) {
+      r.owned.push(rel);
       continue;
     }
     const text = cur.toString("utf8");
@@ -701,6 +707,7 @@ export function main(argv) {
       `파일: 복사 예정 ${files.copied.join(", ") || "없음"}, 덧붙임 예정 ${files.appended.join(", ") || "없음"}, 동일 ${files.same.length}, 유지(템플릿과 다름) ${kept}`,
       ...files.kept.map((k) => k.diff),
       ...files.filled.map((f) => `${f}: 설치기가 채움, 유지`),
+      ...files.owned.map((f) => `${f}: 프로젝트가 채우는 파일, 유지(옮기지 않는다)`),
       (() => {
         const scripts = addScripts(target, { dryRun: true, wrapResources: freshBts, adopt });
         return `package.json scripts 추가 예정: ${scripts.added.join(", ") || "없음"}${scripts.wrapped.length ? `, resource 래퍼 ${scripts.wrapped.join(", ")}` : ""}`;
@@ -757,6 +764,7 @@ export function main(argv) {
   const out = [
     `파일: 복사 ${files.copied.length}, 덧붙임 ${files.appended.join(", ") || "없음"}, 동일 ${files.same.length}, 유지(템플릿과 다름) ${kept}`,
     ...files.filled.map((f) => `${f}: 설치기가 채움, 유지`),
+    ...files.owned.map((f) => `${f}: 프로젝트가 채우는 파일, 유지(옮기지 않는다)`),
     `스킬 링크: 생성 ${links.created.join(", ") || "없음"}${links.conflicts.length ? `, 충돌 ${links.conflicts.join(", ")} (직접 확인)` : ""}`,
     ...(dc ? [`.dev-cycle.json: 기본 브랜치 ${dc.defaultBranch}, commands ${Object.keys(dc.commands).join(", ") || "없음"}`] : []),
     ...(choices.length ? [`.dev-cycle.json 기록: ${choices.join(", ")}`] : []),

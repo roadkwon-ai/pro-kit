@@ -132,6 +132,18 @@ test("두 번째 실행은 아무것도 바꾸지 않는다 (멱등)", () => {
   assert.doesNotMatch(install(root, "--diff").stdout, /^[-+]{3} .*\.dev-cycle\.json/m);
 });
 
+test("--diff는 프로젝트가 채운 용어집·서비스 문서·할 일 목록의 diff를 보이지 않는다", () => {
+  const root = fakeBts();
+  assert.equal(install(root).status, 0);
+  writeFileSync(join(root, "GLOSSARY.md"), "# 용어집\n- 주문: 사용자가 낸 매수·매도\n");
+  writeFileSync(join(root, "tasks/todo.md"), "# 작업\n- [ ] 백로그\n");
+  const out = install(root, "--diff").stdout;
+  assert.match(out, /^GLOSSARY\.md: 프로젝트가 채우는 파일, 유지\(옮기지 않는다\)$/m);
+  assert.match(out, /^tasks\/todo\.md: 프로젝트가 채우는 파일, 유지/m);
+  assert.doesNotMatch(out, /^[-+]{3} .*(GLOSSARY\.md|tasks\/todo\.md)/m);
+  assert.match(out, /유지\(템플릿과 다름\) 없음/);
+});
+
 test("기존 AGENTS.md는 보존하고 템플릿 블록을 한 번만 덧붙인다", () => {
   const root = fakeBts();
   writeFileSync(join(root, "AGENTS.md"), "# 기존 규칙\n- 한국어로 답한다\n");

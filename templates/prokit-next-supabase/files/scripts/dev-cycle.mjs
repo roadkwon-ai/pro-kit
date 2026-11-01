@@ -190,8 +190,10 @@ export function classify(files, config) {
 	// case F 규칙: 계층을 알 수 없는 코드(adopt 프로젝트의 규칙 밖 코드)는 무거운 F로 본다.
 	let wide = false;
 	for (const file of files) {
-		const rule = rules.find((r) => r.re.test(file));
+		let rule = rules.find((r) => r.re.test(file));
 		const isAuth = authRe ? authRe.test(file) : false;
+		// 인증 파일은 서버(D) 몫이다. 화면 규칙(apps/web/src/)에 걸려도 화면 계층으로 세지 않는다
+		if (isAuth && rule?.case === "B") rule = undefined;
 		if (isAuth) auth = true;
 		if (!rule && !isAuth) continue;
 		if (rule?.case === "H") harness = true;
@@ -1058,6 +1060,13 @@ export function logEdit(root, input) {
 const knows = (e) =>
 	e.seen === true || CC_TOOLS.has(e.tool) || CC_EDIT_TOOLS.has(e.tool);
 function skillLog(root, active) {
+	const log = roundLog(root, active);
+	return log && (log.uses.length || log.agentUses.length || log.edits.length)
+		? log
+		: null;
+}
+// 이 라운드 기록 전부(훅 기록 없이 행을 채운 시각만 있어도). 기록 파일이 없으면 null
+function roundLog(root, active) {
 	const p = join(root, SKILL_LOG);
 	if (!existsSync(p)) return null;
 	const since = Date.parse(
@@ -1101,9 +1110,7 @@ function skillLog(root, active) {
 			}
 		} catch {}
 	}
-	return uses.length || agentUses.length || edits.length
-		? { uses, agentUses, fills, edits }
-		: null;
+	return { uses, agentUses, fills, edits };
 }
 function skillsLogged(root, active) {
 	const log = skillLog(root, active);
@@ -1355,8 +1362,13 @@ function usageProblem(root, config, active) {
 			)
 				return "degraded(Main 직접)는 fresh prokit-reviewer(code·db) 리뷰를 받은 라운드에서만 받는다. 대조표에 그 리뷰 행이 있고 실제로 리뷰해야 한다";
 		} else {
+			// 안내 예시는 이 라운드 diff의 계층 에이전트, 계층 파일이 없으면 prokit-implementer(하네스·계층 밖)
+			const eg =
+				[...agentLayers.map((c) => LAYER_AGENTS[c]), "prokit-implementer"].find(
+					(a) => want.includes(a),
+				) ?? want[0];
 			if (want.length && !said.length)
-				return `이 행은 ${want.join("·")}에 맡긴다. 증거에 위임: ${want[0]}(사용: <그 에이전트가 읽은 공식 스킬>) → 결과처럼 적는다. 맡길 에이전트가 없으면 Main이 직접 하지 않고 blocked: 사유로 남긴다. 호스트가 서브에이전트를 구별하지 못하면 degraded: Main 직접(<호스트>)으로 적는다`;
+				return `이 행은 ${want.join("·")}에 맡긴다. 증거에 위임: ${eg}(사용: <그 에이전트가 읽은 공식 스킬>) → 결과처럼 적는다. 맡길 에이전트가 없으면 Main이 직접 하지 않고 blocked: 사유로 남긴다. 호스트가 서브에이전트를 구별하지 못하면 degraded: Main 직접(<호스트>)으로 적는다`;
 			// 계층 에이전트 여럿을 적은 행(F 구현 방식)은 이 라운드 diff의 계층마다 그 에이전트에 맡긴다
 			const lack =
 				namedLayers(r.text).length > 1
@@ -1752,11 +1764,52 @@ export function writeTable(
 	const extra = [...(active?.extra ?? [])];
 	if (active && upgrade) {
 		const old = new Map(active.rows.map((r) => [r.text, r.evidence]));
-		for (const r of rows) r.evidence = old.get(r.text) ?? "";
 		const kept = new Set(rows.map((r) => r.text));
+		// 템플릿 판이 바뀌어 문구만 달라진 행: 단계 이름(괄호·화살표 앞)이 옛 표와 새 표에 하나씩뿐이면 같은 행으로 보고 증거를 옮긴다.
+		// 채운 시각 기록도 새 문구로 하나 더 남겨 audit의 순서 확인이 그 행을 그대로 본다.
+		const stepOf = (t) => t.split(/\s[(→]/)[0].trim();
+		const only = (list) => {
+			const n = new Map();
+			for (const r of list)
+				n.set(stepOf(r.text), (n.get(stepOf(r.text)) ?? 0) + 1);
+			return (r) => n.get(stepOf(r.text)) === 1;
+		};
+		const oldOnly = only(active.rows);
+		const newOnly = only(rows);
+		const moved = new Set();
+		const fills = roundLog(root, active)?.fills ?? [];
+		const refill = [];
+		for (const r of rows) {
+			if (old.has(r.text)) {
+				r.evidence = old.get(r.text);
+				continue;
+			}
+			const i = active.rows.findIndex(
+				(o) =>
+					!kept.has(o.text) &&
+					oldOnly(o) &&
+					newOnly(r) &&
+					stepOf(o.text) === stepOf(r.text),
+			);
+			const o = active.rows[i];
+			r.evidence = o?.evidence ?? "";
+			if (!o) continue;
+			moved.add(o.text);
+			const t = fills
+				.filter((x) => (x.text ? x.text === o.text : x.row === i + 1))
+				.at(-1)?.t;
+			if (t !== undefined)
+				refill.push(
+					`${JSON.stringify({ t: new Date(t).toISOString(), row: i + 1, text: r.text })}\n`,
+				);
+		}
+		if (write && refill.length) {
+			mkdirSync(join(root, ".prokit"), { recursive: true });
+			appendFileSync(join(root, SKILL_LOG), refill.join(""));
+		}
 		// 새 케이스에 없는 이전 행(직접 추가한 행 포함)은 끝의 사용자 확인 행 앞에 둔다.
 		const carried = active.rows
-			.filter((r) => !kept.has(r.text))
+			.filter((r) => !kept.has(r.text) && !moved.has(r.text))
 			.filter((r) => {
 				if (
 					rows.some((row) => row.text.includes("prokit-reviewer(plan)")) &&
@@ -2105,7 +2158,9 @@ export function audit(
 			);
 	});
 	const X = active.meta.case;
-	const cls = classify(roundFiles(root, active), config);
+	const files = roundFiles(root, active);
+	const cls = classify(files, config);
+	const warnings = shellEdits(root, config, active, files);
 	if (!["C", "F"].includes(X) && ![X, "A"].includes(cls.pathCase)) {
 		problems.push(
 			`케이스 상향 필요: 현재 diff 판정은 ${cls.pathCase} → pnpm dev-cycle table ${cls.pathCase} --write --upgrade`,
@@ -2182,9 +2237,32 @@ export function audit(
 	return {
 		ok: problems.length === 0,
 		problems,
+		...(warnings.length ? { warnings } : {}),
 		case: X,
 		pathCase: cls.pathCase,
 	};
+}
+// 편집 훅은 셸 편집(리다이렉션, cp, sed)을 보지 못한다. 훅이 편집을 기록한 라운드에서 기준 커밋에 있던 계층 파일인데
+// 편집 기록이 없으면 알린다. 사용자가 직접 고쳤을 수 있어 막지 않는다. 생성 명령이 새로 만든 파일과 마이그레이션 폴더는 보지 않는다
+function shellEdits(root, config, active, files) {
+	const edits = skillLog(root, active)?.edits ?? [];
+	if (!active.meta.base || !edits.some((e) => e.seen)) return [];
+	const edited = new Set(edits.map((e) => e.file));
+	const loose = files.filter((f) => {
+		if (edited.has(f) || /(^|\/)migrations\//.test(f)) return false;
+		const c = classify([f], config);
+		if (!c.layers.some((l) => LAYER_AGENTS[l]) && !c.auth) return false;
+		return (
+			spawnSync("git", ["cat-file", "-e", `${active.meta.base}:${f}`], {
+				cwd: root,
+			}).status === 0
+		);
+	});
+	return loose.length
+		? [
+				`편집 기록이 없는 계층 파일: ${loose.join(", ")}. 셸로 고쳤으면 편집 훅의 계층 확인을 건너뛴 것이다. 그 계층 에이전트가 편집 도구(Edit·Write, Codex apply_patch)로 다시 고치게 한다. 사용자가 직접 고친 파일이면 그대로 둔다`,
+			]
+		: [];
 }
 
 export function delegationCompletionProblem(result, runtime) {
@@ -2789,6 +2867,13 @@ export function editGuard(root, config, input) {
 	const { name, agent, agentType, seen } = hookCall(input, root);
 	const rels = editFiles(root, input);
 	if (!rels.length) return null;
+	// 실행 확인 에이전트는 코드를 고치지 않고 확인 기록과 스크린샷만 tasks/evidence/에 쓴다
+	const outside =
+		agent && agentType === "prokit-runtime-checker"
+			? rels.filter((f) => !f.startsWith("tasks/evidence/"))
+			: [];
+	if (outside.length)
+		return `dev-cycle: prokit-runtime-checker는 tasks/evidence/에 확인 기록과 스크린샷만 쓴다(${outside.join(", ")}). 고칠 일은 보고에 적어 Main이 그 파일을 맡는 에이전트에 맡기게 한다.`;
 	const cls = classify(rels, config);
 	if (cls.pathCase === "A" && !cls.auth) return null;
 	const md = readTodo(root, config);
@@ -3842,6 +3927,7 @@ export function main(argv, root = process.cwd()) {
 					? "audit 통과"
 					: ["audit 실패:", ...r.problems.map((p) => `  ❌ ${p}`)].join("\n"),
 			);
+			if (!json) for (const w of r.warnings ?? []) console.log(`  ⚠️ ${w}`);
 			return r.ok ? 0 : 1;
 		}
 		case "resource":

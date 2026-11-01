@@ -66,7 +66,7 @@ description: >-
    - `.md`가 아닌 파일은 스크립트가 설치 뒤 원격과 다시 비교한다. `설치본이 검토한 판과 다르다`가 나오거나 문제가 보이면 이번 업데이트를 되돌린다. `git status --short -- .agents/skills .claude/skills skills-lock.json`으로 이번에 생긴 변경만 있는지 보고, `git checkout -- .agents/skills .claude/skills skills-lock.json`과 새로 생긴 스킬 폴더·링크 삭제로 되돌린 뒤 문제없는 스킬만 이름을 지정해 다시 설치한다.
    - 이 프로젝트에서 직접 고쳐 둔 외부 스킬이면 업데이트가 그 수정을 지운다. 지워진 수정이 있으면 보고한다.
 5. **배치 점검**: 새로 생긴 스킬, 원격에서 없어진 스킬, `SKILL.md`의 `description`이나 하는 일이 바뀐 공식 스킬이 있으면 `prokit-skills-assign`의 1\~2절로 맡을 에이전트를 판단해 보여 주고, 바꿀 배치가 있으면 이 라운드에서 그 3절 2번부터 반영한다. 글만 다듬은 업데이트면 `배치 그대로`로 보고에 적는다.
-6. 행을 채운다. `pnpm agents:check`, `pnpm skills:check`, `pnpm dev-cycle case`·`status`의 출력을 적는다. 구현 행은 배치를 바꾸지 않았으면 `N/A: 외부 스킬만 갱신`, skill-creator eval 행은 `N/A: 외부 스킬만 갱신(prokit-* 변경 없음)`, 문서 영향 행은 바뀐 문서가 없으면 `N/A: 외부 스킬 갱신`이다.
+6. 행을 채운다. 설계 행(`[design]`)은 N/A를 받지 않으니 먼저 채운다. 예: `기존: .agents/skills/<바뀐 스킬>과 그 스킬을 읽는 prokit-*·에이전트; 결정: 외부 스킬만 갱신하고 prokit-*·배치는 그대로(바꿨으면 5번 결과); 설정: 환경 변수·설정 영향 없음; 검증: agents:check·skills:check·dev-cycle case`. 이어서 `pnpm agents:check`, `pnpm skills:check`, `pnpm dev-cycle case`·`status`의 출력을 적는다. 구현 행은 배치를 바꾸지 않았으면 `N/A: 외부 스킬만 갱신`, skill-creator eval 행은 `N/A: 외부 스킬만 갱신(prokit-* 변경 없음)`, 문서 영향 행은 바뀐 문서가 없으면 `N/A: 외부 스킬 갱신`이다.
 7. `[confirm]` 행: 업데이트한 스킬 목록, 스킬별 바뀐 줄 수, 2번과 4번에서 본 주의점(뺀 스킬 포함), 5번의 배치 점검 결과를 보여 주고 확인받는다.
 8. `prokit-dev-cycle` 5절대로 닫고 커밋한다. 커밋 제목 예: `chore: 외부 스킬 업데이트 (next-dev-loop, shadcn)`. 앱 코드는 바뀌지 않았으므로 마무리 질문에서 배포는 필요 없다고 함께 알린다.
 

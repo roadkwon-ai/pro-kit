@@ -18,7 +18,7 @@
 		},
 		{
 			"case": "B",
-			"match": "^(apps/web/src/(app|components)/|packages/ui/)",
+			"match": "^(apps/web/src/|packages/ui/)",
 			"why": "화면·UI"
 		},
 		{
