@@ -1335,6 +1335,28 @@ test("Antigravity 대화 묶기: invoke_subagent로 부른 이름을 다음에 �
   bindSession(root, { conversationId: "S3" });
   const bound = readFileSync(join(root, ".prokit/agent-sessions.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l)).filter((x) => x.conv).map((x) => x.conv);
   assert.deepEqual(bound, ["S", "S2"]);
+  // 다른 대화가 묶는 중(잠금)이면 묶지 않고, 죽은 훅이 남긴 오래된 잠금은 치운 뒤 다음 호출에서 묶는다
+  const callAgain = () => cli("skill-log", { ...common, conversationId: "M", toolCall: { name: "invoke_subagent", args: { TypeName: "prokit-ui-builder" } } });
+  callAgain();
+  const lock = join(root, ".prokit/agent-sessions.lock");
+  mkdirSync(lock);
+  assert.equal(bindSession(root, { conversationId: "L" }), undefined);
+  const old = new Date(Date.now() - 60_000);
+  utimesSync(lock, old, old);
+  assert.equal(bindSession(root, { conversationId: "L" }), undefined);
+  assert.equal(existsSync(lock), false);
+  assert.equal(bindSession(root, { conversationId: "L" }), "prokit-ui-builder");
+  // 요청 없이 시작한 Main 대화가 남은 call에 묶여도, 요청이 있는 도구 호출은 Main으로 보고 막는다
+  callAgain();
+  assert.equal(bindSession(root, { conversationId: "M2" }), "prokit-ui-builder");
+  assert.equal(edit("M2", "화면 고쳐줘").decision, "deny");
+  // 묶지 못한 서브에이전트 대화의 읽기는 Main 몫으로 남기지 않는다
+  const skills = () => readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").split("\n").filter((l) => l.includes('"skill"')).length;
+  const before = skills();
+  cli("skill-log", { ...common, conversationId: "U", toolCall: { name: "view_file", args: { AbsolutePath: join(root, ".agents/skills/shadcn/SKILL.md") } } });
+  assert.equal(skills(), before);
+  cli("skill-log", { ...common, conversationId: "M", lastUserInput: "화면 고쳐줘", toolCall: { name: "view_file", args: { AbsolutePath: join(root, ".agents/skills/shadcn/SKILL.md") } } });
+  assert.equal(skills(), before + 1, "요청이 있는 Main 읽기는 남긴다");
 });
 
 test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 바뀌면 받지 않고, 맡은 스킬은 그 행에서 위임한 에이전트가 읽은 기록만 세며, 일한 기록은 다른 에이전트에 맡긴 앞 행을 채운 뒤여야 한다", () => {

@@ -6,9 +6,9 @@
 
 ## Codex·Antigravity에서도 위임 기록과 Main 편집 막기 (2026-11-01)
 
-공통 변경(Codex `agent_type`, Antigravity 대화 묶기, Antigravity 쓰기 에이전트 `tools`, `.agents/hooks.json` matcher)과 세 도구 실측은 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#codexantigravity에서도-위임-기록과-main-편집-막기-2026-11-01)에 있다.
+공통 변경(Codex `agent_type`, Antigravity 대화 묶기, Antigravity 쓰기 에이전트 `tools`, `.agents/hooks.json` matcher), 세 도구 실측, 독립 리뷰로 고친 대화 묶기 세 가지는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#codexantigravity에서도-위임-기록과-main-편집-막기-2026-11-01)에 있다.
 
-- 테스트: 템플릿 전체 393 통과·4 실패였다. 실패한 4건(evidence setter 1건, 자원 guard 3건)은 바꾸기 전(HEAD)에도 같게 실패했다.
+- 테스트: 템플릿 전체 393 통과·4 실패였다. 실패한 4건(evidence setter 1건, 자원 guard 3건)은 바꾸기 전(HEAD)에도 같게 실패했다. 리뷰 보강 뒤에는 392 통과·5 실패였고, 더 실패한 1건(reviewer child 임시 output 검사)은 따로 돌리면 통과했다.
 - 한계: 실제 설치와 세 도구 확인은 neon으로만 했다. 바꾼 파일(`scripts/*.mjs`, `.agents/hooks.json`, 공통 테스트)은 neon과 바이트가 같다(`tests/shared-files.test.mjs`).
 
 ## 공식 스킬을 전문 에이전트에 맡기기 (2026-11-01)

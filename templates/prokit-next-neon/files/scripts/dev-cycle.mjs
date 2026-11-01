@@ -847,9 +847,12 @@ const SKILL_LOG_DAYS = 30;
 // seen: 이 호출이 Main인지 서브에이전트인지 호스트가 알려 준 기록이다(Codex는 turn_id, Antigravity는 conversationId가 늘 있다)
 const hookCall = (e, root) => {
 	const conv = e?.conversationId ? String(e.conversationId) : undefined;
-	// 세션 시작 훅이 call보다 먼저 돌면 묶지 못하므로, 아직 묶지 않은 대화는 첫 도구 호출에서 한 번 더 묶는다
+	// 세션 시작 훅이 call보다 먼저 돌면 묶지 못하므로, 아직 묶지 않은 대화는 도구 호출마다 다시 묶는다.
+	// 사용자 요청(lastUserInput)이 있는 호출은 Main이다. 세션 시작에서 잘못 묶였어도 서브에이전트로 보지 않는다
 	const bound =
-		conv && root ? (agSession(root, conv) ?? bindSession(root, e)) : undefined;
+		conv && root && !e.lastUserInput
+			? (agSession(root, conv) ?? bindSession(root, e))
+			: undefined;
 	return {
 		name: e?.tool_name ?? e?.toolCall?.name,
 		t: e?.tool_input ?? e?.toolCall?.args ?? {},
@@ -862,10 +865,13 @@ const hookCall = (e, root) => {
 // Antigravity 서브에이전트 대화 묶기: Main이 invoke_subagent(TypeName)를 부르면 call을 남기고(skill-log),
 // 처음 보는 대화가 SessionStart(agent-start)나 첫 도구 호출로 오면 아직 묶지 않은 가장 오래된 call에 묶는다.
 // Main 대화는 묶지 않는다: call을 남긴 대화와, 사용자 요청(lastUserInput)이 있는 대화다(CLI 1.4.8 실측에서 서브에이전트 대화는 비어 있었다).
-// 묶지 못한 서브에이전트는 Main으로 보여 계층 편집이 막히고 읽기도 세지 않는다(통과 쪽으로 틀리지 않는다).
+// 묶지 못한 서브에이전트는 Main으로 보여 계층 편집이 막히고, 읽기는 남기지 않는다(logSkill. 통과 쪽으로 틀리지 않는다).
 // shortcut: 동시에 부른 서브에이전트는 부른 순서대로 묶고, AG_BIND_MS 안에 온 대화만 묶는다. 호스트가 서브에이전트 이름을 주면 그 값으로 바꾼다
 const AG_SESSIONS = ".prokit/agent-sessions.jsonl";
 const AG_BIND_MS = 120_000;
+// 동시에 시작한 대화가 같은 call을 함께 잡지 않게 읽고 쓰는 동안 잠근다. 이 시간보다 오래된 잠금은 죽은 훅이 남긴 것이다
+const AG_LOCK = ".prokit/agent-sessions.lock";
+const AG_LOCK_STALE_MS = 10_000;
 function agLines(root) {
 	try {
 		return readFileSync(join(root, AG_SESSIONS), "utf8")
@@ -888,19 +894,35 @@ function agSession(root, conv) {
 export function bindSession(root, input, now = Date.now()) {
 	const conv = input?.conversationId ? String(input.conversationId) : "";
 	if (!conv || input.lastUserInput) return;
-	const lines = agLines(root);
-	// 이미 아는 대화(묶은 대화, call을 남긴 Main 대화)는 다시 묶지 않는다
-	if (lines.some((x) => x.conv === conv || x.from === conv)) return;
-	const taken = new Set(lines.filter((x) => x.conv).map((x) => x.n));
-	const n = lines.findIndex(
-		(x, i) => x.call && !taken.has(i) && now - Date.parse(x.t) <= AG_BIND_MS,
-	);
-	if (n < 0) return;
-	appendFileSync(
-		join(root, AG_SESSIONS),
-		`${JSON.stringify({ t: new Date(now).toISOString(), conv, agent: lines[n].call, n })}\n`,
-	);
-	return lines[n].call;
+	const lock = join(root, AG_LOCK);
+	mkdirSync(join(root, ".prokit"), { recursive: true });
+	try {
+		mkdirSync(lock);
+	} catch {
+		// 다른 대화가 묶는 중이면 이번에는 묶지 않는다(다음 도구 호출에서 다시 묶는다)
+		try {
+			if (Date.now() - statSync(lock).mtimeMs > AG_LOCK_STALE_MS)
+				rmSync(lock, { recursive: true, force: true });
+		} catch {}
+		return;
+	}
+	try {
+		const lines = agLines(root);
+		// 이미 아는 대화(묶은 대화, call을 남긴 Main 대화)는 다시 묶지 않는다
+		if (lines.some((x) => x.conv === conv || x.from === conv)) return;
+		const taken = new Set(lines.filter((x) => x.conv).map((x) => x.n));
+		const n = lines.findIndex(
+			(x, i) => x.call && !taken.has(i) && now - Date.parse(x.t) <= AG_BIND_MS,
+		);
+		if (n < 0) return;
+		appendFileSync(
+			join(root, AG_SESSIONS),
+			`${JSON.stringify({ t: new Date(now).toISOString(), conv, agent: lines[n].call, n })}\n`,
+		);
+		return lines[n].call;
+	} finally {
+		rmSync(lock, { recursive: true, force: true });
+	}
 }
 // Claude Code 읽기 도구. 이 도구와 seen 기록만 Main과 서브에이전트를 구별한다(구별 값이 없는 기록은 자기 신고)
 const CC_TOOLS = new Set(["Skill", "Read"]);
@@ -941,6 +963,8 @@ export function logSkill(root, input) {
 		);
 		return;
 	}
+	// 묶지 못한 Antigravity 서브에이전트(요청 없는 대화)의 읽기는 Main 몫으로 세지 않게 남기지 않는다
+	if (e.conversationId && !agent && !e.lastUserInput) return;
 	const path = String(t.file_path ?? t.Path ?? t.AbsolutePath ?? "");
 	const cmd = String(t.command ?? "");
 	const read = ["Read", "read_file", "view_file"].includes(name);

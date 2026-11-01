@@ -23,8 +23,15 @@ Claude Code에서만 돌던 서브에이전트 구별(읽기·편집 기록의 `
   - Claude Code: Main 편집이 막혔고, 읽기 `{"skill":"shadcn","agentType":"prokit-ui-builder","tool":"Read","project":true}`와 편집 `{"edit":"apps/web/src/app/page.tsx","agentType":"prokit-ui-builder","tool":"Edit"}`가 남았다.
   - Codex: Main의 `apply_patch`가 막혔고, 읽기 `{"skill":"shadcn","agentType":"prokit-ui-builder","tool":"Bash","seen":true,"project":true}`와 편집 `{"edit":"apps/web/src/app/page.tsx","agentType":"prokit-ui-builder","tool":"apply_patch","seen":true}`가 남았다.
   - Antigravity: Main의 `edit_file`이 막혔고, 서브에이전트 대화가 부른 지 0.3초 만에 묶여 읽기(`read_file`)와 편집(`edit_file`)이 `agentType: prokit-ui-builder`로 남았다. 첫 실행에서는 서브에이전트의 첫 읽기가 Main 몫으로 남았다(대화를 늦게 묶었다). 이 일로 첫 도구 호출에서 다시 묶게 했다. 확인용 project scope 플러그인(skill-creator)은 지웠고 DB 컨테이너는 띄우지 않았다.
+- 독립 리뷰(커밋 뒤, 같은 날)의 지적으로 고친 것:
+  - 요청 없이 시작한 Main 대화(세션 시작 입력에 `lastUserInput`이 비는 경우)가 남은 call에 묶이면 Main 편집을 막지 못했다. 이제 `lastUserInput`이 있는 도구 호출은 묶였어도 Main으로 본다.
+  - 묶지 못한 서브에이전트의 읽기가 Main 몫으로 남아, 배치에 없는 스킬(Main이 읽는 스킬)의 읽기로 세졌다. 요청 없는 대화의 묶지 못한 읽기는 남기지 않는다.
+  - 동시에 시작한 두 대화가 같은 call을 함께 잡을 수 있었다. 묶는 동안 `.prokit/agent-sessions.lock`으로 잠그고, 잠겨 있으면 다음 도구 호출에서 다시 묶는다. 10초 넘은 잠금은 죽은 훅이 남긴 것으로 보고 치운다.
+  - 세 가지를 새 테스트 단언으로 보고, 고친 줄을 하나씩 되돌리면 그 테스트가 실패하는 것을 확인했다. 이 보강은 실제 Antigravity 세션으로 다시 돌리지 않았다.
+  - 테스트: 두 템플릿을 함께 돌려 각각 392 통과·5 실패였다. 4건은 위 테스트 항목의 기존 실패(자원 guard 3건, evidence setter 1건)다. 나머지 1건(남은 reviewer child가 있을 때 임시 review output을 지우지 않는 검사)은 따로 돌리면 두 템플릿 모두 통과했다.
 - 한계:
   - Antigravity는 동시에 부른 서브에이전트를 부른 순서대로 묶고, 부른 지 2분 안에 온 대화만 묶는다. 호스트가 이름을 주지 않아서다.
+  - call은 Main의 `invoke_subagent` PostToolUse 훅이 남긴다. 서브에이전트의 첫 호출이 그 훅보다 먼저 오면 그 호출은 묶이지 않아 막히거나 기록되지 않고, 다음 호출에서 묶인다. 실측에서는 call 뒤 0.3초에 세션이 시작됐다. PreToolUse로 옮기는 안은 그 훅의 실제 동작을 재지 않아 미뤘다.
   - Antigravity IDE의 도구 이름이 CLI 1.4.8과 같은지는 확인하지 않았다. 틀린 이름을 `tools`에 적으면 서브에이전트가 멈출 수 있다는 문서 경고가 있어 실측한 이름만 넣었다.
   - 첫 실행에서 묶기가 늦었던 까닭은 확인하지 못했다(대화 묶기 줄의 시각이 부른 시각보다 5분 뒤였다). 그 뒤 두 번은 바로 묶였다.
   - 셸 명령으로 고친 파일은 세 도구 모두 편집 훅이 보지 않는다(Claude Code와 같다). Grok Build는 훅을 확인하지 않았다.
