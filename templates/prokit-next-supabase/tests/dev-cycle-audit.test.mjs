@@ -1450,6 +1450,8 @@ test("행 일 이름의 공식 스킬과 리뷰 focus의 공식 스킬은 맡는
   const unread = () => warnings().find((w) => w.startsWith("이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬")) ?? "";
   assert.match(unread(), /prokit-ui-builder: shadcn[.;]/);
   assert.doesNotMatch(unread(), /next-cache-components-optimizer/);
+  // 리뷰어는 focus마다 읽는 스킬이 달라 알리지 않는다(맡은 neon-postgres를 읽지 않았어도)
+  assert.doesNotMatch(unread(), /prokit-reviewer/);
   write("apps/web/next.config.ts", "export default { cacheComponents: true };\n");
   assert.match(unread(), /prokit-ui-builder: shadcn, next-cache-components-optimizer/);
 });
@@ -1535,6 +1537,30 @@ test("한 행에 계층 에이전트와 리뷰어를 함께 맡기면 리뷰어�
   assert.match(unread()[0] ?? "", /증거의 prokit-verify를 이 라운드에서 부르거나 읽은 기록이 없다/);
   read("prokit-verify", "prokit-ui-builder");
   assert.deepEqual(unread(), []);
+  // 구현 행에 리뷰어 이름만 나온 것("지적 반영")은 리뷰어를 맡긴 것이 아니다: 리뷰어가 읽은 기록으로 화면 에이전트의 스킬을 세지 않는다
+  const impl = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^구현 \(구현 단계,/.test(r.text)) + 1;
+  writeFileSync(join(root, "tasks/evidence/e.txt"), "사용: prokit-ui; 위임: prokit-ui-builder(사용: vercel-composition-patterns) → prokit-reviewer(code) 지적 반영\n");
+  assert.equal(run(root, "evidence", String(impl), "--file", "tasks/evidence/e.txt").status, 0);
+  assert.ok(audit(root, config).problems.some((p) => p.startsWith(`#${impl} `) && /vercel-composition-patterns를 이 라운드에서 부르거나 읽은 기록이 없다/.test(p)));
+});
+
+test("매니페스트가 Claude 플러그인으로도 설치하는 공식 스킬은 <플러그인>:<이름> Skill 호출도 센다(이름만 부른 호출은 개인 스킬일 수 있어 세지 않는다)", () => {
+  const { root, write } = makeRepo();
+  write(".agents/skills/skill-creator/SKILL.md", "---\nname: skill-creator\n---\n");
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["skill-creator"] }], performers: { agents: ["prokit-implementer"], skills: {} }, claude: { plugins: ["skill-creator@claude-plugins-official"] } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "H", { write: true, title: "스킬" });
+  const row = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^스킬을 바꿨으면 skill-creator eval/.test(r.text)) + 1;
+  assert.ok(row);
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  writeFileSync(join(root, "tasks/evidence/e.txt"), "벤치마크 tasks/evidence/bench.json\n");
+  assert.equal(run(root, "evidence", String(row), "--file", "tasks/evidence/e.txt").status, 0);
+  const call = (skill) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Skill", tool_input: { skill } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const mine = () => audit(root, config).problems.filter((p) => p.startsWith(`#${row} `) && /skill-creator/.test(p));
+  call("skill-creator");
+  assert.match(mine()[0] ?? "", /행 문구의 skill-creator\(Main\)를 이 라운드에서 맡는 쪽\(괄호\)이 읽은 기록이 없다/);
+  call("skill-creator:skill-creator");
+  assert.deepEqual(mine(), []);
 });
 
 test("F 구현 방식 행은 다른 행에서 위임한 계층 에이전트의 일한 기록을 그 행에서 보고, 이 행에서만 맡긴 에이전트는 그대로 본다", () => {

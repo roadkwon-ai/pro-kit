@@ -1128,6 +1128,12 @@ function roundLog(root, active) {
 					(e.agent ? agentUses : uses).push({
 						t,
 						name: e.doc ?? skillName(String(e.skill)),
+						// `<플러그인>:<이름>` Skill 호출의 플러그인 이름
+						plugin: String(e.skill).includes(":")
+							? String(e.skill)
+									.replace(/^[/$]+/, "")
+									.split(":")[0]
+							: undefined,
 						ref: e.ref,
 						part: e.part === true,
 						tool: e.tool,
@@ -1162,9 +1168,11 @@ export function performers(root) {
 			official: new Set(m.skills.flatMap((s) => s.skills)),
 			agents: m.performers?.agents ?? [],
 			skills: m.performers?.skills ?? {},
+			// 매니페스트가 Claude 플러그인으로도 설치하는 스킬(skill-creator)은 `<플러그인>:<이름>` Skill 호출도 그 스킬을 쓴 것이다
+			plugins: new Set((m.claude?.plugins ?? []).map((x) => x.split("@")[0])),
 		};
 	} catch {
-		return { official: new Set(), agents: [], skills: {} };
+		return { official: new Set(), agents: [], skills: {}, plugins: new Set() };
 	}
 }
 // 스킬 머리의 `parent: <이름>`(neon-postgres-branches → neon 등). 하위 스킬은 상위 스킬부터 읽는다
@@ -1297,6 +1305,7 @@ function usageProblem(root, config, active) {
 		official,
 		agents: performerAgents,
 		skills: skillAgents,
+		plugins,
 	} = performers(root);
 	const { layers, auth } = classify(roundFiles(root, active), config);
 	// 계층 에이전트가 맡는 계층: 인증 파일은 서버(D) 몫이다(editGuard와 같다)
@@ -1330,14 +1339,15 @@ function usageProblem(root, config, active) {
 		main = !skillAgents[n],
 	) =>
 		u.name === n &&
-		(!official.has(n) || u.project) &&
+		(!official.has(n) || u.project || plugins.has(u.plugin)) &&
 		(u.main ? main || !u.seen : Boolean(agents?.includes(u.agentType)));
 	const read = (n, after, agents, main) =>
 		all.some(
 			(u) =>
 				u.t > (after ?? Number.NEGATIVE_INFINITY) && counts(n, u, agents, main),
 		);
-	// 공식 스킬을 맡지만 수행 에이전트가 아닌 쪽(prokit-reviewer). 증거에 이름이 나오면 이 행에서 맡긴 쪽으로 본다
+	// 공식 스킬을 맡지만 수행 에이전트가 아닌 쪽(prokit-reviewer). 행 문구에 이름이 있거나 증거에 위임: 으로 적은 행에서 맡긴 쪽으로 본다
+	// (구현 행에 "리뷰어 지적 반영"처럼 이름만 나온 것은 아니다)
 	const reviewers = [...new Set(Object.values(skillAgents).flat())].filter(
 		(a) => !performerAgents.includes(a),
 	);
@@ -1414,7 +1424,11 @@ function usageProblem(root, config, active) {
 			...[...value.matchAll(/위임:\s*`?([a-z][a-z0-9-]*)/g)]
 				.map((m) => m[1])
 				.filter((a) => performerAgents.includes(a)),
-			...reviewers.filter((a) => value.includes(a)),
+			...reviewers.filter(
+				(a) =>
+					r.text.includes(a) ||
+					new RegExp(`위임:\\s*\`?${a}(?![a-z0-9-])`).test(value),
+			),
 		];
 		const said = delegated.filter((a) => want.includes(a));
 		// 서브에이전트를 구별하지 못하는 호스트(훅 기록에 구별 값이 없다)에서는 Main이 직접 하고 자기 신고로 적는다
@@ -2388,7 +2402,11 @@ const NEXT_FLAG_SKILLS = {
 function skillWarnings(root, active) {
 	const log = skillLog(root, active);
 	if (!log) return [];
-	const { skills: skillAgents, official } = performers(root);
+	const {
+		skills: skillAgents,
+		official,
+		agents: performerAgents,
+	} = performers(root);
 	const out = [];
 	const mainRead = [
 		...new Set(
@@ -2403,7 +2421,8 @@ function skillWarnings(root, active) {
 		...new Set(
 			[...log.agentUses, ...log.edits].map((u) => u.agentType).filter(Boolean),
 		),
-	];
+		// 리뷰어는 focus마다 읽는 스킬이 달라 알리지 않는다(필수 스킬은 리뷰 행 검사가 본다)
+	].filter((a) => performerAgents.includes(a));
 	// Next 설정을 켜야 상황이 생기는 스킬은 그 설정이 없으면 알리지 않는다(켜는 일은 사용자 요청으로 한다)
 	const nextConfig = ["ts", "mjs", "js"]
 		.map((x) => join(root, `apps/web/next.config.${x}`))

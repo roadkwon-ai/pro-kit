@@ -6,7 +6,7 @@
 
 ## 운영 프로젝트 T7 라운드 보고로 고친 audit (2026-11-02)
 
-실측은 neon 프로젝트에서 했고, 고친 파일(공통 스크립트 `dev-cycle.mjs`, 공통 테스트, `.dev-cycle.json`의 서버·하네스 규칙, `prokit-dev-cycle`·`prokit-verify` 스킬 문서, `prokit-runtime-checker` 정의)은 이 템플릿에도 같게 고쳤다. 결과와 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#운영-프로젝트-t7-라운드-보고로-고친-audit-2026-11-02)에 있다. 고친 뒤 이 템플릿 테스트도 411 통과·0 실패였다.
+실측은 neon 프로젝트에서 했고, 고친 파일(공통 스크립트 `dev-cycle.mjs`, 공통 테스트, `.dev-cycle.json`의 서버·하네스 규칙, `prokit-dev-cycle`·`prokit-verify` 스킬 문서, `prokit-runtime-checker` 정의)은 이 템플릿에도 같게 고쳤다. 결과와 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#운영-프로젝트-t7-라운드-보고로-고친-audit-2026-11-02)에 있다. 고친 뒤 이 템플릿 테스트도 412 통과·0 실패였다.
 
 ## 세 도구·세 두뇌로 같은 기능 요청을 끝까지 돌린 실측 (2026-11-02)
 
