@@ -16,6 +16,7 @@ description: >-
 - `packages/api/src/routers/`: 라우터. `routers/index.ts`의 `appRouter`에 등록한다.
 - `packages/auth/src/index.ts`: `createAuth` (Better Auth 설정)
 - `apps/web/src/app/api/rpc/[[...rest]]/route.ts`, `apps/web/src/app/api/auth/[...all]/route.ts`: HTTP 진입점
+- 앱 폴더의 다른 `route.ts`(route 핸들러), `sitemap.ts`·`robots.ts`·`manifest.ts`(메타데이터 라우트), 서버 액션 파일 `actions.ts`, `apps/web/src/instrumentation.ts`: 서버에서 도는 파일이라 이 계층(D)으로 판정한다. 다른 이름의 서버 액션 파일(`"use server"`)은 경로로 가릴 수 없으니 `.dev-cycle.json`의 서버 규칙에 그 경로를 더한다.
 - `apps/web/src/context.ts`: 요청마다 세션을 읽어 context를 만든다.
 
 ## 공식 스킬 연결

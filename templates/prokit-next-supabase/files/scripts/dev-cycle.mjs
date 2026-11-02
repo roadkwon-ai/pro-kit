@@ -2253,7 +2253,9 @@ function shellEdits(root, config, active, files) {
 		if (
 			edited.has(f) ||
 			/(^|\/)migrations\//.test(f) ||
-			/\.(woff2?|ttf|otf|eot|png|jpe?g|gif|webp|avif|ico|mp4|webm)$/i.test(f)
+			/\.(woff2?|ttf|otf|eot|png|jpe?g|gif|webp|avif|ico|bmp|tiff?|mp[34]|webm|mov|wav|ogg|pdf)$/i.test(
+				f,
+			)
 		)
 			return false;
 		const c = classify([f], config);
