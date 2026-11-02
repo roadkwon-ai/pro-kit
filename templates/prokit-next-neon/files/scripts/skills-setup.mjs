@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 // skills.manifest.json대로 에이전트 스킬·플러그인을 이 프로젝트 scope에 설치한다. install.sh와 `pnpm skills:setup`이 부른다.
 // 사용법: node scripts/skills-setup.mjs [--check] [--with-global] [--brain <이름|none>] [--simplicity <이름|none>]
-//                                       [--matt <스킬>[,<스킬>]] [--optional <묶음>[,<묶음>]]
+//                                       [--ui-skill <이름|none>] [--matt <스킬>[,<스킬>]] [--optional <묶음>[,<묶음>]]
 //   --check        설치하지 않고 상태만 본다. 파일을 쓰지 않는다. 프로젝트 scope 항목이 빠졌거나
 //                  고르지 않은 두뇌·과설계 방지 스킬이 남아 있으면 exit 1.
 //   --with-global  check가 실패한 전역 도구(manifest.global, 고른 두뇌의 global)를 먼저 설치한다.
 //                  auto: true인 전역 도구는 이 플래그 없이도 없으면 설치한다(실패는 경고로만 알린다).
-//   --brain, --simplicity  고르는 항목(manifest.brains, manifest.simplicity)을 .dev-cycle.json에 기록하고,
+//   --brain, --simplicity, --ui-skill  고르는 항목(manifest.brains, manifest.simplicity, manifest.uiSkills)을 .dev-cycle.json에 기록하고,
 //                  그 항목에서 고르지 않은 설치본을 skills-lock.json 출처·플러그인 ID·OMX 기록·init marker로 찾아 지운 뒤 고른 것을 설치한다.
-//                  두뇌만 여럿을 쉼표로 받는다(--brain openspec,superpowers. 첫 값이 주 두뇌). 하나면 문자열, 여럿이면 배열로 기록한다.
-//                  인자가 없으면 기록된 값(없으면 none)을 설치하고 다른 것은 알리기만 한다. 고른 두뇌의 전역 도구는 --brain을 줄 때 설치한다.
+//                  두뇌와 UI 스킬은 여럿을 쉼표로 받는다(--brain openspec,superpowers. 첫 값이 주 두뇌). 하나면 문자열, 여럿이면 배열로 기록한다.
+//                  인자가 없으면 기록된 값(없으면 none. UI 스킬은 impeccable)을 설치하고 다른 것은 알리기만 한다. 고른 두뇌의 전역 도구는 --brain을 줄 때 설치한다.
 //   --matt         mattpocock 추가 스킬(manifest.mattpocock.pool)을 설치한다. 기록하지 않는다(설치본이 선택이다).
 //   --optional     기본으로 설치하지 않는 선택 스킬 묶음(manifest.optional)도 설치한다. --check와 쓰면 그 묶음도 검사한다.
 //   --drop         mattpocock 추가 스킬이나 선택 묶음을 지운다(--drop tdd,taste). skills-lock.json 출처가 맞는 설치본만 지운다.
@@ -54,7 +54,8 @@ const OMX_MARK = ".omx/setup-scope.json";
 // --purge는 .omx/ 전체(plans, notepad, 기억)를 지워 쓰지 않는다. 없으면 기록(setup-scope.json)만 지운다.
 const OMX_REMOVE = ["uninstall", "--scope", "project"];
 // 고르는 항목. 고르지 않으면 none(기본 AI)이다. 카탈로그 항목은 같은 모양이라 같은 코드로 다룬다.
-// multi: 여럿을 고를 수 있다(두뇌). 과설계 방지 스킬은 규칙이 엇갈려 하나만 쓴다.
+// multi: 여럿을 고를 수 있다(두뇌, UI 스킬). 과설계 방지 스킬은 규칙이 엇갈려 하나만 쓴다.
+// unset: 기록이 없을 때의 값. UI 스킬은 이 항목이 생기기 전에 impeccable을 늘 설치했으므로 그 프로젝트가 그대로 돈다.
 const SLOTS = [
 	{
 		catalog: "brains",
@@ -69,17 +70,26 @@ const SLOTS = [
 		flag: "--simplicity",
 		label: "과설계 방지",
 	},
+	{
+		catalog: "uiSkills",
+		key: "uiSkill",
+		flag: "--ui-skill",
+		label: "UI 스킬",
+		multi: true,
+		unset: "impeccable",
+	},
 ];
 const GUIDE = ".agents/skills/prokit-dev-cycle/references/brains/README.md";
 const SETUP_FLAGS = ["--check", "--with-global"];
 const SETUP_VALUE_FLAGS = [
 	"--brain",
 	"--simplicity",
+	"--ui-skill",
 	"--matt",
 	"--optional",
 	"--drop",
 ];
-const SETUP_USAGE = `사용법: pnpm skills:setup [--check] [--with-global] [--brain <이름>[,<이름>]|none] [--simplicity <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]] [--drop <스킬|묶음>[,…]]
+const SETUP_USAGE = `사용법: pnpm skills:setup [--check] [--with-global] [--brain <이름>[,<이름>]|none] [--simplicity <이름|none>] [--ui-skill <이름>[,<이름>]|none] [--matt <스킬>[,…]] [--optional <묶음>[,…]] [--drop <스킬|묶음>[,…]]
        pnpm skills:update [<이름>...] [--check | --if-due | --snooze | --mode ask|auto|off]
 고르는 기준: ${GUIDE}`;
 
@@ -103,12 +113,12 @@ const sameSource = (a, b) =>
 const described = (entries) =>
 	entries.map(([k, v]) => `${k}(${v.description})`).join(", ");
 
-// --brain·--simplicity·--matt·--optional·--drop 값을 읽는다. 잘못된 값이면 error에 사용법을 담는다.
+// --brain·--simplicity·--ui-skill·--matt·--optional·--drop 값을 읽는다. 잘못된 값이면 error에 사용법을 담는다.
 export function readChoices(argv, manifest) {
 	const picked = { matt: [], optional: [], drop: [] };
 	// --brain=x는 아래에서 보지 못해 조용히 무시된다.
 	const eq = argv.find((a) =>
-		/^--(brain|simplicity|matt|optional|drop)=/.test(a),
+		/^--(brain|simplicity|ui-skill|matt|optional|drop)=/.test(a),
 	);
 	if (eq)
 		return { error: `사용법: ${eq.replace("=", " ")}처럼 = 없이 띄어 쓴다` };
@@ -116,6 +126,7 @@ export function readChoices(argv, manifest) {
 	const twice = [
 		"--brain",
 		"--simplicity",
+		"--ui-skill",
 		"--matt",
 		"--optional",
 		"--drop",
@@ -131,7 +142,7 @@ export function readChoices(argv, manifest) {
 		// none은 혼자만 쓴다. 빈 이름(쉼표만)도 받지 않는다.
 		if (!names.every(ok) || (names.length > 1 && names.includes("none")))
 			return {
-				error: `사용법: ${s.flag} <이름>${s.multi ? "[,<이름>]" : ""}. ${s.label}: ${described([["none", { description: "기본 AI" }], ...Object.entries(catalog)])} (설명: ${GUIDE})`,
+				error: `사용법: ${s.flag} <이름>${s.multi ? "[,<이름>]" : ""}. ${s.label}: ${described([["none", { description: "기본 AI" }], ...Object.entries(catalog).filter(([n]) => n !== "none")])} (설명: ${GUIDE})`,
 			};
 		picked[s.key] = names.length === 1 ? names[0] : names;
 	}
@@ -237,6 +248,43 @@ const describe = (f) =>
 		...(f.init ? ["도구 파일"] : []),
 	].join(", ")})`;
 
+// 스킬이 스스로 등록한 훅(impeccable hooks on이 쓰는 두 파일)은 스킬을 지워도 남아 없는 스크립트를 부른다.
+// 지운 스킬 폴더(skills/<이름>/)를 부르는 훅만 뺀다. 그 스킬이 남긴 기록(.impeccable/ 등)은 지우지 않는다.
+const HOOK_FILES = [".claude/settings.local.json", ".codex/hooks.json"];
+function dropHooks(root, names, failures, out) {
+	if (!names.length) return;
+	const hit = (h) =>
+		names.some((n) => String(h.command).includes(`skills/${n}/`));
+	for (const rel of HOOK_FILES) {
+		const p = join(root, rel);
+		let j;
+		try {
+			j = readJson(p, null);
+		} catch (e) {
+			failures.push(`훅 정리: ${e.message}`);
+			continue;
+		}
+		if (!j?.hooks) continue;
+		let n = 0;
+		for (const [ev, groups] of Object.entries(j.hooks)) {
+			const kept = groups.flatMap((g) => {
+				const hooks = (g.hooks ?? []).filter((h) => !hit(h));
+				if (hooks.length === (g.hooks?.length ?? 0)) return [g];
+				n += g.hooks.length - hooks.length;
+				return hooks.length ? [{ ...g, hooks }] : [];
+			});
+			if (kept.length) j.hooks[ev] = kept;
+			else delete j.hooks[ev];
+		}
+		if (!n) continue;
+		if (!Object.keys(j.hooks).length) delete j.hooks;
+		writeFileSync(p, `${JSON.stringify(j, null, 2)}\n`);
+		out.push(
+			`훅 정리: ${rel}에서 지운 스킬(${names.join(", ")})의 훅 ${n}개를 뺐다`,
+		);
+	}
+}
+
 // 두뇌가 만든 문서(openspec/, specs/ 등)는 지우지 않는다. 다른 두뇌로 넘길 때 인계 자료다.
 function cleanup(root, cli, found, failures, out) {
 	for (const f of found) {
@@ -265,6 +313,12 @@ function cleanup(root, cli, found, failures, out) {
 				failures.push(
 					`정리 ${e.source}${still.length ? ` (남음: ${still.join(", ")})` : ""}`,
 				);
+			dropHooks(
+				root,
+				names.filter((s) => !still.includes(s)),
+				failures,
+				out,
+			);
 		}
 		if (onPath("claude"))
 			for (const p of f.plugins)
@@ -736,14 +790,14 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		);
 		return 2;
 	}
-	// 기록이 없는 기존 프로젝트는 none으로 읽는다. 인자로 준 항목만 정리한다(clean).
+	// 기록이 없는 기존 프로젝트는 none(UI 스킬은 unset 값)으로 읽는다. 인자로 준 항목만 정리한다(clean).
 	// 기록은 하나면 문자열, 여럿(두뇌)이면 배열이다. names는 고른 순서(첫 값이 주 두뇌)다.
 	const chosen = SLOTS.map((s) => {
 		const catalog = manifest[s.catalog] ?? {};
 		// 손으로 고친 기록의 중복은 한 번만 센다. 빈 배열은 none이다.
-		const names = [
-			...new Set([].concat(picked[s.key] ?? cfg[s.key] ?? "none")),
-		];
+		// unset 값은 카탈로그에 있을 때만 쓴다(그 항목이 없는 옛 매니페스트는 none이다)
+		const unset = Object.hasOwn(catalog, s.unset ?? "") ? s.unset : "none";
+		const names = [...new Set([].concat(picked[s.key] ?? cfg[s.key] ?? unset))];
 		if (!names.length) names.push("none");
 		const items = names
 			.filter((n) => Object.hasOwn(catalog, n))
@@ -913,8 +967,10 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		out.push(
 			`선택 스킬: ${states.join(", ")} (설치: pnpm skills:setup --optional <묶음>)`,
 		);
-	// 고른 두뇌의 전역 도구가 없으면 누락이다. 그 도구(codex 등)가 없는 기기의 항목은 installGlobal이 건너뛴다.
-	if (check) for (const g of absent) missing.push(`전역 ${g.name}`);
+	// 고른 항목의 전역 도구가 없으면 누락이다. 그 도구(codex 등)가 없는 기기의 항목은 installGlobal이 건너뛴다.
+	// 설치 명령이 없는 준비물(hallmark의 puppeteer-core)은 알리기만 하고 누락으로 세지 않는다.
+	if (check)
+		for (const g of absent) if (g.install) missing.push(`전역 ${g.name}`);
 	if (matt)
 		out.push(
 			`mattpocock 추가: ${matt.pool.filter((s) => hasSkill(root, s)).join(", ") || "없음"} (설치: pnpm skills:setup --matt <스킬>)`,
@@ -1077,8 +1133,9 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 			),
 			...(item.claude?.plugins ?? []).map((p) => now[p] === true),
 			...(item.omx && onPath("omx") ? [existsSync(join(root, OMX_MARK))] : []),
+			// 설치 명령이 없는 항목(hallmark의 puppeteer-core처럼 알리기만 하는 준비물)은 설치 상태에 넣지 않는다
 			...(item.global ?? [])
-				.filter((g) => !g.tool || onPath(g.tool))
+				.filter((g) => g.install && (!g.tool || onPath(g.tool)))
 				.map((g) => !absent.some((a) => a.name === g.name)),
 			...(item.init ? [initDone(root, item.init)] : []),
 		];
@@ -1092,11 +1149,13 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		const unknown = c.names.filter(
 			(n) => n !== "none" && !Object.hasOwn(c.catalog, n),
 		);
-		let line = `${c.label}: 없음(기본 AI)`;
+		// 카탈로그의 none 항목은 기본 AI가 참고하는 스킬이다(UI 스킬 none의 frontend-design)
+		const base = c.names[0] === "none" ? c.catalog.none : undefined;
+		let line = `${c.label}: 없음(기본 AI${base ? `, ${base.skills.flatMap((e) => e.skills).join(", ")} ${state(base)}` : ""})`;
 		if (unknown.length) {
 			line = `${c.label}: ${unknown.join(", ")}(매니페스트에 없음) → pnpm skills:setup ${c.flag} <이름>`;
 			(check ? missing : failures).push(`${c.label} ${unknown.join(", ")}`);
-		} else if (c.items.length) {
+		} else if (c.items.length && !base) {
 			const main = c.names.length > 1 ? "주, " : "";
 			line = `${c.label}: ${c.names.map((n, i) => `${n}(${i ? "" : main}${state(c.catalog[n])})`).join(", ")}`;
 		}
@@ -1121,7 +1180,8 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 	}
 
 	out.push(`전역 도구: ${globals.join(", ") || "없음"}`);
-	if (slotGlobals.length) out.push(`두뇌 전역 도구: ${slotGlobals.join(", ")}`);
+	if (slotGlobals.length)
+		out.push(`고른 항목 전역 도구: ${slotGlobals.join(", ")}`);
 	if (warnings.length)
 		out.push(
 			`경고: ${warnings.join("; ")} 설치 실패 → 위 출력을 보고 직접 설치한다 (없어도 dev-cycle은 진행된다)`,
@@ -1143,6 +1203,8 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 			label(picked.brain ?? cfg.brain) !== label(cfg.brain) ||
 			(picked.simplicity ?? cfg.simplicity ?? "none") !==
 				(cfg.simplicity ?? "none") ||
+			label(picked.uiSkill ?? cfg.uiSkill ?? "impeccable") !==
+				label(cfg.uiSkill ?? "impeccable") ||
 			picked.optional.length ||
 			picked.matt.length ||
 			picked.drop.length;
@@ -1154,10 +1216,15 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 			readFileSync(todo, "utf8").includes("<!-- dev-cycle:start ")
 		)
 			try {
-				const before = { brain: cfg.brain, simplicity: cfg.simplicity };
+				const before = {
+					brain: cfg.brain,
+					simplicity: cfg.simplicity,
+					uiSkill: cfg.uiSkill,
+				};
 				const after = {
 					brain: picked.brain ?? cfg.brain,
 					simplicity: picked.simplicity ?? cfg.simplicity,
+					uiSkill: picked.uiSkill ?? cfg.uiSkill,
 				};
 				if (noteSkillsChange(root, loadConfig(root), { before, after }))
 					out.push(

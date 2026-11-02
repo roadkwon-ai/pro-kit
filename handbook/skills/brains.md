@@ -16,7 +16,8 @@
 | 두뇌 | 추천을 따라요. 신호가 약하면 추천이 **없음(기본 AI)** 이에요 | 없음은 지금 쓰는 에이전트가 프로킷 내장 절차(요구 정리, 계획, 구현, 확인)로 진행해요. 충돌이 없고 가장 가벼워요 |
 | 과설계 방지 스킬 | `ponytail (추천)` | 요청하지 않은 기능이 늘어나지 않게 가장 작게 만들어 줘요. 항상 첫 선택지로 나와요 |
 | 응답 방식 | `i-have-adhd (추천)`. 길고 자세한 설명이 좋다면 SKIP | 설치해도 `/i-have-adhd`로 켤 때만 짧은 답으로 바뀌어서 평소 답은 그대로예요 |
-| 화면 디자인 보조 | SKIP | 랜딩, 소개, 포트폴리오처럼 읽고 스크롤하는 공개 페이지가 주 화면이거나 "AI가 만든 티가 나지 않게"를 원할 때만 `taste-skill`을 추천해요 |
+| UI 스킬 | `impeccable (추천)` | 앱 화면과 웹 페이지를 모두 맡고 점수 기준이 있어요. MVP로 시작해 기능을 하나씩 늘리는 서비스이거나, 새로 만드는 공개 웹 페이지(랜딩, 소개, 가격, 행사, 포트폴리오)가 주 화면이고 로그인 뒤 앱 화면이 적으면 `hallmark` 하나를 추천해요 |
+| 화면 디자인 보조 | SKIP | 랜딩, 소개, 포트폴리오처럼 읽고 스크롤하는 공개 페이지가 주 화면이거나 "AI가 만든 티가 나지 않게"를 원할 때만 `taste-skill`을 추천해요. UI 스킬로 `hallmark`를 고르면 같은 일이라 추천하지 않아요 |
 | mattpocock 추가 스킬 | 아무것도 고르지 않아요 | 필수 3개(`domain-modeling`, `grilling`, `grill-with-docs`)는 늘 설치돼요. 추가 스킬은 PRD에 맞는 것만 `(추천)`이 붙어요 |
 
 뜻을 모르는 말은 [처음 보는 용어](../../tutorials/reference/glossary.md#도구)의 "두뇌", "하네스", "스킬"을 보세요. [선택 스킬 묶음](optional-bundles.md)은 프로젝트가 정해진 뒤에 더해도 늦지 않아요.
@@ -36,21 +37,23 @@
   - 다른 두뇌 보기·여럿 고르기
 [질문 2 과설계 방지]  ponytail (추천) / caveman / andrej-karpathy-skills / SKIP(기본 AI)
 [질문 3 응답 방식]    i-have-adhd (추천) / SKIP
-[질문 4 화면 디자인]  SKIP (추천) / taste-skill
+[질문 4 UI 스킬]      impeccable (추천) / hallmark / taste-skill (화면 보조)
 ```
 
 한 번에 네 가지를 묻고, 답에 따라 이어서 더 물어요.
 
 1. **`다른 두뇌 보기·여럿 고르기`를 골랐을 때**: 두뇌 아홉 개를 세 묶음(진행 규율, 스펙 주도, 제품·장기 실행·학습)에서 골라요. 하나만 골라도 되고, 둘 이상 고르면 "주 두뇌는?"을 한 번 더 물어요.
 2. **mattpocock 추가 스킬**: 두뇌가 정해지면 [아래 14개](#mattpocock-추가-스킬-14개)를 네 묶음(구현·설계, 디버깅·검토, 조사·외부 설정, 인계·학습)의 여러 선택으로 물어요. PRD에 맞는 스킬에 `(추천)`이 붙고, 추가하지 않으려면 아무것도 고르지 않거나 Other에 "없음"이라고 적어요.
-3. **마무리**: 고른 값이 `install.sh`의 `--brain`, `--simplicity`, `--matt`, `--optional`로 들어가고, 끝나면 보고에 `pnpm skills:check`의 해당 줄이 나와요.
+3. **UI 스킬**: 여러 개를 고를 수 있어요. impeccable과 hallmark를 둘 다 고르면 "주 UI 스킬은?"을 한 번 더 물어요. taste-skill은 UI 스킬이 아니라 화면 보조 묶음이라, 고르면 `--optional taste`로 들어가요.
+4. **마무리**: 고른 값이 `install.sh`의 `--brain`, `--simplicity`, `--ui-skill`, `--matt`, `--optional`로 들어가고, 끝나면 보고에 `pnpm skills:check`의 해당 줄이 나와요.
 
-## 고르는 다섯 가지
+## 고르는 여섯 가지
 
 | 구분 | 고르는 수 | 기본 | 고르는 명령 |
 |---|---|---|---|
 | 두뇌 | 0개 이상(하나 권장) | 없음(기본 AI) | `pnpm skills:setup --brain <이름>[,<이름>]` |
 | 과설계 방지 스킬 | 0\~1 | 없음(기본 AI) | `pnpm skills:setup --simplicity <이름>` |
+| UI 스킬 | 0개 이상(하나 권장) | impeccable | `pnpm skills:setup --ui-skill <이름>[,<이름>]`, 빼기 `--ui-skill none` |
 | mattpocock 추가 스킬 | 0개 이상 | 설치 안 함 | `pnpm skills:setup --matt <스킬>`, 지우기 `--drop <스킬>` |
 | 응답 방식(i-have-adhd) | 0\~1 | 설치 안 함 | `pnpm skills:setup --optional i-have-adhd` |
 | 화면 디자인 보조(taste-skill) | 0\~1 | 설치 안 함 | `pnpm skills:setup --optional taste` |
@@ -63,7 +66,7 @@
    - 받는 방법: pro-kit 폴더에서 에이전트를 열었다면 스킬을 부르면서 줄 수도 있어요(Claude Code는 `/prokit-init <PRD 파일 경로나 내용>`, Codex는 `$prokit-init …`).
    - 없을 때: 에이전트가 맨 먼저 PRD를 달라고 해요. 그래도 주지 않으면 PRD가 왜 필요한지 알리고 프로젝트를 만들지 않은 채 끝나요.
 2. **추천 보기**: 에이전트가 PRD로 두뇌 열 개(없음 포함) 가운데 하나를 추천하고 근거 문장을 보여 줘요.
-3. **고르기**: 두뇌, 과설계 방지 스킬, 응답 방식, 화면 디자인 보조를 한 번에 골라요. 추천한 선택지에 `(추천)`이 붙어 맨 앞에 있어요. 처음 질문에 없는 두뇌를 고르거나 두뇌를 여럿 고르려면 `다른 두뇌 보기·여럿 고르기`를 골라요. 둘 이상 고르면 주 두뇌를 한 번 더 물어요.
+3. **고르기**: 두뇌, 과설계 방지 스킬, 응답 방식, UI 스킬(화면 디자인 보조 포함)을 한 번에 골라요. 추천한 선택지에 `(추천)`이 붙어 맨 앞에 있어요. 처음 질문에 없는 두뇌를 고르거나 두뇌를 여럿 고르려면 `다른 두뇌 보기·여럿 고르기`를 골라요. 둘 이상 고르면 주 두뇌를 한 번 더 물어요.
 4. **추가 스킬 고르기**: mattpocock 추가 스킬 <!-- v:mattpocock.pool.count -->14<!-- /v -->개를 여러 개 골라요. PRD에 맞는 스킬에 `(추천)`이 붙어 있어요.
 
 이미 정한 항목(예: "두뇌는 superpowers")은 다시 묻지 않고, "알아서 골라줘"처럼 맡긴 항목은 추천대로 설치해요.
@@ -189,13 +192,32 @@ flowchart TD
 - **고르면 설치**: <!-- v:mattpocock.pool.count -->14<!-- /v -->개예요. 구현·설계, 디버깅·검토, 조사·외부 설정, 인계·학습 네 묶음으로 나눠 물어봐요(스킬별 설명은 위 [mattpocock 추가 스킬 14개](#mattpocock-추가-스킬-14개)). 목록에는 모두 나오고 PRD에 맞는 스킬에 `(추천)`이 붙어요. 고른 두뇌가 같은 일을 하는 스킬은 추천하지 않아요(두뇌가 `mattpocock`이면 겹침을 따지지 않아요).
 - **i-have-adhd**([ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)): 에이전트가 답을 긴 글 속에 묻어 두지 않게 하는 스킬이에요. 다음 행동부터 말하고, 여러 단계는 번호로 나누고, 구체적인 다음 할 일 하나로 끝내요. 목록은 5개까지 쓰고 서론, 요약, 마무리 인사는 빼요. `/i-have-adhd`(Codex는 `$i-have-adhd`)로 켤 때만 쓰고 "stop adhd mode"로 꺼요. 대화 답에만 적용하고 파일, 커밋 메시지, 라운드 보고는 프로킷 형식을 따라요. 켜기 전에는 평소 답 그대로라 새 프로젝트에서는 설치를 추천해요.
 
+## UI 스킬
+
+화면 작업의 디자인 단계(맥락 확인, 기획, 화면 설계, 리뷰, 감사, 다듬기, `DESIGN.md` 기록)를 맡는 스킬이에요. 고른 것만 설치하고, 고르지 않은 설치본은 지워요. 고른 값은 `.dev-cycle.json`의 `uiSkill`에 남고, 기록이 없으면 `impeccable`이에요.
+
+| 이름 | 어떤 스킬인가 | 언제 추천하나 |
+|---|---|---|
+| `impeccable` (추천) | 기획 인터뷰(`PRODUCT.md`)부터 브리프, 점수를 매기는 리뷰와 감사, 다듬기, `DESIGN.md` 기록까지 화면 작업 전체를 맡아요. 앱 화면과 웹 페이지 모두에 써요. 점수 기준(`ui.auditMin`, `ui.a11yMin`)이 있어요 | 기본이에요 |
+| `hallmark` | 새 화면을 AI가 만든 티 없이 만들어요. 테마를 한 번 배정하고(`theme.mjs deal`), 넘을 수 없는 바닥 규칙과 `sloplint` 검사로 지켜요. 그 뒤로는 정한 디자인을 지키며 새 화면을 더해요. 앱 화면은 `--scope app`으로 다뤄요. 스킬은 영어로 쓰여 있어요 | PRD가 핵심 기능만 담은 MVP로 시작해 기능을 하나씩 늘리는 서비스일 때. 주 화면이 새로 만드는 공개 웹 페이지(랜딩, 소개, 가격, 행사, 포트폴리오)이고 로그인 뒤 앱 화면이 적을 때 |
+| SKIP(`none`) | 외부 UI 스킬 없이 기본 AI가 만들어요. Anthropic의 `frontend-design`(시각 방향과 만드는 법)과 게슈탈트 지침(화면이 의도한 덩어리로 묶여 보이는지 진단하고 고치기)을 따르고, `web-design-guidelines`로 검사해요 | 외부 UI 스킬을 줄이고 싶을 때 |
+
+- **하나로 시작해요**: 처음부터 여럿을 쓰면 규칙이 부딪히고 검토가 늘어 초기 개발이 느려져요. hallmark로 MVP를 시작했다면 UI 개선 요구가 많아질 때 impeccable을 더해요(`--ui-skill hallmark,impeccable`).
+- **여럿 고르면**: 첫 값이 주 UI 스킬이고 대조표의 디자인 단계를 맡아요. 둘 다 고르면 주 화면 성격에 맞는 쪽을 앞에 둬요. 다른 UI 스킬은 사용자가 그 화면에 지목했을 때만 쓰고, 그 화면의 단계와 증거도 주 UI 스킬을 따라요.
+- **통과 기준**: impeccable은 audit 점수(`ui.auditMin`, `ui.a11yMin`)예요. hallmark는 점수 대신 sloplint FAIL 0건, REFLEX는 고치거나 사유를 적어 보류, 마감 리뷰 `ship`(`fix`면 고친 뒤 다시 확인)이에요. `web-design-guidelines` 위반은 어느 쪽이든 고치거나 사유를 적어요. 점수 기준은 impeccable에만 적용해요.
+- **hallmark 준비물**: 화면을 찍는 검사(`sloplint --render`)에 Chrome과 `puppeteer-core`(전역, 또는 프로젝트 밖 폴더에 받고 `HALLMARK_PUPPETEER`로 가리키기)가 필요해요. 설치기는 알리기만 하고 설치하지 않아요. 없으면 정적 검사만 돌고, 그 결과를 화면 검사 통과로 보고하지 않아요. 새 맥락에서 하는 마감 리뷰는 메인 세션에서 실행해요.
+- **기능을 더할 때(hallmark)**: `DESIGN.md`가 있으면 테마를 다시 배정하지 않아요. 기존 화면의 디자인, 라우팅, 기능은 그대로 두고 새 기능에 필요한 컴포넌트만 더한 뒤 새 화면만 검사해요. 첫 MVP의 `DESIGN.md`에는 색, 서체, 간격만 적고, 사용자 검증 뒤에 확정해요.
+- **편집 훅**: `impeccable hooks on`은 impeccable을 고른 프로젝트에서만 해요. impeccable을 빼면 `pnpm skills:setup`이 그 훅도 함께 빼요. hallmark의 편집 훅은 쓰지 않아요. 설치기가 기기마다 다른 절대 경로를 공유 설정 `.claude/settings.json`에 쓰기 때문이에요.
+- **남는 파일**: hallmark는 `.hallmark/`에 작업 파일을 남겨요. `.hallmark/shots/`와 `.hallmark/preflight.json`은 커밋하지 않고, `.hallmark/log.json`은 커밋해요.
+- **`DESIGN.md`**: 루트에 `DESIGN.md`가 있으면 hallmark가 그 파일을 따라요. `DESIGN.md`를 갱신할 때는 hallmark 자체 형식이 아니라 Google `DESIGN.md` 스펙 형식으로 써요.
+
 ## 화면 디자인 보조
 
 **taste-skill**([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill))은 갤러리 사이트를 분석한 라이브러리에서 화면 방향을 뽑고, 공개 아카이브 사진과 실제 브라우저 검사로 AI가 만든 듯한 기본 화면을 피하게 하는 스킬이에요. 선택 묶음 `taste`로 설치해요.
 
-- **언제 추천하나**: 기본은 설치하지 않아요. PRD의 주 화면이 랜딩, 소개, 포트폴리오, 행사, 매장처럼 읽고 스크롤하는 공개 페이지이거나 "AI가 만든 티가 나지 않게"처럼 시각 완성도를 따로 요구하면 추천해요.
+- **언제 추천하나**: 기본은 설치하지 않아요. PRD의 주 화면이 랜딩, 소개, 포트폴리오, 행사, 매장처럼 읽고 스크롤하는 공개 페이지이거나 "AI가 만든 티가 나지 않게"처럼 시각 완성도를 따로 요구하면 추천해요. UI 스킬로 hallmark를 골랐다면 같은 일이라 추천하지 않아요.
 - **어떻게 쓰나**: 설치해도 사용자가 고른 화면에만 써요. 화면을 요청할 때 "taste로"라고 하거나, 스타일 고르기 질문에서 "taste-skill로 방향 뽑기"를 고르면 돼요.
-- **impeccable과의 관계**: 대신하지 않고 보태요. 기획, 화면 설계 확인, critique·audit과 통과 기준은 그대로예요. 한글 서체와 `DESIGN.md`, 토큰 규칙은 프로킷 쪽이 우선이에요.
+- **주 UI 스킬과의 관계**: 대신하지 않고 보태요. 기획, 화면 설계 확인, 리뷰·감사와 통과 기준은 그대로예요. 한글 서체와 `DESIGN.md`, 토큰 규칙은 프로킷 쪽이 우선이에요.
 - **준비물**: 검사(`inspect.mjs`)에 Chrome, Edge, Chromium 중 하나가 있어야 해요. 기록과 작업 파일은 프로젝트 안 `.taste-skill/`에 남기고 커밋하지 않아요.
 
 ## 바꾸기
@@ -212,18 +234,22 @@ flowchart TD
 pnpm skills:setup --brain openspec                     # 두뇌를 바꾼다. 고르지 않은 두뇌의 설치본은 지운다
 pnpm skills:setup --brain openspec,superpowers         # 두뇌를 더한다. 남길 목록 전부를 주고 첫 값이 주 두뇌다
 pnpm skills:setup --brain none --simplicity ponytail   # 두뇌를 빼고 내장 절차로 돌아간다
+pnpm skills:setup --ui-skill hallmark                  # UI 스킬을 바꾼다. 고르지 않은 UI 스킬의 설치본은 지운다
+pnpm skills:setup --ui-skill none                      # UI 스킬 없이 간다
 pnpm skills:setup --matt tdd,research                  # 추가 스킬을 더한다(기록하지 않는다)
 pnpm skills:setup --drop tdd,taste                     # 추가 스킬이나 선택 묶음을 지운다
 pnpm skills:setup --brain none --simplicity none --drop all   # 순수 AI: 두뇌·과설계 방지·추가 스킬·선택 묶음을 모두 뺀다
 pnpm skills:check                                      # 고르지 않은 두뇌·과설계 방지 스킬이 남아 있으면 exit 1
 ```
 
-두뇌를 바꿔도 그 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`)는 지우지 않아요. 새 두뇌가 그 문서를 읽고 이어 가요. 지금 두뇌가 없음(`none`)이면 더할 때도 새 두뇌 이름만 줘요. 이번 세션에서만 잠시 끄는 일(`stop ponytail` 등)은 구성 변경이 아니라서 이 스킬을 쓰지 않아요.
+두뇌를 바꿔도 그 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`)는 지우지 않아요. 새 두뇌가 그 문서를 읽고 이어 가요. UI 스킬을 바꾸거나 빼도 `PRODUCT.md`, `DESIGN.md`, 화면 브리프(`docs/briefs/`)는 그대로 이어져요. 새 UI 스킬은 시각 방향을 다시 고르지 않아요. 지금 두뇌가 없음(`none`)이면 더할 때도 새 두뇌 이름만 줘요. 이번 세션에서만 잠시 끄는 일(`stop ponytail` 등)은 구성 변경이 아니라서 이 스킬을 쓰지 않아요.
+
+카탈로그에 없는 두뇌나 UI 스킬도 더할 수 있어요. 카탈로그(`skills.manifest.json`)에 항목 하나, 단계 지도 파일 하나를 더하면 되고 코드는 고치지 않아요. "이 스킬을 UI 스킬로 쓰고 싶어"처럼 말하면 `prokit-skills-manage`가 그 절차("카탈로그에 없는 두뇌·UI 스킬 더하기")로 해요.
 
 ## 자세히
 
-- **정리 기준**: `--brain`이나 `--simplicity`를 주면 그 항목에서 고르지 않은 설치본을 이름이 아니라 출처로 찾아 지워요. 스킬은 `skills-lock.json`의 출처, 플러그인은 ID, OMX는 `.omx/setup-scope.json`, OpenSpec·Spec Kit은 그 도구가 만든 파일로 판정해요. 추가 스킬과 선택 묶음은 `--drop`으로 줄 때만 지워요. 필수 3개와 공식 스킬은 지우지 않아요.
-- **전역 설치본**: 이 컴퓨터 전역에 켜져 있지만 이 프로젝트에서 고르지 않은 플러그인(예: superpowers, ponytail)과 gstack 개인 스킬은 `.claude/settings.local.json`(커밋하지 않는 개인 설정)으로 이 프로젝트에서만 꺼요. impeccable과 같은 일을 하는 `frontend-design` 플러그인도 같아요. 전역 `~/.claude/CLAUDE.md`의 OMC 블록과 Codex 전역 스킬은 끌 수 없어 경고만 해요.
+- **정리 기준**: `--brain`, `--simplicity`, `--ui-skill`을 주면 그 항목에서 고르지 않은 설치본을 이름이 아니라 출처로 찾아 지워요. 스킬은 `skills-lock.json`의 출처, 플러그인은 ID, OMX는 `.omx/setup-scope.json`, OpenSpec·Spec Kit은 그 도구가 만든 파일로 판정해요. 추가 스킬과 선택 묶음은 `--drop`으로 줄 때만 지워요. 필수 3개와 공식 스킬은 지우지 않아요.
+- **전역 설치본**: 이 컴퓨터 전역에 켜져 있지만 이 프로젝트에서 고르지 않은 플러그인(예: superpowers, ponytail)과 gstack 개인 스킬은 `.claude/settings.local.json`(커밋하지 않는 개인 설정)으로 이 프로젝트에서만 꺼요. UI 스킬(impeccable, hallmark)과 같은 일을 하는 `frontend-design` 플러그인도 같아요. 전역 `~/.claude/CLAUDE.md`의 OMC 블록과 Codex 전역 스킬은 끌 수 없어 경고만 해요.
 - **전역 설치가 필요한 두뇌**: gstack, OMX CLI, OpenSpec CLI는 정식 설치가 전역뿐이라 그 두뇌를 고를 때만 설치해요. 다른 두뇌로 바꿔도 전역 설치본은 지우지 않아요. OpenSpec CLI는 기본으로 사용 통계(명령 이름과 판)를 보내요. 끄려면 셸 설정에 `OPENSPEC_TELEMETRY=0`을 둬요.
 - **정본**: 선택지 설명, 추천 기준, 단계 표, 두뇌별 단계 이름은 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/brains/`에 있어요. 고른 과설계 방지 스킬이 맡는 일은 같은 폴더의 `process-routing.md` 규칙 6 역할 표예요.
 

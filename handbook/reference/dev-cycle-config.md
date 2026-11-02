@@ -20,6 +20,7 @@
 |---|---|---|---|
 | `brain` | 두뇌(요구 정리, 계획, 구현을 이끄는 스킬 묶음). 하나면 문자열, 여럿이면 배열이고 첫 값이 주 두뇌예요 | `"none"`, `["openspec", "superpowers"]` | 설치기(`--brain`), 나중에는 `pnpm skills:setup --brain` |
 | `simplicity` | 과설계 방지 스킬 하나 | `"none"`, `"ponytail"` | 설치기(`--simplicity`), 나중에는 `pnpm skills:setup --simplicity` |
+| `uiSkill` | UI 스킬(화면 디자인 단계를 맡는 스킬). 하나면 문자열, 여럿이면 배열이고 첫 값이 주 UI 스킬이에요. 기록이 없으면 `impeccable`이에요 | `"impeccable"`, `["hallmark", "impeccable"]`, `"none"` | 설치기(`--ui-skill`), 나중에는 `pnpm skills:setup --ui-skill` |
 | `todoPath` | 진행 중인 대조표와 할 일 파일 | `"tasks/todo.md"` | 템플릿 |
 | `archiveDir` | 닫은 라운드와 완료 기록을 보관하는 폴더 | `"tasks/archive"` | 템플릿 |
 | `workflowDoc` | 케이스별 대조표 행의 정본 문서 | `"docs/dev-workflow.md"` | 템플릿 |
@@ -27,7 +28,7 @@
 | `defaultBranch` | 케이스 판정의 기준이 되는 브랜치. 이 브랜치와 비교해서 바뀐 파일을 세요 | `"main"` | 설치기가 프로젝트의 기본 브랜치를 찾아 적어요.<!-- edition:pro --> 기존 프로젝트는 `--default-branch`로 정해요<!-- /edition --> |
 | `rules` | 파일 경로로 케이스를 정하는 규칙 목록 | 아래 설명 | 템플릿 |
 | `authPaths` | 인증과 권한에 닿는 경로. 걸리면 보안 리뷰 행이 더 붙어요 | 아래 설명 | 템플릿 |
-| `ui` | 화면 작업의 통과 점수 기준 | `{ "auditMin": 16, "a11yMin": 3 }` | 템플릿 |
+| `ui` | 화면 작업의 통과 점수 기준(impeccable에만 적용) | `{ "auditMin": 16, "a11yMin": 3 }` | 템플릿 |
 | `commands` | 검사에 쓰는 명령 | 아래 설명 | 설치기가 찾아 적고, 에이전트가 더해요 |
 | `resources` | 캐시와 임시 폴더를 감시하는 정책 | `{ "roots": [] }` | 템플릿, 필요하면 H 라운드 |
 | `projectType` | 프로젝트 유형 | `"new"`, `"early"`, `"operating"`, `"migration"` | 설치기(`--project-type`). 기존 프로젝트를 들였을 때 적혀요 | <!-- edition:pro -->
@@ -80,7 +81,7 @@
 
 ## `ui`: 화면 점수 기준
 
-화면 작업(케이스 B, B를 포함하는 F)의 통과선이에요. audit 총점은 20점 만점에 <!-- v:devCycle.ui.auditMin -->16<!-- /v -->점(`auditMin`), 접근성 점수는 4점 만점에 <!-- v:devCycle.ui.a11yMin -->3<!-- /v -->점(`a11yMin`) 이상이어야 해요. 못 미치면 에이전트가 완료로 보고하지 않고 더 다듬을지 물어요([증거와 audit, 사용자 확인](../concepts/audit-and-confirm.md)). **기준을 낮추려고 이 값을 고치지 않아요.**
+화면 작업(케이스 B, B를 포함하는 F)에서 impeccable을 골랐을 때의 통과선이에요. audit 총점은 20점 만점에 <!-- v:devCycle.ui.auditMin -->16<!-- /v -->점(`auditMin`), 접근성 점수는 4점 만점에 <!-- v:devCycle.ui.a11yMin -->3<!-- /v -->점(`a11yMin`) 이상이어야 해요. 못 미치면 에이전트가 완료로 보고하지 않고 더 다듬을지 물어요([증거와 audit, 사용자 확인](../concepts/audit-and-confirm.md)). hallmark는 이 값을 쓰지 않아요. **기준을 낮추려고 이 값을 고치지 않아요.**
 
 ## `commands`: 검사 명령
 

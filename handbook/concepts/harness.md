@@ -50,7 +50,7 @@ flowchart TD
   REQ["사용자 요청<br/>…을 만들어줘 · 고쳐줘"] --> DC["prokit-dev-cycle<br/>케이스 판정 · 대조표"]
   RULES["AGENTS.md · GLOSSARY.md<br/>docs/domain/project.md"] -.->|시작할 때 읽는다| DC
   DC --> LAYER["계층 스킬<br/>prokit-web · prokit-ui · prokit-api · prokit-db · prokit-verify"]
-  LAYER --> OFF["공식 도메인 스킬<br/>Next.js · React · Better Auth · shadcn<br/>impeccable · Neon 또는 Supabase · Vercel"]
+  LAYER --> OFF["공식 도메인 스킬<br/>Next.js · React · Better Auth · shadcn<br/>UI 스킬(impeccable 또는 hallmark) · Neon 또는 Supabase · Vercel"]
   DC -.->|대조표 행이 읽을 스킬을 지정| OFF
   DREQ["배포 요청<br/>develop에 올려줘 · 운영 배포"] --> DEP["prokit-deploy<br/>메인 세션에서 --check → DB → 배포 → 확인"]
   DEP --> OFF

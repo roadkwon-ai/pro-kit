@@ -25,19 +25,19 @@
 - [verify] 타입·린트 검사 (commands.typecheck, commands.lint) → 명령과 결과 요약
 
 ### B. UI
-- impeccable context 실행, PRODUCT.md·DESIGN.md 확인 (새 작업이면: PRODUCT.md가 없을 때 impeccable init, <!-- edition:pro -->기존 프로젝트면 prokit-ui 2번의 디자인 방향(기존 디자인 근거가 있을 때만 한 번 묻고, 유지면 기존 디자인으로 DESIGN.md 작성), <!-- /edition -->DESIGN.md가 없고 Better-T-Stack 기본 화면뿐이거나 리디자인이면 디자인 카탈로그 스타일 1~3위와 직접 정하기 중 사용자 선택. 카탈로그는 use-design-md로 받고, 직접 정하면 마감에서 기록) → 출력 요약, <!-- edition:pro -->디자인 방향(기존 프로젝트), <!-- /edition -->고른 스타일, DESIGN.md lint 결과
-- impeccable shape 브리프 확정 (좁은 개선이면 N/A: 사유) → 브리프 경로
+- 디자인 맥락 확인, PRODUCT.md·DESIGN.md 확인 (주 UI 스킬의 맥락 단계. 새 작업이면: PRODUCT.md가 없을 때 기획 단계, <!-- edition:pro -->기존 프로젝트면 prokit-ui 2번의 디자인 방향(기존 디자인 근거가 있을 때만 한 번 묻고, 유지면 기존 디자인으로 DESIGN.md 작성), <!-- /edition -->DESIGN.md가 없고 Better-T-Stack 기본 화면뿐이거나 리디자인이면 디자인 카탈로그 스타일 1~3위와 직접 정하기 중 사용자 선택. 카탈로그는 use-design-md로 받고, 직접 정하면 마감에서 기록) → 출력 요약, <!-- edition:pro -->디자인 방향(기존 프로젝트), <!-- /edition -->고른 스타일, DESIGN.md lint 결과
+- 화면 브리프 확정 (주 UI 스킬의 설계 단계. 좁은 개선이면 N/A: 사유) → 브리프 경로
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
 - 구현 (구현 단계, prokit-ui<!-- edition:pro -->, prokit-web<!-- /edition -->, 컴포넌트 조합·추가는 shadcn, 컴포넌트·훅 작성은 vercel-react-best-practices. prokit-ui-builder에 위임하고 공식 스킬은 그 에이전트가 읽는다) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 변경 파일 요약, 사용한 스킬
 - [verify] 타입·린트·빌드 → 명령과 결과
 - [verify] next-dev-loop 런타임 확인과 ego-browser(없으면 agent-browser)로 desktop·mobile 스크린샷 (prokit-runtime-checker에 위임) → 위임: prokit-runtime-checker(사용: next-dev-loop), 확인한 경로, 오류 예산(콘솔·개발 오버레이·get_errors·서버 로그, 환경 탓도 빼지 않음) 수, tasks/evidence/ 경로
 - [verify] 휴대폰 스크롤 측정 (prokit-runtime-checker에 위임. prokit-verify의 references/browser.md "휴대폰 스크롤 측정". 스크롤 모션·긴 쪽·반복해서 다시 그리는 요소를 바꾸지 않았으면 N/A: 사유) → 위임: prokit-runtime-checker, 고치기 전·뒤의 50ms 넘는 프레임 수, 스크롤 모션 수, 레이어 수
-- [review] impeccable critique (대상은 화면 경로나 주소) → Design Health 점수, P0/P1 목록, .impeccable/critique/ 기록 파일 경로
-- [review] impeccable audit과 web-design-guidelines 코드 검사 (impeccable audit은 Main이, web-design-guidelines는 prokit-reviewer(ui)가 하고 두 결과를 tasks/evidence/ui-audit-<시각>.md에 저장) → 점수(/20), 접근성 점수, web-design-guidelines 위반 수, 보고서 경로
-- 수정과 impeccable polish를 한 번에 (Main이 고칠 것을 모으고 수정은 prokit-ui-builder에 맡긴다. 고칠 것이 없으면 N/A: 사유) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 반영 내역
+- [review] 디자인 리뷰 (주 UI 스킬의 리뷰 단계. 대상은 화면 경로나 주소) → 점수나 판정, 막는 지적(P0/P1, FAIL) 목록, 기록 파일 경로(.impeccable/critique/ 또는 tasks/evidence/)
+- [review] 디자인 감사와 web-design-guidelines 코드 검사 (주 UI 스킬의 감사 단계는 Main이, web-design-guidelines는 prokit-reviewer(ui)가 하고 두 결과를 tasks/evidence/ui-audit-<시각>.md에 저장) → 감사 결과(impeccable은 점수 /20과 접근성 점수, hallmark는 sloplint FAIL 수), web-design-guidelines 위반 수, 보고서 경로
+- 수정과 다듬기를 한 번에 (주 UI 스킬의 마감 단계. Main이 고칠 것을 모으고 수정은 prokit-ui-builder에 맡긴다. 고칠 것이 없으면 N/A: 사유) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 반영 내역
 - [verify] 재확인 1회 → 스크린샷 경로와 점수
 - [review] prokit-reviewer(code) → verdict, max_severity, 반영·기각 내역
-- DESIGN.md 갱신 여부 (impeccable document. 카탈로그에서 들여온 파일은 merge와 diff 확인) → 갱신 내역과 lint 결과 또는 N/A: 사유
+- DESIGN.md 갱신 여부 (주 UI 스킬의 정본 갱신 단계. 카탈로그에서 들여온 파일은 merge와 diff 확인) → 갱신 내역과 lint 결과 또는 N/A: 사유
 
 ### C. 버그
 - 재현 테스트 작성, 실패 확인 (디버깅 단계. 프로젝트 테스트 러너로 돈다. 화면 문구·모양 버그는 테스트 파일을 만들지 않고 수정 전 화면을 브라우저로 재현한다) → 테스트 이름과 실패 출력, 또는 재현 스크린샷 경로
@@ -63,7 +63,7 @@
 - [review] prokit-reviewer(db) → verdict, max_severity, 반영·기각 내역
 
 ### F. 신규 기능
-- 스펙 작성 (요구 명확화 단계 + 간결성 사다리로 범위 줄이기, 스펙에 '만들지 않는 것' 절과 인수 조건·테스트 시나리오 절(정상·빈·오류·경계 상태, 너비·테마·키보드), 새 용어는 domain-modeling으로 GLOSSARY.md에 바로 기록, 용어·설계 질문은 grilling 형식(사용자는 /grill-with-docs), UI가 있으면 impeccable shape 브리프 링크) → 사용한 스킬, 스펙 경로, 추가·변경한 용어
+- 스펙 작성 (요구 명확화 단계 + 간결성 사다리로 범위 줄이기, 스펙에 '만들지 않는 것' 절과 인수 조건·테스트 시나리오 절(정상·빈·오류·경계 상태, 너비·테마·키보드), 새 용어는 domain-modeling으로 GLOSSARY.md에 바로 기록, 용어·설계 질문은 grilling 형식(사용자는 /grill-with-docs), UI가 있으면 화면 브리프 링크) → 사용한 스킬, 스펙 경로, 추가·변경한 용어
 - 구현 계획 (계획 단계, 바꿀 계층의 prokit-* 스킬과 그 공식 스킬 연결 표를 읽고 계획의 스키마·API·화면 결정에 반영) → 사용한 스킬과 계획 경로
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
 - [review] prokit-reviewer(plan) 계획 리뷰 (간결성 사다리와 고른 과설계 방지 스킬의 계획 기준 적용, 재사용·설정 결정 검토. 고른 두뇌에 계획 리뷰가 있으면 보강) → prokit-reviewer(plan): approve, max=none|low|medium, 반영·기각 내역. N/A 불가

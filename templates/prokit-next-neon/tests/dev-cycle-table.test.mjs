@@ -195,7 +195,7 @@ test("F는 E·D·B 행을 한 번씩 펼치고 공통 행으로 끝난다", () =
   assert.equal(new Set(t).size, t.length);
   assert.ok(t.some((x) => x.includes("[verify] 병합 전")), "F는 E의 병합 전 DB 적용 행을 포함한다");
   assert.ok(t.some((x) => x.includes("2계정 격리 테스트")));
-  assert.ok(t.some((x) => x.includes("impeccable critique")));
+  assert.ok(t.some((x) => x.includes("[review] 디자인 리뷰 (주 UI 스킬의 리뷰 단계")));
   assert.ok(t.at(-2).startsWith("문서 영향 확인"));
   assert.ok(t.at(-1).startsWith("[confirm] 사용자 확인"));
 });
@@ -277,7 +277,7 @@ test("writeTable: 새 라운드를 쓰고, 두 번째는 거부, --upgrade는 �
   const b = parseActive(readFileSync(todoPath, "utf8"));
   assert.equal(b.meta.base, a.meta.base);
   assert.equal(b.title, "목록 화면");
-  assert.equal(b.rows.find((r) => r.text.startsWith("impeccable context ")).evidence, "impeccable context → PRODUCT.md 없음, init 실행");
+  assert.equal(b.rows.find((r) => r.text.startsWith("디자인 맥락 확인, ")).evidence, "impeccable context → PRODUCT.md 없음, init 실행");
   // 새 케이스에 없는 행과 수동 행은 끝의 사용자 확인 행 바로 앞으로 간다
   assert.equal(b.rows.at(-2).text, "수동 추가 행 → 근거");
   assert.equal(b.rows.at(-2).evidence, "직접 적은 증거");

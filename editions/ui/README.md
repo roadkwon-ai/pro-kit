@@ -99,7 +99,7 @@ flowchart LR
 
 ```bash
 cd ../living
-.agents/skills/impeccable/scripts/impeccable hooks on   # 화면 디자인 검사 켜기. 작업 폴더에서 시작했다면 이미 켜져 있습니다
+.agents/skills/impeccable/scripts/impeccable hooks on   # impeccable을 고른 경우만. 화면 디자인 검사 켜기, 작업 폴더에서 시작했다면 이미 켜져 있습니다
 claude
 ```
 

@@ -9,7 +9,7 @@
 ## 작업 분할
 
 - 독립 작업은 의존성, 소유 파일, 완료 조건, 산출물과 검사를 배정한다. 작은 관련 작업은 같은 수행자에게 묶고, 같은 파일·생성 산출물·소비자를 건드리면 순서대로 처리한다. Main은 조정·통합·최종 게이트만 맡고 전문 구현을 대신 쓰지 않는다.
-- 구현자는 자신이 바꾼 동작의 배정된 회귀 검사만 한다. `.dev-cycle.json`의 `commands`에 등록된 전역 검사를 각 수행자가 자동으로 반복하지 않는다. 프로젝트 전체 typecheck·lint·build는 통합 뒤 한 번의 통합 lane에서 한다. UI의 impeccable `critique`·`audit`은 메인 세션에서만 실행한다.
+- 구현자는 자신이 바꾼 동작의 배정된 회귀 검사만 한다. `.dev-cycle.json`의 `commands`에 등록된 전역 검사를 각 수행자가 자동으로 반복하지 않는다. 프로젝트 전체 typecheck·lint·build는 통합 뒤 한 번의 통합 lane에서 한다. UI 스킬의 리뷰·감사(impeccable `critique`·`audit`, hallmark 마감 리뷰)는 메인 세션에서만 실행한다.
 - provider가 실제로 지원하는 capability만 쓴다. 내장 review coverage는 재사용하고 빈 계약만 보완한 뒤, `prokit-reviewer`의 fresh final gate를 항상 거친다. 읽기 전용 artifact는 write authority가 아니다.
 - 병렬 작업은 서로 겹치지 않는 쓰기 범위만 쓴다. CI의 QA worker는 기본 하나로 두고, browser 4, agent 2, build 1을 한 작업의 상한으로 잡으며 중첩 worker도 센다. 이 상한은 host 전체 용량을 보장하지 않는다. guard나 worker 지원이 없으면 독립 읽기 browser만 하나로 제한하고 `unsupported`로 기록한다. 실제 자원 측정이 `unknown` 또는 `block`이면 새 batch를 시작하지 않는다. authority나 실행 권한이 unknown이면 병렬 수를 낮춰도 실행하지 않는다.
 - 같은 frozen artifact를 읽는 독립 review와 QA는 병렬로 할 수 있다. batch의 planned·executed·missing coverage와 receipt를 구분해 남긴다. 일반 런타임 확인은 ego-browser를 우선하고 agent-browser를 기록한 대안으로만 쓴다. Playwright는 이미 승인한 batch에만 쓰며 일반 대안으로 넓히지 않는다.

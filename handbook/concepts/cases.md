@@ -7,7 +7,7 @@
 | 케이스 | 언제 | 판정 경로 | 대조표의 대표 행 |
 |---|---|---|---|
 | A | 문서나 설정처럼 규칙에 걸리지 않는 경미한 변경 | 아래 경로 밖 | 타입·린트 검사 |
-| B | 화면, 컴포넌트, 스타일, 화면 유틸 | `apps/web/src`(서버·인증 경로 밖: `app`, `components`, `utils`, `lib`, CSS), `packages/ui` | impeccable 화면 설계, 스크린샷과 오류 예산 0, critique·audit, 코드 리뷰(+간결성 검토) |
+| B | 화면, 컴포넌트, 스타일, 화면 유틸 | `apps/web/src`(서버·인증 경로 밖: `app`, `components`, `utils`, `lib`, CSS), `packages/ui` | 주 UI 스킬의 화면 설계, 스크린샷과 오류 예산 0, 디자인 리뷰·감사, 코드 리뷰(+간결성 검토) |
 | C | 버그 수정 | 경로와 상관없이 선언 | 재현 테스트 먼저 작성, 수정 뒤 통과 |
 | D | 서버와 API | `packages/api`, `apps/web/src/app/api`, 앱 폴더의 `route.ts`·`sitemap.ts`·`robots.ts`·`manifest.ts`, 서버 액션 파일 `actions.ts`, `apps/web/src/instrumentation.ts` | zod 계약, 2계정 격리 테스트, 코드 리뷰 |
 | E | DB 스키마<!-- edition:pro -->와 마이그레이션<!-- /edition --> | `packages/db` | 생성 SQL 검토, 로컬 적용, 병합 전 원격 적용, DB 리뷰 |
@@ -74,7 +74,7 @@ flowchart TD
 | 표시 | 뜻 |
 |---|---|
 | `[verify]` | 검사 행. 실행한 명령과 결과가 증거예요 |
-| `[review]` | 리뷰 행. `prokit-reviewer`나 impeccable critique 같은 리뷰 결과가 증거예요 |
+| `[review]` | 리뷰 행. `prokit-reviewer`나 UI 스킬의 디자인 리뷰 같은 리뷰 결과가 증거예요 |
 | `[confirm]` | 사용자 확인 행. N/A나 blocked로 넘길 수 없어요 |
 | `@include E D B` | 다른 케이스의 행을 그 자리에 펼쳐요(F가 E·D·B를 포함하는 방식) |
 | `@inherit verify review` | 경로로 판정된 케이스에서 검사·리뷰 행만 가져와요(C가 쓰는 방식) |
@@ -85,9 +85,11 @@ flowchart TD
 <summary>케이스별 행 전체 보기</summary>
 
 - **A. 경미**: 타입·린트 검사.
-- **B. UI**: impeccable context와 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 impeccable init, `DESIGN.md`가 없고 Better-T-Stack 기본 화면뿐이면 스타일 1\~3위와 직접 정하기 중 사용자 선택) → impeccable shape로 화면 설계 확정 → `[design]` 재사용·설정 설계 점검 → 구현 → 타입·린트·빌드 → 런타임 확인과 desktop·mobile 스크린샷(오류 예산) → 휴대폰 스크롤 측정(스크롤 모션이나 긴 쪽을 바꿨을 때) → impeccable critique → impeccable audit과 web-design-guidelines 검사 → 수정과 polish → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
+- **B. UI**: 디자인 맥락 확인과 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 주 UI 스킬의 기획 단계, `DESIGN.md`가 없고 Better-T-Stack 기본 화면뿐이면 스타일 1\~3위와 직접 정하기 중 사용자 선택) → 화면 브리프 확정 → `[design]` 재사용·설정 설계 점검 → 구현 → 타입·린트·빌드 → 런타임 확인과 desktop·mobile 스크린샷(오류 예산) → 휴대폰 스크롤 측정(스크롤 모션이나 긴 쪽을 바꿨을 때) → 디자인 리뷰 → 디자인 감사와 web-design-guidelines 검사 → 수정과 다듬기 → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
   - 기존 프로젝트(`early`·`operating`·`migration`)는 첫 화면 작업에서 스타일을 고르기 전에 디자인 방향을 먼저 물어요(`기존 디자인 유지 (추천)` 또는 `리디자인`). <!-- edition:pro -->
-  - critique 행의 증거에는 impeccable이 남긴 `.impeccable/critique/<시각>__<대상>.md` 경로와 그 파일 머리의 점수를 적어요. audit 행(web-design-guidelines 검사 포함)은 보고서를 `tasks/evidence/ui-audit-<시각>.md`로 저장하고 그 경로와 총점(N/20)을 적어요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요([증거와 audit, 사용자 확인](audit-and-confirm.md)).
+  - 디자인 행(맥락, 브리프, 리뷰, 감사, 다듬기, `DESIGN.md` 갱신)은 주 UI 스킬(`.dev-cycle.json`의 `uiSkill`, 첫 값)의 해당 단계예요. 기록이 없으면 `impeccable`이에요.
+  - 디자인 리뷰 행의 증거에는 impeccable이 남긴 `.impeccable/critique/<시각>__<대상>.md` 경로와 그 파일 머리의 점수를 적어요. 기록 파일을 남기지 않는 UI 스킬(hallmark)은 결과를 `tasks/evidence/ui-review-<시각>.md`로 저장하고 그 경로와 결과(sloplint `N FAIL`)를 적어요. 디자인 감사 행(web-design-guidelines 검사 포함)은 보고서를 `tasks/evidence/ui-audit-<시각>.md`로 저장하고 그 경로와 결과를 적어요. 결과는 impeccable이 총점(N/20), hallmark가 sloplint `N FAIL`, UI 스킬이 없으면 `web-design-guidelines 위반 N`이에요. 파일은 모두 이번 라운드에 쓴 것이어야 해요([증거와 audit, 사용자 확인](audit-and-confirm.md)).
+  - UI 스킬이 없으면(`uiSkill`이 `none`) 기본 AI가 게슈탈트 지침으로 디자인 리뷰를 하고, 증거에 `게슈탈트 위반 N`과 보고서 경로를 적어요. 예전 이름의 행(`impeccable critique` 등)을 연 라운드도 같은 기록 검사를 받아요.
 - **C. 버그**: 재현 테스트 작성과 실패 확인 → 수정 → 재현 테스트 통과 → 판정된 케이스의 검사·리뷰 행. 화면 문구·모양 버그는 테스트 파일 대신 고치기 전과 뒤의 화면 스크린샷으로 재현과 통과를 보여요.
 - **D. 서버·API**: `[design]` 재사용·설정 설계 점검 → zod 입출력 계약 → 구현(격리 테스트부터) → 2계정 격리 테스트 → 타입·린트·테스트 → `prokit-reviewer(code)`. <!-- edition:pro -->
 - **E. DB**: `[design]` 재사용·설정 설계 점검 → 스키마 수정과 생성 SQL 검토 → 타입·린트 → 로컬 개발 DB에 적용 → 병합 전 원격 DB에 적용(neon은 Neon 개발 브랜치) → 파괴적 변경 판단(없음 또는 2단계 계획) → `prokit-reviewer(db)`. supabase는 새 테이블의 RLS 확인, 로컬 `supabase db advisors` 보안 검사, 병합 전 Supabase 스테이징 적용과 advisors 검사가 더 붙어요. <!-- edition:ui - **D. 서버·API**와 **E. DB**: 화면만 프로젝트에서는 쓰지 않는 케이스예요. --> <!-- edition:pro -->

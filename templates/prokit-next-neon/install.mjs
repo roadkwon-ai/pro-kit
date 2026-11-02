@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // pro-kit 템플릿 설치기. install.sh가 이 파일을 실행한다. prokit-next-neon과 prokit-next-supabase에서 내용이 같다(tests/shared-files.test.mjs).
 // 사용법: install.sh <project-dir> [--diff] [--skip-skills] [--with-global]
-//          [--brain <이름|none>] [--simplicity <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]]
+//          [--brain <이름|none>] [--simplicity <이름|none>] [--ui-skill <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]]
 import { spawnSync } from "node:child_process";
 import {
   appendFileSync, copyFileSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, readlinkSync, realpathSync, statSync, symlinkSync, writeFileSync,
@@ -22,7 +22,7 @@ const FILLED = new Set([".dev-cycle.json"]);
 // 프로젝트가 채워 가는 파일(용어집, 서비스 문서, 할 일과 기록 목록). 템플릿은 빈 틀이라 다르면 프로젝트 쪽이 맞다. --diff에서 diff를 보이지 않는다.
 const OWNED = new Set(["GLOSSARY.md", "docs/domain/project.md", "tasks/todo.md", "tasks/archive/README.md"]);
 // 값을 받는 인자. 그대로 skills-setup.mjs에 넘긴다.
-const VALUE_FLAGS = new Set(["--brain", "--simplicity", "--matt", "--optional"]);
+const VALUE_FLAGS = new Set(["--brain", "--simplicity", "--ui-skill", "--matt", "--optional"]);
 // 설치기만 쓰는 값 인자. .dev-cycle.json에 기록한다(projectType, legacy.path).
 // --default-branch: 도입 브랜치(prokit/setup)에서 계속 작업할 때 dev-cycle의 기준 브랜치로 기록한다.
 const OWN_VALUE_FLAGS = new Set(["--project-type", "--legacy", "--default-branch"]);
@@ -53,8 +53,8 @@ export const adoptRules = (rules) => [...rules.filter((r) => r.case === "H" && r
 // auth.config.ts·lib/auth-client.ts·lib/next-auth.ts·app/(auth)/·app/(protected)/도 인증 경로다(보안 리뷰 행이 붙는다).
 export const ADOPT_AUTH = "(^|/)(auth|middleware|proxy)(/|\\.[cm]?[jt]sx?$)|(^|/)(next-)?auth([.-][\\w.-]*)?\\.[cm]?[jt]sx?$|(^|/)\\((auth[\\w-]*|protected)\\)/|(^|/)\\.env\\.schema$";
 const OLD_SETUP =
-  "이 프로젝트의 scripts/skills-setup.mjs는 --brain·--simplicity·--matt(또는 두뇌 여러 개)를 모르는 옛 판이다 → 템플릿의 scripts/skills-setup.mjs와 skills.manifest.json을 먼저 옮긴 뒤 pnpm skills:setup을 다시 실행한다";
-const USAGE = "사용법: install.sh <project-dir> [--diff] [--skip-skills] [--with-global] [--brain <이름>[,…]|none] [--simplicity <이름|none>] [--matt <스킬>[,…]] [--optional <묶음>[,…]] [--project-type new|early|operating|migration] [--legacy <기존 코드 경로>] [--adopt] [--default-branch <브랜치>]";
+  "이 프로젝트의 scripts/skills-setup.mjs는 --brain·--simplicity·--ui-skill·--matt(또는 두뇌 여러 개)를 모르는 옛 판이다 → 템플릿의 scripts/skills-setup.mjs와 skills.manifest.json을 먼저 옮긴 뒤 pnpm skills:setup을 다시 실행한다";
+const USAGE = "사용법: install.sh <project-dir> [--diff] [--skip-skills] [--with-global] [--brain <이름>[,…]|none] [--simplicity <이름|none>] [--ui-skill <이름>[,…]|none] [--matt <스킬>[,…]] [--optional <묶음>[,…]] [--project-type new|early|operating|migration] [--legacy <기존 코드 경로>] [--adopt] [--default-branch <브랜치>]";
 
 const run = (cmd, args, opts = {}) => spawnSync(cmd, args, { encoding: "utf8", ...opts });
 
@@ -345,6 +345,8 @@ const GITIGNORE = [
     "**/.impeccable/questions/",
   ],
   ["# taste-skill 작업 파일(선택 묶음 taste: 방향 시트, 기록, 검사 화면)", "/.taste-skill/"],
+  // hallmark는 화면 찍기·전후 기록을 .hallmark/에 쓴다. log.json(테마 돌려 쓰기 기록)과 design.md는 공유 산출물이라 무시하지 않는다
+  ["# hallmark 작업 파일(UI 스킬 hallmark: 검사 화면, 사전 점검 캐시)", "**/.hallmark/shots/", "**/.hallmark/preflight.json"],
   // Better-T-Stack은 apps/web만 .env*를 무시한다. 루트와 packages/*의 .env.production 같은 파일도 막는다
   ["# 환경별 .env (비밀값). 배포 환경변수는 Vercel에 둔다", ".env.*", "!.env.schema", "!.env.example"],
   ["# pnpm export:html 결과(정적 HTML)", "/html/"],
@@ -444,14 +446,14 @@ const gitHookLines = (h, dryRun) =>
       : [];
 
 // 벤더 스킬은 upstream 원본이다. `pnpm check`(biome check --write .)가 고쳐 쓰면 skills-lock.json의 contentHash와 어긋난다.
-// OMC·OMX·pro-kit·impeccable 상태 파일과 .claude/settings.json, .codex/(OMX 생성물)는 도구가 다시 쓰는 파일이다.
+// OMC·OMX·pro-kit·impeccable·hallmark 상태 파일과 .claude/settings.json, .codex/(OMX 생성물)는 도구가 다시 쓰는 파일이다.
 // .agents/agents/(agents:sync가 만드는 Antigravity 에이전트)는 Biome 2.6이 YAML 머리를 다시 맞추면 agents:check가 깨진다.
 // biome.json은 vcs.useIgnoreFile이 꺼져 있어 .gitignore만으로는 빠지지 않는다.
 // 마이그레이션(drizzle-kit), schema/auth.ts(`auth:generate`), src/env.ts(varlock이 설치·실행 때마다 다시 씀)는 생성물이라
 // 포맷해도 다시 생성하면 지적이 돌아온다. html/(pnpm export:html이 만든 정적 사이트)은 빌드 결과물이다.
 // 마크다운: Biome 2.6부터 표를 칸 너비로 맞추는데, dev-cycle이 tasks/todo.md에 쓰는 대조표와 AGENTS.md 표의 edition 주석 칸이 매번 다시 바뀌어 lint가 실패한다.
 const BIOME_IGNORES = [
-  "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!.claude", "!.codex",
+  "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!**/.hallmark", "!.claude", "!.codex",
   "!tasks/evidence",
   "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
   "!html", "!**/*.md",
@@ -607,7 +609,7 @@ export function main(argv) {
     return 0;
   }
   // 모르는 플래그를 버리면 오타(--dif, --skip-skill)가 실제 설치가 된다. 값 플래그의 = 형식은 아래에서 따로 알린다.
-  const unknown = [...flags].filter((f) => !BOOL_FLAGS.has(f) && !/^--(brain|simplicity|matt|optional|project-type|legacy|default-branch)=/.test(f));
+  const unknown = [...flags].filter((f) => !BOOL_FLAGS.has(f) && !/^--(brain|simplicity|ui-skill|matt|optional|project-type|legacy|default-branch)=/.test(f));
   if (unknown.length) {
     console.error(`모르는 옵션: ${unknown.join(" ")}\n${USAGE}`);
     return 1;
@@ -620,10 +622,12 @@ export function main(argv) {
   // 이미 adopt로 설치한 프로젝트는 --adopt 없이 다시 실행해도 adopt로 본다(Better-T-Stack 파일이 섞이지 않게).
   let adopted = false;
   let recordedType;
+  let recordedUi;
   try {
     const cfg = JSON.parse(readFileSync(join(resolve(args[0]), ".dev-cycle.json"), "utf8"));
     adopted = cfg.adopt === true;
     recordedType = cfg.projectType;
+    recordedUi = cfg.uiSkill;
   } catch {}
   const adopt = flags.has("--adopt") || adopted;
   const projectType = own["project-type"] ?? (adopt ? "operating" : undefined);
@@ -647,7 +651,12 @@ export function main(argv) {
     console.error(picked.error);
     return 1;
   }
-  const choices = ["brain", "simplicity"].filter((k) => k in picked).map((k) => `${k} ${[].concat(picked[k]).join(",")}`);
+  const choices = ["brain", "simplicity", "uiSkill"].filter((k) => k in picked).map((k) => `${k} ${[].concat(picked[k]).join(",")}`);
+  // 고른 UI 스킬(기록이 없으면 impeccable. skills-setup의 unset). 다음 할 일 안내만 바꾼다
+  // 스킬마다 할 일은 매니페스트 uiSkills.<이름>.next에 둔다(새 UI 스킬을 더해도 이 파일은 그대로다)
+  const manifest = JSON.parse(readFileSync(join(FILES_DIR, "skills.manifest.json"), "utf8"));
+  const uiSkills = [].concat(picked.uiSkill ?? recordedUi ?? "impeccable").filter((n) => n !== "none");
+  const uiNext = uiSkills.flatMap((n) => manifest.uiSkills?.[n]?.next ?? []);
   // realpath: 대상이 심볼릭 링크로 연결된 경로(예: macOS의 /tmp)면 node가 하위 프로세스로 실행하는
   // 스크립트의 import.meta.url과 argv 경로가 달라져 CLI 진입점 판별이 어긋난다. 실재 경로로 고정한다.
   const abs = resolve(args[0]);
@@ -695,7 +704,8 @@ export function main(argv) {
   const oldSetup =
     setupText !== null &&
     (((choices.length > 0 || picked.matt.length > 0) && !setupText.includes('"--brain"')) ||
-      (Array.isArray(picked.brain) && !setupText.includes("multi: true")))
+      (Array.isArray(picked.brain) && !setupText.includes("multi: true")) ||
+      ("uiSkill" in picked && !setupText.includes('"--ui-skill"')))
       ? [`경고: ${OLD_SETUP}`]
       : [];
   if (diff) {
@@ -811,10 +821,10 @@ export function main(argv) {
       : [
           "  1. 첫 마이그레이션(README 설치한 뒤 1번)까지 마치고, pnpm check로 Better-T-Stack이 만든 코드의 포맷을 한 번 정리해 pnpm exec biome check .가 exit 0인지 본 뒤 기본 브랜치에 커밋한다 (커밋 전에 연 dev-cycle 라운드는 설치 파일이 diff에 섞여 audit이 F 상향을 요구한다)",
           "  2. 새 에이전트 세션을 열어 스킬과 에이전트를 불러온다 (Claude는 프로젝트를 신뢰해야 project 플러그인을 켜고, Codex는 신뢰해야 .codex/agents를 읽는다. Antigravity는 .agents/agents와 .agents/skills를 읽는다. Grok Build는 폴더를 신뢰해야 AGENTS.md와 프로젝트 스킬을 읽는다: 처음 열 때 신뢰하거나 grok --trust. 라운드 없는 편집 막기와 스킬 기록 훅은 Codex는 /hooks에서 .codex/hooks.json을, Antigravity는 폴더를 신뢰해야 돈다)",
-          "  3. 개발자마다 한 번 프로젝트 루트에서 .agents/skills/impeccable/scripts/impeccable hooks on (스킬 호출로 켜지 않는다. Codex는 /hooks에서 신뢰 확인. Antigravity에서는 돌지 않고 Grok Build에서 도는지는 확인하지 않았다)",
+          ...uiNext.map((line) => `  3. ${line}`),
           "  4. GLOSSARY.md와 docs/domain/project.md에 서비스 이름과 요약을 채운다",
-          "  5. 첫 UI 라운드에서 impeccable init으로 PRODUCT.md를 만든다",
-        ]),
+          `  5. 첫 UI 라운드에서 prokit-ui의 기획 단계로 PRODUCT.md를 만든다 (UI 스킬: ${uiSkills.join(", ") || "없음(기본 AI: frontend-design과 게슈탈트 지침)"}. 단계마다 할 일은 prokit-ui references/${uiSkills.length ? "<이름>" : "none"}-map.md)`,
+        ].map((line, i) => line.replace(/^ {2}\d+\./, `  ${i + 1}.`))),
     ...(picked.simplicity === "caveman" ? ["  - caveman 응답 압축은 /caveman(Codex $caveman)으로 켜고 \"stop caveman\"으로 끈다. 대화 응답에만 쓴다"] : []),
     ...(picked.optional.includes("i-have-adhd") ? ["  - i-have-adhd는 /i-have-adhd(Codex $i-have-adhd)로 켜고 \"stop adhd mode\"로 끈다. 대화 응답에만 쓴다"] : []),
     ...(picked.optional.includes("taste") ? ["  - taste(design-taste-frontend)는 화면 작업에서 사용자가 고른 화면에만 쓴다(prokit-ui references/taste.md). 검사에는 Chrome·Edge·Chromium이 필요하다"] : []),

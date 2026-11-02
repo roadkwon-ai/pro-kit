@@ -44,8 +44,8 @@ function fill(root, value = "pnpm check-types → exit 0") {
     : r.text === PLAN_DOC_ROW ? "docs/plans/p.md, pnpm dev-cycle plan exit 0"
     : r.text.includes("prokit-reviewer(plan)") && !/^(blocked|미실행)/.test(value) ? "prokit-reviewer(plan): approve, max=none, 지적 0"
     : r.text.startsWith("[design]") && !/^(blocked|미실행)/.test(value) ? "기존: 없음; 결정: 새로; 설정: 변경 없음; 검증: 회귀 검사"
-    : r.text.startsWith("[review] impeccable critique") && !/^(blocked|미실행)/.test(value) ? critiqueRecord(root)
-    : r.text.startsWith("[review] impeccable audit") && !/^(blocked|미실행)/.test(value) ? auditRecord(root)
+    : r.text.startsWith("[review] 디자인 리뷰") && !/^(blocked|미실행)/.test(value) ? critiqueRecord(root)
+    : r.text.startsWith("[review] 디자인 감사") && !/^(blocked|미실행)/.test(value) ? auditRecord(root)
     : value;
   const rows = a.rows.map((r) => ({ ...r, evidence: r.evidence || special(r) }));
   writeFileSync(p, md.slice(0, a.start) + renderBlock({ ...a.meta, title: a.title }, rows) + md.slice(a.end));

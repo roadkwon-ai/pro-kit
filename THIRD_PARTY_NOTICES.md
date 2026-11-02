@@ -45,13 +45,15 @@
 | andrej-karpathy-skills(과설계 방지 karpathy) | 저장소에 LICENSE 파일이 없다. README·`plugin.json`·`SKILL.md`에 MIT 표기만 있다. 표준 라이선스로 확정하지 않는다 | [확인 판 plugin.json](https://github.com/multica-ai/andrej-karpathy-skills/blob/2c606141936f1eeef17fa3043a72095b4765b9c2/.claude-plugin/plugin.json) |
 | i-have-adhd(선택 묶음) | MIT | [확인 판 LICENSE](https://github.com/ayghri/i-have-adhd/blob/1ecea1993b7fce257ffbd686c070948b5e07eda6/LICENSE) |
 | taste-skill(선택 묶음 taste) | MIT | [확인 판 LICENSE](https://github.com/Leonxlnx/taste-skill/blob/63aba5f43b5056758b15bbe7d683da8c86a7a7ad/LICENSE) |
+| Anthropic frontend-design(UI 스킬 none: 기본 AI가 참고) | 해당 skill 경로의 Apache 2.0 | [확인 판 LICENSE](https://github.com/anthropics/skills/blob/41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f/skills/frontend-design/LICENSE.txt). 저장소 전체나 다른 스킬의 조건을 일괄 판정하지 않음 |
+| hallmark(UI 스킬 hallmark) | MIT. 사진 목록(`photos.json`)은 위키미디어 공용 이미지 주소만 담고 그림 파일은 없다. 사진마다 그 사진의 조건을 따른다 | [확인 판 LICENSE](https://github.com/Nutlope/hallmark/blob/4f6a46c6dc325d40ab268c93e25c7b96676ebccd/LICENSE) |
 | OpenSpec(두뇌 openspec, 전역 CLI와 프로젝트 init) | MIT | [확인 판 LICENSE](https://github.com/Fission-AI/OpenSpec/blob/c04f30e57817422c1a107ea00a682c1d29a423ca/LICENSE) |
 | Spec Kit(두뇌 spec-kit, 프로젝트 init) | MIT | [확인 판 LICENSE](https://github.com/github/spec-kit/blob/dc2cec4f568d0f6e2cdfb8571c69116bc55c1aaf/LICENSE) |
 | Compound Engineering(두뇌 compound-engineering) | MIT | [확인 판 LICENSE](https://github.com/EveryInc/compound-engineering-plugin/blob/cee312784134a05ac1c1c0c6648000afe7dd60e9/LICENSE) |
 
 ### 매니페스트의 외부 source 목록
 
-다음은 두 템플릿의 기본·선택 묶음 스킬, 두뇌·과설계 방지 후보의 스킬, mattpocock 추가 스킬 출처를 합친 목록이다. 두뇌·과설계 방지 스킬과 추가 스킬은 사용자가 고를 때만 설치한다. source 이름만으로 라이선스를 정하지 않는다. 두뇌 OpenSpec과 Spec Kit은 매니페스트의 source가 아니라 각 도구의 init 명령이 프로젝트에 스킬을 만들므로 이 목록에 없고 위 라이선스 표에만 있다.
+다음은 두 템플릿의 기본·선택 묶음 스킬, 두뇌·과설계 방지·UI 스킬 후보의 스킬, mattpocock 추가 스킬 출처를 합친 목록이다. 두뇌·과설계 방지 스킬과 추가 스킬은 사용자가 고를 때만, UI 스킬은 고른 것(고르지 않으면 impeccable)만 설치한다. source 이름만으로 라이선스를 정하지 않는다. 두뇌 OpenSpec과 Spec Kit은 매니페스트의 source가 아니라 각 도구의 init 명령이 프로젝트에 스킬을 만들므로 이 목록에 없고 위 라이선스 표에만 있다.
 
 - [CaesiumY/ko-design-md](https://github.com/CaesiumY/ko-design-md)
 - [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)
@@ -59,6 +61,7 @@
 - [GENEXIS-AI/gpt-image-skill](https://github.com/GENEXIS-AI/gpt-image-skill)
 - [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman)
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)
+- [Nutlope/hallmark](https://github.com/Nutlope/hallmark)
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
 - [anthropics/skills](https://github.com/anthropics/skills)
 - [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)
@@ -76,7 +79,7 @@
 - [vercel/turborepo](https://github.com/vercel/turborepo)
 - [vercel/vercel-plugin](https://github.com/vercel/vercel-plugin)
 
-Claude marketplace 플러그인·OMX/gstack·CLI 등 별도 도구와 실행 패키지의 조건도 각각 구분한다. 실제 설치 대상은 manifest의 `claude`·`global`, 선택 그룹, 고른 `brains`·`simplicity` 항목에 있으며, 이 문서는 전체 설치본·전이 의존성에 대한 완전한 권리 감사를 주장하지 않는다.
+Claude marketplace 플러그인·OMX/gstack·CLI 등 별도 도구와 실행 패키지의 조건도 각각 구분한다. 실제 설치 대상은 manifest의 `claude`·`global`, 선택 그룹, 고른 `brains`·`simplicity`·`uiSkills` 항목에 있으며, 이 문서는 전체 설치본·전이 의존성에 대한 완전한 권리 감사를 주장하지 않는다.
 
 ## 사용자 작성 코드와 프리셋 팩
 

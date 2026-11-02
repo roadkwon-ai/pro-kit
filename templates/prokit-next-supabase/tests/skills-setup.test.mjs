@@ -524,6 +524,49 @@ test("단일 선택 항목: 기록이 없으면 none이라 두뇌·과설계 방
   assert.equal(exec(["--check"]).status, 0);
 });
 
+test("UI 스킬: 기록이 없으면 impeccable을 설치하고, 고르면 그것만 남기며, 설치 명령이 없는 준비물은 알리기만 한다", () => {
+  const UI = {
+    uiSkills: {
+      impeccable: { description: "전체", skills: [{ agents: ["claude-code", "codex"], source: "org/imp", skills: ["imp-a"] }] },
+      hallmark: { description: "페이지", skills: [{ agents: ["claude-code", "codex"], source: "org/hm", skills: ["hm-a"] }], global: [{ name: "pp", check: "false", hint: "pp 안내" }] },
+      none: { description: "기본 AI", skills: [{ agents: ["claude-code", "codex"], source: "org/fd", skills: ["fd-a"] }] },
+    },
+  };
+  const { root, exec } = slotProject({ manifest: { ...MANIFEST, ...SLOTS, ...UI } });
+  const first = exec();
+  assert.equal(first.status, 0, first.stdout + first.stderr);
+  assert.match(first.stdout, /^UI 스킬: impeccable\(설치됨\)$/m, "기록이 없으면 impeccable");
+  assert.ok(existsSync(join(root, ".agents/skills/imp-a/SKILL.md")));
+  // impeccable hooks on처럼 스킬이 스스로 등록한 훅. 지운 스킬을 부르는 훅만 빠져야 한다
+  const own = { type: "command", command: "node scripts/keep.mjs" };
+  const skillHook = (dir) => ({ type: "command", command: `"${dir}/skills/imp-a/scripts/imp" hook` });
+  writeFileSync(join(root, ".claude/settings.local.json"), JSON.stringify({ enabledPlugins: { "x@y": false }, hooks: { PostToolUse: [{ matcher: "Edit", hooks: [skillHook("${CLAUDE_PROJECT_DIR}/.claude")] }], Stop: [{ hooks: [own, skillHook(".claude")] }] } }));
+  mkdirSync(join(root, ".codex"), { recursive: true });
+  writeFileSync(join(root, ".codex/hooks.json"), JSON.stringify({ hooks: { SessionStart: [{ hooks: [own] }], Stop: [{ hooks: [skillHook(".agents")] }] } }));
+  const hm = exec(["--ui-skill", "hallmark"]);
+  assert.equal(hm.status, 0, hm.stdout + hm.stderr);
+  assert.equal(readJson(join(root, ".dev-cycle.json")).uiSkill, "hallmark");
+  assert.equal(existsSync(join(root, ".agents/skills/imp-a")), false, "고르지 않은 UI 스킬은 지운다");
+  assert.deepEqual(readJson(join(root, ".claude/settings.local.json")), { enabledPlugins: { "x@y": false }, hooks: { Stop: [{ hooks: [own] }] } }, "지운 스킬의 훅만 빼고 나머지 설정은 둔다");
+  const codexHooks = Object.values(readJson(join(root, ".codex/hooks.json")).hooks).flat().flatMap((g) => g.hooks);
+  assert.ok(codexHooks.some((h) => h.command === own.command), "다른 훅은 남긴다");
+  assert.ok(!codexHooks.some((h) => h.command.includes("skills/imp-a/")), "Codex 훅에서도 뺀다");
+  assert.match(hm.stdout, /훅 정리: \.claude\/settings\.local\.json에서 지운 스킬\(imp-a\)의 훅 2개를 뺐다/);
+  assert.match(hm.stdout, /^UI 스킬: hallmark\(설치됨\)$/m, "설치 명령이 없는 준비물은 설치 상태에 넣지 않는다");
+  assert.match(hm.stdout, /^고른 항목 전역 도구: pp 없음 → pp 안내$/m);
+  assert.equal(exec(["--check"]).status, 0, "알리기만 하는 준비물은 누락이 아니다");
+  const none = exec(["--ui-skill", "none"]);
+  assert.equal(none.status, 0, none.stdout + none.stderr);
+  assert.equal(existsSync(join(root, ".agents/skills/hm-a")), false);
+  assert.ok(existsSync(join(root, ".agents/skills/fd-a/SKILL.md")), "none이면 카탈로그 none 항목(기본 AI가 참고하는 스킬)을 설치한다");
+  assert.match(none.stdout, /^UI 스킬: 없음\(기본 AI, fd-a 설치됨\)$/m);
+  assert.equal(exec(["--check"]).status, 0);
+  const back = exec(["--ui-skill", "impeccable"]);
+  assert.equal(back.status, 0, back.stdout + back.stderr);
+  assert.equal(existsSync(join(root, ".agents/skills/fd-a")), false, "UI 스킬을 고르면 기본 AI용 스킬은 지운다");
+  assert.ok(existsSync(join(root, ".agents/skills/imp-a/SKILL.md")));
+});
+
 test("--brain·--simplicity: 형식을 지켜 기록하고 고른 것만 설치하며, 다시 실행하면 받지 않는다", () => {
   const { root, exec, calls } = slotProject();
   const r = exec(["--brain", "sp", "--simplicity", "cv"]);
@@ -958,12 +1001,12 @@ test("Codex 네이티브 플러그인: 과설계 방지를 고르지 않았으�
   assert.deepEqual(calls(), []);
 });
 
-test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 두뇌·과설계 방지 카탈로그가 맞다", () => {
+test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 두뇌·과설계 방지·UI 스킬 카탈로그가 맞다", () => {
   const m = JSON.parse(readFileSync(join(TEMPLATE_FILES, "skills.manifest.json"), "utf8"));
   const optional = Object.values(m.optional).flatMap((o) => o.skills);
   const names = [...m.skills, ...optional].flatMap((e) => e.skills).concat(m.mattpocock.pool);
   assert.equal(new Set(names).size, names.length, "기본, 선택 묶음, mattpocock 추가에 같은 스킬이 두 번 있으면 안 된다");
-  const slotItems = [...Object.values(m.brains), ...Object.values(m.simplicity)];
+  const slotItems = [...Object.values(m.brains), ...Object.values(m.simplicity), ...Object.values(m.uiSkills)];
   const slotEntries = slotItems.flatMap((i) => i.skills ?? []);
   for (const e of [...m.skills, ...optional, ...slotEntries, m.mattpocock]) {
     assert.ok(e.agents.length && e.agents.every((a) => ["claude-code", "codex"].includes(a)), e.source);
@@ -976,6 +1019,14 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
   // 하나만 고르는 두 항목. 기본 설치(skills, claude)에는 두뇌와 과설계 방지 스킬을 두지 않는다(기본은 none).
   assert.deepEqual(Object.keys(m.brains), ["superpowers", "agent-skills", "pstack", "gstack", "oh-my", "mattpocock", "openspec", "spec-kit", "compound-engineering"]);
   assert.deepEqual(Object.keys(m.simplicity), ["ponytail", "caveman", "karpathy"]);
+  // UI 스킬은 고른 것만 설치한다(기록이 없으면 impeccable). 기본 설치 목록에는 두지 않는다.
+  assert.deepEqual(Object.keys(m.uiSkills), ["impeccable", "hallmark", "none"]);
+  assert.deepEqual(m.uiSkills.none.skills.flatMap((e) => e.skills), ["frontend-design"], "UI 스킬이 없으면 기본 AI가 frontend-design을 참고한다");
+  // 새 두뇌·UI 스킬은 카탈로그 항목과 단계 지도 파일 하나씩만 더하면 된다. 둘이 어긋나면 고른 뒤 따를 지도가 없다
+  for (const n of Object.keys(m.brains)) assert.ok(existsSync(join(TEMPLATE_FILES, ".agents/skills/prokit-dev-cycle/references/brains", `${n}.md`)), `두뇌 ${n}의 지도 파일`);
+  for (const n of Object.keys(m.uiSkills)) assert.ok(existsSync(join(TEMPLATE_FILES, ".agents/skills/prokit-ui/references", `${n}-map.md`)), `UI 스킬 ${n}의 지도 파일`);
+  for (const i of Object.values(m.uiSkills)) assert.ok(!i.next || (Array.isArray(i.next) && i.next.every((l) => typeof l === "string")), "next는 설치기가 다음 할 일에 붙이는 문장 목록이다");
+  assert.ok(!names.includes("impeccable") && !names.includes("hallmark"), "UI 스킬은 기본 설치가 아니다");
   for (const i of slotItems) assert.ok(i.description && (i.skills || i.claude || i.global || i.init || i === m.brains.mattpocock), JSON.stringify(i));
   // 세션 시작 훅·전역 지시로 진행 순서를 강제하는 두뇌. 둘 이상 고르면 설치기가 경고한다.
   assert.deepEqual(Object.keys(m.brains).filter((n) => m.brains[n].forces), ["superpowers", "gstack", "oh-my"]);
@@ -1009,7 +1060,7 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
   assert.deepEqual(Object.keys(m.claude.marketplaces), ["claude-plugins-official"]);
   // 새 사용자 설정에는 claude-plugins-official도 등록되어 있지 않다(2026-09-27 실측). 고른 항목의 마켓플레이스도 선언한다.
   assert.deepEqual(m.claude.marketplaces["claude-plugins-official"], { source: "github", repo: "anthropics/claude-plugins-official" });
-  assert.deepEqual(Object.keys(m.claude.conflicts), ["frontend-design@claude-plugins-official"], "impeccable과 같은 일을 하는 전역 플러그인은 이 프로젝트에서 끈다");
+  assert.deepEqual(Object.keys(m.claude.conflicts), ["frontend-design@claude-plugins-official", "hallmark@hallmark"], "UI 스킬과 같은 일을 하는 전역 플러그인(hallmark 플러그인판 포함)은 이 프로젝트에서 끈다");
   assert.equal(m.codex, undefined);
   assert.equal(m.omx, undefined);
   assert.deepEqual(m.brains.superpowers.claude.plugins, ["superpowers@claude-plugins-official"]);

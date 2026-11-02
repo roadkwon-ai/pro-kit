@@ -4,6 +4,10 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## UI 스킬을 골라 바꾸기: hallmark, 기본 AI, 중간 전환 (2026-11-02)
+
+실측은 neon 프로젝트에서 했고, 고친 파일(공통 스크립트 `skills-setup.mjs`·`dev-cycle.mjs`, `install.mjs`, `skills.manifest.json`, `AGENTS.md`·`CLAUDE.md` 템플릿 블록, `prokit-ui`·`prokit-skills-manage`·`prokit-verify` 스킬 문서, 두뇌 카탈로그 `brains/README.md`, 공통 테스트)은 이 템플릿에도 같게 고쳤다. 결과와 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#ui-스킬을-골라-바꾸기-hallmark-기본-ai-중간-전환-2026-11-02)에 있다. 고친 뒤 이 템플릿 테스트도 416 통과·0 실패였다.
+
 ## 테스트 프로젝트로 다시 잰 감사 (2026-11-02)
 
 실측은 neon 프로젝트에서 했고, 고친 파일(공통 스크립트 `dev-cycle.mjs`·`skills-setup.mjs`, `install.mjs`, 공통 테스트, `prokit-runtime-checker` 정의, `prokit-verify`의 `references/browser.md`)은 이 템플릿에도 같게 고쳤다. 결과와 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#테스트-프로젝트로-다시-잰-감사-2026-11-02)에 있다. 고친 뒤 이 템플릿 테스트도 413 통과·0 실패였다.

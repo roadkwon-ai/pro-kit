@@ -71,14 +71,14 @@ https://github.com/roadkwon-ai/pro-kit 을 이 폴더에 받고, 그 안의 AGEN
 
 ```mermaid
 flowchart TD
-  A["1. 프로젝트 생성<br/>pnpm create better-t-stack@latest"] --> B["2. 템플릿 설치<br/>bash templates/템플릿/install.sh 프로젝트<br/>--brain · --simplicity"]
+  A["1. 프로젝트 생성<br/>pnpm create better-t-stack@latest"] --> B["2. 템플릿 설치<br/>bash templates/템플릿/install.sh 프로젝트<br/>--brain · --simplicity · --ui-skill"]
   B --> B1["파일 복사<br/>스킬 · 에이전트 · dev-cycle · 문서 골격"]
   B --> B2["scripts/skills-setup.mjs<br/>내부 스킬 · 플러그인 설치<br/>OMX 설정(omx가 있을 때)"]
   B1 --> C["3. 로컬 DB 시작"]
   B2 --> C
   C --> D["4. 첫 마이그레이션<br/>db:generate → db:migrate"]
   D --> E["5. 포맷 정리 · 커밋<br/>pnpm check → 기본 브랜치"]
-  E --> F["6. 새 에이전트 세션<br/>신뢰 질문 동의 · impeccable hooks on"]
+  E --> F["6. 새 에이전트 세션<br/>신뢰 질문 동의<br/>impeccable이면 hooks on"]
   F --> G["7. 기능 요청<br/>prokit-dev-cycle이 라운드를 연다"]
   G --> H["8. 라운드 끝<br/>사용자 확인 → 커밋 · push<br/>고르면 릴리스 · production 배포"]
 ```
@@ -103,7 +103,7 @@ flowchart TD
 | 두뇌 | `없음(기본 AI)`, superpowers, agent-skills (addyosmani), pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering | PRD에 맞는 하나. 신호가 약하면 `없음(기본 AI)` | `(추천)`을 고르세요. 나중에 말로 바꿀 수 있어요 | 요청에서 정했거나 맡겼을 때 |
 | 과설계 방지 스킬 | ponytail, caveman, andrej-karpathy-skills, `SKIP(기본 AI)` | ponytail | `(추천)` | 요청에서 정했거나 맡겼을 때 |
 | 응답 방식 | i-have-adhd, SKIP | i-have-adhd. 길고 자세한 설명을 원한다고 했으면 SKIP | `(추천)`. 자세한 설명이 좋으면 SKIP | 요청에서 정했거나 맡겼을 때 |
-| 화면 디자인 보조 | taste-skill, SKIP | SKIP. 주 화면이 랜딩·소개 같은 공개 페이지면 taste-skill | `(추천)` | 요청에서 정했거나 맡겼을 때 |
+| UI 스킬(여러 선택) | impeccable, hallmark, taste-skill (화면 보조) | impeccable. MVP로 시작해 기능을 하나씩 늘리는 서비스이거나, 주 화면이 새로 만드는 공개 웹 페이지이고 로그인 뒤 화면이 적으면 hallmark. 공개 페이지가 주 화면이면 taste-skill도 추천하지만 hallmark와는 함께 추천하지 않아요 | `(추천)`. impeccable과 hallmark를 둘 다 고르면 주 UI 스킬을 한 번 더 물어요 | 요청에서 정했거나 맡겼을 때 |
 | mattpocock 추가 스킬 | 14개를 네 묶음(구현·설계, 디버깅·검토, 조사·외부 설정, 인계·학습)으로. 여러 개 고를 수 있어요 | 두뇌와 PRD에 맞는 것 | `(추천)`만 고르거나 아무것도 고르지 않아요. 필수 3개는 늘 설치돼요 | 두뇌가 정해진 뒤에 늘 묻고, 요청에서 정했거나 맡겼을 때만 건너뛰어요 |
 
 두뇌에서 `다른 두뇌 보기·여럿 고르기`를 고르면 세 묶음의 여러 선택 질문으로 묻고, 둘 이상 고르면 주 두뇌(첫째 두뇌)를 한 번 더 물어요. 진행 순서를 강제하는 두뇌(superpowers, gstack, oh-my)를 둘 이상 고르면 지시가 서로 덮어쓰이므로 하나만 남기도록 다시 물어요. 각 선택지의 뜻은 [두뇌와 선택 스킬](../skills/brains.md)에 있어요.
@@ -120,7 +120,7 @@ flowchart TD
 |---|---|
 | 위치 | pro-kit 밖에 만들어요. 기본은 pro-kit의 상위 폴더(`../<이름>`)예요. 대상 폴더가 이미 있으면 멈추고 물어요 |
 | 생성 | neon은 `--db-setup docker`, supabase는 `--db-setup supabase --manual-db`로 `pnpm create better-t-stack@latest <이름> …`을 실행해요 |
-| 설치 | `bash <pro-kit>/templates/<템플릿>/install.sh <프로젝트 경로> --brain <값> --simplicity <값>`으로 설치해요. 고르지 않았으면 둘 다 `none`을 명시해요. 추가 스킬은 `--matt <스킬>[,<스킬>]`, 응답 방식은 `--optional i-have-adhd`, 화면 디자인 보조는 `--optional taste`를 더해요. `--with-global`은 전역 도구 설치를 요청할 때만 붙여요 |
+| 설치 | `bash <pro-kit>/templates/<템플릿>/install.sh <프로젝트 경로> --brain <값> --simplicity <값> --ui-skill <값>`으로 설치해요. 두뇌와 과설계 방지 스킬을 고르지 않았으면 `none`을 명시하고, UI 스킬은 고른 값(묻지 못했으면 `impeccable`)을 줘요. 추가 스킬은 `--matt <스킬>[,<스킬>]`, 응답 방식은 `--optional i-have-adhd`, taste-skill은 `--optional taste`를 더해요. `--with-global`은 전역 도구 설치를 요청할 때만 붙여요 |
 | 로컬 DB (neon) | <!-- v:port.neonDb -->5432<!-- /v --> 포트가 쓰이는지 먼저 보고, 쓰이면 `DB_PORT`로 바꿔요. `packages/db`에서 `podman compose up -d`(Docker면 `db:start`)로 띄워요 |
 | 로컬 DB (supabase) | Podman이면 `DOCKER_HOST`를 먼저 설정해요. `packages/db`에서 `supabase init`을 실행하고 `project_id`를 프로젝트 이름으로 바꾼 뒤 `supabase start -x …`로 DB만 띄워요 |
 | 첫 마이그레이션 | `db:generate`로 인증 테이블 마이그레이션을 만들고 `db:migrate`로 적용해요. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션을 더하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인해요. Better-T-Stack이 만든 README의 `db:push` 단계는 따르지 않아요 |
@@ -135,11 +135,11 @@ flowchart TD
 명령 전체는 각 템플릿 README의 "새 프로젝트 시작"에 있어요([neon](../../templates/prokit-next-neon/README.md#새-프로젝트-시작) · [supabase](../../templates/prokit-next-supabase/README.md#새-프로젝트-시작)).
 
 1. 상위 폴더에서 `pnpm create better-t-stack@latest my-app …`을 실행해요. 옵션은 템플릿 README에 적힌 그대로 써요.
-2. `bash pro-kit/templates/<템플릿>/install.sh my-app --brain <값> --simplicity <값>`으로 설치해요. 두뇌와 과설계 방지 스킬을 고르지 않으면 둘 다 `none`으로 줘요([두뇌와 선택 스킬](../skills/brains.md)).
+2. `bash pro-kit/templates/<템플릿>/install.sh my-app --brain <값> --simplicity <값> --ui-skill <값>`으로 설치해요. 두뇌와 과설계 방지 스킬을 고르지 않으면 둘 다 `none`으로 줘요([두뇌와 선택 스킬](../skills/brains.md)).
 3. 로컬 DB를 띄워요. neon은 `packages/db`에서 `podman compose up -d`, supabase는 `supabase init`, `project_id` 변경, `supabase start -x …`예요.
 4. `db:generate` → (supabase는 `enable_rls_auth` 커스텀 마이그레이션) → `db:migrate` 순서로 첫 마이그레이션을 적용해요.
 5. `pnpm check`로 포맷을 정리하고 `pnpm exec biome check .`가 exit 0인지 본 뒤 기본 브랜치에 커밋해요.
-6. 새 에이전트 세션을 열고 신뢰 질문에 동의해요. 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`을 실행하고 `GLOSSARY.md`, `docs/domain/project.md`를 채워요.
+6. 새 에이전트 세션을 열고 신뢰 질문에 동의해요. impeccable을 골랐다면 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`을 실행하고 `GLOSSARY.md`, `docs/domain/project.md`를 채워요.
 
 이미 만든 프로젝트를 팀원이 클론했다면 `pnpm install` 뒤에 `pnpm skills:setup`을 한 번 실행해요. 선택 스킬 묶음을 쓰는 프로젝트면 `--optional <묶음>`을 붙여요.
 

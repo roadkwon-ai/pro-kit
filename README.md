@@ -126,7 +126,7 @@ PRD(파일 경로나 누가 쓰고 무엇을 하는 서비스인지), DB 종류,
 
 ```bash
 cd ../my-app
-.agents/skills/impeccable/scripts/impeccable hooks on   # 화면 디자인 검사 켜기. 처음 한 번만
+.agents/skills/impeccable/scripts/impeccable hooks on   # impeccable을 고른 프로젝트만. 화면 디자인 검사 켜기, 처음 한 번만
 claude
 ```
 

@@ -15,7 +15,7 @@
 | `pnpm skills:check` | 스킬이 제대로 설치됐는지 볼 때 | 빠진 스킬이나 플러그인 |
 | `pnpm dev:web` | 화면을 내 브라우저로 볼 때 | 개발 서버 주소(보통 `http://localhost:3001`) |
 | `pnpm export:html` | 화면만 프로젝트를 HTML 파일로 내보낼 때 | `html/` 폴더(보통은 "HTML로 내보내줘"라고 말해요) |
-| `.agents/skills/impeccable/scripts/impeccable hooks on` | 새 프로젝트에서 처음 한 번(켜 두면 화면을 고칠 때마다 디자인 검사가 돌아요) | 훅이 켜졌다는 출력 |
+| `.agents/skills/impeccable/scripts/impeccable hooks on` | impeccable을 고른 새 프로젝트에서 처음 한 번(켜 두면 화면을 고칠 때마다 디자인 검사가 돌아요) | 훅이 켜졌다는 출력 |
 
 > [!TIP]
 > `pnpm dev-cycle status`는 라운드가 없으면 여는 법을 알려 줘요. `--json`을 붙이면 결과를 JSON으로 출력해요.
@@ -37,7 +37,7 @@
 | `pnpm dev-cycle table A --write --title "정밀 분석과 진행 계획" --plan` | 진행 계획을 세우거나 고치는 라운드를 열어요. 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 계획 리뷰 행이 붙어요. audit은 `tasks/plan.md`에 진행 계획 블록이 있는지 봐요 | <!-- edition:pro -->
 | `pnpm dev-cycle table <케이스> --write --title "<요약>" --no-task` | 진행 계획을 확정하기 전인 기존 프로젝트에서, 사용자가 먼저 하라고 한 급한 버그 수정, 템플릿 갱신 반영, 스킬 구성 변경 라운드를 열어요. 그 밖의 라운드는 진행 계획을 확정해야 열려요 | <!-- edition:pro -->
 | `pnpm dev-cycle plan [--json]` | `tasks/plan.md`의 Task 표, 다음에 열 Task, 문제를 보여 줘요. 진행 계획 라운드 중에는 사용자 확인에 적을 Task 구성의 지문(`sig=`)도 보여요. 문제가 있으면 exit 1이에요 | <!-- edition:pro -->
-| `pnpm dev-cycle audit` | 빈 칸, 건너뛸 수 없는 칸, 케이스 상향을 검사해요. 화면 리뷰 행은 이번 라운드의 critique 기록(`.impeccable/critique/`)과 audit 보고서(`tasks/evidence/ui-audit-*.md`)의 점수와 맞는지 <!-- edition:pro -->대조하고, 진행 계획의 지문(`sig=`)과 Task 상태도 확인<!-- /edition --><!-- edition:ui 대조 -->해요 |
+| `pnpm dev-cycle audit` | 빈 칸, 건너뛸 수 없는 칸, 케이스 상향을 검사해요. 화면 리뷰 행은 이번 라운드의 리뷰 기록(`.impeccable/critique/` 또는 `tasks/evidence/ui-review-*.md`)과 감사 보고서(`tasks/evidence/ui-audit-*.md`)의 점수나 결과와 맞는지 <!-- edition:pro -->대조하고, 진행 계획의 지문(`sig=`)과 Task 상태도 확인<!-- /edition --><!-- edition:ui 대조 -->해요 |
 | `pnpm dev-cycle archive [--title "제목"]` | 진행 중인 라운드는 그대로 두고, 끝낸 일반 할 일과 백로그만 보관해요. 끝나지 않은 항목과 코드 예시는 남기고, 끝난 하위 항목은 상위 항목의 맥락과 함께 기록해요 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 진행 중인 대조표에서 지정한 행의 증거 칸을 증거 파일(프로젝트 안의 한 줄짜리 일반 파일) 내용으로 바꿔요(끝 줄바꿈 하나는 허용해요). 표 머리, stage, 다른 행, 메모, 코드 블록은 그대로 둬요 |
 | `pnpm dev-cycle close` | audit과 실제 사용자 확인을 마친 뒤 라운드를 닫아요. 대조표와 끝낸 일반 할 일·백로그는 KST 날짜 파일로 보관해요. `blocked`나 `미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial`로 닫아요 |
@@ -71,6 +71,7 @@
 |---|---|
 | `pnpm skills:setup` | `skills.manifest.json`대로 빠진 스킬, 플러그인, OMX 설정, agent-browser CLI를 설치해요. `--with-global`을 붙이면 나머지 전역 도구도 설치해요. 모르는 인자(오타 등)를 주면 설치하지 않고 exit 2로 멈추고, `--help`는 사용법만 보여 줘요 |
 | `pnpm skills:setup --brain <이름>[,…]` | 두뇌를 고르거나 바꿔요. 여러 개는 쉼표로 잇고 첫 번째가 주 두뇌예요. 고르지 않은 설치본은 정리해요(openspec·spec-kit의 도구 파일은 지우지만 `openspec/`, `specs/`, `.specify/memory/` 문서는 남겨요) |
+| `pnpm skills:setup --ui-skill <이름>[,…]` | UI 스킬(`impeccable`, `hallmark`)을 고르거나 바꿔요. 여러 개는 쉼표로 잇고 첫 번째가 주 UI 스킬이에요. 고르지 않은 UI 스킬의 설치본은 정리해요. `--ui-skill none`은 UI 스킬 없이 가요 |
 | `pnpm skills:setup --drop <스킬 또는 묶음>[,…]` | mattpocock 추가 스킬이나 선택 묶음을 지워요. `--drop all`은 설치한 것을 모두 지워요 |
 | `pnpm skills:setup --brain none --simplicity none --drop all` | 순수 AI로 돌아가요. `prokit-*`와 필수·공식 스킬만 남아요 |
 | `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`<!-- /v -->)을 설치해요. 여러 개는 쉼표로 이어요(`ops,motion`) |
@@ -150,7 +151,7 @@ Codex 네이티브 Ponytail은 `pnpm skills:setup --with-global`을 실행할 �
 | 명령 | 하는 일 |
 |---|---|
 | `/prokit-init <PRD 파일 경로나 내용>`, `/prokit-init [프로젝트 경로]` | 새 프로젝트를 만들<!-- edition:pro -->거나 기존 프로젝트에 프로킷을 들여요(기존 프로젝트는 PRD가 없어도 돼요)<!-- /edition --><!-- edition:ui 어요 -->. 새 프로젝트는 PRD를 보고 두뇌와 스킬을 추천해 고르게 한 뒤 아래 설치까지 해요. PRD가 없으면 먼저 받고, 끝내 없으면 만들지 않아요. Claude Code 기준이고, Codex에서는 `$prokit-init`이에요. pro-kit 폴더에서 연 세션에서만 불러요([두뇌와 선택 스킬](../skills/brains.md)) |
-| `bash templates/<템플릿>/install.sh <프로젝트>` | 템플릿을 설치해요. 옵션은 `--brain`, `--simplicity`, `--matt`, `--optional`, `--diff`, `--skip-skills`, `--with-global`<!-- edition:pro -->, 기존 프로젝트용 `--project-type`, `--legacy`, `--adopt`, `--default-branch`<!-- /edition -->예요([설치기와 옵션](../templates/installer.md)) |
+| `bash templates/<템플릿>/install.sh <프로젝트>` | 템플릿을 설치해요. 옵션은 `--brain`, `--simplicity`, `--ui-skill`, `--matt`, `--optional`, `--diff`, `--skip-skills`, `--with-global`<!-- edition:pro -->, 기존 프로젝트용 `--project-type`, `--legacy`, `--adopt`, `--default-branch`<!-- /edition -->예요([설치기와 옵션](../templates/installer.md)) |
 | `node scripts/pack.mjs <이름> --zip <경로>` | 크레딧으로 받은 프리셋 팩 zip의 sha256을 확인한 뒤 `packs/<이름>/`에 풀기 |
 | `node scripts/pack.mjs <이름> --zip <경로>` | 미리 받아 둔 팩 zip을 같은 확인을 거쳐 `packs/<이름>/`에 풀기 |
 

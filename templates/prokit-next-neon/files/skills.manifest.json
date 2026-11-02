@@ -66,11 +66,6 @@
 		},
 		{
 			"agents": ["claude-code", "codex"],
-			"source": "pbakaus/impeccable",
-			"skills": ["impeccable"]
-		},
-		{
-			"agents": ["claude-code", "codex"],
 			"source": "GENEXIS-AI/gpt-image-skill",
 			"skills": ["gpt-image"]
 		},
@@ -548,6 +543,48 @@
 			]
 		}
 	},
+	"uiSkills": {
+		"impeccable": {
+			"description": "기획(PRODUCT.md)·브리프·점수를 매기는 리뷰와 감사·다듬기·DESIGN.md 기록까지 화면 작업 전체. 다듬기와 개선 요구가 많은 서비스",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "pbakaus/impeccable",
+					"skills": ["impeccable"]
+				}
+			],
+			"next": [
+				"개발자마다 한 번 프로젝트 루트에서 .agents/skills/impeccable/scripts/impeccable hooks on (스킬 호출로 켜지 않는다. Codex는 /hooks에서 신뢰 확인. Antigravity에서는 돌지 않고 Grok Build에서 도는지는 확인하지 않았다. impeccable을 빼면 pnpm skills:setup이 이 훅도 뺀다)"
+			]
+		},
+		"hallmark": {
+			"description": "MVP를 만들고 기능을 하나씩 늘리는 서비스: 테마 배정과 바닥 규칙으로 새 화면을 AI가 만든 티 없이 만들고, 정한 디자인을 지키며 화면을 더한다. sloplint 검사(브라우저 검사에 Chrome)",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "Nutlope/hallmark",
+					"skills": ["hallmark"]
+				}
+			],
+			"global": [
+				{
+					"name": "puppeteer-core(hallmark 브라우저 검사)",
+					"check": "npm ls -g puppeteer-core --depth=0 >/dev/null 2>&1 || test -d \"$HALLMARK_PUPPETEER/node_modules/puppeteer-core\"",
+					"hint": "npm install -g puppeteer-core, 또는 프로젝트 밖 폴더에 npm install --prefix <폴더> puppeteer-core 뒤 셸에 HALLMARK_PUPPETEER=<폴더> (없으면 sloplint가 정적 검사만 하고 화면을 찍지 않는다. Chrome도 필요하다)"
+				}
+			]
+		},
+		"none": {
+			"description": "외부 UI 스킬 없이 기본 AI: frontend-design(Anthropic)과 게슈탈트 지침(prokit-ui references/gestalt.md)으로 디자인하고 web-design-guidelines로 검사",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "anthropics/skills",
+					"skills": ["frontend-design"]
+				}
+			]
+		}
+	},
 	"claude": {
 		"marketplaces": {
 			"claude-plugins-official": {
@@ -557,7 +594,8 @@
 		},
 		"plugins": ["skill-creator@claude-plugins-official"],
 		"conflicts": {
-			"frontend-design@claude-plugins-official": "impeccable과 같은 일(impeccable이 이 스킬에서 출발했다)"
+			"frontend-design@claude-plugins-official": "UI 스킬과 같은 일(impeccable이 이 스킬에서 출발했다). UI 스킬이 없으면(none) skills CLI로 받은 frontend-design을 쓴다",
+			"hallmark@hallmark": "UI 스킬 hallmark의 Claude 플러그인판(이 프로젝트는 고른 UI 스킬을 skills CLI 설치본으로만 쓴다)"
 		}
 	},
 	"global": [

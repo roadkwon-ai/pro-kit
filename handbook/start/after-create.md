@@ -10,7 +10,7 @@
 <!-- b:open-in-project -->
 ```bash
 cd ../my-app
-.agents/skills/impeccable/scripts/impeccable hooks on   # 화면 디자인 검사 켜기. 처음 한 번만
+.agents/skills/impeccable/scripts/impeccable hooks on   # impeccable을 고른 프로젝트만. 화면 디자인 검사 켜기, 처음 한 번만
 claude                                                   # 신뢰 질문에 동의한다. Codex는 codex, Antigravity는 agy, Grok Build는 grok --trust
 ```
 <!-- /b -->
@@ -66,7 +66,7 @@ claude                                                   # 신뢰 질문에 동�
 - **스킬 업데이트는 하루 한 번 확인해요**: 작업을 시작할 때 하루 한 번 외부 스킬에 새 버전이 있는지 확인해요. 있으면 업데이트할지 물어요(지금, 항상 자동, 나중에, 다시 묻지 않기)([설치와 업데이트 구조](../skills/install-and-update.md)).
 - **전문 작업은 공식 스킬과 수행자가 맡아요**: 공식 스킬과 전문 수행자가 구현·검토를 맡고, 프로킷은 범위·증거·재지시와 최종 `prokit-reviewer` 게이트를 관리해요. ponytail을 고르고 Codex 네이티브 플러그인을 선택 설치했더라도 `$ponytail:ponytail-review`와 프로젝트 스킬 대체 경로를 같은 검토에 함께 쓰지 않아요([공식 스킬과 연결](../skills/official-skills.md)).
 - **첫 배포는 운영이에요**: Vercel 계정, 원격 DB, GitHub 저장소가 필요하고 에이전트가 준비 순서를 안내해요. 운영에 배포할 때마다 버전과 릴리스 노트를 보여 주고 동의를 받아요([Vercel 배포와 되돌리기](../deploy/vercel.md)). <!-- edition:pro -->
-- **화면 디자인 검사는 명령으로 켜요**: `impeccable hooks on`은 스킬을 불러서 켜지 않아요. 개인(전역) impeccable 스킬이 있으면 훅 경로가 깨지기 때문이에요.
+- **화면 디자인 검사는 명령으로 켜요**: impeccable을 골랐다면 `impeccable hooks on`을 스킬을 불러서 켜지 않아요. 개인(전역) impeccable 스킬이 있으면 훅 경로가 깨지기 때문이에요. hallmark만 골랐다면 켤 훅이 없어요.
 - **개발 명령에 자원 보호가 붙어요**: 새 프로젝트의 개발·빌드 명령은 용량과 여유 공간을 확인해요. 이미 프로킷을 설치한 프로젝트는 [템플릿 갱신 절차](../../AGENTS.md#기존-프로젝트에-템플릿-갱신-반영)로 H 라운드([케이스와 대조표](../concepts/cases.md))에서 반영해야 해요. 큰 환경은 함부로 지우지 않아요([위임과 자원 관리](../concepts/delegation-and-resources.md)).
 - **프로젝트 소개를 채워 두세요**: `GLOSSARY.md`(용어집)와 `docs/domain/project.md`(프로젝트 소개)는 에이전트가 작업마다 읽어요. 채워 두면 새 세션에서 프로젝트를 다시 설명하지 않아도 돼요.
 

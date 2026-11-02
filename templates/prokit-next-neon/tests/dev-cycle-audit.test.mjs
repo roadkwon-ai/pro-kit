@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
-  audit, bindSession, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, noteSkillsChange, parseActive, renderBlock, status, usedSkills, writeTable,
+  audit, bindSession, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, mainUiSkill, noteSkillsChange, parseActive, renderBlock, status, usedSkills, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
 import { captureSnapshot } from "../files/scripts/delegation.mjs";
 import { auditRecord, critiqueRecord, makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
@@ -170,8 +170,8 @@ function fill(root, value = "pnpm check-types → exit 0", confirm = CONFIRMED) 
     if (value === "pnpm check-types → exit 0") {
       if (r.text.startsWith("[design]")) evidence = "기존: docs/dev-workflow.md; 결정: 기존 절차 재사용; 설정: 변경 없음; 검증: 소비자 회귀 검사";
       if (r.text.includes("prokit-reviewer(plan)")) evidence = "prokit-reviewer(plan): approve, max=none, 지적 0";
-      if (r.text.startsWith("[review] impeccable critique")) evidence = critiqueRecord(root);
-      if (r.text.startsWith("[review] impeccable audit")) evidence = auditRecord(root);
+      if (r.text.startsWith("[review] 디자인 리뷰")) evidence = critiqueRecord(root);
+      if (r.text.startsWith("[review] 디자인 감사")) evidence = auditRecord(root);
     }
     return { ...r, evidence: r.evidence || (r.text.startsWith("[confirm]") ? confirm : evidence) };
   });
@@ -185,7 +185,7 @@ test("화면 리뷰 행: critique 기록·audit 보고서가 없거나, 이번 �
   fill(root);
   const p = join(root, config.todoPath);
   const active = parseActive(readFileSync(p, "utf8"));
-  const row = active.rows.findIndex((r) => r.text.startsWith("[review] impeccable critique"));
+  const row = active.rows.findIndex((r) => r.text.startsWith("[review] 디자인 리뷰"));
   const problemFor = (evidence) => {
     const rows = active.rows.map((r, i) => (i === row ? { ...r, evidence } : r));
     writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows));
@@ -194,7 +194,7 @@ test("화면 리뷰 행: critique 기록·audit 보고서가 없거나, 이번 �
   const file = ".impeccable/critique/2026-10-22T12-30-00Z__apps-web.md";
   assert.equal(problemFor(active.rows[row].evidence), null);
   // AG5: critique를 실행하지 않고 적은 점수
-  assert.match(problemFor("Design Health 40/40, P0 0, P1 0"), /기록 파일\(\.impeccable\/critique\//);
+  assert.match(problemFor("Design Health 40/40, P0 0, P1 0"), /리뷰 기록 파일\(impeccable은 \.impeccable\/critique\//);
   assert.match(problemFor("Design Health 40/40, .impeccable/critique/2026-10-22T00-00-00Z__none.md"), /기록 파일이 없다/);
   assert.match(problemFor(`Design Health 40/40, P0 0, ${file}`), /점수가 기록 파일과 다르다: 증거 40\/40/);
   assert.match(problemFor(`Design Health 31/32, P0 0, ${file}`), /점수가 기록 파일과 다르다/);
@@ -220,7 +220,7 @@ test("화면 리뷰 행: critique 기록·audit 보고서가 없거나, 이번 �
   assert.match(problemFor("Design Health 40/40, .impeccable/critique/2026-10-22T13-00-00Z__empty.md"), /total_score가 없다/);
   assert.match(problemFor(`critique 실행함, ${file}`), /증거에 critique 점수\(31\/40\)가 없다/);
   // audit과 web-design-guidelines는 보고서 파일과 총점을 본다
-  const auditRow = active.rows.findIndex((r) => r.text.startsWith("[review] impeccable audit"));
+  const auditRow = active.rows.findIndex((r) => r.text.startsWith("[review] 디자인 감사"));
   const auditProblem = (evidence) => {
     const rows = active.rows.map((r, i) => (i === auditRow ? { ...r, evidence } : r));
     writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows));
@@ -232,10 +232,29 @@ test("화면 리뷰 행: critique 기록·audit 보고서가 없거나, 이번 �
   assert.match(auditProblem("audit 17/20, tasks/evidence/ui-audit-none.md"), /기록 파일이 없다/);
   assert.match(auditProblem(`audit 20/20, 접근성 4/4, ${report}`), /보고서에 증거의 총점 20\/20이 없다/);
   assert.equal(auditProblem(`10/20 기준 audit 17/20, ${report}`), null);
-  assert.match(auditProblem(`audit 실행함, ${report}`), /증거에 audit 총점\(N\/20\)이 없다/);
+  assert.match(auditProblem(`audit 실행함, ${report}`), /증거에 감사 결과\(impeccable 총점 N\/20, sloplint의 N FAIL, UI 스킬이 없으면 web-design-guidelines 위반 N\)가 없다/);
   writeFileSync(join(root, report), "| **Total** | | **17**/20 | Good |\n");
   assert.equal(auditProblem(`audit 17/20, ${report}`), null);
   assert.equal(auditProblem("blocked: web-design-guidelines 가져오기 실패"), null);
+  // 기록을 남기지 않는 UI 스킬(hallmark): 감사 보고서에 sloplint FAIL 수가 있어야 한다
+  writeFileSync(join(root, report), "sloplint: 0 FAIL, 1 REFLEX, 3 WARN across 4 file(s).\n## web-design-guidelines\n위반 2\n");
+  assert.equal(auditProblem(`hallmark audit Floor 0 FAIL, Reflex 1, web-design-guidelines 위반 2, ${report}`), null);
+  assert.match(auditProblem(`hallmark audit 1 FAIL, ${report}`), /보고서에 증거의 1 FAIL이 없다/);
+  // UI 스킬이 없으면 web-design-guidelines 위반 수를 본다
+  assert.equal(auditProblem(`web-design-guidelines 위반 2, ${report}`), null);
+  assert.match(auditProblem(`web-design-guidelines 위반 5, ${report}`), /보고서에 증거의 위반 수\(5\)가 없다/);
+  // 리뷰 행: hallmark는 sloplint 출력과 마감 리뷰를 tasks/evidence/에 저장한다
+  const review = "tasks/evidence/ui-review-20261102-1530.md";
+  writeFileSync(join(root, review), "sloplint: 0 FAIL, 1 REFLEX, 3 WARN across 4 file(s).\nfinish-review: ship\n");
+  assert.equal(problemFor(`sloplint 0 FAIL, 1 REFLEX(47b waive), 마감 리뷰 ship, ${review}`), null);
+  assert.match(problemFor(`sloplint 2 FAIL, ${review}`), /보고서에 증거의 2 FAIL이 없다/);
+  assert.match(problemFor(`마감 리뷰 ship, ${review}`), /증거에 리뷰 결과\(점수 N\/M, sloplint의 N FAIL, 기본 AI면 게슈탈트 위반 N\)가 없다/);
+  // impeccable 기록 파일이 함께 적혀 있으면 그 파일을 본다
+  assert.equal(problemFor(`${review}, Design Health 31/40, ${file}`), null);
+  // 옛 판 행 이름도 같은 검사를 받는다
+  const legacy = active.rows.map((r, i) => (i === row ? { ...r, text: "[review] impeccable critique (대상은 화면 경로나 주소) → Design Health 점수, P0/P1 목록, .impeccable/critique/ 기록 파일 경로", evidence: "Design Health 40/40, P0 0, P1 0" } : r));
+  writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, legacy));
+  assert.ok(audit(root, config).problems.some((x) => x.startsWith(`#${row + 1} `) && /리뷰 기록 파일/.test(x)), "옛 행 이름");
 });
 
 test("증거 판정: 빈 칸·형식만 채운 값·사유 없는 N/A", () => {
@@ -1431,7 +1450,7 @@ test("행 일 이름의 공식 스킬과 리뷰 focus의 공식 스킬은 맡는
   const config = loadConfig(root);
   writeTable(root, config, "B", { write: true, title: "화면" });
   const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
-  const row = rows.findIndex((r) => r.text.startsWith("[review] impeccable audit과 web-design-guidelines")) + 1;
+  const row = rows.findIndex((r) => r.text.startsWith("[review] 디자인 감사와 web-design-guidelines")) + 1;
   assert.ok(row);
   const set = (n, v) => {
     writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
@@ -1444,7 +1463,7 @@ test("행 일 이름의 공식 스킬과 리뷰 focus의 공식 스킬은 맡는
   const evidence = auditRecord(root);
   // 훅 기록이 없으면 행 일 이름의 스킬(impeccable, web-design-guidelines)을 사용:에 적은 자기 신고로 본다. 괄호 안 조건의 스킬은 보지 않는다
   set(row, evidence);
-  assert.match(mine(row)[0] ?? "", /행 문구의 impeccable, web-design-guidelines를 읽고 따른 뒤 증거에 사용:/);
+  assert.match(mine(row)[0] ?? "", /행 문구의 web-design-guidelines, impeccable를 읽고 따른 뒤 증거에 사용:/);
   // 훅 기록이 있으면 맡는 쪽의 읽은 기록을 본다. Main이 읽은 web-design-guidelines는 세지 않고 경고한다
   read("impeccable");
   read("web-design-guidelines");
@@ -1465,6 +1484,34 @@ test("행 일 이름의 공식 스킬과 리뷰 focus의 공식 스킬은 맡는
   assert.doesNotMatch(unread(), /prokit-reviewer/);
   write("apps/web/next.config.ts", "export default { cacheComponents: true };\n");
   assert.match(unread(), /prokit-ui-builder: shadcn, next-cache-components-optimizer/);
+});
+
+test("디자인 단계 행(주 UI 스킬)은 고른 주 UI 스킬을 읽어야 하고, 기록이 없으면 impeccable, none이면 읽을 스킬이 없다", () => {
+  const { root, write } = makeRepo();
+  for (const s of ["impeccable", "hallmark"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n---\n`);
+  write("skills.manifest.json", JSON.stringify({ skills: [], uiSkills: { impeccable: { skills: [{ skills: ["impeccable"] }] }, hallmark: { skills: [{ skills: ["hallmark"] }] } }, performers: { agents: [], skills: {} } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const row = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => r.text.startsWith("화면 브리프 확정 (주 UI 스킬의 설계 단계")) + 1;
+  assert.ok(row);
+  const set = (v) => {
+    mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(row), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  const mine = (cfg) => audit(root, cfg).problems.filter((p) => p.startsWith(`#${row} `)).join("\n");
+  set("docs/briefs/landing.md (사용자 확인 2026-11-02)");
+  const { uiSkill, ...unset } = config;
+  assert.match(mine(unset), /행 문구의 impeccable를 읽고/, "기록이 없으면 impeccable");
+  assert.match(mine({ ...config, uiSkill: ["hallmark", "impeccable"] }), /행 문구의 hallmark를 읽고/, "첫 값이 주 UI 스킬");
+  assert.doesNotMatch(mine({ ...config, uiSkill: "none" }), /행 문구의/);
+  // 훅 기록이 있으면 이 라운드에서 Main이 주 UI 스킬을 읽은 기록을 본다
+  const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/impeccable/SKILL.md") } });
+  set("사용: impeccable, docs/briefs/landing.md (사용자 확인 2026-11-02)");
+  assert.match(mine({ ...config, uiSkill: "hallmark" }), /행 문구의 hallmark\(Main\)를 이 라운드에서 맡는 쪽\(괄호\)이 읽은 기록이 없다/);
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/hallmark/SKILL.md") } });
+  assert.equal(mine({ ...config, uiSkill: "hallmark" }), "");
 });
 
 test("db focus 리뷰는 설치된 Neon 스킬(상위 스킬 포함)을 리뷰어가 읽어야 한다", () => {
@@ -1784,4 +1831,12 @@ test("위임 안내 예시는 계층 파일이 없는 H 라운드에서 prokit-i
   run(root, "evidence", String(impl), "--file", "tasks/evidence.txt");
   const p = audit(root, config).problems.find((x) => x.startsWith(`#${impl} `));
   assert.match(p, /증거에 위임: prokit-implementer\(사용:/);
+});
+
+test("주 UI 스킬: 카탈로그 항목의 스킬을 보고, none이면 카탈로그 none 항목(기본 AI가 참고하는 스킬)이다", () => {
+  const catalog = { hallmark: { skills: [{ skills: ["hallmark"] }] }, none: { skills: [{ skills: ["frontend-design"] }] } };
+  assert.deepEqual(mainUiSkill({}, catalog), ["impeccable"], "기록이 없으면 impeccable");
+  assert.deepEqual(mainUiSkill({ uiSkill: ["hallmark", "impeccable"] }, catalog), ["hallmark"]);
+  assert.deepEqual(mainUiSkill({ uiSkill: "none" }, catalog), ["frontend-design"]);
+  assert.deepEqual(mainUiSkill({ uiSkill: "none" }), [], "none 항목이 없는 옛 매니페스트는 읽을 스킬이 없다");
 });

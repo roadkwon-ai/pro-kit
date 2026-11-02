@@ -40,7 +40,7 @@
 |---|---|---|
 | AI 에이전트 | <!-- v:agents.list -->Claude Code, Codex, Antigravity, Grok Build<!-- /v --> 중 하나 | [지원하는 에이전트](../start/supported-agents.md) |
 | prokit 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v -->개<!-- /edition --><!-- edition:ui 6개 -->와 에이전트 <!-- edition:pro --><!-- v:prokit.agents.count -->8<!-- /v -->개<!-- /edition --><!-- edition:ui 3개 --> | 분야별로 일하는 법을 적은 스킬<!-- edition:pro -->, 기존 프로젝트를 읽기 전용으로 정밀 분석하는 에이전트<!-- /edition -->, 구현을 맡는 에이전트, 전문 리뷰와 최종 리뷰를 맡는 읽기 전용 에이전트 | [prokit 스킬](../skills/prokit-skills.md), [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
-| 공식 도메인 스킬 | Next.js, React, Better Auth, shadcn, impeccable, DB, Vercel 배포 등 | [공식 스킬과 연결](../skills/official-skills.md) |
+| 공식 도메인 스킬 | Next.js, React, Better Auth, shadcn, DB, Vercel 배포 등. 화면 디자인은 고른 UI 스킬(impeccable, hallmark) | [공식 스킬과 연결](../skills/official-skills.md) |
 | 프로세스 스킬 | skill-creator, mattpocock 필수 3개(늘 설치), 고른 두뇌(하나 이상, 첫 번째가 주 두뇌. <!-- v:brains.names -->superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering<!-- /v --> 중에서), 고른 과설계 방지 스킬(ponytail, caveman, karpathy 중 하나) | [프로세스 스킬과 전역 도구](../skills/official-skills.md#프로세스-스킬과-전역-도구) |
 | 선택 스킬 묶음 | <!-- v:optional.names -->ops, motion, mobile, i-have-adhd, taste<!-- /v --> | [선택 스킬 묶음](../skills/optional-bundles.md) |
 
@@ -107,7 +107,8 @@
 
 | 도구 | 설치 | 언제 쓰나 | 쓰는 명령 |
 |---|---|---|---|
-| impeccable CLI | 프로젝트(`impeccable` 스킬에 들어 있음) | 디자인 규칙 검사 훅을 켤 때(개발자마다 한 번) | `.agents/skills/impeccable/scripts/impeccable hooks on` |
+| impeccable CLI | 프로젝트(`impeccable` 스킬에 들어 있음) | impeccable을 고른 프로젝트에서 디자인 규칙 검사 훅을 켤 때(개발자마다 한 번) | `.agents/skills/impeccable/scripts/impeccable hooks on` |
+| hallmark `sloplint` | 프로젝트(`hallmark` 스킬에 들어 있음). 화면을 찍는 `--render`에는 Chrome과 `puppeteer-core`(전역, 또는 프로젝트 밖 폴더에 받고 `HALLMARK_PUPPETEER`로 가리키기)가 필요해요 | hallmark를 고른 프로젝트에서 바꾼 화면의 AI 티와 바닥 규칙을 검사할 때 | `sloplint.mjs <바꾼 파일·폴더> --render` |
 | DESIGN.md 검사기 | 받을 필요 없음(`pnpm dlx`) | 디자인 규칙 파일을 받거나 고쳤을 때 | `pnpm dlx @google/design.md lint DESIGN.md` |
 | Biome | 프로젝트 | 형식과 lint를 검사할 때 | `pnpm check`, `pnpm exec biome check .` |
 | Turborepo | 프로젝트 | 여러 패키지의 빌드·타입 검사를 한 번에 돌릴 때 | `pnpm build`, `pnpm check-types` |

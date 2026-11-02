@@ -477,16 +477,51 @@ function planConfirmProblem(root, config, evidence, needPlan = false) {
 const isConfirm = (text) => /^\[confirm\]/i.test(text);
 const isPlanRound = (active) =>
 	active.rows.some((r) => r.text === PLAN_DOC_ROW);
-// 화면 리뷰 점수는 실행 기록이 있어야 받는다. critique는 impeccable이 .impeccable/critique/<시각>__<대상>.md를
-// 남기고, audit과 web-design-guidelines는 기록을 남기지 않아 보고서를 tasks/evidence/에 저장해 둔다.
+// 화면 리뷰 점수는 실행 기록이 있어야 받는다. 기록 꼴은 주 UI 스킬이 정한다(prokit-ui의 references/<스킬>-map.md).
+// impeccable critique는 .impeccable/critique/<시각>__<대상>.md를 남긴다. 기록을 남기지 않는 리뷰(impeccable audit,
+// hallmark의 sloplint와 마감 리뷰, web-design-guidelines)는 보고서를 tasks/evidence/에 저장해 둔다.
+// 행 이름은 판마다 다르다(옛 판: "[review] impeccable critique"). 두 꼴을 모두 본다.
 const N_OF_M = /(\d+)\s*\/\s*(\d+)/g;
+// sloplint 요약 줄: "sloplint: 0 FAIL, 1 REFLEX, 2 WARN across …"
+const N_FAIL = /(?<!\d)(\d+)\s*FAIL\b/;
+const CRITIQUE_FILE = /\.impeccable\/critique\/[\w.-]+\.md/;
+const EVIDENCE_FILE = /tasks\/evidence\/[\w.-]+\.md/;
+// 저장한 보고서의 결과: 증거의 sloplint FAIL 수, web-design-guidelines 위반 수(UI 스킬이 없을 때), 점수(N/M) 중
+// 먼저 나온 것이 보고서에도 있어야 한다.
+function reportScore(pairs, text, value, what) {
+	const fail = value.match(N_FAIL)?.[1];
+	if (fail !== undefined)
+		return new RegExp(`(?<!\\d)${fail}\\s*FAIL\\b`).test(text)
+			? null
+			: `보고서에 증거의 ${fail} FAIL이 없다(sloplint 출력을 저장한다)`;
+	const found = value.match(/위반\s*(\d+)/)?.[1];
+	if (found !== undefined && !pairs.length)
+		return new RegExp(`위반\\s*${found}(?!\\d)`).test(text)
+			? null
+			: `보고서에 증거의 위반 수(${found})가 없다`;
+	if (!pairs.length) return `증거에 ${what}가 없다`;
+	return pairs.some((p) =>
+		new RegExp(`(?<!\\d)${p[1]}[*\\s]*/[*\\s]*${p[2]}(?!\\d)`).test(text),
+	)
+		? null
+		: `보고서에 증거의 점수 ${pairs[0][1]}/${pairs[0][2]}이 없다`;
+}
 const UI_RECORDS = [
 	{
-		row: "[review] impeccable critique",
-		re: /\.impeccable\/critique\/[\w.-]+\.md/,
-		what: "critique가 남긴 기록 파일(.impeccable/critique/….md)",
-		// 머리의 total_score/max_score와 같은 쌍이 하나라도 있어야 한다(날짜 10/22 같은 다른 N/M은 섞여도 된다).
-		score: (pairs, text) => {
+		rows: ["[review] 디자인 리뷰", "[review] impeccable critique"],
+		// impeccable 기록 파일이 있으면 그것을 본다(증거에 다른 보고서 경로가 앞에 있어도)
+		prefer: CRITIQUE_FILE,
+		re: EVIDENCE_FILE,
+		what: "리뷰 기록 파일(impeccable은 .impeccable/critique/….md, 기록을 남기지 않는 UI 스킬은 tasks/evidence/ui-review-<시각>.md)",
+		score: (pairs, text, value, file) => {
+			if (!CRITIQUE_FILE.test(file))
+				return reportScore(
+					pairs,
+					text,
+					value,
+					"리뷰 결과(점수 N/M, sloplint의 N FAIL, 기본 AI면 게슈탈트 위반 N)",
+				);
+			// 머리의 total_score/max_score와 같은 쌍이 하나라도 있어야 한다(날짜 10/22 같은 다른 N/M은 섞여도 된다).
 			const front = text.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? "";
 			const total = front.match(/^total_score:\s*(\d+)/m)?.[1];
 			const max = front.match(/^max_score:\s*(\d+)/m)?.[1];
@@ -500,13 +535,19 @@ const UI_RECORDS = [
 		},
 	},
 	{
-		row: "[review] impeccable audit",
-		re: /tasks\/evidence\/[\w.-]+\.md/,
-		what: "audit·web-design-guidelines 보고서를 저장한 파일(tasks/evidence/ui-audit-<시각>.md)",
-		// 증거의 총점(N/20)이 보고서에도 있어야 한다. 보고서는 **17/20**처럼 굵게 쓰기도 한다.
-		score: (pairs, text) => {
+		rows: ["[review] 디자인 감사", "[review] impeccable audit"],
+		re: EVIDENCE_FILE,
+		what: "감사·web-design-guidelines 보고서를 저장한 파일(tasks/evidence/ui-audit-<시각>.md)",
+		// impeccable audit은 총점(N/20)이 보고서에도 있어야 한다. 보고서는 **17/20**처럼 굵게 쓰기도 한다.
+		score: (pairs, text, value) => {
 			const totals = pairs.filter((p) => p[2] === "20");
-			if (!totals.length) return "증거에 audit 총점(N/20)이 없다";
+			if (!totals.length)
+				return reportScore(
+					[],
+					text,
+					value,
+					"감사 결과(impeccable 총점 N/20, sloplint의 N FAIL, UI 스킬이 없으면 web-design-guidelines 위반 N)",
+				);
 			return totals.some((p) =>
 				new RegExp(`(?<!\\d)${p[1]}[*\\s]*/[*\\s]*20(?!\\d)`).test(text),
 			)
@@ -530,11 +571,14 @@ function roundStart(root, meta) {
 }
 
 function uiRecordProblem(root, meta, r) {
-	const kind = UI_RECORDS.find((k) => r.text.startsWith(k.row));
+	const kind = UI_RECORDS.find((k) =>
+		k.rows.some((row) => r.text.startsWith(row)),
+	);
 	if (!kind) return null;
 	const value = bare(r.evidence);
 	if (/^(blocked|미실행|n\/a)\s*:/i.test(value)) return null;
-	const file = value.match(kind.re)?.[0];
+	const file =
+		(kind.prefer && value.match(kind.prefer)?.[0]) ?? value.match(kind.re)?.[0];
 	if (!file)
 		return `증거에 ${kind.what} 경로를 적는다. 실행하지 않은 리뷰의 점수는 받지 않는다`;
 	const path = join(root, file);
@@ -544,6 +588,8 @@ function uiRecordProblem(root, meta, r) {
 	const problem = kind.score(
 		[...value.replace(file, "").matchAll(N_OF_M)],
 		readFileSync(path, "utf8"),
+		value.replace(file, ""),
+		file,
 	);
 	return problem && `${problem} (${file})`;
 }
@@ -711,7 +757,7 @@ function installerNames(root) {
 	const groups = [
 		...(m.skills ?? []),
 		...Object.values(m.optional ?? {}).flatMap((o) => o.skills ?? []),
-		...[m.brains, m.simplicity].flatMap((c) =>
+		...[m.brains, m.simplicity, m.uiSkills].flatMap((c) =>
 			Object.values(c ?? {}).flatMap((i) => i.skills ?? []),
 		),
 	];
@@ -739,7 +785,7 @@ function installerNames(root) {
 		plugins,
 		markets,
 		initPrefixes,
-		omx: Boolean(m.brains?.["oh-my"]?.omx),
+		omx: Object.values(m.brains ?? {}).some((b) => b.omx),
 	};
 }
 function installerFile(root, base, file, names) {
@@ -759,7 +805,7 @@ function installerFile(root, base, file, names) {
 		return names.omx;
 	const keys = {
 		".claude/settings.json": ["enabledPlugins", "extraKnownMarketplaces"],
-		".dev-cycle.json": ["brain", "simplicity"],
+		".dev-cycle.json": ["brain", "simplicity", "uiSkill"],
 	}[file];
 	if (!keys || !base) return false;
 	try {
@@ -812,6 +858,9 @@ export function noteSkillsChange(root, config, { before, after }) {
 			`두뇌 ${label(before.brain)} → ${label(after.brain)}`,
 		(before.simplicity ?? "none") !== (after.simplicity ?? "none") &&
 			`과설계 방지 ${before.simplicity ?? "none"} → ${after.simplicity ?? "none"}`,
+		label(before.uiSkill ?? "impeccable") !==
+			label(after.uiSkill ?? "impeccable") &&
+			`UI 스킬 ${label(before.uiSkill ?? "impeccable")} → ${label(after.uiSkill ?? "impeccable")}`,
 	].filter(Boolean);
 	const note = `스킬 구성 변경(${archiveDay(new Date())}): ${change.join(", ") || "추가 스킬·선택 묶음"}. 이 라운드의 남은 단계 행은 새 구성으로 한다(Claude Code는 /reload-plugins로 다시 불러온다)`;
 	const head = md
@@ -1165,7 +1214,13 @@ export function performers(root) {
 			readFileSync(join(root, "skills.manifest.json"), "utf8"),
 		);
 		return {
-			official: new Set(m.skills.flatMap((s) => s.skills)),
+			// 고르는 UI 스킬(impeccable, hallmark)도 공식 스킬이다. 기본 설치 목록에서 옮겨 왔다
+			official: new Set(
+				[
+					...m.skills,
+					...Object.values(m.uiSkills ?? {}).flatMap((i) => i.skills ?? []),
+				].flatMap((s) => s.skills),
+			),
 			agents: m.performers?.agents ?? [],
 			skills: m.performers?.skills ?? {},
 			// 매니페스트가 Claude 플러그인으로도 설치하는 스킬(skill-creator)은 `<플러그인>:<이름>` Skill 호출도 그 스킬을 쓴 것이다
@@ -1256,6 +1311,15 @@ function titleSkills(text, official) {
 		.map((m) => m[0])
 		.filter((n) => official.has(n));
 }
+// 디자인 단계 행("주 UI 스킬의 … 단계")은 고른 주 UI 스킬(.dev-cycle.json uiSkill의 첫 값. 기록이 없으면 impeccable)의 일이다.
+// 카탈로그 항목의 스킬을 본다. none이면 카탈로그 none 항목의 스킬(기본 AI가 참고하는 frontend-design)이고, 그 항목이 없으면 없다
+const UI_STAGE_RE = /주 UI 스킬/;
+export const mainUiSkill = (config, catalog = {}) => {
+	const main = [config.uiSkill ?? "impeccable"].flat()[0];
+	if (!main) return [];
+	const names = (catalog[main]?.skills ?? []).flatMap((e) => e.skills);
+	return names.length ? names : main === "none" ? [] : [main];
+};
 // prokit-reviewer focus마다 리뷰어가 그 행을 하면서 읽는 공식 스킬(에이전트 정의 focus 표에서 조건이 붙지 않은 것).
 // 설치되어 있고 performers에서 리뷰어가 맡은 것만 본다. plan·code focus의 스킬은 모두 조건이 붙어 있어 보지 않는다
 export const REVIEW_FOCUS_SKILLS = {
@@ -1308,6 +1372,10 @@ function usageProblem(root, config, active) {
 		plugins,
 	} = performers(root);
 	const { layers, auth } = classify(roundFiles(root, active), config);
+	const uiMain = mainUiSkill(
+		config,
+		readJson(join(root, "skills.manifest.json"))?.uiSkills,
+	);
 	// 계층 에이전트가 맡는 계층: 인증 파일은 서버(D) 몫이다(editGuard와 같다)
 	const agentLayers = [...new Set([...layers, ...(auth ? ["D"] : [])])].filter(
 		(c) => LAYER_AGENTS[c],
@@ -1403,9 +1471,10 @@ function usageProblem(root, config, active) {
 		const rowNeed = rowSkills(r.text, layers).filter((n) =>
 			isProjectSkill(root, n),
 		);
-		const titleNeed = titleSkills(r.text, official).filter(
-			(n) => !rowNeed.includes(n) && isProjectSkill(root, n),
-		);
+		const titleNeed = [
+			...titleSkills(r.text, official),
+			...(UI_STAGE_RE.test(r.text) ? uiMain : []),
+		].filter((n) => !rowNeed.includes(n) && isProjectSkill(root, n));
 		// 행 일 이름의 스킬은 훅 기록이 있으면 읽은 기록으로 보고, 기록이 없는 호스트면 사용:에 적은 자기 신고로 본다
 		const need = [...rowNeed, ...(log ? [] : titleNeed)].filter(
 			(n) => !names.has(n),

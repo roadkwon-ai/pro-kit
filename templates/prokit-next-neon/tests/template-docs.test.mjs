@@ -230,7 +230,7 @@ test("스킬 연결: 행이 외부 스킬을 이름으로 부르고, 외부 스�
   const wf = read("docs/dev-workflow.md");
   const part = (c) => wf.split(`### ${c}.`)[1].split("###")[0];
   assert.match(part("B"), /^- 구현 \([^\n]*shadcn[^\n]*vercel-react-best-practices/m);
-  assert.match(part("B"), /^- \[review\] impeccable audit과 web-design-guidelines/m);
+  assert.match(part("B"), /^- \[review\] 디자인 감사와 web-design-guidelines/m);
   assert.match(part("D"), /^- 구현 \([^\n]*테스트 먼저[^\n]*better-auth-best-practices/m);
   assert.match(part("E"), /^- 스키마 수정 \+ dbGenerate[^\n]*supabase-postgres-best-practices/m);
   assert.match(part("F"), /^- 구현 계획 \(계획 단계, 바꿀 계층의 prokit-\* 스킬과 그 공식 스킬 연결 표/m);
@@ -356,9 +356,9 @@ test("Antigravity·Grok Build: Codex처럼 SKILL.md를 읽고, 서브에이전�
 test("기존 프로젝트 디자인: prokit-ui가 디자인 방향을 한 번 묻고, 유지면 기존 디자인으로 DESIGN.md 명세를 만든다", () => {
   const ui = read(".agents/skills/prokit-ui/SKILL.md");
   for (const k of ["`projectType`이 `early`·`operating`·`migration`", "docs/prokit/intake.md", "`기존 디자인 유지 (추천)`", "`리디자인`", "`projectType`이 없거나 `new`면 이 질문을 하지 않는다"]) assert.ok(ui.includes(k), k);
-  const map = read(".agents/skills/prokit-ui/references/impeccable-map.md");
+  const map = read(".agents/skills/prokit-ui/references/design-flow.md");
   const sec = map.split("## 기존 디자인으로 DESIGN.md 만들기\n")[1]?.split("\n## ")[0] ?? "";
-  assert.ok(sec, "impeccable-map에 절이 있다");
+  assert.ok(sec, "design-flow에 절이 있다");
   assert.match(sec, /`## Overview`, `## Colors`, `## Typography`, `## Layout`, `## Elevation & Depth`, `## Shapes`, `## Components`, `## Do's and Don'ts`/, "DESIGN.md 명세의 절 순서");
   assert.match(sec, /지어내지 않는다/);
   assert.match(sec, /DESIGN\.md 검사/);

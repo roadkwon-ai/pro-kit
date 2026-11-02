@@ -19,7 +19,7 @@ model: sonnet
 
 ## 규칙
 1. 작업 범위, 금지 명령, 테스트 먼저, 검사, provider 검증은 [prokit-implementer](prokit-implementer.md)의 규칙 1\~6을 그대로 따른다.
-2. 먼저 `AGENTS.md`, 위임 지시에 적힌 `prokit-*` 스킬(`prokit-ui`<!-- edition:pro -->, `prokit-web`<!-- /edition -->)을 읽는다. 화면 모양과 디자인 결정(`DESIGN.md`, impeccable 브리프)은 지시에 적힌 것을 따르고 새로 정하지 않는다.
+2. 먼저 `AGENTS.md`, 위임 지시에 적힌 `prokit-*` 스킬(`prokit-ui`<!-- edition:pro -->, `prokit-web`<!-- /edition -->)을 읽는다. 화면 모양과 디자인 결정(`DESIGN.md`, UI 스킬 브리프)은 지시에 적힌 것을 따르고 새로 정하지 않는다.
 3. 공식 스킬은 Skill 도구로 부르지 않고 Read로 `.agents/skills/<이름>/SKILL.md`를 읽는다. Skill 도구는 이름이 같은 개인 스킬(`~/.claude/skills`)을 먼저 불러온다. 스킬 머리에 `parent:`가 있으면 상위 스킬부터 읽는다. 규칙 파일(`rules/…`)은 이번 일에 맞는 것을 읽는다.
 4. 위임 지시에 적힌 공식 스킬은 모두 읽는다. 지시에 없어도 위 표의 상황이 오면 읽고 보고에 적는다. 표의 상황인데 그 스킬을 읽을 수 없으면 구현하지 않고 `blocked`로 보고한다.
 5. Next.js API를 쓰거나 바꾸면 `apps/web/node_modules/next/dist/docs/`의 해당 문서를 읽는다. 공식 스킬과 번들 문서가 다르면 번들 문서를 따르고 어긋난 곳을 보고한다.

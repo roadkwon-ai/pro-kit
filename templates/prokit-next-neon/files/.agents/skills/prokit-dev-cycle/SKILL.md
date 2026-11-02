@@ -71,7 +71,7 @@ pnpm dev-cycle table <케이스> --write --title "<요청 요약>"
 - 구현을 위임할 때는 그 계층의 전문 에이전트(화면 `prokit-ui-builder`<!-- edition:pro -->, 서버·API `prokit-api-builder`, DB `prokit-db-builder`<!-- /edition -->, 하네스·계층 밖 파일 `prokit-implementer`)에 정확한 파일 목록, 읽을 공식 스킬의 이름과 경로(그 계층 `prokit-*`의 "공식 스킬 연결" 표), 그 단계의 두뇌 스킬(`references/brains/<이름>.md`의 구현 칸. 고른 두뇌가 없으면 생략), 선택한 전문 스킬의 검증 결과, 재사용·설정 결정 위치, 완료 조건을 준다. 병렬로 위임할 때는 파일이 겹치지 않게 나눈다.<!-- edition:pro --> 계층이 여럿이면(F) 계층마다 그 계층 에이전트에 DB, 서버·API, 화면 순서로 맡기고, 앞 계층이 바꾼 계약(스키마 타입, 프로시저 입출력)을 다음 지시에 적는다.<!-- /edition --> `AGENTS.md`, `.dev-cycle.json`, `package.json`, 루트 설정은 메인이 파일을 명시해 `prokit-implementer`에 배정한 경우만 수행자가 고친다.
 - 위임한 쪽의 보고만 믿지 않는다. 수행자·리뷰어·QA를 부르기 전과 끝난 뒤 `pnpm dev-cycle delegation capture`·`diff`로 작업 트리를 대조하고, 배정 밖 변경이나 커밋이 나오면(exit 1) 그 결과를 통합하지 않고 재지시한다. 명령과 병렬 위임의 대조 방법은 위임 프로토콜의 "관측과 수행 범위"를 따른다.
 - 두뇌 파일의 "에이전트" 절에 든 에이전트(예: `agent-skills:security-auditor`)는 읽기 전용 보완 검토로만 쓴다. 파일을 쓰지 않게 지시하고 전후 `delegation capture`·`diff`(`--scope` 없이)로 확인하며, 쓴 것이 있으면 결과를 버리고 `blocked`로 남긴다. 결과는 `prokit-reviewer` 게이트의 입력이지 대체가 아니다.
-- impeccable `critique`처럼 서브에이전트를 스스로 띄우는 스킬은 메인 세션에서 실행한다.
+- impeccable `critique`, hallmark 마감 리뷰처럼 서브에이전트를 스스로 띄우는 UI 스킬 단계는 메인 세션에서 실행한다.
 - 정밀 분석은 읽기 전용 `prokit-analyzer`에 맡긴다. 도입 기록, 유형, 기존 코드 경로, 초점을 주고 돌려받은 보고서를 메인이 `docs/prokit/analysis.md`에 쓴다(6절). <!-- edition:pro -->
 
 ## 5. 종료

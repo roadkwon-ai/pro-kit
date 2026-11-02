@@ -41,7 +41,7 @@ description: >-
 | 개발 서버·브라우저로 동작을 확인 | `prokit-runtime-checker` |
 | 하네스·빌드·작업공간 설정 | `prokit-implementer` |
 | 코드를 읽기만 하는 규칙 검사 | `prokit-reviewer`(맞는 focus) |
-| 사용자에게 묻는 일(`grilling` 형식 질문, 용어 정리), 외부 서비스에 적용하는 일(원격 브랜치, 배포), 서브에이전트를 띄우거나 기록 파일을 남겨야 하는 일(`impeccable`) | Main. `performers.skills`에 넣지 않는다 |
+| 사용자에게 묻는 일(`grilling` 형식 질문, 용어 정리), 외부 서비스에 적용하는 일(원격 브랜치, 배포), 서브에이전트를 띄우거나 기록 파일을 남겨야 하는 일(UI 스킬 `impeccable`·`hallmark`) | Main. `performers.skills`에 넣지 않는다 |
 | 다른 스킬의 상위 스킬(그 스킬 머리의 `parent`) | 하위 스킬을 맡는 쪽이 모두 읽을 수 있어야 한다. 하위 스킬을 맡는 쪽이 Main과 에이전트로 갈리면 `performers.skills`에 넣지 않는다 |
 
 - 쓰는 쪽(수행자)과 검사하는 쪽(리뷰어)이 모두 쓰는 스킬이면 둘 다 둔다. 쓰는 쪽이 여러 계층이면 계층마다 둔다(예: `turborepo`).

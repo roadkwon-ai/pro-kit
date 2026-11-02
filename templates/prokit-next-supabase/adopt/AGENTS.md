@@ -72,7 +72,7 @@
 | 작업 | 스킬 |
 |---|---|
 | 라우팅, 렌더링 경계, 데이터 패칭, 캐시, 성능 | `prokit-web` |
-| 화면 모양, UX, 디자인 스타일과 `DESIGN.md`, 디자인 리뷰 (impeccable) | `prokit-ui` |
+| 화면 모양, UX, 디자인 스타일과 `DESIGN.md`, 디자인 리뷰 (고른 UI 스킬: impeccable, hallmark) | `prokit-ui` |
 | 검사 선택, 증거 기록, 런타임 확인 | `prokit-verify` |
 | 두뇌·과설계 방지·추가 스킬·선택 묶음 바꾸기 | `prokit-skills-manage` |
 

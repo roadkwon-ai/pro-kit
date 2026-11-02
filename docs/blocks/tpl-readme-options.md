@@ -1,8 +1,9 @@
 <!-- 두 템플릿 README "옵션" 절의 옵션 목록과 설치기가 덮어쓰지 않는다는 문단. 인자: cli(--with-global이 설치하는 DB CLI 이름. Neon 또는 Supabase) -->
 - `--diff`: 미리 보기. 템플릿과 다른 기존 파일의 차이, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 주고 파일은 쓰지 않는다. 스킬·플러그인 설치도 하지 않는다.
-- `--skip-skills`: 스킬·플러그인·OMX 설치와 agent-browser CLI 자동 설치(`scripts/skills-setup.mjs`)를 건너뛴다. `--brain`·`--simplicity` 값은 `.dev-cycle.json`에 기록만 하고 나중에 `pnpm skills:setup`이 그 값을 설치한다. `--matt`·`--optional`은 기록하지 않으므로 나중에 `pnpm skills:setup`에 다시 준다.
+- `--skip-skills`: 스킬·플러그인·OMX 설치와 agent-browser CLI 자동 설치(`scripts/skills-setup.mjs`)를 건너뛴다. `--brain`·`--simplicity`·`--ui-skill` 값은 `.dev-cycle.json`에 기록만 하고 나중에 `pnpm skills:setup`이 그 값을 설치한다. `--matt`·`--optional`은 기록하지 않으므로 나중에 `pnpm skills:setup`에 다시 준다.
 - `--brain <이름>[,<이름>]|none`: 두뇌를 고른다(superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering). 하나를 권하고, 여럿이면 쉼표로 잇는다(첫 값이 주 두뇌. `.dev-cycle.json`에 배열로 기록한다). 기본은 `none`(기본 AI)이다. mattpocock은 따로 설치하는 것이 없고 `--matt`로 고른 추가 스킬과 함께 쓴다. openspec은 고를 때 OpenSpec CLI를 전역에 설치하고, spec-kit은 설치할 때 uv가 필요하다.
 - `--simplicity <이름|none>`: 과설계 방지 스킬을 하나 고른다(ponytail, caveman, karpathy). 기본은 `none`(하네스 간결성 규칙)이다.
+- `--ui-skill <이름>[,<이름>]|none`: UI 스킬을 고른다(impeccable, hallmark). 여럿이면 쉼표로 잇는다(첫 값이 주 UI 스킬. `.dev-cycle.json`의 `uiSkill`에 배열로 기록한다). 주지 않거나 기록이 없으면 `impeccable`이고, 고른 것만 설치한다. hallmark는 화면을 찍는 검사에 Chrome과 전역 `puppeteer-core`가 필요한데, 설치기는 알리기만 하고 설치하지 않는다.
 - `--matt <스킬>[,<스킬>]`: mattpocock 추가 스킬을 설치한다(tdd, research 등).
 - `--optional <묶음>[,<묶음>]`: 선택 스킬 묶음을 설치한다(ops, motion, mobile, i-have-adhd, taste).
 - 고르는 기준과 선택지 설명은 `.agents/skills/prokit-dev-cycle/references/brains/README.md`에 있다. 모르는 값이면 아무것도 쓰지 않고 exit 1로 멈춘다.

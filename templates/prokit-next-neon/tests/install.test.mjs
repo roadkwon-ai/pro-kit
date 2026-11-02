@@ -205,7 +205,7 @@ test("도메인 스킬(Claude·Codex 공용): 템플릿 문서가 모두 언급�
 
 test("biome.json: 벤더 스킬, 도구 상태 파일, 생성물을 빼고 shadcn 두 파일에만 a11y 3개를 끈다 (한 번만)", () => {
   const ignores = [
-    "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!.claude", "!.codex",
+    "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!**/.hallmark", "!.claude", "!.codex",
     "!tasks/evidence",
     "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
     "!html", "!**/*.md",
@@ -366,20 +366,22 @@ test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 �
 test(".gitignore: 없는 줄만 더하고, 슬래시 표기가 달라도 같은 항목으로 본다", () => {
   const root = mkdtempSync(join(tmpdir(), "gi-"));
   const p = join(root, ".gitignore");
-  writeFileSync(p, "node_modules\n.omc\n/tasks/evidence/\n.claude/settings.local.json\n.env.*\n!.env.schema\n!.env.example\nhtml\n.taste-skill");
+  writeFileSync(p, "node_modules\n.omc\n/tasks/evidence/\n.claude/settings.local.json\n.env.*\n!.env.schema\n!.env.example\nhtml\n.taste-skill\n**/.hallmark/shots/\n**/.hallmark/preflight.json");
   writeFileSync(p, `${readFileSync(p, "utf8")}\n${IMPECCABLE_IGNORES.join("\n")}`);
   assert.deepEqual(ensureGitignore(root), [".omx/", ".prokit/"]);
   assert.ok(readFileSync(p, "utf8").endsWith("\n\n# OMC·OMX·pro-kit 런타임 상태\n.omx/\n.prokit/\n"));
   assert.deepEqual(ensureGitignore(root), []);
 });
 
-test(".gitignore: impeccable 스크린샷·캐시·개인 설정은 무시하고 critique 기록과 설정은 남긴다", () => {
+test(".gitignore: impeccable·hallmark 스크린샷·캐시·개인 설정은 무시하고 critique 기록, 설정, hallmark 배정 기록은 남긴다", () => {
   const root = mkdtempSync(join(tmpdir(), "gi-"));
   ensureGitignore(root);
   assert.equal(spawnSync("git", ["init", "-q"], { cwd: root }).status, 0);
   const ignored = (f) => spawnSync("git", ["check-ignore", "-q", f], { cwd: root }).status === 0;
   for (const f of [".impeccable/review/desktop.png", ".impeccable/hook.cache.json", "apps/web/.impeccable/config.local.json", ".impeccable/shot.png"]) assert.ok(ignored(f), `${f}가 무시되지 않음`);
   for (const f of [".impeccable/critique/landing.md", ".impeccable/config.json", ".impeccable/design.json"]) assert.ok(!ignored(f), `${f}가 무시됨`);
+  for (const f of [".hallmark/shots/hero-1280x800.png", ".hallmark/preflight.json", "apps/web/.hallmark/shots/full.png"]) assert.ok(ignored(f), `${f}가 무시되지 않음`);
+  assert.ok(!ignored(".hallmark/log.json"), "hallmark 배정 기록은 공유한다");
 });
 
 test(".gitignore: 환경별 .env를 무시하고 .env.schema는 남긴다. 패턴을 새로 더하면 ! 줄을 그 뒤에 다시 쓴다", () => {
@@ -531,6 +533,9 @@ test("설치기: 고른 값은 복사 전에 확인하고, --skip-skills여도 .
   const bad = install(root, "--brain", "nope");
   assert.equal(bad.status, 1, bad.stdout + bad.stderr);
   assert.match(bad.stderr, /두뇌: none\(기본 AI\), superpowers\(/);
+  const badUi = install(root, "--ui-skill", "nope");
+  assert.equal(badUi.status, 1, badUi.stdout + badUi.stderr);
+  assert.match(badUi.stderr, /UI 스킬: none\(기본 AI\), impeccable\(.*\), hallmark\(/);
   assert.deepEqual(snapshot(root), before, "잘못된 값이면 아무것도 쓰지 않는다");
   assert.equal(install(root, "--matt").status, 1, "값이 빠진 인자를 프로젝트 경로로 보지 않는다");
   assert.match(install(root, "--brain=superpowers").stderr, /--brain superpowers처럼 = 없이/, "= 형식을 조용히 무시하지 않는다");
@@ -539,7 +544,7 @@ test("설치기: 고른 값은 복사 전에 확인하고, --skip-skills여도 .
   mkdirSync(join(root, "scripts"), { recursive: true });
   writeFileSync(join(root, "scripts/skills-setup.mjs"), 'const o = argv.includes("--optional");\n');
   const old = spawnSync("bash", [join(TEMPLATE, "install.sh"), root, "--diff", "--brain", "none"], { encoding: "utf8" });
-  assert.match(old.stdout, /^경고: 이 프로젝트의 scripts\/skills-setup\.mjs는 --brain·--simplicity·--matt\(또는 두뇌 여러 개\)를 모르는 옛 판이다/m);
+  assert.match(old.stdout, /^경고: 이 프로젝트의 scripts\/skills-setup\.mjs는 --brain·--simplicity·--ui-skill·--matt\(또는 두뇌 여러 개\)를 모르는 옛 판이다/m);
   rmSync(join(root, "scripts"), { recursive: true });
 
   const diff = spawnSync("bash", [join(TEMPLATE, "install.sh"), root, "--diff", "--brain", "superpowers"], { encoding: "utf8" });
@@ -567,6 +572,22 @@ test("설치기: 고른 값은 복사 전에 확인하고, --skip-skills여도 .
   assert.match(oldMulti.stdout, /^경고: [^\n]*두뇌 여러 개[^\n]*옛 판이다/m);
   const oldSingle = spawnSync("bash", [join(TEMPLATE, "install.sh"), root, "--diff", "--brain", "openspec"], { encoding: "utf8" });
   assert.doesNotMatch(oldSingle.stdout, /옛 판이다/, "--brain을 아는 판에 하나만 주면 경고하지 않는다");
+  const oldUi = spawnSync("bash", [join(TEMPLATE, "install.sh"), root, "--diff", "--ui-skill", "hallmark"], { encoding: "utf8" });
+  assert.match(oldUi.stdout, /^경고: [^\n]*--ui-skill[^\n]*옛 판이다/m, "--ui-skill을 모르는 판이면 알린다");
+  rmSync(join(root, "scripts/skills-setup.mjs"));
+  // UI 스킬: 여럿이면 배열로 기록하고, 다음 할 일은 고른 스킬에 맞춘다(impeccable 훅 안내는 impeccable을 골랐을 때만)
+  const ui = install(root, "--ui-skill", "hallmark");
+  assert.equal(ui.status, 0, ui.stdout + ui.stderr);
+  assert.match(ui.stdout, /^\.dev-cycle\.json 기록: uiSkill hallmark$/m);
+  assert.doesNotMatch(ui.stdout, /impeccable hooks on/);
+  assert.match(ui.stdout, /^ {2}4\. 첫 UI 라운드에서 prokit-ui의 기획 단계로 PRODUCT\.md를 만든다 \(UI 스킬: hallmark\. 단계마다 할 일은 prokit-ui references\/<이름>-map\.md\)$/m);
+  const both = install(root, "--ui-skill", "impeccable,hallmark");
+  assert.equal(both.status, 0, both.stdout + both.stderr);
+  assert.deepEqual(JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8")).uiSkill, ["impeccable", "hallmark"]);
+  assert.match(both.stdout, /^ {2}3\. 개발자마다 한 번 [^\n]*impeccable hooks on/m);
+  assert.match(both.stdout, /^ {2}5\. 첫 UI 라운드에서 prokit-ui의 기획 단계로 PRODUCT\.md를 만든다 \(UI 스킬: impeccable, hallmark/m);
+  const none = install(root, "--ui-skill", "none");
+  assert.match(none.stdout, /^ {2}4\. 첫 UI 라운드에서 [^\n]*\(UI 스킬: 없음\(기본 AI: frontend-design과 게슈탈트 지침\)\. 단계마다 할 일은 prokit-ui references\/none-map\.md\)$/m, "UI 스킬이 없어도 같은 단계로 간다");
 });
 
 test("--diff는 미리 보기라 파일을 쓰지 않고 더할 항목만 보여 준다", () => {

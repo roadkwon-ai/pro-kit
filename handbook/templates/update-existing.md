@@ -101,6 +101,8 @@ flowchart LR
 > [!WARNING]
 > Codex 네이티브 Ponytail은 전역 선택 항목이라 이행으로 자동 설치·갱신하지 않아요. 사용자가 요청했을 때만 원본 훅·코드를 검토하고 `pnpm skills:setup --with-global`과 `/hooks` 신뢰를 따로 진행해요.
 
+UI 스킬 선택(`--ui-skill`, hallmark)을 쓰려면 H 라운드에서 템플릿의 `scripts/skills-setup.mjs`, `skills.manifest.json`, `scripts/dev-cycle.mjs`, `docs/dev-workflow.md`의 B 행, `prokit-ui`(`SKILL.md`와 `references/`의 `design-flow.md`, `impeccable-map.md`, `hallmark-map.md`)를 옮긴 뒤 `pnpm skills:setup --ui-skill <이름>`으로 골라요. 옛 판 `skills-setup.mjs`에 `--ui-skill`을 주면 설치기가 경고해요. 옮기지 않으면 지금처럼 impeccable로 돌아요. 옮긴 뒤에도 `.dev-cycle.json`에 `uiSkill`이 없으면 `impeccable`로 읽고, 예전 이름의 B 행(`impeccable critique` 등)으로 연 라운드도 같은 기록 검사를 받아요.
+
 화면 디자인 보조 선택 묶음 `taste`(2026-10-20)를 쓰려면 H 라운드에서 템플릿의 `skills.manifest.json`과 `prokit-ui`(`SKILL.md`, `references/taste.md`)를 옮긴 뒤 `pnpm skills:setup --optional taste`로 설치해요. `install.sh --skip-skills`가 `.gitignore`에 `/.taste-skill/`을 더해요([화면 디자인 보조](../skills/brains.md#화면-디자인-보조)).
 
 ### 공식 스킬을 전문 에이전트에 맡기게 된 판 이전

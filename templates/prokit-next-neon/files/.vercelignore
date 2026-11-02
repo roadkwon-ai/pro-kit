@@ -8,6 +8,7 @@
 .omc
 .omx
 .impeccable
+.hallmark
 tasks/evidence
 coverage
 # pnpm export:html이 만든 정적 사이트(화면만 프로젝트에서 실제 서비스로 바꾼 뒤에도 남을 수 있다)

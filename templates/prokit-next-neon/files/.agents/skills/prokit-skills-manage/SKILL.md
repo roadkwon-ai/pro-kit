@@ -3,9 +3,9 @@ name: prokit-skills-manage
 description: >-
   이 Better-T-Stack 프로젝트(또는 하네스만 설치한 Next.js 프로젝트)에서 고른 스킬 구성을 진행 중에 바꿀 때 사용한다. 두뇌(여럿 가능: superpowers, agent-skills, pstack, gstack,
   oh-my, mattpocock, openspec, spec-kit, compound-engineering)를 바꾸거나 더하거나 빼고, 과설계 방지 스킬(ponytail,
-  caveman, karpathy)을 바꾸고, mattpocock 추가 스킬과 선택 스킬 묶음(i-have-adhd, taste, ops, motion, mobile)을
+  caveman, karpathy)과 UI 스킬(여럿 가능: impeccable, hallmark)을 바꾸고, mattpocock 추가 스킬과 선택 스킬 묶음(i-have-adhd, taste, ops, motion, mobile)을
   더하거나 지운다. "두뇌 바꿔줘", "openspec도 같이 쓰고 싶어", "superpowers 빼줘", "과설계 방지를 caveman으로",
-  "tdd 스킬 추가해줘", "taste 지워줘", "스킬 구성 바꿔줘" 같은 요청에 쓴다. 이미 고른 스킬을 최신판으로 올리는 일은
+  "UI 스킬을 hallmark로", "tdd 스킬 추가해줘", "taste 지워줘", "스킬 구성 바꿔줘" 같은 요청에 쓴다. 이미 고른 스킬을 최신판으로 올리는 일은
   prokit-skills-update, prokit-* 스킬 갱신은 템플릿 저장소의 갱신 절차가 맡는다. 이번 세션에서만 잠시 끄는 일("stop ponytail",
   "stop caveman", "normal mode")에는 쓰지 않는다. 그것은 그 스킬의 끄기 명령이다.
 ---
@@ -15,7 +15,7 @@ description: >-
 고르는 기준, 카탈로그, 두뇌별 단계는 [두뇌와 선택 스킬](../prokit-dev-cycle/references/brains/README.md)이 정본이다. 이 스킬은 요청을 설치 명령으로 바꾸고 H 라운드로 안전하게 적용하는 절차만 둔다.
 
 ## 1. 지금 구성 보기
-`pnpm skills:check`를 실행해 `두뇌:`, `과설계 방지:`, `mattpocock 추가:`, `선택 스킬:` 줄을 본다. 기록값은 `.dev-cycle.json`의 `brain`(하나면 문자열, 여럿이면 배열. 첫 값이 주 두뇌)과 `simplicity`다. 사용자에게 지금 구성을 한 줄씩 보여 준다.
+`pnpm skills:check`를 실행해 `두뇌:`, `과설계 방지:`, `UI 스킬:`, `mattpocock 추가:`, `선택 스킬:` 줄을 본다. 기록값은 `.dev-cycle.json`의 `brain`(하나면 문자열, 여럿이면 배열. 첫 값이 주 두뇌), `simplicity`, `uiSkill`(두뇌처럼 하나나 배열. 첫 값이 주 UI 스킬. 기록이 없으면 `impeccable`)이다. 사용자에게 지금 구성을 한 줄씩 보여 준다.
 
 ## 2. 요청을 명령으로 바꾸기
 | 요청 | 명령 |
@@ -24,6 +24,7 @@ description: >-
 | 두뇌 더하기 | `pnpm skills:setup --brain <지금 목록>,<새 두뇌>`(지금이 `none`이면 `--brain <새 두뇌>`). 지금 주 두뇌가 그대로 앞에 온다. 새 두뇌를 주 두뇌로 하려면 맨 앞에 둔다 |
 | 두뇌 빼기 | `pnpm skills:setup --brain <남길 목록>`, 모두 빼면 `--brain none` |
 | 과설계 방지 바꾸기·빼기 | `pnpm skills:setup --simplicity <이름\|none>` |
+| UI 스킬 바꾸기·더하기·빼기 | `pnpm skills:setup --ui-skill <이름>[,<이름>]`(첫 값이 주 UI 스킬), 모두 빼면 `--ui-skill none`. 고르지 않은 UI 스킬 설치본은 지운다. 주 UI 스킬을 바꾸면 그 뒤 라운드의 디자인 단계 행은 새 스킬 지도(`prokit-ui`)로 한다 |
 | 추가 스킬·선택 묶음 더하기 | `--matt <스킬>[,<스킬>]`, `--optional <묶음>[,<묶음>]` |
 | 추가 스킬·선택 묶음 지우기 | `--drop <스킬이나 묶음>[,…]`, 모두 지우기는 `--drop all` |
 | 순수 AI로 돌아가기(`prokit-*`와 필수·공식 스킬만) | `--brain none --simplicity none --drop all` |
@@ -36,13 +37,20 @@ description: >-
 ## 3. 적용
 1. 열린 라운드가 있으면 닫지 않고 그 라운드에서 바꾼다. 설치기가 대조표에 구성 변경을 적고(`라운드:` 줄), 설치기가 바꾼 파일은 그 라운드의 케이스 판정에서 빠진다. 바꾸기 전 두뇌로 채운 단계 행은 그대로 두고, 남은 단계 행은 새 구성으로 한다. 이때 2번과 7~8번은 건너뛰고, 바꾼 내역은 그 라운드의 `[confirm]` 보고와 커밋 본문에 함께 적는다.
 2. 열린 라운드가 없으면 `pnpm dev-cycle table H --write --title "스킬 구성 변경: <요약>" --no-task`
-3. 준비물을 알린다. 고른 두뇌에 전역 도구가 있으면 `--brain`을 줄 때 설치기가 전역에 설치한다(gstack은 Bun, OpenSpec은 npm 전역 CLI, oh-my는 Codex를 쓸 때 OMX CLI). 설치 전에 그 사실을 알리고 동의를 받는다. Spec Kit은 설치할 때 uv가 필요하다. 없으면 설치 안내를 주고 멈춘다.
+3. 준비물을 알린다. 고른 두뇌에 전역 도구가 있으면 `--brain`을 줄 때 설치기가 전역에 설치한다(gstack은 Bun, OpenSpec은 npm 전역 CLI, oh-my는 Codex를 쓸 때 OMX CLI). 설치 전에 그 사실을 알리고 동의를 받는다. Spec Kit은 설치할 때 uv가 필요하다. 없으면 설치 안내를 주고 멈춘다. UI 스킬 hallmark는 화면을 찍는 검사에 Chrome과 `puppeteer-core`(전역, 또는 `HALLMARK_PUPPETEER`가 가리키는 폴더)가 필요하다. 설치기는 없다고 알리기만 하고 설치하지 않는다(사용자가 요청할 때 `npm install -g puppeteer-core`나 `prokit-ui`의 `references/hallmark-map.md` "읽고 실행하는 법"의 폴더 방식).
 4. 2절의 명령을 실행하고 출력의 `정리:`, `남김:`, `제거:`, `경고:`, `실패:` 줄을 그대로 보여 준다. 출력을 `tail` 등으로 자르지 않는다(앞쪽에 경고가 있을 수 있다). 종료 코드는 파이프 없이 `<명령> 2>&1; echo "exit=$?"`로 본다(zsh에는 `PIPESTATUS`가 없어 빈 값이 나온다). exit 2면 출력을 보고하고 멈춘다.
-5. 두뇌를 바꾸거나 뺐으면 인계를 남긴다. 이전 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`, `docs/brainstorms/`, `docs/superpowers/`, `.superpowers/`, `.omc/`·`.omx/`의 plans·specs, `.compound-engineering/` 등)와 진행 중인 계획·남은 일의 경로를 대조표 메모와 `tasks/todo.md`에 적는다. 새 두뇌는 그 문서를 읽고 이어 가며 인터뷰·계획을 처음부터 되풀이하지 않는다. 설치기는 이 문서들을 지우지 않는다.
+5. 두뇌를 바꾸거나 뺐으면 인계를 남긴다. 이전 두뇌가 만든 문서(`openspec/`, `specs/`, `.specify/memory/`, `docs/solutions/`, `docs/brainstorms/`, `docs/superpowers/`, `.superpowers/`, `.omc/`·`.omx/`의 plans·specs, `.compound-engineering/` 등)와 진행 중인 계획·남은 일의 경로를 대조표 메모와 `tasks/todo.md`에 적는다. 새 두뇌는 그 문서를 읽고 이어 가며 인터뷰·계획을 처음부터 되풀이하지 않는다. 설치기는 이 문서들을 지우지 않는다. UI 스킬을 바꾸거나 뺐으면 `PRODUCT.md`, `DESIGN.md`, `docs/briefs/`가 그대로 이어진다고 메모에 적는다. 새 UI 스킬은 시각 방향을 다시 고르지 않는다(`prokit-ui` "UI 스킬"). 지운 스킬이 등록한 훅을 설치기가 뺐으면(`훅 정리:` 줄) 그 줄도 보여 준다.
 6. 확인: `pnpm skills:check` exit 0과 바뀐 줄, `pnpm agents:check`, `git status --short`. 바뀐 것이 스킬·플러그인 파일(`.agents/`, `.claude/`, `.codex/`, `skills-lock.json`, `.dev-cycle.json`)과 고른 두뇌가 만든 파일(`openspec/`, `.specify/`, `specs/`)뿐인지 본다. 앱 코드가 바뀌었으면 멈추고 보고한다.
 7. 행을 채운다. 증거는 `tasks/evidence/`의 한 줄 파일로 `pnpm dev-cycle evidence <행 번호> --file <파일>`로 채우고 표를 손으로 고치지 않는다. 구현 행은 `N/A: 스킬 구성만 변경`, skill-creator eval 행은 `N/A: 외부 스킬 구성만 변경(prokit-* 변경 없음)`, 문서 영향 행은 바뀐 문서가 없으면 `N/A: 스킬 구성 변경`이다. `[confirm]` 행에서 바뀐 구성(전과 후), 남긴 문서, 전역에 설치한 도구를 보여 주고 확인받는다.
 8. `prokit-dev-cycle` 5절대로 닫고 커밋한다. 커밋 제목 예: `chore: 두뇌를 openspec으로 바꿈`. 앱 코드는 바뀌지 않았으므로 마무리 질문에서 배포는 필요 없다고 알린다.
 9. Claude Code는 `/reload-plugins`로 지금 세션에 바뀐 플러그인·스킬·훅을 불러온다고 알린다(사용자가 입력한다. 새 세션도 된다). 다시 불러오기 전에는 세션에 남은 이전 스킬 목록과 훅 안내(예: ponytail 모드, `using-superpowers`)를 따르지 않고 `.dev-cycle.json`과 `pnpm skills:check`를 따른다. Codex는 새 세션을 연다.
+
+## 카탈로그에 없는 두뇌·UI 스킬 더하기
+사용자가 카탈로그(`skills.manifest.json`)에 없는 두뇌나 UI 스킬을 쓰자고 하면 그 스킬의 원본 저장소와 라이선스를 확인하고, 위 3절의 H 라운드에서 이렇게 더한다. 코드(`scripts/*.mjs`)는 고치지 않는다. 설치, 정리, audit은 카탈로그와 지도 파일만 읽는다.
+1. `skills.manifest.json`의 `brains`나 `uiSkills`에 항목을 더한다. 이웃 항목의 꼴을 따른다. `description`(선택지 설명 한 줄), `skills`(skills CLI 출처 `owner/repo`, 스킬 이름, `agents`)나 `claude.plugins`, 필요하면 `global`(`check`, `install`, `hint`. `install`이 없으면 알리기만 한다)이다. UI 스킬은 설치기가 다음 할 일에 붙일 문장을 `next`에 둘 수 있다.
+2. 지도 파일을 쓴다. 두뇌는 `prokit-dev-cycle/references/brains/<이름>.md`에 이웃 파일처럼 단계 표(단계, 그 단계에서 쓰는 스킬·명령 이름)를 둔다. audit은 이 표의 이름으로 단계 행을 맞춘다. UI 스킬은 `prokit-ui/references/<이름>-map.md`에 이웃 지도처럼 쓴다(어디에 맞나, 읽고 실행하는 법, 프로젝트 규칙이 앞선다, 단계별 상세, 통과 기준, B 케이스 행별 증거 예시). 리뷰·감사 증거에는 audit이 읽는 결과(`N/M` 점수, `N FAIL`, `위반 N` 가운데 하나)와 `tasks/evidence/` 보고서 경로를 적게 한다.
+3. 그 스킬이 작업 파일(화면 찍기, 캐시)을 만들면 `.gitignore`에 더한다. 스스로 훅을 등록하는 스킬이면 훅 명령이 `skills/<이름>/` 경로를 부르는지 본다. 그래야 뺄 때 설치기가 훅을 함께 뺀다.
+4. `pnpm skills:setup --brain <목록>`이나 `--ui-skill <목록>`으로 고르고, 3절 6번대로 확인한다. 이 스킬을 pro-kit 카탈로그에 올리고 싶으면 보고에 적는다(템플릿을 고치는 일은 pro-kit 저장소에서 한다).
 
 ## 하지 않는 것
 - `npx skills add`·`npx skills remove`·`claude plugin install`을 직접 실행하지 않는다. 설치기(`pnpm skills:setup`)가 출처와 기록을 함께 맞춘다.

@@ -38,7 +38,7 @@
 | 판단 | 읽고 적용할 스킬 |
 |---|---|
 | 필요한 범위와 새 코드의 이유 | 간결성 사다리와 고른 과설계 방지 스킬의 계획 기준(`process-routing.md` 규칙 6 역할 표), 요구·계획 단계의 방법(기본 칸 또는 고른 두뇌) |
-| UI 프리미티브와 토큰 | `prokit-ui` → `shadcn`, impeccable |
+| UI 프리미티브와 토큰 | `prokit-ui` → `shadcn`, 주 UI 스킬 |
 | 재사용할 React API·boolean 옵션·합성 경계 | <!-- edition:pro -->`prokit-web` → <!-- /edition -->`vercel-composition-patterns`의 해당 규칙. 단순 재사용에 Context를 강제하지 않는다 |
 | 렌더링·데이터 패칭 영향 | `vercel-react-best-practices`의 해당 규칙 |
 | 태스크·공유 패키지·환경 변수 캐시 | `turborepo`가 가리키는 설치판 문서 |

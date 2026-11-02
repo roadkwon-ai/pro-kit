@@ -16,7 +16,7 @@
 
 ## 설치되는 공식 스킬
 
-기본으로 <!-- edition:pro -->neon은 <!-- v:skills.official.neon -->28<!-- /v -->개, supabase는 <!-- v:skills.official.supabase -->25<!-- /v -->개를 설치해요(`--adopt` 설치는 이보다 적어요). 기준 목록은 각 템플릿의 `files/skills.manifest.json`이에요.<!-- /edition --><!-- edition:ui 설치하는 공식 스킬의 기준 목록은 `files/skills.manifest.json`이에요. --> 용어 정리에 쓰는 `domain-modeling`처럼 널리 쓰이는 외부 스킬도 같은 방식으로 설치해요.
+기본으로 <!-- edition:pro -->neon은 <!-- v:skills.official.neon -->27<!-- /v -->개, supabase는 <!-- v:skills.official.supabase -->24<!-- /v -->개를 설치해요(`--adopt` 설치는 이보다 적어요). 기준 목록은 각 템플릿의 `files/skills.manifest.json`이에요.<!-- /edition --><!-- edition:ui 설치하는 공식 스킬의 기준 목록은 `files/skills.manifest.json`이에요. --> 화면 디자인을 맡는 UI 스킬(`impeccable`, `hallmark`)은 이 기본 목록에 없고 고른 것만 설치해요(고르지 않으면 `impeccable`). 용어 정리에 쓰는 `domain-modeling`처럼 널리 쓰이는 외부 스킬도 같은 방식으로 설치해요.
 
 ### 화면과 Next.js
 
@@ -25,9 +25,11 @@ B·F 라운드의 화면·런타임 행에서 읽는 스킬이에요. 먼저 이
 | 분야 | 스킬 | 출처 | 읽는 곳 |
 |---|---|---|---|
 | Next.js 동작·성능 | `next-dev-loop`, `next-cache-components-adoption`, `next-cache-components-optimizer`, `next-partial-prefetching-adoption`, `next-partial-prefetching-optimizer` | vercel/next.js | <!-- edition:pro -->`prokit-web`, <!-- /edition -->`prokit-verify`. `next-dev-loop`는 B·F 런타임 확인 행 |
-| React·화면 규칙 | `vercel-react-best-practices`, `vercel-composition-patterns`, `web-design-guidelines` | vercel-labs/agent-skills | <!-- edition:pro -->`prokit-web`(앞의 둘), <!-- /edition -->`prokit-reviewer`(컴포넌트·훅은 react-best-practices, 합성 결정은 composition-patterns), `prokit-ui`(web-design-guidelines). B·F 설계 점검(재사용 API·합성), B 구현 행(react-best-practices), audit 행(web-design-guidelines). audit 행은 위반 목록을 impeccable audit 보고서와 함께 `tasks/evidence/ui-audit-<시각>.md`에 저장하고, `dev-cycle audit`이 그 파일을 확인해요 |
+| React·화면 규칙 | `vercel-react-best-practices`, `vercel-composition-patterns`, `web-design-guidelines` | vercel-labs/agent-skills | <!-- edition:pro -->`prokit-web`(앞의 둘), <!-- /edition -->`prokit-reviewer`(컴포넌트·훅은 react-best-practices, 합성 결정은 composition-patterns), `prokit-ui`(web-design-guidelines). B·F 설계 점검(재사용 API·합성), B 구현 행(react-best-practices), audit 행(web-design-guidelines). audit 행은 위반 목록을 UI 스킬의 감사 결과와 함께 `tasks/evidence/ui-audit-<시각>.md`에 저장하고, `dev-cycle audit`이 그 파일을 확인해요 |
 | 컴포넌트 | `shadcn` | shadcn/ui | `prokit-ui`. B 구현 행 |
-| 화면 디자인 | `impeccable` | pbakaus/impeccable | `prokit-ui`. B·F 화면 설계, critique, audit 행. critique는 `.impeccable/critique/<시각>__<대상>.md` 기록을 남겨야 하고 그 점수가 증거와 같아야 해요. audit의 N/20은 저장한 보고서에 있어야 해요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요. 기존 디자인을 이어 가는 프로젝트는 지금 화면에서 `DESIGN.md`를 만들어요 |
+| 화면 디자인(UI 스킬) | `impeccable` | pbakaus/impeccable | `prokit-ui`. 주 UI 스킬로 고른 경우(기본)에 B·F 화면 설계, 디자인 리뷰, 디자인 감사 행. 리뷰는 `.impeccable/critique/<시각>__<대상>.md` 기록을 남겨야 하고 그 점수가 증거와 같아야 해요. 감사의 N/20은 저장한 보고서에 있어야 해요. 두 파일 모두 이번 라운드에 쓴 것이어야 해요. 기존 디자인을 이어 가는 프로젝트는 지금 화면에서 `DESIGN.md`를 만들어요 |
+| 화면 디자인(UI 스킬) | `hallmark` | Nutlope/hallmark | `prokit-ui`. 주 UI 스킬로 고른 경우에 같은 행. 새 웹 페이지를 AI가 만든 티 없이 만들어요. 기록 파일을 남기지 않아서 리뷰와 감사 결과(sloplint `N FAIL`)를 `tasks/evidence/ui-review-<시각>.md`와 `ui-audit-<시각>.md`에 저장하고, 두 파일 모두 이번 라운드에 쓴 것이어야 해요. 브라우저 검사(`sloplint --render`)에는 Chrome과 `puppeteer-core`(전역, 또는 프로젝트 밖 폴더에 받고 `HALLMARK_PUPPETEER`로 가리키기)가 필요해요. 설치기는 이 둘을 경고만 하고 설치하지 않아요 |
+| 화면 디자인(UI 스킬 없음) | `frontend-design` | anthropics/skills | `prokit-ui`. UI 스킬을 고르지 않았을 때(`none`) 기본 AI가 같은 행에서 참고해요. 시각 방향과 만드는 법은 이 스킬, 화면 진단과 고치기는 `prokit-ui`의 게슈탈트 지침(`references/gestalt.md`)이에요. 디자인 리뷰는 `게슈탈트 위반 N`을 적은 `tasks/evidence/ui-review-<시각>.md`, 감사는 `web-design-guidelines` 보고서로 해요. UI 스킬을 고르면 설치기가 이 스킬을 지워요 |
 | 이미지 그리기 (ChatGPT 요금제) | `gpt-image` | GENEXIS-AI/gpt-image-skill | `prokit-ui`. Claude Code에서 `OPENAI_API_KEY`가 없고 Codex CLI에 ChatGPT로 로그인했을 때 comp와 plate 이미지를 그려요 |
 | 디자인 스타일 카탈로그 | `use-design-md` | CaesiumY/ko-design-md | `prokit-ui`. B 첫 행에서 고른 스타일(getdesign.kr, awesome-design-md, Refero Styles)의 DESIGN.md를 받아 적용해요. 받은 파일은 Google 스펙 CLI(`@google/design.md`)로 lint해요. 기존 디자인을 이어 가기로 한 프로젝트는 쓰지 않아요 |
 | 브라우저 확인 | `agent-browser` | vercel-labs/agent-browser | `prokit-verify`. B·F 런타임 확인 행(macOS는 ego lite를 먼저 써요). 견본이 콘솔 오류와 가로 넘침을 모아 `결함:` 줄로 출력하고, 이 줄은 오류 예산에 들어가요. 띄우기 전에 3001 포트를 `lsof`로 보고, 다른 프로세스가 쓰면 끄지 않고 알려요 |
@@ -59,7 +61,7 @@ E·D 라운드에서 읽는 스킬이에요.
 > `--adopt`로 하네스만 들인 기존 프로젝트는 `stack` 표시가 붙은 Better-T-Stack 전용 스킬(`better-auth` 3종, neon의 `neon` 4종, `turborepo`)을 설치하지 않아요. `prokit-api`, `prokit-db`, `prokit-deploy`도 없어서 이 스킬들이 맡던 행은 그 프로젝트의 기존 방식으로 해요([설치와 업데이트 구조](install-and-update.md)).
 <!-- /edition -->
 
-일부 프로젝트만 쓰는 스킬은 [선택 스킬 묶음](optional-bundles.md)에 따로 모아 두었어요. 화면 디자인을 보조하는 taste-skill([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill))도 선택 묶음 `taste`로 더할 수 있어요. 고른 화면에서만 방향 뽑기, 공개 아카이브 사진, 실제 브라우저 검사를 보태고 impeccable 흐름은 그대로예요([화면 디자인 보조](brains.md#화면-디자인-보조)).
+일부 프로젝트만 쓰는 스킬은 [선택 스킬 묶음](optional-bundles.md)에 따로 모아 두었어요. 화면 디자인을 보조하는 taste-skill([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill))도 선택 묶음 `taste`로 더할 수 있어요. 고른 화면에서만 방향 뽑기, 공개 아카이브 사진, 실제 브라우저 검사를 보태고 주 UI 스킬 흐름은 그대로예요([화면 디자인 보조](brains.md#화면-디자인-보조)).
 
 재사용·컴포넌트화·설정 정본·환경 변수의 판단 기준은 설치된 `prokit-dev-cycle`의 [재사용과 설정 설계](../../templates/prokit-next-neon/files/.agents/skills/prokit-dev-cycle/references/reuse-design.md)에 있어요. 읽은 스킬 이름과 함께 기존 경로·소비자·적용한 결정을 남겨요. 새 스킬 설치로 대신하지 않아요.
 
@@ -110,12 +112,12 @@ E·D 라운드에서 읽는 스킬이에요.
 | `prokit-runtime-checker`(실행 확인) | `next-dev-loop`, `agent-browser` | 확인한 경로, 오류 예산 0, 스크린샷 |
 | `prokit-implementer`(하네스·계층 밖) | `turborepo`(`turbo.json`) | 바뀐 환경 변수가 캐시 입력에 들어갔는지 |
 | `prokit-reviewer`(리뷰) | focus마다: code는 `vercel-react-best-practices`·`vercel-composition-patterns`·`shadcn`·`turborepo`, ui는 `web-design-guidelines`·`shadcn`, security는 Better Auth 세 개, db는 DB 스킬 | 리뷰 JSON의 `skills_read` |
-| 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `use-design-md`, `gpt-image`, 배포 세 개, neon은 `neon-postgres-branches`와 상위 `neon` | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | <!-- edition:ui | 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `use-design-md`, `gpt-image`, 배포 세 개 | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | --> <!-- edition:pro -->
+| 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `hallmark`, `use-design-md`, `gpt-image`, 배포 세 개, neon은 `neon-postgres-branches`와 상위 `neon` | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | <!-- edition:ui | 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `hallmark`, `use-design-md`, `gpt-image`, 배포 세 개 | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | --> <!-- edition:pro -->
 
 - 이 배치의 정본은 프로젝트의 `skills.manifest.json`에 있는 `performers`예요. `performers.agents`는 대조표 행에서 일을 넘겨받는 에이전트, `performers.skills`는 공식 스킬마다 그 스킬을 읽는 에이전트예요. 코드에 박아 두지 않아서 공식 스킬이 늘거나 바뀌어도 이 파일만 고치면 돼요.
 - 훅이 서브에이전트의 읽기·편집 기록에 에이전트 이름을 남겨요(Claude Code, Codex, Antigravity). audit은 그 스킬을 맡은 에이전트가 프로젝트 판(`.agents/skills/<이름>/SKILL.md`)을 읽은 기록만 세요. 메인 세션이 대신 읽었거나 Skill 도구로 불렀으면(이름이 같은 개인 스킬이 불릴 수 있어요) 세지 않아요. 하위 스킬은 같은 쪽이 상위 스킬(스킬 머리의 `parent`)도 읽어야 해요. 훅이 돌지 않은 라운드(Codex에서 `/hooks`로 신뢰하기 전 등)는 증거에 적은 이름만 봐요.
 - 구현 단계 행과 행 문구에 전문 에이전트가 적힌 행은 증거에 `위임: <에이전트>(사용: …)`가 있어야 해요. 맡길 에이전트가 없으면 메인 세션이 직접 하지 않고 `blocked`로 남겨요. 그 행에 적은 에이전트가 읽은 기록만 세고, 그 에이전트는 다른 에이전트에 맡긴 앞 행을 처음 채운 뒤에 일한 기록(스킬 읽기나 파일 편집)이 있어야 해요. 증거를 고쳐 다시 채운 행은 처음 채운 순서로 봐요. 화면<!-- edition:pro -->·서버·DB<!-- /edition --> 코드가 바뀌었는데 구현 행을 `N/A`나 `blocked`로 두면 audit이 받지 않아요.
-- 행 이름에 스킬이 나온 행(`[review] impeccable audit과 web-design-guidelines 코드 검사`, `[verify] next-dev-loop …`)은 그 스킬을 맡은 쪽이 라운드 안에서 읽은 기록이 있어야 해요. 리뷰어의 ui<!-- edition:pro -->·security·db<!-- /edition --> 리뷰는 리뷰어 정의에서 언제가 붙지 않은 스킬을 리뷰어가 읽어야 해요. 상황이 맞을 때만 읽는 스킬은 막지 않고, 일한 전문 에이전트가 읽지 않은 맡은 스킬(리뷰어는 리뷰 행 검사가 봐요), 메인 세션이 대신 읽은 맡긴 스킬, `SKILL.md`를 앞부분만 읽은 공식 스킬을 audit 경고로 보여 줘요. 캐시·프리패치 스킬은 Next 설정(`cacheComponents`, `partialPrefetching`)을 켠 프로젝트에서만 알려요.
+- 행 이름에 스킬이 나온 행(`[review] 디자인 감사와 web-design-guidelines 코드 검사`, `[verify] next-dev-loop …`)은 그 스킬을 맡은 쪽이 라운드 안에서 읽은 기록이 있어야 해요. 행 이름에 "주 UI 스킬"이 나오는 디자인 행은 고른 주 UI 스킬을 그 라운드에서 읽었는지 봐요. 리뷰어의 ui<!-- edition:pro -->·security·db<!-- /edition --> 리뷰는 리뷰어 정의에서 언제가 붙지 않은 스킬을 리뷰어가 읽어야 해요. 상황이 맞을 때만 읽는 스킬은 막지 않고, 일한 전문 에이전트가 읽지 않은 맡은 스킬(리뷰어는 리뷰 행 검사가 봐요), 메인 세션이 대신 읽은 맡긴 스킬, `SKILL.md`를 앞부분만 읽은 공식 스킬을 audit 경고로 보여 줘요. 캐시·프리패치 스킬은 Next 설정(`cacheComponents`, `partialPrefetching`)을 켠 프로젝트에서만 알려요.
 - 공식 스킬이 업데이트로 새로 생기거나 없어지거나 하는 일이 바뀌면 `prokit-skills-update`가 `prokit-skills-assign`으로 넘겨요. `prokit-skills-assign`은 스킬 본문을 읽고 맡을 에이전트를 판단해 보여 준 뒤, 확인받으면 매니페스트, 에이전트 정의, `prokit-*` 연결 표, 대조표 행을 함께 고쳐요. 새 공식 스킬을 더하거나 빼고 싶을 때도 이 스킬에 요청해요. `pnpm agents:check`가 배치에 적힌 에이전트와 스킬 이름이 실제로 있는지, 에이전트 정의의 공식 스킬 표와 `prokit-*` 연결 표가 배치와 같은지 봐요.
 
 ## 읽을 스킬을 정해 두는 방법
@@ -182,7 +184,7 @@ pie showData title 측정 때 neon 공식 도메인 스킬 26개가 연결된 �
 
 - after에서도 읽히지 않은 11개는 측정 요청에 그 상황이 없었기 때문이에요. 해당하는 스킬은 원격 Neon 브랜치(`neon` 4종), 실제 배포(Vercel 배포 3종), 컴포넌트 조합 설계(`vercel-composition-patterns`), 설계 질문(`grill-with-docs`, `grilling`)이에요. 이 둘은 요청이 질문을 모아 두라고 해서 쓰이지 않았어요. `agent-browser`는 macOS에서 ego lite를 먼저 써서 읽히지 않았어요.
 - 같은 이름의 개인 스킬(`~/.claude/skills`)이 있으면 Claude Code의 Skill 도구가 그 스킬을 먼저 불러와요. 그래서 before에서는 프로젝트에 설치한 판 대신 전역 판을 읽는 일이 많았어요. after는 `.agents/skills/<이름>/SKILL.md`를 Read로 읽게 했어요.
-- 측정할 때 공식 도메인 스킬은 neon 26개, supabase 23개였어요. 그 뒤 `use-design-md`와 `gpt-image`가 더해져 지금은 neon <!-- v:skills.official.neon -->28<!-- /v -->개, supabase <!-- v:skills.official.supabase -->25<!-- /v -->개예요.
+- 측정할 때 공식 도메인 스킬은 neon 26개, supabase 23개였어요. 그 뒤 `use-design-md`와 `gpt-image`가 더해져 지금은 neon <!-- v:skills.official.neon -->27<!-- /v -->개, supabase <!-- v:skills.official.supabase -->24<!-- /v -->개예요.
 - 한계: 설정마다 두 번만 실행했고, neon 템플릿과 전역 스킬이 많은 기기 하나에서만 쟀어요. 스킬을 읽었는지만 셌고, 읽은 내용을 제대로 적용했는지는 채점하지 않았어요.
 - 2026-09-30에는 Codex CLI에서도 따로 검수했어요. 스킬을 읽는지와 적용하는지를 나눠 확인했고, 그 결과 Vitest 행이 빠지거나 다른 자리로 옮겨지는 문제를 고쳤어요. Neon·Supabase DB 사례와 전역 스킬을 제외한 사례도 다시 확인했어요. 운영 인증 보안과 성능 재현의 한계는 [Codex 검수 보고서](../../docs/reports/2026-09-30-codex-skill-wiring-check.html)에 적었어요. 위 호출률 차트는 이전에 Claude로 잰 값이에요.
 - 측정 방법, 찾은 결함 3건, 시나리오별 세부 결과, 비용은 [스킬 연결 점검 보고서](../../docs/reports/2026-09-30-skill-wiring-check.html)에 있어요. 내려받아 브라우저로 열거나 [claude.ai 게시본](https://claude.ai/artifact/BHpjS12NRAzY36xBxbArBN)을 보세요. 수치와 판정은 [neon 검증 기록](../../templates/prokit-next-neon/VERIFICATION.md#스킬-연결-점검과-보강-2026-09-30-추가)에도 있어요.

@@ -154,6 +154,9 @@ export function assignProblems(root) {
 	const has = (a) => existsSync(join(root, ".claude/agents", `${a}.md`));
 	const known = new Set([
 		...m.skills.flatMap((s) => s.skills),
+		...Object.values(m.uiSkills ?? {}).flatMap((i) =>
+			(i.skills ?? []).flatMap((s) => s.skills),
+		),
 		...(m.mattpocock?.pool ?? []),
 		...Object.values(m.optional ?? {}).flatMap((o) =>
 			o.skills.flatMap((s) => s.skills),

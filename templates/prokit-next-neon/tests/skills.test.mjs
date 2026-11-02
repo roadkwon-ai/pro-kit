@@ -72,7 +72,9 @@ for (const name of EXPECTED) {
 test("공식 스킬 연결 표의 스킬은 skills.manifest.json이 설치한다", () => {
   const manifest = JSON.parse(readFileSync(join(TEMPLATE_FILES, "skills.manifest.json"), "utf8"));
   const optional = Object.values(manifest.optional ?? {}).flatMap((o) => o.skills);
-  const installed = new Set([...manifest.skills, ...optional].flatMap((g) => g.skills));
+  // 고르는 UI 스킬(impeccable, hallmark)도 매니페스트가 설치한다
+  const ui = Object.values(manifest.uiSkills ?? {}).flatMap((i) => i.skills ?? []);
+  const installed = new Set([...manifest.skills, ...optional, ...ui].flatMap((g) => g.skills));
   for (const name of EXPECTED) {
     const table = load(name).body.split("## 공식 스킬 연결")[1]?.split("\n## ")[0] ?? "";
     // 표 행만 본다(표 앞 설명의 `performers` 같은 이름은 스킬이 아니다)

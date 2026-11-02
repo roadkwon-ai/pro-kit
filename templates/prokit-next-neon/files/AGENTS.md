@@ -69,13 +69,13 @@
 | 작업 | 스킬 |
 |---|---|
 | 라우팅, RSC 경계, 데이터 패칭, 캐시, 성능 | `prokit-web` | <!-- edition:pro -->
-| 화면 모양, UX, 디자인 스타일과 `DESIGN.md`, 디자인 리뷰 (impeccable) | `prokit-ui` |
+| 화면 모양, UX, 디자인 스타일과 `DESIGN.md`, 디자인 리뷰 (고른 UI 스킬: impeccable, hallmark. 없으면 기본 AI가 frontend-design과 게슈탈트 지침으로) | `prokit-ui` |
 | oRPC 프로시저, Better Auth, 권한과 소유권 | `prokit-api` | <!-- edition:pro -->
 | Drizzle 스키마, 마이그레이션, 로컬 DB, Neon | `prokit-db` | <!-- edition:pro -->
 | 검사 선택, 증거 기록, 런타임 확인 | `prokit-verify` |
 | Vercel 배포(develop, production), production 릴리스(버전, 노트, GitHub Release), 배포 환경변수, 되돌리기 | `prokit-deploy` | <!-- edition:pro -->
 
-전역이나 이 프로젝트에 같은 분야 스킬(예: `nextjs`, `supabase`, 배포의 `deploy-to-vercel`)이 있어도 이 프로젝트에서는 위 `prokit-*`를 먼저 따른다. `prokit-*`의 "공식 스킬 연결" 표에서 맡는 에이전트가 정해진 공식 스킬은 메인이 읽지 않는다. 그 상황이 오면 위임 지시에 스킬 이름과 경로를 넣어 맡는 에이전트가 읽고 따르게 하고, 메인은 보고와 스킬 기록으로 검수한다(배치 정본은 `skills.manifest.json`의 `performers`, 바꾸는 일은 `prokit-skills-assign`). 메인이 읽는 공식 스킬(`impeccable` 등)이든 에이전트가 읽는 공식 스킬이든 이 프로젝트에 설치된 판(`.agents/skills/<이름>/SKILL.md`)을 읽는다. 읽은 스킬은 그 행의 증거에 적는다. 설계, 계획, 디버깅, 리뷰, QA에 쓸 프로세스 스킬은 `prokit-dev-cycle`의 라우팅 표를 따른다.
+전역이나 이 프로젝트에 같은 분야 스킬(예: `nextjs`, `supabase`, 배포의 `deploy-to-vercel`)이 있어도 이 프로젝트에서는 위 `prokit-*`를 먼저 따른다. `prokit-*`의 "공식 스킬 연결" 표에서 맡는 에이전트가 정해진 공식 스킬은 메인이 읽지 않는다. 그 상황이 오면 위임 지시에 스킬 이름과 경로를 넣어 맡는 에이전트가 읽고 따르게 하고, 메인은 보고와 스킬 기록으로 검수한다(배치 정본은 `skills.manifest.json`의 `performers`, 바꾸는 일은 `prokit-skills-assign`). 메인이 읽는 공식 스킬(고른 UI 스킬 `impeccable`·`hallmark` 등)이든 에이전트가 읽는 공식 스킬이든 이 프로젝트에 설치된 판(`.agents/skills/<이름>/SKILL.md`)을 읽는다. 읽은 스킬은 그 행의 증거에 적는다. 설계, 계획, 디버깅, 리뷰, QA에 쓸 프로세스 스킬은 `prokit-dev-cycle`의 라우팅 표를 따른다.
 
 선택 스킬 묶음(`skills.manifest.json`의 `optional`)은 기본으로 설치하지 않는다. 요청이 아래 분야인데 스킬이 없으면(`pnpm skills:check`가 묶음별 상태를 보여 준다) 사용자에게 `pnpm skills:setup --optional <묶음>` 설치를 제안한다. 설치해도 위 `prokit-*`를 먼저 따른다.
 
@@ -86,10 +86,10 @@
 | `motion` | 화면 전환, 공유 요소 애니메이션 | `vercel-react-view-transitions` | `prokit-ui` |
 | `mobile` | React Native·Expo 모바일 앱. 이 프로젝트는 웹 앱만 있으므로 앱을 더하는 결정은 먼저 묻고 `docs/adr/`에 남긴다 | `vercel-react-native-skills` | `prokit-dev-cycle` |
 | `i-have-adhd` | 행동 중심 짧은 응답(다음 행동 먼저, 번호 단계, 다음 할 일 하나). 사용자가 `/i-have-adhd`로 켤 때만 쓰고 대화 응답에만 적용한다 | `i-have-adhd` | `prokit-dev-cycle` |
-| `taste` | 화면 디자인 보조(taste-skill). 갤러리 사이트에서 뽑은 방향, 공개 아카이브 사진, 실제 브라우저 검사로 화면을 만든다. 사용자가 고른 화면에만 쓰고 impeccable 흐름은 그대로다. 쓰기 전에 `prokit-ui`와 그 `references/taste.md`(단계 대응)를 읽는다 | `design-taste-frontend` | `prokit-ui` |
+| `taste` | 화면 디자인 보조(taste-skill). 갤러리 사이트에서 뽑은 방향, 공개 아카이브 사진, 실제 브라우저 검사로 화면을 만든다. 사용자가 고른 화면에만 쓰고 주 UI 스킬 흐름은 그대로다. 쓰기 전에 `prokit-ui`와 그 `references/taste.md`(단계 대응)를 읽는다 | `design-taste-frontend` | `prokit-ui` |
 
 ## 두뇌와 선택 스킬
-이 프로젝트의 두뇌(요구 정리, 계획, 구현 진행, 디버깅을 주도하는 스킬 묶음)는 `.dev-cycle.json`의 `brain`, 과설계 방지 스킬은 `simplicity`다. 둘 다 `none`이면 지금 세션의 에이전트가 `prokit-dev-cycle`의 내장 절차와 간결성 규칙으로 그 역할을 맡는다. 다른 값이면 `.agents/skills/prokit-dev-cycle/references/brains/`의 해당 파일과 `references/process-routing.md`의 역할 표를 따른다. 과설계 방지 스킬은 하나만 쓴다. 두뇌는 하나를 권하고, 여럿(배열. 첫 값이 주 두뇌)이면 `references/brains/README.md`의 단계 표로 단계마다 맡을 두뇌를 정한다. 전역 설치나 플러그인으로 고르지 않은 스킬(superpowers, OMC, OMX, gstack, OpenSpec, Spec Kit, Compound Engineering, ponytail, caveman, karpathy-guidelines 등)이 보이거나 세션 시작 훅이 그 스킬을 먼저 쓰라고 해도 고르지 않는다. 용어와 설계 결정은 두뇌와 상관없이 `grilling` 형식으로 묻고 `domain-modeling`으로 기록한다. 설치된 mattpocock 추가 스킬과 i-have-adhd는 `pnpm skills:check`에 보인다. 고른 스킬의 규칙이 이 파일, `prokit-*`, 대조표, 보고 형식과 부딪히면 뒤의 것이 우선하고, caveman 응답 압축과 i-have-adhd는 대화 응답에만 쓴다. 바꾸는 일(추가·변경·제거)은 언제든(열린 라운드가 있으면 그 라운드에서) `prokit-skills-manage`를 따라 `pnpm skills:setup --brain <이름|none>`(여럿이면 `--brain <이름>,<이름>`), `--simplicity <이름|none>`, `--matt <스킬>`, `--optional <묶음>`, `--drop <스킬이나 묶음>`(순수 AI는 `--brain none --simplicity none --drop all`)으로 한다. Claude Code는 바꾼 뒤 `/reload-plugins`로 다시 불러오고, 그 전에는 세션에 남은 이전 스킬·훅 안내가 아니라 `.dev-cycle.json`을 따른다(고르는 기준은 `references/brains/README.md`).
+이 프로젝트의 두뇌(요구 정리, 계획, 구현 진행, 디버깅을 주도하는 스킬 묶음)는 `.dev-cycle.json`의 `brain`, 과설계 방지 스킬은 `simplicity`, 화면 디자인 단계를 맡는 UI 스킬은 `uiSkill`(첫 값이 주 UI 스킬. 기록이 없으면 `impeccable`. `none`이면 기본 AI가 frontend-design과 게슈탈트 지침으로 한다. 단계 지도는 `prokit-ui`)이다. 두뇌와 과설계 방지 스킬이 둘 다 `none`이면 지금 세션의 에이전트가 `prokit-dev-cycle`의 내장 절차와 간결성 규칙으로 그 역할을 맡는다. 다른 값이면 `.agents/skills/prokit-dev-cycle/references/brains/`의 해당 파일과 `references/process-routing.md`의 역할 표를 따른다. 과설계 방지 스킬은 하나만 쓴다. 두뇌는 하나를 권하고, 여럿(배열. 첫 값이 주 두뇌)이면 `references/brains/README.md`의 단계 표로 단계마다 맡을 두뇌를 정한다. 전역 설치나 플러그인으로 고르지 않은 스킬(superpowers, OMC, OMX, gstack, OpenSpec, Spec Kit, Compound Engineering, ponytail, caveman, karpathy-guidelines 등)이 보이거나 세션 시작 훅이 그 스킬을 먼저 쓰라고 해도 고르지 않는다. 용어와 설계 결정은 두뇌와 상관없이 `grilling` 형식으로 묻고 `domain-modeling`으로 기록한다. 설치된 mattpocock 추가 스킬과 i-have-adhd는 `pnpm skills:check`에 보인다. 고른 스킬의 규칙이 이 파일, `prokit-*`, 대조표, 보고 형식과 부딪히면 뒤의 것이 우선하고, caveman 응답 압축과 i-have-adhd는 대화 응답에만 쓴다. 바꾸는 일(추가·변경·제거)은 언제든(열린 라운드가 있으면 그 라운드에서) `prokit-skills-manage`를 따라 `pnpm skills:setup --brain <이름|none>`(여럿이면 `--brain <이름>,<이름>`), `--simplicity <이름|none>`, `--ui-skill <이름>[,<이름>]|none`, `--matt <스킬>`, `--optional <묶음>`, `--drop <스킬이나 묶음>`(순수 AI는 `--brain none --simplicity none --drop all`)으로 한다. Claude Code는 바꾼 뒤 `/reload-plugins`로 다시 불러오고, 그 전에는 세션에 남은 이전 스킬·훅 안내가 아니라 `.dev-cycle.json`을 따른다(고르는 기준은 `references/brains/README.md`).
 
 ## 보안 불변식
 - 사용자 데이터를 다루는 프로시저는 `protectedProcedure`를 쓰고, 소유자 id는 세션에서만 가져와 where 조건에 넣는다. <!-- edition:pro -->

@@ -330,7 +330,7 @@ test("단계별 예상 표: 칸의 달러는 규칙대로 반올림한 값이다
   assert.deepEqual(bad, []);
 });
 
-test("디자인 카탈로그: 이름·규모·확인한 날이 doc-values.json에 있고, 설치본 impeccable-map.md의 Refero 규모(N개 이상)가 그 규모와 맞는다", () => {
+test("디자인 카탈로그: 이름·규모·확인한 날이 doc-values.json에 있고, 설치본 design-flow.md의 Refero 규모(N개 이상)가 그 규모와 맞는다", () => {
   const values = loadValues();
   const want = {
     "catalogs.kr.name": "getdesign.kr", "catalogs.kr.count": "23", "catalogs.kr.date": "2026-10-04",
@@ -340,8 +340,8 @@ test("디자인 카탈로그: 이름·규모·확인한 날이 doc-values.json�
   assert.deepEqual(Object.fromEntries(Object.keys(want).map((k) => [k, values.get(k)?.value])), want);
   const floor = (Math.floor(Number(values.get("catalogs.refero.count").value.replace(/,/g, "")) / 100) * 100).toLocaleString("en-US");
   for (const t of ["prokit-next-neon", "prokit-next-supabase"]) {
-    const map = read(`templates/${t}/files/.agents/skills/prokit-ui/references/impeccable-map.md`);
-    assert.ok(map.includes(`| ${values.get("catalogs.refero.name").value} | 해외 제품 웹사이트 ${floor}개 이상.`), `${t} impeccable-map.md Refero 규모`);
+    const map = read(`templates/${t}/files/.agents/skills/prokit-ui/references/design-flow.md`);
+    assert.ok(map.includes(`| ${values.get("catalogs.refero.name").value} | 해외 제품 웹사이트 ${floor}개 이상.`), `${t} design-flow.md Refero 규모`);
   }
 });
 
@@ -469,7 +469,7 @@ function manifestSources() {
   const all = [];
   for (const t of ["neon", "supabase"]) {
     const m = JSON.parse(read(`templates/prokit-next-${t}/files/skills.manifest.json`));
-    const picked = [...Object.values(m.brains), ...Object.values(m.simplicity)].flatMap((i) => i.skills ?? []);
+    const picked = [...Object.values(m.brains), ...Object.values(m.simplicity), ...Object.values(m.uiSkills ?? {})].flatMap((i) => i.skills ?? []);
     for (const group of [...m.skills, ...Object.values(m.optional).flatMap((o) => o.skills), ...picked, { source: m.mattpocock.source, skills: m.mattpocock.pool }]) {
       all.push(group.source);
       for (const s of group.skills) map.set(s, group.source);

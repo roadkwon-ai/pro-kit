@@ -144,6 +144,7 @@ flowchart TD
 |---|---|
 | 두뇌 | 요구 정리, 계획, 구현 진행의 방법을 주도하는 스킬이에요. superpowers, agent-skills, gstack, oh-my, pstack, mattpocock, openspec, spec-kit, compound-engineering 중 하나를 권하고 여럿도 고를 수 있어요. 고르지 않으면(`none`) 지금 에이전트가 내장 절차로 진행해요 |
 | 과설계 방지 스킬 | ponytail(추천), caveman, karpathy 중 하나. 고르지 않으면 내장 간결성 규칙을 따라요 |
+| UI 스킬 | impeccable(기본), hallmark. 화면 디자인 단계(맥락, 기획, 설계, 리뷰, 감사, 다듬기)를 맡아요. 여럿도 고를 수 있고 첫 값이 주 UI 스킬이에요 |
 | 더하는 것 | mattpocock 추가 스킬, 응답 방식(`i-have-adhd`), 화면 디자인 보조(`taste`) |
 
 두뇌와 과설계 방지 스킬은 일하는 방식만 바꿔요. 대조표, 리뷰 게이트, 배포 절차는 무엇을 골라도 같아요([두뇌와 선택 스킬](../skills/brains.md)).
@@ -173,7 +174,7 @@ flowchart LR
 
 ## 새 프로젝트는 PRD부터 정해요
 
-프로킷은 새 프로젝트를 만들기 전에 PRD를 읽어요. <!-- edition:pro -->로그인과 DB가 필요한지로 템플릿을 정하고, <!-- /edition -->진행을 이끄는 두뇌와 추가 스킬, 화면 디자인 보조를 PRD에 맞춰 추천한 뒤 고른 대로 설치해요.
+프로킷은 새 프로젝트를 만들기 전에 PRD를 읽어요. <!-- edition:pro -->로그인과 DB가 필요한지로 템플릿을 정하고, <!-- /edition -->진행을 이끄는 두뇌와 추가 스킬, UI 스킬, 화면 디자인 보조를 PRD에 맞춰 추천한 뒤 고른 대로 설치해요.
 
 > [!IMPORTANT]
 > 새 프로젝트는 PRD가 없으면 추천할 근거가 없어서 만들지 않아요.

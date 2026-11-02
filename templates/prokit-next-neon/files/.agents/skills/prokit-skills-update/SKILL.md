@@ -2,7 +2,7 @@
 name: prokit-skills-update
 description: >-
   이 Better-T-Stack 프로젝트가 skills.manifest.json으로 설치한 외부 스킬(Next.js, Vercel,
-  shadcn, Better Auth, DB, impeccable, 고른 두뇌·과설계 방지 스킬과 추가 스킬 등)을 GitHub 원본과 비교해 새 버전을 확인하고
+  shadcn, Better Auth, DB, 고른 UI 스킬(impeccable, hallmark), 고른 두뇌·과설계 방지 스킬과 추가 스킬 등)을 GitHub 원본과 비교해 새 버전을 확인하고
   한 번에 업데이트한다. `pnpm dev-cycle status`나 `pnpm skills:update --if-due`가 UPDATE_AVAILABLE,
   UPSTREAM_GONE, CHECK_FAILED를 출력했을 때, 그리고 스킬 업데이트해줘, 스킬 최신인지 확인해줘,
   스킬 버전 올려줘, npx skills update 같은 요청에 사용한다. prokit-* 스킬 갱신(템플릿 새 버전),
@@ -55,7 +55,7 @@ description: >-
 스킬 파일과 `skills-lock.json`이 바뀌므로 케이스 H 라운드 하나로 한다. 진행 중인 라운드가 있으면 그 라운드를 먼저 닫는다. 다른 작업과 diff가 섞이면 audit이 더 무거운 케이스를 요구하고 리뷰 범위도 흐려진다. 확인 결과 바꿀 스킬이 없으면(원격에서 없어진 스킬만 있으면) 라운드를 열지 않는다.
 
 1. `pnpm dev-cycle table H --write --title "외부 스킬 업데이트" --no-task`
-2. **설치 전 확인**: `pnpm skills:update --check`를 실행한다. `스크립트 변경` 줄에 나온 파일은 설치하기 전에 원격 내용을 읽는다. impeccable처럼 훅이 스킬 폴더의 스크립트를 바로 실행하는 스킬은 설치되는 즉시 새 스크립트가 돌기 때문이다. 이 실행이 보여 준 판이 검토 고정값으로 기록된다.
+2. **설치 전 확인**: `pnpm skills:update --check`를 실행한다. `스크립트 변경` 줄에 나온 파일은 설치하기 전에 원격 내용을 읽는다. impeccable처럼 훅이 스킬 폴더의 스크립트를 바로 실행하는 스킬과 hallmark처럼 검사 스크립트를 실행하는 스킬은 설치되는 즉시 새 스크립트가 돌기 때문이다. 이 실행이 보여 준 판이 검토 고정값으로 기록된다.
    - `blob <sha>`: `gh api "repos/<저장소>/git/blobs/<sha>" --jq .content | base64 -d | diff .agents/skills/<이름>/<파일> -` (새 파일이면 diff 없이 읽는다)
    - `원격에서 지움`: 로컬 파일이 무엇이었는지만 본다. `링크`: `gh api "repos/<저장소>/contents/<폴더>/<파일>"`로 대상 경로를 보고 그 파일을 읽는다.
    - `VERSION`처럼 설치 뒤 바이너리를 내려받게 하는 파일이 바뀌었거나, 원래 압축된 파일(`*.min.js`, `*.umd.js`)이면 diff로 판단할 수 없다. 출처와 바뀐 버전을 알리고 사용자가 정한다.

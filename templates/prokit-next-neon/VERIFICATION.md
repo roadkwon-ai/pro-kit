@@ -4,6 +4,35 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## UI 스킬을 골라 바꾸기: hallmark, 기본 AI, 중간 전환 (2026-11-02)
+
+UI 스킬이 impeccable 하나에 기대지 않게 바꿨다. `skills.manifest.json`의 `uiSkills`에 hallmark([Nutlope/hallmark](https://github.com/Nutlope/hallmark))와 `none`(기본 AI)을 더했다. `--ui-skill`은 여럿을 받고 첫 값을 주 UI 스킬로 본다. `none`은 Anthropic `frontend-design` 스킬을 설치하고, `prokit-ui`의 `references/none-map.md`가 이 스킬과 게슈탈트 지침(`references/gestalt.md`)으로 단계마다 할 일을 정한다. 스킬마다 할 일은 `references/<이름>-map.md` 한 파일에 두고, 카탈로그의 모든 두뇌와 UI 스킬에 이 파일이 있는지 테스트가 본다.
+
+Better-T-Stack 프로젝트를 scratchpad에 만들어 이 판을 설치하고 사본 셋을 헤드리스 Claude Code 세션(`claude -p`)으로 돌렸다. 두뇌와 과설계 방지 스킬은 없음이다. 요청은 셋 모두 같은 걷기 모임 랜딩 화면(케이스 B)이다. 첫 세션이 낸 기획 질문에 답해 같은 세션을 이어 받고 `[confirm]` 직전까지 채우게 했다.
+
+- **hallmark:** 테마 배정부터 리뷰·감사까지 마치고 audit에 `[confirm]`만 남았다. sloplint는 FAIL 31건을 냈다. 모두 원래 있던 shadcn `.dark` 색 블록에서 나왔고 기준 커밋에서도 같은 31건이라, 이번 변경에서 새로 나온 FAIL은 0건이다. 세션은 브라우저 렌더 검사(`--render`)를 전역 `puppeteer-core`가 없다며 건너뛰었다. `puppeteer-core`만 받은 폴더를 `HALLMARK_PUPPETEER`로 주자 같은 화면에서 렌더 검사가 돌았다(스크린샷 5장, 파일 10개와 주소 1개에서 FAIL·REFLEX·WARN 0). 디자인 리뷰 지적 7건 중 6건, `web-design-guidelines` 위반 19건 중 17건을 고쳤다.
+- **impeccable:** critique 23/32, audit 14→17/20(접근성 4/4)이었다. `web-design-guidelines` 위반 7건 중 6건, 코드 리뷰 지적 8건 중 7건을 반영했다. audit에는 `[confirm]`만 남았다.
+- **중간에 바꾸기:** impeccable 사본에서 `impeccable hooks on`으로 훅을 켰다(`.claude/settings.local.json`과 `.codex/hooks.json`에 2개씩). `pnpm skills:setup --ui-skill none`은 exit 0이었다. impeccable을 지우고 두 파일에서 그 훅을 2개씩 뺐으며, `frontend-design`을 설치해 `UI 스킬: 없음(기본 AI, frontend-design 설치됨)`으로 보였다. 같은 이름의 전역 플러그인(`frontend-design@claude-plugins-official`)은 `settings.local.json`에서 껐다. `skills:check`와 `agents:check`는 exit 0이었다. 다시 `--ui-skill impeccable`로 돌리자 `frontend-design`을 지우고 impeccable을 설치했다(exit 0).
+- **기본 AI:** `--brain none --simplicity none --ui-skill none`으로 설치한 새 사본이다. 설치 뒤 확인(`check`, `skills:check`, `agents:check`, `check-types`, Biome)이 모두 exit 0이었다. 세션은 `frontend-design`의 `SKILL.md`를 읽고 카탈로그 후보 셋과 "직접 정하기" 안(색 hex, 서체, 핵심 연출 하나)을 함께 냈다. 직접 정하기와 이미지 없음으로 답하자 `PRODUCT.md`, 브리프, `DESIGN.md`를 쓰고 audit에 `[confirm]`만 남았다. 디자인 리뷰 행은 `게슈탈트 위반 1`(모바일 첫 화면이 두 덩어리로 갈라짐)이었고 재확인에서 0이 됐다. `web-design-guidelines` 위반 19건 중 17건을 고쳤고, 코드 리뷰는 두 번째에 승인됐다.
+
+고친 것:
+
+- **스킬을 지워도 그 스킬이 켠 훅이 남았다.** `impeccable hooks on`은 `settings.local.json`과 `.codex/hooks.json`에 훅을 쓰고, `hooks off`는 설정만 바꾼다. `skills:setup`이 스킬을 지울 때 명령에 `skills/<이름>/`이 든 훅을 두 파일에서 빼고, 남은 훅이 없으면 `hooks` 키도 지운다.
+- **설치 뒤 안내가 UI 스킬 이름을 코드에 박아 두었다.** `install.mjs`는 매니페스트 항목의 `next`를 읽어 할 일을 적는다. 새 UI 스킬은 매니페스트 항목과 단계 매핑 파일만 더하면 된다(`prokit-skills-manage`의 "카탈로그에 없는 두뇌·UI 스킬 더하기").
+- **OMX 검사가 두뇌 이름 `oh-my`에 기댔다.** 매니페스트 두뇌 항목의 `omx` 값으로 본다.
+- **hallmark 렌더 검사 안내가 전역 설치만 적었다.** `hallmark-map.md`에 프로젝트 의존성에 넣지 않고 따로 받은 폴더를 `HALLMARK_PUPPETEER`로 주는 법을 적었다. shadcn `.dark` 블록 때문에 기준 커밋과 비교해 새 FAIL만 보는 법도 함께 적었다. 매니페스트의 hallmark 준비물 검사도 이 폴더를 받는다.
+- **기본 AI의 디자인 리뷰 행은 점수가 없어 N/A였다.** 게슈탈트 점검으로 `게슈탈트 위반 N`을 적고, audit이 이 꼴을 받는다.
+- **UI 스킬을 바꿀 때 정한 디자인을 다시 고를 수 있었다.** `prokit-ui`에 바꿔도 `PRODUCT.md`, `DESIGN.md`, 브리프, 토큰을 그대로 쓰고 다시 디자인해 달라는 요청이 없으면 새 시각 방향을 내지 않는다고 적었다. hallmark에는 기능을 더하는 라운드에서 테마를 다시 배정하지 않는 절을 더했다.
+
+고치지 않은 것:
+
+- hallmark 세션은 고친 안내 전 판으로 돌아 렌더 검사를 건너뛰었다. 렌더 검사는 따로 확인했고, 고친 안내로 라운드를 다시 돌리지는 않았다.
+- 세 세션 모두 `prokit-ui-builder`가 `next-dev-loop`·`turborepo`를 읽지 않았다는 audit 경고가 나왔다. 막지 않는 경고다. impeccable 세션은 `globals.css`를 셸 명령으로 고쳐 같은 종류의 경고가 하나 더 나왔다.
+- 디자인 리뷰·감사 행 문구는 기록 경로와 감사 결과를 impeccable과 hallmark 기준으로 적는다. 기본 AI 세션은 `none-map.md`대로 채웠다. 행 문구를 바꾸면 이미 연 라운드를 `--upgrade`해야 해서 두었다.
+- 헤드리스 세션은 사용자 확인을 기다리며 개발 서버를 띄워 두었고, 그 서버를 끄자 다시 띄웠다. 확인을 마친 뒤 기록한 PID로 껐다.
+
+고친 뒤 두 템플릿 테스트는 모두 416 통과·0 실패였다. 새 테스트는 스킬을 지울 때 그 스킬의 훅만 빼는지, `none`을 고르면 `frontend-design`을 설치하고 다른 UI 스킬을 고르면 지우는지, 카탈로그의 모든 두뇌와 UI 스킬에 단계 매핑 파일이 있는지, 주 UI 스킬을 읽는 `mainUiSkill`을 본다.
+
 ## 테스트 프로젝트로 다시 잰 감사 (2026-11-02)
 
 아래 T7 보고로 고친 판(0d080ac8)을 운영 프로젝트가 아닌 테스트 프로젝트로 다시 쟀다. Better-T-Stack 프로젝트를 scratchpad에 만들어 이 판을 설치했다. 두뇌와 과설계 방지 스킬은 없음, DB는 로컬 Postgres 컨테이너다. 사본 셋을 헤드리스 Claude Code 세션(`claude -p`)으로 돌렸다. 진행 조건은 셋 모두 원격 DB·배포·커밋 금지, `[confirm]` 직전까지 채우기다.
