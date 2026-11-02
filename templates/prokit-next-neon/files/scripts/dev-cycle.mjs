@@ -1213,6 +1213,29 @@ function rowSkills(text, layers) {
 		: [];
 	return [...new Set([...rowNamedSkills(text), ...named])];
 }
+// 첫 괄호 앞(행의 일 이름)에 나온 공식 스킬은 그 행의 일 자체다("[review] impeccable audit과 web-design-guidelines 코드 검사", "[verify] next-dev-loop …").
+// 괄호 안 "…는 shadcn", "(없으면 agent-browser)"처럼 조건이 붙은 이름은 보지 않는다
+function titleSkills(text, official) {
+	return [...text.split("(")[0].matchAll(/[a-z][a-z0-9-]*/g)]
+		.map((m) => m[0])
+		.filter((n) => official.has(n));
+}
+// prokit-reviewer focus마다 리뷰어가 그 행을 하면서 읽는 공식 스킬(에이전트 정의 focus 표에서 조건이 붙지 않은 것).
+// 설치되어 있고 performers에서 리뷰어가 맡은 것만 본다. plan·code focus의 스킬은 모두 조건이 붙어 있어 보지 않는다
+export const REVIEW_FOCUS_SKILLS = {
+	ui: ["web-design-guidelines", "shadcn"],
+	security: [
+		"better-auth-best-practices",
+		"better-auth-security-best-practices",
+	],
+	db: [
+		"supabase-postgres-best-practices",
+		"supabase",
+		"neon",
+		"neon-postgres",
+		"neon-postgres-egress-optimizer",
+	],
+};
 function rowNamedSkills(text) {
 	const open = text.indexOf("(");
 	if (open < 0) return [];
@@ -1337,7 +1360,13 @@ function usageProblem(root, config, active) {
 		const rowNeed = rowSkills(r.text, layers).filter((n) =>
 			isProjectSkill(root, n),
 		);
-		const need = rowNeed.filter((n) => !names.has(n));
+		const titleNeed = titleSkills(r.text, official).filter(
+			(n) => !rowNeed.includes(n) && isProjectSkill(root, n),
+		);
+		// 행 일 이름의 스킬은 훅 기록이 있으면 읽은 기록으로 보고, 기록이 없는 호스트면 사용:에 적은 자기 신고로 본다
+		const need = [...rowNeed, ...(log ? [] : titleNeed)].filter(
+			(n) => !names.has(n),
+		);
 		if (need.length)
 			return `행 문구의 ${need.join(", ")}를 읽고 따른 뒤 증거에 사용: ${need.join(", ")}처럼 적는다`;
 		if (
@@ -1459,6 +1488,22 @@ function usageProblem(root, config, active) {
 					miss.map((u) => why(skillName(u), delegated)).filter(Boolean),
 				),
 			].join(" ")} ${LOG_HINT}`.replace(/\s+(?=Claude Code는)/, " ");
+		// 행 일 이름의 스킬과 리뷰 focus의 공식 스킬은 맡는 쪽이 이 라운드에서 읽은 기록이 있어야 한다.
+		// 한 번 맡긴 일로 행 여럿을 채우거나 행을 늦게 채울 수 있어 채운 순서는 보지 않는다
+		const titleUnread = titleNeed.filter(
+			(n) => !read(n, undefined, scoped(n, delegated)),
+		);
+		if (titleUnread.length)
+			return `행 문구의 ${titleUnread.map((n) => `${n}(${skillAgents[n]?.join("·") ?? "Main"})`).join(", ")}를 이 라운드에서 맡는 쪽(괄호)이 읽은 기록이 없다(${SKILL_LOG}). 맡는 쪽이 읽고 따른 뒤 적는다. ${[...new Set(titleUnread.map((n) => why(n, delegated)).filter(Boolean))].join(" ")} ${LOG_HINT}`;
+		const focus = r.text.match(/prokit-reviewer\((ui|security|db)\)/)?.[1];
+		const lensUnread = (REVIEW_FOCUS_SKILLS[focus] ?? []).filter(
+			(n) =>
+				isProjectSkill(root, n) &&
+				(skillAgents[n] ?? parentAgents[n])?.includes("prokit-reviewer") &&
+				!read(n, undefined, ["prokit-reviewer"], false),
+		);
+		if (lensUnread.length)
+			return `prokit-reviewer(${focus})가 읽는 ${lensUnread.join(", ")}를 이 라운드에서 리뷰어가 읽은 기록이 없다(${SKILL_LOG}). 리뷰 지시에 .agents/skills/<이름>/SKILL.md 경로를 넣어 다시 맡긴 뒤 적는다. ${LOG_HINT}`;
 		// 하위 스킬(`parent:`가 있는 스킬)을 읽었으면 그 쪽(Main이나 맡은 에이전트)이 상위 스킬도 읽어야 한다
 		const orphan = [...names]
 			.map((n) => [n, parentSkill(root, n)])
@@ -2160,7 +2205,10 @@ export function audit(
 	const X = active.meta.case;
 	const files = roundFiles(root, active);
 	const cls = classify(files, config);
-	const warnings = shellEdits(root, config, active, files);
+	const warnings = [
+		...shellEdits(root, config, active, files),
+		...skillWarnings(root, active),
+	];
 	if (!["C", "F"].includes(X) && ![X, "A"].includes(cls.pathCase)) {
 		problems.push(
 			`케이스 상향 필요: 현재 diff 판정은 ${cls.pathCase} → pnpm dev-cycle table ${cls.pathCase} --write --upgrade`,
@@ -2271,6 +2319,69 @@ function shellEdits(root, config, active, files) {
 				`편집 기록이 없는 계층 파일: ${loose.join(", ")}. 셸로 고쳤으면 편집 훅의 계층 확인을 건너뛴 것이다. 그 계층 에이전트가 편집 도구(Edit·Write, Codex apply_patch)로 다시 고치게 한다. 사용자가 직접 고친 파일이나 생성 명령(shadcn add 등) 결과면 그대로 둔다`,
 			]
 		: [];
+}
+
+const NEXT_FLAG_SKILLS = {
+	cacheComponents: [
+		"next-cache-components-adoption",
+		"next-cache-components-optimizer",
+	],
+	partialPrefetching: [
+		"next-partial-prefetching-adoption",
+		"next-partial-prefetching-optimizer",
+	],
+};
+// 막지 않는 알림 두 가지. Main이 에이전트에 맡긴 공식 스킬을 직접 읽은 기록, 이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬이다.
+// 맡은 스킬은 상황이 맞을 때만 읽으므로(에이전트 정의의 "맡는 공식 스킬" 표) 막지 않고 Main이 상황을 확인하게 한다
+function skillWarnings(root, active) {
+	const log = skillLog(root, active);
+	if (!log) return [];
+	const { skills: skillAgents } = performers(root);
+	const out = [];
+	const mainRead = [
+		...new Set(
+			log.uses.filter((u) => u.seen && skillAgents[u.name]).map((u) => u.name),
+		),
+	];
+	if (mainRead.length)
+		out.push(
+			`Main이 에이전트에 맡긴 공식 스킬을 직접 읽었다: ${mainRead.map((n) => `${n}(${skillAgents[n].join("·")} 몫)`).join(", ")}. 위임 지시에는 경로만 넣고 읽기와 적용은 맡은 에이전트가 한다`,
+		);
+	const worked = [
+		...new Set(
+			[...log.agentUses, ...log.edits].map((u) => u.agentType).filter(Boolean),
+		),
+	];
+	// Next 설정을 켜야 상황이 생기는 스킬은 그 설정이 없으면 알리지 않는다(켜는 일은 사용자 요청으로 한다)
+	const nextConfig = ["ts", "mjs", "js"]
+		.map((x) => join(root, `apps/web/next.config.${x}`))
+		.filter((p) => existsSync(p))
+		.map((p) => readFileSync(p, "utf8"))
+		.join("\n");
+	const off = new Set(
+		Object.entries(NEXT_FLAG_SKILLS)
+			.filter(([f]) => !new RegExp(`\\b${f}\\s*:\\s*true\\b`).test(nextConfig))
+			.flatMap(([, s]) => s),
+	);
+	const unread = worked
+		.map((a) => [
+			a,
+			Object.keys(skillAgents).filter(
+				(n) =>
+					skillAgents[n].includes(a) &&
+					!off.has(n) &&
+					isProjectSkill(root, n) &&
+					!log.agentUses.some(
+						(u) => u.agentType === a && u.name === n && u.project,
+					),
+			),
+		])
+		.filter(([, l]) => l.length);
+	if (unread.length)
+		out.push(
+			`이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬: ${unread.map(([a, l]) => `${a}: ${l.join(", ")}`).join("; ")}. 에이전트 정의의 "맡는 공식 스킬" 표에서 그 상황이 이번 일에 있었으면 그 에이전트에 다시 맡기고, 없었으면 그대로 둔다`,
+		);
+	return out;
 }
 
 export function delegationCompletionProblem(result, runtime) {

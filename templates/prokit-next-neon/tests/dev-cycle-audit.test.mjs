@@ -1409,6 +1409,69 @@ test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 �
   assert.deepEqual(idle(scroll), []);
 });
 
+test("행 일 이름의 공식 스킬과 리뷰 focus의 공식 스킬은 맡는 쪽이 읽어야 하고, 맡았지만 읽지 않은 스킬과 Main이 읽은 맡긴 스킬은 경고만 한다", () => {
+  const { root, write } = makeRepo();
+  const official = ["impeccable", "web-design-guidelines", "shadcn", "neon", "neon-postgres", "next-cache-components-optimizer"];
+  for (const s of official) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n${s === "neon-postgres" ? "parent: neon\n" : ""}---\n`);
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: official }], performers: { agents: ["prokit-ui-builder", "prokit-db-builder", "prokit-implementer"], skills: { "web-design-guidelines": ["prokit-reviewer"], shadcn: ["prokit-ui-builder", "prokit-reviewer"], "neon-postgres": ["prokit-db-builder", "prokit-reviewer"], "next-cache-components-optimizer": ["prokit-ui-builder"] } } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
+  const row = rows.findIndex((r) => r.text.startsWith("[review] impeccable audit과 web-design-guidelines")) + 1;
+  assert.ok(row);
+  const set = (n, v) => {
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(n), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  const mine = (n) => audit(root, config).problems.filter((p) => p.startsWith(`#${n} `)).map((p) => p.replace(/^#\d+ .*?→ [^:]*: /, ""));
+  const warnings = () => audit(root, config).warnings ?? [];
+  const hook = (cmd, input) => spawnSync(process.execPath, [CLI, cmd], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const read = (s, agent) => hook("skill-log", { tool_name: "Read", ...(agent ? { agent_id: `id-${agent}`, agent_type: agent } : {}), tool_input: { file_path: join(root, `.agents/skills/${s}/SKILL.md`) } });
+  const evidence = auditRecord(root);
+  // 훅 기록이 없으면 행 일 이름의 스킬(impeccable, web-design-guidelines)을 사용:에 적은 자기 신고로 본다. 괄호 안 조건의 스킬은 보지 않는다
+  set(row, evidence);
+  assert.match(mine(row)[0] ?? "", /행 문구의 impeccable, web-design-guidelines를 읽고 따른 뒤 증거에 사용:/);
+  // 훅 기록이 있으면 맡는 쪽의 읽은 기록을 본다. Main이 읽은 web-design-guidelines는 세지 않고 경고한다
+  read("impeccable");
+  read("web-design-guidelines");
+  set(row, evidence);
+  assert.match(mine(row)[0] ?? "", /행 문구의 web-design-guidelines\(prokit-reviewer\)를 이 라운드에서 맡는 쪽\(괄호\)이 읽은 기록이 없다/);
+  assert.ok(warnings().some((w) => w.startsWith("Main이 에이전트에 맡긴 공식 스킬을 직접 읽었다: web-design-guidelines(prokit-reviewer 몫)")));
+  // ui focus는 리뷰어가 shadcn도 읽어야 한다
+  read("web-design-guidelines", "prokit-reviewer");
+  assert.match(mine(row)[0] ?? "", /prokit-reviewer\(ui\)가 읽는 shadcn를 이 라운드에서 리뷰어가 읽은 기록이 없다/);
+  read("shadcn", "prokit-reviewer");
+  assert.deepEqual(mine(row), []);
+  // 일한 에이전트가 읽지 않은 맡은 스킬은 경고만 한다. Next 설정을 켜야 생기는 스킬은 그 설정이 있을 때만 알린다
+  hook("edit-guard", { tool_name: "Edit", agent_id: "u1", agent_type: "prokit-ui-builder", tool_input: { file_path: join(root, "apps/web/src/app/page.tsx") } });
+  const unread = () => warnings().find((w) => w.startsWith("이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬")) ?? "";
+  assert.match(unread(), /prokit-ui-builder: shadcn[.;]/);
+  assert.doesNotMatch(unread(), /next-cache-components-optimizer/);
+  write("apps/web/next.config.ts", "export default { cacheComponents: true };\n");
+  assert.match(unread(), /prokit-ui-builder: shadcn, next-cache-components-optimizer/);
+});
+
+test("db focus 리뷰는 설치된 Neon 스킬(상위 스킬 포함)을 리뷰어가 읽어야 한다", () => {
+  const { root, write } = makeRepo();
+  for (const s of ["neon", "neon-postgres"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n${s === "neon-postgres" ? "parent: neon\n" : ""}---\n`);
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["neon", "neon-postgres"] }], performers: { agents: ["prokit-db-builder"], skills: { "neon-postgres": ["prokit-db-builder", "prokit-reviewer"] } } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "E", { write: true, title: "스키마" });
+  const row = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^\[review\] prokit-reviewer\(db\)/.test(r.text)) + 1;
+  assert.ok(row);
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  writeFileSync(join(root, "tasks/evidence/e.txt"), "prokit-reviewer(db): approve, max=none\n");
+  const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const read = (s, agent) => hook({ tool_name: "Read", agent_id: `id-${agent}`, agent_type: agent, tool_input: { file_path: join(root, `.agents/skills/${s}/SKILL.md`) } });
+  const mine = () => audit(root, config).problems.filter((p) => p.startsWith(`#${row} `));
+  read("neon-postgres", "prokit-db-builder");
+  assert.equal(run(root, "evidence", String(row), "--file", "tasks/evidence/e.txt").status, 0);
+  assert.match(mine()[0] ?? "", /prokit-reviewer\(db\)가 읽는 neon, neon-postgres를 이 라운드에서 리뷰어가 읽은 기록이 없다/);
+  read("neon", "prokit-reviewer");
+  read("neon-postgres", "prokit-reviewer");
+  assert.deepEqual(mine(), []);
+});
+
 test("F 계층별 위임: 계층별 구현 행의 N/A는 그 계층 코드만 보고, 계층 에이전트 여럿을 적은 구현 방식 행은 diff의 계층마다 위임을 요구한다", () => {
   const { root, write } = makeRepo();
   write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-api-builder", "prokit-db-builder", "prokit-implementer"], skills: {} } }));

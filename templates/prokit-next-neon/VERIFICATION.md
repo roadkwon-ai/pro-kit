@@ -32,6 +32,53 @@
 
 같은 날 템플릿에 빈 곳 두 가지를 채웠다. [confirm]을 어떻게 묻는지(Claude Code는 AskUserQuestion, 다른 도구는 대화로 "확인했고 다음으로", "고칠 것이 있다", "확인 없이 닫는다" 세 선택지)와, 확인을 받으면 다시 묻지 않고 audit부터 커밋까지 이어서 한다는 것(진행 계획이 있으면 다음 Task까지)이다. 답을 받을 수 없는 비대화 실행이면 이 행을 채우지 않고 확인 질문과 이어 갈 명령을 보고하고 멈춘다. 새 질문 꼴이 실제 대화 세션에서 어떻게 나오는지는 아직 재지 않았다.
 
+## 공식 스킬 활용 감사 (2026-11-02)
+
+위 다섯 실측의 스킬 기록(`.prokit/skills-used.jsonl`)으로 공식 스킬마다 맡는 쪽이 프로젝트 판 `SKILL.md`를 읽었는지 대조했다. 맡는 쪽은 `skills.manifest.json`의 `performers.skills`이고, 없으면 Main이다. 북마크 기능(F)이라 화면·서버·DB를 모두 바꿨고 원격 배포는 하지 않았다.
+
+| 공식 스킬 | 맡는 쪽과 이번 일 | 읽은 실측 | 판단 |
+|---|---|---|---|
+| `next-dev-loop`, `agent-browser` | 실행 확인 에이전트, 행 이름에 있다 | 5/5 | 맞다 |
+| `shadcn`, `vercel-react-best-practices` | 화면 에이전트, 리뷰어 | 5/5 | 맞다 |
+| `supabase-postgres-best-practices` | DB 에이전트, 리뷰어(db) | 5/5 | 맞다 |
+| `turborepo` | 서버 에이전트·하네스(`packages/api`에 vitest 도입) | 5/5 | 맞다 |
+| `impeccable`, `domain-modeling` | Main | 5/5 | 맞다 |
+| `web-design-guidelines` | 리뷰어(ui), 25행 이름에 있다 | 3/5 | f-cc·sp-cc(Claude Code)는 SKILL.md를 읽지 않고 지침 원문만 WebFetch로 받아 검사했다(각 3회, sp-cc 위반 17건) |
+| `neon`·`neon-postgres`·`neon-postgres-egress-optimizer` | 리뷰어(db) | 3/5 | f-cc·sp-cc 리뷰어가 읽지 않았다 |
+| `better-auth-best-practices` | 리뷰어(security). 보안 리뷰 행은 넷에만 있었다 | 3/4 | sp-cc 리뷰어가 읽지 않았다 |
+| `better-auth-security-best-practices` | 리뷰어(security) | 4/4 | 맞다 |
+| `vercel-composition-patterns` | 화면 에이전트(재사용 컴포넌트 API일 때), 리뷰어 | 화면 2/5, 리뷰어 5/5 | 조건 밖. 폼과 목록만 만들었다 |
+| Better Auth 세 스킬 | 서버 에이전트(인증 설정·세션·비밀번호를 바꿀 때) | 1\~2/5 | 조건 밖. 기존 세션만 썼다 |
+| `email-and-password-best-practices` | 리뷰어(이메일·비밀번호 인증일 때) | 2/4 | 조건 밖 |
+| `next-cache-components-*`, `next-partial-prefetching-*` | 화면 에이전트 | 0/5 | 조건 밖. `next.config`에 `cacheComponents`·`partialPrefetching`이 없다 |
+| `grilling` | Main(요구 명확화의 질문 꼴) | 2/5 | 묻지 말라는 비대화 실측이라 Codex·Antigravity는 건너뛰었다 |
+| `use-design-md` | Main(카탈로그 스타일을 고를 때) | 0/5 | 조건 밖. 다섯 모두 묻지 않고 기존 디자인을 유지했다 |
+| `grill-with-docs` | 사용자가 `/grill-with-docs`로 부른다 | 0/5 | 조건 밖 |
+| `deploy-to-vercel`, `vercel-cli-with-tokens`, `access-protected-vercel-deployment` | Main(`prokit-deploy`) | 0/5 | 측정 밖. 원격 배포를 하지 않았다 |
+| `neon-postgres-branches` | Main | 0/5 | 조건 밖. Neon 미연결이라 10행이 `N/A`였다 |
+
+om-cx(Codex, oh-my)의 Main은 맡긴 스킬 `shadcn`, `next-dev-loop`, `agent-browser`를 셸로 직접 읽었다. 계층 편집은 모두 맡은 에이전트가 했다.
+
+audit이 이 누락을 통과시킨 이유는 두 가지다. 행 문구의 스킬은 첫 괄호 안에 이름만 적힌 것만 봤다. 25행은 "web-design-guidelines는 prokit-reviewer(ui)가 하고"처럼 문장 속에 이름이 있어 보지 않았다. 리뷰어 focus별 스킬은 에이전트 정의에만 있어 보지 않았다. `docs/dev-workflow.md`에 문장 속에만 공식 스킬 이름이 있는 행은 16개였다(E의 `neon`은 상위 스킬 검사가 따로 본다). 대부분 조건이 붙은 이름이다.
+
+고친 것:
+- **필수는 막는다.**
+  - 행 일 이름(첫 괄호 앞)에 나온 공식 스킬은 맡는 쪽이 그 라운드에서 읽은 기록이 있어야 한다. 훅 기록이 없는 호스트는 증거의 `사용:`에 적어야 한다.
+  - `prokit-reviewer(ui·security·db)` 행은 리뷰어 정의 focus 표에서 언제가 붙지 않은 스킬 가운데 설치되어 있고 리뷰어가 맡은 것을 리뷰어가 읽어야 한다.
+  - 두 검사 모두 행을 채운 순서는 보지 않는다. 한 번 맡긴 일로 행 여럿을 채우는 경우가 있어서다.
+- **조건부는 경고만 한다.**
+  - audit 출력에 "이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬"과 "Main이 에이전트에 맡긴 공식 스킬을 직접 읽었다"를 보인다.
+  - 캐시·프리패치 스킬은 `apps/web/next.config`에 그 설정이 켜져 있을 때만 알린다.
+- 리뷰어 정의: focus를 맡으면 표의 스킬을 읽고, 언제가 붙은 스킬만 그 상황에서 읽는다. 지침 원문을 WebFetch로 받는 `web-design-guidelines`도 SKILL.md를 먼저 읽는다.
+- `prokit-web` 연결 표와 화면 에이전트 정의: 캐시·프리패치 스킬의 상황에 "켠 프로젝트에서 라우트·데이터 패칭·링크를 더하거나 바꿀 때(빌드의 blocking route 오류 포함)"를 더했다.
+
+고친 audit을 실측 사본 넷(f-cc는 닫혀 있다)에 그대로 돌렸다. 새로 막힌 것은 sp-cc의 세 행뿐이고(12행 Neon 스킬, 25행 `web-design-guidelines`, 42행 `better-auth-best-practices`), 위 표의 누락과 같다. 나머지 셋은 경고만 늘었다. 사본 파일은 바뀌지 않았다. 처음 판은 행을 채운 순서까지 봐서 실제로 읽은 스킬도 막았다. 증거의 `사용:`에 이름이 없는 것도 막았다. 그래서 위처럼 바꿨다.
+
+한계:
+- 이 감사는 읽은 기록을 본다. 읽은 스킬의 규칙을 결과물에 적용했는지는 리뷰어의 지적과 보고로만 본다.
+- 배포 세 스킬, `use-design-md`, 대화형 `grilling`은 이 실측에서 상황이 오지 않았다. 대화형 세션과 원격 배포가 있는 실측에서 다시 잰다.
+- 조건부 경고는 상황을 판정하지 않는다. Main이 에이전트 정의의 상황과 이번 일을 비교한다.
+
 ## 운영 프로젝트에 반영한 실측 감사에서 고친 것 (2026-11-02)
 
 운영 중인 프로젝트 하나(neon, 두뇌 agent-skills, 과설계 방지 ponytail, 2026-10-31 설치)에 이 판(b41832a4와 커밋하지 않은 수정)을 그 프로젝트 세션이 H 라운드로 반영하고, 편집 훅과 audit을 일부러 어겨 가며 쟀다. 반영 전후 그 프로젝트의 타입 검사·Biome·테스트 결과는 같았다. 잡힌 결함과 고친 내용:

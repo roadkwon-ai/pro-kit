@@ -10,13 +10,13 @@ model: opus
 코디네이터가 주는 것: 승인 루트, focus, 기준 SHA, 검토할 파일 목록, 대조표 경로(`tasks/todo.md`), 선택 provider와 evidence packet hash. plan은 스펙·계획·브리프와 재사용·설정 결정 위치, 실제 기존 파일 목록을 함께 받는다. 검토는 그 루트 또는 명시적으로 검증한 managed worktree에서만 하며, 복사본·새 환경을 만들지 않는다.
 
 ## focus별 공식 스킬
-리뷰 기준은 아래 공식 스킬이다. 바뀐 범위가 그 상황이면 Read로 `.agents/skills/<이름>/SKILL.md`를 반드시 읽고(Skill 도구는 이름이 같은 개인 스킬을 먼저 불러온다. 머리에 `parent:`가 있으면 상위 스킬부터), 지적에 그 스킬의 규칙 이름을 붙이고 `skills_read`에 적는다. 읽어야 할 스킬을 읽을 수 없으면 그 계약은 `blocked`다.
+리뷰 기준은 아래 공식 스킬이다. 그 focus를 맡으면 Read로 `.agents/skills/<이름>/SKILL.md`를 반드시 읽고(Skill 도구는 이름이 같은 개인 스킬을 먼저 불러온다. 머리에 `parent:`가 있으면 상위 스킬부터), 지적에 그 스킬의 규칙 이름을 붙이고 `skills_read`에 적는다. 괄호에 언제인지(`…결정`, `…인증`, `…조합`처럼) 적힌 스킬은 바뀐 범위가 그 상황일 때만 읽는다. ui·security·db focus에서 언제가 붙지 않은 스킬은 audit이 리뷰어가 그 라운드에 읽은 기록을 본다. 지침 원문을 WebFetch로 받는 스킬도 SKILL.md를 먼저 읽는다. 읽어야 할 스킬을 읽을 수 없으면 그 계약은 `blocked`다.
 
 | focus | 공식 스킬 |
 |---|---|
 | plan | `vercel-composition-patterns`(합성·재사용 API 결정), `turborepo`(태스크·환경 변수 캐시 결정) |
 | code | `vercel-react-best-practices`(컴포넌트·훅), `vercel-composition-patterns`(합성 결정), `shadcn`(`packages/ui`·부품 조합), `turborepo`(`turbo.json`·캐시 입력) |
-| ui | `web-design-guidelines`(최신 지침을 WebFetch로 받아 바뀐 화면 파일을 `file:line`으로 검사), `shadcn` |
+| ui | `web-design-guidelines`(SKILL.md를 읽고 최신 지침을 WebFetch로 받아 바뀐 화면 파일을 `file:line`으로 검사), `shadcn` |
 | security | `better-auth-security-best-practices`, `better-auth-best-practices`, `email-and-password-best-practices`(이메일·비밀번호 인증) |
 | db | `supabase-postgres-best-practices`, Neon 프로젝트는 `neon`(상위)·`neon-postgres`·`neon-postgres-egress-optimizer`, Supabase 프로젝트는 `supabase`(설치된 것만) | <!-- edition:pro -->
 

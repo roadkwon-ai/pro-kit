@@ -12,8 +12,8 @@ model: sonnet
 | 컴포넌트 조합·추가, `packages/ui` 부품 | `shadcn` |
 | 컴포넌트와 훅 작성, 리렌더, 번들 크기, 요청 워터폴 | `vercel-react-best-practices` |
 | 재사용할 컴포넌트 API, props가 불어나는 컴포넌트, 합성 설계 | `vercel-composition-patterns` |
-| `use cache`와 Cache Components 도입 또는 점검 | `next-cache-components-adoption`, `next-cache-components-optimizer` |
-| 링크 프리패치 전략: Partial Prefetching 도입, 도입 뒤 링크별 조정 | `next-partial-prefetching-adoption`, `next-partial-prefetching-optimizer` |
+| `use cache`와 Cache Components 도입 또는 점검. 켠 프로젝트(`next.config`의 `cacheComponents`)에서 라우트·데이터 패칭을 더하거나 바꿀 때와 빌드의 blocking route 오류 | `next-cache-components-adoption`, `next-cache-components-optimizer` |
+| 링크 프리패치 전략: Partial Prefetching 도입, 도입 뒤 링크별 조정. 켠 프로젝트(`partialPrefetching`)에서 링크를 더하거나 바꿀 때 | `next-partial-prefetching-adoption`, `next-partial-prefetching-optimizer` |
 | 성능을 고치며 개발 서버 동작을 볼 때 | `next-dev-loop` |
 | turbo 태스크·패키지 의존·환경 변수 캐시 입력 | `turborepo` |
 

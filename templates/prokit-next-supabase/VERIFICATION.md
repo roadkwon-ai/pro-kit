@@ -8,6 +8,10 @@
 
 실측은 neon 프로젝트에서 했고, 고친 파일(`prokit-runtime-checker` 에이전트 정의)은 이 템플릿에도 같다. 결과와 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#세-도구세-두뇌로-같은-기능-요청을-끝까지-돌린-실측-2026-11-02)에 있다.
 
+## 공식 스킬 활용 감사 (2026-11-02)
+
+실측은 neon 프로젝트에서 했고, 고친 파일(공통 스크립트 `dev-cycle.mjs`, 공통 테스트, 리뷰어·화면 에이전트 정의, `prokit-web`·`prokit-dev-cycle` 스킬 문서, `docs/dev-workflow.md`)은 이 템플릿에도 같게 고쳤다. db focus는 이 템플릿에서 `supabase-postgres-best-practices`와 설치된 `supabase`를 리뷰어가 읽어야 한다. 결과와 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#공식-스킬-활용-감사-2026-11-02)에 있다.
+
 ## 운영 프로젝트에 반영한 실측 감사에서 고친 것 (2026-11-02)
 
 실측은 neon 프로젝트에서 했고, 고친 파일은 이 템플릿의 같은 파일(`.dev-cycle.json`, `CLAUDE.md`, 공통 스크립트·설치기·에이전트 정의·스킬 문서)이다. 결함과 고친 내용은 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#운영-프로젝트에-반영한-실측-감사에서-고친-것-2026-11-02)에 있다. 고친 뒤 이 템플릿 테스트도 405 통과·0 실패였다.
