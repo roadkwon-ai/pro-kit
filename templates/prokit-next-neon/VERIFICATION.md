@@ -22,13 +22,14 @@ Better-T-Stack 프로젝트를 scratchpad에 만들어 이 판을 설치하고 �
 - **OMX 검사가 두뇌 이름 `oh-my`에 기댔다.** 매니페스트 두뇌 항목의 `omx` 값으로 본다.
 - **hallmark 렌더 검사 안내가 전역 설치만 적었다.** `hallmark-map.md`에 프로젝트 의존성에 넣지 않고 따로 받은 폴더를 `HALLMARK_PUPPETEER`로 주는 법을 적었다. shadcn `.dark` 블록 때문에 기준 커밋과 비교해 새 FAIL만 보는 법도 함께 적었다. 매니페스트의 hallmark 준비물 검사도 이 폴더를 받는다.
 - **기본 AI의 디자인 리뷰 행은 점수가 없어 N/A였다.** 게슈탈트 점검으로 `게슈탈트 위반 N`을 적고, audit이 이 꼴을 받는다.
+- **디자인 리뷰·감사 행 문구가 impeccable과 hallmark 기준이었다.** 기록 경로(`.impeccable/critique/`)와 감사 결과(점수 /20, sloplint FAIL 수)를 스킬 이름으로 적었다. 기본 AI 세션은 `none-map.md`를 보고 채웠다. 행 문구는 이제 스킬 이름 없이 `prokit-ui`의 `references/<주 UI 스킬>-map.md`를 가리키고, `docs/dev-workflow.md`에 UI 스킬 이름이 없는지 테스트가 본다. 단계 이름은 그대로라 이미 연 라운드는 `pnpm dev-cycle table <케이스> --write --upgrade`로 증거를 옮긴다.
+- **기본 AI 파일을 나열하는 곳이 빠져 있었다.** 기존 프로젝트 갱신 절차(루트 `AGENTS.md`, handbook `update-existing.md`), `licenses/PROKIT-SCOPE.md`, handbook의 `prokit-ui` 참조 표, `design-flow.md` 링크에 `none-map.md`와 `gestalt.md`를 더했다.
 - **UI 스킬을 바꿀 때 정한 디자인을 다시 고를 수 있었다.** `prokit-ui`에 바꿔도 `PRODUCT.md`, `DESIGN.md`, 브리프, 토큰을 그대로 쓰고 다시 디자인해 달라는 요청이 없으면 새 시각 방향을 내지 않는다고 적었다. hallmark에는 기능을 더하는 라운드에서 테마를 다시 배정하지 않는 절을 더했다.
 
 고치지 않은 것:
 
 - hallmark 세션은 고친 안내 전 판으로 돌아 렌더 검사를 건너뛰었다. 렌더 검사는 따로 확인했고, 고친 안내로 라운드를 다시 돌리지는 않았다.
 - 세 세션 모두 `prokit-ui-builder`가 `next-dev-loop`·`turborepo`를 읽지 않았다는 audit 경고가 나왔다. 막지 않는 경고다. impeccable 세션은 `globals.css`를 셸 명령으로 고쳐 같은 종류의 경고가 하나 더 나왔다.
-- 디자인 리뷰·감사 행 문구는 기록 경로와 감사 결과를 impeccable과 hallmark 기준으로 적는다. 기본 AI 세션은 `none-map.md`대로 채웠다. 행 문구를 바꾸면 이미 연 라운드를 `--upgrade`해야 해서 두었다.
 - 헤드리스 세션은 사용자 확인을 기다리며 개발 서버를 띄워 두었고, 그 서버를 끄자 다시 띄웠다. 확인을 마친 뒤 기록한 PID로 껐다.
 
 고친 뒤 두 템플릿 테스트는 모두 416 통과·0 실패였다. 새 테스트는 스킬을 지울 때 그 스킬의 훅만 빼는지, `none`을 고르면 `frontend-design`을 설치하고 다른 UI 스킬을 고르면 지우는지, 카탈로그의 모든 두뇌와 UI 스킬에 단계 매핑 파일이 있는지, 주 UI 스킬을 읽는 `mainUiSkill`을 본다.

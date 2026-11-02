@@ -72,6 +72,8 @@
 | `prokit-ui` | `design-flow.md` | UI 스킬과 상관없이 따르는 화면 작업 절차(디자인 카탈로그, 사이트맵, 시각 자산, DESIGN.md 검사) |
 | | `impeccable-map.md` | 주 UI 스킬이 impeccable일 때 단계마다 쓰는 기능과 기록 |
 | | `hallmark-map.md` | 주 UI 스킬이 hallmark일 때 단계마다 쓰는 기능과 기록 |
+| | `none-map.md` | UI 스킬이 없을 때(기본 AI) `frontend-design`과 게슈탈트 지침으로 단계마다 하는 일과 기록 |
+| | `gestalt.md` | 화면이 의도한 덩어리로 묶여 보이는지 진단하고 고치는 게슈탈트 지침 |
 | | `taste.md` | 선택 묶음 taste를 언제 어떻게 쓰는지 |
 | | `preset-settings.md` | 완성팩의 설정을 적용할 때의 기준 |
 | | `screen-only.md` | DB 없이 예시 데이터로 만드는 화면만 프로젝트의 규칙 |

@@ -43,7 +43,7 @@ flowchart LR
 | 설계 (화면마다) | 사이트맵에 링크와 버튼이 이어지는 곳을 모두 적고, 주 UI 스킬의 설계 단계(impeccable은 `shape`)로 화면마다 상호작용, 서체, 이미지, 아이콘, 모션 계획을 세워요. 이름이나 헤드라인을 새로 정하면 비슷한 서비스를 조사해 후보 3\~4개를 내요 | `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 화면 설계 확인, 이름·문구 고르기 |
 | 시각 자산 (화면마다) | 서체 파일을 받아 프로젝트에 직접 넣어요. 이미지를 그릴 수 있으면 방향 comp 3장을 그리고, 고른 comp에 맞춰 사진·일러스트(plate)를 만들어요 | `apps/web/src/fonts/`, `apps/web/public/images/`, `.impeccable/mocks/`(impeccable) | comp 고르기 |
 | 개발 | 디자인 토큰을 `globals.css`의 shadcn 변수로 옮기고 컴포넌트를 조합해 화면을 만들어요 | 코드 | |
-| 리뷰 | 스크린샷, 모든 링크·버튼 누르기(404, "준비 중", 반응 없는 버튼이 없어야 해요), 주 UI 스킬의 리뷰와 감사(impeccable은 `critique`·`audit`, hallmark는 `sloplint`와 마감 리뷰), `web-design-guidelines` | 점수나 판정, 위반 목록, 리뷰 기록(impeccable은 `.impeccable/critique/…md`, 기록 파일을 남기지 않는 스킬은 `tasks/evidence/ui-review-<시각>.md`), 감사 보고서(`tasks/evidence/ui-audit-<시각>.md`) | |
+| 리뷰 | 스크린샷, 모든 링크·버튼 누르기(404, "준비 중", 반응 없는 버튼이 없어야 해요), 주 UI 스킬의 리뷰와 감사(impeccable은 `critique`·`audit`, hallmark는 `sloplint`와 마감 리뷰, UI 스킬이 없으면 게슈탈트 점검), `web-design-guidelines` | 점수나 판정, 위반 목록, 리뷰 기록(impeccable은 `.impeccable/critique/…md`, 기록 파일을 남기지 않는 스킬은 `tasks/evidence/ui-review-<시각>.md`), 감사 보고서(`tasks/evidence/ui-audit-<시각>.md`) | |
 | 마감 | 다듬기(impeccable은 `polish`, 마무리 손질), 재확인 1회 | 통과 점수 | 기준에 못 미치면 더 다듬을지 결정 |
 | 기록 | 정본 갱신(impeccable은 `document` merge, 기존 파일에 합치기), lint, diff | 갱신한 `DESIGN.md` | 덮어쓰기 전 확인 |
 

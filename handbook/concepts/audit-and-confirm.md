@@ -41,7 +41,7 @@
 
 `N/A:`, `blocked:`, `미실행:`은 평소 규칙대로예요. 두뇌가 `none`이면 이 검사는 하지 않아요. 단, audit은 **이름만 확인해요.** 에이전트가 그 스킬을 실제로 불렀는지는 대화 기록을 보지 않으니 알 수 없고, 그 부분은 리뷰와 사용자 확인이 받쳐 줘요.
 
-audit은 행 누락, 설계 필수 항목, 리뷰 승인 형식도 확인해요. 화면 리뷰 행은 실행 기록도 봐요. 디자인 리뷰 행은 impeccable `critique`가 스스로 남긴 `.impeccable/critique/` 기록 파일을, 기록 파일을 남기지 않는 UI 스킬(hallmark 등)은 `tasks/evidence/ui-review-<시각>.md` 보고서를 증거에 적어야 해요. 디자인 감사 행은 `tasks/evidence/ui-audit-<시각>.md` 보고서를 적어야 해요. 그 파일이 이번 라운드에 쓴 것이고 증거에 적은 결과(impeccable은 점수, hallmark는 sloplint `N FAIL`, UI 스킬이 없으면 `web-design-guidelines 위반 N`)가 파일에 있어야 통과해요. 재사용·설정 판단이 옳은지, 스킬을 실제로 적용했는지는 독립 리뷰와 동작 평가로 확인해요.
+audit은 행 누락, 설계 필수 항목, 리뷰 승인 형식도 확인해요. 화면 리뷰 행은 실행 기록도 봐요. 디자인 리뷰 행은 impeccable `critique`가 스스로 남긴 `.impeccable/critique/` 기록 파일을, 기록 파일을 남기지 않는 UI 스킬(hallmark 등)과 UI 스킬이 없을 때는 `tasks/evidence/ui-review-<시각>.md` 보고서를 증거에 적어야 해요. UI 스킬이 없으면 리뷰 결과는 게슈탈트 점검의 `게슈탈트 위반 N`이에요. 디자인 감사 행은 `tasks/evidence/ui-audit-<시각>.md` 보고서를 적어야 해요. 그 파일이 이번 라운드에 쓴 것이고 증거에 적은 결과(impeccable은 점수, hallmark는 sloplint `N FAIL`, UI 스킬이 없으면 `web-design-guidelines 위반 N`)가 파일에 있어야 통과해요. 재사용·설정 판단이 옳은지, 스킬을 실제로 적용했는지는 독립 리뷰와 동작 평가로 확인해요.
 
 ## 검사 고르기
 

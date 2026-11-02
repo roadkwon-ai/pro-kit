@@ -1,6 +1,6 @@
 # 화면 작업 공통 절차
 
-주 UI 스킬(impeccable, hallmark, 없음)과 상관없이 따르는 절차다. 스킬마다 다른 명령과 기록은 [impeccable-map.md](impeccable-map.md), [hallmark-map.md](hallmark-map.md)에 있다. 화면 성격은 impeccable의 모드 이름으로 부른다: 앱 화면(대시보드, 목록, 설정, 편집기)은 **Operate**, 랜딩과 가격 페이지는 **Persuade**, 문서와 도움말은 **Read**다.
+주 UI 스킬(impeccable, hallmark, 없음)과 상관없이 따르는 절차다. 스킬마다 다른 명령과 기록은 [impeccable-map.md](impeccable-map.md), [hallmark-map.md](hallmark-map.md), [none-map.md](none-map.md)(기본 AI)에 있다. 화면 성격은 impeccable의 모드 이름으로 부른다: 앱 화면(대시보드, 목록, 설정, 편집기)은 **Operate**, 랜딩과 가격 페이지는 **Persuade**, 문서와 도움말은 **Read**다.
 
 ## PRODUCT.md
 제품 맥락의 정본이다. impeccable은 `init`이 만든다. 다른 UI 스킬이나 UI 스킬이 없으면 Main이 init 질문(사용자, 목적, 차별점, 브랜드 약속, 원칙, 접근성)을 사용자에게 보내고 답으로 같은 절(Platform, Stack, Users, Purpose, Positioning, Brand Commitments, Principles, Accessibility)을 쓴다. 답을 받기 전에는 만들지 않는다. 추정으로 채우면 다음 세션이 인터뷰를 건너뛴다.

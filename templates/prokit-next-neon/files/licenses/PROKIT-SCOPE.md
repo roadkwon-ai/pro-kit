@@ -18,6 +18,8 @@
 - `.agents/skills/prokit-ui/SKILL.md`
 - `.agents/skills/prokit-ui/references/impeccable-map.md`
 - `.agents/skills/prokit-ui/references/hallmark-map.md`
+- `.agents/skills/prokit-ui/references/none-map.md`
+- `.agents/skills/prokit-ui/references/gestalt.md`
 - `.agents/skills/prokit-ui/references/design-flow.md`
 - `.agents/skills/prokit-ui/references/screen-only.md`
 - `.agents/skills/prokit-verify/SKILL.md`

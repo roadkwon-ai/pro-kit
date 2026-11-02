@@ -32,8 +32,8 @@
 - [verify] 타입·린트·빌드 → 명령과 결과
 - [verify] next-dev-loop 런타임 확인과 ego-browser(없으면 agent-browser)로 desktop·mobile 스크린샷 (prokit-runtime-checker에 위임) → 위임: prokit-runtime-checker(사용: next-dev-loop), 확인한 경로, 오류 예산(콘솔·개발 오버레이·get_errors·서버 로그, 환경 탓도 빼지 않음) 수, tasks/evidence/ 경로
 - [verify] 휴대폰 스크롤 측정 (prokit-runtime-checker에 위임. prokit-verify의 references/browser.md "휴대폰 스크롤 측정". 스크롤 모션·긴 쪽·반복해서 다시 그리는 요소를 바꾸지 않았으면 N/A: 사유) → 위임: prokit-runtime-checker, 고치기 전·뒤의 50ms 넘는 프레임 수, 스크롤 모션 수, 레이어 수
-- [review] 디자인 리뷰 (주 UI 스킬의 리뷰 단계. 대상은 화면 경로나 주소) → 점수나 판정, 막는 지적(P0/P1, FAIL) 목록, 기록 파일 경로(.impeccable/critique/ 또는 tasks/evidence/)
-- [review] 디자인 감사와 web-design-guidelines 코드 검사 (주 UI 스킬의 감사 단계는 Main이, web-design-guidelines는 prokit-reviewer(ui)가 하고 두 결과를 tasks/evidence/ui-audit-<시각>.md에 저장) → 감사 결과(impeccable은 점수 /20과 접근성 점수, hallmark는 sloplint FAIL 수), web-design-guidelines 위반 수, 보고서 경로
+- [review] 디자인 리뷰 (주 UI 스킬의 리뷰 단계. 대상은 화면 경로나 주소. 결과의 꼴과 기록 위치는 prokit-ui의 references/<주 UI 스킬>-map.md) → 점수나 판정, 막는 지적 목록, 기록 파일 경로
+- [review] 디자인 감사와 web-design-guidelines 코드 검사 (주 UI 스킬의 감사 단계는 Main이, web-design-guidelines는 prokit-reviewer(ui)가 하고 두 결과를 tasks/evidence/ui-audit-<시각>.md에 저장) → 감사 결과(꼴은 prokit-ui의 references/<주 UI 스킬>-map.md), web-design-guidelines 위반 수, 보고서 경로
 - 수정과 다듬기를 한 번에 (주 UI 스킬의 마감 단계. Main이 고칠 것을 모으고 수정은 prokit-ui-builder에 맡긴다. 고칠 것이 없으면 N/A: 사유) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 반영 내역
 - [verify] 재확인 1회 → 스크린샷 경로와 점수
 - [review] prokit-reviewer(code) → verdict, max_severity, 반영·기각 내역

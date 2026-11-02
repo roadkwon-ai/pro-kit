@@ -231,6 +231,7 @@ test("스킬 연결: 행이 외부 스킬을 이름으로 부르고, 외부 스�
   const part = (c) => wf.split(`### ${c}.`)[1].split("###")[0];
   assert.match(part("B"), /^- 구현 \([^\n]*shadcn[^\n]*vercel-react-best-practices/m);
   assert.match(part("B"), /^- \[review\] 디자인 감사와 web-design-guidelines/m);
+  assert.doesNotMatch(wf, /impeccable|hallmark|sloplint|critique/, "행 문구는 UI 스킬 이름 없이 주 UI 스킬의 단계 매핑을 가리킨다");
   assert.match(part("D"), /^- 구현 \([^\n]*테스트 먼저[^\n]*better-auth-best-practices/m);
   assert.match(part("E"), /^- 스키마 수정 \+ dbGenerate[^\n]*supabase-postgres-best-practices/m);
   assert.match(part("F"), /^- 구현 계획 \(계획 단계, 바꿀 계층의 prokit-\* 스킬과 그 공식 스킬 연결 표/m);
