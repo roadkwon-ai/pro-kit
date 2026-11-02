@@ -491,7 +491,8 @@ export function mergeClaudeSettings(
 	return { added, settings: cur };
 }
 
-// Codex 프로젝트 훅(.codex/hooks.json): 라운드 없는 편집을 막고(apply_patch) 셸로 읽은 SKILL.md를 기록한다(Bash).
+// Codex 프로젝트 훅(.codex/hooks.json): 라운드 없는 편집(apply_patch)과 이름·포트로 골라 프로세스를 끄는 셸 명령(Bash)을 막고,
+// 셸로 읽은 SKILL.md를 기록한다(Bash).
 // OMX도 이 파일에 쓰므로 다른 항목은 그대로 두고 없는 것만 더한다. Codex는 훅을 세션 cwd에서 셸로
 // 실행하므로, 하위 폴더에서 시작해도 저장소 루트의 스크립트를 부르게 한다.
 const CODEX_HOOKS = [
@@ -500,6 +501,12 @@ const CODEX_HOOKS = [
 		matcher: "apply_patch",
 		command:
 			'node "$(git rev-parse --show-toplevel)/scripts/dev-cycle.mjs" edit-guard',
+	},
+	{
+		event: "PreToolUse",
+		matcher: "Bash",
+		command:
+			'node "$(git rev-parse --show-toplevel)/scripts/dev-cycle.mjs" shell-guard',
 	},
 	{
 		event: "PostToolUse",

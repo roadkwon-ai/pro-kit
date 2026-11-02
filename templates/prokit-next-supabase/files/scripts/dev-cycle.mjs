@@ -1421,14 +1421,16 @@ function usageProblem(root, config, active) {
 		const want =
 			named.length || !/구현 단계/.test(r.text) ? named : performerAgents;
 		const delegated = [
-			...[...value.matchAll(/위임:\s*`?([a-z][a-z0-9-]*)/g)]
-				.map((m) => m[1])
-				.filter((a) => performerAgents.includes(a)),
-			...reviewers.filter(
-				(a) =>
-					r.text.includes(a) ||
-					new RegExp(`위임:\\s*\`?${a}(?![a-z0-9-])`).test(value),
-			),
+			...new Set([
+				...[...value.matchAll(/위임:\s*`?([a-z][a-z0-9-]*)/g)]
+					.map((m) => m[1])
+					.filter((a) => performerAgents.includes(a)),
+				...reviewers.filter(
+					(a) =>
+						r.text.includes(a) ||
+						new RegExp(`위임:\\s*\`?${a}(?![a-z0-9-])`).test(value),
+				),
+			]),
 		];
 		const said = delegated.filter((a) => want.includes(a));
 		// 서브에이전트를 구별하지 못하는 호스트(훅 기록에 구별 값이 없다)에서는 Main이 직접 하고 자기 신고로 적는다
@@ -3155,6 +3157,16 @@ export function editGuard(root, config, input) {
 	}
 	return `dev-cycle: 열린 라운드 없이 ${rels.join(", ")}(케이스 ${cls.pathCase} 경로)를 고치려 한다. prokit-dev-cycle대로 pnpm dev-cycle status를 보고 pnpm dev-cycle table <케이스> --write --title "<요약>"로 라운드를 연 뒤 고친다. 코드를 바꾸지 않는 요청이면 이 파일을 고치지 않는다.`;
 }
+// 이름이나 포트로 골라 끄는 명령: 같은 기기의 다른 프로젝트 서버까지 끈다(2026-11-02 실측: 실행 확인 에이전트의 pkill -f next-server가 다른 저장소 개발 서버를 모두 껐다).
+// shortcut: 셸을 해석하지 않고 명령 첫머리의 pkill·killall과 pgrep·lsof 결과를 kill에 넘기는 꼴만 본다. 다른 우회가 실측되면 더한다
+const KILL_BY_NAME_RE =
+	/(?:^|[;&|(\n]|\$\()\s*(?:sudo\s+)?(?:pkill|killall)\b|\b(?:pgrep|lsof)\b[^;&\n]*\|\s*xargs\s+(?:-\S+\s+)*kill\b|(?:^|[;&|(\n])\s*kill\b[^;&|\n]*\$\(\s*(?:pgrep|lsof)\b/;
+// 셸 실행 전 확인(PreToolUse 훅, Claude Code·Codex Bash): 이름·포트로 골라 끄는 명령이면 막을 사유, 아니면 null
+export function shellGuard(input) {
+	return KILL_BY_NAME_RE.test(String(hookCall(input).t.command ?? ""))
+		? "dev-cycle: 이름이나 포트로 골라 끄는 명령(pkill, killall, pgrep·lsof 결과를 넘긴 kill)은 쓰지 않는다. 같은 기기의 다른 프로젝트 서버까지 꺼진다. 띄울 때 적어 둔 PID와 그 프로세스 그룹만 끈다(kill -- -<PGID>). 다른 프로세스가 포트를 쓰면 끄지 않고 보고한다."
+		: null;
+}
 // 편집 도구 입력에서 고칠 프로젝트 안 파일(상대 경로)
 function editFiles(root, input) {
 	const { name, t } = hookCall(input);
@@ -4050,6 +4062,15 @@ export function main(argv, root = process.cwd()) {
 			);
 			return 0;
 		}
+		if (why) console.error(why);
+		return why ? 2 : 0;
+	}
+	// PreToolUse 훅(Claude Code·Codex Bash): exit 2가 그 명령을 막고 stderr를 에이전트에게 보인다. 깨진 입력은 막지 않는다
+	if (cmd === "shell-guard") {
+		let why = null;
+		try {
+			why = shellGuard(JSON.parse(readFileSync(0, "utf8")));
+		} catch {}
 		if (why) console.error(why);
 		return why ? 2 : 0;
 	}

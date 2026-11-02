@@ -914,6 +914,17 @@ test("편집 전 확인: 열린 라운드 없이 코드·하네스 파일을 Edi
   assert.deepEqual(agy(join(root, "apps/web/src/app/page.tsx")), [0, { decision: "allow" }]);
 });
 
+test("셸 실행 전 확인: 이름·포트로 골라 끄는 명령(pkill, killall, pgrep·lsof 결과의 kill)은 shell-guard 훅이 exit 2로 막고, PID·프로세스 그룹 kill과 그 말을 담은 글은 막지 않는다", () => {
+  const sh = (command) => spawnSync(process.execPath, [CLI, "shell-guard"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Bash", tool_input: { command } }), encoding: "utf8" });
+  for (const bad of ['kill -- -$PG; sleep 2; pkill -f "next-server" 2>/dev/null', "killall node", "sudo pkill next", "lsof -ti:3001 | xargs kill -9", "pgrep -f next | xargs -r kill", "kill $(lsof -t -iTCP:3001)", "echo x && kill -9 $(pgrep -f next-server)", "(pkill -P 123)"]) {
+    const r = sh(bad);
+    assert.equal(r.status, 2, bad);
+    assert.match(r.stderr, /이름이나 포트로 골라 끄는 명령/);
+  }
+  for (const ok of ["kill -- -$(ps -o pgid= -p $PID | tr -d ' ')", "kill 38382 38514", 'grep -n "pkill" tasks/lessons.md', "lsof -nP -iTCP:3001 -sTCP:LISTEN", "pgrep -fl next-server", "pnpm dev:web"]) assert.equal(sh(ok).status, 0, ok);
+  assert.equal(spawnSync(process.execPath, [CLI, "shell-guard"], { cwd: tmpdir(), input: "깨진 입력", encoding: "utf8" }).status, 0);
+});
+
 test("부른 스킬 기록: Codex는 Bash 명령 속 SKILL.md 경로를, Antigravity는 read_file·view_file 경로를 남긴다", () => {
   const { root } = makeRepo();
   const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
@@ -1542,6 +1553,14 @@ test("한 행에 계층 에이전트와 리뷰어를 함께 맡기면 리뷰어�
   writeFileSync(join(root, "tasks/evidence/e.txt"), "사용: prokit-ui; 위임: prokit-ui-builder(사용: vercel-composition-patterns) → prokit-reviewer(code) 지적 반영\n");
   assert.equal(run(root, "evidence", String(impl), "--file", "tasks/evidence/e.txt").status, 0);
   assert.ok(audit(root, config).problems.some((p) => p.startsWith(`#${impl} `) && /vercel-composition-patterns를 이 라운드에서 부르거나 읽은 기록이 없다/.test(p)));
+  // 같은 에이전트에 두 번 맡긴 행: 맡긴 쪽 이름을 한 번만 적는다
+  write(".agents/skills/web-design-guidelines/SKILL.md", "---\nname: web-design-guidelines\n---\n");
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["vercel-composition-patterns", "web-design-guidelines"] }], performers: { agents: ["prokit-ui-builder", "prokit-runtime-checker", "prokit-implementer"], skills: { "vercel-composition-patterns": ["prokit-ui-builder", "prokit-reviewer"], "web-design-guidelines": ["prokit-reviewer"] } } }));
+  read("web-design-guidelines", "prokit-reviewer");
+  writeFileSync(join(root, "tasks/evidence/e.txt"), "사용: prokit-ui; 위임: prokit-ui-builder(사용: prokit-ui); 위임: prokit-ui-builder(사용: web-design-guidelines)\n");
+  assert.equal(run(root, "evidence", String(impl), "--file", "tasks/evidence/e.txt").status, 0);
+  const twice = audit(root, config).problems.find((p) => p.startsWith(`#${impl} `));
+  assert.match(twice, /web-design-guidelines는 이 행에서 위임한 prokit-ui-builder가 맡는 스킬이 아니다/);
 });
 
 test("매니페스트가 Claude 플러그인으로도 설치하는 공식 스킬은 <플러그인>:<이름> Skill 호출도 센다(이름만 부른 호출은 개인 스킬일 수 있어 세지 않는다)", () => {

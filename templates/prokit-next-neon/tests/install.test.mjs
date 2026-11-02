@@ -341,7 +341,7 @@ test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 �
   assert.equal(cur.hooks.SessionStart.length, 2);
   assert.deepEqual(cur.hooks.SessionStart[0], other);
   assert.deepEqual(cur.hooks.PostToolUse, [{ matcher: "Skill|Read", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" skill-log' }] }]);
-  assert.deepEqual(cur.hooks.PreToolUse, [{ matcher: "Edit|Write|MultiEdit|NotebookEdit", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" edit-guard' }] }]);
+  assert.deepEqual(cur.hooks.PreToolUse, [{ matcher: "Edit|Write|MultiEdit|NotebookEdit", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" edit-guard' }] }, { matcher: "Bash", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" shell-guard' }] }]);
   // 옛 설치본에는 빠진 훅만 더한다
   delete cur.hooks.PostToolUse;
   delete cur.hooks.PreToolUse;
@@ -350,7 +350,12 @@ test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 �
   const again = JSON.parse(readFileSync(p, "utf8"));
   assert.equal(again.hooks.SessionStart.length, 2);
   assert.equal(again.hooks.PostToolUse.length, 1);
-  assert.equal(again.hooks.PreToolUse.length, 1);
+  assert.equal(again.hooks.PreToolUse.length, 2);
+  // shell-guard가 없던 설치본에는 그 훅만 더한다
+  again.hooks.PreToolUse.pop();
+  writeFileSync(p, JSON.stringify(again));
+  assert.equal(ensureClaudeHook(root), true);
+  assert.deepEqual(JSON.parse(readFileSync(p, "utf8")).hooks.PreToolUse.map((g) => g.matcher), ["Edit|Write|MultiEdit|NotebookEdit", "Bash"]);
   for (const bad of ["{ broken", "null", "[]", '{"hooks":"x"}', '{"hooks":{"SessionStart":{}}}', '{"hooks":{"PostToolUse":{}}}', '{"hooks":{"PreToolUse":{}}}']) {
     writeFileSync(p, bad);
     assert.equal(ensureClaudeHook(root), null, bad);

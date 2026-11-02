@@ -1449,12 +1449,12 @@ test("Codex 훅: .codex/hooks.json에 dev-cycle 훅만 더하고 OMX 등 다른 
     const omx = { hooks: [{ type: "command", command: "node omx-hook.js" }] };
     mkdirSync(join(root, ".codex"));
     writeFileSync(join(root, ".codex/hooks.json"), JSON.stringify({ hooks: { PreToolUse: [omx] }, other: 1 }));
-    assert.deepEqual(mergeCodexHooks(root, { write: false }), ["edit-guard", "skill-log"]);
+    assert.deepEqual(mergeCodexHooks(root, { write: false }), ["edit-guard", "shell-guard", "skill-log"]);
     assert.equal(JSON.parse(readFileSync(join(root, ".codex/hooks.json"), "utf8")).hooks.PostToolUse, undefined, "--check는 쓰지 않는다");
-    assert.deepEqual(mergeCodexHooks(root), ["edit-guard", "skill-log"]);
+    assert.deepEqual(mergeCodexHooks(root), ["edit-guard", "shell-guard", "skill-log"]);
     const cur = JSON.parse(readFileSync(join(root, ".codex/hooks.json"), "utf8"));
     assert.equal(cur.other, 1);
-    assert.deepEqual(cur.hooks.PreToolUse, [omx, { matcher: "apply_patch", hooks: [{ type: "command", command: 'node "$(git rev-parse --show-toplevel)/scripts/dev-cycle.mjs" edit-guard', timeout: 10 }] }]);
+    assert.deepEqual(cur.hooks.PreToolUse, [omx, { matcher: "apply_patch", hooks: [{ type: "command", command: 'node "$(git rev-parse --show-toplevel)/scripts/dev-cycle.mjs" edit-guard', timeout: 10 }] }, { matcher: "Bash", hooks: [{ type: "command", command: 'node "$(git rev-parse --show-toplevel)/scripts/dev-cycle.mjs" shell-guard', timeout: 10 }] }]);
     assert.deepEqual(cur.hooks.PostToolUse, [{ matcher: "Bash", hooks: [{ type: "command", command: 'node "$(git rev-parse --show-toplevel)/scripts/dev-cycle.mjs" skill-log', timeout: 10 }] }]);
     assert.deepEqual(mergeCodexHooks(root), []);
   } finally {
