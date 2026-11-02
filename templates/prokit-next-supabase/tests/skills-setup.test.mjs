@@ -1027,6 +1027,12 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
   for (const n of Object.keys(m.uiSkills)) assert.ok(existsSync(join(TEMPLATE_FILES, ".agents/skills/prokit-ui/references", `${n}-map.md`)), `UI 스킬 ${n}의 지도 파일`);
   for (const i of Object.values(m.uiSkills)) assert.ok(!i.next || (Array.isArray(i.next) && i.next.every((l) => typeof l === "string")), "next는 설치기가 다음 할 일에 붙이는 문장 목록이다");
   assert.ok(!names.includes("impeccable") && !names.includes("hallmark"), "UI 스킬은 기본 설치가 아니다");
+  // 고르지 않은 UI 스킬의 전역 사본: Claude 개인 스킬은 이 프로젝트에서 끄고, Codex가 읽는 두 곳은 skills:check가 알린다
+  for (const [n, i] of Object.entries(m.uiSkills))
+    for (const s of i.skills.flatMap((e) => e.skills)) {
+      assert.equal(i.userSkills, `.claude/skills/${s}`, n);
+      assert.deepEqual(i.userTraces.map((t) => t.path), [`.agents/skills/${s}`, `.codex/skills/${s}`], n);
+    }
   for (const i of slotItems) assert.ok(i.description && (i.skills || i.claude || i.global || i.init || i === m.brains.mattpocock), JSON.stringify(i));
   // 세션 시작 훅·전역 지시로 진행 순서를 강제하는 두뇌. 둘 이상 고르면 설치기가 경고한다.
   assert.deepEqual(Object.keys(m.brains).filter((n) => m.brains[n].forces), ["superpowers", "gstack", "oh-my"]);

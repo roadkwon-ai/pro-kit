@@ -553,6 +553,11 @@
 					"skills": ["impeccable"]
 				}
 			],
+			"userSkills": ".claude/skills/impeccable",
+			"userTraces": [
+				{ "path": ".agents/skills/impeccable" },
+				{ "path": ".codex/skills/impeccable" }
+			],
 			"next": [
 				"개발자마다 한 번 프로젝트 루트에서 .agents/skills/impeccable/scripts/impeccable hooks on (스킬 호출로 켜지 않는다. Codex는 /hooks에서 신뢰 확인. Antigravity에서는 돌지 않고 Grok Build에서 도는지는 확인하지 않았다. impeccable을 빼면 pnpm skills:setup이 이 훅도 뺀다)"
 			]
@@ -565,6 +570,11 @@
 					"source": "Nutlope/hallmark",
 					"skills": ["hallmark"]
 				}
+			],
+			"userSkills": ".claude/skills/hallmark",
+			"userTraces": [
+				{ "path": ".agents/skills/hallmark" },
+				{ "path": ".codex/skills/hallmark" }
 			],
 			"global": [
 				{
@@ -582,6 +592,11 @@
 					"source": "anthropics/skills",
 					"skills": ["frontend-design"]
 				}
+			],
+			"userSkills": ".claude/skills/frontend-design",
+			"userTraces": [
+				{ "path": ".agents/skills/frontend-design" },
+				{ "path": ".codex/skills/frontend-design" }
 			]
 		}
 	},

@@ -249,7 +249,7 @@ pnpm skills:check                                      # 고르지 않은 두뇌
 ## 자세히
 
 - **정리 기준**: `--brain`, `--simplicity`, `--ui-skill`을 주면 그 항목에서 고르지 않은 설치본을 이름이 아니라 출처로 찾아 지워요. 스킬은 `skills-lock.json`의 출처, 플러그인은 ID, OMX는 `.omx/setup-scope.json`, OpenSpec·Spec Kit은 그 도구가 만든 파일로 판정해요. 추가 스킬과 선택 묶음은 `--drop`으로 줄 때만 지워요. 필수 3개와 공식 스킬은 지우지 않아요.
-- **전역 설치본**: 이 컴퓨터 전역에 켜져 있지만 이 프로젝트에서 고르지 않은 플러그인(예: superpowers, ponytail)과 gstack 개인 스킬은 `.claude/settings.local.json`(커밋하지 않는 개인 설정)으로 이 프로젝트에서만 꺼요. UI 스킬(impeccable, hallmark)과 같은 일을 하는 `frontend-design` 플러그인도 같아요. 전역 `~/.claude/CLAUDE.md`의 OMC 블록과 Codex 전역 스킬은 끌 수 없어 경고만 해요.
+- **전역 설치본**: 이 컴퓨터 전역에 켜져 있지만 이 프로젝트에서 고르지 않은 플러그인(예: superpowers, ponytail)과 gstack 개인 스킬은 `.claude/settings.local.json`(커밋하지 않는 개인 설정)으로 이 프로젝트에서만 꺼요. UI 스킬(impeccable, hallmark)과 같은 일을 하는 `frontend-design` 플러그인과, 고르지 않은 UI 스킬의 개인 스킬(impeccable, hallmark, frontend-design)도 같아요. 전역 `~/.claude/CLAUDE.md`의 OMC 블록과 Codex 전역 스킬(`~/.agents/skills`, `~/.codex/skills`)은 끌 수 없어 경고만 해요.
 - **전역 설치가 필요한 두뇌**: gstack, OMX CLI, OpenSpec CLI는 정식 설치가 전역뿐이라 그 두뇌를 고를 때만 설치해요. 다른 두뇌로 바꿔도 전역 설치본은 지우지 않아요. OpenSpec CLI는 기본으로 사용 통계(명령 이름과 판)를 보내요. 끄려면 셸 설정에 `OPENSPEC_TELEMETRY=0`을 둬요.
 - **정본**: 선택지 설명, 추천 기준, 단계 표, 두뇌별 단계 이름은 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/brains/`에 있어요. 고른 과설계 방지 스킬이 맡는 일은 같은 폴더의 `process-routing.md` 규칙 6 역할 표예요.
 

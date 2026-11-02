@@ -9,7 +9,7 @@
 - hallmark는 이름이 불리지 않으면 기존 디자인을 고치지 않는다. `prokit-ui`가 이 지도의 단계를 맡기면 hallmark를 이름으로 부른 것이다(리디자인은 `redesign <대상>`, 진단은 `audit <대상>`).
 
 ## 읽고 실행하는 법
-- Claude Code는 `.agents/skills/hallmark/SKILL.md`를 Read로 읽고 그 절차대로 한다. Skill 도구로 부르면 개인 전역 hallmark(`npx skills add … -g`)가 먼저 뜰 수 있다(`CLAUDE.md`). Codex는 `$hallmark`, Antigravity와 Grok Build는 같은 `SKILL.md`를 읽는다. Codex는 `references/flow.md` "Harnesses"를 먼저 읽는다.
+- Claude Code는 `.agents/skills/hallmark/SKILL.md`를 Read로 읽고 그 절차대로 한다. Skill 도구로 부르면 개인 전역 hallmark(`npx skills add … -g`)가 먼저 뜰 수 있다(`CLAUDE.md`). Codex는 `$hallmark`, Antigravity와 Grok Build는 같은 `SKILL.md`를 읽는다. hallmark `references/flow.md` "Harnesses" 표는 Codex에 서브에이전트가 없다고 보고 리뷰를 같은 대화에서 하라고 적는다. 이 프로젝트의 Codex는 서브에이전트(`spawn_agent`)를 쓰므로 위임과 리뷰는 그 표가 아니라 대조표대로 한다.
 - 아래 `<skill>`은 `.agents/skills/hallmark`다. 스크립트는 프로젝트 루트에서 `node <skill>/scripts/<이름>.mjs`로 실행한다.
 - 화면을 찍는 검사(`sloplint --render`, `capture.mjs`)는 Chrome과 `puppeteer-core`가 있어야 돈다. `puppeteer-core`는 둘 중 하나로 둔다. 전역(`npm install -g puppeteer-core`)이거나, 프로젝트 밖 폴더에 받고(`npm install --prefix <폴더> puppeteer-core`) 실행할 때 `HALLMARK_PUPPETEER=<폴더>`를 주는 것이다(hallmark 스크립트가 이 변수를 먼저 본다). 프로젝트 의존성에는 더하지 않는다. 둘 다 없으면 정적 검사만 돌고 그렇다고 출력한다. 이때는 render 통과로 적지 않고, 화면은 `prokit-runtime-checker`의 스크린샷으로 본다. 전역 설치와 폴더 받기는 사용자가 요청할 때만 한다.
 
@@ -22,7 +22,7 @@ hallmark의 흐름이 이 프로젝트 규칙과 부딪히면 프로젝트 쪽�
 - **서체**: 테마 파일의 서체는 고르되 받는 법은 design-flow "서체"(`next/font`)를 따르고 `<link>`·`@import`로 부르지 않는다. 한글 본문·제목은 design-flow의 한글 서체에서 테마 인상에 가까운 것을 고른다.
 - **사진**: hallmark 사진 목록(`theme.mjs photos`, 위키미디어 공용)은 `prokit-ui` 규칙 "이미지 그리기" ④(배치도)로 가기 전에 쓴다. 출처는 푸터와 보고에 적고, 찾은 사진을 그 서비스의 제품, 사람, 공간으로 내세우지 않는다. 시안 이미지(`references/comp.md`, 9번 신호)는 셸에 `TOGETHER_API_KEY`가 있을 때만 hallmark가 쓴다. 비용은 사용자의 Together AI 계정에 청구된다.
 - **편집 훅**: `scripts/install-hook.mjs`는 공유 파일 `.claude/settings.json`에 이 기기의 절대 경로를 쓰므로 실행하지 않는다. 검사는 7단계 sweep의 `sloplint`로 한다.
-- **기록**: `.hallmark/log.json`(다음 배정이 같은 조합을 피하게 하는 기록)은 커밋한다. `.hallmark/shots/`와 `preflight.json`은 설치기가 `.gitignore`에 넣었다.
+- **기록**: `.hallmark/log.json`(다음 배정이 같은 조합을 피하게 하는 기록), `.hallmark/salt`(테마 배정이 이 프로젝트에서 늘 같은 패를 내게 하는 값), hallmark가 만든 `.hallmark/.gitignore`는 커밋한다. `.hallmark/shots/`와 `preflight.json`은 설치기가 `.gitignore`에 넣었다.
 
 ## 기능을 더할 때
 - `DESIGN.md`가 있으면 테마를 다시 배정하지 않는다(`theme.mjs deal`을 돌리지 않는다). 사전 점검이 `DESIGN.md`를 읽고 그 체계를 따른다. 테마를 바꾸는 일은 사용자가 리디자인을 요청할 때만 `redesign <대상>`으로 한다.

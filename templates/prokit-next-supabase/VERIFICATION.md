@@ -6,7 +6,7 @@
 
 ## UI 스킬을 골라 바꾸기: hallmark, 기본 AI, 중간 전환 (2026-11-02)
 
-실측은 neon 프로젝트에서 했고, 고친 파일(공통 스크립트 `skills-setup.mjs`·`dev-cycle.mjs`, `install.mjs`, `skills.manifest.json`, `AGENTS.md`·`CLAUDE.md` 템플릿 블록, `prokit-ui`·`prokit-skills-manage`·`prokit-verify` 스킬 문서, 두뇌 카탈로그 `brains/README.md`, 공통 테스트)은 이 템플릿에도 같게 고쳤다. 결과와 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#ui-스킬을-골라-바꾸기-hallmark-기본-ai-중간-전환-2026-11-02)에 있다. 고친 뒤 이 템플릿 테스트도 416 통과·0 실패였다. 같은 확인을 Codex와 Antigravity에서 다시 돌린 결과와, 그때 고친 공통 스크립트 `dev-cycle.mjs`의 스킬 읽기 기록(출력을 버린 Codex 명령, Antigravity 부분 읽기)도 같은 절의 "Codex·Antigravity에서 다시 돌리기"에 있다. 고친 뒤에도 이 템플릿 테스트는 416 통과·0 실패였다.
+실측은 neon 프로젝트에서 했고, 고친 파일(공통 스크립트 `skills-setup.mjs`·`dev-cycle.mjs`, `install.mjs`, `skills.manifest.json`, `AGENTS.md`·`CLAUDE.md` 템플릿 블록, `prokit-ui`·`prokit-skills-manage`·`prokit-verify` 스킬 문서, 두뇌 카탈로그 `brains/README.md`, 공통 테스트)은 이 템플릿에도 같게 고쳤다. 결과와 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#ui-스킬을-골라-바꾸기-hallmark-기본-ai-중간-전환-2026-11-02)에 있다. 고친 뒤 이 템플릿 테스트도 416 통과·0 실패였다. 같은 확인을 Codex와 Antigravity에서 다시 돌린 결과와, 그때 고친 공통 스크립트 `dev-cycle.mjs`의 스킬 읽기 기록(출력을 버린 Codex 명령, Antigravity 부분 읽기)도 같은 절의 "Codex·Antigravity에서 다시 돌리기"에 있다. 그 뒤 Antigravity를 hallmark로 다시 돌리며 고친 공통 파일(`skills.manifest.json`의 UI 스킬 전역 사본, `prokit-ui`의 한글 제목 규칙과 `hallmark-map.md`, `prokit-reviewer` 정의, 공통 테스트)도 이 템플릿에 같게 고쳤다. 고친 뒤에도 이 템플릿 테스트는 416 통과·0 실패였다.
 
 ## 테스트 프로젝트로 다시 잰 감사 (2026-11-02)
 

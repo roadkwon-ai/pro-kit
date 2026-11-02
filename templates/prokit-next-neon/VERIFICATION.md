@@ -42,21 +42,24 @@ Better-T-Stack 프로젝트를 scratchpad에 만들어 이 판을 설치하고 �
 - **Codex, hallmark:** audit에 `[confirm]`만 남았다. Main은 hallmark `SKILL.md`를 `cat`으로 읽어 기록이 남았다. 이 기기의 전역 impeccable(`~/.codex/skills`, `~/.agents/skills`)은 한 번도 읽지 않았다. `HALLMARK_PUPPETEER`를 주자 세션 안에서 렌더 검사가 돌았다. 남은 sloplint FAIL 31건은 기준에도 있던 shadcn 다크 토큰에서 나왔고, 새로 나온 FAIL·REFLEX는 0건이다. 위임 기록에는 `prokit-ui-builder`, `prokit-implementer`, `prokit-reviewer`, `prokit-runtime-checker`와 hallmark 독립 리뷰의 `designer`가 `agentType`으로 남았다.
 - **Antigravity, 기본 AI:** 1\~11행, 13행, 14행이 audit을 통과했다. 첫 턴은 `none-map.md`만 읽고 `frontend-design`은 읽지 않은 채 "직접 정하기"를 선택지로 냈다. 둘째 턴에서는 1행을 채우기 전에 스스로 읽었다. 읽지 않았으면 1행에서 audit이 막는다. `prokit-ui-builder`도 `frontend-design`과 `gestalt.md`를 읽었다. 디자인 리뷰는 `게슈탈트 위반 0` 보고서를 audit이 받았고, `web-design-guidelines` 위반 11건을 모두 고쳤다. `DESIGN.md`는 새로 써서 lint 오류가 0이었다.
 - **Antigravity 사용 한도:** 12행 코드 리뷰를 맡기던 중 계정의 Antigravity 사용 한도에 걸렸다. 모델을 Claude Sonnet 4.6으로 바꿔 이어 가자 13행과 14행을 채웠다. 12행은 Main이 직접 리뷰하고 `degraded`로 적었는데, audit이 훅 기록이 있는 라운드라며 받지 않았다. 리뷰어를 다시 부르다 같은 한도에 걸려 멈췄다.
+- **Antigravity, hallmark(다른 계정으로 다시):** 한도가 남은 다른 계정으로 새 사본을 hallmark로 설치해 같은 요청을 돌렸다. 모델은 Gemini 3.8 Flash (Medium), `--effort medium`이다. 1\~14행이 audit을 통과했다. 12행은 `prokit-reviewer`(code)가 `vercel-react-best-practices`와 `shadcn`을 끝까지 읽고 approve했다. `[confirm]`에서 고칠 것(아래 한글 제목)을 주자 `prokit-ui-builder`에 다시 맡기고 10\~12행을 다시 채웠다. 확인 답을 주자 `[confirm]`을 채우고 `close`, `secrets` 검사, 커밋까지 한 뒤 개발 서버를 껐다. Main은 처음에 hallmark `SKILL.md`를 앞부분만 읽어 `part`로 남았고, 구현 전에 끝까지 다시 읽었다. 렌더 검사는 `HALLMARK_PUPPETEER`로 돌았고(`.hallmark/shots/` 5장), 마지막 sloplint는 FAIL 0건이었다. 전역 impeccable과 frontend-design은 읽지 않았다. 일한 에이전트는 `prokit-ui-builder`, `prokit-runtime-checker`, `prokit-reviewer`다.
 
-고친 것(두 도구에서 찾았고, 이번 변경 전부터 있던 훅의 허점이다):
+고친 것(앞의 둘은 이번 변경 전부터 있던 훅의 허점이다):
 
 - **Codex가 출력을 버린 명령으로 스킬 읽기 기록을 남겼다.** Main이 증거를 채우기 직전에 `cat .agents/skills/<이름>/SKILL.md > /dev/null`을 4번 실행했다(prokit-dev-cycle, prokit-verify, prokit-ui와 prokit-web, hallmark). 훅은 명령에 경로만 있으면 읽은 것으로 셌다. 이제 출력을 `/dev/null`로 버린 명령 조각의 경로는 세지 않는다. stderr만 버린 `2>/dev/null`은 센다. 세션의 실제 명령을 새 훅에 넣자 남은 기록은 0건이었다.
 - **Antigravity의 부분 읽기를 끝까지 읽은 것으로 셌다.** `read_file`은 `EndLine`을 100 언저리로 주는 일이 잦다. 이번 세션은 `gestalt.md` 238줄 가운데 1\~100줄과 170\~238줄만 읽었다. hallmark `SKILL.md`는 154줄이라 이렇게 읽어도 audit이 알리지 않았다. 이제 `EndLine`이 파일 끝에 닿지 않은 `SKILL.md` 읽기도 Claude Code `Read`의 `limit`처럼 부분 읽기로 남기고 audit이 경고한다.
 - 두 가지를 공통 테스트로 보고, 고친 줄을 하나씩 되돌리면 그 테스트가 실패하는 것을 확인했다. 새 스크립트로 두 확인용 프로젝트의 audit을 다시 돌려 판정이 같은 것도 봤다.
+- **hallmark-map이 Codex에 맞지 않는 표를 먼저 읽게 했다.** hallmark `references/flow.md`의 "Harnesses" 표(2026-10-29 판)는 Codex에 서브에이전트가 없다고 보고, 리뷰를 같은 대화에서 하라고 적는다. 이제 `hallmark-map.md`는 그 표 대신 대조표대로 위임하라고 적는다.
+- **고르지 않은 UI 스킬의 전역 사본을 알리지 않았다.** `skills.manifest.json`의 UI 스킬 셋에 `userSkills`와 `userTraces`를 더했다. hallmark를 고른 사본에서 `skills:check`를 돌리면, 이 기기의 개인 스킬 impeccable과 frontend-design을 이 프로젝트에서 끌 것으로 보였다. Codex가 읽는 전역 사본 세 곳(`~/.agents/skills/impeccable`, `~/.codex/skills/impeccable`, `~/.agents/skills/frontend-design`)은 전역 경고로 나왔다. impeccable로 바꾸면 impeccable은 두 목록에서 빠졌다.
+- **한글 제목이 낱말 중간에서 끊겼다.** Antigravity 사본의 히어로 제목이 데스크톱에서 "시계 대 / 신"으로 끊겼다. 디자인 리뷰, sloplint, 코드 리뷰가 모두 놓쳤다. `word-break: keep-all` 규칙이 Main이 읽는 `design-flow.md`에만 있었기 때문이다. `prokit-ui-builder`가 읽는 `prokit-ui` 규칙과 `prokit-reviewer`의 ui focus에 이 규칙을 더했다. 고친 판으로 라운드를 다시 돌리지는 않았다.
+- **hallmark의 `salt`가 커밋되지 않고 남았다.** 테마 배정이 `.hallmark/salt`와 `.hallmark/.gitignore`를 만들었지만 라운드 커밋에 들어가지 않았다. `hallmark-map.md`의 기록 항목에 둘 다 커밋한다고 적었다.
 
 고치지 않은 것:
 
-- Antigravity는 한도 때문에 12행 코드 리뷰와 `[confirm]`을 확인하지 못했다. Antigravity의 리뷰어 위임은 같은 라운드 9행(`prokit-reviewer`의 ui focus)에서 돌았다. Codex는 기본 AI로, Antigravity는 hallmark로 라운드를 돌리지 않았다. 두 도구 모두 impeccable 라운드는 돌리지 않고 전환과 훅 정리만 봤다.
-- `hallmark-map.md`는 Codex에 hallmark `references/flow.md`의 "Harnesses"를 먼저 읽으라고 하지만 Codex는 읽지 않았다. 그 표는 Codex에 서브에이전트가 없다고 적어 지금 Codex와 다르고, 결과에 해가 없었다.
-- 설치기는 고르지 않은 UI 스킬의 전역 사본(`~/.codex/skills/impeccable` 등)을 알리지 않는다. 이번 Codex 세션은 그 사본을 쓰지 않았다.
-- 두 세션 모두 `prokit-ui-builder`가 `vercel-composition-patterns`·`next-dev-loop`·`turborepo`를 읽지 않았다는 막지 않는 경고가 위와 같이 나왔다.
+- Codex는 기본 AI로, 두 도구 모두 impeccable로는 라운드를 돌리지 않았다. 도구마다 다른 부분(스킬 읽기 기록, 위임, audit)은 UI 스킬과 상관없이 같은 코드를 지나고, UI 스킬마다 다른 부분(지도 파일, 주 UI 스킬 읽기 확인)은 도구와 상관없이 같은 코드를 지난다. 이번 세 라운드로 두 쪽을 모두 거쳤다. impeccable의 Codex 훅은 전환할 때 넣고 빼는 것만 봤다.
+- 여러 세션에서 `prokit-ui-builder`가 `vercel-composition-patterns`·`next-dev-loop`·`turborepo`를 읽지 않았다는 막지 않는 경고가 위와 같이 나왔다.
 
-고친 뒤 두 템플릿 테스트는 모두 416 통과·0 실패였다. 새 단언은 기존 테스트 두 개(Codex·Antigravity의 스킬 읽기 기록, 부분 읽기 경고) 안에 더했다.
+고친 뒤 두 템플릿 테스트는 모두 416 통과·0 실패였다. 새 단언은 기존 테스트 세 개(Codex·Antigravity의 스킬 읽기 기록, 부분 읽기 경고, 실제 매니페스트의 UI 스킬마다 개인·전역 사본 경로) 안에 더했다.
 
 ## 테스트 프로젝트로 다시 잰 감사 (2026-11-02)
 
