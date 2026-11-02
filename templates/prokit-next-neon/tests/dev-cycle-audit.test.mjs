@@ -950,11 +950,13 @@ test("부른 스킬 기록: Codex는 Bash 명령 속 SKILL.md 경로를, Antigra
   assert.equal(hook({ tool_name: "Bash", tool_input: { command: "cat .agents/skills/prokit-verify/SKILL.md '/x/agent-skills/skills/debugging-and-error-recovery/SKILL.md'; ls .agents/skills/*/SKILL.md x/SKILL.md.bak" } }).stdout, "");
   hook({ tool_name: "Bash", tool_input: { command: "ls .agents/skills" } });
   hook({ tool_name: "Bash", tool_input: { command: "cat .agents/skills/prokit-dev-cycle/references/reuse-design.md .agents/skills/prokit-dev-cycle/SKILL.md" } });
+  // 출력을 버린 조각은 읽은 것이 아니다(Codex 실측: 증거를 채우기 직전 cat … > /dev/null로 기록만 남겼다). stderr만 버리면 센다
+  hook({ tool_name: "Bash", tool_input: { command: "/bin/zsh -lc 'cat .agents/skills/hallmark/SKILL.md > /dev/null && cat .agents/skills/impeccable/SKILL.md 2>/dev/null; cat .agents/skills/shadcn/SKILL.md &>/dev/null || cat .agents/skills/neon/SKILL.md 1>>/dev/null'" } });
   assert.equal(hook({ toolCall: { name: "read_file", args: { Path: "/p/.agents/skills/ponytail-review/SKILL.md" } } }).stdout.trim(), "{}", "Antigravity에는 JSON 객체로 답한다");
   hook({ toolCall: { name: "view_file", args: { AbsolutePath: "/p/.agents/skills/grilling/SKILL.md" } } });
   hook({ toolCall: { name: "edit_file", args: { Path: "/p/.agents/skills/x/SKILL.md" } } });
   const skills = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l).skill);
-  assert.deepEqual(skills, ["prokit-verify", "debugging-and-error-recovery", "prokit-dev-cycle", "ponytail-review", "grilling"]);
+  assert.deepEqual(skills, ["prokit-verify", "debugging-and-error-recovery", "prokit-dev-cycle", "impeccable", "ponytail-review", "grilling"]);
 });
 
 test("부른 스킬 기록: 모든 행의 사용: 목록, 행 문구의 prokit-* 계층 스킬, prokit-web의 Next 문서를 기록과 대조한다", () => {
@@ -1664,7 +1666,7 @@ test("F 구현 방식 행은 다른 행에서 위임한 계층 에이전트의 �
   assert.match(idle()[0] ?? "", /prokit-implementer가/);
 });
 
-test("공식 스킬 SKILL.md를 Read limit으로 앞부분만 읽으면 경고하고, 끝까지 닿는 읽기가 같은 쪽에 있으면 알리지 않는다", () => {
+test("공식 스킬 SKILL.md를 Read limit이나 read_file EndLine으로 앞부분만 읽으면 경고하고, 끝까지 닿는 읽기가 같은 쪽에 있으면 알리지 않는다", () => {
   const { root, write } = makeRepo();
   write(".agents/skills/shadcn/SKILL.md", "---\nname: shadcn\n---\n1\n2\n3\n4\n5\n");
   write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["shadcn"] }], performers: { agents: ["prokit-ui-builder"], skills: { shadcn: ["prokit-ui-builder"] } } }));
@@ -1676,6 +1678,12 @@ test("공식 스킬 SKILL.md를 Read limit으로 앞부분만 읽으면 경고�
   assert.match(partial(), /shadcn\(prokit-ui-builder\)/);
   // 파일 줄 수(8줄)에 닿는 limit은 끝까지 읽은 것이다. 나눠 읽은 마지막 조각도 끝에 닿는다
   read({ offset: 4, limit: 5 });
+  assert.equal(partial(), "");
+  // Antigravity read_file은 EndLine까지 읽는다(실측: 긴 파일도 100줄까지만 읽는 일이 잦다)
+  const ag = (args) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify({ conversationId: "M", lastUserInput: "화면 만들어줘", toolCall: { name: "read_file", args: { Path: join(root, ".agents/skills/shadcn/SKILL.md"), ...args } } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  ag({ StartLine: 1, EndLine: 3 });
+  assert.match(partial(), /shadcn\(Main\)/);
+  ag({ StartLine: 4, EndLine: 100 });
   assert.equal(partial(), "");
 });
 

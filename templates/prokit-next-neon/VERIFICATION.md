@@ -34,6 +34,30 @@ Better-T-Stack 프로젝트를 scratchpad에 만들어 이 판을 설치하고 �
 
 고친 뒤 두 템플릿 테스트는 모두 416 통과·0 실패였다. 새 테스트는 스킬을 지울 때 그 스킬의 훅만 빼는지, `none`을 고르면 `frontend-design`을 설치하고 다른 UI 스킬을 고르면 지우는지, 카탈로그의 모든 두뇌와 UI 스킬에 단계 매핑 파일이 있는지, 주 UI 스킬을 읽는 `mainUiSkill`을 본다.
 
+### Codex·Antigravity에서 다시 돌리기 (2026-11-03)
+
+위 확인은 Claude Code에서만 했다. 같은 요청을 Codex CLI 0.166.0(`gpt-6.1-sol`)과 Antigravity CLI 1.4.12(기본 모델 Gemini 3.8 Flash (High))로 다시 돌렸다. Better-T-Stack 최신판으로 새 프로젝트를 만들어 두 사본에 impeccable로 설치하고 `impeccable hooks on`을 켰다. 질문에 답하는 방식은 위와 같다. Codex는 `codex exec`와 `codex exec resume`, Antigravity는 `agy -p`와 `--conversation`으로 턴을 이었다.
+
+- **중간에 바꾸기:** Codex 사본은 impeccable → none → hallmark, Antigravity 사본은 impeccable → hallmark → none으로 바꿨다. 모두 exit 0이었다. impeccable을 지울 때 `.claude/settings.local.json`과 `.codex/hooks.json`에서 그 훅을 2개씩 뺐고, Codex의 dev-cycle 훅 3개는 남았다. 단계마다 `skills:check`와 `agents:check`가 exit 0이었다.
+- **Codex, hallmark:** audit에 `[confirm]`만 남았다. Main은 hallmark `SKILL.md`를 `cat`으로 읽어 기록이 남았다. 이 기기의 전역 impeccable(`~/.codex/skills`, `~/.agents/skills`)은 한 번도 읽지 않았다. `HALLMARK_PUPPETEER`를 주자 세션 안에서 렌더 검사가 돌았다. 남은 sloplint FAIL 31건은 기준에도 있던 shadcn 다크 토큰에서 나왔고, 새로 나온 FAIL·REFLEX는 0건이다. 위임 기록에는 `prokit-ui-builder`, `prokit-implementer`, `prokit-reviewer`, `prokit-runtime-checker`와 hallmark 독립 리뷰의 `designer`가 `agentType`으로 남았다.
+- **Antigravity, 기본 AI:** 1\~11행, 13행, 14행이 audit을 통과했다. 첫 턴은 `none-map.md`만 읽고 `frontend-design`은 읽지 않은 채 "직접 정하기"를 선택지로 냈다. 둘째 턴에서는 1행을 채우기 전에 스스로 읽었다. 읽지 않았으면 1행에서 audit이 막는다. `prokit-ui-builder`도 `frontend-design`과 `gestalt.md`를 읽었다. 디자인 리뷰는 `게슈탈트 위반 0` 보고서를 audit이 받았고, `web-design-guidelines` 위반 11건을 모두 고쳤다. `DESIGN.md`는 새로 써서 lint 오류가 0이었다.
+- **Antigravity 사용 한도:** 12행 코드 리뷰를 맡기던 중 계정의 Antigravity 사용 한도에 걸렸다. 모델을 Claude Sonnet 4.6으로 바꿔 이어 가자 13행과 14행을 채웠다. 12행은 Main이 직접 리뷰하고 `degraded`로 적었는데, audit이 훅 기록이 있는 라운드라며 받지 않았다. 리뷰어를 다시 부르다 같은 한도에 걸려 멈췄다.
+
+고친 것(두 도구에서 찾았고, 이번 변경 전부터 있던 훅의 허점이다):
+
+- **Codex가 출력을 버린 명령으로 스킬 읽기 기록을 남겼다.** Main이 증거를 채우기 직전에 `cat .agents/skills/<이름>/SKILL.md > /dev/null`을 4번 실행했다(prokit-dev-cycle, prokit-verify, prokit-ui와 prokit-web, hallmark). 훅은 명령에 경로만 있으면 읽은 것으로 셌다. 이제 출력을 `/dev/null`로 버린 명령 조각의 경로는 세지 않는다. stderr만 버린 `2>/dev/null`은 센다. 세션의 실제 명령을 새 훅에 넣자 남은 기록은 0건이었다.
+- **Antigravity의 부분 읽기를 끝까지 읽은 것으로 셌다.** `read_file`은 `EndLine`을 100 언저리로 주는 일이 잦다. 이번 세션은 `gestalt.md` 238줄 가운데 1\~100줄과 170\~238줄만 읽었다. hallmark `SKILL.md`는 154줄이라 이렇게 읽어도 audit이 알리지 않았다. 이제 `EndLine`이 파일 끝에 닿지 않은 `SKILL.md` 읽기도 Claude Code `Read`의 `limit`처럼 부분 읽기로 남기고 audit이 경고한다.
+- 두 가지를 공통 테스트로 보고, 고친 줄을 하나씩 되돌리면 그 테스트가 실패하는 것을 확인했다. 새 스크립트로 두 확인용 프로젝트의 audit을 다시 돌려 판정이 같은 것도 봤다.
+
+고치지 않은 것:
+
+- Antigravity는 한도 때문에 12행 코드 리뷰와 `[confirm]`을 확인하지 못했다. Antigravity의 리뷰어 위임은 같은 라운드 9행(`prokit-reviewer`의 ui focus)에서 돌았다. Codex는 기본 AI로, Antigravity는 hallmark로 라운드를 돌리지 않았다. 두 도구 모두 impeccable 라운드는 돌리지 않고 전환과 훅 정리만 봤다.
+- `hallmark-map.md`는 Codex에 hallmark `references/flow.md`의 "Harnesses"를 먼저 읽으라고 하지만 Codex는 읽지 않았다. 그 표는 Codex에 서브에이전트가 없다고 적어 지금 Codex와 다르고, 결과에 해가 없었다.
+- 설치기는 고르지 않은 UI 스킬의 전역 사본(`~/.codex/skills/impeccable` 등)을 알리지 않는다. 이번 Codex 세션은 그 사본을 쓰지 않았다.
+- 두 세션 모두 `prokit-ui-builder`가 `vercel-composition-patterns`·`next-dev-loop`·`turborepo`를 읽지 않았다는 막지 않는 경고가 위와 같이 나왔다.
+
+고친 뒤 두 템플릿 테스트는 모두 416 통과·0 실패였다. 새 단언은 기존 테스트 두 개(Codex·Antigravity의 스킬 읽기 기록, 부분 읽기 경고) 안에 더했다.
+
 ## 테스트 프로젝트로 다시 잰 감사 (2026-11-02)
 
 아래 T7 보고로 고친 판(0d080ac8)을 운영 프로젝트가 아닌 테스트 프로젝트로 다시 쟀다. Better-T-Stack 프로젝트를 scratchpad에 만들어 이 판을 설치했다. 두뇌와 과설계 방지 스킬은 없음, DB는 로컬 Postgres 컨테이너다. 사본 셋을 헤드리스 Claude Code 세션(`claude -p`)으로 돌렸다. 진행 조건은 셋 모두 원격 DB·배포·커밋 금지, `[confirm]` 직전까지 채우기다.

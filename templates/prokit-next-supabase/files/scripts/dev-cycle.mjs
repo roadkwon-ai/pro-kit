@@ -1017,7 +1017,11 @@ export function logSkill(root, input) {
 	// 묶지 못한 Antigravity 서브에이전트(요청 없는 대화)의 읽기는 Main 몫으로 세지 않게 남기지 않는다
 	if (e.conversationId && !agent && !e.lastUserInput) return;
 	const path = String(t.file_path ?? t.Path ?? t.AbsolutePath ?? "");
-	const cmd = String(t.command ?? "");
+	// 출력을 버린 명령 조각(cat …/SKILL.md > /dev/null)은 읽은 것이 아니다. stderr만 버린 2>/dev/null은 센다
+	const cmd = String(t.command ?? "")
+		.split(/&&|\|\||[;\n]/)
+		.filter((s) => !/(?<![2>])(?:&|1)?>>?\s*\/dev\/null/.test(s))
+		.join("\n");
 	const read = ["Read", "read_file", "view_file"].includes(name);
 	const names =
 		name === "Skill"
@@ -1055,10 +1059,14 @@ export function logSkill(root, input) {
 				.replaceAll("\\", "/")
 				.match(/(?:^|\/)\.(?:agents|claude)\/skills\/[^/]+\/(.+)$/)?.[1]
 		: undefined;
-	// Read의 limit이 파일 끝에 닿지 않은 SKILL.md 읽기는 앞부분만 읽은 것이다(audit이 알린다).
-	// shortcut: Claude Code Read의 offset·limit만 본다. 셸의 head·sed -n은 보지 않는다
+	// Read의 limit이나 Antigravity read_file의 EndLine이 파일 끝에 닿지 않은 SKILL.md 읽기는 앞부분만 읽은 것이다(audit이 알린다).
+	// shortcut: 도구가 받은 줄 범위만 본다. 셸의 head·sed -n은 보지 않는다
+	const end =
+		Number(t.limit) > 0
+			? (Number(t.offset) || 1) + Number(t.limit) - 1
+			: Number(t.EndLine);
 	let part = false;
-	if (read && /SKILL\.md$/.test(path) && Number(t.limit) > 0)
+	if (read && /SKILL\.md$/.test(path) && end > 0)
 		try {
 			const lines = readFileSync(
 				resolve(cwd ? resolve(root, cwd) : root, path),
@@ -1066,7 +1074,7 @@ export function logSkill(root, input) {
 			)
 				.replace(/\n$/, "")
 				.split("\n").length;
-			part = (Number(t.offset) || 1) + Number(t.limit) - 1 < lines;
+			part = end < lines;
 		} catch {}
 	const extra = {
 		...(ref && ref !== "SKILL.md" ? { ref } : {}),
@@ -1200,7 +1208,7 @@ function skillsLogged(root, active) {
 	return log?.uses.length ? new Set(log.uses.map((u) => u.name)) : null;
 }
 const LOG_HINT =
-	"Claude Code는 Skill 도구로 부르거나(사용자 호출 전용이면 그 SKILL.md를 Read로 읽는다. 공식 스킬은 Read로만 읽는다. Bash cat은 기록되지 않는다), Codex는 그 SKILL.md 경로를 그대로 cat으로, Antigravity는 read_file로 읽어 다시 진행한 뒤 적는다";
+	"Claude Code는 Skill 도구로 부르거나(사용자 호출 전용이면 그 SKILL.md를 Read로 읽는다. 공식 스킬은 Read로만 읽는다. Bash cat은 기록되지 않는다), Codex는 그 SKILL.md 경로를 그대로 cat으로(출력을 /dev/null로 버리면 세지 않는다), Antigravity는 read_file로 끝까지 읽어 다시 진행한 뒤 적는다";
 
 // 공식 스킬과 그 스킬로 일하는 에이전트의 정본은 skills.manifest.json이다(바꾸는 일은 prokit-skills-assign).
 // - skills: 기본 설치 스킬(공식 스킬). 프로젝트 판을 읽은 기록만 센다
@@ -2533,7 +2541,7 @@ function skillWarnings(root, active) {
 	);
 	if (partial.length)
 		out.push(
-			`공식 스킬의 SKILL.md를 앞부분만 읽었다(Read limit): ${partial.join(", ")}. 그 스킬로 한 일이면 끝까지 읽고 다시 확인하게 한다`,
+			`공식 스킬의 SKILL.md를 앞부분만 읽었다(Read limit, read_file EndLine): ${partial.join(", ")}. 그 스킬로 한 일이면 끝까지 읽고 다시 확인하게 한다`,
 		);
 	return out;
 }
