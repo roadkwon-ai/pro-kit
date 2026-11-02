@@ -52,7 +52,7 @@
 | 바뀐 파일 | 맞는 규칙 | 계층 |
 |---|---|---|
 | `packages/db/src/schema/todo.ts` | E (`^packages/db/`) | E |
-| `packages/api/src/routers/todo.ts` | D (`^(packages/api/\|apps/web/src/app/api/\|…(route\|sitemap\|robots\|manifest)\.[jt]sx?$\|…actions?\.[jt]sx?$\|…instrumentation\.[jt]s$)`) | D |
+| `packages/api/src/routers/todo.ts` | D (`^(packages/api/\|apps/web/src/app/api/\|…(route\|sitemap\|robots\|manifest)\.[jt]sx?$\|…actions?\.[jt]s$\|…instrumentation\.[jt]s$)`) | D |
 | `apps/web/src/components/todo-list.tsx` | B (`^(apps/web/src/\|packages/ui/)`) | B |
 
 - 한 계층(E, D, B 중 하나)만 바뀌면 그 글자가 케이스예요.

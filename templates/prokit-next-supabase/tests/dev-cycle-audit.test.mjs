@@ -1395,17 +1395,20 @@ test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 �
   assert.match(mine(impl)[0] ?? "", /vercel-react-best-practices를 이 라운드에서.*이 행에서 위임하지 않은 에이전트가 읽은 기록은 세지 않는다/);
   read("vercel-react-best-practices", "prokit-ui-builder");
   assert.deepEqual(mine(impl), []);
-  // 같은 에이전트에 한 번 맡겨 이어진 두 행을 채우면 그 일을 함께 센다
+  // 다른 에이전트에 맡기지 않은 앞 행을 처음 채운 뒤에 일한 기록이 있어야 한다
   const idle = (n) => mine(n).filter((p) => /일한 기록이 없다/.test(p));
   read("agent-browser", "prokit-runtime-checker");
+  set(types, "pnpm check-types exit 0");
   set(runtime, "위임: prokit-runtime-checker(사용: agent-browser) → 오류 0건");
+  assert.match(idle(runtime)[0] ?? "", /prokit-runtime-checker가 이 행을 하면서 일한 기록이 없다\(앞 행을 채운 뒤/);
+  read("agent-browser", "prokit-runtime-checker");
+  assert.deepEqual(idle(runtime), []);
+  // 같은 에이전트에 한 번 맡겨 이어진 두 행을 채우면 그 일을 함께 센다
   set(scroll, "위임: prokit-runtime-checker(사용: agent-browser) → 측정 결과");
   assert.deepEqual(idle(scroll), []);
-  // 다른 행을 채운 뒤 다시 채우면 그 뒤에 일한 기록이 있어야 한다
-  set(types, "pnpm check-types exit 0");
-  set(scroll, "위임: prokit-runtime-checker(사용: agent-browser) → 측정 결과");
-  assert.match(idle(scroll)[0] ?? "", /prokit-runtime-checker가 이 행을 하면서 일한 기록이 없다\(앞 행을 채운 뒤/);
-  read("agent-browser", "prokit-runtime-checker");
+  // 증거를 고쳐 다시 채운 행은 처음 채운 순서로 본다: 앞 행을 다시 채워도 뒤 행이 무효가 되지 않는다
+  set(types, "pnpm check-types exit 0, lint exit 0");
+  set(scroll, "위임: prokit-runtime-checker(사용: agent-browser) → 측정 결과(단위 고침)");
   assert.deepEqual(idle(scroll), []);
 });
 
@@ -1503,6 +1506,85 @@ test("F 계층별 위임: 계층별 구현 행의 N/A는 그 계층 코드만 �
   assert.deepEqual(mine(db).filter((p) => /둘 수 없다/.test(p)), []);
   set(method, "위임: prokit-api-builder → 서버; 위임: prokit-ui-builder → 화면");
   assert.deepEqual(mine(method).filter((p) => /계층마다/.test(p)), []);
+});
+
+test("한 행에 계층 에이전트와 리뷰어를 함께 맡기면 리뷰어가 읽은 맡은 스킬도 세고, 위임받은 쪽이 읽은 prokit-*도 세며, 가운뎃점으로 이은 사용: 이름도 대조한다", () => {
+  const { root, write } = makeRepo();
+  for (const s of ["prokit-ui", "prokit-verify", "vercel-composition-patterns"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n---\n`);
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["vercel-composition-patterns"] }], performers: { agents: ["prokit-ui-builder", "prokit-runtime-checker", "prokit-implementer"], skills: { "vercel-composition-patterns": ["prokit-ui-builder", "prokit-reviewer"] } } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const row = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^\[review\] prokit-reviewer\(code\)/.test(r.text)) + 1;
+  assert.ok(row);
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  const set = (v) => {
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(row), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  const unread = () => audit(root, config).problems.filter((p) => p.startsWith(`#${row} `) && /기록이 없다/.test(p));
+  const hook = (cmd, input) => spawnSync(process.execPath, [CLI, cmd], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const read = (s, agent) => hook("skill-log", { tool_name: "Read", agent_id: `id-${agent}`, agent_type: agent, tool_input: { file_path: join(root, `.agents/skills/${s}/SKILL.md`) } });
+  write("apps/web/src/app/page.tsx", "export default 1\n");
+  hook("edit-guard", { tool_name: "Edit", agent_id: "u1", agent_type: "prokit-ui-builder", tool_input: { file_path: join(root, "apps/web/src/app/page.tsx") } });
+  read("prokit-ui", "prokit-ui-builder");
+  read("vercel-composition-patterns", "prokit-reviewer");
+  set("prokit-reviewer(code)(사용: vercel-composition-patterns): approve, max_severity=low. 반영 1: 위임: prokit-ui-builder(사용: prokit-ui) → 한 줄");
+  assert.deepEqual(unread(), []);
+  // 가운뎃점으로 이은 이름도 하나씩 대조한다(파일 경로는 이름이 아니라 뺀다)
+  set("prokit-reviewer(code)(사용: vercel-composition-patterns): approve. 반영 1: 위임: prokit-ui-builder(사용: prokit-ui·prokit-verify·references/browser.md) → 한 줄");
+  assert.match(unread()[0] ?? "", /증거의 prokit-verify를 이 라운드에서 부르거나 읽은 기록이 없다/);
+  read("prokit-verify", "prokit-ui-builder");
+  assert.deepEqual(unread(), []);
+});
+
+test("F 구현 방식 행은 다른 행에서 위임한 계층 에이전트의 일한 기록을 그 행에서 보고, 이 행에서만 맡긴 에이전트는 그대로 본다", () => {
+  const { root, write } = makeRepo();
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-api-builder", "prokit-db-builder", "prokit-implementer"], skills: {} } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "F", { write: true, title: "기능" });
+  const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
+  const at = (re) => rows.findIndex((r) => re.test(r.text)) + 1;
+  const db = at(/^스키마 수정 \+ dbGenerate/);
+  const ui = at(/^구현 \(구현 단계, prokit-ui/);
+  const types = at(/^\[verify\] 타입·린트·빌드/);
+  const method = at(/^구현 방식 \(구현 단계/);
+  assert.ok(db && ui && types && method);
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  const set = (n, v) => {
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(n), "--file", "tasks/evidence/e.txt").status, 0);
+  };
+  const idle = () => audit(root, config).problems.filter((p) => p.startsWith(`#${method} `) && /일한 기록이 없다/.test(p));
+  const edit = (agent, f) => {
+    write(f, "export const x = 1\n");
+    spawnSync(process.execPath, [CLI, "edit-guard"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Edit", agent_id: `id-${agent}`, agent_type: agent, tool_input: { file_path: join(root, f) } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  };
+  edit("prokit-db-builder", "packages/db/src/schema/todo.ts");
+  set(db, "위임: prokit-db-builder → 스키마");
+  edit("prokit-ui-builder", "apps/web/src/app/page.tsx");
+  set(ui, "위임: prokit-ui-builder → 화면");
+  set(types, "pnpm check-types exit 0");
+  // 계층 행이 끝난 뒤 모아 적어도 그 계층 행에서 일한 기록을 센다
+  set(method, "위임: prokit-db-builder → 스키마 행; 위임: prokit-ui-builder → 화면 행");
+  assert.deepEqual(idle(), []);
+  // 다른 행에서 맡기지 않은 에이전트는 이 행에서 일한 기록을 본다
+  set(method, "위임: prokit-db-builder → 스키마 행; 위임: prokit-ui-builder → 화면 행; 위임: prokit-implementer → 설정");
+  assert.match(idle()[0] ?? "", /prokit-implementer가/);
+});
+
+test("공식 스킬 SKILL.md를 Read limit으로 앞부분만 읽으면 경고하고, 끝까지 닿는 읽기가 같은 쪽에 있으면 알리지 않는다", () => {
+  const { root, write } = makeRepo();
+  write(".agents/skills/shadcn/SKILL.md", "---\nname: shadcn\n---\n1\n2\n3\n4\n5\n");
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["shadcn"] }], performers: { agents: ["prokit-ui-builder"], skills: { shadcn: ["prokit-ui-builder"] } } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const read = (extra) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Read", agent_id: "u1", agent_type: "prokit-ui-builder", tool_input: { file_path: join(root, ".agents/skills/shadcn/SKILL.md"), ...extra } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const partial = () => (audit(root, config).warnings ?? []).find((w) => w.startsWith("공식 스킬의 SKILL.md를 앞부분만 읽었다")) ?? "";
+  read({ limit: 3 });
+  assert.match(partial(), /shadcn\(prokit-ui-builder\)/);
+  // 파일 줄 수(8줄)에 닿는 limit은 끝까지 읽은 것이다. 나눠 읽은 마지막 조각도 끝에 닿는다
+  read({ offset: 4, limit: 5 });
+  assert.equal(partial(), "");
 });
 
 test("degraded: 서브에이전트를 구별하지 못한 라운드에서만 Main 직접을 받고, 코드 리뷰를 건너뛰면 받지 않으며, 사유가 없으면 형식 오류다", () => {

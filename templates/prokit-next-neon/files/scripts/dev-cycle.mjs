@@ -1006,8 +1006,22 @@ export function logSkill(root, input) {
 				.replaceAll("\\", "/")
 				.match(/(?:^|\/)\.(?:agents|claude)\/skills\/[^/]+\/(.+)$/)?.[1]
 		: undefined;
+	// Read의 limit이 파일 끝에 닿지 않은 SKILL.md 읽기는 앞부분만 읽은 것이다(audit이 알린다).
+	// shortcut: Claude Code Read의 offset·limit만 본다. 셸의 head·sed -n은 보지 않는다
+	let part = false;
+	if (read && /SKILL\.md$/.test(path) && Number(t.limit) > 0)
+		try {
+			const lines = readFileSync(
+				resolve(cwd ? resolve(root, cwd) : root, path),
+				"utf8",
+			)
+				.replace(/\n$/, "")
+				.split("\n").length;
+			part = (Number(t.offset) || 1) + Number(t.limit) - 1 < lines;
+		} catch {}
 	const extra = {
 		...(ref && ref !== "SKILL.md" ? { ref } : {}),
+		...(part ? { part: true } : {}),
 		...(agent ? { agent: String(agent) } : {}),
 		...(agentType ? { agentType: String(agentType) } : {}),
 		...(name ? { tool: String(name) } : {}),
@@ -1102,6 +1116,7 @@ function roundLog(root, active) {
 						t,
 						name: e.doc ?? skillName(String(e.skill)),
 						ref: e.ref,
+						part: e.part === true,
 						tool: e.tool,
 						project: e.project === true,
 						agentType: e.agentType,
@@ -1153,7 +1168,7 @@ function parentSkill(root, n) {
 	return null;
 }
 
-// 증거의 `사용:` 목록: `사용:` 뒤에 쉼표로 이어 적은 이름(뒤에 괄호 설명 가능)이다. →·;·|·문장 끝 마침표에서 끝난다.
+// 증거의 `사용:` 목록: `사용:` 뒤에 쉼표나 가운뎃점으로 이어 적은 이름(뒤에 괄호 설명 가능)이다. →·;·|·문장 끝 마침표에서 끝난다.
 // 이름 꼴이 아닌 항목(내장(계획), 파일 경로, "shadcn은 …" 같은 문장)은 뺀다.
 export function usedSkills(value) {
 	return usedItems(value).map((x) => x.name);
@@ -1175,7 +1190,7 @@ function usedItems(value) {
 				(depth === 0 &&
 					(/[;→|]/.test(c) ||
 						(c === "." && /^\s|^$/.test(value[i + 1] ?? ""))));
-			if (depth === 0 && (c === "," || end)) {
+			if (depth === 0 && (c === "," || c === "·" || end)) {
 				items.push(item);
 				item = "";
 				if (end) break;
@@ -1254,7 +1269,7 @@ function rowNamedSkills(text) {
 // 모든 행: 행 문구의 스킬은 `사용:`에 있어야 하고, prokit-web을 썼으면 읽은 Next 번들 문서를 적는다.
 // 행 문구에 전문 에이전트가 있거나 구현 단계 행이면 증거에 `위임: <에이전트>`가 있어야 한다(Main은 직접 하지 않는다).
 // 이 라운드의 기록이 있으면 `사용:`의 스킬(프로젝트 스킬이나 플러그인 접두어)·괄호에 적은 그 스킬의 참조 파일·적은 Next 문서를
-// 읽은 기록이 있어야 하고, 행 문구의 스킬은 앞 행(다른 행)을 마지막으로 채운 뒤 읽은 기록이어야 한다("그 행을 할 때 부른다").
+// 읽은 기록이 있어야 하고, 행 문구의 스킬은 앞 행(다른 행)을 처음 채운 뒤 읽은 기록이어야 한다("그 행을 할 때 부른다").
 // 공식 스킬은 프로젝트 판을 읽은 기록만, performers.skills의 스킬은 맡은 에이전트가 읽은 기록만 센다. 상위 스킬(parent)도 같은 쪽이 읽어야 한다.
 function usageProblem(root, config, active) {
 	const log = skillLog(root, active);
@@ -1309,12 +1324,17 @@ function usageProblem(root, config, active) {
 			(u) =>
 				u.t > (after ?? Number.NEGATIVE_INFINITY) && counts(n, u, agents, main),
 		);
-	// 이 행에서 위임한 에이전트(delegated)가 있으면 맡은 공식 스킬은 그 에이전트가 읽은 기록만 센다
+	// 공식 스킬을 맡지만 수행 에이전트가 아닌 쪽(prokit-reviewer). 증거에 이름이 나오면 이 행에서 맡긴 쪽으로 본다
+	const reviewers = [...new Set(Object.values(skillAgents).flat())].filter(
+		(a) => !performerAgents.includes(a),
+	);
+	// 이 행에서 맡긴 쪽(delegated)이 있으면 맡은 공식 스킬은 그쪽이 읽은 기록만 센다.
+	// 배치에 없는 prokit-* 스킬은 Main과 이 행에서 맡긴 쪽이 읽은 기록을 센다(에이전트도 위임 지시의 prokit-*를 읽는다)
 	const scoped = (n, delegated) => {
+		if (!delegated.length) return undefined;
 		const a = skillAgents[n] ?? parentAgents[n];
-		return delegated.length && a
-			? a.filter((x) => delegated.includes(x))
-			: undefined;
+		if (!a) return official.has(n) ? undefined : delegated;
+		return a.filter((x) => delegated.includes(x));
 	};
 	const why = (n, delegated = []) => {
 		const agents = skillAgents[n];
@@ -1377,9 +1397,12 @@ function usageProblem(root, config, active) {
 		const named = performerAgents.filter((a) => r.text.includes(a));
 		const want =
 			named.length || !/구현 단계/.test(r.text) ? named : performerAgents;
-		const delegated = [...value.matchAll(/위임:\s*`?([a-z][a-z0-9-]*)/g)]
-			.map((m) => m[1])
-			.filter((a) => performerAgents.includes(a));
+		const delegated = [
+			...[...value.matchAll(/위임:\s*`?([a-z][a-z0-9-]*)/g)]
+				.map((m) => m[1])
+				.filter((a) => performerAgents.includes(a)),
+			...reviewers.filter((a) => value.includes(a)),
+		];
 		const said = delegated.filter((a) => want.includes(a));
 		// 서브에이전트를 구별하지 못하는 호스트(훅 기록에 구별 값이 없다)에서는 Main이 직접 하고 자기 신고로 적는다
 		if (/^degraded\s*:/i.test(value)) {
@@ -1409,18 +1432,23 @@ function usageProblem(root, config, active) {
 				return `이 라운드 diff의 계층은 계층마다 그 에이전트에 맡긴다. ${lack.join("·")}의 위임: <에이전트>(사용: …)도 적는다(DB, 서버, 화면 순서로 맡기고 앞 계층이 바꾼 계약을 다음 지시에 넣는다)`;
 		}
 		if (!log) return null;
-		// 이 행을 채운 기록과 그보다 앞서 채운 다른 행. 채운 기록은 행 문구로 짝짓는다(--upgrade가 번호를 바꾼다. 문구가 없는 옛 줄만 번호로)
+		// 이 행을 처음 채운 기록과 그보다 앞서 처음 채운 다른 행. 증거를 고쳐 다시 채운 기록은 순서에 넣지 않는다
+		// (앞 행을 다시 채워도 뒤 행의 기준이 바뀌지 않는다). 채운 기록은 행 문구로 짝짓는다(--upgrade가 번호를 바꾼다. 문구가 없는 옛 줄만 번호로)
 		const row = active.rows.indexOf(r) + 1;
 		const own = (x) => (x.text ? x.text === r.text : x.row === row);
-		const mine = log.fills.filter(own).at(-1)?.t;
+		const key = (x) => x.text ?? `#${x.row}`;
+		const first = log.fills.filter(
+			(x, i, a) => a.findIndex((y) => key(y) === key(x)) === i,
+		);
+		const mine = first.find(own)?.t;
 		const before =
-			mine === undefined ? [] : log.fills.filter((x) => !own(x) && x.t < mine);
+			mine === undefined ? [] : first.filter((x) => !own(x) && x.t < mine);
 		const rowOf = (x) =>
 			active.rows.find((y, i) =>
 				x.text ? y.text === x.text : i + 1 === x.row,
 			);
 		// 호스트가 Main과 서브에이전트를 구별한 기록(seen)이 있는 라운드는 위임한 에이전트가 이 행을 하며 일했는지 본다.
-		// 같은 에이전트에 맡기지 않은 앞 행을 채운 뒤의 기록(스킬 읽기나 편집)이어야 한다. 한 번 맡겨 이어진 행 여럿을 채운 것은 센다
+		// 같은 에이전트에 맡기지 않은 앞 행을 처음 채운 뒤의 기록(스킬 읽기나 편집)이어야 한다. 한 번 맡겨 이어진 행 여럿을 채운 것은 센다
 		const work = [...all, ...log.edits];
 		const cc = seenHost;
 		const since = (a) =>
@@ -1432,9 +1460,18 @@ function usageProblem(root, config, active) {
 						),
 				)
 				.at(-1)?.t;
+		// 계층 에이전트 여럿을 적은 행(F 구현 방식)은 계층 행에서 맡긴 일을 모아 적는다. 다른 행에서 위임한 에이전트는 그 행에서 일한 기록을 본다
+		const elsewhere = (a) =>
+			namedLayers(r.text).length > 1 &&
+			active.rows.some(
+				(y) =>
+					y !== r &&
+					new RegExp(`위임:\\s*\`?${a}(?![a-z0-9-])`).test(bare(y.evidence)),
+			);
 		const idle = cc
 			? said.filter(
 					(a) =>
+						!elsewhere(a) &&
 						!work.some(
 							(u) =>
 								u.agentType === a &&
@@ -1520,7 +1557,7 @@ function usageProblem(root, config, active) {
 						`${n}는 상위 스킬 ${p}부터 읽는다(SKILL.md의 parent). ${skillAgents[n] ? `${skillAgents[n].join("·")}가` : "Main이"} ${p} 스킬을 읽은 기록이 없다`,
 				)
 				.join(". ");
-		// 행 문구의 스킬: 다른 행을 마지막으로 채운 시각(이 행을 채운 시각 전) 뒤에 읽어야 한다. 채운 기록이 없으면 보지 않는다.
+		// 행 문구의 스킬: 앞서 처음 채운 다른 행 가운데 마지막 행의 시각(이 행을 처음 채운 시각 전) 뒤에 읽어야 한다. 채운 기록이 없으면 보지 않는다.
 		// 채운 기록은 행 문구로 짝짓는다(--upgrade가 번호를 바꾼다. 문구가 없는 옛 줄만 번호로).
 		// 상한은 두지 않는다: audit이 거부한 뒤 다시 읽으면 다시 채우지 않아도 통과한다(행을 채울 때 evidence가 바로 알린다)
 		if (mine === undefined) return null;
@@ -1840,9 +1877,10 @@ export function writeTable(
 			r.evidence = o?.evidence ?? "";
 			if (!o) continue;
 			moved.add(o.text);
-			const t = fills
-				.filter((x) => (x.text ? x.text === o.text : x.row === i + 1))
-				.at(-1)?.t;
+			// audit은 행을 처음 채운 시각을 보므로 그 시각을 옮긴다
+			const t = fills.find((x) =>
+				x.text ? x.text === o.text : x.row === i + 1,
+			)?.t;
 			if (t !== undefined)
 				refill.push(
 					`${JSON.stringify({ t: new Date(t).toISOString(), row: i + 1, text: r.text })}\n`,
@@ -2331,12 +2369,12 @@ const NEXT_FLAG_SKILLS = {
 		"next-partial-prefetching-optimizer",
 	],
 };
-// 막지 않는 알림 두 가지. Main이 에이전트에 맡긴 공식 스킬을 직접 읽은 기록, 이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬이다.
-// 맡은 스킬은 상황이 맞을 때만 읽으므로(에이전트 정의의 "맡는 공식 스킬" 표) 막지 않고 Main이 상황을 확인하게 한다
+// 막지 않는 알림 세 가지. Main이 에이전트에 맡긴 공식 스킬을 직접 읽은 기록, 이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬,
+// 공식 스킬의 SKILL.md를 앞부분만 읽은 기록이다. 맡은 스킬은 상황이 맞을 때만 읽으므로(에이전트 정의의 "맡는 공식 스킬" 표) 막지 않고 Main이 상황을 확인하게 한다
 function skillWarnings(root, active) {
 	const log = skillLog(root, active);
 	if (!log) return [];
-	const { skills: skillAgents } = performers(root);
+	const { skills: skillAgents, official } = performers(root);
 	const out = [];
 	const mainRead = [
 		...new Set(
@@ -2380,6 +2418,18 @@ function skillWarnings(root, active) {
 	if (unread.length)
 		out.push(
 			`이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬: ${unread.map(([a, l]) => `${a}: ${l.join(", ")}`).join("; ")}. 에이전트 정의의 "맡는 공식 스킬" 표에서 그 상황이 이번 일에 있었으면 그 에이전트에 다시 맡기고, 없었으면 그대로 둔다`,
+		);
+	// 나눠 읽어 끝까지 읽은 기록이 같은 쪽에 있으면 알리지 않는다
+	const all = [...log.uses, ...log.agentUses];
+	const who = (u) => `${u.name}(${u.agentType ?? "Main"})`;
+	const partial = [
+		...new Set(all.filter((u) => u.part && official.has(u.name)).map(who)),
+	].filter(
+		(k) => !all.some((u) => u.project && !u.part && !u.ref && who(u) === k),
+	);
+	if (partial.length)
+		out.push(
+			`공식 스킬의 SKILL.md를 앞부분만 읽었다(Read limit): ${partial.join(", ")}. 그 스킬로 한 일이면 끝까지 읽고 다시 확인하게 한다`,
 		);
 	return out;
 }

@@ -20,6 +20,9 @@ test("경로별 케이스: 첫 일치 규칙 하나만 적용한다", () => {
   for (const f of ["apps/web/src/app/feed/route.tsx", "apps/web/src/app/sitemap.ts", "apps/web/src/app/robots.ts", "apps/web/src/app/watchlist/[code]/actions.ts", "apps/web/src/lib/actions.ts"])
     assert.equal(classify([f], c).pathCase, "D", f);
   assert.equal(classify(["apps/web/src/app/opengraph-image.tsx"], c).pathCase, "B", "이미지 메타데이터는 화면으로 둔다");
+  assert.equal(classify(["apps/web/src/app/strategy/actions.tsx"], c).pathCase, "B", "JSX가 든 actions.tsx는 화면 컴포넌트다(서버 액션 파일은 .ts)");
+  for (const f of ["AGENTS.md", "CLAUDE.md"]) assert.equal(classify([f], c).pathCase, "H", `에이전트 규칙 파일은 하네스: ${f}`);
+  assert.equal(classify(["apps/web/AGENTS.md"], c).pathCase, "A", "Next가 만드는 apps/web/AGENTS.md는 하네스가 아니다");
   assert.equal(classify(["apps/web/src/app/feed/page.tsx"], c).pathCase, "B");
   assert.deepEqual(classify(["apps/web/src/lib/auth-client.ts"], c).layers, [], "인증 파일은 화면 계층으로 세지 않는다");
   assert.equal(classify(["packages/db/src/schema/todo.ts"], c).pathCase, "E");

@@ -13,7 +13,7 @@
 		},
 		{
 			"case": "D",
-			"match": "^(packages/api/|apps/web/src/app/api/|apps/web/src/app/(.+/)?(route|sitemap|robots|manifest)\\.[jt]sx?$|apps/web/src/(.+/)?actions?\\.[jt]sx?$|apps/web/src/instrumentation\\.[jt]s$)",
+			"match": "^(packages/api/|apps/web/src/app/api/|apps/web/src/app/(.+/)?(route|sitemap|robots|manifest)\\.[jt]sx?$|apps/web/src/(.+/)?actions?\\.[jt]s$|apps/web/src/instrumentation\\.[jt]s$)",
 			"why": "서버·API(앱 폴더의 route 핸들러·메타데이터 라우트, 서버 액션 파일 actions.ts, instrumentation 포함)"
 		},
 		{
@@ -23,7 +23,7 @@
 		},
 		{
 			"case": "H",
-			"match": "^(\\.agents/(skills|agents)/|\\.claude/(agents|skills)/|\\.claude/settings\\.json$|\\.(agents|codex)/hooks\\.json$|\\.codex/(agents|skills|prompts)/|skills-lock\\.json$|skills\\.manifest\\.json$|scripts/(dev-cycle|sync-agents|skills-setup|vercel-deploy|release|resource-guard|delegation|export-html|load-keys)\\.mjs$|\\.dev-cycle\\.json$|\\.vercelignore$|docs/dev-workflow\\.md$)",
+			"match": "^(AGENTS\\.md$|CLAUDE\\.md$|\\.agents/(skills|agents)/|\\.claude/(agents|skills)/|\\.claude/settings\\.json$|\\.(agents|codex)/hooks\\.json$|\\.codex/(agents|skills|prompts)/|skills-lock\\.json$|skills\\.manifest\\.json$|scripts/(dev-cycle|sync-agents|skills-setup|vercel-deploy|release|resource-guard|delegation|export-html|load-keys)\\.mjs$|\\.dev-cycle\\.json$|\\.vercelignore$|docs/dev-workflow\\.md$)",
 			"why": "하네스"
 		},
 		{
