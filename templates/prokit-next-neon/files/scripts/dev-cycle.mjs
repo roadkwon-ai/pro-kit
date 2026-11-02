@@ -1027,8 +1027,18 @@ export function logSkill(root, input) {
 		...(name ? { tool: String(name) } : {}),
 		...(seen ? { seen: true } : {}),
 	};
+	// 증거 폴더의 스크린샷을 이미지로 연 기록. audit이 증거에 적은 스크린샷과 대조한다
+	const shot =
+		read && /\.(?:png|jpe?g|webp)$/i.test(path)
+			? relative(root, resolve(cwd ? resolve(root, cwd) : root, path))
+					.split(sep)
+					.join("/")
+			: "";
 	const at = new Date().toISOString();
 	const lines = [
+		...(shot.startsWith("tasks/evidence/")
+			? [JSON.stringify({ t: at, shot, ...extra })]
+			: []),
 		...names.filter(Boolean).map((skill) =>
 			JSON.stringify({
 				t: at,
@@ -1090,6 +1100,7 @@ function roundLog(root, active) {
 	let agentUses = [];
 	let fills = [];
 	let edits = [];
+	let shots = [];
 	for (const line of readFileSync(p, "utf8").split("\n")) {
 		try {
 			const e = JSON.parse(line);
@@ -1099,8 +1110,10 @@ function roundLog(root, active) {
 				agentUses = [];
 				fills = [];
 				edits = [];
+				shots = [];
 			} else if (t >= since) {
-				if ("row" in e) {
+				if ("shot" in e) shots.push({ t, file: e.shot });
+				else if ("row" in e) {
 					if (!e.agent) fills.push({ t, row: e.row, text: e.text });
 				} else if ("edit" in e)
 					edits.push({
@@ -1125,7 +1138,7 @@ function roundLog(root, active) {
 			}
 		} catch {}
 	}
-	return { uses, agentUses, fills, edits };
+	return { uses, agentUses, fills, edits, shots };
 }
 function skillsLogged(root, active) {
 	const log = skillLog(root, active);
@@ -2246,6 +2259,7 @@ export function audit(
 	const warnings = [
 		...shellEdits(root, config, active, files),
 		...skillWarnings(root, active),
+		...shotWarnings(root, active),
 	];
 	if (!["C", "F"].includes(X) && ![X, "A"].includes(cls.pathCase)) {
 		problems.push(
@@ -2432,6 +2446,55 @@ function skillWarnings(root, active) {
 			`공식 스킬의 SKILL.md를 앞부분만 읽었다(Read limit): ${partial.join(", ")}. 그 스킬로 한 일이면 끝까지 읽고 다시 확인하게 한다`,
 		);
 	return out;
+}
+
+// 증거에 적은 스크린샷 가운데 이 라운드에서 아무도 이미지로 열지 않은 것(browser.md: 보지 않은 스크린샷은 증거가 아니다).
+// 이미지 읽기를 기록하는 호스트(Claude Code Read, Antigravity read_file·view_file)의 라운드만 본다. 막지 않는다.
+// shortcut: tasks/evidence/로 시작하는 경로만 본다. {a,b} 묶음과 *는 펼치고, 앞 경로를 빼고 이어 쓴 파일 이름은 보지 않는다
+function shotWarnings(root, active) {
+	const log = roundLog(root, active);
+	if (
+		!log ||
+		![...log.uses, ...log.agentUses].some((u) =>
+			["Read", "read_file", "view_file"].includes(u.tool),
+		)
+	)
+		return [];
+	const expand = (s) => {
+		const m = s.match(/\{([^{}]*)\}/);
+		return m ? m[1].split(",").flatMap((x) => expand(s.replace(m[0], x))) : [s];
+	};
+	const cited = new Set();
+	for (const r of active.rows)
+		for (const m of String(r.evidence ?? "").matchAll(
+			/tasks\/evidence\/(?:[^\s,;|)`'"{}]|\{[^{}\s]*\})+?\.(?:png|jpe?g|webp)(?![\w])/gi,
+		))
+			for (const p of expand(m[0])) {
+				if (!p.includes("*")) {
+					cited.add(p);
+					continue;
+				}
+				const dir = p.slice(0, p.lastIndexOf("/"));
+				const re = new RegExp(
+					`^${p
+						.slice(dir.length + 1)
+						.replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+						.replaceAll("*", "[^/]*")}$`,
+				);
+				try {
+					for (const f of readdirSync(join(root, dir)))
+						if (re.test(f)) cited.add(`${dir}/${f}`);
+				} catch {}
+			}
+	const opened = new Set(log.shots.map((x) => x.file));
+	const unseen = [...cited].filter(
+		(p) => existsSync(join(root, p)) && !opened.has(p),
+	);
+	return unseen.length
+		? [
+				`증거에 적은 스크린샷 가운데 이 라운드에서 이미지로 열어 본 기록이 없는 것: ${unseen.slice(0, 10).join(", ")}${unseen.length > 10 ? ` 외 ${unseen.length - 10}개` : ""}. 보지 않은 스크린샷은 증거가 아니다(prokit-verify의 references/browser.md). 찍은 에이전트나 Main이 열어 보고 확인한 뒤 적는다`,
+			]
+		: [];
 }
 
 export function delegationCompletionProblem(result, runtime) {

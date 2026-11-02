@@ -22,5 +22,5 @@ model: sonnet
 - 읽은 스킬: `이름(따른 절차)` 꼴(예: `next-dev-loop(/_next/mcp get_errors)`, `agent-browser(스크린샷, 콘솔 수집)`). 코디네이터가 이 줄을 증거 `위임: prokit-runtime-checker(사용: …)`로 옮긴다.
 - 확인한 경로와 시나리오별 통과·실패
 - 오류 예산 수(출처별)와 `결함:` 줄
-- 스크린샷과 기록 파일 경로(`tasks/evidence/…`)
+- 스크린샷과 기록 파일 경로(`tasks/evidence/…`). 스크린샷은 이미지로 열어 본 것만 증거로 적고, 열지 않은 것은 "열지 않음"으로 따로 적는다. 경로마다 `tasks/evidence/`부터 적는다(audit이 증거의 스크린샷을 열어 본 기록과 대조한다)
 - 확인하지 못한 것과 이유

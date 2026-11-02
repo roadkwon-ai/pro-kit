@@ -1587,6 +1587,29 @@ test("공식 스킬 SKILL.md를 Read limit으로 앞부분만 읽으면 경고�
   assert.equal(partial(), "");
 });
 
+test("증거에 적은 tasks/evidence/ 스크린샷을 아무도 이미지로 열지 않았으면 경고하고, 묶음·별표 경로도 펼쳐 대조한다", () => {
+  const { root, write } = makeRepo();
+  write(".agents/skills/prokit-verify/SKILL.md", "---\nname: prokit-verify\n---\n");
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const row = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^\[verify\] 재확인 1회/.test(r.text)) + 1;
+  assert.ok(row);
+  for (const f of ["a-desktop.png", "a-mobile.png", "b-1.png", "b-2.png"]) write(`tasks/evidence/T1/${f}`, "png");
+  const hook = (file, agent) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Read", ...(agent ? { agent_id: "c1", agent_type: agent } : {}), tool_input: { file_path: join(root, file) } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const unseen = () => (audit(root, config).warnings ?? []).find((w) => w.startsWith("증거에 적은 스크린샷 가운데")) ?? "";
+  hook(".agents/skills/prokit-verify/SKILL.md");
+  writeFileSync(join(root, "tasks/evidence/e.txt"), "사용: prokit-verify. 스크린샷 tasks/evidence/T1/a-{desktop,mobile}.png, tasks/evidence/T1/b-*.png, tasks/evidence/T1/없음.png\n");
+  assert.equal(run(root, "evidence", String(row), "--file", "tasks/evidence/e.txt").status, 0);
+  // 없는 파일은 보지 않는다
+  assert.match(unseen(), /a-desktop\.png, tasks\/evidence\/T1\/a-mobile\.png, tasks\/evidence\/T1\/b-1\.png, tasks\/evidence\/T1\/b-2\.png\./);
+  hook("tasks/evidence/T1/a-desktop.png", "prokit-runtime-checker");
+  hook("tasks/evidence/T1/a-mobile.png");
+  hook("tasks/evidence/T1/b-1.png", "prokit-runtime-checker");
+  assert.match(unseen(), /없는 것: tasks\/evidence\/T1\/b-2\.png\./);
+  hook("tasks/evidence/T1/b-2.png", "prokit-runtime-checker");
+  assert.equal(unseen(), "");
+});
+
 test("degraded: 서브에이전트를 구별하지 못한 라운드에서만 Main 직접을 받고, 코드 리뷰를 건너뛰면 받지 않으며, 사유가 없으면 형식 오류다", () => {
   const { root, write } = makeRepo();
   for (const s of ["prokit-ui", "prokit-web"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n---\n`);
