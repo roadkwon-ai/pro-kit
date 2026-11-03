@@ -1536,7 +1536,7 @@ test("행 문구 스킬의 기준은 표에서 앞에 있는 행이다. 뒤 행�
     const stale = () => audit(root, config).problems.filter((p) => p.startsWith(`#${neon} `) && /이 행을 하면서 읽은 기록이 없다/.test(p));
     const read = (s, main) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Read", ...(main ? {} : { agent_id: "x1", agent_type: "prokit-db-builder" }), tool_input: { file_path: join(root, `.agents/skills/${s}/SKILL.md`) } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
     const problems = () => audit(root, config).problems.filter((p) => p.startsWith(`#${neon} `));
-    return { neon, mid, after, set, stale, read, problems };
+    return { root, config, neon, mid, after, set, stale, read, problems };
   };
   // Neon 행은 neon 템플릿에만 있다
   if (setup().neon <= 0) return;
@@ -1563,6 +1563,11 @@ test("행 문구 스킬의 기준은 표에서 앞에 있는 행이다. 뒤 행�
   c.read("neon-postgres", true);
   c.set(c.neon, "사용: neon-postgres. 브랜치 dev에 적용");
   assert.deepEqual(c.problems(), []);
+  // 그 읽기는 "Main이 맡긴 스킬을 직접 읽었다" 경고도 내지 않는다. 같은 행을 에이전트에 맡기면 Main 몫이 아니라 경고한다
+  const mainWarned = () => (audit(c.root, c.config).warnings ?? []).some((w) => w.startsWith("Main이 에이전트에 맡긴 공식 스킬을 직접 읽었다: neon-postgres"));
+  assert.equal(mainWarned(), false);
+  c.set(c.neon, "위임: prokit-db-builder(사용: neon-postgres). 브랜치 dev에 적용");
+  assert.equal(mainWarned(), true);
 });
 
 test("행 일 이름의 공식 스킬과 리뷰 focus의 공식 스킬은 맡는 쪽이 읽어야 하고, 맡았지만 읽지 않은 스킬과 Main이 읽은 맡긴 스킬은 경고만 한다", () => {

@@ -997,6 +997,39 @@ const layerOwners = (c, { agents, layers }) =>
 	[LAYER_AGENTS[c], ...(layers?.[c] ?? [])].filter(
 		(a) => a && agents.includes(a),
 	);
+// 행 문구에 이름이 있는 계층 에이전트의 계층. 없으면(H·F 구현 방식 밖의 일반 행) 모든 계층이다
+const namedLayers = (text) =>
+	Object.keys(LAYER_AGENTS).filter((c) => text.includes(LAYER_AGENTS[c]));
+// 행을 맡을 에이전트(want)와 이 행에서 맡긴 쪽(delegated). 둘 다 없으면 Main 몫 행이다(F의 Neon 브랜치 적용 등).
+// want: 행 문구의 전문 에이전트와 performers.layers로 그 계층을 함께 맡는 에이전트. 이름이 없는 구현 단계 행은 모든 전문 에이전트다.
+// delegated: 증거에 위임: 으로 적은 전문 에이전트와 리뷰어(prokit-reviewer). 리뷰어는 행 문구에 이름이 있어도 맡긴 쪽이다
+// (구현 행에 "리뷰어 지적 반영"처럼 이름만 나온 것은 아니다)
+function rowHands(text, value, perf) {
+	const named = [
+		...new Set([
+			...perf.agents.filter((a) => text.includes(a)),
+			...namedLayers(text).flatMap((c) => layerOwners(c, perf)),
+		]),
+	];
+	const reviewers = [...new Set(Object.values(perf.skills).flat())].filter(
+		(a) => !perf.agents.includes(a),
+	);
+	return {
+		want: named.length || !/구현 단계/.test(text) ? named : perf.agents,
+		delegated: [
+			...new Set([
+				...[...value.matchAll(/위임:\s*`?([a-z][a-z0-9-]*)/g)]
+					.map((m) => m[1])
+					.filter((a) => perf.agents.includes(a)),
+				...reviewers.filter(
+					(a) =>
+						text.includes(a) ||
+						new RegExp(`위임:\\s*\`?${a}(?![a-z0-9-])`).test(value),
+				),
+			]),
+		],
+	};
+}
 // 프로젝트 판(.agents/skills·.claude/skills)을 읽었는지. Skill 호출은 이름이 같은 개인 스킬(~/.claude/skills)이 먼저 불려 판을 알 수 없다
 // 셸 명령은 프로젝트 절대 경로, 상대 경로(./, ../), $PWD로 시작한 경로만 프로젝트 판이다. ~/.agents/skills(개인 판)는 아니다.
 // shortcut: 셸을 해석하지 않고 cwd를 프로젝트 루트로 본다. 하위 폴더에서 ../로 올라간 경로도 프로젝트로 센다
@@ -1417,9 +1450,6 @@ function usageProblem(root, config, active) {
 	const agentLayers = [...new Set([...layers, ...(auth ? ["D"] : [])])].filter(
 		(c) => LAYER_AGENTS[c],
 	);
-	// 행 문구에 이름이 있는 계층 에이전트의 계층. 없으면(H·F 구현 방식 밖의 일반 행) 모든 계층이다
-	const namedLayers = (text) =>
-		Object.keys(LAYER_AGENTS).filter((c) => text.includes(LAYER_AGENTS[c]));
 	// 호스트 훅이 Main과 서브에이전트를 구별한 기록이 있는 라운드인지
 	const seenHost = Boolean(log) && [...all, ...log.edits].some((u) => u.seen);
 	// 훅 기록(스킬 읽기·편집)이 하나라도 있는 라운드. 훅을 설치한 호스트(Claude Code·Codex·Antigravity)는 모두 서브에이전트를 구별한다
@@ -1459,11 +1489,6 @@ function usageProblem(root, config, active) {
 					(lastWork[u.agentId] ?? Number.NEGATIVE_INFINITY) > after) &&
 				counts(n, u, agents, main),
 		);
-	// 공식 스킬을 맡지만 수행 에이전트가 아닌 쪽(prokit-reviewer). 행 문구에 이름이 있거나 증거에 위임: 으로 적은 행에서 맡긴 쪽으로 본다
-	// (구현 행에 "리뷰어 지적 반영"처럼 이름만 나온 것은 아니다)
-	const reviewers = [...new Set(Object.values(skillAgents).flat())].filter(
-		(a) => !performerAgents.includes(a),
-	);
 	// 이 행에서 맡긴 쪽(delegated)이 있으면 맡은 공식 스킬은 그쪽이 읽은 기록만 센다.
 	// 배치에 없는 prokit-* 스킬은 Main과 이 행에서 맡긴 쪽이 읽은 기록을 센다(에이전트도 위임 지시의 prokit-*를 읽는다)
 	const scoped = (n, delegated) => {
@@ -1531,27 +1556,7 @@ function usageProblem(root, config, active) {
 			!/next\/dist\/docs\/|Next 문서:\s*N\/A:\s*\S/.test(value)
 		)
 			return "prokit-web을 썼으면 읽은 Next 번들 문서 경로(apps/web/node_modules/next/dist/docs/…)를 적는다. 쓰거나 바꾼 Next API가 없으면 Next 문서: N/A: 사유로 적는다";
-		// 행 문구에 계층 에이전트 이름이 있으면 performers.layers로 그 계층을 함께 맡는 에이전트도 받는다
-		const named = [
-			...new Set([
-				...performerAgents.filter((a) => r.text.includes(a)),
-				...namedLayers(r.text).flatMap((c) => layerOwners(c, perf)),
-			]),
-		];
-		const want =
-			named.length || !/구현 단계/.test(r.text) ? named : performerAgents;
-		const delegated = [
-			...new Set([
-				...[...value.matchAll(/위임:\s*`?([a-z][a-z0-9-]*)/g)]
-					.map((m) => m[1])
-					.filter((a) => performerAgents.includes(a)),
-				...reviewers.filter(
-					(a) =>
-						r.text.includes(a) ||
-						new RegExp(`위임:\\s*\`?${a}(?![a-z0-9-])`).test(value),
-				),
-			]),
-		];
+		const { want, delegated } = rowHands(r.text, value, perf);
 		const said = delegated.filter((a) => want.includes(a));
 		// 맡길 에이전트가 정해지지 않고 위임하지 않은 행은 Main 몫이다(F의 Neon 브랜치 적용 등). 맡는 에이전트가 있는 스킬도 Main 읽기를 센다
 		const mainOk = (n) =>
@@ -2589,15 +2594,28 @@ const SKILL_SITUATIONS = {
 function skillWarnings(root, active, round = { files: [], auth: false }) {
 	const log = skillLog(root, active);
 	if (!log) return [];
-	const {
-		skills: skillAgents,
-		official,
-		agents: performerAgents,
-	} = performers(root);
+	const perf = performers(root);
+	const { skills: skillAgents, official, agents: performerAgents } = perf;
 	const out = [];
+	// Main 몫 행(맡을 에이전트도 위임도 없는 행)의 행 문구 스킬은 Main이 읽어야 한다(audit 행 검사의 mainOk). 그 읽기는 알리지 않는다
+	const mainRows = new Set(
+		active.rows
+			.filter((r) => {
+				const value = bare(r.evidence);
+				if (!value || /^(blocked|미실행|n\/a)\s*:/i.test(value)) return false;
+				const { want, delegated } = rowHands(r.text, value, perf);
+				return !want.length && !delegated.length;
+			})
+			.flatMap((r) => [
+				...rowNamedSkills(r.text),
+				...titleSkills(r.text, official),
+			]),
+	);
 	const mainRead = [
 		...new Set(
-			log.uses.filter((u) => u.seen && skillAgents[u.name]).map((u) => u.name),
+			log.uses
+				.filter((u) => u.seen && skillAgents[u.name] && !mainRows.has(u.name))
+				.map((u) => u.name),
 		),
 	];
 	if (mainRead.length)
