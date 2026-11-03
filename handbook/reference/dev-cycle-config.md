@@ -60,7 +60,7 @@
 - 계층이 둘 이상 바뀌면 케이스 F예요. 위 예시는 세 계층을 모두 건드려서 F예요.
 - 계층 파일은 없고 하네스 파일(H 규칙)만 바뀌면 H예요. 계층과 함께 바뀌면 케이스는 그 계층 그대로이고 H 행이 더 붙어요(`(+H)` 표시).
 - 어느 규칙에도 맞지 않으면 A(경미한 변경)예요.
-- 화면 규칙(B)은 `apps/web/src/` 전체와 `packages/ui/`예요. 그 안에서도 라우트 핸들러(`route.ts`), `sitemap`·`robots`·`manifest`, 서버 액션 파일(`actions.ts`), `instrumentation`은 서버(D) 규칙이 먼저 맞아요. 인증 파일(`authPaths`)은 화면 규칙에 걸려도 B로 세지 않아요.<!-- edition:pro --> 서버 몫이라 서버·API 에이전트가 맡아요.<!-- /edition -->
+- 화면 규칙(B)은 `apps/web/src/` 전체와 `packages/ui/`예요. 그 안에서도 라우트 핸들러(`route.ts`), `sitemap`·`robots`·`manifest`, 서버 액션 파일(`actions.ts`), `instrumentation`은 서버(D) 규칙이 먼저 맞아요. 정적으로 만드는 `sitemap`도 D라서 화면 작업과 함께 고치면 F가 돼요. 이런 일이 잦고 그 파일이 DB나 비밀값을 읽지 않으면, H 라운드에서 D 규칙의 `sitemap|robots|manifest`를 빼 화면(B)으로 둘 수 있어요. 인증 파일(`authPaths`)은 화면 규칙에 걸려도 B로 세지 않아요.<!-- edition:pro --> 서버 몫이라 서버·API 에이전트가 맡아요.<!-- /edition -->
 
 그래서 똑같이 한 줄을 고쳐도 `README`는 A, `packages/db/` 안의 파일은 E가 돼요. 계층의 케이스 설명은 [케이스와 대조표](../concepts/cases.md)에 있어요. 하네스(H) 규칙에는 다음 경로가 들어 있어요.
 

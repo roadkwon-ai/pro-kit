@@ -4,6 +4,26 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 갱신 반영에서 옛 러너에 새 훅을 넣지 않기, 운영 프로젝트 보고 반영 (2026-11-03)
+
+pro-kit-trader가 v0.3.6을 H 라운드로 반영하며 보고한 결함을 고쳤다.
+
+- 훅 순서(high): 갱신 반영의 `install.sh --skip-skills`는 템플릿과 다른 `scripts/dev-cycle.mjs`를 덮어쓰지 않으면서 `.claude/settings.json`에 `shell-guard` 훅을 넣었다. 옛 러너는 이 하위 명령을 몰라 exit 2로 끝나 메인과 서브에이전트의 모든 Bash 호출이 막혔다.
+  - 고친 것: 설치기가 프로젝트 러너에 하위 명령 분기(`cmd === "<이름>"`)가 없는 훅은 넣지 않고 경고한다(`unknownHookCommands`). 러너가 없으면(새 설치의 미리 보기) 템플릿 러너로 본다. 루트 `AGENTS.md` 갱신 반영 7번과 handbook "갱신 반영"에 러너를 먼저 옮기라고 적었다.
+  - 실제 설치: scratchpad의 Better-T-Stack 프로젝트(`create better-t-stack@latest`)에 설치한 뒤 러너를 v0.3.4 판으로 바꾸고 `shell-guard` 훅을 빼 재현했다. 옛 러너의 `shell-guard`는 `echo hi` 입력에 exit 2였다. `--diff`와 `--skip-skills`는 경고만 내고 훅을 넣지 않았고, 템플릿 러너로 바꿔 다시 실행하니 훅이 들어가 exit 0으로 통과했다.
+  - 한계: `.agents/hooks.json`(새로 복사할 때)과 `.codex/hooks.json`(`skills:setup`)은 이 검사를 하지 않는다. 둘 다 러너를 먼저 옮기는 순서로 막는다.
+- 공식 스킬 읽기 안내(low): `CLAUDE.md`에 Skill 목록에 보이는 공식 스킬(`grilling`, `domain-modeling`)도 Read로 읽고 Skill 도구 호출은 audit이 세지 않는다고 적었다. 스킬 기록 막힘 안내도 공식 스킬은 Read, `prokit-*`·플러그인 스킬은 Skill 도구로 나눠 적었다.
+- 설계 증거 안내(low): `[design]` 행 거부 안내가 읽지 못한 필드 이름과 `;`로 구분한 예를 보인다. 판독 규칙은 그대로다.
+- 고치지 않은 것: 맡은 공식 스킬 경고를 diff 경로로 거르는 일(경고는 막지 않고 "그 상황이 없었으면 그대로 둔다"고 안내한다).
+
+pro-kit-web이 v0.3.6을 B(+H) 라운드로 반영하며 보고한 결함도 고쳤다.
+
+- `turbo.json` 포맷: 설치기가 `globalPassThroughEnv`를 한 줄로 넣고 `turbo.json`을 Biome 포맷 대상에 넣지 않아, 갱신 반영 뒤 lint가 exit 1이었다. 항목을 더하면 `turbo.json`도 포맷한다. scratchpad의 Better-T-Stack 프로젝트에 `--skip-skills`로 설치해 여러 줄로 포맷되고 `biome check`가 통과하는 것을 확인했다.
+- 환경 변수 경고: `dev-cycle.mjs`의 `process.env.CLAUDE_PROJECT_DIR`와 `skills-setup.mjs`의 `process.env.CLAUDE_CONFIG_DIR`에 Biome `noUndeclaredEnvVars`(turbo 도메인) 경고가 났다. 이 경고는 프로젝트 `turbo.json`에 따라 나기도 하고 나지 않기도 한다(새 Better-T-Stack 프로젝트에서는 나지 않았다). 그래서 억제 주석은 쓰지 않았다(나지 않는 프로젝트에서 "쓰이지 않는 억제" 경고가 된다). 구조 분해와 `env.X` 꼴로 읽게 바꿨고, 규칙이 켜진 임시 프로젝트와 새 Better-T-Stack 프로젝트 모두에서 경고 0건을 확인했다.
+- 수행자 편집 도구: 화면 수행자가 Edit 대신 셸 `python3`로 화면 파일을 고쳐 편집 훅을 건너뛰었다(audit 경고로만 잡혔다). `prokit-implementer`에만 있던 "편집 도구로만 고친다" 규칙을 `prokit-ui-builder`·`prokit-api-builder`·`prokit-db-builder` 정의에도 넣었다.
+- sitemap 판정: 정적 `sitemap`·`robots`·`manifest`도 서버(D)라 화면 작업과 함께 고치면 F가 된다. 규칙은 그대로 두고 `prokit-api` 구조 절과 handbook `.dev-cycle.json` 설정 쪽에 이유와 대처(DB·비밀값을 읽지 않는 파일이면 H 라운드에서 D 규칙에서 빼기)를 적었다.
+- 고치지 않은 것: 프로젝트 전용 에이전트를 계층 소유자로 더하는 확장점(`dev-cycle.mjs`의 `LAYER_AGENTS`는 고정 맵이다).
+
 ## `--adopt`에 Antigravity 훅 더하기 (2026-11-03)
 
 문서 검토에서 `--adopt`가 `.agents/hooks.json`을 복사하지 않는 것을 찾았다(`ADOPT_ONLY`에 없었다). 그래서 하네스만 설치한 프로젝트는 Antigravity에서 라운드 없는 편집 막기, 스킬 기록, 서브에이전트 묶기 훅이 돌지 않았다. Claude Code(`.claude/settings.json`)와 Codex(`.codex/hooks.json`) 훅은 원래 설치됐다.

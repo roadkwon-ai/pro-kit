@@ -5,7 +5,7 @@ import { chmodSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, 
 import { tmpdir } from "node:os";
 import { basename, dirname, join, relative } from "node:path";
 import { test } from "node:test";
-import { ADOPT_AUTH, ESLINT_IGNORES, ensureBiomeConfig, ensureClaudeHook, ensureEslintIgnores, ensureGitignore, ensureTurboAgentGuidance, ensureTurboProxyEnv, formatWithBiome, TURBO_PROXY_ENV, preflight } from "../install.mjs";
+import { ADOPT_AUTH, ESLINT_IGNORES, FILES_DIR, ensureBiomeConfig, ensureClaudeHook, unknownHookCommands, ensureEslintIgnores, ensureGitignore, ensureTurboAgentGuidance, ensureTurboProxyEnv, formatWithBiome, TURBO_PROXY_ENV, preflight } from "../install.mjs";
 import { TEMPLATE, TEMPLATE_FILES } from "./helpers.mjs";
 
 function fakeBts(prefix = "prokit-") {
@@ -324,6 +324,22 @@ test("ESLint(adopt): flat config의 globalIgnores에 벤더 스킬과 하네스 
 });
 
 const IMPECCABLE_IGNORES = ["**/.impeccable/config.local.json", "**/.impeccable/hook.cache.json", "**/.impeccable/hook.pending.json", "**/.impeccable/*.png", "**/.impeccable/review/", "**/.impeccable/questions/"];
+
+test(".claude/settings.json: 프로젝트의 옛 dev-cycle.mjs가 모르는 훅은 넣지 않고(넣으면 모든 Bash가 막힌다), 러너를 옮기면 넣는다", () => {
+  const root = mkdtempSync(join(tmpdir(), "hook-stale-"));
+  mkdirSync(join(root, "scripts"));
+  const runner = join(root, "scripts/dev-cycle.mjs");
+  writeFileSync(runner, 'if (cmd === "skill-log") {}\nif (cmd === "edit-guard") {}\n');
+  assert.deepEqual(unknownHookCommands(root), ["shell-guard"]);
+  assert.equal(ensureClaudeHook(root), true);
+  const cur = JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8"));
+  assert.deepEqual(cur.hooks.PreToolUse.map((g) => g.matcher), ["Edit|Write|MultiEdit|NotebookEdit"]);
+  assert.equal(cur.hooks.PostToolUse.length, 1);
+  writeFileSync(runner, readFileSync(join(FILES_DIR, "scripts/dev-cycle.mjs"), "utf8"));
+  assert.deepEqual(unknownHookCommands(root), []);
+  assert.equal(ensureClaudeHook(root), true);
+  assert.deepEqual(JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).hooks.PreToolUse.map((g) => g.matcher), ["Edit|Write|MultiEdit|NotebookEdit", "Bash"]);
+});
 
 test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 더한다. 읽지 못하면 null", () => {
   const root = mkdtempSync(join(tmpdir(), "hook-"));

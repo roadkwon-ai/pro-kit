@@ -16,7 +16,7 @@ description: >-
 - `packages/api/src/routers/`: 라우터. `routers/index.ts`의 `appRouter`에 등록한다.
 - `packages/auth/src/index.ts`: `createAuth` (Better Auth 설정)
 - `apps/web/src/app/api/rpc/[[...rest]]/route.ts`, `apps/web/src/app/api/auth/[...all]/route.ts`: HTTP 진입점
-- 앱 폴더의 다른 `route.ts`(route 핸들러), `sitemap.ts`·`robots.ts`·`manifest.ts`(메타데이터 라우트), 서버 액션 파일 `actions.ts`, `apps/web/src/instrumentation.ts`: 서버에서 도는 파일이라 이 계층(D)으로 판정한다. 다른 이름의 서버 액션 파일(`"use server"`)은 경로로 가릴 수 없으니 `.dev-cycle.json`의 서버 규칙에 그 경로를 더한다.
+- 앱 폴더의 다른 `route.ts`(route 핸들러), `sitemap.ts`·`robots.ts`·`manifest.ts`(메타데이터 라우트), 서버 액션 파일 `actions.ts`, `apps/web/src/instrumentation.ts`: 서버에서 도는 파일이라 이 계층(D)으로 판정한다. 다른 이름의 서버 액션 파일(`"use server"`)은 경로로 가릴 수 없으니 `.dev-cycle.json`의 서버 규칙에 그 경로를 더한다. 정적 생성(`force-static`) 메타데이터 라우트도 경로로 D가 되므로, 화면 작업에서 `sitemap.ts`를 함께 고치면 계층이 둘이라 F가 되고 그 파일은 `prokit-api-builder`가 맡는다. 공개 쪽 페이지를 자주 더해 이런 일이 잦은 프로젝트는 H 라운드에서 D 규칙의 `sitemap|robots|manifest`를 빼 화면(B)으로 둘 수 있다. 그 파일이 DB·비밀값·서버 전용 모듈을 읽지 않을 때만 그렇게 하고 결정은 `docs/adr/`에 남긴다.
 - `apps/web/src/context.ts`: 요청마다 세션을 읽어 context를 만든다.
 
 ## 공식 스킬 연결

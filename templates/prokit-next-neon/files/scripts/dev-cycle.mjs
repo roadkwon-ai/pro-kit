@@ -1208,7 +1208,7 @@ function skillsLogged(root, active) {
 	return log?.uses.length ? new Set(log.uses.map((u) => u.name)) : null;
 }
 const LOG_HINT =
-	"Claude Code는 Skill 도구로 부르거나(사용자 호출 전용이면 그 SKILL.md를 Read로 읽는다. 공식 스킬은 Read로만 읽는다. Bash cat은 기록되지 않는다), Codex는 그 SKILL.md 경로를 그대로 cat으로(출력을 /dev/null로 버리면 세지 않는다), Antigravity는 read_file로 끝까지 읽어 다시 진행한 뒤 적는다";
+	"Claude Code는 공식 스킬(skills.manifest.json의 skills)과 사용자 호출 전용 스킬이면 그 SKILL.md를 Read로 읽고(공식 스킬을 Skill 도구로 부른 기록과 Bash cat은 세지 않는다), prokit-*·플러그인 스킬이면 Skill 도구로 부르고, Codex는 그 SKILL.md 경로를 그대로 cat으로(출력을 /dev/null로 버리면 세지 않는다), Antigravity는 read_file로 끝까지 읽어 다시 진행한 뒤 적는다";
 
 // 공식 스킬과 그 스킬로 일하는 에이전트의 정본은 skills.manifest.json이다(바꾸는 일은 prokit-skills-assign).
 // - skills: 기본 설치 스킬(공식 스킬). 프로젝트 판을 읽은 기록만 센다
@@ -2312,13 +2312,13 @@ const rowProblem = (r) => {
 		!/\S+\.md\b/.test(value)
 	)
 		return "정밀 분석·진행 계획 증거는 문서 경로(.md)다 (N/A 불가)";
-	if (
-		r.text.startsWith("[design]") &&
-		!["기존", "결정", "설정", "검증"].every((field) =>
-			new RegExp(`(?:^|;\\s*)${field}:\\s*[^;\\s]`).test(value),
-		)
-	)
-		return "설계 증거에 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사를 적는다. 각 필드는 증거 맨 앞이나 ; 뒤에서 시작한다(사용: …. 기존: …처럼 다른 말 뒤에 두면 읽지 못한다. 사용:은 검증: 뒤에 적는다)";
+	if (r.text.startsWith("[design]")) {
+		const missing = ["기존", "결정", "설정", "검증"].filter(
+			(field) => !new RegExp(`(?:^|;\\s*)${field}:\\s*[^;\\s]`).test(value),
+		);
+		if (missing.length)
+			return `설계 증거에서 ${missing.map((f) => `${f}:`).join(", ")}을 읽지 못했다. 네 필드(기존: 경로·소비자, 결정: 재사용·분리, 설정: 환경 변수·설정 영향, 검증: 회귀 검사)는 증거 맨 앞이나 ; 뒤에서 시작한다(마침표·쉼표 뒤에 두면 읽지 못한다). 예: 기존: apps/web/src/lib/a.ts(소비자 2곳); 결정: 재사용; 설정: 없음; 검증: a.test.ts. 사용:은 검증: 뒤에 적는다`;
+	}
 	return null;
 };
 
@@ -4095,9 +4095,10 @@ export function main(argv, root = process.cwd()) {
 			(taskAt < 0 || i !== taskAt + 1),
 	);
 	// 훅의 프로젝트는 이 스크립트가 든 프로젝트다(Antigravity는 훅을 .agents/에서 실행한다). Claude Code는 CLAUDE_PROJECT_DIR를 준다.
+	// 구조 분해로 읽는다: process.env.X 꼴은 Biome turbo 규칙(noUndeclaredEnvVars)이 turbo 작업 변수로 보고 경고한다
+	const { CLAUDE_PROJECT_DIR } = process.env;
 	const hookRoot =
-		process.env.CLAUDE_PROJECT_DIR ||
-		dirname(dirname(fileURLToPath(import.meta.url)));
+		CLAUDE_PROJECT_DIR || dirname(dirname(fileURLToPath(import.meta.url)));
 	// PostToolUse 훅(Claude Code Skill|Read, Codex Bash, Antigravity read_file|view_file|invoke_subagent). 어떤 오류도 세션을 막지 않게 조용히 끝낸다.
 	// Antigravity는 PostToolUse 출력으로 JSON 객체를 기대한다.
 	if (cmd === "skill-log") {

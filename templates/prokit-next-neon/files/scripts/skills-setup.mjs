@@ -468,11 +468,14 @@ export function missingSkills(root, entry) {
 // marketplaces 값은 settings의 source 객체 그대로다({source:"github",repo} 또는 {source:"git",url}).
 // on: 고른 두뇌·과설계 방지 스킬의 플러그인(false였어도 켠다). off: 정리한 플러그인(false로 남겨 user scope 설치도
 // 이 프로젝트에서 끈다). drop: 고르지 않은 후보만 쓰던 마켓플레이스 선언.
+// env.X 꼴로 읽는다: process.env.X 꼴은 Biome turbo 규칙(noUndeclaredEnvVars)이 turbo 작업 변수로 보고 경고한다
+const claudeConfigDir = (env = process.env) =>
+	env.CLAUDE_CONFIG_DIR ?? join(homedir(), ".claude");
 // ~/.claude/plugins/installed_plugins.json에서 이 폴더(또는 user scope)에 설치 기록이 없는 플러그인. 파일이 없으면 보지 않는다.
 export function unregisteredPlugins(
 	root,
 	plugins,
-	configDir = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), ".claude"),
+	configDir = claudeConfigDir(),
 ) {
 	let installed;
 	try {

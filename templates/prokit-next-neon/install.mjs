@@ -388,6 +388,16 @@ const HOOKS = [
   { event: "PreToolUse", mark: "dev-cycle.mjs\" shell-guard", entry: { matcher: "Bash", hooks: [{ type: "command", command: SHELL_HOOK }] } },
 ];
 const isObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+// 프로젝트의 scripts/dev-cycle.mjs가 모르는 훅 하위 명령. 갱신 반영에서 러너는 덮어쓰지 않으므로, 옛 러너에 새 훅을 넣으면
+// 훅이 사용법 오류로 끝나 모든 Bash·편집 호출이 막힌다. 러너가 아직 없으면(새 설치의 미리 보기) 템플릿 러너로 본다.
+// shortcut: 러너 원문에 cmd === "<하위 명령>" 분기가 있는지로 본다. 러너의 분기 꼴을 바꾸면 이 검사도 바꾼다.
+export function unknownHookCommands(target) {
+  const own = join(target, "scripts/dev-cycle.mjs");
+  const runner = readFileSync(existsSync(own) ? own : join(FILES_DIR, "scripts/dev-cycle.mjs"), "utf8");
+  return HOOKS.map(({ mark }) => mark.match(/dev-cycle\.mjs" (\S+)$/)?.[1]).filter((c) => c && !runner.includes(`cmd === "${c}"`));
+}
+const STALE_HOOK = (cmds) =>
+  `경고: 이 프로젝트의 scripts/dev-cycle.mjs가 모르는 훅(${cmds.join(", ")})은 .claude/settings.json에 넣지 않는다. 넣으면 훅이 실패해 모든 Bash·편집 호출이 막힌다. 템플릿의 scripts/dev-cycle.mjs를 먼저 옮긴 뒤 다시 실행한다`;
 export function ensureClaudeHook(target, { dryRun = false } = {}) {
   const p = join(target, ".claude/settings.json");
   let cur = {};
@@ -399,8 +409,10 @@ export function ensureClaudeHook(target, { dryRun = false } = {}) {
   if (!isObject(cur) || !(cur.hooks === undefined || isObject(cur.hooks))) return null;
   if (!HOOKS.every(({ event }) => cur.hooks?.[event] === undefined || Array.isArray(cur.hooks[event]))) return null;
   cur.hooks ??= {};
+  const stale = unknownHookCommands(target);
   let added = false;
   for (const { event, mark, entry } of HOOKS) {
+    if (stale.some((c) => mark.endsWith(`" ${c}`))) continue;
     cur.hooks[event] ??= [];
     if (cur.hooks[event].some((g) => g.hooks?.some((h) => h.command?.includes(mark)))) continue;
     cur.hooks[event].push(entry);
@@ -715,6 +727,7 @@ export function main(argv) {
     const proxy = adopt ? null : ensureTurboProxyEnv(target, { dryRun: true });
     const eslint = adopt ? ensureEslintIgnores(target, { dryRun: true }) : null;
     const hook = ensureClaudeHook(target, { dryRun: true });
+    const staleHooks = unknownHookCommands(target);
     const gitHook = ensureGitHook(target, { dryRun: true });
     console.log([
       `파일: 복사 예정 ${files.copied.join(", ") || "없음"}, 덧붙임 예정 ${files.appended.join(", ") || "없음"}, 동일 ${files.same.length}, 유지(템플릿과 다름) ${kept}`,
@@ -733,6 +746,7 @@ export function main(argv) {
       ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
       `.claude/settings.json 추가 예정: ${hook ? "SessionStart 훅(scripts/load-keys.mjs), PostToolUse 훅(부른 스킬 기록), PreToolUse 훅(라운드 없는 편집 막기, 이름으로 프로세스 끄기 막기)" : "없음"}`,
       ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
+      ...(staleHooks.length ? [STALE_HOOK(staleHooks)] : []),
       ...gitHookLines(gitHook, true),
       ...(turbo === "manual" ? [`경고: ${TURBO_MANUAL}`] : []),
       ...(proxy === "manual" ? [`경고: ${TURBO_PROXY_MANUAL}`] : []),
@@ -757,11 +771,14 @@ export function main(argv) {
   const proxy = adopt ? null : ensureTurboProxyEnv(target);
   const eslint = adopt ? ensureEslintIgnores(target) : null;
   const hook = ensureClaudeHook(target);
+  const staleHooks = unknownHookCommands(target);
   const gitHook = ensureGitHook(target);
   const toFormat = [
     ...files.copied.filter((f) => /\.(mjs|js|json)$/.test(f)),
     ...(scripts.added.length || scripts.wrapped.length ? ["package.json"] : []),
     ...(Array.isArray(biomeConfig) && biomeConfig.length && !adopt ? ["biome.json"] : []),
+    // 더한 globalPassThroughEnv는 한 줄이라 80자를 넘는다. 포맷하지 않으면 갱신 반영 뒤 lint가 실패한다
+    ...(turbo === "added" || proxy === "added" ? ["turbo.json"] : []),
   ];
   const biome = adopt ? "건너뜀 (adopt: 프로젝트의 포맷 도구를 따른다)" : formatWithBiome(target, toFormat);
   const agents = run(process.execPath, [join(target, "scripts/sync-agents.mjs")], { cwd: target });
@@ -801,6 +818,7 @@ export function main(argv) {
     ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
     ...(hook ? [".claude/settings.json: SessionStart 훅(scripts/load-keys.mjs: .env의 이미지 키와 배포 토큰을 세션에 불러온다)과 PostToolUse 훅(dev-cycle skill-log: 부른 스킬을 .prokit/skills-used.jsonl에 남겨 audit이 단계 행 증거와 대조한다), PreToolUse 훅(dev-cycle edit-guard: 열린 라운드 없이 코드·하네스 파일을 고치지 못하게 한다. dev-cycle shell-guard: pkill처럼 이름·포트로 골라 프로세스를 끄지 못하게 한다) 중 없는 것을 더함"] : []),
     ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
+    ...(staleHooks.length ? [STALE_HOOK(staleHooks)] : []),
     ...gitHookLines(gitHook, false),
     ...legacyWarning(target),
     `biome 포맷: ${biome}`,

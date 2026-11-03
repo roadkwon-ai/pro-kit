@@ -4,6 +4,10 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 갱신 반영에서 옛 러너에 새 훅을 넣지 않기, 운영 프로젝트 보고 반영 (2026-11-03)
+
+공통 `install.mjs`(러너가 모르는 훅은 넣지 않고 경고, 더한 `turbo.json` 포맷), `scripts/dev-cycle.mjs`·`skills-setup.mjs`(스킬 기록·설계 증거 안내, 환경 변수 읽는 꼴), `CLAUDE.md`(공식 스킬 Read 안내), 수행자 에이전트 정의 셋(편집 도구 규칙), `prokit-api`(sitemap 판정 안내), 공통 설치 테스트를 이 템플릿에도 같게 고쳤다. 재현과 실제 설치 확인은 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#갱신-반영에서-옛-러너에-새-훅을-넣지-않기-운영-프로젝트-보고-반영-2026-11-03)에 있다.
+
 ## `--adopt`에 Antigravity 훅 더하기 (2026-11-03)
 
 공통 `install.mjs`의 `ADOPT_ONLY`에 `.agents/hooks.json`을 더했고 공통 설치 테스트에 단언을 더했다. 실제 설치 확인과 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#--adopt에-antigravity-훅-더하기-2026-11-03)에 있다. 테스트 `install.test.mjs`와 공유 파일 검사 42/0.
