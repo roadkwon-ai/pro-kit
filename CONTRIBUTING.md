@@ -17,7 +17,7 @@ pro-kit/
 ├── evals/                      저장소 자체 스킬의 eval 입력 (prokit-init)
 ├── site-links.json, doc-values.json   공개 주소와 공통 값의 정본
 ├── editions.json, editions/   UI 스킬셋 저장소(pro-kit-ui)의 판 목록과 판에만 있는 루트 문서
-├── docs/                       assets/(README 이미지), blocks/(공통 글 묶음), common-values.md(공통 값 목록), plans/(설계 결정), prompts/(시험 프롬프트), research/(조사 기록), reports/(측정 보고서), superpowers/(설계 스펙과 계획)
+├── docs/                       assets/(README 이미지), blocks/(공통 글 묶음), common-values.md(공통 값 목록), guideline/(AI가 따르는 지침 원문. 예: 게슈탈트 원칙 UI 개선 지침), plans/(설계 결정), prompts/(시험 프롬프트), research/(조사 기록), reports/(측정 보고서), superpowers/(설계 스펙과 계획)
 ├── release/                    릴리스 노트 (릴리스마다 추가)
 ├── .env.example                작업 폴더 .env 예시 (이미지 키, 배포 토큰)
 └── packs/                      받은 프리셋 팩 (scripts/pack.mjs. git에 넣지 않음)

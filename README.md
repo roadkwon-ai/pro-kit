@@ -72,12 +72,12 @@ flowchart LR
 | 스킬 | 전용 스킬 <!-- v:prokit.skills.count -->11<!-- /v -->개가 프로젝트 계약을 지키며 공식·사용자 지정 전문 스킬에 작업을 맡기고 결과를 검수합니다. 필요하면 선택 스킬 묶음을 더합니다. [prokit 스킬](handbook/skills/prokit-skills.md) · [공식 스킬과 연결](handbook/skills/official-skills.md) |
 | 역할 나누기 | 수행자가 전문 작업을 맡고, 필요한 전문 리뷰와 프로킷의 최종 검수를 분리합니다. 기존 프로젝트는 계획을 세우기 전에 읽기 전용 분석 에이전트가 정밀 분석합니다. [위임 에이전트와 리뷰 에이전트](handbook/concepts/agent-roles.md) |
 | 대조표와 audit | 작업을 케이스로 나눠 대조표를 열고, 모든 칸에 실행한 증거가 있어야 라운드를 닫습니다. 화면 리뷰 점수는 리뷰 기록 파일과 맞춰 봅니다. 큰 일은 진행 계획을 Task로 나눠 앞 Task가 끝나야 다음 Task를 엽니다. [dev-cycle 라운드](handbook/concepts/dev-cycle.md) · [케이스와 대조표](handbook/concepts/cases.md) · [정밀 분석과 진행 계획](handbook/concepts/project-plan.md) |
-| 자동 검사 | 타입, 린트, 빌드, 테스트, 화면 디자인, 커밋 전 비밀값, 배포 준비를 명령으로 확인합니다. 독립 검사는 병렬로 진행하고, 영향이 없는 통과 증거는 조건을 확인해 재사용합니다. [검사 배정과 재사용](handbook/concepts/delegation-and-resources.md#독립-작업을-나눠서-확인하기) |
+| 자동 검사 | 타입, 린트, 빌드, 테스트, 화면 디자인, 커밋 전 비밀값, 배포 준비를 명령으로 확인합니다. 열린 라운드 없이 코드를 고치거나 커밋하려 하면 훅이 막습니다. 독립 검사는 병렬로 진행하고, 영향이 없는 통과 증거는 조건을 확인해 재사용합니다. [검사 배정과 재사용](handbook/concepts/delegation-and-resources.md#독립-작업을-나눠서-확인하기) |
 | 개발 자원 보호 | 관리하는 캐시·설치 환경의 용량과 여유 공간을 확인합니다. [감시 범위와 안전한 정리](handbook/concepts/delegation-and-resources.md#관리-범위-안-자원만-다루기) |
 
 화면은 스타일 추천부터 `DESIGN.md`, 모든 페이지까지 [UI/UX 흐름](handbook/design/ui-flow.md)을 따르고, 배포는 내 컴퓨터의 Vercel CLI로 develop과 운영에 올리며 릴리스를 남깁니다([Vercel 배포와 되돌리기](handbook/deploy/vercel.md)). 전체 그림은 [하네스 엔지니어링](handbook/concepts/harness.md)에 있습니다.
 
-프리셋 제작 프롬프트에 고른 서체·색상·모드·언어를 반영하고, 실제 서비스에는 선택한 디자인을 고정합니다([프리셋 디자인 설정](handbook/design/ui-flow.md#프리셋)). 두뇌(진행을 주도하는 스킬 묶음)는 하나를 권하되 여럿을 함께 쓸 수 있고(OpenSpec, Spec Kit, Compound Engineering 포함), 과설계 방지 스킬(ponytail 추천)은 하나를 고르거나 고르지 않습니다. 진행 중에 바꾸거나 더하거나 뺄 수도 있으며, 고르는 법은 [두뇌와 선택 스킬](handbook/skills/brains.md), ponytail의 일회성 검토 방법은 [공식 스킬과 연결](handbook/skills/official-skills.md#ponytail-사용하기)에 있습니다.
+프리셋 제작 프롬프트에 고른 서체·색상·모드·언어를 반영하고, 실제 서비스에는 선택한 디자인을 고정합니다([프리셋 디자인 설정](handbook/design/ui-flow.md#프리셋)). 두뇌(진행을 주도하는 스킬 묶음)는 하나를 권하되 여럿을 함께 쓸 수 있고(OpenSpec, Spec Kit, Compound Engineering 포함), 과설계 방지 스킬(ponytail 추천)은 하나를 고르거나 고르지 않습니다. 화면 디자인 단계를 맡는 UI 스킬은 impeccable(기본)과 hallmark 중에서 고르고, 고르지 않으면 기본 AI가 만듭니다. 이 선택은 진행 중에 바꾸거나 더하거나 뺄 수도 있으며, 고르는 법은 [두뇌와 선택 스킬](handbook/skills/brains.md), ponytail의 일회성 검토 방법은 [공식 스킬과 연결](handbook/skills/official-skills.md#ponytail-사용하기)에 있습니다.
 
 그냥 AI에게 맡길 때와 이렇게 다릅니다.
 

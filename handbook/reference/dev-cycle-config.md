@@ -60,13 +60,16 @@
 - 계층이 둘 이상 바뀌면 케이스 F예요. 위 예시는 세 계층을 모두 건드려서 F예요.
 - 계층 파일은 없고 하네스 파일(H 규칙)만 바뀌면 H예요. 계층과 함께 바뀌면 케이스는 그 계층 그대로이고 H 행이 더 붙어요(`(+H)` 표시).
 - 어느 규칙에도 맞지 않으면 A(경미한 변경)예요.
+- 화면 규칙(B)은 `apps/web/src/` 전체와 `packages/ui/`예요. 그 안에서도 라우트 핸들러(`route.ts`), `sitemap`·`robots`·`manifest`, 서버 액션 파일(`actions.ts`), `instrumentation`은 서버(D) 규칙이 먼저 맞아요. 인증 파일(`authPaths`)은 화면 규칙에 걸려도 B로 세지 않아요.<!-- edition:pro --> 서버 몫이라 서버·API 에이전트가 맡아요.<!-- /edition -->
 
 그래서 똑같이 한 줄을 고쳐도 `README`는 A, `packages/db/` 안의 파일은 E가 돼요. 계층의 케이스 설명은 [케이스와 대조표](../concepts/cases.md)에 있어요. 하네스(H) 규칙에는 다음 경로가 들어 있어요.
 
-- 스킬과 에이전트 폴더
-- `.dev-cycle.json` 자신
-- 빌드·배포 설정(`next.config`, `vercel.json`, `.github/workflows/`, `turbo.json`)
-- 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`)
+- 규칙과 스킬, 에이전트(`AGENTS.md`, `CLAUDE.md`, `.agents/skills`, `.agents/agents`, `.claude/agents`, `.claude/skills`, `.codex/agents`·`skills`·`prompts`, `skills.manifest.json`, `skills-lock.json`)
+- 훅 설정(`.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json`)
+- 하네스 스크립트(`scripts/`의 `dev-cycle`, `sync-agents`, `skills-setup`, `delegation`, `resource-guard`, `vercel-deploy`, `release`, `export-html`, `load-keys`)
+- `.dev-cycle.json` 자신, `docs/dev-workflow.md`, `.vercelignore`
+- 빌드·배포 설정(`next.config`, `vercel.json`, `.github/workflows/`·`actions/`, `turbo.json`)
+- 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`, `packages/config/`)
 
 `--adopt` 프로젝트는 설치기가 이 규칙을 그 프로젝트에 맞게 바꾸고, 규칙 밖의 코드는 계층을 알 수 없어서 무거운 F로 봐요. <!-- edition:pro -->
 

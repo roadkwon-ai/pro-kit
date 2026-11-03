@@ -26,7 +26,7 @@
 > **사용 전에**: 이 저장소의 프로킷 코드·스킬·문서는 [MIT License](LICENSE)를 따릅니다. 설치할 때 원본 출처에서 받는 외부 스킬에는 각자의 [원래 조건](THIRD_PARTY_NOTICES.md)이 적용됩니다.
 
 <p align="center">
-  <strong>PRD로 스킬 추천 &middot; 화면만 프로젝트 &middot; 프로젝트 스킬 6개 &middot; dev-cycle 라운드와 독립 리뷰 &middot; 디자인 스타일 추천·DESIGN.md &middot; 화면 프리셋 팩 &middot; HTML 내보내기 &middot; GitHub Pages·Vercel 정적 배포</strong>
+  <strong>PRD로 스킬 추천 &middot; 화면만 프로젝트 &middot; 프로젝트 스킬 7개 &middot; dev-cycle 라운드와 독립 리뷰 &middot; 디자인 스타일 추천·DESIGN.md &middot; 화면 프리셋 팩 &middot; HTML 내보내기 &middot; GitHub Pages·Vercel 정적 배포</strong>
 </p>
 
 <p align="center">
@@ -65,12 +65,12 @@ flowchart LR
 | 하네스를 이루는 것 | 하는 일 |
 |---|---|
 | 규칙 문서 | 에이전트가 시작할 때 `AGENTS.md`, 용어집, 프로젝트 소개를 읽어 새 세션도 같은 원칙으로 화면을 만듭니다 |
-| 스킬 | 프로젝트 스킬 6개가 진행 순서, 화면 기획과 디자인, 검사, 프리셋 팩 활용, 스킬 구성 변경, 외부 스킬 갱신을 맡습니다. 전문 작업은 공식·외부 스킬에 맡기고 결과를 검수합니다. 첫 설정은 이 저장소의 `prokit-init`이 합니다. [프로킷 스킬](handbook/skills/prokit-skills.md) · [공식 스킬과 연결](handbook/skills/official-skills.md) |
+| 스킬 | 프로젝트 스킬 7개가 진행 순서, 화면 기획과 디자인, 검사, 프리셋 팩 활용, 스킬 구성 변경, 외부 스킬 갱신, 공식 스킬을 맡을 에이전트 배치를 맡습니다. 전문 작업은 공식·외부 스킬에 맡기고 결과를 검수합니다. 첫 설정은 이 저장소의 `prokit-init`이 합니다. [프로킷 스킬](handbook/skills/prokit-skills.md) · [공식 스킬과 연결](handbook/skills/official-skills.md) |
 | 역할 나누기 | 만든 에이전트가 아닌 리뷰 에이전트가 결과를 따로 검토합니다. [위임 에이전트와 리뷰 에이전트](handbook/concepts/agent-roles.md) |
 | 대조표와 audit | 작업을 케이스로 나눠 대조표를 열고, 모든 칸에 실행한 증거가 있어야 라운드를 닫습니다. 화면 리뷰 점수는 리뷰 기록 파일과 맞춰 봅니다. [dev-cycle 라운드](handbook/concepts/dev-cycle.md) · [케이스와 대조표](handbook/concepts/cases.md) |
-| 자동 검사 | 타입, 린트, 빌드, 화면 디자인, 커밋 전 비밀값을 명령으로 확인합니다. 마감 전에는 개발 화면과 내보낸 HTML에서 모든 링크와 버튼을 눌러 봅니다. [화면만 프로젝트와 HTML 내보내기](handbook/design/screen-only.md) |
+| 자동 검사 | 타입, 린트, 빌드, 화면 디자인, 커밋 전 비밀값을 명령으로 확인합니다. 열린 라운드 없이 코드를 고치거나 커밋하려 하면 훅이 막습니다. 마감 전에는 개발 화면과 내보낸 HTML에서 모든 링크와 버튼을 눌러 봅니다. [화면만 프로젝트와 HTML 내보내기](handbook/design/screen-only.md) |
 
-화면은 스타일 추천부터 `DESIGN.md`, 모든 페이지까지 [UI/UX 흐름](handbook/design/ui-flow.md)을 따릅니다. 두뇌(진행을 주도하는 스킬 묶음)는 하나를 권하되 여럿을 함께 쓸 수 있고, 과설계 방지 스킬(ponytail 추천)은 하나를 고르거나 고르지 않습니다. 고르는 법은 [두뇌와 선택 스킬](handbook/skills/brains.md)에 있습니다.
+화면은 스타일 추천부터 `DESIGN.md`, 모든 페이지까지 [UI/UX 흐름](handbook/design/ui-flow.md)을 따릅니다. 두뇌(진행을 주도하는 스킬 묶음)는 하나를 권하되 여럿을 함께 쓸 수 있고, 과설계 방지 스킬(ponytail 추천)은 하나를 고르거나 고르지 않습니다. 화면 디자인 단계를 맡는 UI 스킬은 impeccable(기본)과 hallmark 중에서 고르고, 고르지 않으면 기본 AI가 만들며, 진행 중에 바꿀 수도 있습니다. 고르는 법은 [두뇌와 선택 스킬](handbook/skills/brains.md)에 있습니다.
 
 그냥 AI에게 맡길 때와 이렇게 다릅니다.
 

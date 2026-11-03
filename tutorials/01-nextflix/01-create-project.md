@@ -84,7 +84,7 @@ claude --dangerously-skip-permissions   # Codex는 codex --yolo
 <!-- b:clone-create-hooks -->
 두 번째 줄은 화면 파일을 고칠 때마다 디자인 검사기가 결과를 알려 주게 켜는 명령이에요. 처음 한 번만 하면 돼요. 폴더를 믿을지 물으면 "예"를 고르세요([폴더를 믿을지 물을 때](../reference/claude-code-and-codex.md#폴더를-믿을지-물을-때)).
 
-Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅을 믿는다고 확인하세요.
+Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅과 프로킷 훅(라운드 없는 편집 막기, 스킬 기록)을 믿는다고 확인하세요.
 <!-- /b -->
 
 ## 3. (선택) 시안을 그리려면

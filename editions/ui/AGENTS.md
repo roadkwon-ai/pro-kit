@@ -31,7 +31,7 @@
     - 프로젝트 경로, 8번 결과, 개발 서버로 보는 법(`pnpm dev:web`), HTML로 내보내기(`pnpm export:html` 또는 "HTML로 내보내줘"), 배포("GitHub Pages에 배포해줘", "Vercel에 배포해줘")
     - 스킬 구성: 고른 두뇌·과설계 방지 스킬·추가 스킬·UI 스킬·응답 방식·화면 디자인 보조와 `pnpm skills:check`의 해당 줄, 설치기가 이 프로젝트에서 끈 전역 플러그인과 남은 전역 경고, 건너뛴 추천과 나중에 설치하는 명령(`prokit-init` 6절)
     - 이미지 그리기: <!-- v:agents.imageTools -->Codex, Antigravity, Grok Build<!-- /v -->는 자체 이미지 도구로 그린다. Claude Code는 ChatGPT로 로그인한 Codex CLI(`gpt-image` 스킬)나 `OPENAI_API_KEY`(프로젝트나 작업 폴더의 `.env`. 세션을 열 때 훅이 불러온다)가 있어야 그린다. 없으면 배치도로 진행한다
-    - 사용자가 할 일: 새 에이전트 세션에서 신뢰 질문에 동의, UI 스킬로 impeccable을 골랐으면 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`(스킬 호출로 켜지 않는다), `GLOSSARY.md`·`docs/domain/project.md` 채우기, 필요할 때 선택 스킬 묶음 설치(`pnpm skills:setup --optional <묶음>`)
+    - 사용자가 할 일: 새 에이전트 세션에서 신뢰 질문에 동의(Codex는 `/hooks`에서 `.codex/hooks.json`의 프로킷 훅도 신뢰해야 라운드 없는 편집 막기와 스킬 기록이 돈다. Antigravity는 폴더를 신뢰해야 돈다), UI 스킬로 impeccable을 골랐으면 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`(스킬 호출로 켜지 않는다), `GLOSSARY.md`·`docs/domain/project.md` 채우기, 필요할 때 선택 스킬 묶음 설치(`pnpm skills:setup --optional <묶음>`)
     - 로그인·저장 같은 실제 서비스로 바꾸려면 Pro 스킬셋이 필요하다는 것(아래 "Pro 스킬셋으로 올리기")
 
 초기 구성이 끝나면 이 저장소 세션에서 새 프로젝트의 화면 개발을 이어 가지 않는다. 새 프로젝트의 스킬, 에이전트, dev-cycle 규칙은 그 프로젝트에서 연 새 세션에서만 불러온다. 보고할 때 새 프로젝트에서 세션을 열라고 안내한다.

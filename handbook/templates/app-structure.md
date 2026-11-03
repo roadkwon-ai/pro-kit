@@ -38,6 +38,8 @@ flowchart LR
 | `packages/db` | Drizzle 스키마와 마이그레이션 | `prokit-db` | <!-- edition:ui | `packages/api`, `packages/auth`, `packages/db` | 서버와 DB 폴더예요. 화면만 만드는 프로젝트에서는 쓰지 않아요 | 없음 | --> <!-- edition:pro -->
 | `packages/config` | 앱과 패키지가 함께 쓰는 공유 설정(tsconfig) | 없음 |
 
+계층마다 고치는 에이전트도 달라요. 화면(`apps/web`의 화면 파일, `packages/ui`)은 `prokit-ui-builder`<!-- edition:pro -->, 서버·API(`packages/api`, `packages/auth`, `apps/web/src/app/api/`)는 `prokit-api-builder`, DB(`packages/db`)는 `prokit-db-builder`<!-- /edition -->가 맡아요. 열린 라운드에서 메인 세션이나 다른 계층 에이전트가 이 파일들을 고치려 하면 훅이 막아요([위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md)).
+
 ## 내 요청은 어디를 바꾸나
 
 > [!TIP]

@@ -51,7 +51,7 @@ flowchart TD
 | `docs/adr/` | 되돌리기 어려운 설계 결정의 기록이에요. 결정을 바꿀 때 에이전트가 이유와 함께 남겨요 |
 | `docs/plans/`, `tasks/plan.md` | 진행 계획이에요. Task의 순서와 제목에는 지문(sig)이 있어서 손으로 고치면 검사가 알아채요([정밀 분석과 진행 계획](../concepts/project-plan.md)) | <!-- edition:pro -->
 | `tasks/todo.md`의 할 일과 백로그 | 에이전트에게 "할 일에 ○○ 더해줘"라고 시켜요. 아래 "건드리지 말 것"의 대조표 칸과 같은 파일에 있어서, 직접 고치다가 표를 깨기 쉬워요 |
-| `skills.manifest.json`, 스킬 구성 | 두뇌, 과설계 방지 스킬, 추가 스킬은 "두뇌 바꿔줘"처럼 요청해요. 에이전트가 `pnpm skills:setup`으로 바꿔요(열린 라운드가 있으면 그 라운드에서, 없으면 H 라운드에서)([두뇌와 선택 스킬](../skills/brains.md)) |
+| `skills.manifest.json`, 스킬 구성 | 두뇌, 과설계 방지 스킬, UI 스킬, 추가 스킬은 "두뇌 바꿔줘", "UI 스킬을 hallmark로 바꿔줘"처럼 요청해요. 에이전트가 `pnpm skills:setup`으로 바꿔요(열린 라운드가 있으면 그 라운드에서, 없으면 H 라운드에서)([두뇌와 선택 스킬](../skills/brains.md)). 공식 스킬을 맡을 에이전트 배치(`performers`)는 "이 스킬은 어느 에이전트가 맡게 해줘"처럼 요청하면 `prokit-skills-assign`이 정해요 |
 
 ## 건드리지 말 것
 
@@ -61,6 +61,8 @@ flowchart TD
 | 파일 | 왜 건드리지 않나요 |
 |---|---|
 | `.dev-cycle.json` | 케이스 판정 경로, 검사 명령, 화면 점수 기준이에요. 설치기가 채우고 `dev-cycle`이 읽어요. 잘못 고치면 케이스 판정이 달라져 검사가 느슨해질 수 있어요. 바꿀 때는 H 라운드로만 해요([설정 읽기](dev-cycle-config.md)) |
+| `.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json` | 라운드 없는 편집 막기(`edit-guard`), 이름이나 포트로 프로세스 끄기 막기(`shell-guard`), 읽은 스킬 기록(`skill-log`)이 걸려 있는 훅 설정이에요. 지우거나 고치면 그 막기와 기록이 멈춰서 audit이 같은 일을 확인하지 못해요 |
+| `.prokit/` | 훅이 남기는 스킬 읽기·편집 기록과 자원 보호 상태예요. audit이 대조표 증거와 맞춰 보는 기록이라 손으로 쓰지 않아요. git이 무시해요 |
 | `skills-lock.json` | `skills` CLI가 설치한 스킬의 출처와 판을 적은 잠금 파일이에요. 손으로 고치면 설치 상태와 어긋나요 |
 | `.codex/agents/`, `.agents/agents/` | `.claude/agents/`의 정본에서 `pnpm agents:sync`가 만든 생성물이에요. 고쳐도 다음 동기화가 덮어쓰고, `pnpm agents:check`가 어긋남을 알려 줘요. 에이전트 규칙을 바꾸려면 정본(`.claude/agents/`)을 H 라운드로 고쳐요 |
 | `.agents/skills/prokit-*`, `.claude/skills/` | 프로킷 스킬과 연결이에요. 바꾸면 모든 라운드의 규칙이 달라져요. 템플릿의 새 판은 [갱신 반영](../templates/update-existing.md)으로 가져와요 |

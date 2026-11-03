@@ -21,12 +21,14 @@ my-app/
 ├── AGENTS.md, CLAUDE.md, GLOSSARY.md                                                   (템플릿)
 ├── .agents/skills/             prokit-* 스킬, 공식 도메인 스킬, mattpocock·skill-creator, 고른 두뇌·과설계 방지·UI 스킬(Codex·Antigravity·Grok Build)
 ├── .agents/agents/             에이전트 생성물(Antigravity)
-├── .claude/                    agents/(정본), skills/(링크), settings.json(플러그인, 키 훅)
-├── .codex/                     agents/(생성물), skills·prompts(OMX)
+├── .agents/hooks.json          Antigravity 훅(세션 시작, 편집 막기, 스킬 기록)
+├── .claude/                    agents/(정본), skills/(링크), settings.json(플러그인, 훅)
+├── .codex/                     agents/(생성물), hooks.json(훅), skills·prompts(OMX)
 ├── scripts/                    dev-cycle.mjs, sync-agents.mjs, skills-setup.mjs, delegation.mjs, resource-guard.mjs,
 │                               vercel-deploy.mjs, release.mjs, export-html.mjs, load-keys.mjs
 ├── release/                    production 배포마다 릴리스 노트 (pnpm release)
 ├── skills.manifest.json, skills-lock.json, .dev-cycle.json, .vercelignore
+├── .prokit/                    스킬 읽기·편집 기록, 자원 보호 상태(git이 무시해요)
 ├── .impeccable/                impeccable 기록(critique/*.md 등. impeccable을 골랐을 때 화면을 리뷰하면 생기고 커밋해요)
 ├── .hallmark/                  hallmark 기록(log.json은 커밋하고, shots/·preflight.json은 git이 무시해요. hallmark를 골랐을 때)
 ├── licenses/                   PROKIT-SCOPE.md, PROKIT-LICENSE.txt: 템플릿이 전한 파일의 MIT 범위 안내   (템플릿)
@@ -59,6 +61,7 @@ my-app/
 | `tasks/todo.md`, `tasks/archive/`, `tasks/evidence/` | 남은 일반 할 일·백로그와 진행 중 대조표, 날짜별 완료 기록과 색인, 스크린샷과 `ui-audit-*.md` 같은 증거(`tasks/evidence/`는 git이 무시해요) | [증거와 audit, 사용자 확인](../concepts/audit-and-confirm.md) |
 | `skills.manifest.json`, `skills-lock.json` | 설치할 스킬 목록과 설치한 판 | [설치와 업데이트 구조](../skills/install-and-update.md) |
 | `.claude/agents/`, `.codex/agents/`, `.agents/agents/` | 전문 수행 에이전트(화면<!-- edition:pro -->·서버·DB<!-- /edition --> 수행자, 실행 확인, 구현 수행자), 전문 리뷰어, 최종 리뷰어<!-- edition:pro -->, 정밀 분석(`prokit-analyzer`)<!-- /edition -->의 정본과 생성물(Codex용, Antigravity용) | [위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md) |
+| `.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json` | 에이전트 훅 설정이에요. 읽은 스킬과 파일 편집을 기록하고, 열린 라운드 없이 코드를 고치는 일과 이름이나 포트로 골라 프로세스를 끄는 명령을 막아요. Claude Code는 설치기가 `.claude/settings.json`에 더하고, 세션을 열 때 `.env`의 이미지 키와 배포 토큰도 불러와요. Codex는 `pnpm skills:setup`이 `.codex/hooks.json`에 더하고 `/hooks`에서 신뢰해야 돌아요. Antigravity는 템플릿이 주는 `.agents/hooks.json`을 쓰고 폴더를 신뢰해야 돌아요(프로세스 끄기 막기는 걸지 않아요) | [하네스 엔지니어링](../concepts/harness.md#자세히) |
 | `scripts/delegation.mjs`, `scripts/resource-guard.mjs`, `.prokit/` | 위임 패킷의 실제 변경 검증과 자원 보호. `.prokit/` 실행 상태는 Git과 Biome에서 제외해요 | [위임과 자원 관리](../concepts/delegation-and-resources.md) |
 | `licenses/` | `PROKIT-SCOPE.md`는 템플릿이 전달한 파일(스킬, 스크립트, 문서)과 외부 구성 요소를 구분하는 안내예요. `PROKIT-LICENSE.txt`는 프로킷 자체 코드·스킬·문서의 MIT 라이선스 사본이에요. 이 파일들이 내 앱 전체의 라이선스를 정하지는 않고, 내가 쓴 코드의 권리를 프로킷에 넘기지도 않아요. 지우지 않고 그대로 둬요 | [프로킷의 사용 조건](../../README.md) |
 | `.vercelignore` | 배포에서 비밀값 파일을 빼요 | [비밀값 지키기](../deploy/secrets.md) |

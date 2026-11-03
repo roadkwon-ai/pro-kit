@@ -19,12 +19,12 @@ supabase 템플릿은 `prokit-next-supabase`로 바꿔요. <!-- edition:pro -->
 
 | 옵션 | 동작 |
 |---|---|
-| (없음) | 파일 복사, `package.json` 스크립트 추가, Claude Code 키 훅(`.claude/settings.json`) 추가, 이 프로젝트에 스킬·플러그인 설치(두뇌·과설계 방지 스킬은 없음, UI 스킬은 impeccable), agent-browser CLI(<!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v -->) |
-| `--diff` | 미리 보기예요. 템플릿과 다른 기존 파일의 차이, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 주고, 파일은 쓰지 않아요. 스킬·플러그인도 설치하지 않아요 |
-| `--skip-skills` | 스킬·플러그인·OMX 설치와 agent-browser CLI 자동 설치를 건너뛰어요. 고른 두뇌·과설계 방지 스킬·UI 스킬은 `.dev-cycle.json`에 기록만 하고, 나중에 `pnpm skills:setup`이 설치해요 |
+| (없음) | 파일 복사, `package.json` 스크립트 추가, Claude Code 훅(`.claude/settings.json`에 키 불러오기, 스킬 기록, 라운드 없는 편집 막기, 이름·포트로 프로세스 끄기 막기) 추가, git pre-commit 훅, 이 프로젝트에 스킬·플러그인 설치(두뇌·과설계 방지 스킬은 없음, UI 스킬은 impeccable), agent-browser CLI(<!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v -->) |
+| `--diff` | 미리 보기예요. 템플릿과 다른 기존 파일의 차이, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 주고, 파일은 쓰지 않아요. 프로젝트가 채워 가는 파일(`GLOSSARY.md`, `docs/domain/project.md`, `tasks/todo.md`, `tasks/archive/README.md`)은 diff 없이 유지로만 나와요. 스킬·플러그인도 설치하지 않아요 |
+| `--skip-skills` | 스킬·플러그인·OMX 설치와 agent-browser CLI 자동 설치를 건너뛰어요. 고른 두뇌·과설계 방지 스킬·UI 스킬은 `.dev-cycle.json`에 기록만 하고, 나중에 `pnpm skills:setup`이 설치해요. `--matt`·`--optional`은 기록하지 않으니 나중에 `pnpm skills:setup`에 다시 줘요 |
 | `--brain <이름>[,…]` | 두뇌를 골라요. 여러 개는 쉼표로 잇고 첫 번째가 주 두뇌예요(<!-- v:brains.names -->superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering<!-- /v -->). 기본은 `none`이에요 |
 | `--simplicity <이름>` | 과설계 방지 스킬을 하나 골라요(ponytail, caveman, karpathy). 기본은 `none`이에요 |
-| `--ui-skill <이름>[,…]` | UI 스킬을 골라요(impeccable, hallmark). 여러 개는 쉼표로 잇고 첫 번째가 주 UI 스킬이에요. 주지 않으면 `impeccable`이고, `none`이면 UI 스킬 없이 가요 |
+| `--ui-skill <이름>[,…]` | UI 스킬을 골라요(impeccable, hallmark). 여러 개는 쉼표로 잇고 첫 번째가 주 UI 스킬이에요. 주지 않으면 `impeccable`이에요. `none`이면 외부 UI 스킬 없이 기본 AI가 Anthropic `frontend-design`(함께 설치)과 게슈탈트 지침으로 디자인해요 |
 | `--matt <스킬>`, `--optional <묶음>` | mattpocock 추가 스킬과 선택 스킬 묶음(i-have-adhd, taste 포함)을 설치해요. 여러 개는 쉼표로 이어요 |
 | `--project-type <유형>` | 프로젝트 유형을 `.dev-cycle.json`의 `projectType`에 기록해요. `new`(새 프로젝트), `early`(기획 자료와 프로토타입만 있는 초기), `operating`(운영 중), `migration`(다른 스택에서 전환). `early`는 옮겨 둔 `prototype/`을 Biome 검사에서 빼요 | <!-- edition:pro -->
 | `--legacy <경로>` | `migration`에서만 써요. 기존 코드 폴더를 새 프로젝트 기준 상대 경로로 `legacy.path`에 기록해요. 안내용이라 코드는 읽기만 하고, `pnpm dev-cycle status`에 보여 줘요 | <!-- edition:pro -->
@@ -68,7 +68,7 @@ flowchart TD
 
 | 유형(설치 옵션) | 설치하는 것 | 설치하지 않거나 바꾸는 것 |
 |---|---|---|
-| 새 프로젝트(`new` 또는 옵션 없음) | 전체 템플릿: 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개, 에이전트, dev-cycle과 스크립트 전부(배포, 릴리스, HTML 내보내기 포함), 문서 골격, `licenses/`, `tasks/`, 제작 표시 컴포넌트. `dev`·`build`에 자원 보호 래퍼, Biome 포맷, turbo 설정 | 없음 |
+| 새 프로젝트(`new` 또는 옵션 없음) | 전체 템플릿: 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 7 -->개, 에이전트, dev-cycle과 스크립트 전부(배포, 릴리스, HTML 내보내기 포함), 문서 골격, `licenses/`, `tasks/`, 제작 표시 컴포넌트. `dev`·`build`에 자원 보호 래퍼, Biome 포맷, turbo 설정 | 없음 |
 | 초기 프로젝트(`early`) | 새 프로젝트와 같아요. `.dev-cycle.json`에 `projectType: early`를 기록해요 | 옮겨 둔 `prototype/` 폴더는 Biome 검사에서 빼요 |
 | 운영 중, Better-T-Stack(`operating`) | 전체 템플릿에서 아래만 빼고 같아요 | `dev`·`build`에 자원 보호 래퍼를 씌우지 않고(배포와 CI가 쓰는 명령), 제작 표시 컴포넌트를 더하지 않아요 |
 | 운영 중, 그 밖의 Next.js(`operating --adopt`) | 하네스만: 스킬 7개(`prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`, `prokit-skills-assign`), 스크립트 6개(`dev-cycle`, `delegation`, `resource-guard`, `skills-setup`, `sync-agents`, `load-keys`), `.claude/agents`, `tasks/`, `licenses/`, `AGENTS.md`·`CLAUDE.md`(adopt 블록), `.dev-cycle.json`, `skills.manifest.json`, `GLOSSARY.md`, `docs/dev-workflow.md`, `docs/domain/project.md` | `prokit-api`, `prokit-db`, `prokit-deploy`, `prokit-pack-use`, 배포·릴리스·HTML 내보내기 스크립트와 그 `package.json` 명령(`vercel:deploy`, `export:html`, `release`), `.vercelignore`, `docs/adr/`, 제작 표시 컴포넌트, 자원 보호 래퍼, Biome 포맷, `biome.json`·`turbo.json` 수정. Better-T-Stack 전용 공식 스킬도 건너뛰어요 |
@@ -113,8 +113,8 @@ my-next-app/
 <!-- edition:ui 1. **DB 준비는 건너뛰어요**: 화면만 프로젝트는 DB를 쓰지 않아요. -->
 1. **첫 마이그레이션**: 로컬 DB를 띄우고 `db:generate`로 인증 테이블 마이그레이션을 만든 뒤 `db:migrate`로 적용해요. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션(인증 테이블의 RLS 켜기)을 더하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인해요. Better-T-Stack이 만든 프로젝트 `README.md`의 `db:push` 단계는 따르지 않아요. 화면만 프로젝트는 건너뛰어요. <!-- edition:pro -->
 2. **포맷 정리와 커밋**: `pnpm check`로 Better-T-Stack이 만든 코드의 포맷과 정렬을 한 번 정리하고 `pnpm exec biome check .`가 exit 0인지 봐요. 설치 결과, <!-- edition:pro -->포맷 정리, 첫 마이그레이션을<!-- /edition --><!-- edition:ui 포맷 정리를 --> 기본 브랜치에 커밋해요.
-3. **새 세션 열기**: 스킬과 에이전트는 새 세션부터 보여요. 첫 실행 때 묻는 신뢰 질문에 동의해야 프로젝트 설정이 켜져요. Claude Code는 플러그인, Codex는 에이전트와 프로젝트 스킬, Grok Build는 규칙과 스킬이에요(`grok --trust`로 열면 묻지 않고 신뢰해요). `--with-global`로 Codex Ponytail을 선택 설치했다면 `/hooks`에서 별도로 신뢰한 뒤 새 세션을 열어요. Antigravity는 `AGENTS.md`, `.agents/skills`, `.agents/agents`를 그대로 읽어요([지원하는 에이전트](../start/supported-agents.md#신뢰-질문)).
-4. **화면 디자인 검사 켜기**: impeccable을 골랐다면 개발자마다 한 번, 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`을 실행해요. 켠 뒤 `.claude/settings.local.json`의 훅 명령이 `…/scripts/impeccable" hook`인지 확인해요. hallmark만 골랐다면 이 단계는 없어요.
+3. **새 세션 열기**: 스킬과 에이전트는 새 세션부터 보여요. 첫 실행 때 묻는 신뢰 질문에 동의해야 프로젝트 설정이 켜져요. Claude Code는 플러그인, Codex는 에이전트와 프로젝트 스킬, Grok Build는 규칙과 스킬이에요(`grok --trust`로 열면 묻지 않고 신뢰해요). `--with-global`로 Codex Ponytail을 선택 설치했다면 `/hooks`에서 별도로 신뢰한 뒤 새 세션을 열어요. Antigravity는 `AGENTS.md`, `.agents/skills`, `.agents/agents`를 그대로 읽어요. 라운드 없는 편집 막기와 스킬 기록 훅은 Codex가 `/hooks`에서 `.codex/hooks.json`을 신뢰해야, Antigravity가 폴더를 신뢰해야 돌아요([지원하는 에이전트](../start/supported-agents.md#신뢰-질문)).
+4. **화면 디자인 검사 켜기**: impeccable을 골랐다면 개발자마다 한 번, 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`을 실행해요. 켠 뒤 `.claude/settings.local.json`의 훅 명령이 `…/scripts/impeccable" hook`인지 확인해요. hallmark만 골랐다면 이 단계는 없어요. 대신 첫 화면 라운드가 만드는 `.hallmark/log.json`, `.hallmark/salt`, `.hallmark/.gitignore`는 커밋해요(`shots/`와 `preflight.json`은 설치기가 git 무시에 넣었어요).
 5. **프로젝트 소개 채우기**: `GLOSSARY.md`와 `docs/domain/project.md`를 채워요.
 6. **첫 요청**: "…을 만들어줘"처럼 요청하면 `prokit-dev-cycle`이 라운드를 열어요([dev-cycle 라운드](../concepts/dev-cycle.md)). <!-- edition:pro -->기존 프로젝트를 들였다면 새 세션이 `docs/first-request.md`를 읽고 정밀 분석부터 시작해요([기존 프로젝트에 도입하기](../start/adopt.md)).<!-- /edition -->
 
@@ -124,9 +124,12 @@ my-next-app/
 
 - `templates/<템플릿>/files/` 아래 파일(스킬, 에이전트, dev-cycle, 문서 골격, 스크립트)을 프로젝트에 복사해요.
 - `package.json`에 스크립트(`dev-cycle`, `skills:*`, `agents:*`, `export:html`<!-- edition:pro -->, `vercel:deploy`<!-- /edition --> 등)를 더해요.
-- 다시 생성되는 파일(<!-- edition:pro -->마이그레이션, `schema/auth.ts`, <!-- /edition -->varlock의 `src/env.ts`)과 `pnpm export:html`이 만든 `html/`을 `biome.json` 검사 대상에서 빼요.
+- `.claude/settings.json`에 훅 네 개를 없는 것만 더해요. 세션을 열 때 `.env`의 키를 불러오는 훅, 부른 스킬을 `.prokit/skills-used.jsonl`에 남기는 훅(`skill-log`), 열린 라운드 없이 코드나 하네스를 편집하지 못하게 하는 훅(`edit-guard`), `pkill`처럼 이름이나 포트로 골라 프로세스를 끄는 셸 명령을 막는 훅(`shell-guard`)이에요. 같은 훅의 Antigravity판은 템플릿 파일 `.agents/hooks.json`이고, Codex판 `.codex/hooks.json`은 `pnpm skills:setup`이 기기마다 병합해요(OMX 등 다른 항목은 그대로 둬요). `.claude/settings.json`을 읽지 못하면 직접 더하라고 알려요. 훅이 막고 기록하는 일은 [하네스 엔지니어링](../concepts/harness.md#자세히)에 있어요.
+- `.gitignore`에 작업 파일을 더해요. `tasks/evidence/`, `.omc/`·`.omx/`·`.prokit/`, `.claude/settings.local.json`, UI 스킬의 작업 파일(`.impeccable/`의 개인 설정·캐시·스크린샷, `.hallmark/shots/`와 `preflight.json`), `taste` 묶음의 `/.taste-skill/`, 루트와 `packages/*`의 `.env.*`(`.env.schema`·`.env.example` 제외), `/html/`이에요.
+- 다시 생성되는 파일(<!-- edition:pro -->마이그레이션, `schema/auth.ts`, <!-- /edition -->varlock의 `src/env.ts`)과 `pnpm export:html`이 만든 `html/`을 `biome.json` 검사 대상에서 빼요. 마크다운 파일(`**/*.md`)도 빼요. Biome 2.6의 마크다운 포맷이 `tasks/todo.md`의 대조표와 `AGENTS.md` 표를 매번 바꿔 lint가 실패해서예요.
 - 설치된 turbo가 2.11.5 이상이면 `turbo.json`에 `"agentGuidance": false`를 넣어요. turbo가 AI 에이전트를 감지하면 루트 `AGENTS.md`에 규칙 블록을 쓰고 커밋하라고 지시하기 때문이에요.
-- `scripts/skills-setup.mjs`로 `skills.manifest.json`의 스킬과 플러그인을 이 프로젝트에 설치해요([설치와 업데이트 구조](../skills/install-and-update.md)). 두뇌는 여럿을 고를 수 있고, openspec·spec-kit·compound-engineering은 그 두뇌를 골랐을 때만 필요한 도구를 받아요. UI 스킬도 고른 것만 설치해요. hallmark를 골랐는데 Chrome이나 전역 `puppeteer-core`가 없으면 알리기만 하고 설치하지 않아요.
+- `turbo.json`의 `globalPassThroughEnv`에 프록시 변수(`HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`와 소문자판 세 개)를 넣어요. turbo의 엄격 환경 변수 모드가 이 변수를 작업에 넘기지 않아, 프록시 뒤(회사망, Codex 샌드박스)에서 빌드의 `next/font/google` 받기가 실패해서예요. 이미 `globalPassThroughEnv`가 있으면 고치지 않고 빠진 변수를 직접 더하라고 알려요.
+- `scripts/skills-setup.mjs`로 `skills.manifest.json`의 스킬과 플러그인을 이 프로젝트에 설치해요([설치와 업데이트 구조](../skills/install-and-update.md)). 두뇌는 여럿을 고를 수 있고, openspec·spec-kit·compound-engineering은 그 두뇌를 골랐을 때만 필요한 도구를 받아요. UI 스킬도 고른 것만 설치해요. 스킬을 지울 때는 그 스킬이 켠 훅(impeccable `hooks on` 등)도 `.claude/settings.local.json`과 `.codex/hooks.json`에서 함께 빼요. 고르지 않은 UI 스킬의 개인(전역) 사본은 이 프로젝트에서만 꺼요(`.claude/settings.local.json`). Codex 전역 사본은 프로젝트 설정으로 끌 수 없어 경고만 해요. hallmark를 골랐는데 Chrome이나 `puppeteer-core`가 없으면 알리기만 하고 설치하지 않아요. `puppeteer-core`는 전역에 두거나, 프로젝트 밖 폴더에 받고 셸에 `HALLMARK_PUPPETEER=<폴더>`를 줘도 돼요.
 
 ### 첫 커밋이 중요한 이유
 

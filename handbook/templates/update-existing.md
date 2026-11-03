@@ -116,6 +116,16 @@ UI 스킬 선택(`--ui-skill`, hallmark)을 쓰려면 H 라운드에서 템플�
 
 `performers`가 없으면 audit은 위임과 맡은 에이전트의 기록을 보지 않고 예전처럼 검사해요. 그 프로젝트에만 있는 공식 스킬은 옮긴 뒤 `prokit-skills-assign`으로 맡을 에이전트를 정해요.
 
+### 일하는 도중에 막는 훅과 turbo 프록시 설정이 생긴 판 이전
+
+이 판부터 설치기와 `pnpm skills:setup`이 dev-cycle 훅과 `turbo.json` 설정을 더해요([하네스 엔지니어링](../concepts/harness.md#자세히)). 이렇게 옮겨요.
+
+1. 열린 라운드를 닫아요.
+2. H 라운드에서 `scripts/dev-cycle.mjs`를 먼저 옮겨요. 훅이 부르는 명령(`edit-guard`, `shell-guard`, `skill-log`, `agent-start`)이 이 파일에 있어요.
+3. `install.sh <프로젝트> --skip-skills`가 `.claude/settings.json`에 없는 훅을 더하고, 새 파일 `.agents/hooks.json`(Antigravity)을 복사하고, `turbo.json`의 `globalPassThroughEnv`에 프록시 변수를 더해요. 먼저 `--diff`로 볼 수 있어요. 이미 `globalPassThroughEnv`가 있으면 고치지 않고 빠진 변수를 직접 더하라고 알려요.
+4. `.codex/hooks.json`은 설치기가 아니라 `pnpm skills:setup`이 기기마다 더해요. `--skip-skills`로는 생기지 않으니 옮긴 `scripts/skills-setup.mjs`로 한 번 실행하고, Codex에서 `/hooks`로 신뢰해요.
+5. `.dev-cycle.json`의 계층 규칙(`rules`, `authPaths`)과 하네스 규칙은 템플릿과 비교해 직접 맞춰요. 어느 계층 에이전트가 어느 파일을 고치는지가 이 규칙으로 정해져요.
+
 ## 관련 문서
 
 - [기존 프로젝트에 도입하기](../start/adopt.md)

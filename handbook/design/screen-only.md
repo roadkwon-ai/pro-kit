@@ -26,10 +26,10 @@
 - **버튼이 실제로 반응해요**: 체크, 상태 바꾸기, 추가 같은 동작은 화면 상태나 브라우저 저장소(`localStorage`)로 흉내 내요.
 - **서버를 부르는 부품은 빼요**: 헤더의 사용자 메뉴와 `/dashboard` 링크, 로그인·가입 폼의 `authClient`, `orpc` 호출은 화면에 쓰지 않아요. 첫 화면을 만들 때 Better-T-Stack 기본 헤더와 로그인 화면을 제품 화면으로 바꿔요.
 - **인증 파일은 그대로 둬요**: `auth-client.ts`, `packages/auth/` 같은 인증 경로 파일은 고치지 않아요. 실제 서비스로 바꿀 때 그대로 써요.
-- **설치된 Next 판을 따라요**: Next 기능을 쓰기 전에 프로젝트에 설치된 판의 문서(`apps/web/node_modules/next/dist/docs/`)를 먼저 읽어요. 에이전트가 아는 Next와 판이 다를 수 있어서예요. 컴포넌트는 Server Component가 기본이고, `"use client"`는 상태나 이벤트가 필요한 가장 작은 부분에만 붙여요.
-- **HTML로 내보낼 수 있게 지어요**: 동적 경로는 `generateStaticParams`로 값을 모두 내고, 쿼리 값은 클라이언트 컴포넌트에서 읽어요. `headers`, `cookies`, `redirect`, route handler, server action은 쓰지 않아요. 이미지는 `apps/web/public/` 아래에 두고 `next/image`로 불러요.
+- **설치된 Next 판을 따라요**: Next 기능을 쓰기 전에 프로젝트에 설치된 판의 문서(`apps/web/node_modules/next/dist/docs/`)를 먼저 읽어요. 에이전트가 아는 Next와 판이 다를 수 있어서예요. 읽은 문서 경로는 대조표 증거에 적어요. 컴포넌트는 Server Component가 기본이고, `"use client"`는 상태나 이벤트가 필요한 가장 작은 부분에만 붙여요.
+- **HTML로 내보낼 수 있게 지어요**: 동적 경로는 `generateStaticParams`로 값을 모두 내고, 쿼리 값은 클라이언트 컴포넌트에서 읽어요. `headers`, `cookies`, `redirect`, route handler, server action은 쓰지 않아요. 이미지는 `apps/web/public/` 아래에 두고 `next/image`로 불러요. 하위 경로에 올릴 때 내보내기가 경로 앞에 붙여 주므로, CSS `url()`이나 `<img>`에 `/`로 시작하는 경로를 직접 쓰지 않아요.
 - **제작 표시는 선택 사항이에요**: 출처를 알리고 싶으면 사이트 푸터에 `<ProkitCredit />`를 넣어요. 프로킷 심볼과 홈페이지·GitHub 링크를 제공해요. 템플릿이 `apps/web/src/components/prokit-credit.tsx`를 설치해 둬요. 표시 여부·문구·배치는 조정할 수 있어요. MIT의 저작권·허가문 보존 조건은 이 홍보 표시와 별개예요.
-- **모드와 언어도 화면 기능이에요**: 프리셋처럼 만들 때는 시스템·라이트·다크와 한국어·영어 전환을 넣어요. 문구는 같은 키의 두 사전에 두고, 전환 뒤 현재 페이지·입력 상태가 남아야 해요. 실전 서비스의 요구가 다르면 그 요구를 따라요.
+- **모드와 언어도 화면 기능이에요**: 완성팩이 지원하거나 사용자가 요청한 범위에서 시스템·라이트·다크와 한국어·영어 전환을 넣고 확인해요. 팩이 테마나 언어를 하나만 지원하면 임의로 더하지 않아요. 문구는 같은 키의 두 사전에 두고, 전환 뒤 현재 페이지·입력 상태가 남아야 해요. 실전 서비스의 요구가 다르면 그 요구를 따라요.
 
 > [!IMPORTANT]
 > 마감 전에는 개발 서버와 `pnpm export:html` 결과 양쪽에서 모든 링크·버튼과 모드·언어 전환을 확인해요. 개발 서버에서는 `/dashboard`와 `/api`가 살아 있어 남은 Better-T-Stack 부품이 드러나지 않기 때문이에요.
@@ -66,7 +66,7 @@ pnpm export:html --base /living  # GitHub Pages처럼 하위 경로에 올릴 �
 
 ### 배포
 
-배포는 "GitHub Pages에 배포해줘", "Vercel에 배포해줘"처럼 요청할 때만 해요. 화면 라운드가 닫힌 뒤(`[confirm]` 뒤) 메인 세션에서 하고, 원격 저장소나 Vercel 프로젝트를 만드는 것까지 요청한 것으로 봐요. 풀스택 배포(`pnpm vercel:deploy`)는 쓰지 않아요. 순서는 [GitHub Pages 배포](../deploy/github-pages.md)에 있어요.
+화면만 프로젝트는 라운드를 마칠 때 릴리스나 서비스 배포를 묻지 않고 대조표에 `배포 PASS: 화면만`을 적어요. 배포는 "GitHub Pages에 배포해줘", "Vercel에 배포해줘"처럼 요청할 때만 해요. 화면 라운드가 닫힌 뒤(`[confirm]` 뒤) 메인 세션에서 하고, 원격 저장소나 Vercel 프로젝트를 만드는 것까지 요청한 것으로 봐요. 풀스택 배포(`pnpm vercel:deploy`)는 쓰지 않아요. 순서는 [GitHub Pages 배포](../deploy/github-pages.md)에 있어요.
 
 ### 실제 서비스로 바꾸기
 

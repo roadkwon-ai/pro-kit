@@ -89,6 +89,8 @@ Antigravity와 Grok Build는 각 도구의 안내를 보세요.
 
 프로젝트 폴더에서 처음 열면 "이 폴더를 믿을지" 물어요. 튜토리얼에서 만든 폴더라면 "예"를 고르세요. 신뢰 여부에 따라 프로젝트 설정과 에이전트가 불러와져요.
 
+Codex는 프로젝트가 켜는 훅(`.codex/hooks.json`의 라운드 없는 편집 막기와 스킬 기록)도 `/hooks`에서 믿는다고 확인해야 돌아요. Antigravity는 폴더를 믿어야 훅(`.agents/hooks.json`)이 돌아요.
+
 > [!NOTE]
 > Codex 네이티브 Ponytail은 과설계 방지 스킬로 ponytail을 고르고 전역 도구 설치를 요청했을 때만 선택 설치해요. 설치했다면 `/hooks`에서 훅을 별도로 허용하고 새 세션을 열어 확인해요. 설치·프로젝트 신뢰·훅 허용의 차이는 [설치와 업데이트 구조](https://github.com/roadkwon-ai/pro-kit/blob/main/handbook/skills/install-and-update.md#ponytail-훅과-codex-네이티브-플러그인)에 있어요.
 
@@ -98,7 +100,7 @@ pro-kit에는 화면 디자인, 기능 개발, 검사, 배포를 돕는 스킬(�
 
 ## Antigravity와 Grok Build
 
-Google Antigravity와 xAI Grok Build도 Codex처럼 pro-kit의 `AGENTS.md` 규칙과 `.agents/skills`의 스킬을 읽어요. 그래서 튜토리얼의 프롬프트를 그대로 보내면 돼요. 다만 튜토리얼 전체를 이 둘로 따라 해 보지는 않았어요. Antigravity로는 첫 화면 제목을 바꾸는 라운드를 내가 확인하기 직전까지 진행해 봤고, Grok Build로는 규칙과 스킬을 읽고 라운드를 여는 데까지 확인했어요(2026-10-08).
+Google Antigravity와 xAI Grok Build도 Codex처럼 pro-kit의 `AGENTS.md` 규칙과 `.agents/skills`의 스킬을 읽어요. 그래서 튜토리얼의 프롬프트를 그대로 보내면 돼요. 다만 튜토리얼 전체를 이 둘로 따라 해 보지는 않았어요. Antigravity로는 첫 화면 제목을 바꾸는 라운드를 내가 확인하기 직전까지 진행해 봤고, Grok Build로는 규칙과 스킬을 읽고 라운드를 여는 데까지 확인했어요(2026-10-08). 그 뒤 Antigravity로는 같은 기능 요청과 UI 스킬 바꾸기도 내가 확인하기 직전까지 돌려 봤어요(2026-11).
 
 | 구분 | Antigravity | Grok Build |
 |---|---|---|

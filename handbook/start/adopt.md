@@ -115,7 +115,7 @@ flowchart TD
 - 로컬 DB와 첫 마이그레이션까지 마치고 기본 브랜치에 합쳐요. 운영 전이라 브랜치를 오래 두지 않아요.
 
 ### 운영 중인 Next.js
-- 새 브랜치 `prokit/setup`에 하네스(dev-cycle, 두뇌, 리뷰 게이트, 분석 에이전트)만 설치해요. **앱 코드와 배포 설정은 바꾸지 않아요.**
+- 새 브랜치 `prokit/setup`에 하네스(dev-cycle, 두뇌, 수행·리뷰·분석 에이전트, 편집 막기 같은 훅)만 설치해요. **앱 코드와 배포 설정은 바꾸지 않아요.**
 - Better-T-Stack 구조이고 DB가 Postgres와 Drizzle이면 실제 DB(Neon이나 Supabase)에 맞는 템플릿(`--project-type operating`)을 골라요. 실제 DB가 Supabase면 `prokit-next-supabase`, Neon이나 일반 Postgres면 `prokit-next-neon`이에요. 그렇지 않으면 하네스만 설치하는 `--adopt`로 설치하고, Better-T-Stack 전용 스킬(API, DB, 배포)은 설치하지 않아요. 계층별 경로 규칙은 정밀 분석 뒤 첫 Task에서 이 프로젝트에 맞춰요.
 - 하네스 커밋을 검토해 기본 브랜치에 합치길 권해요. 도입 브랜치에서 계속할 수도 있어요. 계속했다가 나중에 합치면 기준 브랜치 기록(`.dev-cycle.json`의 `defaultBranch`)을 기본 브랜치로 되돌려요.
 - `dev`·`build` 명령에는 자원 보호 래퍼를 씌우지 않아요. 배포와 CI가 쓰는 명령이라서예요.

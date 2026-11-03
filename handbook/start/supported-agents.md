@@ -24,6 +24,7 @@
 | 규칙 | `CLAUDE.md`(`@AGENTS.md`로 `AGENTS.md`를 읽어요) | `AGENTS.md` | `AGENTS.md` | `AGENTS.md`, `CLAUDE.md` |
 | 스킬 | `.claude/skills`(`.agents/skills`로 가는 링크) | `.agents/skills` | `.agents/skills` | `.agents/skills` |
 | 서브에이전트 | `.claude/agents`(정본) | `.codex/agents`(생성물) | `.agents/agents`(생성물) | `.claude/agents` |
+| 훅(편집 막기, 스킬 기록) | `.claude/settings.json` | `.codex/hooks.json` | `.agents/hooks.json` | 확인하지 않았어요 |
 | 이미지 그리기 | impeccable을 골랐고 `OPENAI_API_KEY`가 있으면 impeccable `generate-image`, 없으면 ChatGPT로 로그인한 Codex CLI(`gpt-image` 스킬) | 자체 도구 `image_gen` | 자체 도구 `generate_image` | 자체 도구 `image_gen` |
 | 여는 명령 | <!-- v:agent.claude.openCode -->`claude`<!-- /v --> | <!-- v:agent.codex.openCode -->`codex`<!-- /v --> | <!-- v:agent.agy.openCode -->`agy -i "<요청>"`<!-- /v --> | <!-- v:agent.grok.openCode -->`grok --trust "<요청>"`<!-- /v --> |
 | 묻지 않고 진행하게 열 때 | <!-- v:agent.claude.yoloCode -->`claude --dangerously-skip-permissions`<!-- /v --> | <!-- v:agent.codex.yoloCode -->`codex --yolo`<!-- /v --> | <!-- v:agent.agy.yoloCode -->`agy --dangerously-skip-permissions`<!-- /v --> | <!-- v:agent.grok.yoloCode -->`grok --permission-mode bypassPermissions`<!-- /v --> |
@@ -41,9 +42,10 @@
 > 새 프로젝트를 처음 열면 도구가 이 폴더를 믿을지 물어요. 동의해야 프로젝트 설정이 켜져요.
 
 - Claude Code: 프로젝트 플러그인(skill-creator와 고른 두뇌·과설계 방지 스킬의 플러그인)
-- Codex: `.codex/agents`의 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트와 프로젝트 스킬을 써요.
+- Codex: `.codex/agents`의 전문 수행·실행 확인·구현 수행·전문 리뷰·최종 리뷰<!-- edition:pro -->·정밀 분석<!-- /edition --> 에이전트와 프로젝트 스킬을 써요. 라운드 없는 편집 막기와 스킬 기록 훅(`.codex/hooks.json`)은 `/hooks`에서 신뢰해야 돌아요.
   - ponytail을 고르고 `--with-global`로 Ponytail 네이티브 플러그인을 설치한 경우에는 `/hooks`에서 별도로 신뢰하고 새 세션을 열어야 훅이 자동으로 돌아요. 설치만으로 신뢰를 대신하지 않으며, 플러그인이 없어도 프로젝트의 Ponytail <!-- v:skills.codex.ponytail -->6<!-- /v -->개 스킬은 보여요.
   - 두뇌는 고른 것에 따라 쓰는 도구가 달라요([두뇌와 선택 스킬](../skills/brains.md))
+- Antigravity: 폴더를 신뢰해야 `.agents/hooks.json`의 훅이 돌아요.
 - Grok Build: 규칙과 스킬. 신뢰하지 않은 폴더에서는 에이전트만 보여요. `grok --trust`로 열면 묻지 않고 신뢰해요
 
 ### 쓰지 않는 것과 대신하는 것
@@ -66,6 +68,8 @@
 | Claude Code | 2.1.316, 2026-11-01 | 위임 기록과 편집 훅만 따로 시험했어요. 계층 에이전트 셋(DB, 서버·API, 화면)이 스킬을 읽고 고친 기록에 각자 이름이 남았고, 다른 계층 파일 편집은 막혔어요 |
 | Codex | CLI 0.166.0, 2026-11-01 | 위임 기록과 편집 훅만 따로 시험했어요. 계층 에이전트 셋(DB, 서버·API, 화면)이 스킬을 읽고 고친 기록에 각자 이름이 남았고, 다른 계층 파일 편집은 막혔어요 |
 | Antigravity | CLI 1.4.12, 2026-11-01 | 위임 기록과 편집 훅만 따로 시험했어요. 계층 에이전트 셋(DB, 서버·API, 화면)이 스킬을 읽고 고친 기록에 각자 이름이 남았고, 다른 계층 파일 편집은 막혔어요 |
+| Claude Code, Codex, Antigravity | 2.1.316, CLI 0.166.0, CLI 1.4.12, 2026-11-02 | 같은 기능 요청(로그인한 사용자의 북마크)을 F 라운드로 사용자 확인 직전까지 돌렸어요. 세 도구 모두 계층 에이전트의 읽기와 편집 기록이 남았고 코디네이터의 편집에 계층 파일은 없었어요. 사람이 화면을 써 본 뒤의 마무리는 Claude Code 프로젝트 하나로만 봤어요 |
+| Codex, Antigravity | CLI 0.166.0, CLI 1.4.12, 2026-11-03 | UI 스킬을 바꿔 가며 같은 화면 요청을 돌렸어요. Codex는 hallmark, Antigravity는 기본 AI와 hallmark로 사용자 확인 직전까지 진행했어요. Antigravity는 계정의 사용 한도에 한 번 걸려 다른 계정으로 다시 돌렸어요 |
 
 표 밖의 한계는 이래요.
 

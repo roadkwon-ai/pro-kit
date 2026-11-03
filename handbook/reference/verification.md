@@ -28,12 +28,19 @@
 | 스킬·에이전트 실행 준비 | 작업 범위, 검사 담당자, 리뷰 문맥과 평가가 맞는지 확인했어요. 읽기 전용 비교는 실제 개발 시간 측정과 구분해요 | [추가 개선 기록](../../docs/reports/2026-10-10-skill-agent-efficiency/README.md) |
 | Ponytail 통합 | 프로젝트 스킬과 선택 플러그인의 설치 회귀, 격리한 실제 Better-T-Stack 설치와 모드 처리를 확인했어요. 직접 훅 스크립트를 실행한 결과와 호스트의 자동 훅 실행은 구분해요 | [통합 결과와 미검증 범위](../../docs/reports/2026-10-10-ponytail-5-integration/README.md) |
 | 기존 프로젝트 이행 | 지정한 프로젝트의 H 라운드에서 차이·검사·리뷰를 확인했어요. 다른 프로젝트에 일괄 적용한 결과는 아니에요 | [H 이행 기록](../../docs/reports/2026-10-10-h-migration/README.md) |
+| 공식 스킬을 전문 에이전트에 맡기기 | 화면·서버·DB 수행자, 실행 확인, 구현 수행자에게 공식 스킬을 나눠 맡기고, audit이 맡은 에이전트가 읽은 기록만 세는지, 열린 라운드에서 코디네이터가 계층 코드를 고치려 하면 편집 훅이 막는지 확인했어요. 실제 Claude Code 세션으로 봤고, 에이전트 정의의 `skills:` 미리 읽기는 실제 세션으로 확인하지 못했어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#공식-스킬을-전문-에이전트에-맡기기-2026-11-01) |
+| 계층별 위임과 세 도구의 훅 | Claude Code 2.1.316, Codex CLI 0.166.0, Antigravity CLI 1.4.12에서 같은 지시로 DB, 서버·API, 화면 에이전트와 구현 수행자를 차례로 불렀어요. 세 도구 모두 읽기와 편집 기록에 각자 이름이 남았고 다른 계층 파일 편집은 막혔어요. 실제 기능 요청에서 코디네이터가 스스로 계층마다 맡기는지는 이 시험으로 재지 않았어요 | [계층별 위임](../../templates/prokit-next-neon/VERIFICATION.md#계층별-위임-계층-편집-경계-훅-없는-호스트의-degraded-2026-11-01) · [Codex·Antigravity 훅](../../templates/prokit-next-neon/VERIFICATION.md#codexantigravity에서도-위임-기록과-main-편집-막기-2026-11-01) |
+| 같은 기능 요청을 세 도구·세 두뇌로 | 로그인한 사용자의 북마크 저장·목록·삭제를 프로젝트 다섯 개(Claude Code 둘, Antigravity 하나, Codex 둘. 두뇌는 없음 셋, superpowers, oh-my)에서 F 라운드로 `[confirm]` 직전까지 돌렸어요. 코디네이터의 편집에 계층 파일은 없었고, 포트를 다른 프로젝트가 쓰고 있으면 그 서버를 끄지 않았어요. 사람이 화면을 써 본 확인은 Claude Code 프로젝트 하나로만 이어 봤어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#세-도구세-두뇌로-같은-기능-요청을-끝까지-돌린-실측-2026-11-02) |
+| 프로세스 끄기 막기 | 테스트 프로젝트에서 실행 확인 에이전트의 `pkill -f next-server`가 같은 기기의 다른 저장소 개발 서버를 모두 끈 일을 계기로 `shell-guard` 훅을 더했어요. Claude Code와 Codex의 Bash에서 이름이나 포트로 골라 끄는 명령을 막고, 셸을 해석하지 않아 다른 꼴의 우회는 막지 못해요. Antigravity에는 걸지 않았어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#테스트-프로젝트로-다시-잰-감사-2026-11-02) |
+| 라운드 없는 커밋 막기 | `dev-cycle guard`(git pre-commit 훅과 `pnpm release`의 검사)가 라운드도 닫은 라운드 기록도 없는 코드·하네스 커밋을 막는지 실제 설치한 프로젝트에서 확인했어요. `--no-verify`로는 건너뛸 수 있어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#라운드-없는-커밋릴리스-막기-dev-cycle-guard-2026-10-23) |
 
 ### 두뇌, 프로젝트 유형, 디자인
 
 | 검증 | 무엇을 봤나요 | 기록 |
 |---|---|---|
 | 두뇌 선택과 PRD로 시작하기 | 고른 두뇌·과설계 방지 스킬만 설치하고, 바꾸면 이전 설치본을 지우는지 실제 프로젝트에서 확인했어요. `prokit-init`은 평가와 실제 Claude Code 세션으로 PRD 없이 끝나는 흐름과 PRD를 받아 커밋까지 만드는 흐름을 확인했어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#두뇌과설계-방지-스킬-선택-설치-2026-10-20) · [보고서](../../docs/reports/2026-10-20-brain-selection/README.md) |
+| 고른 스킬 실사용 | 두뇌 9개, 과설계 방지 스킬 3개, 화면 선택 묶음(`taste`, `motion`)을 설치한 프로젝트에서 dev-cycle이 그 스킬을 단계마다 부르는지 보고, 구성을 언제든 바꾸고 빼는 경로를 확인했어요. 설치 12개 구성과 9단계 전환이 모두 exit 0이었어요. 증거에 이름만 적고 실제로는 부르지 않는 결함을 찾아, 훅이 남긴 읽은 기록과 대조하게 고쳤어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#고른-스킬-실사용-검수와-자유로운-전환-2026-10-27) |
+| UI 스킬 고르기와 바꾸기 | impeccable, hallmark, 기본 AI(`none`)를 고르고 프로젝트 중간에 바꾸는 흐름을 Claude Code 사본 셋으로 `[confirm]` 직전까지 돌렸어요. Codex 0.166.0은 hallmark, Antigravity 1.4.12는 기본 AI와 hallmark로 다시 돌렸고, 두 도구 모두 impeccable로는 라운드를 돌리지 않았어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#ui-스킬을-골라-바꾸기-hallmark-기본-ai-중간-전환-2026-11-02) |
 | 프로젝트 유형별 도입과 Task 게이트 | 새·초기·운영 중·전환 유형 설치, `--adopt`, 두뇌 3종 추가, 진행 계획과 Task 게이트를 실제 프로젝트에서 확인했어요. Codex 실제 세션은 CX1 9/10, 고친 뒤 CX2 10/10이고, Antigravity(Gemini 3.8 Flash)는 AG1\~AG9를 돌렸어요. 화면 리뷰 기록 대조 같은 채점 지적 보완은 실제 세션으로 다시 시험하지 않았어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#프로젝트-유형별-도입-두뇌-확장-task-게이트-2026-10-22) |
 | 화면 디자인 보조 taste | 선택 묶음 `taste`로 taste-skill을 설치하고, 기록이 프로젝트 안에만 남는지와 브라우저 검사가 도는지 실제 프로젝트에서 확인했어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#선택-묶음-taste-taste-skill-화면-디자인-보조-2026-10-20) |
 | DESIGN.md 효과 | `DESIGN.md`가 있을 때와 브랜드 이름과 대표 색만 줬을 때의 디자인 일치율 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#designmd-효과-측정-2026-09-30-추가) |

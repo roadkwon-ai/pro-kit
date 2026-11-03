@@ -73,6 +73,10 @@ Vercel 계정, 원격 DB, GitHub 저장소가 필요해요. "Vercel 배포 준�
 - Vercel은 프로젝트의 첫 배포를 production으로 만들어서 production부터 배포해요. 스크립트는 production 배포가 없으면 develop을 막아요.
 - `vercel link`가 GitHub 저장소까지 연결하면 기본 브랜치에 push하는 순간 production에 배포돼서 릴리스 검사를 거치지 않아요. 그래서 새 Vercel 프로젝트를 만들며 저장소가 연결됐으면 연결을 끊어요(`vercel git disconnect --yes`). push마다 자동 배포하는 방식은 사용자가 요청할 때만 쓰고, 결정은 `docs/adr/`에 남겨요.
 
+### 배포 검사만 실패했을 때
+
+Vercel에 연결한 배포 검사(예: Neon 통합의 브랜치 만들기)만 실패하면 CLI는 `checks_failed`로 끝나지만 빌드는 계속돼요. develop은 빌드가 끝나기를 기다려서 배포가 준비됐으면 경고만 하고 이어 가요. production은 검사 실패가 운영 주소 옮기기를 막았을 수 있어서 멈추고, 배포 URL과 운영 주소가 새 배포로 옮겨졌는지 보는 `vercel inspect` 명령, 옮겨졌으면 쓸 `vercel rollback` 명령을 알려 줘요. 어느 검사가 실패했는지는 출력에 나온 `vercel api /v1/deployments/<배포 id>/checks`로 봐요.
+
 ### develop 주소로 보기
 
 Better Auth는 `BETTER_AUTH_URL`만 기준으로 삼아서 배포마다 생기는 고유 URL에서는 로그인이 실패해요. develop은 고정 주소로 열어요. Preview에는 Vercel 배포 보호가 걸려 있어서 Vercel에 로그인한 브라우저로 보거나 `vercel curl https://<고정 주소>/…`로 확인해요.

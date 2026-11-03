@@ -390,7 +390,7 @@
 | `templates.count` | 2 | 템플릿 수 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `templates.count.ko` | 두 | 템플릿 수의 한글 수 관형사 | templates/prokit-next-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 16 |
 | `prokit.skills.count` | 11 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 18 |
-| `prokit.skills.count.ko` | 열한 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `prokit.skills.count.ko` | 열한 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `prokit.agents.count` | 8 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |
 | `devCycle.cases.count` | 7 | dev-cycle 케이스 수 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `devCycle.cases.count.ko` | 일곱 | dev-cycle 케이스 수의 한글 수 관형사 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
@@ -561,7 +561,7 @@
 | `b:clone-screens-steps-copy` | (글 묶음) | 클론 튜토리얼 4장의 1단계 에이전트가 하는 일 목록의 첫 두 줄(팩의 데이터와 그림 복사). 목록 중간이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/clone-screens-steps-copy.md | 묶음 원본을 고친다 | 2 |
 | `b:clone-screens-trouble-images` | (글 묶음) | 클론 튜토리얼 4장의 "막히면"의 첫 줄(그림을 못 찾을 때). 인자: name(프로젝트 폴더 이름. nextflix 또는 claudle). 목록 중간이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/clone-screens-trouble-images.md | 묶음 원본을 고친다 | 2 |
 | `b:clone-screens-trouble-rename` | (글 묶음) | 클론 튜토리얼 4장의 "막히면" 끝 줄(이름을 바꿨는데 화면에 팩의 서비스 이름이 남았을 때). 인자: name(프로젝트 폴더 이름. nextflix 또는 claudle), ga(이름 뒤 조사 "가" 또는 "이"). 목록 중간이라 묶음 표시를 달면 목록이 끊기므로, 표시 없이 이 원본과 같은 글로 두고 테스트(CASES)가 지킨다 | docs/blocks/clone-screens-trouble-rename.md | 묶음 원본을 고친다 | 2 |
-| `b:codex-hooks-line` | (글 묶음) | 클론 튜토리얼에서 새 프로젝트 폴더를 Codex로 열었을 때 디자인 검사기 훅을 믿는다고 확인하는 안내 줄 | docs/blocks/codex-hooks-line.md | 묶음 원본을 고친다 | 4 |
+| `b:codex-hooks-line` | (글 묶음) | 클론 튜토리얼에서 새 프로젝트 폴더를 Codex로 열었을 때 디자인 검사기 훅과 프로킷 훅을 믿는다고 확인하는 안내 줄 | docs/blocks/codex-hooks-line.md | 묶음 원본을 고친다 | 4 |
 | `b:continue-line` | (글 묶음) | "알려 준 한 줄로 이어 가기"의 명령 블록(묻지 않고 진행하게 여는 명령으로 새 프로젝트 폴더를 연다). 인자: folder(프로젝트 폴더) | docs/blocks/continue-line.md | 묶음 원본을 고친다 | 3 |
 | `b:cost-note` | (글 묶음) | 시간과 비용 표 아래의 안내(시간의 앞 숫자와 토큰은 최솟값, 토큰도 늘 수 있다). tutorials/<묶음>/ 쪽에서 쓴다 | docs/blocks/cost-note.md | 묶음 원본을 고친다 | 12 |
 | `b:course-trouble` | (글 묶음) | 클론 튜토리얼 README(tutorials/01-nextflix, 02-claudle)의 "막히면" 목록 전체(첫 프롬프트 공통 줄, 프리셋 팩, Docker, 한도). 목록이 끊기지 않게 목록 전체를 묶는다. 인자: folder와 name(둘 다 프로젝트 이름. 포함한 first-trouble은 folder, trouble-pack은 name을 쓴다), iyo(이름 뒤 "예요" 또는 "이에요") | docs/blocks/course-trouble.md | 묶음 원본을 고친다 | 2 |

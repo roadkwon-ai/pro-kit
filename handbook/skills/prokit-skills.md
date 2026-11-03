@@ -1,10 +1,10 @@
 # prokit 스킬
 
-> 한눈에: 프로킷 전용 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개는 이 프로젝트에서 일하는 방법을 에이전트에게 알려 주는 작업 설명서예요. 스킬 이름을 몰라도 돼요. "할 일에 마감일 붙여줘"처럼 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러와요. 그 전에 프로젝트를 <!-- edition:pro -->만들거나 기존 프로젝트에 들이<!-- /edition --><!-- edition:ui 만드 -->는 처음 설정은 `prokit-init`이 맡아요.
+> 한눈에: 프로킷 전용 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 7 -->개는 이 프로젝트에서 일하는 방법을 에이전트에게 알려 주는 작업 설명서예요. 스킬 이름을 몰라도 돼요. "할 일에 마감일 붙여줘"처럼 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러와요. 그 전에 프로젝트를 <!-- edition:pro -->만들거나 기존 프로젝트에 들이<!-- /edition --><!-- edition:ui 만드 -->는 처음 설정은 `prokit-init`이 맡아요.
 
 ## 처음 설정은 prokit-init
 
-`prokit-init`은 pro-kit 폴더에 있는 스킬이에요. 설치한 프로젝트에는 들어가지 않고, 아래 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개 스킬은 이 스킬이 설치를 마친 뒤부터 일해요.
+`prokit-init`은 pro-kit 폴더에 있는 스킬이에요. 설치한 프로젝트에는 들어가지 않고, 아래 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 7 -->개 스킬은 이 스킬이 설치를 마친 뒤부터 일해요.
 
 1. **유형 점검**: <!-- edition:pro -->새 프로젝트, 초기 프로젝트(기획 자료·프로토타입만 있음), 운영 중인 Next.js, 다른 언어에서 전환 가운데 어느 것인지<!-- /edition --><!-- edition:ui 어떤 프로젝트를 만드는지 --> 먼저 정해요.
 2. **분석과 추천**: <!-- edition:pro -->새 프로젝트는 PRD를 받고, 기존 프로젝트는 폴더를 읽기만 하면서 초기 분석을 해요.<!-- /edition --><!-- edition:ui PRD를 받아 분석해요. --> 그 결과로 템플릿, 적용 방식, 두뇌, 과설계 방지 스킬, 추가 스킬을 추천하고 고르게 해요.
@@ -20,7 +20,7 @@
 | `prokit-dev-cycle` | 작업과 검사 배정·감독·통합. 요청을 케이스로 나누고 대조표를 열어요.<!-- edition:pro --> 큰 일은 진행 계획을 세워 Task로 나눠요<!-- /edition --> | 만들어줘, 고쳐줘, 바꿔줘, 완료 처리<!-- edition:pro -->, 진행 계획 세워줘, 다음 Task 하자<!-- /edition --> | 공식 전문 스킬을 연결하고 모든 단계의 증거·최종 검수·`audit` 통과를 확인<!-- edition:pro -->. 앞 Task가 끝나야 다음 Task를 열고, 기존 프로젝트는 정밀 분석과 진행 계획을 확정한 뒤 개발<!-- /edition --> |
 | `prokit-pack-use` | 완성팩 복원·개인화·실전 개발 | 이 팩으로 만들어줘, 프리셋처럼 유지해줘 | 팩 무결성과 충돌 확인, 실제 복원·실행 검사, 완성 프리셋 대비 화면·모션 유지 |
 | `prokit-web` | 화면 동작(라우팅, 데이터 불러오기, 캐시) | 페이지 추가, 로그인한 사람만, 느려요 | 로그인 확인은 서버에서, 로딩·빈·오류 상태 구분, 서버 비밀값은 브라우저로 보내지 않기 | <!-- edition:pro -->
-| `prokit-ui` | 화면 모양과 사용 경험(고른 UI 스킬: impeccable, hallmark) | 디자인해줘, 예쁘게, 접근성 점검 | 새 디자인의 스타일 후보 추천, 완성팩이 제공하는 디자인 유지, `DESIGN.md` 스펙 검사(lint), 코드 전에 화면 설계 확인, 선택 묶음 `taste`가 있으면 고른 화면에 taste-skill 방향·검사 보태기, 디자인 토큰만 사용, 점수 기준(impeccable은 audit <!-- v:devCycle.ui.auditMin -->16<!-- /v -->/20)과 실행 기록 파일<!-- edition:pro -->. 기존 프로젝트는 기존 디자인 유지와 리디자인 중 먼저 고르기<!-- /edition --> |
+| `prokit-ui` | 화면 모양과 사용 경험(고른 UI 스킬: impeccable, hallmark. 고르지 않으면 기본 AI가 frontend-design과 게슈탈트 지침으로) | 디자인해줘, 예쁘게, 접근성 점검 | 새 디자인의 스타일 후보 추천, 완성팩이 제공하는 디자인 유지, `DESIGN.md` 스펙 검사(lint), 코드 전에 화면 설계 확인, 선택 묶음 `taste`가 있으면 고른 화면에 taste-skill 방향·검사 보태기, 디자인 토큰만 사용, 한글 제목은 어절 단위로 줄바꿈(`break-keep`), 점수 기준(impeccable은 audit <!-- v:devCycle.ui.auditMin -->16<!-- /v -->/20)과 실행 기록 파일<!-- edition:pro -->. 기존 프로젝트는 기존 디자인 유지와 리디자인 중 먼저 고르기<!-- /edition --> |
 | `prokit-api` | 서버 API, 로그인, 권한 | API 추가, 남의 데이터가 보여요 | 로그인 필수, 자기 데이터에만 접근, 입력 검증, 2계정 격리 테스트 | <!-- edition:pro -->
 | `prokit-db` | 테이블과 마이그레이션 | 컬럼 추가, 테이블 만들기, 쿼리가 느려요 | 마이그레이션 파일로만 변경, 로컬 → 병합 전(기본 브랜치에 합치기 전) → 운영 순서, 데이터를 잃을 수 있는 변경은 두 단계. Supabase는 모든 테이블에 RLS(행 단위 접근 제한) | <!-- edition:pro -->
 | `prokit-verify` | 영향 검사 선택, 담당자·재사용 조건 확인과 증거 기록 | 검증해줘, 테스트 돌려, 끝났어? | 실행하지 않은 검사는 통과로 적지 않고, 전문 증거 재사용과 새 최종 검수를 구분 |
@@ -51,7 +51,7 @@
 | "새 공식 스킬 추가해줘", "이 스킬은 어느 에이전트가 써?" | `prokit-skills-assign` | 공식 스킬을 맡을 에이전트를 정하고 관련 파일에 반영해요([공식 스킬과 연결](official-skills.md#누가-읽고-따르나)) |
 
 > [!NOTE]
-> "이 프로젝트에 프로킷 적용해줘"나 "새 프로젝트 만들어줘"처럼 처음 들이는 요청은 위 <!-- edition:pro -->열 개<!-- /edition --><!-- edition:ui 여섯 개 -->가 아니라 pro-kit 폴더의 `prokit-init`이 맡아요.
+> "이 프로젝트에 프로킷 적용해줘"나 "새 프로젝트 만들어줘"처럼 처음 들이는 요청은 위 <!-- edition:pro --><!-- v:prokit.skills.count.ko -->열한<!-- /v --> 개<!-- /edition --><!-- edition:ui 일곱 개 -->가 아니라 pro-kit 폴더의 `prokit-init`이 맡아요.
 
 ## 스킬이 필요할 때 읽는 참고 자료
 
@@ -121,7 +121,7 @@ flowchart LR
 
 - **위치**: 설치된 프로젝트의 `.agents/skills/prokit-*/SKILL.md`예요. Claude Code는 `.claude/skills/`의 링크로 같은 파일을 읽어요.
 - **기존 프로젝트에 도입할 때**: 초기 프로젝트, 전환, Better-T-Stack 구조의 운영 중 프로젝트는 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 7 -->개를 모두 설치해요. `install.sh --adopt`는 Better-T-Stack이 아닌 Next.js 프로젝트에 `prokit-dev-cycle`, `prokit-verify`, `prokit-web`, `prokit-ui`, `prokit-skills-update`, `prokit-skills-manage`, `prokit-skills-assign`만 복사해요. Better-T-Stack 전용 스킬은 건너뛰어요([기존 프로젝트에 도입하기](../start/adopt.md)). <!-- edition:pro -->
-- **에이전트**: 스킬과 별개로 <!-- edition:pro -->읽기 전용 정밀 분석을 맡는 `prokit-analyzer`를 포함해 <!-- /edition -->프로젝트 에이전트가 <!-- edition:pro --><!-- v:prokit.agents.count -->8<!-- /v --><!-- /edition --><!-- edition:ui 5 -->개예요. `prokit-*` 스킬은 일을 나누고 맡기고 검수하고, 공식 스킬로 하는 일은 전문 에이전트가 해요([에이전트 역할](../concepts/agent-roles.md)).
+- **에이전트**: 스킬과 별개로 <!-- edition:pro -->읽기 전용 정밀 분석을 맡는 `prokit-analyzer`를 포함해 <!-- /edition -->프로젝트 에이전트가 <!-- edition:pro --><!-- v:prokit.agents.count -->8<!-- /v --><!-- /edition --><!-- edition:ui 5 -->개예요. `prokit-*` 스킬은 일을 나누고 맡기고 검수하고, 공식 스킬로 하는 일은 전문 에이전트가 해요. 화면은 `prokit-ui-builder`<!-- edition:pro -->, 서버·API는 `prokit-api-builder`, DB는 `prokit-db-builder`<!-- /edition -->, 실행 확인은 `prokit-runtime-checker`, 하네스와 계층 밖 파일은 `prokit-implementer`가 맡고, 리뷰는 `prokit-reviewer`(내장 리뷰가 없는 전문 산출물만 `specialist-reviewer`)가 해요([에이전트 역할](../concepts/agent-roles.md)).
 - **Next.js는 설치된 판의 문서부터**: `node_modules/next/dist/docs`를 먼저 읽게 해요. 에이전트가 학습한 옛 API를 그대로 쓰는 일을 줄이려는 거예요.
 - **효과**: 같은 요청을 스킬이 있을 때와 없을 때로 나눠 체크 항목으로 채점했어요. 스킬이 있을 때 `prokit-dev-cycle` <!-- v:eval.dev-cycle.with -->93<!-- /v -->%(없을 때 <!-- v:eval.dev-cycle.without -->27<!-- /v -->%), `prokit-ui` <!-- v:eval.ui.with -->100<!-- /v -->%(<!-- v:eval.ui.without -->12<!-- /v -->%)였어요. <!-- edition:pro -->스킬별 수치는 [검증 결과](../reference/verification.md)에 있어요.<!-- /edition -->
 - **스킬을 고치는 일**: `prokit-*` 스킬을 바꾸는 작업은 케이스 H 라운드로 하고, 스킬 본문을 바꿨으면 skill-creator eval을 다시 돌려요([케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](../concepts/cases.md)).

@@ -57,9 +57,11 @@ flowchart TD
   S --> P1["공식 도메인 스킬<br/>.agents/skills + .claude/skills 링크"]
   S --> P2["Claude 플러그인<br/>.claude/settings.json<br/>skill-creator"]
   S -.->|"고른 두뇌·과설계 방지 스킬만<br/>(.dev-cycle.json brain · simplicity)"| SEL["두뇌: superpowers · agent-skills(addyosmani) · gstack · oh-my · pstack · mattpocock · openspec · spec-kit · compound-engineering 중 하나 이상(첫 값이 주 두뇌)<br/>과설계 방지: ponytail · caveman · karpathy 중 하나<br/>플러그인 또는 .agents/skills"]
+  S -.->|"고른 UI 스킬만<br/>(.dev-cycle.json uiSkill, 없으면 impeccable)"| UI["UI 스킬: impeccable · hallmark 중 하나 이상(첫 값이 주 UI 스킬)<br/>하나도 고르지 않으면(none) frontend-design<br/>.agents/skills + .claude/skills 링크"]
   S -.->|"두뇌가 oh-my이고 omx CLI가 있을 때"| P4["OMX 프로젝트 설정<br/>.codex/skills · agents · prompts"]
   S -.->|"--matt 스킬일 때만"| MATT["mattpocock 추가 스킬<br/>.agents/skills + .claude/skills 링크"]
   S -.->|"--drop일 때만"| DROP["추가 스킬·선택 묶음 삭제<br/>skills-lock.json 출처가 맞는 설치본만"]
+  S -.->|"고르지 않은 두뇌·과설계 방지·UI 스킬을 지울 때"| HK["지운 스킬 폴더를 부르는 훅만 뺌<br/>.claude/settings.local.json · .codex/hooks.json"]
   S -.->|"--optional 묶음일 때만"| OPT["선택 스킬 묶음<br/>ops · motion · mobile · i-have-adhd · taste<br/>.agents/skills + .claude/skills 링크"]
   S -->|"없거나 최신판보다 낮으면"| AB["agent-browser CLI<br/>(전역)"]
   S -.->|"--with-global일 때만"| G["나머지 전역 도구<br/>Vercel CLI<br/>Neon CLI 또는 Supabase CLI"]
@@ -72,6 +74,7 @@ flowchart TD
 
 ### 설치할 때 알아 둘 것
 
+- **고르지 않은 설치본은 지워요**: `--brain`, `--simplicity`, `--ui-skill`을 주면 그 항목에서 고르지 않은 설치본을 지워요. 지운 스킬이 스스로 등록한 훅(예: `impeccable hooks on`이 쓴 훅)은 그 스킬 폴더를 부르는 것만 `.claude/settings.local.json`과 `.codex/hooks.json`에서 빼요. 스킬이 남긴 기록(`.impeccable/` 등)은 지우지 않아요([두뇌와 선택 스킬](brains.md#자세히)).
 - **최신판을 받아요**: 공식 스킬은 템플릿에 복사해 두지 않고, 설치할 때 원본 저장소의 최신 커밋을 받아요(skills CLI도 `skills@latest`). Claude 플러그인은 마켓플레이스를 최신으로 받은 뒤 설치해요.
 - **프로젝트 설치와 Codex 선택 설치는 달라요**: 프로젝트 스킬과 Claude 플러그인은 프로젝트 범위(project scope)에 들어가요. Codex 네이티브 Ponytail은 `--with-global`일 때만 사용자 설정에 공식 marketplace와 플러그인을 등록하는 선택 항목이에요. 기본 설치와 `pnpm skills:check`는 그 설정을 바꾸지 않아요.
 - **전역 도구는 둘로 나뉘어요**: <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->. 나머지 전역 도구는 `--with-global`을 줄 때만 설치해요.
@@ -113,7 +116,7 @@ pnpm skills:setup --drop <스킬|묶음>[,…]   # 추가 스킬이나 선택 �
 ### 플러그인은 따로 올려요
 
 > [!WARNING]
-> Claude 플러그인은 `skills:update`가 업데이트하지 않아요. 네 플러그인 모두 훅이 있어서 업데이트하는 즉시 새 코드가 실행되기 때문이에요.
+> Claude 플러그인은 `skills:update`가 업데이트하지 않아요. 훅이 있는 플러그인은 업데이트하는 즉시 새 코드가 실행되기 때문이에요.
 
 사용자가 요청하면 플러그인 저장소의 `hooks/` 변경을 먼저 보고 올려요.
 

@@ -139,7 +139,7 @@ cd ~/projects/claudle && claude --dangerously-skip-permissions "docs/first-reque
 <!-- /b -->
 
 <!-- b:codex-hooks-line -->
-Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅을 믿는다고 확인하세요.
+Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅과 프로킷 훅(라운드 없는 편집 막기, 스킬 기록)을 믿는다고 확인하세요.
 <!-- /b -->
 
 ### 4. 답하며 4장까지 가기

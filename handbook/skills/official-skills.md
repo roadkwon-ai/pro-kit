@@ -52,7 +52,7 @@ E·D 라운드에서 읽는 스킬이에요.
 
 | 분야 | 스킬 | 출처 | 읽는 곳 |
 |---|---|---|---|
-| 모노레포 | `turborepo` | vercel/turborepo | <!-- edition:pro -->`prokit-web`, <!-- /edition -->`prokit-dev-cycle`. 태스크·패키지 의존·환경 변수 캐시 입력을 설계하고 `turbo.json`을 바꿀 때 |
+| 모노레포 | `turborepo` | vercel/turborepo | <!-- edition:pro -->`prokit-web`, `prokit-api`, <!-- /edition -->`prokit-dev-cycle`. 태스크·패키지 의존·환경 변수 캐시 입력을 설계하고 `turbo.json`을 바꿀 때 |
 | 용어·설계 질문 | `domain-modeling`, `grill-with-docs`, `grilling` | mattpocock/skills | `prokit-dev-cycle`<!-- edition:pro -->, `prokit-db`<!-- /edition -->. F 스펙 행과 공통 문서 행<!-- edition:pro -->. 진행 계획 라운드에서는 계획 전에 결과를 바꾸는 질문을 물을 때도 써요<!-- /edition --> |
 | Vercel 배포 | `deploy-to-vercel`, `vercel-cli-with-tokens`, `access-protected-vercel-deployment` | vercel-labs/agent-skills, vercel/vercel-plugin | <!-- edition:pro -->`prokit-deploy`<!-- /edition --><!-- edition:ui `prokit-ui` --> |
 
@@ -106,16 +106,16 @@ E·D 라운드에서 읽는 스킬이에요.
 
 | 맡는 쪽 | 공식 스킬 | 메인 세션이 검수하는 것 |
 |---|---|---|
-| `prokit-ui-builder`(화면) | `shadcn`, `vercel-react-best-practices`, `vercel-composition-patterns`, `next-cache-components-*`, `next-partial-prefetching-*`, `turborepo` | 보고에 적은 규칙 이름이 바뀐 코드와 맞는지, 읽은 Next 번들 문서 |
+| `prokit-ui-builder`(화면) | `shadcn`, `vercel-react-best-practices`, `vercel-composition-patterns`, `next-cache-components-*`, `next-partial-prefetching-*`, `next-dev-loop`(성능을 고치며 개발 서버 동작을 볼 때), `turborepo` | 보고에 적은 규칙 이름이 바뀐 코드와 맞는지, 읽은 Next 번들 문서 |
 | `prokit-api-builder`(서버·API) | `better-auth-best-practices`, `better-auth-security-best-practices`, `email-and-password-best-practices`, `turborepo` | 보안 불변식, 2계정 격리 테스트 | <!-- edition:pro -->
 | `prokit-db-builder`(DB) | `supabase-postgres-best-practices`, neon은 `neon`·`neon-postgres`·`neon-postgres-egress-optimizer`, supabase는 `supabase` | 생성 SQL 검토, 상위 스킬 `neon`도 읽었는지 | <!-- edition:pro -->
 | `prokit-runtime-checker`(실행 확인) | `next-dev-loop`, `agent-browser` | 확인한 경로, 오류 예산 0, 스크린샷 |
 | `prokit-implementer`(하네스·계층 밖) | `turborepo`(`turbo.json`) | 바뀐 환경 변수가 캐시 입력에 들어갔는지 |
-| `prokit-reviewer`(리뷰) | focus마다: code는 `vercel-react-best-practices`·`vercel-composition-patterns`·`shadcn`·`turborepo`, ui는 `web-design-guidelines`·`shadcn`, security는 Better Auth 세 개, db는 DB 스킬 | 리뷰 JSON의 `skills_read` |
+| `prokit-reviewer`(리뷰) | focus마다: plan은 `vercel-composition-patterns`·`turborepo`, code는 `vercel-react-best-practices`·`vercel-composition-patterns`·`shadcn`·`turborepo`, ui는 `web-design-guidelines`(한글 제목에 `break-keep`이 없으면 위반으로 적어요)·`shadcn`, security는 Better Auth 세 개<!-- edition:pro -->, db는 DB 스킬<!-- /edition --> | 리뷰 JSON의 `skills_read` |
 | 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `hallmark`, `use-design-md`, `gpt-image`, 배포 세 개, neon은 `neon-postgres-branches`와 상위 `neon` | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | <!-- edition:ui | 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `hallmark`, `use-design-md`, `gpt-image`, 배포 세 개 | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | --> <!-- edition:pro -->
 
-- 이 배치의 정본은 프로젝트의 `skills.manifest.json`에 있는 `performers`예요. `performers.agents`는 대조표 행에서 일을 넘겨받는 에이전트, `performers.skills`는 공식 스킬마다 그 스킬을 읽는 에이전트예요. 코드에 박아 두지 않아서 공식 스킬이 늘거나 바뀌어도 이 파일만 고치면 돼요.
-- 훅이 서브에이전트의 읽기·편집 기록에 에이전트 이름을 남겨요(Claude Code, Codex, Antigravity). audit은 그 스킬을 맡은 에이전트가 프로젝트 판(`.agents/skills/<이름>/SKILL.md`)을 읽은 기록만 세요. 메인 세션이 대신 읽었거나 Skill 도구로 불렀으면(이름이 같은 개인 스킬이 불릴 수 있어요) 세지 않아요. 하위 스킬은 같은 쪽이 상위 스킬(스킬 머리의 `parent`)도 읽어야 해요. 훅이 돌지 않은 라운드(Codex에서 `/hooks`로 신뢰하기 전 등)는 증거에 적은 이름만 봐요.
+- 이 배치의 정본은 프로젝트의 `skills.manifest.json`에 있는 `performers`예요. `performers.agents`는 대조표 행에서 일을 넘겨받는 에이전트, `performers.skills`는 공식 스킬마다 그 스킬을 읽는 에이전트예요. 여기에 없는 공식 스킬은 메인 세션이 읽어요. 코드에 박아 두지 않아서 공식 스킬이 늘거나 바뀌어도 이 파일만 고치면 돼요. 선택 묶음 `ops`의 스킬은 기본 배치에 없어서, 그 스킬로 코드를 고치는 일을 에이전트에 맡기려면 `prokit-skills-assign`으로 배치해요.
+- 훅이 서브에이전트의 읽기·편집 기록에 에이전트 이름을 남겨요(Claude Code, Codex, Antigravity). audit은 그 스킬을 맡은 에이전트가 프로젝트 판(`.agents/skills/<이름>/SKILL.md`)을 읽은 기록만 세요. 메인 세션이 대신 읽었거나 Skill 도구로 불렀으면(이름이 같은 개인 스킬이 불릴 수 있어요) 세지 않아요. 다만 매니페스트가 Claude 플러그인으로도 설치하는 공식 스킬(`skill-creator`)은 `<플러그인>:<이름>` 형태의 Skill 호출도 읽은 것으로 세요. 하위 스킬은 같은 쪽이 상위 스킬(스킬 머리의 `parent`)도 읽어야 해요. 훅이 돌지 않은 라운드(Codex에서 `/hooks`로 신뢰하기 전 등)는 증거에 적은 이름만 봐요.
 - 구현 단계 행과 행 문구에 전문 에이전트가 적힌 행은 증거에 `위임: <에이전트>(사용: …)`가 있어야 해요. 맡길 에이전트가 없으면 메인 세션이 직접 하지 않고 `blocked`로 남겨요. 그 행에 적은 에이전트가 읽은 기록만 세고, 그 에이전트는 다른 에이전트에 맡긴 앞 행을 처음 채운 뒤에 일한 기록(스킬 읽기나 파일 편집)이 있어야 해요. 증거를 고쳐 다시 채운 행은 처음 채운 순서로 봐요. 화면<!-- edition:pro -->·서버·DB<!-- /edition --> 코드가 바뀌었는데 구현 행을 `N/A`나 `blocked`로 두면 audit이 받지 않아요.
 - 행 이름에 스킬이 나온 행(`[review] 디자인 감사와 web-design-guidelines 코드 검사`, `[verify] next-dev-loop …`)은 그 스킬을 맡은 쪽이 라운드 안에서 읽은 기록이 있어야 해요. 행 이름에 "주 UI 스킬"이 나오는 디자인 행은 고른 주 UI 스킬을 그 라운드에서 읽었는지 봐요. 리뷰어의 ui<!-- edition:pro -->·security·db<!-- /edition --> 리뷰는 리뷰어 정의에서 언제가 붙지 않은 스킬을 리뷰어가 읽어야 해요. 상황이 맞을 때만 읽는 스킬은 막지 않고, 일한 전문 에이전트가 읽지 않은 맡은 스킬(리뷰어는 리뷰 행 검사가 봐요), 메인 세션이 대신 읽은 맡긴 스킬, `SKILL.md`를 앞부분만 읽은 공식 스킬을 audit 경고로 보여 줘요. 캐시·프리패치 스킬은 Next 설정(`cacheComponents`, `partialPrefetching`)을 켠 프로젝트에서만 알려요.
 - 공식 스킬이 업데이트로 새로 생기거나 없어지거나 하는 일이 바뀌면 `prokit-skills-update`가 `prokit-skills-assign`으로 넘겨요. `prokit-skills-assign`은 스킬 본문을 읽고 맡을 에이전트를 판단해 보여 준 뒤, 확인받으면 매니페스트, 에이전트 정의, `prokit-*` 연결 표, 대조표 행을 함께 고쳐요. 새 공식 스킬을 더하거나 빼고 싶을 때도 이 스킬에 요청해요. `pnpm agents:check`가 배치에 적힌 에이전트와 스킬 이름이 실제로 있는지, 에이전트 정의의 공식 스킬 표와 `prokit-*` 연결 표가 배치와 같은지 봐요.

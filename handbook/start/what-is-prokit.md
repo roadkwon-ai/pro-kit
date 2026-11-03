@@ -47,7 +47,7 @@ pro-kit 저장소는 새 프로젝트를 만들어 주는 생성기예요. 안�
 
 템플릿은 [Better-T-Stack](../templates/what-it-adds.md)으로 만든 Next.js 풀스택 앱 위에 설치돼요. 설치하면 앱 뼈대에 다음이 더해져요.
 
-- 프로젝트 전용 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 6 -->개
+- 프로젝트 전용 스킬 <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 7 -->개
 - 에이전트 <!-- edition:pro -->세<!-- /edition --><!-- edition:ui 두 --> 종류
   - 화면<!-- edition:pro -->·서버·DB 계층별로<!-- /edition --> 구현과 실행 확인을 맡는 전문 수행 에이전트
   - 구현에 참여하지 않은 독립 리뷰 에이전트

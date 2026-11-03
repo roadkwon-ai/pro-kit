@@ -13,12 +13,14 @@ my-app/
 ├── AGENTS.md, CLAUDE.md, GLOSSARY.md                                                   (템플릿)
 ├── .agents/skills/             prokit-* 스킬, 공식 도메인 스킬, mattpocock·skill-creator, 고른 두뇌·과설계 방지·UI 스킬(Codex·Antigravity·Grok Build)
 ├── .agents/agents/             에이전트 생성물(Antigravity)
-├── .claude/                    agents/(정본), skills/(링크), settings.json(플러그인, 키 훅)
-├── .codex/                     agents/(생성물), skills·prompts(OMX)
+├── .agents/hooks.json          Antigravity 훅(세션 시작, 편집 막기, 스킬 기록)
+├── .claude/                    agents/(정본), skills/(링크), settings.json(플러그인, 훅)
+├── .codex/                     agents/(생성물), hooks.json(훅), skills·prompts(OMX)
 ├── scripts/                    dev-cycle.mjs, sync-agents.mjs, skills-setup.mjs, delegation.mjs, resource-guard.mjs,
 │                               vercel-deploy.mjs, release.mjs, export-html.mjs, load-keys.mjs
 ├── release/                    production 배포마다 릴리스 노트 (pnpm release)
 ├── skills.manifest.json, skills-lock.json, .dev-cycle.json, .vercelignore
+├── .prokit/                    스킬 읽기·편집 기록, 자원 보호 상태(git이 무시해요)
 ├── .impeccable/                impeccable 기록(critique/*.md 등. impeccable을 골랐을 때 화면을 리뷰하면 생기고 커밋해요)
 ├── .hallmark/                  hallmark 기록(log.json은 커밋하고, shots/·preflight.json은 git이 무시해요. hallmark를 골랐을 때)
 ├── licenses/                   PROKIT-SCOPE.md, PROKIT-LICENSE.txt: 템플릿이 전한 파일의 MIT 범위 안내   (템플릿)

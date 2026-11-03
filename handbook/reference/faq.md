@@ -20,13 +20,13 @@
 
 ### Claude Code와 Codex 중 무엇을 써야 하나요?
 
-둘 다 돼요. 프로킷이 두 에이전트에 같은 규칙과 스킬을 설치하니 같은 프롬프트를 쓰면 돼요. Codex는 프로젝트를 신뢰(trusted)해야 정밀 분석·구현 수행·전문 리뷰·최종 리뷰 에이전트를 불러와요. 조작 차이는 [Claude Code와 Codex](../../tutorials/reference/claude-code-and-codex.md)에 있어요.
+둘 다 돼요. 프로킷이 두 에이전트에 같은 규칙과 스킬을 설치하니 같은 프롬프트를 쓰면 돼요. Codex는 프로젝트를 신뢰(trusted)해야 전문 수행·실행 확인·구현 수행·전문 리뷰·최종 리뷰<!-- edition:pro -->·정밀 분석<!-- /edition --> 에이전트를 불러오고, 라운드 없는 편집 막기 같은 훅은 `/hooks`에서 신뢰해야 돌아요. 조작 차이는 [Claude Code와 Codex](../../tutorials/reference/claude-code-and-codex.md)에 있어요.
 
 ### Antigravity나 Grok Build로도 쓸 수 있나요?
 
 네. 두 도구도 Codex처럼 프로킷의 규칙과 스킬을 읽어요. Antigravity는 <!-- v:agent.agy.open -->agy -i "<요청>"<!-- /v -->, Grok Build는 <!-- v:agent.grok.open -->grok --trust "<요청>"<!-- /v -->로 열어요. Grok Build는 폴더를 신뢰해야 규칙과 스킬을 읽어요.
 
-Antigravity로는 구현부터 리뷰까지 한 라운드를 사용자 확인 직전까지 돌려 봤고, Grok Build는 무료 사용량 한도 때문에 대조표를 여는 데까지만 확인했어요. Grok Build는 Claude 설정도 함께 읽어서, 전역에 설치한 Claude 플러그인이 같이 보일 수 있어요. 긴 작업에는 유료 요금제가 필요할 수 있어요.
+Antigravity로는 구현부터 리뷰까지 한 라운드를 사용자 확인 직전까지 돌려 봤고, Grok Build는 무료 사용량 한도 때문에 대조표를 여는 데까지만 확인했어요. 서브에이전트가 일한 기록과 라운드 없는 편집 막기 훅은 Claude Code, Codex, Antigravity에서 확인했고, Grok Build는 훅이 도는지 확인하지 않았어요. Grok Build는 Claude 설정도 함께 읽어서, 전역에 설치한 Claude 플러그인이 같이 보일 수 있어요. 긴 작업에는 유료 요금제가 필요할 수 있어요.
 
 도구마다 읽는 파일과 확인한 범위는 [지원하는 에이전트](../start/supported-agents.md)에 있어요.
 
@@ -85,6 +85,14 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 
 네. "두뇌 바꿔줘", "openspec도 같이 쓰고 싶어"처럼 요청하면 `prokit-skills-manage` 스킬이 `pnpm skills:setup --brain …`으로 바꿔요. 고르지 않은 두뇌의 도구 파일은 지우지만 `openspec/`, `specs/`, `.specify/memory/` 같은 명세 문서는 남겨요([두뇌와 선택 스킬](../skills/brains.md)).
 
+### UI 스킬을 고르거나 바꿀 수 있나요?
+
+네. 화면 디자인 단계를 맡는 UI 스킬은 impeccable(기본)과 hallmark 중에서 고르고, 둘 다 고를 수도 있어요. 첫 번째가 주 UI 스킬이에요. 고르지 않으면 기본 AI가 `frontend-design` 스킬과 게슈탈트 지침으로 화면을 만들어요. "UI 스킬을 hallmark로 바꿔줘"처럼 요청하면 `prokit-skills-manage` 스킬이 `pnpm skills:setup --ui-skill …`으로 바꿔요. 바꿔도 `PRODUCT.md`, `DESIGN.md`, 화면 설계, 토큰은 그대로 쓰고, 다시 디자인해 달라고 하지 않으면 새 시각 방향을 내지 않아요([두뇌와 선택 스킬](../skills/brains.md)).
+
+### 에이전트가 코드를 직접 고치지 않고 다른 에이전트에게 맡겨요
+
+정상이에요. 공식 스킬로 하는 일은 그 스킬을 맡은 전문 에이전트가 읽고 해요. 열린 라운드에서 코디네이터가 <!-- edition:pro -->화면·서버·DB<!-- /edition --><!-- edition:ui 화면 --> 코드를 편집 도구로 직접 고치려 하면 훅이 막고, 맡을 에이전트를 알려 줘요. 계층 에이전트는 자기 계층의 파일만 고쳐요. 훅이 없는 도구에서는 코디네이터가 직접 구현하고 증거에 `degraded: Main 직접(도구 이름)`으로 적어요([위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md#공식-스킬은-맡은-에이전트가-읽어요)).
+
 ### 스킬을 직접 불러야 하나요?
 
 아니요. 평소 말로 요청하면 에이전트가 맞는 스킬을 스스로 불러요. 직접 부르고 싶을 때만 Claude Code는 `/prokit-ui`, Codex는 `$prokit-ui`처럼 써요([prokit 스킬](../skills/prokit-skills.md)).
@@ -128,6 +136,10 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 ### 어떤 파일을 직접 고쳐도 되나요?
 
 **용어집과 서비스 소개 문서, 내 컴퓨터의 `.env` 값만 직접 고치고, 코드와 디자인 파일은 에이전트에게 시켜요.** `.dev-cycle.json`, 생성 파일, 대조표의 증거 칸은 건드리지 않아요([고쳐도 되는 파일](what-to-edit.md)).
+
+### 열린 라운드가 없다며 파일 고치기가 막혀요
+
+정상이에요. 코드나 하네스 파일은 라운드를 먼저 열어야 고칠 수 있어서, 열지 않았으면 훅(`edit-guard`)이 막고 라운드를 여는 법을 알려 줘요. 에이전트가 `pnpm dev-cycle table …`로 라운드를 연 뒤 다시 고쳐요. 코드를 바꾸지 않는 질문과 설명에는 라운드가 필요 없어요([dev-cycle 라운드](../concepts/dev-cycle.md)).
 
 ### 설정 파일은 어디서 보나요?
 

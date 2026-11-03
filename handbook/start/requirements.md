@@ -22,6 +22,7 @@
 | Vercel CLI (<!-- v:cli.vercel.installCode -->`npm install -g vercel`<!-- /v -->)와 Vercel 계정 | <!-- edition:pro -->develop과 운영에 배포할 때<!-- /edition --><!-- edition:ui Vercel에 배포할 때 --> |
 | ego lite (macOS) | 브라우저로 화면을 확인할 때 먼저 쓰는 도구 |
 | agent-browser CLI | ego lite를 쓸 수 없을 때의 브라우저 확인 도구. <!-- v:policy.agentBrowser.cell -->없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치<!-- /v --> |
+| Chrome과 `puppeteer-core` | UI 스킬 hallmark로 화면을 찍는 검사(`sloplint --render`)를 돌릴 때. `puppeteer-core`는 전역에 설치하거나 프로젝트 밖 폴더에 받고 `HALLMARK_PUPPETEER`로 가리켜요. 없으면 정적 검사만 돌아요 |
 | Bun | 두뇌 gstack을 고를 때 |
 | uv | 두뇌 Spec Kit을 설치할 때만 |
 | tmux | 두뇌 oh-my의 OMX `team`(Codex)을 돌릴 때. 없어도 진행은 멈추지 않고 에이전트가 보고에 적어요 |

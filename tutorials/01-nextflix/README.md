@@ -128,7 +128,7 @@ cd ~/projects/nextflix && claude --dangerously-skip-permissions "docs/first-requ
 <!-- /b -->
 
 <!-- b:codex-hooks-line -->
-Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅을 믿는다고 확인하세요.
+Codex로 열었다면 대화창에 `/hooks`를 입력해 디자인 검사기 훅과 프로킷 훅(라운드 없는 편집 막기, 스킬 기록)을 믿는다고 확인하세요.
 <!-- /b -->
 
 ![1단계는 작업 폴더에서, 3단계는 새 프로젝트 폴더에서 에이전트를 열어요](assets/where-to-open@2x.webp)
