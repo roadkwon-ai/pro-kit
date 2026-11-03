@@ -4,6 +4,18 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## `pnpm-workspace.yaml`을 작업공간 설정으로, Workflow 생성물을 Biome 제외로 (2026-11-03)
+
+- 원인: pro-kit-trader가 T8 라운드에서 두 가지를 알렸다.
+  - `pnpm-workspace.yaml`의 `allowBuilds`(설치 스크립트 허용)와 `minimumReleaseAgeExclude`(새 판 대기 예외)를 바꿨는데 `case`가 H로 잡지 않았다. 앞선 판은 공용 의존성 `catalog:` 때문에 이 파일을 A로 두었다.
+  - Workflow SDK를 들이면 `apps/web/src/app/.well-known/workflow/`에 생성 파일이 생긴다. `biome.json`이 `.gitignore`를 따르지 않아(`vcs.useIgnoreFile: false`) `biome check .`가 exit 1이 됐다.
+- 고친 것:
+  - `.dev-cycle.json`의 H 규칙 "작업공간 설정"에 `pnpm-workspace.yaml`을 더했다. 공급망 설정이 리뷰 없이 지나가는 것보다, 가끔 바뀌는 `catalog:` 때문에 H 라운드를 더 하는 편이 낫다고 보았다. 앱과 패키지의 `package.json`, `pnpm-lock.yaml`은 그대로 A다. H 표 빌드·검사 행, `prokit-dev-cycle` 케이스 표, handbook `dev-cycle-config.md`의 목록을 맞췄다.
+  - 설치기의 Biome 제외 목록에 `!**/.well-known/workflow`를 더했다. 갱신 반영의 `install.sh --skip-skills`도 빠진 제외 항목을 더한다.
+- 테스트: 경로 판정(`pnpm-workspace.yaml` → H "작업공간 설정")과 Biome 제외 목록 단언을 고쳤다.
+- 실제 설치: Better-T-Stack 새 프로젝트에 neon 템플릿을 설치했다. `biome.json`에 `!**/.well-known/workflow`가 들어갔고, `apps/web/src/app/.well-known/workflow/`에 포맷이 맞지 않는 파일을 두어도 `biome check .`가 exit 0이었다. 설치 커밋 뒤 `pnpm-workspace.yaml`만 바꾸면 `pnpm dev-cycle case`가 `H (작업공간 설정)`으로 판정했다. 두 템플릿 419 통과·0 실패, 문서 검사 80 통과·0 실패.
+- 한계: Workflow SDK 자체는 설치하지 않았다. 경로는 pro-kit-trader의 보고를 따랐다. `--adopt`는 그 프로젝트의 Biome 설정과 작업공간 규칙을 두므로 이 두 변경이 들어가지 않는다.
+
 ## 운영 프로젝트 T8 감사 보고: 셸 편집 막기, delegation diff 안내, 리뷰 focus 스킬 안내 (2026-11-03)
 
 - 원인: pro-kit-trader가 T8 라운드를 감사하다 세 가지를 알렸다.

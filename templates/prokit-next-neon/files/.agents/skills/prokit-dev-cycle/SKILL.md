@@ -32,7 +32,7 @@ description: >-
 | D | 서버와 API (`packages/api`, `apps/web/src/app/api`, 앱 폴더의 `route.ts`·메타데이터 라우트, 서버 액션 `actions.ts`, `instrumentation.ts`) |
 | E | DB 스키마와 마이그레이션 (`packages/db`) |
 | F | 두 계층 이상에 걸친 신규 기능, 또는 새 기능으로 선언한 작업 |
-| H | 스킬, 에이전트, dev-cycle 자체 변경. 빌드·배포 설정(`next.config.*`, `vercel.json`, `turbo.json`, `.github/workflows/`)과 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`, `packages/config`)도 H다 |
+| H | 스킬, 에이전트, dev-cycle 자체 변경. 빌드·배포 설정(`next.config.*`, `vercel.json`, `turbo.json`, `.github/workflows/`)과 작업공간 설정(루트 `package.json`, `pnpm-workspace.yaml`, `biome.json`, `tsconfig.json`, `packages/config`)도 H다 |
 
 - 새 기능 요청은 F, 버그 제보는 C로 선언한다. 애매하면 더 무거운 케이스를 고른다.
 - 고치거나 만들어 달라는 요청이면, 이번에는 원인 분석이나 스펙·계획까지만 하라고 해도 라운드를 연다. 분석 결과와 재현 계획은 블록 안 메모나 `tasks/evidence/`에 남기고, 행의 증거 칸은 그 행을 실제로 끝냈을 때만 채운다. 다음 세션이 `pnpm dev-cycle status`로 이어받는다. 코드를 바꾸지 않는 질문이나 설명 요청에만 라운드를 열지 않는다.

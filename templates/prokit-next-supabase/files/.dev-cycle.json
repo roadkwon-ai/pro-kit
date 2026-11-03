@@ -34,7 +34,7 @@
 		},
 		{
 			"case": "H",
-			"match": "^(package\\.json|biome\\.jsonc?|tsconfig\\.json|packages/config/)",
+			"match": "^(package\\.json|pnpm-workspace\\.yaml|biome\\.jsonc?|tsconfig\\.json|packages/config/)",
 			"why": "작업공간 설정"
 		}
 	],

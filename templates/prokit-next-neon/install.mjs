@@ -463,12 +463,13 @@ const gitHookLines = (h, dryRun) =>
 // biome.json은 vcs.useIgnoreFile이 꺼져 있어 .gitignore만으로는 빠지지 않는다.
 // 마이그레이션(drizzle-kit), schema/auth.ts(`auth:generate`), src/env.ts(varlock이 설치·실행 때마다 다시 씀)는 생성물이라
 // 포맷해도 다시 생성하면 지적이 돌아온다. html/(pnpm export:html이 만든 정적 사이트)은 빌드 결과물이다.
+// .well-known/workflow/는 Workflow SDK가 앱 안에 만드는 생성물이다.
 // 마크다운: Biome 2.6부터 표를 칸 너비로 맞추는데, dev-cycle이 tasks/todo.md에 쓰는 대조표와 AGENTS.md 표의 edition 주석 칸이 매번 다시 바뀌어 lint가 실패한다.
 const BIOME_IGNORES = [
   "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!**/.hallmark", "!.claude", "!.codex",
   "!tasks/evidence",
   "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
-  "!html", "!**/*.md",
+  "!html", "!**/.well-known/workflow", "!**/*.md",
 ];
 // shadcn의 label.tsx·input-group.tsx는 upstream 코드라 Better-T-Stack 생성 직후부터 a11y 오류 4건이 난다(범용 Label 래퍼,
 // role="group", 애드온 클릭 포커스). 고쳐 써도 `shadcn add --overwrite`가 되돌리므로 이 두 파일에서만 세 규칙을 끈다.

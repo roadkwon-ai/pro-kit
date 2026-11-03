@@ -69,7 +69,7 @@
 - 하네스 스크립트(`scripts/`의 `dev-cycle`, `sync-agents`, `skills-setup`, `delegation`, `resource-guard`, `vercel-deploy`, `release`, `export-html`, `load-keys`)
 - `.dev-cycle.json` 자신, `docs/dev-workflow.md`, `.vercelignore`
 - 빌드·배포 설정(`next.config`, `vercel.json`, `.github/workflows/`·`actions/`, `turbo.json`)
-- 작업공간 설정(루트 `package.json`, `biome.json`, `tsconfig.json`, `packages/config/`)
+- 작업공간 설정(루트 `package.json`, `pnpm-workspace.yaml`, `biome.json`, `tsconfig.json`, `packages/config/`)
 
 `--adopt` 프로젝트는 설치기가 이 규칙을 그 프로젝트에 맞게 바꾸고, 규칙 밖의 코드는 계층을 알 수 없어서 무거운 F로 봐요. <!-- edition:pro -->
 

@@ -208,7 +208,7 @@ test("biome.json: 벤더 스킬, 도구 상태 파일, 생성물을 빼고 shadc
     "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!**/.hallmark", "!.claude", "!.codex",
     "!tasks/evidence",
     "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
-    "!html", "!**/*.md",
+    "!html", "!**/.well-known/workflow", "!**/*.md",
   ];
   const override = "overrides(shadcn label.tsx·input-group.tsx a11y 3개 끔)";
   const shadcn = ["packages/ui/src/components/label.tsx", "packages/ui/src/components/input-group.tsx"];
