@@ -4,6 +4,13 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 계층을 함께 맡는 프로젝트 에이전트 `performers.layers`, 스킬 기록 안내 문구 (2026-11-03)
+
+- 원인: pro-kit-web이 프로젝트 전용 에이전트(`prokit-preset-implementer`)에 화면 파일을 맡기려 했다. 그런데 계층 소유자가 `scripts/dev-cycle.mjs`의 고정 맵(`LAYER_AGENTS`)이라 편집 훅이 그 에이전트의 `apps/web/src` 편집을 막았다. audit도 화면 구현 행에서 그 에이전트의 `위임:`을 받지 않았다. 같은 리뷰에서 스킬 기록 안내(`LOG_HINT`)의 "prokit-*는 Skill 도구로"가 `CLAUDE.md`의 "이름이 `prokit-`로 시작하는 팩 저장소 공식 스킬은 Read로"와 어긋난다는 지적도 나왔다.
+- 고친 것: `skills.manifest.json`의 `performers`에 선택 항목 `layers`(계층 `B`·`D`·`E`마다 더할 에이전트)를 더했다. 적은 에이전트는 편집 훅이 그 계층 파일 편집을 막지 않는다. audit은 그 계층 에이전트를 적은 행에서 이 에이전트의 `위임:`도 받고, F의 계층별 위임 누락 검사에서도 그 계층을 맡은 것으로 센다. `pnpm agents:check`(`sync-agents.mjs`)는 계층 이름이 아니거나 `performers.agents`에 없는 에이전트를 알린다. 템플릿 매니페스트에는 `layers`를 두지 않아 기본 동작은 그대로다. `LOG_HINT`는 "공식 스킬이 아닌 prokit-*"로 고쳤다. `prokit-skills-assign`과 handbook(공식 스킬, 에이전트 역할)에 쓰는 법을 적었다.
+- 테스트: 더한 에이전트의 편집 허용, 더하지 않은 계층의 편집 막기, Main이 막힐 때 안내에 두 에이전트가 나오는지, 화면 구현 행의 위임 판정, `agents:check`의 잘못된 항목 알림을 단언으로 더했다. 두 템플릿 418 통과·0 실패, 문서 검사 80 통과·0 실패.
+- 한계: `install.mjs`와 `skills-setup.mjs`는 바꾸지 않아 실제 설치 확인은 하지 않았다. 고친 두 스크립트는 탭 들여쓰기 Biome 설정으로 포맷을 확인했다. 더한 에이전트가 공식 스킬을 읽은 기록은 `performers.skills`에 그 에이전트가 있어야 센다(`prokit-skills-assign`으로 배치).
+
 ## Neon 공식 스킬 통합 반영: `neon-postgres-branches`·`neon-postgres-egress-optimizer` → `neon-postgres` (2026-11-03)
 
 - 원인: `neondatabase/agent-skills` PR #172 "Consolidate Neon Postgres skills"(2026-11-02 병합)가 두 스킬을 `neon-postgres`로 합쳤다. 브랜치 내용은 `references/branching.md`, egress 내용은 `references/egress-optimization.md`와 "Egress Optimization" 절로 옮겼다. pro-kit-web이 외부 스킬을 업데이트하다 `UPSTREAM_GONE`으로 찾아 알렸다. 고치기 전 판으로 새로 설치하면 없어진 스킬 두 개를 받으려 했다.

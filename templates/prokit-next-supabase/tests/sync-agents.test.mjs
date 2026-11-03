@@ -135,6 +135,12 @@ test("공식 스킬 배치: 없는 에이전트·매니페스트에 없는 스�
     "prokit-reviewer.md의 공식 스킬 표에 있지만 performers.skills가 prokit-reviewer에 맡기지 않는다: shadcn",
     "prokit-reviewer.md의 공식 스킬 표에 없다: gone(performers.skills가 prokit-reviewer에 맡긴다)",
   ]);
+  // performers.layers의 에이전트는 계층(B·D·E)과 performers.agents에 있어야 한다
+  writeFileSync(join(root, "skills.manifest.json"), JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder"], layers: { B: ["prokit-ui-builder", "prokit-other"], X: ["prokit-ui-builder"] }, skills: {} } }));
+  assert.deepEqual(assignProblems(root), [
+    "performers.layers의 B: prokit-other는 계층(B·D·E)과 performers.agents에 있어야 한다",
+    "performers.layers의 X: prokit-ui-builder는 계층(B·D·E)과 performers.agents에 있어야 한다",
+  ]);
   // prokit-* 연결 표의 맡는 에이전트 칸도 대조한다(배치에 없는 스킬을 에이전트에 맡기거나, 배치와 다른 에이전트를 적으면)
   const table = (rows) => `# x\n\n| 상황 | 공식 스킬 | 맡는 에이전트 | Main 검수 |\n|---|---|---|---|\n${rows.join("\n")}\n\n## 다음\n`;
   mkdirSync(join(root, ".agents/skills/prokit-x"), { recursive: true });

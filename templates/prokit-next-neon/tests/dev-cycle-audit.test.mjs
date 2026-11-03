@@ -1775,6 +1775,33 @@ test("계층 파일은 그 계층 에이전트만 편집하고(인증 파일은 
   assert.equal(guard("prokit-ui-builder", "apps/web/src/lib/auth-client.ts").status, 2);
 });
 
+test("performers.layers로 더한 프로젝트 에이전트는 그 계층 파일을 고치고, 그 계층 에이전트 대신 위임받을 수 있다", () => {
+  const { root, write } = makeRepo();
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-db-builder", "prokit-preset-implementer"], layers: { B: ["prokit-preset-implementer"] }, skills: {} } }));
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "화면" });
+  const guard = (agent, file) => spawnSync(process.execPath, [CLI, "edit-guard"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Edit", ...(agent ? { agent_id: `id-${agent}`, agent_type: agent } : {}), tool_input: { file_path: join(root, file) } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const page = "apps/web/src/app/page.tsx";
+  assert.equal(guard("prokit-preset-implementer", page).status, 0);
+  assert.equal(guard("prokit-ui-builder", page).status, 0, "계층 에이전트도 그대로 고친다");
+  assert.equal(guard("prokit-preset-implementer", "packages/db/src/schema/todo.ts").status, 2, "더하지 않은 계층은 고치지 못한다");
+  const main = guard(null, page);
+  assert.equal(main.status, 2);
+  assert.match(main.stderr, /prokit-ui-builder·prokit-preset-implementer에 맡긴다/);
+  // 화면 구현 행(문구에 prokit-ui-builder)은 더한 에이전트의 위임도 받는다
+  const impl = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => r.text.startsWith("구현 (구현 단계, prokit-ui")) + 1;
+  assert.ok(impl > 0);
+  write(page, "export default 1\n");
+  mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+  const set = (v) => {
+    writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+    assert.equal(run(root, "evidence", String(impl), "--file", "tasks/evidence/e.txt").status, 0);
+    return audit(root, config).problems.filter((p) => p.startsWith(`#${impl} `)).join("\n");
+  };
+  assert.doesNotMatch(set("위임: prokit-preset-implementer(사용: prokit-ui, prokit-web. Next 문서: N/A: 없음) → 화면"), /이 행은 .*에 맡긴다/);
+  assert.match(set("위임: prokit-db-builder(사용: 없음) → 화면"), /이 행은 prokit-ui-builder·prokit-preset-implementer에 맡긴다/);
+});
+
 test("--upgrade는 판이 바뀌어 문구만 달라진 행을 단계 이름으로 짝지어 증거와 채운 시각을 옮긴다", () => {
   const { root, write } = makeRepo();
   const config = loadConfig(root);

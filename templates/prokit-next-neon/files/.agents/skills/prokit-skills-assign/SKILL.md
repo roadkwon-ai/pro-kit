@@ -18,12 +18,13 @@ description: >-
 |---|---|
 | `skills.manifest.json`의 `skills` | 설치할 공식 스킬(설치 정본) |
 | `skills.manifest.json`의 `performers.agents` | 대조표 행에서 위임받는 전문 에이전트 |
+| `skills.manifest.json`의 `performers.layers`(선택) | 계층(`B` 화면, `D` 서버, `E` DB)마다 계층 에이전트와 함께 그 계층 파일을 고칠 수 있는 프로젝트 에이전트(예: `{"B": ["prokit-preset-implementer"]}`). 편집 훅이 그 에이전트의 계층 파일 편집을 막지 않고, audit이 그 계층 에이전트를 적은 행에서 이 에이전트의 `위임:`도 받는다. `performers.agents`에도 있어야 한다 |
 | `skills.manifest.json`의 `performers.skills` | 공식 스킬마다 그 스킬을 읽고 일하는 에이전트(배치 정본). audit은 이 표의 에이전트가 읽은 기록만 그 스킬을 쓴 것으로 센다. 여기에 없는 공식 스킬은 Main이 읽는다 |
 | `.claude/agents/<에이전트>.md`의 "맡는 공식 스킬" 표(리뷰어는 "focus별 공식 스킬" 표) | 에이전트가 읽을 스킬과 그 상황 |
 | `prokit-*`의 "공식 스킬 연결" 표 | 상황, 공식 스킬, 맡는 에이전트, Main 검수 항목 |
 | `docs/dev-workflow.md`의 행 문구 | 그 행을 맡는 에이전트와 꼭 읽을 스킬 |
 
-`pnpm agents:check`는 `performers`의 에이전트·스킬 이름이 실제 에이전트 정의와 매니페스트의 스킬을 가리키는지, 에이전트 정의의 공식 스킬 표와 `prokit-*` 연결 표의 맡는 에이전트 칸이 `performers`와 같은지 양쪽으로 본다. `pnpm agents:sync`는 Codex·Antigravity용 에이전트 정의를 다시 만든다.
+`pnpm agents:check`는 `performers`의 에이전트·스킬 이름이 실제 에이전트 정의와 매니페스트의 스킬을 가리키는지, `performers.layers`의 에이전트가 계층(`B`·`D`·`E`)과 `performers.agents`에 있는지, 에이전트 정의의 공식 스킬 표와 `prokit-*` 연결 표의 맡는 에이전트 칸이 `performers`와 같은지 양쪽으로 본다. `pnpm agents:sync`는 Codex·Antigravity용 에이전트 정의를 다시 만든다.
 
 ## 1. 바뀐 것 찾기
 - 업데이트 뒤(`prokit-skills-update`가 넘긴 경우): 그 보고와 `git diff --stat -- .agents/skills skills-lock.json`에서 새로 생긴 스킬 폴더, 원격에서 없어진 스킬(`UPSTREAM_GONE`), `SKILL.md`의 `description`이나 하는 일이 바뀐 스킬을 고른다. 글만 다듬은 업데이트는 배치를 바꾸지 않는다.
@@ -45,7 +46,7 @@ description: >-
 | 다른 스킬의 상위 스킬(그 스킬 머리의 `parent`) | 하위 스킬을 맡는 쪽이 모두 읽을 수 있어야 한다. 하위 스킬을 맡는 쪽이 Main과 에이전트로 갈리면 `performers.skills`에 넣지 않는다 |
 
 - 쓰는 쪽(수행자)과 검사하는 쪽(리뷰어)이 모두 쓰는 스킬이면 둘 다 둔다. 쓰는 쪽이 여러 계층이면 계층마다 둔다(예: `turborepo`).
-- 어느 칸에도 맞지 않는 새 분야면 새 전문 에이전트가 필요한지 사용자에게 묻는다. 만들면 `prokit-implementer`의 공통 규칙과 보고 형식을 따르는 정의(`.claude/agents/<이름>.md`, "맡는 공식 스킬" 표 포함)를 만들고 `performers.agents`에 더한다.
+- 어느 칸에도 맞지 않는 새 분야면 새 전문 에이전트가 필요한지 사용자에게 묻는다. 만들면 `prokit-implementer`의 공통 규칙과 보고 형식을 따르는 정의(`.claude/agents/<이름>.md`, "맡는 공식 스킬" 표 포함)를 만들고 `performers.agents`에 더한다. 그 에이전트가 화면·서버·DB 계층 파일을 고쳐야 하면 `performers.layers`의 그 계층에도 더한다(더하지 않으면 편집 훅이 막는다).
 - 판단 결과를 표(스킬, 시키는 일 한 줄, 지금 배치, 바꿀 배치, 이유)로 보여 주고 사용자에게 확인받는다(Claude Code는 AskUserQuestion). 사용자가 다르게 고르면 그대로 한다.
 
 ## 3. 반영 라운드

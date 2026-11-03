@@ -166,6 +166,12 @@ export function assignProblems(root) {
 	for (const a of p.agents ?? [])
 		if (!has(a))
 			out.push(`performers.agents의 ${a}: .claude/agents/${a}.md가 없다`);
+	for (const [layer, agents] of Object.entries(p.layers ?? {}))
+		for (const a of agents)
+			if (!["B", "D", "E"].includes(layer) || !(p.agents ?? []).includes(a))
+				out.push(
+					`performers.layers의 ${layer}: ${a}는 계층(B·D·E)과 performers.agents에 있어야 한다`,
+				);
 	for (const [skill, agents] of Object.entries(p.skills ?? {})) {
 		if (!known.has(skill))
 			out.push(

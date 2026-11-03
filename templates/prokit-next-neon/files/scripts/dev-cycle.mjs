@@ -985,6 +985,11 @@ const LAYER_AGENTS = {
 	D: "prokit-api-builder",
 	E: "prokit-db-builder",
 };
+// 계층 c의 파일을 고칠 수 있는 에이전트: 계층 에이전트와 performers.layers로 더한 프로젝트 에이전트. performers.agents에 있는 것만 본다
+const layerOwners = (c, { agents, layers }) =>
+	[LAYER_AGENTS[c], ...(layers?.[c] ?? [])].filter(
+		(a) => a && agents.includes(a),
+	);
 // 프로젝트 판(.agents/skills·.claude/skills)을 읽었는지. Skill 호출은 이름이 같은 개인 스킬(~/.claude/skills)이 먼저 불려 판을 알 수 없다
 // 셸 명령은 프로젝트 절대 경로, 상대 경로(./, ../), $PWD로 시작한 경로만 프로젝트 판이다. ~/.agents/skills(개인 판)는 아니다.
 // shortcut: 셸을 해석하지 않고 cwd를 프로젝트 루트로 본다. 하위 폴더에서 ../로 올라간 경로도 프로젝트로 센다
@@ -1208,11 +1213,12 @@ function skillsLogged(root, active) {
 	return log?.uses.length ? new Set(log.uses.map((u) => u.name)) : null;
 }
 const LOG_HINT =
-	"Claude Code는 공식 스킬(skills.manifest.json의 skills)과 사용자 호출 전용 스킬이면 그 SKILL.md를 Read로 읽고(공식 스킬을 Skill 도구로 부른 기록과 Bash cat은 세지 않는다), prokit-*·플러그인 스킬이면 Skill 도구로 부르고, Codex는 그 SKILL.md 경로를 그대로 cat으로(출력을 /dev/null로 버리면 세지 않는다), Antigravity는 read_file로 끝까지 읽어 다시 진행한 뒤 적는다";
+	"Claude Code는 공식 스킬(skills.manifest.json의 skills)과 사용자 호출 전용 스킬이면 그 SKILL.md를 Read로 읽고(공식 스킬을 Skill 도구로 부른 기록과 Bash cat은 세지 않는다), 공식 스킬이 아닌 prokit-*·플러그인 스킬이면 Skill 도구로 부르고, Codex는 그 SKILL.md 경로를 그대로 cat으로(출력을 /dev/null로 버리면 세지 않는다), Antigravity는 read_file로 끝까지 읽어 다시 진행한 뒤 적는다";
 
 // 공식 스킬과 그 스킬로 일하는 에이전트의 정본은 skills.manifest.json이다(바꾸는 일은 prokit-skills-assign).
 // - skills: 기본 설치 스킬(공식 스킬). 프로젝트 판을 읽은 기록만 센다
 // - performers.agents: 일을 맡는 전문 에이전트. 대조표 행 문구에 이름이 있거나 구현 단계 행이면 증거에 `위임: <에이전트>`가 있어야 한다
+// - performers.layers: 계층(B·D·E)마다 계층 에이전트와 함께 그 계층 파일을 고칠 수 있는 프로젝트 에이전트(performers.agents에도 있어야 한다)
 // - performers.skills: 공식 스킬마다 그 스킬로 일하는 에이전트. 이 에이전트가 읽은 기록만 그 스킬을 쓴 것으로 센다(Main이 읽으면 위임하지 않은 것이다).
 //   여기에 없는 공식 스킬(사용자에게 묻는 domain-modeling·grilling, 외부에 적용하는 배포, 기록 파일을 쓰는 impeccable 등)은 Main이 읽는다.
 // manifest가 없거나 performers가 없는 옛 판은 위임과 에이전트 대조를 하지 않는다.
@@ -1230,12 +1236,19 @@ export function performers(root) {
 				].flatMap((s) => s.skills),
 			),
 			agents: m.performers?.agents ?? [],
+			layers: m.performers?.layers ?? {},
 			skills: m.performers?.skills ?? {},
 			// 매니페스트가 Claude 플러그인으로도 설치하는 스킬(skill-creator)은 `<플러그인>:<이름>` Skill 호출도 그 스킬을 쓴 것이다
 			plugins: new Set((m.claude?.plugins ?? []).map((x) => x.split("@")[0])),
 		};
 	} catch {
-		return { official: new Set(), agents: [], skills: {}, plugins: new Set() };
+		return {
+			official: new Set(),
+			agents: [],
+			layers: {},
+			skills: {},
+			plugins: new Set(),
+		};
 	}
 }
 // 스킬 머리의 `parent: <이름>`(neon-postgres → neon 등). 하위 스킬은 상위 스킬부터 읽는다
@@ -1367,12 +1380,13 @@ function usageProblem(root, config, active) {
 			]
 		: [];
 	const logged = log && new Set(all.map((u) => u.name));
+	const perf = performers(root);
 	const {
 		official,
 		agents: performerAgents,
 		skills: skillAgents,
 		plugins,
-	} = performers(root);
+	} = perf;
 	const { layers, auth } = classify(roundFiles(root, active), config);
 	const uiMain = mainUiSkill(
 		config,
@@ -1488,7 +1502,13 @@ function usageProblem(root, config, active) {
 			!/next\/dist\/docs\/|Next 문서:\s*N\/A:\s*\S/.test(value)
 		)
 			return "prokit-web을 썼으면 읽은 Next 번들 문서 경로(apps/web/node_modules/next/dist/docs/…)를 적는다. 쓰거나 바꾼 Next API가 없으면 Next 문서: N/A: 사유로 적는다";
-		const named = performerAgents.filter((a) => r.text.includes(a));
+		// 행 문구에 계층 에이전트 이름이 있으면 performers.layers로 그 계층을 함께 맡는 에이전트도 받는다
+		const named = [
+			...new Set([
+				...performerAgents.filter((a) => r.text.includes(a)),
+				...namedLayers(r.text).flatMap((c) => layerOwners(c, perf)),
+			]),
+		];
 		const want =
 			named.length || !/구현 단계/.test(r.text) ? named : performerAgents;
 		const delegated = [
@@ -1525,8 +1545,12 @@ function usageProblem(root, config, active) {
 			const lack =
 				namedLayers(r.text).length > 1
 					? agentLayers
+							.filter(
+								(c) =>
+									performerAgents.includes(LAYER_AGENTS[c]) &&
+									!layerOwners(c, perf).some((a) => said.includes(a)),
+							)
 							.map((c) => LAYER_AGENTS[c])
-							.filter((a) => performerAgents.includes(a) && !said.includes(a))
 					: [];
 			if (lack.length)
 				return `이 라운드 diff의 계층은 계층마다 그 에이전트에 맡긴다. ${lack.join("·")}의 위임: <에이전트>(사용: …)도 적는다(DB, 서버, 화면 순서로 맡기고 앞 계층이 바꾼 계약을 다음 지시에 넣는다)`;
@@ -3203,14 +3227,14 @@ export function editGuard(root, config, input) {
 	const md = readTodo(root, config);
 	if (md && parseActive(md)) {
 		if (!(CC_EDIT_TOOLS.has(name) || seen)) return null;
-		const { agents } = performers(root);
-		const owners = (c) =>
-			[
-				...new Set([
-					...c.layers.map((l) => LAYER_AGENTS[l]),
-					...(c.auth ? [LAYER_AGENTS.D] : []),
-				]),
-			].filter((a) => a && agents.includes(a));
+		const perf = performers(root);
+		const owners = (c) => [
+			...new Set(
+				[...c.layers, ...(c.auth ? ["D"] : [])].flatMap((l) =>
+					layerOwners(l, perf),
+				),
+			),
+		];
 		if (agent) {
 			// 계층 파일은 그 계층 에이전트만 고친다(prokit-implementer 등 다른 서브에이전트도). 병렬로 맡겨도 누가 어느 파일을 고쳤는지 계층으로 나뉜다
 			const foreign = rels.filter((f) => {
