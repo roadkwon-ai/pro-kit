@@ -4,6 +4,13 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 맡은 공식 스킬 경고를 이번 diff의 상황으로 거르기 (2026-11-03)
+
+- 원인: audit 경고 "이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬"은 일한 에이전트가 맡은 공식 스킬을 모두 보고, 이번 diff에 그 상황이 있는지는 보지 않았다. pro-kit-trader와 pro-kit-web이 각각 알렸다. `turbo.json`을 바꾸지 않은 H 라운드에서도 "prokit-implementer: turborepo"가 떴다.
+- 고친 것: `scripts/dev-cycle.mjs`에 파일 경로로 상황이 정해지는 스킬의 작은 표(`SKILL_SITUATIONS`)를 두었다. `turborepo`는 `turbo.json`·`package.json`, Better Auth 스킬 셋(`better-auth-best-practices`, `better-auth-security-best-practices`, `email-and-password-best-practices`)은 인증 파일(`authPaths`)을 이번 diff에서 바꾼 라운드에서만 알린다. 표에 없는 스킬은 그대로 알린다. handbook 공식 스킬 쪽에 이 조건을 적었다.
+- 테스트: 경고 테스트에 `turborepo`를 맡긴 화면 에이전트가 `turbo.json` 없는 라운드에서는 알리지 않고, `turbo.json`을 더하면 알린다는 단언을 더했다. 두 템플릿 418 통과·0 실패, 문서 검사 80 통과·0 실패.
+- 한계: 표는 경로로 가를 수 있는 스킬만 담는다. 다른 스킬(`shadcn` 등)은 상황을 파일로 가를 수 없어 지금처럼 알린다. 경고라 audit 통과에는 영향이 없다.
+
 ## 계층을 함께 맡는 프로젝트 에이전트 `performers.layers`, 스킬 기록 안내 문구 (2026-11-03)
 
 - 원인: pro-kit-web이 프로젝트 전용 에이전트(`prokit-preset-implementer`)에 화면 파일을 맡기려 했다. 그런데 계층 소유자가 `scripts/dev-cycle.mjs`의 고정 맵(`LAYER_AGENTS`)이라 편집 훅이 그 에이전트의 `apps/web/src` 편집을 막았다. audit도 화면 구현 행에서 그 에이전트의 `위임:`을 받지 않았다. 같은 리뷰에서 스킬 기록 안내(`LOG_HINT`)의 "prokit-*는 Skill 도구로"가 `CLAUDE.md`의 "이름이 `prokit-`로 시작하는 팩 저장소 공식 스킬은 Read로"와 어긋난다는 지적도 나왔다.

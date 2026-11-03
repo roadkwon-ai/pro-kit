@@ -2369,7 +2369,7 @@ export function audit(
 	const cls = classify(files, config);
 	const warnings = [
 		...shellEdits(root, config, active, files),
-		...skillWarnings(root, active),
+		...skillWarnings(root, active, { files, auth: cls.auth }),
 		...shotWarnings(root, active),
 	];
 	if (!["C", "F"].includes(X) && ![X, "A"].includes(cls.pathCase)) {
@@ -2496,7 +2496,17 @@ const NEXT_FLAG_SKILLS = {
 };
 // 막지 않는 알림 세 가지. Main이 에이전트에 맡긴 공식 스킬을 직접 읽은 기록, 이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬,
 // 공식 스킬의 SKILL.md를 앞부분만 읽은 기록이다. 맡은 스킬은 상황이 맞을 때만 읽으므로(에이전트 정의의 "맡는 공식 스킬" 표) 막지 않고 Main이 상황을 확인하게 한다
-function skillWarnings(root, active) {
+// 이 라운드 diff의 파일로 상황이 정해지는 맡은 스킬. 그 상황이 없으면 일한 에이전트가 읽지 않아도 알리지 않는다
+// shortcut: 경로로 가를 수 있는 스킬만 둔다. 다른 스킬에서도 상황 없는 경고가 실측되면 더한다
+const authRound = ({ auth }) => auth;
+const SKILL_SITUATIONS = {
+	turborepo: ({ files }) =>
+		files.some((f) => /(^|\/)(turbo|package)\.json$/.test(f)),
+	"better-auth-best-practices": authRound,
+	"better-auth-security-best-practices": authRound,
+	"email-and-password-best-practices": authRound,
+};
+function skillWarnings(root, active, round = { files: [], auth: false }) {
 	const log = skillLog(root, active);
 	if (!log) return [];
 	const {
@@ -2538,6 +2548,7 @@ function skillWarnings(root, active) {
 				(n) =>
 					skillAgents[n].includes(a) &&
 					!off.has(n) &&
+					(SKILL_SITUATIONS[n]?.(round) ?? true) &&
 					isProjectSkill(root, n) &&
 					!log.agentUses.some(
 						(u) => u.agentType === a && u.name === n && u.project,

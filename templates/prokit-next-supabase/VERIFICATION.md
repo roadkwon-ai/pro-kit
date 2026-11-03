@@ -4,6 +4,10 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 맡은 공식 스킬 경고를 이번 diff의 상황으로 거르기 (2026-11-03)
+
+공통 `scripts/dev-cycle.mjs`(`SKILL_SITUATIONS`)와 공통 테스트를 이 템플릿에도 같게 고쳤다. 원인과 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#맡은-공식-스킬-경고를-이번-diff의-상황으로-거르기-2026-11-03)에 있다. 고친 뒤 이 템플릿 테스트도 418 통과·0 실패였다.
+
 ## 계층을 함께 맡는 프로젝트 에이전트 `performers.layers`, 스킬 기록 안내 문구 (2026-11-03)
 
 공통 `scripts/dev-cycle.mjs`(`performers.layers`, `LOG_HINT`), `scripts/sync-agents.mjs`, `prokit-skills-assign`, 공통 테스트를 이 템플릿에도 같게 고쳤다. 원인과 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#계층을-함께-맡는-프로젝트-에이전트-performerslayers-스킬-기록-안내-문구-2026-11-03)에 있다. 고친 뒤 이 템플릿 테스트도 418 통과·0 실패였다.

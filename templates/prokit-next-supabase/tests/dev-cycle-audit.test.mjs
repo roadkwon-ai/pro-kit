@@ -1446,9 +1446,9 @@ test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 �
 
 test("행 일 이름의 공식 스킬과 리뷰 focus의 공식 스킬은 맡는 쪽이 읽어야 하고, 맡았지만 읽지 않은 스킬과 Main이 읽은 맡긴 스킬은 경고만 한다", () => {
   const { root, write } = makeRepo();
-  const official = ["impeccable", "web-design-guidelines", "shadcn", "neon", "neon-postgres", "next-cache-components-optimizer"];
+  const official = ["impeccable", "web-design-guidelines", "shadcn", "neon", "neon-postgres", "next-cache-components-optimizer", "turborepo"];
   for (const s of official) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n${s === "neon-postgres" ? "parent: neon\n" : ""}---\n`);
-  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: official }], performers: { agents: ["prokit-ui-builder", "prokit-db-builder", "prokit-implementer"], skills: { "web-design-guidelines": ["prokit-reviewer"], shadcn: ["prokit-ui-builder", "prokit-reviewer"], "neon-postgres": ["prokit-db-builder", "prokit-reviewer"], "next-cache-components-optimizer": ["prokit-ui-builder"] } } }));
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: official }], performers: { agents: ["prokit-ui-builder", "prokit-db-builder", "prokit-implementer"], skills: { "web-design-guidelines": ["prokit-reviewer"], shadcn: ["prokit-ui-builder", "prokit-reviewer"], "neon-postgres": ["prokit-db-builder", "prokit-reviewer"], "next-cache-components-optimizer": ["prokit-ui-builder"], turborepo: ["prokit-ui-builder"] } } }));
   const config = loadConfig(root);
   writeTable(root, config, "B", { write: true, title: "화면" });
   const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
@@ -1485,7 +1485,10 @@ test("행 일 이름의 공식 스킬과 리뷰 focus의 공식 스킬은 맡는
   // 리뷰어는 focus마다 읽는 스킬이 달라 알리지 않는다(맡은 neon-postgres를 읽지 않았어도)
   assert.doesNotMatch(unread(), /prokit-reviewer/);
   write("apps/web/next.config.ts", "export default { cacheComponents: true };\n");
-  assert.match(unread(), /prokit-ui-builder: shadcn, next-cache-components-optimizer/);
+  assert.match(unread(), /prokit-ui-builder: shadcn, next-cache-components-optimizer\./);
+  // 경로로 상황이 정해지는 스킬(turborepo)은 이 라운드 diff에 그 파일이 있을 때만 알린다
+  write("turbo.json", "{}\n");
+  assert.match(unread(), /prokit-ui-builder: shadcn, next-cache-components-optimizer, turborepo\./);
 });
 
 test("디자인 단계 행(주 UI 스킬)은 고른 주 UI 스킬을 읽어야 하고, 기록이 없으면 impeccable, none이면 읽을 스킬이 없다", () => {
