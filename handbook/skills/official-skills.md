@@ -16,7 +16,7 @@
 
 ## 설치되는 공식 스킬
 
-기본으로 <!-- edition:pro -->neon은 <!-- v:skills.official.neon -->27<!-- /v -->개, supabase는 <!-- v:skills.official.supabase -->24<!-- /v -->개를 설치해요(`--adopt` 설치는 이보다 적어요). 기준 목록은 각 템플릿의 `files/skills.manifest.json`이에요.<!-- /edition --><!-- edition:ui 설치하는 공식 스킬의 기준 목록은 `files/skills.manifest.json`이에요. --> 화면 디자인을 맡는 UI 스킬(`impeccable`, `hallmark`)은 이 기본 목록에 없고 고른 것만 설치해요(고르지 않으면 `impeccable`). 용어 정리에 쓰는 `domain-modeling`처럼 널리 쓰이는 외부 스킬도 같은 방식으로 설치해요.
+기본으로 <!-- edition:pro -->neon은 <!-- v:skills.official.neon -->25<!-- /v -->개, supabase는 <!-- v:skills.official.supabase -->24<!-- /v -->개를 설치해요(`--adopt` 설치는 이보다 적어요). 기준 목록은 각 템플릿의 `files/skills.manifest.json`이에요.<!-- /edition --><!-- edition:ui 설치하는 공식 스킬의 기준 목록은 `files/skills.manifest.json`이에요. --> 화면 디자인을 맡는 UI 스킬(`impeccable`, `hallmark`)은 이 기본 목록에 없고 고른 것만 설치해요(고르지 않으면 `impeccable`). 용어 정리에 쓰는 `domain-modeling`처럼 널리 쓰이는 외부 스킬도 같은 방식으로 설치해요.
 
 ### 화면과 Next.js
 
@@ -43,7 +43,7 @@ E·D 라운드에서 읽는 스킬이에요.
 |---|---|---|---|
 | 인증 | `better-auth-best-practices`, `better-auth-security-best-practices`, `email-and-password-best-practices` | better-auth/skills | `prokit-api`, `prokit-reviewer`(security). D 구현 행 |
 | Postgres 스키마 | `supabase-postgres-best-practices` | supabase/agent-skills | `prokit-db`, `prokit-reviewer`(db). E 스키마 행 |
-| Neon (neon만) | `neon`, `neon-postgres`, `neon-postgres-branches`, `neon-postgres-egress-optimizer` | neondatabase/agent-skills | `prokit-db`. `neon-postgres-branches`는 E 병합 전 행 |
+| Neon (neon만) | `neon`, `neon-postgres` | neondatabase/agent-skills | `prokit-db`. 브랜치(`references/branching.md`)와 egress(`references/egress-optimization.md`)도 `neon-postgres`에 있고, `neon-postgres`는 E 병합 전 행에도 나와요 |
 | Supabase (supabase만) | `supabase` | supabase/agent-skills | `prokit-db`, `prokit-reviewer`(db). E advisors 행의 보안 체크리스트 |
 <!-- /edition -->
 <!-- edition:ui 인증과 데이터베이스 스킬(`better-auth-*`, `supabase-postgres-best-practices` 등)도 함께 설치되지만, 화면만 만드는 프로젝트에서는 읽지 않아요. -->
@@ -58,7 +58,7 @@ E·D 라운드에서 읽는 스킬이에요.
 
 <!-- edition:pro -->
 > [!NOTE]
-> `--adopt`로 하네스만 들인 기존 프로젝트는 `stack` 표시가 붙은 Better-T-Stack 전용 스킬(`better-auth` 3종, neon의 `neon` 4종, `turborepo`)을 설치하지 않아요. `prokit-api`, `prokit-db`, `prokit-deploy`도 없어서 이 스킬들이 맡던 행은 그 프로젝트의 기존 방식으로 해요([설치와 업데이트 구조](install-and-update.md)).
+> `--adopt`로 하네스만 들인 기존 프로젝트는 `stack` 표시가 붙은 Better-T-Stack 전용 스킬(`better-auth` 3종, neon의 `neon` 2종, `turborepo`)을 설치하지 않아요. `prokit-api`, `prokit-db`, `prokit-deploy`도 없어서 이 스킬들이 맡던 행은 그 프로젝트의 기존 방식으로 해요([설치와 업데이트 구조](install-and-update.md)).
 <!-- /edition -->
 
 일부 프로젝트만 쓰는 스킬은 [선택 스킬 묶음](optional-bundles.md)에 따로 모아 두었어요. 화면 디자인을 보조하는 taste-skill([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill))도 선택 묶음 `taste`로 더할 수 있어요. 고른 화면에서만 방향 뽑기, 공개 아카이브 사진, 실제 브라우저 검사를 보태고 주 UI 스킬 흐름은 그대로예요([화면 디자인 보조](brains.md#화면-디자인-보조)).
@@ -108,11 +108,11 @@ E·D 라운드에서 읽는 스킬이에요.
 |---|---|---|
 | `prokit-ui-builder`(화면) | `shadcn`, `vercel-react-best-practices`, `vercel-composition-patterns`, `next-cache-components-*`, `next-partial-prefetching-*`, `next-dev-loop`(성능을 고치며 개발 서버 동작을 볼 때), `turborepo` | 보고에 적은 규칙 이름이 바뀐 코드와 맞는지, 읽은 Next 번들 문서 |
 | `prokit-api-builder`(서버·API) | `better-auth-best-practices`, `better-auth-security-best-practices`, `email-and-password-best-practices`, `turborepo` | 보안 불변식, 2계정 격리 테스트 | <!-- edition:pro -->
-| `prokit-db-builder`(DB) | `supabase-postgres-best-practices`, neon은 `neon`·`neon-postgres`·`neon-postgres-egress-optimizer`, supabase는 `supabase` | 생성 SQL 검토, 상위 스킬 `neon`도 읽었는지 | <!-- edition:pro -->
+| `prokit-db-builder`(DB) | `supabase-postgres-best-practices`, neon은 `neon`·`neon-postgres`(E 병합 전 행의 브랜치 명령 정리 포함), supabase는 `supabase` | 생성 SQL 검토, 상위 스킬 `neon`도 읽었는지 | <!-- edition:pro -->
 | `prokit-runtime-checker`(실행 확인) | `next-dev-loop`, `agent-browser` | 확인한 경로, 오류 예산 0, 스크린샷 |
 | `prokit-implementer`(하네스·계층 밖) | `turborepo`(`turbo.json`) | 바뀐 환경 변수가 캐시 입력에 들어갔는지 |
 | `prokit-reviewer`(리뷰) | focus마다: plan은 `vercel-composition-patterns`·`turborepo`, code는 `vercel-react-best-practices`·`vercel-composition-patterns`·`shadcn`·`turborepo`, ui는 `web-design-guidelines`(한글 제목에 `break-keep`이 없으면 위반으로 적어요)·`shadcn`, security는 Better Auth 세 개<!-- edition:pro -->, db는 DB 스킬<!-- /edition --> | 리뷰 JSON의 `skills_read` |
-| 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `hallmark`, `use-design-md`, `gpt-image`, 배포 세 개, neon은 `neon-postgres-branches`와 상위 `neon` | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | <!-- edition:ui | 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `hallmark`, `use-design-md`, `gpt-image`, 배포 세 개 | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | --> <!-- edition:pro -->
+| 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `hallmark`, `use-design-md`, `gpt-image`, 배포 세 개, neon은 원격 브랜치 적용 | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | <!-- edition:ui | 메인 세션 | `domain-modeling`, `grilling`, `grill-with-docs`, `impeccable`, `hallmark`, `use-design-md`, `gpt-image`, 배포 세 개 | 사용자에게 묻는 일, 외부 서비스에 적용하는 일, 서브에이전트를 띄우거나 기록 파일을 남기는 일이라 직접 해요 | --> <!-- edition:pro -->
 
 - 이 배치의 정본은 프로젝트의 `skills.manifest.json`에 있는 `performers`예요. `performers.agents`는 대조표 행에서 일을 넘겨받는 에이전트, `performers.skills`는 공식 스킬마다 그 스킬을 읽는 에이전트예요. 여기에 없는 공식 스킬은 메인 세션이 읽어요. 코드에 박아 두지 않아서 공식 스킬이 늘거나 바뀌어도 이 파일만 고치면 돼요. 선택 묶음 `ops`의 스킬은 기본 배치에 없어서, 그 스킬로 코드를 고치는 일을 에이전트에 맡기려면 `prokit-skills-assign`으로 배치해요.
 - 훅이 서브에이전트의 읽기·편집 기록에 에이전트 이름을 남겨요(Claude Code, Codex, Antigravity). audit은 그 스킬을 맡은 에이전트가 프로젝트 판(`.agents/skills/<이름>/SKILL.md`)을 읽은 기록만 세요. 메인 세션이 대신 읽었거나 Skill 도구로 불렀으면(이름이 같은 개인 스킬이 불릴 수 있어요) 세지 않아요. 다만 매니페스트가 Claude 플러그인으로도 설치하는 공식 스킬(`skill-creator`)은 `<플러그인>:<이름>` 형태의 Skill 호출도 읽은 것으로 세요. 하위 스킬은 같은 쪽이 상위 스킬(스킬 머리의 `parent`)도 읽어야 해요. 훅이 돌지 않은 라운드(Codex에서 `/hooks`로 신뢰하기 전 등)는 증거에 적은 이름만 봐요.
@@ -184,7 +184,7 @@ pie showData title 측정 때 neon 공식 도메인 스킬 26개가 연결된 �
 
 - after에서도 읽히지 않은 11개는 측정 요청에 그 상황이 없었기 때문이에요. 해당하는 스킬은 원격 Neon 브랜치(`neon` 4종), 실제 배포(Vercel 배포 3종), 컴포넌트 조합 설계(`vercel-composition-patterns`), 설계 질문(`grill-with-docs`, `grilling`)이에요. 이 둘은 요청이 질문을 모아 두라고 해서 쓰이지 않았어요. `agent-browser`는 macOS에서 ego lite를 먼저 써서 읽히지 않았어요.
 - 같은 이름의 개인 스킬(`~/.claude/skills`)이 있으면 Claude Code의 Skill 도구가 그 스킬을 먼저 불러와요. 그래서 before에서는 프로젝트에 설치한 판 대신 전역 판을 읽는 일이 많았어요. after는 `.agents/skills/<이름>/SKILL.md`를 Read로 읽게 했어요.
-- 측정할 때 공식 도메인 스킬은 neon 26개, supabase 23개였어요. 그 뒤 `use-design-md`와 `gpt-image`가 더해져 지금은 neon <!-- v:skills.official.neon -->27<!-- /v -->개, supabase <!-- v:skills.official.supabase -->24<!-- /v -->개예요.
+- 측정할 때 공식 도메인 스킬은 neon 26개, supabase 23개였어요. 그 뒤 `use-design-md`와 `gpt-image`가 더해져 지금은 neon <!-- v:skills.official.neon -->25<!-- /v -->개, supabase <!-- v:skills.official.supabase -->24<!-- /v -->개예요.
 - 한계: 설정마다 두 번만 실행했고, neon 템플릿과 전역 스킬이 많은 기기 하나에서만 쟀어요. 스킬을 읽었는지만 셌고, 읽은 내용을 제대로 적용했는지는 채점하지 않았어요.
 - 2026-09-30에는 Codex CLI에서도 따로 검수했어요. 스킬을 읽는지와 적용하는지를 나눠 확인했고, 그 결과 Vitest 행이 빠지거나 다른 자리로 옮겨지는 문제를 고쳤어요. Neon·Supabase DB 사례와 전역 스킬을 제외한 사례도 다시 확인했어요. 운영 인증 보안과 성능 재현의 한계는 [Codex 검수 보고서](../../docs/reports/2026-09-30-codex-skill-wiring-check.html)에 적었어요. 위 호출률 차트는 이전에 Claude로 잰 값이에요.
 - 측정 방법, 찾은 결함 3건, 시나리오별 세부 결과, 비용은 [스킬 연결 점검 보고서](../../docs/reports/2026-09-30-skill-wiring-check.html)에 있어요. 내려받아 브라우저로 열거나 [claude.ai 게시본](https://claude.ai/artifact/BHpjS12NRAzY36xBxbArBN)을 보세요. 수치와 판정은 [neon 검증 기록](../../templates/prokit-next-neon/VERIFICATION.md#스킬-연결-점검과-보강-2026-09-30-추가)에도 있어요.

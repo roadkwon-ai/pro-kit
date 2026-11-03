@@ -10,8 +10,8 @@ model: inherit
 | 상황 | 공식 스킬 |
 |---|---|
 | 컬럼 타입, 제약, 인덱스, 외래 키, RLS | `supabase-postgres-best-practices` |
-| Neon 프로젝트의 Postgres 사용과 연결(이 프로젝트에 설치되어 있을 때) | `neon`(상위), `neon-postgres` |
-| Neon 프로젝트의 전송량을 늘리는 쿼리·조인(설치되어 있을 때) | `neon`(상위), `neon-postgres-egress-optimizer` |
+| Neon 프로젝트의 Postgres 사용과 연결(이 프로젝트에 설치되어 있을 때) | `neon`(상위), `neon-postgres`(브랜치 명령 정리는 `references/branching.md`) |
+| Neon 프로젝트의 전송량을 늘리는 쿼리·조인(설치되어 있을 때) | `neon`(상위), `neon-postgres`("Egress Optimization" 절과 `references/egress-optimization.md`) |
 | Supabase 프로젝트의 보안 체크리스트와 advisors 지적(설치되어 있을 때) | `supabase` |
 
 ## 규칙

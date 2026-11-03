@@ -1214,7 +1214,7 @@ const LOG_HINT =
 // - skills: 기본 설치 스킬(공식 스킬). 프로젝트 판을 읽은 기록만 센다
 // - performers.agents: 일을 맡는 전문 에이전트. 대조표 행 문구에 이름이 있거나 구현 단계 행이면 증거에 `위임: <에이전트>`가 있어야 한다
 // - performers.skills: 공식 스킬마다 그 스킬로 일하는 에이전트. 이 에이전트가 읽은 기록만 그 스킬을 쓴 것으로 센다(Main이 읽으면 위임하지 않은 것이다).
-//   여기에 없는 공식 스킬(사용자에게 묻는 domain-modeling·grilling, 외부에 적용하는 neon-postgres-branches·배포, 기록 파일을 쓰는 impeccable 등)은 Main이 읽는다.
+//   여기에 없는 공식 스킬(사용자에게 묻는 domain-modeling·grilling, 외부에 적용하는 배포, 기록 파일을 쓰는 impeccable 등)은 Main이 읽는다.
 // manifest가 없거나 performers가 없는 옛 판은 위임과 에이전트 대조를 하지 않는다.
 export function performers(root) {
 	try {
@@ -1238,7 +1238,7 @@ export function performers(root) {
 		return { official: new Set(), agents: [], skills: {}, plugins: new Set() };
 	}
 }
-// 스킬 머리의 `parent: <이름>`(neon-postgres-branches → neon 등). 하위 스킬은 상위 스킬부터 읽는다
+// 스킬 머리의 `parent: <이름>`(neon-postgres → neon 등). 하위 스킬은 상위 스킬부터 읽는다
 function parentSkill(root, n) {
 	for (const d of [".agents/skills", ".claude/skills"]) {
 		try {
@@ -1299,7 +1299,7 @@ const isProjectSkill = (root, n) =>
 	[".agents/skills", ".claude/skills"].some((d) =>
 		existsSync(join(root, d, n, "SKILL.md")),
 	);
-// 행 문구 첫 괄호에 이름만 적힌 스킬(예: "구현 (구현 단계, prokit-ui, prokit-web, …)", "(neon-postgres-branches)")은 그 행에서 쓴다.
+// 행 문구 첫 괄호에 이름만 적힌 스킬(예: "구현 (구현 단계, prokit-ui, prokit-web, …)", "(neon-postgres)")은 그 행에서 쓴다.
 // "바꿀 계층의 prokit-*"는 이 라운드 diff의 계층(B·D·E)으로 정한다. 조건이 붙은 이름("…는 shadcn")은 그 상황일 때만이라 보지 않는다.
 const LAYER_SKILLS = {
 	B: ["prokit-web", "prokit-ui"],
@@ -1336,13 +1336,7 @@ export const REVIEW_FOCUS_SKILLS = {
 		"better-auth-best-practices",
 		"better-auth-security-best-practices",
 	],
-	db: [
-		"supabase-postgres-best-practices",
-		"supabase",
-		"neon",
-		"neon-postgres",
-		"neon-postgres-egress-optimizer",
-	],
+	db: ["supabase-postgres-best-practices", "supabase", "neon", "neon-postgres"],
 };
 function rowNamedSkills(text) {
 	const open = text.indexOf("(");

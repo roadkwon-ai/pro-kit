@@ -18,7 +18,7 @@ model: opus
 | code | `vercel-react-best-practices`(컴포넌트·훅), `vercel-composition-patterns`(합성 결정), `shadcn`(`packages/ui`·부품 조합), `turborepo`(`turbo.json`·캐시 입력) |
 | ui | `web-design-guidelines`(SKILL.md를 읽고 최신 지침을 WebFetch로 받아 바뀐 화면 파일을 `file:line`으로 검사), `shadcn` |
 | security | `better-auth-security-best-practices`, `better-auth-best-practices`, `email-and-password-best-practices`(이메일·비밀번호 인증) |
-| db | `supabase-postgres-best-practices`, Neon 프로젝트는 `neon`(상위)·`neon-postgres`·`neon-postgres-egress-optimizer`, Supabase 프로젝트는 `supabase`(설치된 것만) | <!-- edition:pro -->
+| db | `supabase-postgres-best-practices`, Neon 프로젝트는 `neon`(상위)·`neon-postgres`, Supabase 프로젝트는 `supabase`(설치된 것만) | <!-- edition:pro -->
 
 ## 절차
 1. 공통 필수 읽기: `AGENTS.md`, [위임과 전문 스킬 프로토콜](../../.agents/skills/prokit-dev-cycle/references/delegation.md), [실행 효율과 재검증](../../.agents/skills/prokit-dev-cycle/references/execution-efficiency.md)을 먼저 읽는다. 이 공통 읽기는 문맥 최소화 대상이 아니다.

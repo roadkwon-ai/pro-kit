@@ -4,6 +4,14 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## Neon 공식 스킬 통합 반영: `neon-postgres-branches`·`neon-postgres-egress-optimizer` → `neon-postgres` (2026-11-03)
+
+- 원인: `neondatabase/agent-skills` PR #172 "Consolidate Neon Postgres skills"(2026-11-02 병합)가 두 스킬을 `neon-postgres`로 합쳤다. 브랜치 내용은 `references/branching.md`, egress 내용은 `references/egress-optimization.md`와 "Egress Optimization" 절로 옮겼다. pro-kit-web이 외부 스킬을 업데이트하다 `UPSTREAM_GONE`으로 찾아 알렸다. 고치기 전 판으로 새로 설치하면 없어진 스킬 두 개를 받으려 했다.
+- 고친 것: `skills.manifest.json`의 neon 스킬 목록과 `performers.skills`(egress 항목)에서 두 스킬을 뺐다. 공식 스킬은 27개에서 25개가 됐다. `scripts/dev-cycle.mjs`의 db 리뷰 focus 스킬과 주석 예시, `docs/dev-workflow.md` E 행(`(neon-postgres)`)도 고쳤다. `prokit-db`의 연결 표에서는 브랜치 행을 "`prokit-db-builder`가 브랜치 명령을 정리하고 원격 적용은 Main"으로 바꿨다(브랜치 내용이 `prokit-db-builder`가 맡는 `neon-postgres`로 옮겨 왔기 때문이다). 나머지는 `references/migration-flow.md`, `prokit-api`의 `references/ownership-test.md`, `prokit-db-builder`·`prokit-reviewer` 정의, 공통 audit 테스트, handbook(공식 스킬 표, 에이전트 역할, 템플릿 비교표)이다.
+- 실제 설치 확인: Better-T-Stack 최신판으로 만든 프로젝트에 `install.sh --brain none --simplicity none --ui-skill none`을 실행했고 exit 0이었다. neondatabase 스킬은 `neon`, `neon-postgres` 두 개만 설치됐고, `neon-postgres/references/`에 `branching.md`와 `egress-optimization.md`가 있었다. 이어서 `pnpm skills:check`와 `pnpm agents:check`는 exit 0이었다. `pnpm skills:update --check`는 "원격에서 없어짐 0개"로 exit 0, `pnpm dev-cycle table E`는 병합 전 행이 `(neon-postgres)`였다. 고친 `skills.manifest.json`과 `scripts/dev-cycle.mjs`는 그 프로젝트의 `biome check`를 통과했다.
+- 테스트: 두 템플릿 417 통과·0 실패, 문서 검사(handbook, doc-values, edition) 80 통과·0 실패.
+- 한계: 이미 두 스킬을 설치한 프로젝트는 템플릿 갱신 반영(H 라운드)에서 매니페스트를 옮기고 옛 스킬 폴더와 `skills-lock.json` 항목을 지워야 한다. 그 전에는 `pnpm skills:update`가 `UPSTREAM_GONE`으로 알린다(`prokit-skills-update`의 안내). handbook 공식 스킬 쪽의 2026-09-30 측정 결과("`neon` 4종")는 그때 판의 기록이라 그대로 두었다.
+
 ## 갱신 반영에서 옛 러너에 새 훅을 넣지 않기, 운영 프로젝트 보고 반영 (2026-11-03)
 
 pro-kit-trader가 v0.3.6을 H 라운드로 반영하며 보고한 결함을 고쳤다.

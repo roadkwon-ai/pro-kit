@@ -1,6 +1,6 @@
 # 마이그레이션 흐름 (로컬 DB → Neon 브랜치)
 
-일상 개발은 로컬 컨테이너 Postgres에서 하고, 병합 전에 Neon 개발 브랜치에서 한 번 더 확인한다. Neon CLI와 MCP 명령의 정확한 문법은 설치된 `neon-postgres-branches`, `neon-postgres` 스킬을 따른다.
+일상 개발은 로컬 컨테이너 Postgres에서 하고, 병합 전에 Neon 개발 브랜치에서 한 번 더 확인한다. Neon CLI와 MCP 명령의 정확한 문법은 설치된 `neon-postgres` 스킬(브랜치는 `references/branching.md`)을 따른다.
 
 ## 로컬 DB
 - 시작: `packages/db`에서 `podman compose up -d`. Docker를 쓰면 `pnpm --filter @<프로젝트>/db db:start`(스크립트가 `docker compose`를 부른다). Linux·WSL의 Podman이 `short-name "postgres:18" did not resolve`로 멈추면 사용자에게 `~/.config/containers/registries.conf`에 `unqualified-search-registries = ["docker.io"]`를 넣어 달라고 요청한다(사용자 설정 파일이라 에이전트가 바꾸지 않는다).
@@ -15,7 +15,7 @@
 3. **검토**: 생성 SQL을 읽는다. 의도하지 않은 `DROP`, 타입 축소, 기존 행이 있는 테이블에 기본값 없는 `NOT NULL` 추가, 빠진 인덱스, FK의 `ON DELETE`를 확인한다.
 4. **로컬 적용**: `commands.dbMigrate`(예: `pnpm --filter @<프로젝트>/db db:migrate`). `apps/web/.env`의 로컬 URL을 쓴다. 테스트 DB에도 `DATABASE_URL='<로컬 테스트 DB URL>'`을 붙여 적용한다.
    루트 `pnpm db:*`는 turbo interactive 태스크라 TTY 없는 에이전트 셸에서 `Cannot run interactive task`로 실패하므로 `--filter`로 패키지 스크립트를 직접 부른다. drizzle-kit 출력에는 대상이 나오지 않으므로 실행 전에 대상을 확인한다: 로컬이면 호스트:포트가 compose 컨테이너의 것인지(`podman ps`의 포트 매핑, Docker면 `docker ps`), Neon이면 엔드포인트 호스트(`ep-…`)가 개발 브랜치의 것인지.
-5. **병합 전 Neon 확인**: `dev/<작업명>` 브랜치를 만들고(`neon-postgres-branches`, 실데이터가 민감하면 schema-only) **direct** 연결 문자열로 적용한다.
+5. **병합 전 Neon 확인**: `dev/<작업명>` 브랜치를 만들고(`neon-postgres`의 `references/branching.md`, 실데이터가 민감하면 schema-only) **direct** 연결 문자열로 적용한다.
    ```bash
    url="$(neon cs dev/<작업명>)" && printf '%s\n' "$url" | sed -nE 's#^[a-z]+://([^/]*@)?([^/:?]*).*#\2#p'   # 호스트만 출력해 확인
    DATABASE_URL="$url" pnpm --filter @<프로젝트>/db db:migrate                            # commands.dbMigrate
@@ -33,7 +33,7 @@
 | develop (Preview) | 오래 두는 `develop` 브랜치 | `develop`의 pooled 주소 | 5번과 같은 방법으로 `develop`에 적용 |
 | production | 기본(운영) 브랜치 | 운영 브랜치의 pooled 주소 | 8번 |
 
-- `develop` 브랜치는 처음 한 번 운영 브랜치에서 만든다(`neon-postgres-branches`). 작업별 `dev/<작업명>` 브랜치(5번)는 그대로 쓰고 병합 뒤 지운다.
+- `develop` 브랜치는 처음 한 번 운영 브랜치에서 만든다(`neon-postgres`의 `references/branching.md`). 작업별 `dev/<작업명>` 브랜치(5번)는 그대로 쓰고 병합 뒤 지운다.
 - 서버리스 앱은 pooled 주소(`-pooler`)를 쓰고, 마이그레이션은 direct 주소(`neon cs <브랜치>`)로 한다. Vercel에는 값이 출력되지 않게 셸 변수로 넘긴다. 느린 명령을 `vercel env add`에 바로 파이프로 넘기면 값이 비어 실패한다. 두 줄은 따로 실행한다.
   ```bash
   neon cs develop --pooled | sed -nE 's#^[a-z]+://([^/]*@)?([^/:?]*).*#\2#p'      # 호스트만 출력해 develop 브랜치의 -pooler 호스트인지 확인한다

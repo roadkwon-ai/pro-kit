@@ -24,8 +24,8 @@ description: >-
 |---|---|---|---|
 | 컬럼 타입, 제약, 인덱스, 쿼리 작성과 튜닝 | `supabase-postgres-best-practices` (서비스와 무관한 Postgres 규칙) | `prokit-db-builder`. 리뷰는 `prokit-reviewer`(db) | 생성 SQL 검토(데이터 손실, 파괴적 변경)와 FK 인덱스가 보고에 있는지 |
 | 연결(pooled와 direct), 마이그레이션 운영, 검색 | `neon-postgres` (먼저 상위 `neon`) | `prokit-db-builder`. 리뷰는 `prokit-reviewer`(db) | 상위 `neon`도 읽었는지, 연결 문자열이 출력·파일에 없는지 |
-| 병합 전 검증용 브랜치 만들기와 리셋 | `neon-postgres-branches` (먼저 상위 `neon`) | Main(원격 브랜치에 적용하는 일) | 브랜치 이름과 적용 출력 |
-| DB 비용, 데이터 전송량(egress), 과다 조회 점검 | `neon-postgres-egress-optimizer` (먼저 상위 `neon`. 운영 DB 통계 조회와 `pg_stat_statements` 설치·초기화는 사용자가 요청할 때만 한다) | `prokit-db-builder`. 리뷰는 `prokit-reviewer`(db) | 개선안에 규칙 이름과 바뀐 쿼리가 있는지 |
+| 병합 전 검증용 브랜치 만들기와 리셋 | `neon-postgres` (`references/branching.md`, 먼저 상위 `neon`) | `prokit-db-builder`(브랜치 명령 정리). 원격 브랜치에 적용하는 일은 Main | 브랜치 이름과 적용 출력(Main이 원격에 적용한 것) |
+| DB 비용, 데이터 전송량(egress), 과다 조회 점검 | `neon-postgres` (`references/egress-optimization.md`와 "Egress Optimization" 절, 먼저 상위 `neon`. 운영 DB 통계 조회와 `pg_stat_statements` 설치·초기화는 사용자가 요청할 때만 한다) | `prokit-db-builder`. 리뷰는 `prokit-reviewer`(db) | 개선안에 규칙 이름과 바뀐 쿼리가 있는지 |
 | Neon 부가 기능: 오래 도는 함수, 파일 저장, LLM 호출 | `neon-functions`, `neon-object-storage`, `neon-ai-gateway` (선택 묶음 `ops`. 새 서비스 의존이 생기므로 도입 전에 사용자에게 묻고 `docs/adr/`에 남긴다) | 도입을 정한 뒤 `prokit-skills-assign`으로 배치한다 | `docs/adr/` 기록 |
 
 ## 위임

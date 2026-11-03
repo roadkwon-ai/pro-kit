@@ -1050,7 +1050,7 @@ test("부른 스킬 기록: 서브에이전트가 읽은 것은 Main 기록으�
 
 test("행 문구 스킬: 괄호에 이름만 적힌 프로젝트 스킬은 사용:에 있어야 하고, 앞 행을 채운 뒤 다시 읽은 기록이 있어야 한다. 바꿀 계층의 prokit-*는 diff 계층으로 정한다", () => {
   const { root, write } = makeRepo();
-  for (const s of ["prokit-db", "prokit-api", "prokit-web", "prokit-ui", "neon-postgres-branches"]) write(`.agents/skills/${s}/SKILL.md`);
+  for (const s of ["prokit-db", "prokit-api", "prokit-web", "prokit-ui", "neon-postgres"]) write(`.agents/skills/${s}/SKILL.md`);
   const config = loadConfig(root);
   writeTable(root, config, "E", { write: true, title: "테이블" });
   const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
@@ -1074,9 +1074,9 @@ test("행 문구 스킬: 괄호에 이름만 적힌 프로젝트 스킬은 사�
   // 외부 스킬도 괄호에 이름만 적혔으면 같다(Neon 템플릿의 병합 전 브랜치 행)
   if (neon > 0) {
     set(neon, "브랜치 dev에 적용, 마이그레이션 1개");
-    assert.match(mine(neon)[0] ?? "", /행 문구의 neon-postgres-branches를 읽고/);
-    read("neon-postgres-branches");
-    set(neon, "사용: neon-postgres-branches. 브랜치 dev에 적용");
+    assert.match(mine(neon)[0] ?? "", /행 문구의 neon-postgres를 읽고/);
+    read("neon-postgres");
+    set(neon, "사용: neon-postgres. 브랜치 dev에 적용");
     assert.deepEqual(mine(neon), []);
   }
 

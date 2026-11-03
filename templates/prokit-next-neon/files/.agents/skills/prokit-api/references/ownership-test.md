@@ -8,7 +8,7 @@ D·E·F 대조표는 `table`이 이 행을 넣고, C 라운드나 패키지 폴�
 1. `pnpm --filter @<프로젝트>/api add -D vitest`
 2. `packages/api/package.json` scripts에 `"test": "vitest run"`, 루트 `package.json`에 `"test": "turbo run test"`를 추가한다.
 3. `turbo.json`의 `tasks`에 `"test": { "cache": false }`를 추가하고, `globalEnv`에 `"TEST_DATABASE_URL"`을 추가한다 (turbo는 선언하지 않은 환경변수를 태스크에 넘기지 않는다).
-4. 로컬 컨테이너에 테스트 DB를 만들고(`podman exec <컨테이너> createdb -U postgres <이름>_test`) 그 URL(`postgresql://postgres:<compose 비밀번호>@localhost:<호스트 포트>/<이름>_test`)을 `TEST_DATABASE_URL`로 둔다. 개발 DB와 운영 DB URL은 쓰지 않는다. 스키마는 `DATABASE_URL="$TEST_DATABASE_URL"`를 붙여 `commands.dbMigrate`(예: `pnpm --filter @<프로젝트>/db db:migrate`)로 적용한다. 병합 전 확인을 Neon에서 하려면 Neon 테스트 브랜치(`neon-postgres-branches`)의 direct URL을 같은 방식으로 넘긴다.
+4. 로컬 컨테이너에 테스트 DB를 만들고(`podman exec <컨테이너> createdb -U postgres <이름>_test`) 그 URL(`postgresql://postgres:<compose 비밀번호>@localhost:<호스트 포트>/<이름>_test`)을 `TEST_DATABASE_URL`로 둔다. 개발 DB와 운영 DB URL은 쓰지 않는다. 스키마는 `DATABASE_URL="$TEST_DATABASE_URL"`를 붙여 `commands.dbMigrate`(예: `pnpm --filter @<프로젝트>/db db:migrate`)로 적용한다. 병합 전 확인을 Neon에서 하려면 Neon 테스트 브랜치(`neon-postgres`의 `references/branching.md`)의 direct URL을 같은 방식으로 넘긴다.
 5. `.dev-cycle.json`의 `commands.test`에 `"pnpm test"`를 기록한다.
 
 ## 테스트 예

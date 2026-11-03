@@ -51,12 +51,7 @@
 		{
 			"agents": ["claude-code", "codex"],
 			"source": "neondatabase/agent-skills",
-			"skills": [
-				"neon",
-				"neon-postgres",
-				"neon-postgres-branches",
-				"neon-postgres-egress-optimizer"
-			],
+			"skills": ["neon", "neon-postgres"],
 			"stack": true
 		},
 		{
@@ -130,8 +125,7 @@
 				"prokit-db-builder",
 				"prokit-reviewer"
 			],
-			"neon-postgres": ["prokit-db-builder", "prokit-reviewer"],
-			"neon-postgres-egress-optimizer": ["prokit-db-builder", "prokit-reviewer"]
+			"neon-postgres": ["prokit-db-builder", "prokit-reviewer"]
 		}
 	},
 	"mattpocock": {

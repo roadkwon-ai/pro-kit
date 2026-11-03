@@ -58,7 +58,7 @@
 - 스키마 수정 + dbGenerate, 생성 SQL 검토 (구현 단계, <!-- edition:pro -->prokit-db, <!-- /edition -->컬럼 타입·제약·인덱스는 supabase-postgres-best-practices<!-- edition:pro -->. prokit-db-builder에 위임하고 공식 스킬은 그 에이전트가 읽는다<!-- /edition -->) → 위임: <에이전트>(사용: 읽은 공식 스킬), 마이그레이션 파일 경로와 요약, 사용한 스킬
 - [verify] 타입·린트 검사 (commands.typecheck, commands.lint) → 명령과 결과 요약
 - [verify] 로컬 개발 DB에 dbMigrate 적용 → 호스트:포트와 출력 요약
-- [verify] 병합 전 Neon 개발 브랜치에 dbMigrate 적용 (neon-postgres-branches) → 브랜치 이름과 출력 요약 또는 N/A: Neon 미연결(.neon 없음)
+- [verify] 병합 전 Neon 개발 브랜치에 dbMigrate 적용 (neon-postgres) → 브랜치 이름과 출력 요약 또는 N/A: Neon 미연결(.neon 없음)
 - 파괴적 변경 여부 판단 → 없음 또는 2단계 계획
 - [review] prokit-reviewer(db) → verdict, max_severity, 반영·기각 내역
 

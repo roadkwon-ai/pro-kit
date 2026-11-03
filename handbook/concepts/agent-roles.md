@@ -102,7 +102,7 @@ flowchart LR
 | `code` | <!-- edition:pro -->`prokit-web`, `prokit-api`<!-- /edition --><!-- edition:ui `prokit-ui` -->, `GLOSSARY.md`, `docs/domain/project.md`, React가 바뀌었으면 `vercel-react-best-practices`, 합성 결정은 `vercel-composition-patterns`, `packages/ui` 부품은 `shadcn`, `turbo.json`·캐시 입력은 `turborepo` | 정확성, 오류와 경계 처리, Server·Client Component 경계, 데이터 화면의 네 가지 상태, 불필요한 복잡도, 테스트가 동작을 실제로 검증하는지, 용어집과 어긋나는 새 이름, `docs/domain/project.md` 표에 빠진 항목 |
 | `ui` | `web-design-guidelines`(최신 지침을 받아 와요), `shadcn` | 바뀐 화면 파일의 웹 인터페이스 지침 위반(접근성, 포커스, 폼, 모션 등)을 `file:line`으로. 한글 제목에 `word-break: keep-all`(`break-keep`)이 없어 낱말 중간에서 줄이 바뀔 수 있으면 타이포그래피 위반으로 적어요. 화면 모양의 점수나 판정은 고른 UI 스킬이 매겨요 |
 | `security` | `prokit-api`, `better-auth-security-best-practices`, `better-auth-best-practices`, `email-and-password-best-practices` | 세션 없는 접근, 입력으로 받은 소유자 id, where 조건의 소유자 누락, 출력에 섞인 내부 필드, 비밀값의 클라이언트 노출, 인증 설정 | <!-- edition:pro -->
-| `db` | `prokit-db`, `supabase-postgres-best-practices`, neon 템플릿은 `neon`·`neon-postgres`·`neon-postgres-egress-optimizer` | 생성 SQL의 데이터 손실, 파괴적 변경의 단계 분리, FK·인덱스·nullable·기본값, `db:push` 흔적, 적용된 마이그레이션 파일의 사후 수정 | <!-- edition:pro -->
+| `db` | `prokit-db`, `supabase-postgres-best-practices`, neon 템플릿은 `neon`·`neon-postgres` | 생성 SQL의 데이터 손실, 파괴적 변경의 단계 분리, FK·인덱스·nullable·기본값, `db:push` 흔적, 적용된 마이그레이션 파일의 사후 수정 | <!-- edition:pro -->
 
 계획 리뷰에는 스펙·계획·화면 설계와 결정 위치, 재사용 후보 파일도 줘요. 리뷰어는 문서의 주장을 실제 파일과 대조해요. F의 계획 리뷰는 두뇌의 계획 리뷰가 없어도 수행하고 N/A로 넘기지 않아요. 구현 전에 지적을 반영하거나 근거를 적어 기각해요.
 

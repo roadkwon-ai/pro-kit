@@ -398,7 +398,7 @@
 | `devCycle.cases.range` | A\~F·H | dev-cycle 케이스를 이어지는 구간으로 묶은 글(A\~F·H) | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 19 |
 | `devCycle.ui.auditMin` | 16 | 화면 작업 audit 점수 하한(20점 만점) | templates/*/files/.dev-cycle.json ui.auditMin | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
 | `devCycle.ui.a11yMin` | 3 | 화면 작업 접근성 점수 하한(4점 만점) | templates/*/files/.dev-cycle.json ui.a11yMin | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
-| `skills.official.neon` | 27 | neon 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치) | templates/prokit-next-neon/files/skills.manifest.json | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
+| `skills.official.neon` | 25 | neon 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치) | templates/prokit-next-neon/files/skills.manifest.json | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
 | `skills.official.supabase` | 24 | supabase 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치) | templates/prokit-next-supabase/files/skills.manifest.json | 정본 파일이 바뀌면 따라 바뀐다 | 4 |
 | `skills.codex.superpowers` | 15 | superpowers를 두뇌로 고르면 Codex에 설치하는 스킬 수 | templates/*/files/skills.manifest.json brains.superpowers | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `skills.codex.ponytail` | 6 | ponytail을 고르면 프로젝트에 설치하는 Ponytail 프로세스 스킬 수 | templates/*/files/skills.manifest.json simplicity.ponytail | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
