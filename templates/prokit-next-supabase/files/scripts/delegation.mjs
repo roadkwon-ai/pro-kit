@@ -596,6 +596,13 @@ function globMatches(path, pattern) {
 	return new RegExp(`^${escaped}$`).test(path);
 }
 
+// 글롭이 없는 scope는 그 파일이거나 그 디렉터리 아래 전체다(apps/web/src → apps/web/src/**).
+const inScope = (path, scope) =>
+	globMatches(path, scope) ||
+	(!scope.includes("*") &&
+		safePath(scope) &&
+		path.startsWith(`${scope.replace(/\/+$/, "")}/`));
+
 function isSubsetPath(candidate, owner) {
 	if (!safePath(candidate) || !safePath(owner)) return false;
 	if (candidate === owner) return true;
@@ -1091,7 +1098,7 @@ export function main(argv = process.argv.slice(2), root = process.cwd()) {
 				kind: entry?.kind === "missing" ? "deleted" : kind,
 			}));
 		const outside = changed
-			.filter(({ path }) => !scopes.some((scope) => globMatches(path, scope)))
+			.filter(({ path }) => !scopes.some((scope) => inScope(path, scope)))
 			.map(({ path }) => path);
 		const headChanged = before.bindings.head !== after.bindings.head;
 		const ok = !outside.length && !headChanged;

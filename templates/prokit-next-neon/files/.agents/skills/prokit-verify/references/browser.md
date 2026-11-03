@@ -59,7 +59,7 @@ try {
 EOF
 ```
 
-출력에 `결함:` 줄이 없어야 한다. 스크립트는 가로 넘침(모바일 에뮬레이션은 넘친 내용에 맞춰 화면을 넓혀 `innerWidth`가 390보다 커진다)과 콘솔 오류·경고, 잡히지 않은 오류를 `결함:`으로 출력한다. 이 수는 오류 예산(`prokit-verify` 본문)에 넣는다. 브라우저가 직접 남기는 `Failed to load resource` 줄은 여기에 잡히지 않으니 `/_next/mcp`의 `get_errors`로 함께 본다. 그리고 찍은 PNG를 이미지로 열어 화면이 기대한 상태인지 본다. 파일 경로만 적고 보지 않은 스크린샷은 증거가 아니다. Claude Code(Read)와 Antigravity(`read_file`·`view_file`) 라운드에서는 증거에 적은 `tasks/evidence/` 스크린샷 가운데 열어 본 기록이 없는 것을 audit이 경고로 알린다.
+출력에 `결함:` 줄이 없어야 한다. 스크립트는 가로 넘침(모바일 에뮬레이션은 넘친 내용에 맞춰 화면을 넓혀 `innerWidth`가 390보다 커진다)과 콘솔 오류·경고, 잡히지 않은 오류를 `결함:`으로 출력한다. 이 수는 오류 예산(`prokit-verify` 본문)에 넣는다. 브라우저가 직접 남기는 `Failed to load resource` 줄은 여기에 잡히지 않으니 `/_next/mcp`의 `get_errors`로 함께 본다. 그리고 찍은 PNG를 이미지로 열어 화면이 기대한 상태인지 본다. 파일 경로만 적고 보지 않은 스크린샷은 증거가 아니다. Claude Code(Read)와 Antigravity(`read_file`·`view_file`) 라운드에서는 증거에 적은 `tasks/evidence/` 스크린샷 가운데 열어 본 기록이 없는 것을 audit이 경고로 알린다. `*`·`{a,b}` 묶음은 폴더에서 맞는 파일을 모두 펼쳐 세므로, 같은 문장에 "증거 제외"라고 적어도 그 파일까지 센다. 연 파일만 적는다(예: `tasks/evidence/recheck-{home,login}.png`이고 `tasks/evidence/recheck-*.png`는 쓰지 않는다).
 
 ## 휴대폰 스크롤 측정
 B 라운드가 스크롤 모션(`animation-timeline`, 스크롤 이벤트), 긴 쪽, 반복해서 다시 그리는 요소(타이핑 효과, 자동 넘김)를 더하거나 바꿨을 때 한다. 그 밖의 라운드는 행에 `N/A: 스크롤 모션·긴 쪽 변경 없음`을 적는다. 데스크톱에서 매끄러워도 휴대폰에서는 끊길 수 있어 스크린샷으로는 보이지 않는다.

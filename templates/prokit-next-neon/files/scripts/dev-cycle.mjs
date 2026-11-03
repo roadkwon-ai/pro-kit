@@ -1183,6 +1183,7 @@ function roundLog(root, active) {
 						file: e.edit,
 						tool: e.tool,
 						agentType: e.agentType,
+						agentId: e.agent,
 						main: !e.agent,
 						seen: knows(e),
 					});
@@ -1201,6 +1202,7 @@ function roundLog(root, active) {
 						tool: e.tool,
 						project: e.project === true,
 						agentType: e.agentType,
+						agentId: e.agent,
 						seen: knows(e),
 					});
 			}
@@ -1213,7 +1215,7 @@ function skillsLogged(root, active) {
 	return log?.uses.length ? new Set(log.uses.map((u) => u.name)) : null;
 }
 const LOG_HINT =
-	"Claude Code는 공식 스킬(skills.manifest.json의 skills)과 사용자 호출 전용 스킬이면 그 SKILL.md를 Read로 읽고(공식 스킬을 Skill 도구로 부른 기록과 Bash cat은 세지 않는다), 공식 스킬이 아닌 prokit-*·플러그인 스킬이면 Skill 도구로 부르고, Codex는 그 SKILL.md 경로를 그대로 cat으로(출력을 /dev/null로 버리면 세지 않는다), Antigravity는 read_file로 끝까지 읽어 다시 진행한 뒤 적는다";
+	"읽는 법: Claude Code에서 공식 스킬(skills.manifest.json의 skills. 예: domain-modeling, grilling)과 사용자 호출 전용 스킬은 SKILL.md를 Read로 읽는다(Skill 도구 호출과 Bash cat은 세지 않는다). Claude Code에서 공식 스킬이 아닌 prokit-*·플러그인 스킬은 Skill 도구로 부른다. Codex는 SKILL.md 경로를 그대로 cat한다(출력을 /dev/null로 버리면 세지 않는다). Antigravity는 read_file로 끝까지 읽는다. 읽고 따른 뒤 다시 적는다";
 
 // 공식 스킬과 그 스킬로 일하는 에이전트의 정본은 skills.manifest.json이다(바꾸는 일은 prokit-skills-assign).
 // - skills: 기본 설치 스킬(공식 스킬). 프로젝트 판을 읽은 기록만 센다
@@ -1425,10 +1427,18 @@ function usageProblem(root, config, active) {
 		u.name === n &&
 		(!official.has(n) || u.project || plugins.has(u.plugin)) &&
 		(u.main ? main || !u.seen : Boolean(agents?.includes(u.agentType)));
+	// after 뒤에도 일한 서브에이전트(같은 agent_id)가 그 전에 읽은 기록은 센다(위임하는 동안 Main이 다른 행을 채운 경우)
+	const lastWork = {};
+	for (const u of log ? [...all, ...log.edits] : [])
+		if (u.agentId)
+			lastWork[u.agentId] = Math.max(lastWork[u.agentId] ?? 0, u.t);
 	const read = (n, after, agents, main) =>
 		all.some(
 			(u) =>
-				u.t > (after ?? Number.NEGATIVE_INFINITY) && counts(n, u, agents, main),
+				(after === undefined ||
+					u.t > after ||
+					(lastWork[u.agentId] ?? Number.NEGATIVE_INFINITY) > after) &&
+				counts(n, u, agents, main),
 		);
 	// 공식 스킬을 맡지만 수행 에이전트가 아닌 쪽(prokit-reviewer). 행 문구에 이름이 있거나 증거에 위임: 으로 적은 행에서 맡긴 쪽으로 본다
 	// (구현 행에 "리뷰어 지적 반영"처럼 이름만 나온 것은 아니다)
@@ -1565,12 +1575,18 @@ function usageProblem(root, config, active) {
 			(x, i, a) => a.findIndex((y) => key(y) === key(x)) === i,
 		);
 		const mine = first.find(own)?.t;
-		const before =
-			mine === undefined ? [] : first.filter((x) => !own(x) && x.t < mine);
 		const rowOf = (x) =>
 			active.rows.find((y, i) =>
 				x.text ? y.text === x.text : i + 1 === x.row,
 			);
+		// 표에서 이 행보다 앞에 있는 행만 기준이 된다(뒤 행을 먼저 채워도 이 행의 기준이 바뀌지 않는다)
+		const before =
+			mine === undefined
+				? []
+				: first.filter(
+						(x) =>
+							!own(x) && x.t < mine && active.rows.indexOf(rowOf(x)) + 1 < row,
+					);
 		// 호스트가 Main과 서브에이전트를 구별한 기록(seen)이 있는 라운드는 위임한 에이전트가 이 행을 하며 일했는지 본다.
 		// 같은 에이전트에 맡기지 않은 앞 행을 처음 채운 뒤의 기록(스킬 읽기나 편집)이어야 한다. 한 번 맡겨 이어진 행 여럿을 채운 것은 센다
 		const work = [...all, ...log.edits];
@@ -1648,7 +1664,7 @@ function usageProblem(root, config, active) {
 				...new Set(
 					miss.map((u) => why(skillName(u), delegated)).filter(Boolean),
 				),
-			].join(" ")} ${LOG_HINT}`.replace(/\s+(?=Claude Code는)/, " ");
+			].join(" ")} ${LOG_HINT}`.replace(/\s+(?=읽는 법:)/, " ");
 		// 행 일 이름의 스킬과 리뷰 focus의 공식 스킬은 맡는 쪽이 이 라운드에서 읽은 기록이 있어야 한다.
 		// 한 번 맡긴 일로 행 여럿을 채우거나 행을 늦게 채울 수 있어 채운 순서는 보지 않는다
 		const titleUnread = titleNeed.filter(
@@ -1681,7 +1697,7 @@ function usageProblem(root, config, active) {
 						`${n}는 상위 스킬 ${p}부터 읽는다(SKILL.md의 parent). ${skillAgents[n] ? `${skillAgents[n].join("·")}가` : "Main이"} ${p} 스킬을 읽은 기록이 없다`,
 				)
 				.join(". ");
-		// 행 문구의 스킬: 앞서 처음 채운 다른 행 가운데 마지막 행의 시각(이 행을 처음 채운 시각 전) 뒤에 읽어야 한다. 채운 기록이 없으면 보지 않는다.
+		// 행 문구의 스킬: 표에서 앞에 있고 이 행보다 먼저 처음 채운 행 가운데 마지막 행의 시각(이 행을 처음 채운 시각 전) 뒤에 읽어야 한다. 채운 기록이 없으면 보지 않는다.
 		// 채운 기록은 행 문구로 짝짓는다(--upgrade가 번호를 바꾼다. 문구가 없는 옛 줄만 번호로).
 		// 상한은 두지 않는다: audit이 거부한 뒤 다시 읽으면 다시 채우지 않아도 통과한다(행을 채울 때 evidence가 바로 알린다)
 		if (mine === undefined) return null;
@@ -1697,12 +1713,12 @@ function usageProblem(root, config, active) {
 // 고른 과설계 방지 스킬의 구현 diff 보완 검토는 prokit-reviewer(code) 행 증거 뒤에 덧붙인다(process-routing 규칙 6).
 const SIMPLICITY_LABEL = {
 	ponytail: {
-		re: /ponytail-review\s*:/,
+		re: /ponytail-review(?:\([^)]*\))?\s*:/,
 		label: "ponytail-review: …",
 		skill: "ponytail-review",
 	},
 	caveman: {
-		re: /caveman-review\s*:/,
+		re: /caveman-review(?:\([^)]*\))?\s*:/,
 		label: "caveman-review: …",
 		skill: "caveman-review",
 	},
@@ -1721,7 +1737,7 @@ function simplicityProblem(root, config, active) {
 		const value = bare(r.evidence);
 		if (!value || /^(blocked|미실행|n\/a)\s*:/i.test(value)) return null;
 		if (!want.re.test(value))
-			return `고른 과설계 방지(${config.simplicity})의 보완 검토 결과를 덧붙인다: ${want.label}`;
+			return `고른 과설계 방지(${config.simplicity})의 보완 검토 결과를 덧붙인다. 예: prokit-reviewer(code): approve, max=low; ${want.label.replace("…", "approve, 지적 0건")}`;
 		if (want.skill && logged && !logged.has(want.skill))
 			return `${want.skill}를 이 라운드에서 부른 기록이 없다(${SKILL_LOG}). ${LOG_HINT}`;
 		return null;
@@ -2459,7 +2475,15 @@ function shellEdits(root, config, active, files) {
 	const edits = skillLog(root, active)?.edits ?? [];
 	if (!active.meta.base || !edits.some((e) => e.seen)) return [];
 	const edited = new Set(edits.map((e) => e.file));
+	// 편집 기록이 처음 생기기 전에 바뀐 파일은 보지 않는다(라운드 도중 템플릿 갱신으로 편집 기록 훅이 생긴 경우).
+	// shortcut: 기록 전 셸 편집도 놓친다. 셸 쓰기는 shell-guard가 먼저 막는다
+	const from = Math.min(...edits.map((e) => e.t));
 	const loose = files.filter((f) => {
+		if (
+			(statSync(join(root, f), { throwIfNoEntry: false })?.mtimeMs ?? from) <
+			from
+		)
+			return false;
 		// 생성 명령 결과(마이그레이션)와 편집 도구로 고칠 수 없는 바이너리 자산은 보지 않는다
 		if (
 			edited.has(f) ||
@@ -2705,6 +2729,20 @@ function reviewGuide(root, config) {
 	return lines.length
 		? `\n리뷰 지시에 넣을 공식 스킬(리뷰어가 이 라운드에서 읽어야 audit이 받는다):\n${lines.join("\n")}`
 		: "";
+}
+
+// table --write 출력: audit이 글자 그대로 읽는 증거 꼴(행 문구에는 예시가 없다)
+function formatGuide(config) {
+	const simple = SIMPLICITY_LABEL[config.simplicity]?.label;
+	return [
+		"\n증거 꼴(audit이 이 글자로 읽는다):",
+		"  전문 에이전트에 맡긴 행: 위임: <에이전트>(사용: <그 에이전트가 읽은 공식 스킬>) → 결과",
+		"  [design] 행: 기존: …; 결정: …; 설정: …; 검증: … (필드는 맨 앞이나 ; 뒤에서 시작)",
+		simple &&
+			`  prokit-reviewer(code) 행: verdict, max_severity, 반영·기각 내역; ${simple}`,
+	]
+		.filter(Boolean)
+		.join("\n");
 }
 
 // table --write 출력: 단계 행마다 부를 두뇌 스킬
@@ -4306,7 +4344,7 @@ export function main(argv, root = process.cwd()) {
 				noTask: rest.includes("--no-task"),
 			});
 			const text = rest.includes("--write")
-				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}${stageGuide(root, config)}${reviewGuide(root, config)}`
+				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}${stageGuide(root, config)}${reviewGuide(root, config)}${formatGuide(config)}`
 				: r.block;
 			print(r, r.warning ? `${text}\n${r.warning}` : text);
 			return 0;

@@ -4,6 +4,19 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 운영 프로젝트 T8 감사 보고 2: scope 디렉터리, 증거 꼴 안내, 묶음 스크린샷, 갱신 중 셸 편집 경고, 스킬 읽기 시각 (2026-11-03)
+
+- 원인: pro-kit-trader가 T8 라운드를 닫은 뒤 감사 기록을 보냈다. 앞서 고친 항목(옛 러너 훅, 셸 편집 막기, delegation diff 밖 경로, db 리뷰 스킬, 설계 증거 구분 안내, `pnpm-workspace.yaml`)을 빼고 다음을 고쳤다.
+- 고친 것:
+  - `delegation diff --scope`에 디렉터리(`apps/web/src`, `apps/web/src/`)를 주면 그 아래 전체로 본다. 전에는 글롭만 받아 안의 파일이 모두 outside로 나왔다.
+  - `table --write` 출력 끝에 audit이 글자 그대로 읽는 증거 꼴(위임 행, `[design]` 행, 고른 과설계 방지 스킬이 있으면 코드 리뷰 행)을 보인다. `ponytail-review(full):`·`caveman-review(…):`처럼 괄호를 붙인 꼴도 받고, 거부 안내에 예를 넣었다.
+  - 스킬 기록 안내(`LOG_HINT`)를 경우마다 한 문장으로 나눴다. 공식 스킬 예로 `domain-modeling`, `grilling`을 적었다.
+  - `prokit-verify` `references/browser.md`에 스크린샷 묶음(`*`)이 폴더의 맞는 파일을 모두 센다는 것과 연 파일만 적는 예를 더했다.
+  - "편집 기록이 없는 계층 파일" 경고는 이 라운드의 첫 편집 기록보다 늦게 바뀐 파일만 본다. 라운드 도중 템플릿 갱신으로 편집 기록 훅이 생기면 그 전 편집까지 셸 편집으로 잡았다.
+  - 행 문구 스킬과 위임 에이전트의 "이 행을 하면서" 기준을 표에서 앞에 있는 행으로 좁혔다. 뒤 행을 먼저 채워도 기준이 바뀌지 않는다. 앞 행을 채운 뒤에도 일한 서브에이전트(같은 `agent_id`)가 먼저 읽은 기록은 센다(위임하는 동안 Main이 다른 행을 채운 경우).
+- 테스트: 디렉터리 scope, 증거 꼴 출력, 괄호 붙은 `ponytail-review`, 첫 편집 기록 전 파일, 표 순서 기준과 `agent_id` 기준을 단언으로 더했다. 마지막 둘과 첫 편집 기록 필터는 고친 코드를 되돌리면 실패하는 것을 확인했다.
+- 한계: 첫 편집 기록 전에 셸로 고친 파일은 이제 경고하지 않는다(셸 쓰기는 `shell-guard`가 먼저 막는다). 수정 시각(mtime)을 쓰므로 `git checkout`처럼 시각을 바꾸는 명령 뒤에는 다르게 보일 수 있다. 위임한 에이전트가 앞 행을 채우기 전에 일을 모두 끝냈으면 여전히 세지 않는다. `pnpm test`가 DB 테스트를 skipped로 두고 exit 0인 것은 그 프로젝트의 테스트 설정이다. 템플릿 `prokit-api` `references/ownership-test.md`는 skipped를 통과로 적지 않게 한다.
+
 ## `pnpm-workspace.yaml`을 작업공간 설정으로, Workflow 생성물을 Biome 제외로 (2026-11-03)
 
 - 원인: pro-kit-trader가 T8 라운드에서 두 가지를 알렸다.
