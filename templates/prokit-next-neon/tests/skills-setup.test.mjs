@@ -1015,11 +1015,13 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
   }
   for (const s of slotEntries.flatMap((e) => e.skills)) assert.ok(!names.includes(s), `${s}: 두뇌·과설계 방지 후보가 기본 설치와 같은 이름을 쓰면 정리할 때 헷갈린다`);
   for (const [k, o] of Object.entries(m.optional)) assert.ok(/^[a-z][a-z-]*$/.test(k) && o.description && o.skills.length, k);
-  assert.deepEqual(Object.keys(m.optional), ["ops", "motion", "mobile", "i-have-adhd", "taste", "landing", "tastemaker", "web-design-engineer", "awwwards", "animation", "visual-critique", "ui-design"]);
-  // 화면 디자인 보조는 guide(단계 대응 문서)가 있는 선택 묶음이다. 묶음 항목과 guide 파일 하나씩만 더하면 된다(코드는 그대로)
+  for (const k of ["ops", "motion", "mobile", "i-have-adhd"]) assert.ok(m.optional[k], `선택 묶음 ${k}`);
+  // 화면 디자인 보조는 guide(단계 대응 문서)가 있는 선택 묶음이다. 묶음 항목, guide 파일, prokit-ui 표 한 줄만 더하거나 빼면 된다(코드와 이 테스트는 그대로)
   const guides = Object.entries(m.optional).filter(([, o]) => o.guide);
-  assert.deepEqual(guides.map(([k]) => k), ["taste", "landing", "tastemaker", "web-design-engineer", "awwwards", "animation", "visual-critique", "ui-design"]);
+  assert.ok(guides.length > 0, "화면 디자인 보조 묶음");
+  const uiSkill = readFileSync(join(TEMPLATE_FILES, ".agents/skills/prokit-ui/SKILL.md"), "utf8");
   for (const [k, o] of guides) {
+    assert.ok(uiSkill.includes(`| \`${k}\` |`) && uiSkill.includes(`](${o.guide.replace(".agents/skills/prokit-ui/", "")})`), `prokit-ui "화면 디자인 보조" 표에 ${k} 행과 guide 링크`);
     assert.match(o.guide, /^\.agents\/skills\/prokit-ui\/references\//, k);
     assert.ok(existsSync(join(TEMPLATE_FILES, o.guide)), `화면 디자인 보조 ${k}의 guide 파일`);
     const text = readFileSync(join(TEMPLATE_FILES, o.guide), "utf8");

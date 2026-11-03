@@ -117,9 +117,9 @@ function prep() {
 	}
 }
 
-function claude(dir, prompt, resume) {
+function claude(dir, prompt, resume, budget) {
 	return new Promise((done) => {
-		const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--setting-sources", "user,project,local", "--strict-mcp-config", "--model", MODEL, "--permission-mode", "bypassPermissions", "--max-budget-usd", String(CONF.budgetUsd), "--disallowedTools", ...DENY, ...READ_DENY, "--settings", JSON.stringify(SANDBOX)];
+		const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--setting-sources", "user,project,local", "--strict-mcp-config", "--model", MODEL, "--permission-mode", "bypassPermissions", "--max-budget-usd", String(budget ?? CONF.budgetUsd), "--disallowedTools", ...DENY, ...READ_DENY, "--settings", JSON.stringify(SANDBOX)];
 		if (resume) args.push("--resume", resume);
 		const p = spawn("claude", args, { cwd: dir, env, stdio: ["ignore", "pipe", "pipe"] });
 		const events = [];
@@ -166,6 +166,7 @@ async function pool(items, jobs, f) {
 		while (next < items.length) await f(items[next++]);
 	}));
 }
+let portSeq = 0;
 const runDirOf = (iter, sc, config) => join(WS, `iteration-${iter}`, `eval-${sc.id}-${sc.name}`, config, "run-1");
 
 async function behavior(iter) {
@@ -182,6 +183,17 @@ async function behavior(iter) {
 		const copy = join(WS, "runs", `${iter}-${sc.id}-${config}`);
 		rmSync(copy, { recursive: true, force: true });
 		cpSync(join(WS, "fx", config), copy, { recursive: true, verbatimSymlinks: true });
+		// 이 기기의 3001은 다른 개발 서버가 쓸 수 있고 사본도 동시에 돈다. 사본마다 웹 포트를 따로 준다(인증 주소도 같이)
+		const port = String(3200 + ++portSeq);
+		for (const f of ["apps/web/package.json", "apps/web/.env", "apps/web/src/utils/orpc.ts"]) {
+			const p = join(copy, f);
+			if (existsSync(p)) writeFileSync(p, readFileSync(p, "utf8").replace(/--port 3001\b/g, `--port ${port}`).replace(/localhost:3001\b/g, `localhost:${port}`));
+		}
+		commit(copy, `eval port ${port}`);
+		// 샌드박스는 Turbopack 파일 감시(FSEvents)를 막아 세션 안에서는 개발 서버가 뜨지 않는다.
+		// 사용자 기기처럼 서버를 샌드박스 밖에서 미리 띄워 둔다(세션이 띄우려 하면 Next가 이미 도는 서버 주소를 알려 준다)
+		const dev = spawn("pnpm", ["dev"], { cwd: join(copy, "apps/web"), env: process.env, detached: true, stdio: "ignore" });
+		for (let i = 0; i < 90 && sh(copy, "curl", ["-s", "-o", "/dev/null", "-m", "5", `http://localhost:${port}/`]).status !== 0; i++) await new Promise((r) => setTimeout(r, 2000));
 		// Claude Code는 project scope 플러그인을 폴더 경로별로 기록한다. 사본 경로에도 등록해야 세션에 켜진다(끝나면 지운다).
 		const plugins = Object.entries(JSON.parse(readFileSync(join(copy, ".claude/settings.json"), "utf8")).enabledPlugins ?? {}).filter(([, v]) => v).map(([k]) => k);
 		await serial(() => { for (const id of plugins) sh(copy, "claude", ["plugin", "install", id, "--scope", "project"]); });
@@ -191,7 +203,7 @@ async function behavior(iter) {
 		let session;
 		let goSent = !rest.includes("--go-reply");
 		for (let t = 0; t < CONF.maxTurns; t++) {
-			const r = await claude(copy, t === 0 ? sc.prompt : CONF.reply, session);
+			const r = await claude(copy, t === 0 ? sc.prompt : CONF.reply, session, sc.budgetUsd);
 			turns.push(r);
 			session = r.result?.session_id ?? r.events.find((e) => e.session_id)?.session_id;
 			if (r.stop || !session || r.result?.subtype === "error_max_budget_usd") break;
@@ -201,6 +213,8 @@ async function behavior(iter) {
 			}
 		}
 		spawnSync("pkill", ["-f", copy]);
+		try { process.kill(-dev.pid); } catch {}
+		for (const pid of sh(copy, "lsof", ["-t", "-nP", `-iTCP:${port}`, "-sTCP:LISTEN"]).stdout.split("\n").filter(Boolean)) try { process.kill(Number(pid)); } catch {}
 		const events = turns.flatMap((r) => r.events);
 		const tools = events.flatMap((e) => (e.type === "assistant" ? (e.message?.content ?? []) : []).filter((c) => c.type === "tool_use").map((c) => ({ name: c.name, input: c.input })));
 		// audit·diff는 등록을 지우기 전에 남긴다. 해제가 .claude/settings.json의 enabledPlugins를 바꾼다
@@ -254,6 +268,32 @@ if (process.argv[1] === import.meta.filename) {
 		cpSync(join(WS, "fx", rest[0]), copy, { recursive: true, verbatimSymlinks: true });
 		const r = await claude(copy, `다음 명령만 실행하고 종료 코드와 마지막 오류 줄을 그대로 보고해. 다른 일은 하지 마: ${rest.slice(1).join(" ")}`);
 		console.log(r.result?.result, r.result?.total_cost_usd);
+		process.exit(0);
+	}
+	if (cmd === "turn") {
+		// 이미 돈 사본에서 한 턴만 더 돌리고 같은 채점을 한다(예: 샌드박스 밖에서 찍은 스크린샷을 주고 리뷰 행만 다시).
+		//   node run.mjs turn <회차> <시나리오 id> <사본 폴더 이름(runs/ 아래)> "<프롬프트>"
+		prepareSafe();
+		const [iter, id, name, prompt] = rest;
+		const sc = CONF.scenarios.find((s) => s.id === Number(id));
+		const copy = join(WS, "runs", name);
+		const meta0 = JSON.parse(readFileSync(join(WS, `iteration-${name.split("-")[0]}`, `eval-${sc.id}-${sc.name}`, name.split("-").slice(2).join("-"), "run-1", "run.json"), "utf8"));
+		const runDir = runDirOf(iter, sc, meta0.fixture);
+		const r = await claude(copy, prompt, undefined, sc.budgetUsd);
+		const tools = r.events.flatMap((e) => (e.type === "assistant" ? (e.message?.content ?? []) : []).filter((c) => c.type === "tool_use").map((c) => ({ name: c.name, input: c.input })));
+		const audit = sh(copy, "node", ["scripts/dev-cycle.mjs", "audit"]);
+		mkdirSync(join(runDir, "outputs"), { recursive: true });
+		writeFileSync(join(runDir, "outputs", "response.md"), r.result?.result ?? "(응답 없음)");
+		writeFileSync(join(runDir, "outputs", "todo.md"), readFileSync(join(copy, "tasks/todo.md"), "utf8"));
+		writeFileSync(join(runDir, "outputs", "audit.txt"), `exit ${audit.status}\n${audit.stdout}${audit.stderr}`);
+		writeFileSync(join(runDir, "outputs", "changes.diff"), (git(copy, "add", "-A", "-N"), git(copy, "diff", "HEAD", "--", ".", ":!node_modules")));
+		writeFileSync(join(runDir, "transcript.jsonl"), r.events.map((e) => JSON.stringify(e)).join("\n"));
+		json(join(runDir, "eval_prompt.json"), { prompt });
+		json(join(runDir, "timing.json"), { total_duration_seconds: null, total_cost_usd: Math.round((r.result?.total_cost_usd ?? 0) * 100) / 100, stop: r.stop ?? r.result?.subtype ?? null });
+		// 앞 회차 도구 호출도 합쳐 채점한다(브리프·구현 단계는 앞 회차에서 했다)
+		json(join(runDir, "run.json"), { ...meta0, tools: [...meta0.tools, ...tools], turnTools: tools.length });
+		const s = gradeRun(sc, runDir);
+		console.log(`eval-${sc.id} ${name} turn: ${s.passed}/${s.total} ($${(r.result?.total_cost_usd ?? 0).toFixed(2)})`);
 		process.exit(0);
 	}
 	if (cmd === "base") base(rest[0], resolve(rest[1]));

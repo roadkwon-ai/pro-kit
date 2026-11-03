@@ -44,12 +44,14 @@ UI 스킬을 바꾸거나 빼도 `PRODUCT.md`, `DESIGN.md`(명세 형식), `docs
 | `web-design-engineer` | 원칙 | 스타일 레시피를 지목한 화면("Linear처럼")의 방향, 설치되어 있으면 리뷰의 5개 차원 채점 | [addon-web-design-engineer.md](references/addon-web-design-engineer.md) |
 | `awwwards` | 원칙 | 스크롤 스토리텔링·모션이 중심인 브랜드·쇼케이스 화면 | [addon-awwwards.md](references/addon-awwwards.md) |
 | `animation` | 모션 | 설치되어 있으면 모션을 넣거나 고치는 화면, 요청한 모션 감사 | [addon-animation.md](references/addon-animation.md) |
-| `visual-critique` | 검수 | 설치되어 있으면 디자인 리뷰마다(7개 차원 비평) | [addon-visual-critique.md](references/addon-visual-critique.md) |
+| `visual-critique` | 검수 | 설치되어 있으면 디자인 리뷰마다(7개 차원 비평). 주 UI 스킬이 impeccable이면 요청할 때만 | [addon-visual-critique.md](references/addon-visual-critique.md) |
 | `ui-design` | 검수 | 설치되어 있으면 간격·타입·그리드 체계를 정하는 설계와 리뷰 | [addon-ui-design.md](references/addon-ui-design.md) |
 
-- 방향 보조(그 화면의 시각 방향을 정하는 보조: `landing`, `tastemaker`, `taste`, 방향으로 쓰는 `web-design-engineer`)는 한 화면에 하나만 쓴다. 방향 규칙이 서로 달라 함께 쓰면 서체·모션·구성이 엇갈린다. 원칙·모션·검수 보조는 함께 쓴다.
-- 브리프에 `보조: <묶음>[, <묶음>]` 줄로 그 화면에 쓰는 보조를 적는다. 방향 보조는 사용자가 지목했거나 화면 성격이 위 "언제 쓰나"에 맞을 때 넣고, 맞는 방향 보조가 둘이면 스타일 질문에서 고르게 한다.
-- 우선순위는 프로젝트 규칙(`AGENTS.md`, 이 스킬의 규칙, `DESIGN.md`, 토큰) → 주 UI 스킬의 단계·증거·통과 기준 → 보조다. 보조의 검사와 점수는 더하는 것이고 주 UI 스킬의 리뷰·감사를 대신하지 않는다. 보조의 결과는 주 UI 스킬의 리뷰 보고서에 절을 따로 두어 함께 남긴다.
+- 방향 보조(위 표에서 종류가 방향인 보조와 방향으로 쓰는 `web-design-engineer`)는 한 화면에 하나만 쓴다. 방향 규칙이 서로 달라 함께 쓰면 서체·모션·구성이 엇갈린다. 원칙·모션·검수 보조는 함께 쓴다.
+- 브리프에 `보조: <묶음>[, <묶음>]` 줄로 그 화면에 쓰는 보조를 모두 적는다. 위 표에서 "설치되어 있으면" 쓰는 모션·검수 보조도 이 화면의 설계·리뷰에 쓰면 넣는다(리뷰 단계는 이 줄을 보고 보조 절을 더한다). 방향 보조는 사용자가 지목했거나 화면 성격이 위 "언제 쓰나"에 맞을 때 넣고, 맞는 방향 보조가 둘이면 스타일 질문에서 고르게 한다.
+- 우선순위는 프로젝트 규칙(`AGENTS.md`, 이 스킬의 규칙, `DESIGN.md`, 토큰) → 주 UI 스킬의 단계·증거·통과 기준 → 보조다. 보조의 검사와 점수는 더하는 것이고 주 UI 스킬의 리뷰·감사를 대신하지 않는다. 거꾸로 주 UI 스킬의 리뷰가 같은 차원을 봤어도 브리프에 적은 보조를 건너뛰지 않는다. 보조의 결과는 주 UI 스킬의 리뷰 보고서에 절을 따로 두어 함께 남긴다. 리뷰 보고서가 스킬이 만드는 기록(impeccable `.impeccable/critique/`)이면 보조 결과는 `tasks/evidence/ui-review-<YYYYMMDD-HHmm>.md`에 따로 두고 증거에 두 경로를 함께 적는다. 대조표 증거에는 주 UI 스킬의 결과를 먼저 적고 보조 결과는 guide의 문구 그대로 붙인다. audit은 증거의 `N FAIL`, `위반 N`, `N/M`을 주 UI 스킬의 결과로 읽으므로 보조 결과를 이 꼴로 쓰지 않는다.
+- guide의 단계를 할 때는 그 칸이 가리키는 스킬 파일을 그 단계에서 읽는다. guide는 연결 지도라 요약만 보고 채점하거나 형식을 흉내 내지 않는다.
+- guide가 토큰으로 옮긴다고 한 값은 `packages/ui/src/styles/globals.css`가 화면 계층이라 `prokit-ui-builder`에 맡겨 옮기고, `DESIGN.md`는 Main이 쓴다.
 - 보조 스킬 다수가 UI 작업이면 스스로 불리게 쓰여 있다. 그 화면의 `보조:` 줄에 없는 보조가 불리면 그 절차를 따르지 않고 이 스킬의 흐름대로 한다.
 - 보조 스킬은 Main이 읽는다. 개발 단계에서 따를 보조 스킬은 위임 지시에 `.agents/skills/<이름>/SKILL.md` 경로를 넣어 `prokit-ui-builder`가 읽게 한다.
 - 카탈로그에 없는 보조를 더하는 일은 `prokit-skills-manage`의 "카탈로그에 없는 두뇌·UI 스킬 더하기"다(묶음 항목과 `guide` 파일 하나씩).

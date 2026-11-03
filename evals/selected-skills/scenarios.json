@@ -11,7 +11,10 @@
 		"b-compound": ["--brain", "compound-engineering", "--simplicity", "caveman"],
 		"b-none": ["--brain", "none", "--simplicity", "none"],
 		"u-taste": ["--brain", "none", "--simplicity", "ponytail", "--optional", "taste"],
-		"u-motion": ["--brain", "none", "--simplicity", "ponytail", "--optional", "motion"]
+		"u-motion": ["--brain", "none", "--simplicity", "ponytail", "--optional", "motion"],
+		"u-hallmark": ["--brain", "none", "--simplicity", "ponytail", "--ui-skill", "hallmark"],
+		"u-landing-combo": ["--brain", "none", "--simplicity", "ponytail", "--ui-skill", "hallmark", "--optional", "landing,animation,visual-critique"],
+		"u-app-combo": ["--brain", "none", "--simplicity", "ponytail", "--ui-skill", "hallmark", "--optional", "ui-design,web-design-engineer"]
 	},
 	"reply": "추천한 대로 진행해 줘. 내가 고를 것은 네 추천안으로 정하고 더 묻지 마. 처음 요청한 범위까지 마치고 멈춰.",
 	"maxTurns": 4,
@@ -43,6 +46,29 @@
 			"name": "b-motion-transition",
 			"fixtures": ["u-motion"],
 			"prompt": "첫 화면에서 로그인 화면(/login)으로 넘어갈 때 부드러운 화면 전환 애니메이션을 넣어 줘. 나머지 화면 모양은 그대로 둬.",
+			"stop": { "confirm": true }
+		},
+		{
+			"id": 5,
+			"name": "b-landing-combo",
+			"fixtures": ["u-landing-combo", "u-hallmark"],
+			"budgetUsd": 8,
+			"prompt": "첫 화면(apps/web/src/app/page.tsx)을 할 일 관리 서비스 '오늘할일'의 랜딩 페이지로 새로 디자인해 줘. 대상은 바쁜 직장인이고, 방문자가 무료로 시작하기 버튼을 누르게 하는 게 목표야.",
+			"stop": { "confirm": true }
+		},
+		{
+			"id": 6,
+			"name": "b-app-combo",
+			"fixtures": ["u-app-combo"],
+			"budgetUsd": 8,
+			"prompt": "할 일 목록 화면(/todos)을 새로 만들어 줘. API 연결은 다음에 할 거라 지금은 예시 데이터로 보여 주면 돼. Linear처럼 차분하고 정돈된 느낌으로, 정보 위계와 빈 상태, 버튼 배치를 신경 써 줘.",
+			"stop": { "confirm": true }
+		},
+		{
+			"id": 7,
+			"name": "b-addon-withdraw",
+			"fixtures": ["u-landing-combo"],
+			"prompt": "로그인 화면(/login)의 입력칸 간격과 버튼 문구만 다듬어 줘. 화면 구성은 그대로 둬.",
 			"stop": { "confirm": true }
 		}
 	]

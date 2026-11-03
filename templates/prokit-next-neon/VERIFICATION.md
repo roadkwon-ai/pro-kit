@@ -4,6 +4,58 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 화면 디자인 보조 행동 eval과 보완 (2026-11-04)
+
+아래 절의 한계였던 "보조를 쓴 화면 하나를 브리프부터 리뷰까지 잇는 라운드"를 돌렸다. 커밋 1eff168c를 독립 리뷰한 결과와 함께, 찾은 결함을 고쳤다.
+
+- 조건: Better-T-Stack 3.49.0(Next.js 16.4.4)으로 만든 neon 프로젝트에 이 판을 설치하고 `evals/selected-skills` 시드를 넣었다. 구성은 셋이고, 모두 두뇌 없음, ponytail, 주 UI 스킬 hallmark다.
+  - `u-landing-combo`: 랜딩 조합(`landing`, `animation`, `visual-critique`)
+  - `u-app-combo`: 앱 정돈 조합(`ui-design`, `web-design-engineer`)
+  - `u-hallmark`: 보조 없는 비교군
+- 실행: `claude -p`(Sonnet 5.5)를 사용자·프로젝트·로컬 설정과 훅을 켠 채 샌드박스에서 돌렸다. 시나리오는 `scenarios.json` 5\~7번 셋이다. 랜딩 새로 디자인(무료로 시작하기), 할 일 목록 화면 새로 만들기(예시 데이터, "Linear처럼"), 로그인 화면의 간격과 문구만 다듬기(고르지 않은 화면에서 물러서는지)다. 채점은 `checks.mjs`가 도구 호출과 최종 파일로 한다.
+- 1회차(커밋한 판):
+  - 브리프에 `보조:` 줄은 썼다(랜딩 `landing, animation`, 앱 `web-design-engineer`, 비교군 `보조: 없음`). 설치된 검수 보조(`visual-critique`, `ui-design`)는 빠졌다.
+  - 랜딩은 `addon-landing`·`addon-animation`과 `landing-page-design`을 읽고 브리프와 구현까지 따랐다. 메타데이터를 넣은 것은 랜딩 조합뿐이다(비교군은 두 회차 모두 넣지 않았다). 리뷰 단계에서는 보조를 잊었고, 위임 지시에 `animate` 경로도 없었다.
+  - 앱은 guide를 읽지 않고 디자인 카탈로그의 Linear `DESIGN.md`로 방향을 잡았다.
+  - 물러서기 시나리오는 `landing-page-design`을 읽지 않았고 `page.tsx`를 건드리지 않았다.
+- 고친 것:
+  - B 대조표 행 문구 셋에 보조 연결을 넣었다. 규칙이 `prokit-ui` 첫머리에만 있어 행을 채울 때 보이지 않았다. 브리프 행은 설치한 보조의 guide를 읽고 `보조:` 줄에 적게 한다. 구현 행은 보조 스킬 경로를 위임 지시에 넣게 한다. 디자인 리뷰 행은 보조마다 guide와 그 리뷰 칸이 가리키는 스킬 파일을 읽고 같은 보고서에 절로 더하게 한다. 주 UI 스킬의 리뷰가 보조를 대신하지 않고, 못 하면 `<보조> 미실행: 사유`로 적고, 결과 문구는 증거 끝에 붙인다. 이미 연 라운드는 `pnpm dev-cycle table B --write --upgrade`로 문구를 맞춘다.
+  - `prokit-ui` "화면 디자인 보조":
+    - `보조:` 줄에는 설치되어 그 화면에 쓰는 모션·검수 보조도 적는다.
+    - guide 단계의 스킬 파일은 그 단계에서 읽는다(guide 요약만 보고 채점하지 않는다). 주 UI 스킬의 리뷰가 같은 차원을 봤어도 보조를 건너뛰지 않는다.
+    - 보조 결과를 증거에 `N FAIL`, `위반 N`, `N/M` 꼴로 쓰지 않는다(audit이 주 UI 스킬의 결과로 읽는다). 주 UI 스킬이 impeccable이면 보조 결과는 `tasks/evidence/ui-review-*.md`에 둔다.
+    - guide가 토큰으로 옮긴다고 한 값은 `prokit-ui-builder`가 옮긴다.
+    - 방향 보조는 이름을 나열하지 않고 표의 종류로 가리킨다. `visual-critique` 행에 "impeccable이면 요청할 때만"을 더했다.
+  - guide:
+    - web-design-engineer: 지목한 이름이 디자인 카탈로그에도 있으면 카탈로그가 방향이고 이 보조는 채점만 한다. 채점은 `SKILL.md` "Step 7: Critique"와 `references/critique-guide.md`를 읽고 한다.
+    - animation: impeccable의 `animate` 명령과 이 묶음의 `animate` 스킬을 구분한다. 리뷰는 `emil-design-eng`를 읽고 한다.
+    - visual-critique: hallmark 마감 리뷰가 이 비평을 대신하지 않는다.
+  - `prokit-ui-builder`: 위임 지시에 경로로 적힌 UI 스킬과 보조 스킬 파일도 읽고 보고한다.
+  - 독립 리뷰가 찾은 유연성 문제를 고쳤다. 이제 묶음을 더하거나 빼는 일은 매니페스트 항목, guide 파일, `prokit-ui` 표 한 줄이다.
+    - `skills-setup.test.mjs`가 선택 묶음과 guide 묶음 목록을 글자 그대로 비교해, 묶음을 바꾸면 테스트를 고쳐야 했다. 이제 guide 묶음마다 guide 파일, 스킬 이름, `prokit-ui` 표 행과 링크만 본다.
+    - `scripts/doc-values.test.mjs`의 선택 묶음 기대값은 매니페스트에서 읽는다.
+    - handbook `optional-bundles.md`의 "일곱 묶음"을 지웠다.
+    - pro-kit `prokit-init`의 직접 고르기 머리글을 종류대로(방향 넷, 원칙·모션·검수 넷) 나눴다. 목록의 정본, 한 머리글에 넷이 넘을 때 질문을 나누는 규칙, 묶음 하나를 추천할 때의 선택지를 적었다.
+- 2회차(고친 판, 같은 시나리오): 브리프 `보조:` 줄에 설치한 보조가 모두 들어갔다(`landing, animation, visual-critique`, `web-design-engineer(리뷰 채점), ui-design`). 위임 지시에 `animate/SKILL.md`가 들어갔고, 앱은 guide 둘을 읽었다. 랜딩 리뷰 보고서와 증거에는 `landing 체크리스트 미충족 4; motion 지적 0`이 붙었다. visual-critique와 web-design-engineer 채점은 렌더한 화면이 없어 `미실행(blocked)`으로 적었다. 앱의 ui-design은 기록 없이 빠졌다(이후 행 문구 보강으로 고쳤다).
+- 리뷰 턴: eval 샌드박스는 브라우저를 막아 세션 안에서 스크린샷을 찍지 못한다. 2회차 사본의 화면을 샌드박스 밖에서 agent-browser로 데스크톱(1440)·모바일(390) 전체 화면으로 찍어 주고, 디자인 리뷰 행만 다시 하게 했다.
+  - 3회차(guide에 읽을 파일을 적기 전): 랜딩은 critique 스킬 일곱 개를 읽고 `visual-critique P1 0, P2 6, P3 7`을 냈다. 제목이 "한 / 줄이면"으로 갈라진 것과 Better-T-Stack 기본 영어 헤더를 P2로 잡았다. 앱은 `ui-design 지적 4`와 5개 차원 점수를 냈지만 web-design-engineer `SKILL.md`는 읽지 않았다. 랜딩의 motion 리뷰도 `emil-design-eng`를 읽지 않고 그 형식만 적었다.
+  - 5회차(guide에 읽을 파일을 적은 판, 리뷰 전 상태로 다시 만든 사본): 앱은 `SKILL.md`와 `critique-guide.md`를 읽고 채점했다. 랜딩은 hallmark 마감 리뷰가 같은 차원을 다뤘다며 visual-critique를 건너뛰었다.
+  - 6회차(행 문구와 규칙을 보강한 판, 랜딩): guide 셋, `emil-design-eng`, critique 일곱 개를 읽고 `landing 체크리스트 미충족 6`, `visual-critique P1 0, P2 6, P3 6`을 냈다.
+- 점수(채점 항목 수는 구성마다 다르다): 랜딩 조합 15/20 → 17/20(2회차) → 19/20(6회차), 앱 조합 11/19 → 17/19 → 18/19(5회차), 비교군 7/9 → 8/9, 물러서기 8/9 → 9/9. 남은 실패는 모두 audit이고 eval 환경에서 생겼다.
+  - 1회차는 개발 서버를 띄우지 못해 런타임 행이 막혔다.
+  - 리뷰 턴은 실행기가 플러그인 등록을 풀며 `.claude/settings.json`을 바꿨거나, 다시 만든 사본의 커밋 해시가 라운드 기준과 달랐다.
+  - 비용은 모두 약 $60이다.
+- eval 실행기(`evals/selected-skills/run.mjs`):
+  - 사본마다 웹 포트를 따로 준다. 이 기기의 3001은 다른 개발 서버가 쓴다.
+  - 샌드박스가 Turbopack 파일 감시를 막아 세션 안에서는 개발 서버가 뜨지 않는다. 그래서 샌드박스 밖에서 미리 띄운다.
+  - 이미 돈 사본에서 한 턴을 더 돌려 같은 채점을 하는 `turn` 명령과 시나리오별 비용 한도를 더했다.
+- 테스트: 두 템플릿 421 통과·0 실패, 문서 검사 80 통과·0 실패.
+- 한계:
+  - 회차마다 한 번씩 돌렸고 모델은 Sonnet 5.5뿐이다. 랜딩의 visual-critique는 비슷한 guide에서도 회차에 따라 했다 안 했다 해서, 6회차 판은 한 번만 확인했다.
+  - 스크린샷은 샌드박스 밖에서 찍어 주었다. 세션이 직접 찍는 흐름(`prokit-runtime-checker`)과 hallmark `--render`는 eval 환경에서 돌지 않았다.
+  - 리뷰 턴은 고칠 것 정리까지만 하고 마감·재확인은 돌리지 않았다.
+  - tastemaker, awwwards, impeccable과의 조합, Codex·Antigravity는 돌리지 않았다.
+
 ## 화면 디자인 보조 묶음 일곱 개와 추천 조합 (2026-11-03)
 
 UI/UX 스킬 조사(`docs/guideline/` 두 문서)에서 고른 스킬을 화면 디자인 보조 선택 묶음 일곱 개로 더했다: `landing`(landing-page-design), `tastemaker`, `web-design-engineer`, `awwwards`(build-awwwards-quality-sites), `animation`(Emil Kowalski 스킬 5개), `visual-critique`(critique 7개), `ui-design`(19개). 원본은 모두 MIT이고 확인 커밋은 `THIRD_PARTY_NOTICES.md`에 있다.
