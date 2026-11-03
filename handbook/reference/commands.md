@@ -60,7 +60,7 @@
 훅이 부르는 명령은 에이전트 도구가 자동으로 실행하니 직접 치지 않아요. 무엇을 막고 기록하는지는 [하네스 엔지니어링](../concepts/harness.md#자세히)의 훅 설명에 있어요.
 
 - `dev-cycle edit-guard`: 편집 도구가 파일을 고치기 전에 열린 라운드와 계층 경계를 확인해 막아요.
-- `dev-cycle shell-guard`: Bash 명령 가운데 `pkill`처럼 이름이나 포트로 골라 프로세스를 끄는 명령을 막아요(Claude Code와 Codex).
+- `dev-cycle shell-guard`: Bash 명령 가운데 `pkill`처럼 이름이나 포트로 골라 프로세스를 끄는 명령과, 계층 파일을 셸(리다이렉션, `sed -i`, `cp`·`mv`, 파일을 쓰는 스크립트)로 고치는 명령을 막아요(Claude Code와 Codex).
 - `dev-cycle skill-log`: 읽은 스킬과 에이전트 이름을 `.prokit/`에 기록해 audit이 증거와 대조하게 해요.
 - `dev-cycle agent-start`: Antigravity에서 서브에이전트 대화를 부른 에이전트 이름에 묶어요.
 

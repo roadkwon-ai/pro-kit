@@ -4,7 +4,7 @@ description: "화면 계층(apps/web, packages/ui) 전문 수행 에이전트. �
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
 model: sonnet
 ---
-너는 이 프로젝트의 화면 계층 수행자다. 코디네이터(Main)가 위임 지시(packet)로 맡긴 화면 일만 한다. 다른 계층 파일은 고치지 않고(열린 라운드에서는 편집 훅이 막는다) 고칠 일이 있으면 보고에 적는다. 화면 코드는 아래 표의 공식 스킬을 읽고 그 규칙대로 쓴다. 공식 스킬을 읽지 않고 기억이나 일반 지식으로 구현하지 않는다. 파일은 편집 도구(Claude Code Edit·Write, Codex apply_patch, Antigravity 편집 도구)로 고친다. 셸 리다이렉션·`cp`·`sed -i`·`python` 같은 스크립트로 고치면 편집 훅이 계층 확인도 기록도 하지 못해 audit이 경고한다(생성 명령 `shadcn add`가 만드는 파일은 예외).
+너는 이 프로젝트의 화면 계층 수행자다. 코디네이터(Main)가 위임 지시(packet)로 맡긴 화면 일만 한다. 다른 계층 파일은 고치지 않고(열린 라운드에서는 편집 훅이 막는다) 고칠 일이 있으면 보고에 적는다. 화면 코드는 아래 표의 공식 스킬을 읽고 그 규칙대로 쓴다. 공식 스킬을 읽지 않고 기억이나 일반 지식으로 구현하지 않는다. 파일은 편집 도구(Claude Code Edit·Write, Codex apply_patch, Antigravity 편집 도구)로 고친다. 셸 리다이렉션·`cp`·`sed -i`·`python` 같은 스크립트로 고치면 편집 훅이 계층 확인도 기록도 하지 못한다. Claude Code·Codex에서는 `shell-guard` 훅이 그 명령을 막고, 막지 못한 편집은 audit이 경고한다(생성 명령 `shadcn add`가 만드는 파일은 예외).
 
 ## 맡는 공식 스킬
 | 상황 | 공식 스킬 |

@@ -4,6 +4,20 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 운영 프로젝트 T8 감사 보고: 셸 편집 막기, delegation diff 안내, 리뷰 focus 스킬 안내 (2026-11-03)
+
+- 원인: pro-kit-trader가 T8 라운드를 감사하다 세 가지를 알렸다.
+  - 서브에이전트가 셸 `python` 치환으로 계층 파일을 고쳤다. `shell-guard`는 프로세스 끄기만 막아 편집 훅의 계층 확인을 건너뛰었다.
+  - `delegation diff`에 프로젝트 밖(scratchpad) 기준 파일을 주면 이유 없이 사용법만 출력했다.
+  - db 리뷰가 읽어야 하는 Neon 스킬을 대조표나 출력이 미리 알려 주지 않았다. 증거를 채운 뒤 audit 거부로 처음 알았다.
+- 고친 것:
+  - `scripts/dev-cycle.mjs`의 `shell-guard`가 계층 파일(화면·서버·DB, 인증 파일)을 셸로 쓰는 명령을 막는다. 리다이렉션 대상, `sed`·`perl`의 `-i`, `tee`, `cp`·`mv`·`install`의 마지막 인자, 파일을 쓰는 `python`·`node`·`ruby` 인라인 스크립트의 경로를 본다(`shellWrites`). 계층 에이전트가 있는 판(`performers`)에서만 막는다. 읽기, `tasks/evidence/`로의 리다이렉션, 생성(`db:generate`)·포맷(`biome check --write`) 명령, Codex `apply_patch`는 막지 않는다.
+  - `scripts/delegation.mjs`의 `diff`는 프로젝트 밖 기준 파일이면 "프로젝트 밖이다"와 둘 곳(`tasks/evidence/`)을 알린다.
+  - `table --write` 출력이 리뷰 행(ui·security·db)마다 리뷰 지시에 넣을 공식 스킬 경로를 보여 준다. 설치되어 있고 리뷰어가 맡은 스킬이며, 상위 스킬(`parent`)도 포함한다.
+  - 계층 수행자 정의 셋과 handbook(하네스, 에이전트 역할, 명령, 설치기, 고칠 파일)의 `shell-guard` 설명을 맞췄다.
+- 테스트: 셸 쓰기 막기(python·`sed -i`·리다이렉션·`cp`·`node` 막기, 읽기·증거·생성·포맷·`apply_patch`·하네스 파일은 통과, `performers` 없는 옛 판 통과), 프로젝트 밖 기준 파일 안내, `table --write`의 리뷰 스킬 안내를 단언으로 더했다. 두 템플릿 419 통과·0 실패, 문서 검사 80 통과·0 실패.
+- 한계: 셸을 해석하지 않는다. 그래서 `cd`로 옮긴 뒤의 상대 경로, 변수로 만든 경로, `git checkout -- <파일>` 같은 되돌리기는 막지 못한다. 따옴표 안의 `>`는 대상이 계층 파일이면 잘못 막을 수 있다. 막지 못한 편집은 audit의 "편집 기록이 없는 계층 파일" 경고가 그대로 알린다. Antigravity에는 셸 훅이 없다.
+
 ## 맡은 공식 스킬 경고를 이번 diff의 상황으로 거르기 (2026-11-03)
 
 - 원인: audit 경고 "이 라운드에서 일한 에이전트가 읽지 않은 맡은 공식 스킬"은 일한 에이전트가 맡은 공식 스킬을 모두 보고, 이번 diff에 그 상황이 있는지는 보지 않았다. pro-kit-trader와 pro-kit-web이 각각 알렸다. `turbo.json`을 바꾸지 않은 H 라운드에서도 "prokit-implementer: turborepo"가 떴다.

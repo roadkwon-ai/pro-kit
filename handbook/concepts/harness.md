@@ -74,7 +74,7 @@ flowchart TD
 - **일하는 도중에 막는 훅**: 설치기가 Claude Code 설정(`.claude/settings.json`)에 훅을 넣고, Codex(`.codex/hooks.json`)와 Antigravity(`.agents/hooks.json`)에도 비슷한 훅을 넣어요(도구마다 조금 달라요. 아래 괄호와 [지원하는 에이전트](../start/supported-agents.md)). 훅은 audit이 끝에서 잡는 일을 중간에 막거나 기록해요.
   - 편집 막기(`edit-guard`): 열린 라운드 없이 코드나 하네스 파일을 편집 도구로 고치려 하면 막아요. 라운드가 열려 있어도 코디네이터가 계층 코드를, 계층 에이전트가 다른 계층 파일을 고치려 하면 막아요.
   - 스킬 기록(`skill-log`): 스킬 호출, `SKILL.md` 읽기, 증거 폴더의 스크린샷을 연 일을 `.prokit/skills-used.jsonl`(커밋하지 않는 파일)에 에이전트 이름과 함께 남겨요. audit이 증거에 적은 스킬과 대조해요.
-  - 프로세스 끄기 막기(`shell-guard`, Claude Code와 Codex): `pkill`, `killall`, `pgrep`·`lsof` 결과를 넘긴 `kill`처럼 이름이나 포트로 골라 끄는 명령을 막아요. 같은 기기의 다른 프로젝트 서버까지 꺼지기 때문이에요.
+  - 프로세스 끄기 막기(`shell-guard`, Claude Code와 Codex): `pkill`, `killall`, `pgrep`·`lsof` 결과를 넘긴 `kill`처럼 이름이나 포트로 골라 끄는 명령을 막아요. 같은 기기의 다른 프로젝트 서버까지 꺼지기 때문이에요. 계층 파일(화면<!-- edition:pro -->·서버·DB<!-- /edition --> 코드)을 리다이렉션, `sed -i`, `cp`·`mv`, 파일을 쓰는 `python`·`node` 스크립트로 고치는 명령도 막아요. 셸로 고치면 편집 훅이 계층을 확인하지도 기록하지도 못하기 때문이에요. 생성 명령과 포맷 명령은 막지 않아요.
   - 커밋 막기(git pre-commit 훅): 라운드 기록 없이 코드나 하네스를 커밋하려 하면 막아요([dev-cycle 라운드](dev-cycle.md#마무리)).
   - Codex는 `/hooks`에서 신뢰하고, Antigravity는 폴더를 신뢰한 뒤에 돌아요. 도구별 확인 범위는 [지원하는 에이전트](../start/supported-agents.md)에 있어요.
 - **새 세션도 같은 규칙으로**: 규칙 문서와 대조표가 파일로 남아 있어서 새 세션은 `pnpm dev-cycle status`로 진행 중인 라운드를 이어받아요. 닫은 라운드와 완료한 일반 할 일은 `tasks/archive/README.md`에서 찾고, `tasks/todo.md`에는 남은 항목만 남아요.

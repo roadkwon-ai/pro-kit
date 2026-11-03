@@ -61,7 +61,7 @@ flowchart TD
 | 파일 | 왜 건드리지 않나요 |
 |---|---|
 | `.dev-cycle.json` | 케이스 판정 경로, 검사 명령, 화면 점수 기준이에요. 설치기가 채우고 `dev-cycle`이 읽어요. 잘못 고치면 케이스 판정이 달라져 검사가 느슨해질 수 있어요. 바꿀 때는 H 라운드로만 해요([설정 읽기](dev-cycle-config.md)) |
-| `.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json` | 라운드 없는 편집 막기(`edit-guard`), 이름이나 포트로 프로세스 끄기 막기(`shell-guard`), 읽은 스킬 기록(`skill-log`)이 걸려 있는 훅 설정이에요. 지우거나 고치면 그 막기와 기록이 멈춰서 audit이 같은 일을 확인하지 못해요 |
+| `.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json` | 라운드 없는 편집 막기(`edit-guard`), 이름이나 포트로 프로세스 끄기와 계층 파일 셸 편집 막기(`shell-guard`), 읽은 스킬 기록(`skill-log`)이 걸려 있는 훅 설정이에요. 지우거나 고치면 그 막기와 기록이 멈춰서 audit이 같은 일을 확인하지 못해요 |
 | `.prokit/` | 훅이 남기는 스킬 읽기·편집 기록과 자원 보호 상태예요. audit이 대조표 증거와 맞춰 보는 기록이라 손으로 쓰지 않아요. git이 무시해요 |
 | `skills-lock.json` | `skills` CLI가 설치한 스킬의 출처와 판을 적은 잠금 파일이에요. 손으로 고치면 설치 상태와 어긋나요 |
 | `.codex/agents/`, `.agents/agents/` | `.claude/agents/`의 정본에서 `pnpm agents:sync`가 만든 생성물이에요. 고쳐도 다음 동기화가 덮어쓰고, `pnpm agents:check`가 어긋남을 알려 줘요. 에이전트 규칙을 바꾸려면 정본(`.claude/agents/`)을 H 라운드로 고쳐요 |

@@ -1039,6 +1039,12 @@ export function main(argv = process.argv.slice(2), root = process.cwd()) {
 	const beforeArg = argv[1]?.startsWith("/")
 		? relative(root, argv[1])
 		: argv[1];
+	if (argv[0] === "diff" && argv[1] && !safePath(beforeArg)) {
+		console.error(
+			`기준 snapshot(${argv[1]})이 프로젝트 밖이다. 프로젝트 안(예: tasks/evidence/before.json)에 capture 결과를 두고 그 경로를 준다`,
+		);
+		return 2;
+	}
 	if (argv[0] === "diff" && safePath(beforeArg)) {
 		// scope가 없으면 어떤 변경도 허용하지 않는다(리뷰·QA 전후 대조).
 		const scopes = [];

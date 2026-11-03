@@ -944,6 +944,22 @@ test("셸 실행 전 확인: 이름·포트로 골라 끄는 명령(pkill, killa
   assert.equal(spawnSync(process.execPath, [CLI, "shell-guard"], { cwd: tmpdir(), input: "깨진 입력", encoding: "utf8" }).status, 0);
 });
 
+test("셸 실행 전 확인: 계층 파일을 셸(리다이렉션, sed -i, cp·mv, python·node 스크립트)로 쓰면 막고, 읽기·증거 기록·생성·포맷 명령과 performers 없는 옛 판은 막지 않는다", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  const sh = (command, agent) => spawnSync(process.execPath, [CLI, "shell-guard"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Bash", cwd: root, ...(agent ? { agent_id: `id-${agent}`, agent_type: agent } : {}), tool_input: { command } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  const py = "python3 -c \"import pathlib; p=pathlib.Path('apps/web/src/app/page.tsx'); p.write_text(p.read_text().replace('a','b'))\"";
+  assert.equal(sh(py, "prokit-ui-builder").status, 0, "performers가 없는 옛 판은 막지 않는다");
+  write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-db-builder"], skills: {} } }));
+  assert.ok(config);
+  for (const bad of [py, "sed -i '' 's/a/b/' apps/web/src/app/page.tsx", "echo x > apps/web/src/app/page.tsx", "cp /tmp/a.ts packages/db/src/schema/todo.ts", `node -e "require('fs').writeFileSync('${join(root, "apps/web/src/app/page.tsx")}', '')"`]) {
+    const r = sh(bad, "prokit-ui-builder");
+    assert.equal(r.status, 2, bad);
+    assert.match(r.stderr, /계층 파일\(.+\)을 셸 명령/);
+  }
+  for (const ok of ["sed -n 1,5p apps/web/src/app/page.tsx", "cat apps/web/src/app/page.tsx > tasks/evidence/x.txt", "pnpm test 2>&1 | tee tasks/evidence/t.txt", "grep -rn foo apps/web/src 2>/dev/null", "pnpm --filter @x/db db:generate", "pnpm exec biome check --write apps/web/src/app/page.tsx", "echo x > AGENTS.md", "apply_patch <<'EOF'\n*** Update File: apps/web/src/app/page.tsx\nnode writeFileSync(\nEOF"]) assert.equal(sh(ok).status, 0, ok);
+});
+
 test("부른 스킬 기록: Codex는 Bash 명령 속 SKILL.md 경로를, Antigravity는 read_file·view_file 경로를 남긴다", () => {
   const { root } = makeRepo();
   const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
@@ -1524,9 +1540,12 @@ test("db focus 리뷰는 설치된 Neon 스킬(상위 스킬 포함)을 리뷰�
   for (const s of ["neon", "neon-postgres"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n${s === "neon-postgres" ? "parent: neon\n" : ""}---\n`);
   write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["neon", "neon-postgres"] }], performers: { agents: ["prokit-db-builder"], skills: { "neon-postgres": ["prokit-db-builder", "prokit-reviewer"] } } }));
   const config = loadConfig(root);
-  writeTable(root, config, "E", { write: true, title: "스키마" });
+  // table --write가 리뷰 지시에 넣을 스킬(상위 스킬 포함)을 미리 알린다
+  const out = run(root, "table", "E", "--write", "--title", "스키마");
+  assert.equal(out.status, 0, out.stderr);
   const row = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^\[review\] prokit-reviewer\(db\)/.test(r.text)) + 1;
   assert.ok(row);
+  assert.match(out.stdout, new RegExp(`리뷰 지시에 넣을 공식 스킬[^\\n]*\\n(?: {2}#.*\\n)* {2}#${row} prokit-reviewer\\(db\\): \\.agents/skills/neon/SKILL\\.md, \\.agents/skills/neon-postgres/SKILL\\.md`));
   mkdirSync(join(root, "tasks/evidence"), { recursive: true });
   writeFileSync(join(root, "tasks/evidence/e.txt"), "prokit-reviewer(db): approve, max=none\n");
   const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });

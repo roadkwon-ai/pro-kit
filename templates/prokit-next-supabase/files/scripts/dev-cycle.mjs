@@ -2679,6 +2679,34 @@ const brainLine = (config) => {
 		: "두뇌: 없음(기본 칸)";
 };
 
+// table --write 출력: 리뷰 행(ui·security·db)마다 리뷰어가 읽어야 audit이 받는 공식 스킬. 증거를 채우기 전에 리뷰 지시에 넣게 한다
+function reviewGuide(root, config) {
+	const md = readTodo(root, config);
+	const active = md && parseActive(md);
+	if (!active) return "";
+	const { skills } = performers(root);
+	// 배치에 없는 상위 스킬(parent)은 하위 스킬을 맡은 쪽이 읽는다(audit의 parentAgents와 같다)
+	const owners = (n) =>
+		skills[n] ??
+		Object.entries(skills)
+			.filter(([c]) => parentSkill(root, c) === n)
+			.flatMap(([, a]) => a);
+	const lines = active.rows
+		.map((r, i) => {
+			const focus = r.text.match(/prokit-reviewer\((ui|security|db)\)/)?.[1];
+			const need = (REVIEW_FOCUS_SKILLS[focus] ?? []).filter(
+				(n) => isProjectSkill(root, n) && owners(n).includes("prokit-reviewer"),
+			);
+			return need.length
+				? `  #${i + 1} prokit-reviewer(${focus}): ${need.map((n) => `.agents/skills/${n}/SKILL.md`).join(", ")}`
+				: null;
+		})
+		.filter(Boolean);
+	return lines.length
+		? `\n리뷰 지시에 넣을 공식 스킬(리뷰어가 이 라운드에서 읽어야 audit이 받는다):\n${lines.join("\n")}`
+		: "";
+}
+
 // table --write 출력: 단계 행마다 부를 두뇌 스킬
 function stageGuide(root, config) {
 	const brains = brainsOf(config);
@@ -3267,10 +3295,69 @@ export function editGuard(root, config, input) {
 // shortcut: 셸을 해석하지 않고 명령 첫머리의 pkill·killall과 pgrep·lsof 결과를 kill에 넘기는 꼴만 본다. 다른 우회가 실측되면 더한다
 const KILL_BY_NAME_RE =
 	/(?:^|[;&|(\n]|\$\()\s*(?:sudo\s+)?(?:pkill|killall)\b|\b(?:pgrep|lsof)\b[^;&\n]*\|\s*xargs\s+(?:-\S+\s+)*kill\b|(?:^|[;&|(\n])\s*kill\b[^;&|\n]*\$\(\s*(?:pgrep|lsof)\b/;
-// 셸 실행 전 확인(PreToolUse 훅, Claude Code·Codex Bash): 이름·포트로 골라 끄는 명령이면 막을 사유, 아니면 null
-export function shellGuard(input) {
-	return KILL_BY_NAME_RE.test(String(hookCall(input).t.command ?? ""))
-		? "dev-cycle: 이름이나 포트로 골라 끄는 명령(pkill, killall, pgrep·lsof 결과를 넘긴 kill)은 쓰지 않는다. 같은 기기의 다른 프로젝트 서버까지 꺼진다. 띄울 때 적어 둔 PID와 그 프로세스 그룹만 끈다(kill -- -<PGID>). 다른 프로세스가 포트를 쓰면 끄지 않고 보고한다."
+// 셸 명령이 쓰는 파일 후보(2026-11-03 실측: 서브에이전트가 python 치환으로 계층 파일을 고쳐 편집 훅의 계층 확인을 건너뛰었다).
+// 리다이렉션 대상, sed·perl -i와 tee의 인자, cp·mv·install의 마지막 인자, 파일을 쓰는 python·node·ruby 인라인 스크립트의 경로를 본다.
+// shortcut: 셸을 해석하지 않는다. 따옴표 안의 >, cd로 옮긴 뒤의 상대 경로, 변수로 만든 경로는 잘못 보거나 놓친다. 우회가 실측되면 더한다
+const PATH_TOKEN_RE =
+	/[\w@.~$-]*\/[\w@.~$/()[\]-]+|[\w.-]+\.(?:tsx?|jsx?|mjs|cjs|css|json|sql|md)\b/g;
+const SCRIPT_WRITE_RE =
+	/\b(?:python3?|node|ruby|bun|deno)\b[\s\S]*(?:write_text|write_bytes|writeFileSync|writeFile|appendFileSync|\.write\(|open\([^)]*["'][wa]b?\+?["'])/;
+export function shellWrites(command) {
+	const cmd = String(command ?? "");
+	// Codex apply_patch는 편집 훅(edit-guard)이 본다
+	if (/^\s*apply_patch\b/.test(cmd)) return [];
+	const paths = (text) =>
+		[...String(text).matchAll(PATH_TOKEN_RE)].map((m) => m[0]);
+	const out = [];
+	for (const m of cmd.matchAll(
+		/(?:^|[^0-9&<>=-])\d?>>?\s*(["']?)([^\s;&|<>()'"]+)\1/g,
+	))
+		if (!m[2].startsWith("&") && m[2] !== "/dev/null") out.push(m[2]);
+	for (const seg of cmd.split(/[;&|\n]+/)) {
+		const words = seg
+			.trim()
+			.split(/\s+/)
+			.map((w) => w.replace(/^["']|["']$/g, ""));
+		const at = words.findIndex((w) =>
+			/^(sed|gsed|perl|tee|cp|mv|install)$/.test(w),
+		);
+		if (at < 0) continue;
+		const [tool, ...args] = words.slice(at);
+		if (
+			/sed$/.test(tool) &&
+			!args.some((a) => /^(-[a-zA-Z]*i|--in-place)/.test(a))
+		)
+			continue;
+		if (tool === "perl" && !args.some((a) => /^-[a-zA-Z]*i/.test(a))) continue;
+		const files = args.filter((a) => !a.startsWith("-"));
+		out.push(
+			...(["cp", "mv", "install"].includes(tool)
+				? files.slice(-1)
+				: files.flatMap(paths)),
+		);
+	}
+	if (SCRIPT_WRITE_RE.test(cmd)) out.push(...paths(cmd));
+	return [...new Set(out)];
+}
+// 셸 실행 전 확인(PreToolUse 훅, Claude Code·Codex Bash): 이름·포트로 골라 끄는 명령이나 계층 파일을 셸로 쓰는 명령이면 막을 사유, 아니면 null.
+// 계층 파일 검사는 performers가 있는 판(계층 에이전트가 있는 프로젝트)에서만 한다
+export function shellGuard(input, root = null, config = null) {
+	const { t } = hookCall(input);
+	if (KILL_BY_NAME_RE.test(String(t.command ?? "")))
+		return "dev-cycle: 이름이나 포트로 골라 끄는 명령(pkill, killall, pgrep·lsof 결과를 넘긴 kill)은 쓰지 않는다. 같은 기기의 다른 프로젝트 서버까지 꺼진다. 띄울 때 적어 둔 PID와 그 프로세스 그룹만 끈다(kill -- -<PGID>). 다른 프로세스가 포트를 쓰면 끄지 않고 보고한다.";
+	if (!root || !config) return null;
+	const perf = performers(root);
+	const layered = shellWrites(t.command)
+		.map((f) => projectPath(root, input?.cwd, f))
+		.filter((f) => {
+			if (!f) return false;
+			const c = classify([f], config);
+			return [...c.layers, ...(c.auth ? ["D"] : [])].some(
+				(l) => layerOwners(l, perf).length,
+			);
+		});
+	return layered.length
+		? `dev-cycle: 계층 파일(${layered.join(", ")})을 셸 명령(리다이렉션, sed -i, cp·mv, python·node 스크립트 등)으로 고치지 않는다. 편집 훅이 계층 확인도 기록도 하지 못한다. 편집 도구(Claude Code Edit·Write, Codex apply_patch, Antigravity 편집 도구)로 고친다. Main이면 그 계층 에이전트에 맡긴다. 생성 명령(shadcn add, db:generate)과 포맷 명령은 막지 않는다.`
 		: null;
 }
 // 편집 도구 입력에서 고칠 프로젝트 안 파일(상대 경로)
@@ -4175,8 +4262,11 @@ export function main(argv, root = process.cwd()) {
 	// PreToolUse 훅(Claude Code·Codex Bash): exit 2가 그 명령을 막고 stderr를 에이전트에게 보인다. 깨진 입력은 막지 않는다
 	if (cmd === "shell-guard") {
 		let why = null;
+		let input = null;
 		try {
-			why = shellGuard(JSON.parse(readFileSync(0, "utf8")));
+			input = JSON.parse(readFileSync(0, "utf8"));
+			why = shellGuard(input);
+			why ??= shellGuard(input, hookRoot, loadConfig(hookRoot));
 		} catch {}
 		if (why) console.error(why);
 		return why ? 2 : 0;
@@ -4216,7 +4306,7 @@ export function main(argv, root = process.cwd()) {
 				noTask: rest.includes("--no-task"),
 			});
 			const text = rest.includes("--write")
-				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}${stageGuide(root, config)}`
+				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}${stageGuide(root, config)}${reviewGuide(root, config)}`
 				: r.block;
 			print(r, r.warning ? `${text}\n${r.warning}` : text);
 			return 0;

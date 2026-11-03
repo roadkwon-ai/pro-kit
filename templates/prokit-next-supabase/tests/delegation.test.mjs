@@ -415,6 +415,14 @@ test("diff CLI는 기준 snapshot 뒤 배정 밖 변경·커밋을 exit 1로, �
 	};
 	try {
 		assert.equal(main(["capture"], root), 0);
+		// 프로젝트 밖 기준 파일은 사용법 대신 이유를 알린다
+		let why = "";
+		console.error = (value) => {
+			why = value;
+		};
+		assert.equal(main(["diff", "/tmp/scratch/before.json"], root), 2);
+		assert.match(why, /프로젝트 밖이다/);
+		console.error = () => {};
 		// gitignore 밖의 기준 파일도 자기 자신은 변경으로 세지 않는다.
 		const captured = output;
 		write("before.json", captured);
