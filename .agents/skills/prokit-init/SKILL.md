@@ -4,7 +4,7 @@ description: >-
   pro-kit을 처음 들일 때 쓴다. 먼저 프로젝트 유형(새 프로젝트, 초기 프로젝트, 운영 중인 Next.js 프로젝트, 다른 언어·프레임워크에서
   Next.js로 전환)을 정한다. 새 프로젝트는 PRD를 받고, 기존 프로젝트는 기본 AI가 대상 폴더를 읽기 전용으로 초기 분석한 뒤
   그 프로젝트에 맞는 설정(템플릿, 적용 방식, 두뇌(여럿 가능: superpowers, agent-skills, pstack, gstack, oh-my, mattpocock,
-  openspec, spec-kit, compound-engineering), 과설계 방지 스킬, mattpocock 추가 스킬, UI 스킬(여럿 가능: impeccable, hallmark), 응답 방식, 화면 디자인 보조)을 추천해 고르게 하고,
+  openspec, spec-kit, compound-engineering), 과설계 방지 스킬, mattpocock 추가 스킬, UI 스킬(여럿 가능: impeccable, hallmark), 응답 방식, 화면 디자인 보조 조합(랜딩, 레퍼런스, 쇼케이스 등))을 추천해 고르게 하고,
   유형별 동의를 받아 적용한다. "템플릿으로 프로젝트 만들어줘", "새 프로젝트 시작", "프로킷 초기 셋팅", "init", "pro-kit 받고 AGENTS.md대로",
   "이 PRD로 프로젝트 만들어줘", "이 프로젝트에 프로킷 적용해줘", "기존 프로젝트에 도입", "프로토타입을 프로킷으로 개발",
   "PHP(Django, Rails 등) 서비스를 Next.js로 옮기고 싶어"처럼 프로킷을 처음 들이는 요청에 쓴다. 이미 프로킷을 들인 프로젝트(.dev-cycle.json이 있음)의
@@ -58,7 +58,7 @@ prokit은 PRD를 바탕으로 두뇌와 스킬을 추천하고, PRD에 맞춰 �
 | mattpocock 추가 스킬 | PRD에 맞는 것 추천 | 2절 |
 | 응답 방식(i-have-adhd) | `i-have-adhd` 추천 | 2절 |
 | UI 스킬 | `impeccable` 추천. MVP로 시작해 기능을 하나씩 늘리는 서비스이거나 새로 만드는 공개 웹 페이지가 주 화면이면 `hallmark` 추천. 여럿도 고를 수 있지만 하나를 권한다 | 2절 |
-| 화면 디자인 보조(taste-skill) | SKIP 추천. 공개 페이지가 주 화면이면 `taste-skill` 추천(UI 스킬로 hallmark를 고르면 추천하지 않는다) | 2절. UI 스킬 질문에서 함께 묻는다 |
+| 화면 디자인 보조 | PRD 신호에 맞는 추천 조합 하나(기본, 랜딩, 레퍼런스, 쇼케이스, 앱 정돈). 신호가 약하면 UI 스킬이 hallmark일 때 기본 조합, 그 밖이면 SKIP | 4절 5번. UI 스킬이 정해진 뒤 묻는다 |
 | 전역 도구(`--with-global`) | 안 함 | 사용자가 요청할 때만 |
 | 선택 묶음(ops, motion, mobile) | 안 함 | 사용자가 요청할 때만. 보고에 설치법을 적는다 |
 
@@ -76,7 +76,7 @@ prokit은 PRD를 바탕으로 두뇌와 스킬을 추천하고, PRD에 맞춰 �
 - 추가 스킬은 신호가 맞는 것을 모두 추천하되, 두뇌와 겹치는 것은 추천에서 뺀다. 두뇌가 `mattpocock`이면 빼지 않는다.
 - UI 스킬은 하나를 추천한다. 기본은 impeccable이다. PRD가 핵심 기능만 담은 MVP로 시작해 기능을 단계적으로 늘린다고 하거나(MVP, 1차 출시 범위, 단계별 확장), 주 화면이 새로 만드는 공개 웹 페이지(랜딩, 소개, 가격, 행사, 포트폴리오)이고 로그인 뒤 앱 화면이 적으면 hallmark 하나를 추천하고, 보고에 "UI 개선 요구가 많아지면 impeccable을 더한다"를 적는다. 기준의 정본은 템플릿 `brains/README.md`다.
 - 응답 방식은 i-have-adhd를 추천한다. 사용자가 길고 자세한 설명을 원한다고 했으면 SKIP을 추천한다.
-- 화면 디자인 보조는 SKIP을 추천한다. PRD의 주 화면이 공개 페이지(랜딩, 소개, 포트폴리오, 행사, 매장)이거나 시각 완성도를 따로 요구하면 taste-skill을 추천한다. UI 스킬로 hallmark를 추천했으면 같은 일이라 taste-skill은 추천하지 않는다.
+- 화면 디자인 보조는 템플릿 `brains/README.md` "화면 디자인 보조"의 추천 조합 표에서 PRD 신호에 맞는 조합 하나를 추천한다(주 행동 하나를 이끄는 랜딩이면 랜딩, 레퍼런스 이미지나 좋아하는 사이트가 있으면 레퍼런스, 브랜드·포트폴리오·행사이고 몰입감이나 어워드급을 원하면 쇼케이스, 로그인 뒤 화면이 많으면 앱 정돈). 신호가 약하면 UI 스킬이 hallmark일 때 기본 조합, 그 밖이면 SKIP이다. 모든 묶음을 한꺼번에 추천하지 않는다. 방향 보조끼리 규칙이 엇갈리고 에이전트가 읽을 스킬 목록이 길어지기 때문이다.
 - 맡긴 항목은 묻지 않지만, 고른 값과 근거 한 줄을 대화로 알리고 진행한다. 사용자가 무엇이 왜 설치되는지 알고 바꿀 수 있어야 해서다.
 - 기존 프로젝트는 PRD와 초기 분석 결과를 함께 신호로 쓴다(7절). <!-- edition:pro -->
 - 물을 항목이 있으면 묻기 전에 대화로 추천을 짧게 보여 준다(정했거나 맡긴 항목은 뺀다): 두뇌 열 개(`none`, superpowers, agent-skills(addyosmani), pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering)를 한 줄씩 나열하고 추천에 `(추천)`과 근거로 삼은 PRD 문장이나 신호 한두 개를 붙인다. 두뇌는 하나를 권하고, 여럿을 함께 쓸 수 있다는 것과 그때 첫 두뇌가 주 두뇌라는 것을 한 줄로 알린다. 이어서 과설계 방지 스킬, 추가 스킬(스킬마다 근거 한 줄), UI 스킬, 응답 방식, 화면 디자인 보조, 설치하지 않는 스킬과 이유를 적는다.
@@ -92,9 +92,9 @@ Claude Code는 AskUserQuestion으로 묻는다. 한 번에 질문 4개, 질문�
    | 두뇌 | `<추천> (추천)`, PRD에 다음으로 맞는 두뇌 하나, `없음(기본 AI)`, `다른 두뇌 보기·여럿 고르기`. 추천이 `none`이면 `없음(기본 AI) (추천)`, 다음으로 맞는 두뇌 둘, `다른 두뇌 보기·여럿 고르기` |
    | 과설계 방지 | `ponytail (추천)`, `caveman`, `andrej-karpathy-skills`, `SKIP(기본 AI)` |
    | 응답 방식 | `i-have-adhd (추천)`, `SKIP`. SKIP을 추천할 때는 `SKIP (추천)`, `i-have-adhd` |
-   | UI 스킬(여러 선택) | `<추천 UI 스킬> (추천)`(impeccable 또는 hallmark), 나머지 UI 스킬, `taste-skill (화면 보조)`. taste-skill을 추천하면 이름에 ` (추천)`을 더한다. 질문 본문에 "고른 UI 스킬만 설치해요. UI 스킬을 쓰지 않으려면 Other에 '없음'이라고 적어요(기본 AI가 frontend-design과 게슈탈트 지침으로 만들어요)"를 적는다 |
+   | UI 스킬(여러 선택) | `<추천 UI 스킬> (추천)`(impeccable 또는 hallmark), 나머지 UI 스킬. 질문 본문에 "고른 UI 스킬만 설치해요. UI 스킬을 쓰지 않으려면 Other에 '없음'이라고 적어요(기본 AI가 frontend-design과 게슈탈트 지침으로 만들어요)"를 적는다 |
 
-   UI 스킬 질문에서 impeccable과 hallmark를 둘 다 고르면 "주 UI 스킬은?"을 둘 중에서 한 번 더 묻는다(대조표의 디자인 단계를 맡는다). 설치 값은 주 UI 스킬을 앞에 둔 쉼표 목록이다(`--ui-skill hallmark,impeccable`). 하나도 고르지 않았으면 `none`이다. taste-skill은 UI 스킬 값이 아니라 선택 묶음 `taste`다.
+   UI 스킬 질문에서 impeccable과 hallmark를 둘 다 고르면 "주 UI 스킬은?"을 둘 중에서 한 번 더 묻는다(대조표의 디자인 단계를 맡는다). 설치 값은 주 UI 스킬을 앞에 둔 쉼표 목록이다(`--ui-skill hallmark,impeccable`). 하나도 고르지 않았으면 `none`이다.
 
 3. `다른 두뇌 보기·여럿 고르기`를 고르면 두뇌 아홉 개를 세 묶음의 여러 선택 질문으로 한 번에 묻는다(하나만 골라도 된다). 묶음: 진행 규율(superpowers, agent-skills, pstack, mattpocock), 스펙 주도(openspec, spec-kit), 제품·장기 실행·학습(gstack, oh-my, compound-engineering). 선택지마다 `brains/README.md`의 "선택지 설명(한 줄)"을 넣고 추천에 ` (추천)`을 붙인다.
    - 둘 이상 고르면 "주 두뇌는?"을 고른 것 중에서 한 번 더 묻는다. 설치 값은 주 두뇌를 앞에 둔 쉼표 목록이다(`--brain openspec,superpowers`).
@@ -109,24 +109,32 @@ Claude Code는 AskUserQuestion으로 묻는다. 한 번에 질문 4개, 질문�
    | 조사·외부 설정 | `research`, `wizard`, `to-questionnaire` |
    | 인계·학습 | `handoff`, `teach`, `wait-what` |
 
-- 다른 도구는 같은 순서로 대화로 묻는다. 두뇌 열 개, UI 스킬, 추가 스킬 14개를 번호 목록으로 한 번에 보여 주고(추천 표시와 설명 포함) 번호로 고르게 한다. 두뇌와 추가 스킬은 여러 개를 고를 수 있다. 두뇌를 여럿 고르면 첫 번호가 주 두뇌다.
+5. 화면 디자인 보조: UI 스킬이 정해지면 묻는다(정했거나 맡긴 경우는 뺀다). 한 질문(하나 고르기)으로 묻고, 선택지는 `<추천 조합> (추천)`, PRD에 다음으로 맞는 조합 하나, `직접 고르기(여럿)`, `SKIP`이다. 조합 선택지의 `description`에는 묶음 이름과 정본의 "이럴 때"를 한 줄로 넣는다(예: `landing, animation, visual-critique: 가입·구매 하나를 이끄는 랜딩`). 질문 본문에 "주 UI 스킬은 그대로이고, 고른 보조는 화면 단계에 더해져요. 나중에 하나씩 더하고 뺄 수 있어요"를 적는다.
+   - `직접 고르기(여럿)`를 고르면 두 묶음의 여러 선택 질문으로 한 번에 묻는다. 추천에 들어 있던 묶음은 ` (추천)`을 붙여 앞에 둔다. 방향 보조를 둘 이상 고르면 한 화면에는 하나만 쓴다고 알린다(설치는 그대로 한다).
+
+   | 머리글 | 묶음 |
+   |---|---|
+   | 방향·원칙 | `landing`, `tastemaker`, `web-design-engineer`, `awwwards` |
+   | 모션·검수 | `animation`, `visual-critique`, `ui-design`, `taste` |
+
+- 다른 도구는 같은 순서로 대화로 묻는다. 두뇌 열 개, UI 스킬, 추가 스킬 14개, 화면 디자인 보조 조합과 묶음을 번호 목록으로 한 번에 보여 주고(추천 표시와 설명 포함) 번호로 고르게 한다. 두뇌와 추가 스킬은 여러 개를 고를 수 있다. 두뇌를 여럿 고르면 첫 번호가 주 두뇌다.
 - 사용자가 겹치는 추가 스킬을 고르면 겹친다는 점(라우팅은 두뇌의 스킬을 먼저 쓴다)을 알리고 설치한다. 제외 스킬(`grill-me` 등)을 원하면 이유를 알린다. 그래도 원하면 새 프로젝트의 H 라운드에서 매니페스트를 고친 뒤 설치하라고 안내한다.
 
 ## 5. 실행
 1. 설치 전에 이 기기 전역의 두뇌·과설계 방지 스킬을 확인해 보고 목록을 만든다. `~/.claude/settings.json`의 `enabledPlugins`에서 켜진 두뇌·과설계 방지 플러그인(superpowers, agent-skills, pstack, oh-my-claudecode, ponytail)과 frontend-design 플러그인, `~/.claude/skills/gstack`, `~/.claude/CLAUDE.md`의 `<!-- OMC:START -->` 블록을 본다. 지우거나 고치지 않는다. 고르지 않은 것은 설치기가 새 프로젝트의 `.claude/settings.local.json`으로 끈다.
 2. `AGENTS.md` 3번 준비물에 고른 두뇌의 준비물을 더해 확인한다. gstack은 Bun, Spec Kit은 uv(설치할 때만)가 필요하다. oh-my는 Codex를 쓰면 OMX CLI(`omx`)가 필요하고, OMX `team`은 tmux가 필요하다(tmux가 없으면 멈추지 않고 보고에 적는다). gstack, OMX CLI, OpenSpec CLI(npm)는 그 두뇌를 고르면 설치기가 전역에 설치한다(`--brain`을 명시하므로). 설치 전에 그 사실을 알린다. 그 밖의 전역 설치는 사용자가 요청할 때만 한다.
-3. `AGENTS.md` 1\~10을 그대로 하되, 5번 설치 명령에 고른 값을 붙인다: `bash <pro-kit>/templates/<템플릿>/install.sh <경로> --brain <값> --simplicity <값> --ui-skill <값>`. `none`도 명시한다. 두뇌가 여럿이면 주 두뇌를 앞에 둔 쉼표 목록이다(`--brain openspec,superpowers`).<!-- edition:pro --> 새 프로젝트는 `--project-type new`를 붙여도 되고 빼도 된다.<!-- /edition --> 선택지 이름이 아니라 설치 값을 쓴다: `agent-skills (addyosmani)`는 `agent-skills`, `andrej-karpathy-skills`는 `karpathy`, `SKIP(기본 AI)`·`없음(기본 AI)`은 `none`이고, 응답 방식 `SKIP`은 `--optional i-have-adhd`를 빼는 것이고, UI 스킬 질문에서 taste-skill을 고르지 않으면 `--optional taste`를 뺀다. 추가 스킬은 `--matt <스킬>[,<스킬>]`, i-have-adhd는 `--optional i-have-adhd`, taste-skill은 `--optional taste`를 더한다(둘 다면 `--optional i-have-adhd,taste`). mattpocock 두뇌는 `--brain mattpocock`과 고른 `--matt`를 함께 준다. exit 0이 아니면 `AGENTS.md` 5번대로 출력을 보고하고 멈춘다.
+3. `AGENTS.md` 1\~10을 그대로 하되, 5번 설치 명령에 고른 값을 붙인다: `bash <pro-kit>/templates/<템플릿>/install.sh <경로> --brain <값> --simplicity <값> --ui-skill <값>`. `none`도 명시한다. 두뇌가 여럿이면 주 두뇌를 앞에 둔 쉼표 목록이다(`--brain openspec,superpowers`).<!-- edition:pro --> 새 프로젝트는 `--project-type new`를 붙여도 되고 빼도 된다.<!-- /edition --> 선택지 이름이 아니라 설치 값을 쓴다: `agent-skills (addyosmani)`는 `agent-skills`, `andrej-karpathy-skills`는 `karpathy`, `SKIP(기본 AI)`·`없음(기본 AI)`은 `none`이고, 응답 방식 `SKIP`은 `--optional i-have-adhd`를 빼는 것이고, 화면 디자인 보조 `SKIP`은 보조 묶음을 넣지 않는 것이다. 추가 스킬은 `--matt <스킬>[,<스킬>]`, i-have-adhd는 `--optional i-have-adhd`, 화면 디자인 보조는 고른 조합의 묶음을 `--optional`에 더한다(예: `--optional i-have-adhd,landing,animation,visual-critique`). mattpocock 두뇌는 `--brain mattpocock`과 고른 `--matt`를 함께 준다. exit 0이 아니면 `AGENTS.md` 5번대로 출력을 보고하고 멈춘다.
 4. PRD를 새 프로젝트에 남겨 9번 커밋에 넣는다. 추천의 근거이고, 나중에 두뇌를 바꿀 때도 읽는다. 작업 폴더 흐름에서 첫 요청을 `docs/first-request.md`에 적었고 PRD가 그 요청 안에 있으면 그 파일로 충분하다(문장은 바꾸지 않는다). 그 밖에는 `docs/prd.md`에 둔다: 파일이면 내용을 옮기고 원래 경로를 첫 줄에 적고, 요청 속 설명이면 그 문장을 그대로, 프리셋 팩이면 팩 이름과 경로를 적는다.
-5. 8번 확인에서 `pnpm skills:check`가 exit 0이고 `두뇌:`·`과설계 방지:`·`UI 스킬:`·`mattpocock 추가:` 줄이 고른 값인지 본다. i-have-adhd나 taste-skill을 골랐으면 `선택 스킬:` 줄에 `i-have-adhd 있음`, `taste 있음`이 보여야 한다.
+5. 8번 확인에서 `pnpm skills:check`가 exit 0이고 `두뇌:`·`과설계 방지:`·`UI 스킬:`·`mattpocock 추가:` 줄이 고른 값인지 본다. i-have-adhd나 화면 디자인 보조를 골랐으면 `선택 스킬:` 줄에 고른 묶음마다 `<묶음> 있음`(예: `i-have-adhd 있음`, `landing 있음`)이 보여야 한다.
 
 ## 6. 보고
 `AGENTS.md` 10번 보고에 더한다.
 - 추천에 쓴 PRD(파일 경로나 "요청의 서비스 설명", 팩 이름)
-- 고른 두뇌, 과설계 방지 스킬, 추가 스킬, UI 스킬, 응답 방식과 실제 설치 상태(`pnpm skills:check`의 해당 줄)
-- 추천과 다르게 고른 것, 건너뛴 추천과 나중에 바꾸는 법(새 프로젝트 세션에서 "두뇌 바꿔줘", "taste 추가해줘"처럼 요청하면 `prokit-skills-manage`가 H 라운드로 설치한다. 명령 예: `--simplicity <이름>`, `--ui-skill <이름>[,<이름>]`, `--matt <스킬>`, `--optional i-have-adhd`, `--optional taste`. 두뇌를 더할 때는 지금 목록 뒤에 붙인다: `--brain <지금 두뇌>,<새 두뇌>`)
+- 고른 두뇌, 과설계 방지 스킬, 추가 스킬, UI 스킬, 응답 방식, 화면 디자인 보조(조합 이름과 묶음)와 실제 설치 상태(`pnpm skills:check`의 해당 줄)
+- 추천과 다르게 고른 것, 건너뛴 추천과 나중에 바꾸는 법(새 프로젝트 세션에서 "두뇌 바꿔줘", "애니메이션 보조 더해줘", "랜딩 조합으로 해줘"처럼 요청하면 `prokit-skills-manage`가 H 라운드로 설치한다. 명령 예: `--simplicity <이름>`, `--ui-skill <이름>[,<이름>]`, `--matt <스킬>`, `--optional i-have-adhd`, `--optional landing,animation`, `--drop ui-design`. 두뇌를 더할 때는 지금 목록 뒤에 붙인다: `--brain <지금 두뇌>,<새 두뇌>`)
 - 끈 전역 플러그인과 남은 전역 경고(설치기 출력의 `전역:`·`전역 경고:` 줄)
 - caveman이나 i-have-adhd를 골랐으면 켜는 명령(`/caveman`, `/i-have-adhd`. Codex는 `$`)과 대화 응답에만 쓴다는 점. 끄는 말은 스킬별로 적는다("stop caveman", "stop adhd mode", "stop ponytail"). "normal mode"는 셋을 함께 끈다
-- taste-skill을 골랐으면 화면 작업에서 "taste로"라고 하거나 스타일 질문에서 "taste-skill로 방향 뽑기"를 고른 화면에만 쓴다는 점, 주 UI 스킬 흐름(브리프, 리뷰, 감사)은 그대로라는 점, 검사에 Chrome·Edge·Chromium이 필요하다는 점
+- 화면 디자인 보조를 골랐으면 묶음마다 언제 쓰는지(설치기 출력의 `화면 디자인 보조 <묶음>:` 줄과 템플릿 `prokit-ui` "화면 디자인 보조" 표), 한 화면에 방향 보조(`landing`, `tastemaker`, `taste`, 방향으로 쓰는 `web-design-engineer`)는 하나만 쓴다는 점, 주 UI 스킬 흐름(브리프, 리뷰, 감사)은 그대로라는 점, 준비물(`tastemaker`는 `python3`, `taste`는 Chrome·Edge·Chromium)
 - hallmark를 골랐으면 화면을 찍는 검사(`sloplint --render`)에 Chrome과 `puppeteer-core`(전역, 또는 프로젝트 밖 폴더에 받고 `HALLMARK_PUPPETEER`로 가리키기)가 필요하다는 점(설치기는 알리기만 한다. 없으면 정적 검사만 돈다). impeccable을 고르지 않았으면 `impeccable hooks on` 할 일은 보고에서 뺀다
 - karpathy를 골랐으면 diff 검토 스킬이 없어 `prokit-reviewer` focus가 그 역할을 맡는다는 점
 - gstack을 골랐으면 전역 설치가 Stop 훅을 등록하고 다른 프로젝트에서도 보인다는 점

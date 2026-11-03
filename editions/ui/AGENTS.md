@@ -22,7 +22,7 @@
      --web-deploy none --server-deploy none \
      --package-manager pnpm --git --install)
    ```
-5. **템플릿 설치**: `bash <이 저장소>/templates/prokit-next-neon/install.sh <프로젝트 경로> --brain <값> --simplicity <값> --ui-skill <값>`. `none`도 명시한다. UI 스킬이 여럿이면 주 UI 스킬을 앞에 둔 쉼표 목록이다(`--ui-skill hallmark,impeccable`). 추가 스킬은 `--matt <스킬>[,<스킬>]`, i-have-adhd는 `--optional i-have-adhd`, taste-skill은 `--optional taste`를 더한다(둘 다면 `--optional i-have-adhd,taste`). `--with-global`은 사용자가 전역 도구 설치를 요청할 때만 붙인다(전역 설정과 훅을 바꾼다). 기본 실행도 <!-- v:policy.agentBrowser.da -->agent-browser CLI가 없거나 npm 최신판보다 낮으면 전역에 최신판을 설치한다<!-- /v -->. 설치했거나 실패 경고가 나오면 보고에 적는다. exit 0이 아니면 출력을 보고하고 멈춘다.
+5. **템플릿 설치**: `bash <이 저장소>/templates/prokit-next-neon/install.sh <프로젝트 경로> --brain <값> --simplicity <값> --ui-skill <값>`. `none`도 명시한다. UI 스킬이 여럿이면 주 UI 스킬을 앞에 둔 쉼표 목록이다(`--ui-skill hallmark,impeccable`). 추가 스킬은 `--matt <스킬>[,<스킬>]`, i-have-adhd는 `--optional i-have-adhd`, 화면 디자인 보조는 고른 조합의 묶음을 더한다(예: `--optional i-have-adhd,landing,animation,visual-critique`). `--with-global`은 사용자가 전역 도구 설치를 요청할 때만 붙인다(전역 설정과 훅을 바꾼다). 기본 실행도 <!-- v:policy.agentBrowser.da -->agent-browser CLI가 없거나 npm 최신판보다 낮으면 전역에 최신판을 설치한다<!-- /v -->. 설치했거나 실패 경고가 나오면 보고에 적는다. exit 0이 아니면 출력을 보고하고 멈춘다.
 6. **로컬 DB**: 화면만 프로젝트라 띄우지 않는다.
 7. **첫 마이그레이션**: 만들지 않는다.
 8. **확인**: 새 프로젝트에서 `pnpm check`를 한 번 실행해 Better-T-Stack이 만든 코드의 포맷과 정렬(import, Tailwind 클래스)을 정리한다. 이어서 `pnpm skills:check`, `pnpm agents:check`, `pnpm check-types`, `pnpm exec biome check .`가 exit 0인지 본다.

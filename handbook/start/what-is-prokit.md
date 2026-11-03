@@ -59,7 +59,7 @@ pro-kit 저장소는 새 프로젝트를 만들어 주는 생성기예요. 안�
 - 내 컴퓨터의 Vercel CLI로 develop과 운영에 배포하는 스크립트와 절차 <!-- edition:pro -->
 - 에이전트가 쓰는 공식 스킬과 플러그인(그때의 최신판)
 - 프로젝트마다 고르는 두뇌(하나를 추천하고 여럿도 고를 수 있어요)와 과설계 방지 스킬. 고르지 않으면 지금 에이전트가 내장 절차로 진행해요([두뇌와 선택 스킬](../skills/brains.md))
-- 필요할 때 더하는 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`<!-- /v -->)
+- 필요할 때 더하는 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`, `landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design`<!-- /v -->)
 
 ![내가 서비스 설명이나 진행 중인 프로젝트를 주면, 프로킷이 규칙 문서와 스킬, 역할 에이전트, 검사 도구를 프로젝트에 깔아 주고, 나는 증거가 남은 변경과 커밋, 배포 준비를 받아요.](assets/prokit-at-a-glance@2x.webp)
 
@@ -145,7 +145,7 @@ flowchart TD
 | 두뇌 | 요구 정리, 계획, 구현 진행의 방법을 주도하는 스킬이에요. superpowers, agent-skills, gstack, oh-my, pstack, mattpocock, openspec, spec-kit, compound-engineering 중 하나를 권하고 여럿도 고를 수 있어요. 고르지 않으면(`none`) 지금 에이전트가 내장 절차로 진행해요 |
 | 과설계 방지 스킬 | ponytail(추천), caveman, karpathy 중 하나. 고르지 않으면 내장 간결성 규칙을 따라요 |
 | UI 스킬 | impeccable(기본), hallmark. 화면 디자인 단계(맥락, 기획, 설계, 리뷰, 감사, 다듬기)를 맡아요. 여럿도 고를 수 있고 첫 값이 주 UI 스킬이에요 |
-| 더하는 것 | mattpocock 추가 스킬, 응답 방식(`i-have-adhd`), 화면 디자인 보조(`taste`) |
+| 더하는 것 | mattpocock 추가 스킬, 응답 방식(`i-have-adhd`), 화면 디자인 보조(`landing`, `tastemaker`, `animation`, `visual-critique` 등) |
 
 두뇌와 과설계 방지 스킬은 일하는 방식만 바꿔요. 대조표, 리뷰 게이트, 배포 절차는 무엇을 골라도 같아요([두뇌와 선택 스킬](../skills/brains.md)).
 

@@ -103,7 +103,7 @@ flowchart TD
 | 두뇌 | `없음(기본 AI)`, superpowers, agent-skills (addyosmani), pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering | PRD에 맞는 하나. 신호가 약하면 `없음(기본 AI)` | `(추천)`을 고르세요. 나중에 말로 바꿀 수 있어요 | 요청에서 정했거나 맡겼을 때 |
 | 과설계 방지 스킬 | ponytail, caveman, andrej-karpathy-skills, `SKIP(기본 AI)` | ponytail | `(추천)` | 요청에서 정했거나 맡겼을 때 |
 | 응답 방식 | i-have-adhd, SKIP | i-have-adhd. 길고 자세한 설명을 원한다고 했으면 SKIP | `(추천)`. 자세한 설명이 좋으면 SKIP | 요청에서 정했거나 맡겼을 때 |
-| UI 스킬(여러 선택) | impeccable, hallmark, taste-skill (화면 보조) | impeccable. MVP로 시작해 기능을 하나씩 늘리는 서비스이거나, 주 화면이 새로 만드는 공개 웹 페이지이고 로그인 뒤 화면이 적으면 hallmark. 공개 페이지가 주 화면이면 taste-skill도 추천하지만 hallmark와는 함께 추천하지 않아요 | `(추천)`. impeccable과 hallmark를 둘 다 고르면 주 UI 스킬을 한 번 더 물어요 | 요청에서 정했거나 맡겼을 때 |
+| UI 스킬(여러 선택) | impeccable, hallmark | impeccable. MVP로 시작해 기능을 하나씩 늘리는 서비스이거나, 주 화면이 새로 만드는 공개 웹 페이지이고 로그인 뒤 화면이 적으면 hallmark | `(추천)`. impeccable과 hallmark를 둘 다 고르면 주 UI 스킬을 한 번 더 물어요 | 요청에서 정했거나 맡겼을 때 |
 | mattpocock 추가 스킬 | 14개를 네 묶음(구현·설계, 디버깅·검토, 조사·외부 설정, 인계·학습)으로. 여러 개 고를 수 있어요 | 두뇌와 PRD에 맞는 것 | `(추천)`만 고르거나 아무것도 고르지 않아요. 필수 3개는 늘 설치돼요 | 두뇌가 정해진 뒤에 늘 묻고, 요청에서 정했거나 맡겼을 때만 건너뛰어요 |
 
 두뇌에서 `다른 두뇌 보기·여럿 고르기`를 고르면 세 묶음의 여러 선택 질문으로 묻고, 둘 이상 고르면 주 두뇌(첫째 두뇌)를 한 번 더 물어요. 진행 순서를 강제하는 두뇌(superpowers, gstack, oh-my)를 둘 이상 고르면 지시가 서로 덮어쓰이므로 하나만 남기도록 다시 물어요. 각 선택지의 뜻은 [두뇌와 선택 스킬](../skills/brains.md)에 있어요.

@@ -1015,7 +1015,16 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
   }
   for (const s of slotEntries.flatMap((e) => e.skills)) assert.ok(!names.includes(s), `${s}: 두뇌·과설계 방지 후보가 기본 설치와 같은 이름을 쓰면 정리할 때 헷갈린다`);
   for (const [k, o] of Object.entries(m.optional)) assert.ok(/^[a-z][a-z-]*$/.test(k) && o.description && o.skills.length, k);
-  assert.deepEqual(Object.keys(m.optional), ["ops", "motion", "mobile", "i-have-adhd", "taste"]);
+  assert.deepEqual(Object.keys(m.optional), ["ops", "motion", "mobile", "i-have-adhd", "taste", "landing", "tastemaker", "web-design-engineer", "awwwards", "animation", "visual-critique", "ui-design"]);
+  // 화면 디자인 보조는 guide(단계 대응 문서)가 있는 선택 묶음이다. 묶음 항목과 guide 파일 하나씩만 더하면 된다(코드는 그대로)
+  const guides = Object.entries(m.optional).filter(([, o]) => o.guide);
+  assert.deepEqual(guides.map(([k]) => k), ["taste", "landing", "tastemaker", "web-design-engineer", "awwwards", "animation", "visual-critique", "ui-design"]);
+  for (const [k, o] of guides) {
+    assert.match(o.guide, /^\.agents\/skills\/prokit-ui\/references\//, k);
+    assert.ok(existsSync(join(TEMPLATE_FILES, o.guide)), `화면 디자인 보조 ${k}의 guide 파일`);
+    const text = readFileSync(join(TEMPLATE_FILES, o.guide), "utf8");
+    for (const s of o.skills.flatMap((e) => e.skills)) assert.ok(text.includes(`\`${s}\``), `${o.guide}가 ${s}를 다룬다`);
+  }
   // 하나만 고르는 두 항목. 기본 설치(skills, claude)에는 두뇌와 과설계 방지 스킬을 두지 않는다(기본은 none).
   assert.deepEqual(Object.keys(m.brains), ["superpowers", "agent-skills", "pstack", "gstack", "oh-my", "mattpocock", "openspec", "spec-kit", "compound-engineering"]);
   assert.deepEqual(Object.keys(m.simplicity), ["ponytail", "caveman", "karpathy"]);

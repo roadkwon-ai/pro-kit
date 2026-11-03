@@ -105,6 +105,8 @@ UI 스킬 선택(`--ui-skill`, hallmark)을 쓰려면 H 라운드에서 템플�
 
 화면 디자인 보조 선택 묶음 `taste`(2026-10-20)를 쓰려면 H 라운드에서 템플릿의 `skills.manifest.json`과 `prokit-ui`(`SKILL.md`, `references/taste.md`)를 옮긴 뒤 `pnpm skills:setup --optional taste`로 설치해요. `install.sh --skip-skills`가 `.gitignore`에 `/.taste-skill/`을 더해요([화면 디자인 보조](../skills/brains.md#화면-디자인-보조)).
 
+나머지 화면 디자인 보조 묶음(`landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design`. 2026-11-03)을 쓰려면 H 라운드에서 템플릿의 `skills.manifest.json`(`optional`의 그 묶음과 `taste`의 `guide`), `prokit-ui`(`SKILL.md`의 "화면 디자인 보조"와 `references/addon-*.md`), `install.mjs`를 옮긴 뒤 `pnpm skills:setup --optional <묶음>`으로 설치해요. `install.sh --skip-skills`가 `biome.json`에 `!**/.tastemaker`를 더해요.
+
 ### 공식 스킬을 전문 에이전트에 맡기게 된 판 이전
 
 이 판부터 공식 스킬은 그 일을 맡은 전문 에이전트(`prokit-ui-builder`<!-- edition:pro -->, `prokit-api-builder`, `prokit-db-builder`<!-- /edition -->, `prokit-runtime-checker` 등)가 읽고 따르고, 메인 세션은 맡기고 검수해요([공식 스킬과 연결](../skills/official-skills.md#누가-읽고-따르나)). 이렇게 옮겨요.

@@ -5,8 +5,8 @@ description: >-
   페이지 디자인, 사이트맵과 페이지 구성, 링크·버튼 동작, 모달·툴팁·햄버거 메뉴·사이드바 같은 상호작용,
   리디자인, 레이아웃, 타이포, 색, 간격, 빈 상태와 온보딩, UX 문구, 서비스 이름과 헤드라인 후보, 반응형,
   접근성, 디자인 리뷰와 폴리시, 디자인 토큰과 DESIGN.md, 디자인 스타일 고르기를 다룬다. 화면 만들어줘, 디자인,
-  예쁘게, UI 개선, UX, 디자인 리뷰, 접근성 점검, polish, 토스처럼·당근 스타일로, taste로, hallmark로 같은 요청에
-  사용하며 고른 UI 스킬(impeccable, hallmark)의 단계 지도로 진행한다. 데이터
+  예쁘게, UI 개선, UX, 디자인 리뷰, 접근성 점검, polish, 토스처럼·당근 스타일로, taste로, hallmark로, 랜딩, 레퍼런스대로,
+  애니메이션, 화면 비평 같은 요청에 사용하며 고른 UI 스킬(impeccable, hallmark)의 단계 지도와 설치한 화면 디자인 보조의 guide로 진행한다. 데이터
   패칭, 라우팅, 렌더링 경계 같은 동작 문제는 다루지 않는다.
 ---
 
@@ -33,6 +33,27 @@ description: >-
 
 UI 스킬을 바꾸거나 빼도 `PRODUCT.md`, `DESIGN.md`(명세 형식), `docs/briefs/`, globals.css 토큰은 그대로 이어진다. 어느 스킬에도 묶이지 않은 정본이라 새 주 UI 스킬이나 기본 AI가 이어 쓴다. 새 스킬로 시각 방향을 다시 고르거나 테마를 다시 배정하지 않는다(사용자가 리디자인을 요청할 때만). 이전 스킬의 작업 기록(`.impeccable/`, `.hallmark/` 등)은 지우지 않고 새 스킬의 근거로도 쓰지 않는다. 스킬이 스스로 등록한 훅(impeccable `hooks on`)은 `pnpm skills:setup`이 그 스킬을 지울 때 함께 뺀다.
 
+## 화면 디자인 보조
+선택 묶음 가운데 `skills.manifest.json`의 항목에 `guide`가 있는 묶음이 화면 디자인 보조다. 설치 상태는 `pnpm skills:check`의 `선택 스킬:` 줄로 본다. 보조는 주 UI 스킬을 대신하지 않고 그 단계에 더한다. 쓰기 전에 그 묶음의 `guide` 파일을 읽고 그 단계 대응을 따른다(스킬 자체의 순서가 아니다). 고르는 기준과 추천 조합은 `prokit-dev-cycle`의 `references/brains/README.md` "화면 디자인 보조"다.
+
+| 묶음 | 종류 | 언제 쓰나 | guide |
+|---|---|---|---|
+| `landing` | 방향 | 행동 하나를 이끄는 랜딩·가입·가격 화면 | [addon-landing.md](references/addon-landing.md) |
+| `tastemaker` | 방향 | 사용자가 레퍼런스 이미지·화면을 준 화면, 고정한 스타일을 이어 쓰는 새 화면 | [addon-tastemaker.md](references/addon-tastemaker.md) |
+| `taste` | 방향 | "taste로"라고 했거나 스타일 질문에서 taste 방향을 고른 화면 | [taste.md](references/taste.md) |
+| `web-design-engineer` | 원칙 | 스타일 레시피를 지목한 화면("Linear처럼")의 방향, 설치되어 있으면 리뷰의 5개 차원 채점 | [addon-web-design-engineer.md](references/addon-web-design-engineer.md) |
+| `awwwards` | 원칙 | 스크롤 스토리텔링·모션이 중심인 브랜드·쇼케이스 화면 | [addon-awwwards.md](references/addon-awwwards.md) |
+| `animation` | 모션 | 설치되어 있으면 모션을 넣거나 고치는 화면, 요청한 모션 감사 | [addon-animation.md](references/addon-animation.md) |
+| `visual-critique` | 검수 | 설치되어 있으면 디자인 리뷰마다(7개 차원 비평) | [addon-visual-critique.md](references/addon-visual-critique.md) |
+| `ui-design` | 검수 | 설치되어 있으면 간격·타입·그리드 체계를 정하는 설계와 리뷰 | [addon-ui-design.md](references/addon-ui-design.md) |
+
+- 방향 보조(그 화면의 시각 방향을 정하는 보조: `landing`, `tastemaker`, `taste`, 방향으로 쓰는 `web-design-engineer`)는 한 화면에 하나만 쓴다. 방향 규칙이 서로 달라 함께 쓰면 서체·모션·구성이 엇갈린다. 원칙·모션·검수 보조는 함께 쓴다.
+- 브리프에 `보조: <묶음>[, <묶음>]` 줄로 그 화면에 쓰는 보조를 적는다. 방향 보조는 사용자가 지목했거나 화면 성격이 위 "언제 쓰나"에 맞을 때 넣고, 맞는 방향 보조가 둘이면 스타일 질문에서 고르게 한다.
+- 우선순위는 프로젝트 규칙(`AGENTS.md`, 이 스킬의 규칙, `DESIGN.md`, 토큰) → 주 UI 스킬의 단계·증거·통과 기준 → 보조다. 보조의 검사와 점수는 더하는 것이고 주 UI 스킬의 리뷰·감사를 대신하지 않는다. 보조의 결과는 주 UI 스킬의 리뷰 보고서에 절을 따로 두어 함께 남긴다.
+- 보조 스킬 다수가 UI 작업이면 스스로 불리게 쓰여 있다. 그 화면의 `보조:` 줄에 없는 보조가 불리면 그 절차를 따르지 않고 이 스킬의 흐름대로 한다.
+- 보조 스킬은 Main이 읽는다. 개발 단계에서 따를 보조 스킬은 위임 지시에 `.agents/skills/<이름>/SKILL.md` 경로를 넣어 `prokit-ui-builder`가 읽게 한다.
+- 카탈로그에 없는 보조를 더하는 일은 `prokit-skills-manage`의 "카탈로그에 없는 두뇌·UI 스킬 더하기"다(묶음 항목과 `guide` 파일 하나씩).
+
 ## 시작할 때마다
 주 UI 스킬의 맥락 단계를 한 번 한다. impeccable은 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable context`를 실행한다(대상이 정해져 있으면 `--target <경로>`). hallmark는 `SKILL.md` 0단계 사전 점검을 한다. 다른 UI 스킬은 그 지도의 맥락 단계를 한다. UI 스킬이 없으면 `PRODUCT.md`, `DESIGN.md`, `.agents/skills/frontend-design/SKILL.md`를 읽는다. 출력의 지시를 따른다. 실행이 실패하면 `PRODUCT.md`와 `DESIGN.md`를 직접 읽고 없는 내용을 지어내지 않는다.
 
@@ -48,7 +69,7 @@ UI 스킬을 바꾸거나 빼도 `PRODUCT.md`, `DESIGN.md`(명세 형식), `docs
    - 유지: 스타일 후보를 내지 않는다. `DESIGN.md`가 있으면 그것이 시각 세계다. 없으면 기존 디자인(운영 화면의 토큰과 컴포넌트, 디자인 시스템 문서, 프로토타입)을 분석해 `DESIGN.md`를 만든다([references/design-flow.md](references/design-flow.md) "기존 디자인으로 DESIGN.md 만들기"). <!-- edition:pro -->
    - 리디자인: 3번의 스타일 고르기와 design-flow "리디자인"을 따른다. <!-- edition:pro -->
    - `projectType`이 없거나 `new`면 이 질문을 하지 않는다. <!-- edition:pro -->
-3. 새 프로젝트에서 `DESIGN.md`가 없고 화면이 아직 Better-T-Stack 기본 화면뿐이면, 또는 사용자가 시각 세계를 바꾸는 리디자인을 요청하<!-- edition:pro -->거나 2번에서 리디자인을 고르<!-- /edition -->면 디자인 스타일을 고르게 한다. 새 프로젝트에 이미 만든 화면이 있으면 `DESIGN.md`가 없어도 그 화면이 시각 세계이므로 묻지 않는다. 디자인 카탈로그에서 서비스에 맞는 스타일 1~3개를 추천 순위로 추리고, "카탈로그 없이 주 UI 스킬로 정하기"(hallmark는 테마 배정 셋. UI 스킬이 없으면 "카탈로그 없이 직접 정하기")를 함께 내놓는다. 선택 묶음 `taste`(`.agents/skills/design-taste-frontend/`)가 있으면 "taste-skill로 방향 뽑기"도 내놓는다([references/taste.md](references/taste.md)). 사용자가 브랜드를 지목했으면("토스처럼") 세 카탈로그에서 그 브랜드를 찾아 1위로 둔다. 없으면 지어내지 않고 "카탈로그에 없음"이라고 알린다. 절차는 [references/design-flow.md](references/design-flow.md)의 "디자인 카탈로그에서 고르기"를 따른다.
+3. 새 프로젝트에서 `DESIGN.md`가 없고 화면이 아직 Better-T-Stack 기본 화면뿐이면, 또는 사용자가 시각 세계를 바꾸는 리디자인을 요청하<!-- edition:pro -->거나 2번에서 리디자인을 고르<!-- /edition -->면 디자인 스타일을 고르게 한다. 새 프로젝트에 이미 만든 화면이 있으면 `DESIGN.md`가 없어도 그 화면이 시각 세계이므로 묻지 않는다. 디자인 카탈로그에서 서비스에 맞는 스타일 1~3개를 추천 순위로 추리고, "카탈로그 없이 주 UI 스킬로 정하기"(hallmark는 테마 배정 셋. UI 스킬이 없으면 "카탈로그 없이 직접 정하기")를 함께 내놓는다. 방향 보조 묶음이 설치되어 있고 그 화면에 맞으면 그 선택지도 내놓는다(`taste`는 "taste-skill로 방향 뽑기", `tastemaker`는 "레퍼런스로 스타일 고정", `web-design-engineer`는 지목한 스타일 레시피. 위 "화면 디자인 보조"). 사용자가 브랜드를 지목했으면("토스처럼") 세 카탈로그에서 그 브랜드를 찾아 1위로 둔다. 없으면 지어내지 않고 "카탈로그에 없음"이라고 알린다. 절차는 [references/design-flow.md](references/design-flow.md)의 "디자인 카탈로그에서 고르기"를 따른다.
 4. 사이트맵 `docs/briefs/site-map.md`를 먼저 쓰고, 주 UI 스킬의 설계 단계(impeccable `shape <기능>`, hallmark Shape와 Picks 블록)로 화면마다 브리프를 `docs/briefs/<화면>.md`에 쓴 뒤 사용자 확인을 요청한다. 사이트맵에는 화면에서 나가는 링크와 버튼이 모두 어디로 이어지는지 적는다. 브리프에는 상호작용(hover, 툴팁, 모달, 드로어, 햄버거 메뉴, 사이드바), 서체, 이미지, 아이콘, 모션 계획을 적는다(design-flow "사이트맵과 상호작용", "시각 자산"). 제품 이름이나 첫 화면 헤드라인을 새로 정해야 하면 후보를 함께 낸다(design-flow "이름과 문구"). 스타일 선택, 이름·문구 후보, 브리프 확인은 한 번에 묻는다.
 
 리디자인이면 1번 전에 지금 화면을 데스크톱과 모바일로 찍고 주 UI 스킬의 리뷰 단계로 진단한다. 진단 결과와 약점은 브리프의 "버릴 것"에, 제품 사실·문구·기능은 "지킬 것"에 적는다. 옛 모양은 다듬을 출발점이 아니라 반례다(design-flow "리디자인").
@@ -102,7 +123,7 @@ UI 스킬을 바꾸거나 빼도 `PRODUCT.md`, `DESIGN.md`(명세 형식), `docs
 - 사용자 요청이나 승인된 브리프에 생성 이미지가 있으면 실제 생성·화면 연결·출처·검수 증거를 회수한다. 이를 임의로 "SVG로 충분"이나 "생성 불필요"라는 사용자 승인으로 바꾸지 않는다. 수행자에 이미지 도구가 없으면 코디네이터가 접근 가능한 이미지 도구로 위임하고, 대안도 없으면 해당 자산을 미완료로 남긴다. 아이콘·정확한 글자가 필요한 슬라이드 같은 벡터 자산은 그대로 재사용하며, 생성 이미지를 실제 인물·행사·성과의 증거로 표현하지 않는다.
 - 팩 기반 작업은 완성 프리셋과 같은 뷰포트·설정·스크롤·hover 상태에서 비교한다. 개인화 밖 영역의 자산·서체·레이아웃·모션을 유지하며 기능 QA 통과로 시각 비교를 대신하지 않는다. 검증은 `prokit-verify`의 팩 기준 비교를 따른다.
 - 키: Claude Code는 세션을 열 때 훅(`scripts/load-keys.mjs`)이 프로젝트 `.env`, 작업 폴더(프로젝트의 상위 폴더) `.env` 순서로 `OPENAI_API_KEY`를 셸 환경에 넣는다. 셸에 없는데 `.env`에 있으면(Codex·Antigravity·Grok Build, 세션을 연 뒤 넣은 키) `node scripts/load-keys.mjs -- <명령>`으로 그 명령에만 넣는다. 배포 토큰(`GH_TOKEN`, `VERCEL_TOKEN`)은 늘 이 방법으로 배포 명령에만 넣는다. 키 값은 출력(`printenv`, `echo`, `cat .env` 포함), 다른 파일, 커밋에 남기지 않고 대화창에 붙여 넣으라고 하지 않는다. 있는지만 볼 때는 `node scripts/load-keys.mjs -- sh -c 'test -n "$GH_TOKEN"'`처럼 exit로 본다.
-- taste-skill(선택 묶음 `taste`)은 사용자가 고른 화면에만 쓴다. 고르지 않은 화면에서 불려도 이 흐름대로 한다. 고른 화면은 `design-taste-frontend`를 부르기 전에 [references/taste.md](references/taste.md)를 읽고 그 단계 대응을 따른다(taste-skill 자체 순서가 아니다). 순서, `DESIGN.md`, 토큰 규칙, 주 UI 스킬의 리뷰·감사와 통과 기준은 그대로다.
+- 화면 디자인 보조(taste-skill 포함)는 위 "화면 디자인 보조"대로 쓴다. 그 화면의 `보조:` 줄에 없는 보조가 불려도 이 흐름대로 하고, 쓰는 보조는 부르기 전에 그 `guide`를 읽는다. 순서, `DESIGN.md`, 토큰 규칙, 주 UI 스킬의 리뷰·감사와 통과 기준은 그대로다.
 - 데이터 상태(loading, empty, error, 비인가)의 모양과 문구를 설계한다<!-- edition:pro -->(동작은 `prokit-web`과 함께)<!-- /edition -->.
 - 제작 표시(선택): 출처를 알리고 싶으면 하단에 `apps/web/src/components/prokit-credit.tsx`의 `<ProkitCredit />`를 사용한다. 프로킷 심볼, 홈페이지로 가는 "이 사이트도 프로킷으로 만들었어요" 링크, GitHub 링크를 제공한다. MIT는 사이트에 이 홍보 표시를 유지할 의무를 부과하지 않는다. 사용자가 표시를 제외하거나 문구·모양을 조정하도록 요청하면 따른다. 표시를 쓰는 경우 위치·크기·간격은 사이트 디자인과 접근성에 맞춰 조정한다. 프로킷 주소는 이 파일의 `PROKIT_LINKS`에 있다. MIT의 저작권·허가문 보존 조건은 홍보 표시와 별도로 지킨다.
 

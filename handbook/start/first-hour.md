@@ -92,7 +92,8 @@ flowchart LR
 - 두뇌: superpowers (추천) / 없음(기본 AI) / 다른 두뇌 보기·여럿 고르기
 - 과설계 방지: ponytail (추천) / caveman / andrej-karpathy-skills / SKIP(기본 AI)
 - 응답 방식: i-have-adhd (추천) / SKIP
-- UI 스킬: impeccable (추천) / hallmark / taste-skill (화면 보조)
+- UI 스킬: impeccable (추천) / hallmark
+- 화면 디자인 보조: PRD에 맞는 조합 (추천) / 다음으로 맞는 조합 / 직접 고르기(여럿) / SKIP
 ```
 
 답을 하면 에이전트가 앱 뼈대를 만들고, 프로킷의 규칙과 스킬을 설치하고, <!-- edition:pro -->화면만이 아니라면 내 컴퓨터에 개발용 DB를 띄운 뒤 <!-- /edition -->결과를 커밋해요. 끝나면 보고와 함께 **새 폴더에서 이어 갈 한 줄**을 알려 줘요.

@@ -458,7 +458,7 @@ const gitHookLines = (h, dryRun) =>
       : [];
 
 // 벤더 스킬은 upstream 원본이다. `pnpm check`(biome check --write .)가 고쳐 쓰면 skills-lock.json의 contentHash와 어긋난다.
-// OMC·OMX·pro-kit·impeccable·hallmark 상태 파일과 .claude/settings.json, .codex/(OMX 생성물)는 도구가 다시 쓰는 파일이다.
+// OMC·OMX·pro-kit·impeccable·hallmark·tastemaker 상태 파일과 .claude/settings.json, .codex/(OMX 생성물)는 도구가 다시 쓰는 파일이다.
 // .agents/agents/(agents:sync가 만드는 Antigravity 에이전트)는 Biome 2.6이 YAML 머리를 다시 맞추면 agents:check가 깨진다.
 // biome.json은 vcs.useIgnoreFile이 꺼져 있어 .gitignore만으로는 빠지지 않는다.
 // 마이그레이션(drizzle-kit), schema/auth.ts(`auth:generate`), src/env.ts(varlock이 설치·실행 때마다 다시 씀)는 생성물이라
@@ -466,7 +466,7 @@ const gitHookLines = (h, dryRun) =>
 // .well-known/workflow/는 Workflow SDK가 앱 안에 만드는 생성물이다.
 // 마크다운: Biome 2.6부터 표를 칸 너비로 맞추는데, dev-cycle이 tasks/todo.md에 쓰는 대조표와 AGENTS.md 표의 edition 주석 칸이 매번 다시 바뀌어 lint가 실패한다.
 const BIOME_IGNORES = [
-  "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!**/.hallmark", "!.claude", "!.codex",
+  "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!**/.hallmark", "!**/.tastemaker", "!.claude", "!.codex",
   "!tasks/evidence",
   "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
   "!html", "!**/.well-known/workflow", "!**/*.md",
@@ -846,7 +846,8 @@ export function main(argv) {
         ].map((line, i) => line.replace(/^ {2}\d+\./, `  ${i + 1}.`))),
     ...(picked.simplicity === "caveman" ? ["  - caveman 응답 압축은 /caveman(Codex $caveman)으로 켜고 \"stop caveman\"으로 끈다. 대화 응답에만 쓴다"] : []),
     ...(picked.optional.includes("i-have-adhd") ? ["  - i-have-adhd는 /i-have-adhd(Codex $i-have-adhd)로 켜고 \"stop adhd mode\"로 끈다. 대화 응답에만 쓴다"] : []),
-    ...(picked.optional.includes("taste") ? ["  - taste(design-taste-frontend)는 화면 작업에서 사용자가 고른 화면에만 쓴다(prokit-ui references/taste.md). 검사에는 Chrome·Edge·Chromium이 필요하다"] : []),
+    // 화면 디자인 보조(guide가 있는 선택 묶음)는 주 UI 스킬에 더하는 것이다. 언제 쓰는지는 guide와 prokit-ui가 정한다
+    ...picked.optional.filter((k) => manifest.optional?.[k]?.guide).map((k) => `  - 화면 디자인 보조 ${k}: 주 UI 스킬 흐름에 더한다. 쓰기 전에 ${manifest.optional[k].guide}를 읽는다(prokit-ui "화면 디자인 보조")`),
   ];
   console.log(out.join("\n"));
   if (skills && skills.status !== 0) return 2;

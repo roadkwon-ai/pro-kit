@@ -191,6 +191,118 @@
 					"source": "Leonxlnx/taste-skill",
 					"skills": ["design-taste-frontend"]
 				}
+			],
+			"guide": ".agents/skills/prokit-ui/references/taste.md"
+		},
+		"landing": {
+			"description": "화면 디자인 보조(방향): 가입·구매·신청 하나를 이끄는 랜딩의 인테이크·구조·전환 카피·SEO(landing-page-design)",
+			"guide": ".agents/skills/prokit-ui/references/addon-landing.md",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "elayadesign/ai-design-skills",
+					"skills": ["landing-page-design"]
+				}
+			]
+		},
+		"tastemaker": {
+			"description": "화면 디자인 보조(방향): 레퍼런스 이미지에서 색·서체·간격 값을 뽑아 스타일을 고정하고 화면마다 이어 쓴다(python3 필요)",
+			"guide": ".agents/skills/prokit-ui/references/addon-tastemaker.md",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "codeswithroh/tastemaker",
+					"skills": ["tastemaker"]
+				}
+			]
+		},
+		"web-design-engineer": {
+			"description": "화면 디자인 보조(원칙): 스타일 레시피 25종과 방향 셋 제안, 5개 차원 채점(web-design-engineer)",
+			"guide": ".agents/skills/prokit-ui/references/addon-web-design-engineer.md",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "ConardLi/garden-skills",
+					"skills": ["web-design-engineer"]
+				}
+			]
+		},
+		"awwwards": {
+			"description": "화면 디자인 보조(원칙): 스크롤 스토리텔링과 모션이 중심인 브랜드·쇼케이스 페이지 지침(build-awwwards-quality-sites. GSAP와 스크롤 엔진 하나)",
+			"guide": ".agents/skills/prokit-ui/references/addon-awwwards.md",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "MengTo/Skills",
+					"skills": ["build-awwwards-quality-sites"]
+				}
+			]
+		},
+		"animation": {
+			"description": "화면 디자인 보조(모션): 애니메이션을 넣을지부터 곡선·시간·중단까지 정하고, 코드베이스 모션을 감사해 계획을 만든다(Emil Kowalski 스킬 5개)",
+			"guide": ".agents/skills/prokit-ui/references/addon-animation.md",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "emilkowalski/skills",
+					"skills": [
+						"emil-design-eng",
+						"animate",
+						"improve-animations",
+						"apple-design",
+						"animation-vocabulary"
+					]
+				}
+			]
+		},
+		"visual-critique": {
+			"description": "화면 디자인 보조(검수): 화면 하나를 7개 차원(위계, 브랜드, 구성, 타이포, 색, 어포던스, 정보 밀도)으로 비평하고 P1~P3로 묶는다",
+			"guide": ".agents/skills/prokit-ui/references/addon-visual-critique.md",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "Owl-Listener/designer-skills",
+					"skills": [
+						"critique-visual-hierarchy",
+						"critique-brand-consistency",
+						"critique-composition",
+						"critique-typography",
+						"critique-color",
+						"critique-affordance",
+						"critique-information-density"
+					]
+				}
+			]
+		},
+		"ui-design": {
+			"description": "화면 디자인 보조(검수): 게슈탈트·지각 법칙 8개와 간격·타이포·그리드·색·반응형 시스템 11개로 화면을 설계하고 점검한다",
+			"guide": ".agents/skills/prokit-ui/references/addon-ui-design.md",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "Owl-Listener/designer-skills",
+					"skills": [
+						"aesthetic-usability",
+						"color-system",
+						"dark-mode-design",
+						"data-visualization",
+						"illustration-style",
+						"law-of-closure",
+						"law-of-common-region",
+						"law-of-continuity",
+						"law-of-figure-ground",
+						"law-of-proximity",
+						"law-of-similarity",
+						"layout-grid",
+						"platform-conventions",
+						"readable-measure",
+						"responsive-design",
+						"spacing-system",
+						"typography-scale",
+						"visual-hierarchy",
+						"von-restorff-effect"
+					]
+				}
 			]
 		}
 	},
@@ -538,8 +650,12 @@
 			],
 			"userSkills": ".claude/skills/impeccable",
 			"userTraces": [
-				{ "path": ".agents/skills/impeccable" },
-				{ "path": ".codex/skills/impeccable" }
+				{
+					"path": ".agents/skills/impeccable"
+				},
+				{
+					"path": ".codex/skills/impeccable"
+				}
 			],
 			"next": [
 				"개발자마다 한 번 프로젝트 루트에서 .agents/skills/impeccable/scripts/impeccable hooks on (스킬 호출로 켜지 않는다. Codex는 /hooks에서 신뢰 확인. Antigravity에서는 돌지 않고 Grok Build에서 도는지는 확인하지 않았다. impeccable을 빼면 pnpm skills:setup이 이 훅도 뺀다)"
@@ -556,8 +672,12 @@
 			],
 			"userSkills": ".claude/skills/hallmark",
 			"userTraces": [
-				{ "path": ".agents/skills/hallmark" },
-				{ "path": ".codex/skills/hallmark" }
+				{
+					"path": ".agents/skills/hallmark"
+				},
+				{
+					"path": ".codex/skills/hallmark"
+				}
 			],
 			"global": [
 				{
@@ -578,8 +698,12 @@
 			],
 			"userSkills": ".claude/skills/frontend-design",
 			"userTraces": [
-				{ "path": ".agents/skills/frontend-design" },
-				{ "path": ".codex/skills/frontend-design" }
+				{
+					"path": ".agents/skills/frontend-design"
+				},
+				{
+					"path": ".codex/skills/frontend-design"
+				}
 			]
 		}
 	},

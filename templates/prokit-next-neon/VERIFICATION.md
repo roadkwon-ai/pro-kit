@@ -4,6 +4,21 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 화면 디자인 보조 묶음 일곱 개와 추천 조합 (2026-11-03)
+
+UI/UX 스킬 조사(`docs/guideline/` 두 문서)에서 고른 스킬을 화면 디자인 보조 선택 묶음 일곱 개로 더했다: `landing`(landing-page-design), `tastemaker`, `web-design-engineer`, `awwwards`(build-awwwards-quality-sites), `animation`(Emil Kowalski 스킬 5개), `visual-critique`(critique 7개), `ui-design`(19개). 원본은 모두 MIT이고 확인 커밋은 `THIRD_PARTY_NOTICES.md`에 있다.
+- 구조: 매니페스트 `optional.<묶음>.guide`가 있는 묶음이 화면 디자인 보조다(`taste`에도 더했다). 묶음을 더하거나 빼는 일은 매니페스트 항목과 `prokit-ui/references/addon-<묶음>.md` 하나씩이고 스크립트는 고치지 않는다. 설치기의 안내 줄도 `guide`로 만든다. 테스트가 guide 파일이 있는지와 그 파일이 설치하는 스킬 이름을 모두 다루는지 본다.
+- 연결: `prokit-ui` "화면 디자인 보조" 절이 종류(방향, 원칙, 모션, 검수), 한 화면에 방향 보조 하나, 브리프의 `보조:` 줄, 우선순위(프로젝트 규칙, 주 UI 스킬, 보조), 스스로 불렸을 때 물러서기를 정한다. 묶음마다 guide가 원본 규칙과 프로젝트 규칙이 부딪히는 곳을 정리한다(landing의 영문 서체 목록과 고정 hex, tastemaker의 hex 팔레트·GSAP·루트 shadcn·홈 폴더 기록, web-design-engineer의 단일 HTML, awwwards의 GSAP와 스크롤 엔진, improve-animations의 `plans/`와 `execute`, Owl-Listener 플러그인 명령이 skills CLI로는 오지 않는 점).
+- 추천: `brains/README.md`에 추천 조합 다섯(기본, 랜딩, 레퍼런스, 쇼케이스, 앱 정돈)을 두고, pro-kit `prokit-init`이 UI 스킬을 고른 뒤 조합을 묻는다. `prokit-skills-manage`는 "랜딩 조합으로" 같은 요청을 `--optional`로 바꾼다.
+- 실제 Better-T-Stack 프로젝트(neon, create-better-t-stack 3.49.0, skills CLI 1.7.6)에 `--brain none --simplicity none --ui-skill hallmark --optional landing,tastemaker,web-design-engineer,awwwards,animation,visual-critique,ui-design`로 설치했다.
+  - exit 0. 새 스킬 35개가 `.agents/skills`에 들어오고 `.claude/skills`에 링크됐다. `skills:check` exit 0, `선택 스킬:` 줄에 일곱 묶음이 `있음`이었다. `agents:check` exit 0, `skills:update --check`는 62개 중 업데이트 0개, 빠짐 0개였다.
+  - `MengTo/Skills`는 저장소의 다른 스킬 가운데 YAML 머리를 읽지 못한 것을 건너뛴다는 경고를 냈다. `build-awwwards-quality-sites` 설치에는 영향이 없었다.
+  - `--drop ui-design,awwwards`는 exit 0이고 두 묶음의 스킬 20개만 지웠다. 같은 저장소에서 받은 `visual-critique`는 남았고 `skills:check`는 exit 0이었다.
+  - `install.sh --skip-skills --optional landing,tastemaker`는 guide 안내 줄을 내고 `biome.json`에 `!**/.tastemaker`를 더했다. `.tastemaker/log.json`은 Biome가 무시했다.
+  - 부속 파일: `animate`의 `RECIPES.md`, `improve-animations`의 `AUDIT.md`·`PLAN-TEMPLATE.md`, `web-design-engineer`의 `references/`(스타일 레시피 25개와 INDEX), `tastemaker`의 `scripts/`가 모두 들어왔다.
+  - tastemaker 스크립트를 python 3.15.2로 돌렸다. `generate_palette.py --mood premium`은 팔레트를 냈고, `anti_slop_scan.py`는 `MEDIUM <파일:줄> [규칙]` 꼴로 생성 파일 `env.ts`까지 잡았다(guide에 이번 화면 파일만 주라고 적었다). Pillow가 없어 `extract_palette.py`는 이미지를 직접 읽으라는 안내만 냈다. 두 스크립트를 돌린 뒤 홈 폴더에 `~/.tastemaker`는 생기지 않았다.
+- 한계: 보조를 쓴 화면 하나를 브리프부터 리뷰까지 잇는 라운드(행동 eval)는 돌리지 않았다. 고르지 않은 화면에서 스스로 불렸을 때 물러서는지, Codex·Antigravity·Grok Build에서의 호출, tastemaker `build`·`study`의 홈 폴더 기록은 확인하지 않았다. 원본 저장소가 조사 직전까지 갱신되고 있어 판이 흔들릴 수 있다.
+
 ## 운영 프로젝트 T24 감사 보고: shell-guard 쓰기 대상, Main 몫 행의 스킬 읽기, 위임 시각 기준, 증거 꼴 세부 (2026-11-03)
 
 - 원인: pro-kit-trader가 템플릿 373cdd82까지 반영한 뒤 T24 라운드를 닫고 감사 기록을 보냈다. 디렉터리 scope, 증거 꼴 안내, 셸 편집 경고는 의도대로 돌았고, 다음을 고쳤다.

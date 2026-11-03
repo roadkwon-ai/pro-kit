@@ -9,7 +9,7 @@
 | UI 스킬 | 0개 이상(하나 추천) | `.dev-cycle.json`의 `uiSkill`(여럿이면 배열, 첫 값이 주 UI 스킬) | `impeccable`(기록이 없을 때) | `pnpm skills:setup --ui-skill <이름>[,<이름>]` 또는 `--ui-skill none` |
 | mattpocock 추가 스킬 | 0개 이상 | 설치본(`skills-lock.json`) | 없음 | `pnpm skills:setup --matt <스킬>[,<스킬>]` |
 | 응답 방식 스킬 | 0~1 | 설치본 | 없음 | `pnpm skills:setup --optional i-have-adhd` |
-| 화면 디자인 보조 | 0~1 | 설치본 | 없음 | `pnpm skills:setup --optional taste` |
+| 화면 디자인 보조 | 0개 이상(추천 조합) | 설치본 | 없음 | `pnpm skills:setup --optional <묶음>[,<묶음>]`(아래 "화면 디자인 보조"의 조합), 빼기는 `--drop <묶음>` |
 
 - 하네스(`prokit-*` 스킬과 에이전트, dev-cycle 스크립트, 대조표·audit·`[confirm]`, 공식 도메인 스킬, skill-creator, mattpocock `domain-modeling`·`grilling`·`grill-with-docs`, 간결성 규칙)는 무엇을 골라도 그대로 설치하고 지킨다.
 - 두뇌와 과설계 방지 스킬은 "어떻게 생각하고 진행하나", "얼마나 작게 만드나"만 바꾼다. 대조표 행, 위임 검증, `prokit-reviewer` 최종 게이트, `prokit-verify`, <!-- edition:pro -->`prokit-deploy` 배포 경로, <!-- /edition -->audit, `[confirm]`은 그대로다.
@@ -98,12 +98,36 @@
 여럿을 고르면 첫 값이 주 UI 스킬이고 대조표의 디자인 단계를 맡는다. 다른 UI 스킬은 사용자가 그 화면에 지목했을 때만 쓰고, 그 화면의 단계와 증거도 주 UI 스킬 지도를 따른다(`prokit-ui` "UI 스킬").
 
 ## 화면 디자인 보조
-| 이름 | 선택지 설명(한 줄) | 설치 | 쓰는 법 |
-|---|---|---|---|
-| `taste` | 랜딩·소개 화면을 갤러리 사이트에서 뽑은 방향과 실제 브라우저 검사로 만들어요. 고른 화면에만 써요. 스킬은 영어로 쓰여 있어요 | 선택 묶음 `taste`(skills CLI `design-taste-frontend`) | 화면 작업에서 "taste로"라고 하거나 스타일 질문에서 "taste-skill로 방향 뽑기"를 고른다. 검사에 Chrome·Edge·Chromium이 필요하다 |
-| SKIP | 주 UI 스킬과 디자인 카탈로그로 화면을 만들어요 | 없음 | 없음 |
+주 UI 스킬의 단계에 더하는 선택 묶음이다. 주 UI 스킬을 대신하지 않는다. 화면 작업 순서, `DESIGN.md`, 리뷰·감사 통과 기준은 그대로이고, 묶음마다 언제 어떻게 쓰는지는 `prokit-ui` "화면 디자인 보조"와 그 묶음의 `guide` 파일(`skills.manifest.json`)이다. 스킬은 모두 영어로 쓰여 있다.
 
-주 UI 스킬을 대신하지 않는다. 화면 작업 순서, `DESIGN.md`, 리뷰·감사 통과 기준은 그대로이고 연결 규칙은 `prokit-ui`의 `references/taste.md`다.
+| 이름 | 종류 | 선택지 설명(한 줄) | 설치(skills CLI) | 준비물 |
+|---|---|---|---|---|
+| `landing` | 방향 | 가입·구매·신청 하나를 이끄는 랜딩을 인테이크, 페이지 구조, 전환 카피, SEO로 만들어요 | `elayadesign/ai-design-skills`의 `landing-page-design` | 없음 |
+| `tastemaker` | 방향 | 레퍼런스 이미지에서 색과 디자인 값을 뽑아 고정하고 다음 화면도 같은 값으로 만들어요 | `codeswithroh/tastemaker`의 `tastemaker` | `python3`. 홈 폴더 `~/.tastemaker/`에도 기록한다 |
+| `taste` | 방향 | 갤러리 사이트에서 뽑은 방향과 실제 브라우저 검사로 랜딩·소개 화면을 만들어요 | `Leonxlnx/taste-skill`의 `design-taste-frontend` | Chrome·Edge·Chromium |
+| `web-design-engineer` | 원칙 | "Linear처럼" 같은 스타일 레시피로 방향을 잡고, 화면을 5개 차원으로 채점해요 | `ConardLi/garden-skills`의 `web-design-engineer` | 없음 |
+| `awwwards` | 원칙 | 스크롤 스토리텔링과 모션이 중심인 브랜드·쇼케이스 페이지의 아트 디렉션과 검증 지침이에요 | `MengTo/Skills`의 `build-awwwards-quality-sites` | 고르면 GSAP와 스크롤 엔진 하나를 더한다 |
+| `animation` | 모션 | 움직여야 하는지부터 곡선·시간·중단까지 정해 만들고, 모션을 감사해 계획을 세워요 | `emilkowalski/skills`의 `emil-design-eng`, `animate`, `improve-animations`, `apple-design`, `animation-vocabulary` | 없음 |
+| `visual-critique` | 검수 | 화면을 7개 차원으로 비평하고 P1\~P3로 묶어요 | `Owl-Listener/designer-skills`의 `critique-*` 7개 | 없음 |
+| `ui-design` | 검수 | 게슈탈트·지각 법칙과 간격·타입·그리드·색 체계로 화면을 설계하고 점검해요 | `Owl-Listener/designer-skills`의 19개 | 없음 |
+| SKIP | | 주 UI 스킬과 디자인 카탈로그로만 만들어요 | 없음 | 없음 |
+
+- 방향 보조는 한 화면에 하나만 쓴다(설치는 여럿 해도 된다). 원칙·모션·검수 보조는 함께 쓴다.
+- 모두 설치하지 않는다. 스킬 설명이 늘면 에이전트가 읽을 목록이 길어지고, 방향 보조끼리 규칙이 엇갈린다. 아래 조합 하나로 시작해 필요할 때 더하고 뺀다(`--optional`, `--drop`).
+
+### 추천 조합
+주 UI 스킬은 따로 고른다(아래 조합은 hallmark를 주 UI 스킬로 두고 정했다). impeccable이 주 UI 스킬이면 `critique`가 비슷한 일을 하므로 `visual-critique`는 빼도 된다.
+
+| 조합 | 이럴 때(PRD 신호) | 묶음 | 명령 |
+|---|---|---|---|
+| 기본 | MVP로 시작해 기능 화면을 하나씩 더한다. 따로 원하는 시각 방향이 없다 | `visual-critique` | `--optional visual-critique` |
+| 랜딩 | 주 화면이 가입·구매·신청 하나를 이끄는 랜딩이다(광고 유입, 전환율, 사전 신청) | `landing`, `animation`, `visual-critique` | `--optional landing,animation,visual-critique` |
+| 레퍼런스 | 레퍼런스 이미지, 스크린샷, 좋아하는 사이트를 주고 "이런 느낌"을 원한다 | `tastemaker`, `visual-critique` | `--optional tastemaker,visual-critique` |
+| 쇼케이스 | 브랜드 소개, 포트폴리오, 행사, 제품 출시. "어워드급", "몰입감", 스크롤 스토리텔링 | `awwwards`, `animation`, `visual-critique` | `--optional awwwards,animation,visual-critique` |
+| 앱 정돈 | 로그인 뒤 화면(대시보드, 관리, 목록)이 많고 화면마다 간격·타입·색이 흔들리지 않게 점수로 관리하고 싶다 | `ui-design`, `web-design-engineer` | `--optional ui-design,web-design-engineer` |
+
+- 조합은 시작점이다. 진행 중에 "애니메이션 보조 더해줘", "ui-design 빼줘"처럼 묶음 하나씩 더하고 뺀다(`prokit-skills-manage`).
+- 조합을 섞을 때는 방향 보조를 화면마다 하나로 정한다. 예: 랜딩 화면은 `landing`, 그 밖의 화면은 주 UI 스킬만.
 
 ## mattpocock 스킬
 `domain-modeling`·`grilling`·`grill-with-docs`는 필수(하네스)다. 나머지는 서로 독립된 기법이라 PRD에 맞는 것만 추가로 고른다. "사용자" 호출 스킬은 모델이 스스로 부르지 않으므로, 에이전트가 대신 실행하지 않고 그 단계에서 명령(예: `/grill-with-docs`)을 제안한다. "겹치는 두뇌"는 그 두뇌가 같은 단계를 자기 스킬로 맡는다는 뜻이다. 추천에서 빼는 데만 쓰고 설치를 막지 않는다. 사용자가 겹치는 스킬을 원하면 겹친다는 점과 라우팅은 두뇌의 스킬을 먼저 쓴다는 점을 알리고 설치한다. 두뇌가 `mattpocock`이면 겹치는 두뇌가 없으므로 이 열을 보지 않는다.
@@ -161,6 +185,6 @@
 - 과설계 방지 스킬은 선택지를 ponytail(추천), caveman, andrej-karpathy-skills, SKIP(기본 AI) 순서로 낸다. caveman은 토큰·비용 절감이나 짧은 답을 함께 원하거나 늘 켜지는 훅을 원하지 않을 때, karpathy는 이 지침을 이미 알고 선호하거나 짧은 지침 하나만 원할 때, SKIP은 외부 스킬을 줄이고 싶을 때 추천한다.
 - 응답 방식은 i-have-adhd를 추천한다. `/i-have-adhd`로 켤 때만 동작해 설치해도 평소 답은 그대로이고, 필요할 때 짧은 행동 중심 답으로 바꿀 수 있다. 사용자가 길고 자세한 설명을 원한다고 했으면 SKIP을 추천한다.
 - UI 스킬은 하나를 추천한다. 처음부터 여럿을 쓰면 규칙이 부딪히고 검토가 늘어 초기 개발이 느려진다. 기본은 impeccable이다. 앱 화면과 웹 페이지를 모두 맡고 점수 기준(`ui.auditMin`·`ui.a11yMin`)이 있어 만든 화면을 점수로 다듬어 가는 데 맞다. PRD가 핵심 기능만 담은 MVP로 시작해 기능을 단계적으로 늘린다고 하거나(MVP, 1차 출시 범위, 단계별 확장), 주 화면이 새로 만드는 공개 웹 페이지(랜딩, 소개, 가격, 행사, 포트폴리오)이고 로그인 뒤 앱 화면이 적으면 hallmark 하나를 추천한다. 이때 보고에 "UI 개선 요구가 많아지면 impeccable을 더한다(`--ui-skill hallmark,impeccable`)"를 적는다. 둘 다 원하면 주 화면 성격에 맞는 쪽을 첫 값으로 둔다. 외부 UI 스킬을 줄이고 싶다고 하면 SKIP을 추천한다.
-- 화면 디자인 보조는 SKIP을 추천한다. PRD의 주 화면이 읽고 스크롤하는 공개 페이지(랜딩, 브랜드·제품 소개, 포트폴리오, 행사, 매장)이거나 "AI가 만든 티가 나지 않게", "어워드급"처럼 시각 완성도를 따로 요구하면 taste를 추천한다. UI 스킬로 hallmark를 고르면 같은 일을 하므로 taste는 추천하지 않는다.
+- 화면 디자인 보조는 위 "추천 조합" 표에서 PRD 신호에 맞는 조합 하나를 추천한다. 두 줄 이상이 맞으면 주 화면 성격에 맞는 쪽을 고르고, 다른 쪽 묶음은 근거 한 줄과 함께 "필요할 때 더하기"로 적는다. 신호가 약하면 UI 스킬이 hallmark일 때 "기본" 조합, 그 밖이면 SKIP을 추천한다. 외부 스킬을 줄이고 싶다고 하면 SKIP이다. `taste`는 사용자가 이름을 말했거나 공개 페이지가 주 화면이고 UI 스킬이 impeccable일 때 추천한다(hallmark·`landing`·`tastemaker`와 같은 방향 일을 한다).
 - 고르는 화면에는 추천한 것만이 아니라 모든 두뇌와 모든 추가 스킬을 내고, 추천한 것에 `(추천)`을 붙여 앞에 둔다. 고르는 것은 사용자다.
 - 추천은 제안이다. 사용자가 고르거나 "알아서 골라줘"처럼 맡겼을 때만 설치한다. 답이 없거나 묻지 않는 흐름이면 두뇌·과설계 방지 스킬은 `none`, UI 스킬은 `impeccable`(기본), 추가 스킬·응답 방식 스킬·화면 디자인 보조는 설치하지 않고 보고에 추천과 설치 명령을 적는다.

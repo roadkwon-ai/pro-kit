@@ -12,6 +12,13 @@
 | `mobile` | React Native·Expo 모바일 앱을 따로 만들 때. 템플릿은 웹 앱만 만들어요 | <!-- v:optional.mobile.skillsCode -->`vercel-react-native-skills`<!-- /v --> | `prokit-dev-cycle` |
 | `i-have-adhd` | 다음 행동부터 번호 단계로 짧은 답을 받고 싶을 때. `/i-have-adhd`로 켤 때만 대화 답에 적용해요([두뇌와 선택 스킬](brains.md)) | `i-have-adhd` | `prokit-dev-cycle` |
 | `taste` | 랜딩·소개처럼 보여 주는 화면을 갤러리 사이트에서 뽑은 방향, 공개 아카이브 사진, 실제 브라우저 검사로 만들고 싶을 때. 사용자가 고른 화면에만 쓰고, 검사에는 Chrome이 필요해요([두뇌와 선택 스킬](brains.md#화면-디자인-보조)) | <!-- v:optional.taste.skillsCode -->`design-taste-frontend`<!-- /v --> | `prokit-ui` |
+| `landing` | 가입, 구매, 신청 하나를 이끄는 랜딩을 만들 때. 인테이크 질문, 페이지 구조, 전환 카피, SEO를 함께 정해요 | <!-- v:optional.landing.skillsCode -->`landing-page-design`<!-- /v --> | `prokit-ui` |
+| `tastemaker` | 레퍼런스 이미지나 좋아하는 사이트의 색과 디자인 값을 뽑아 고정하고, 다음 화면도 같은 값으로 만들 때. `python3`이 필요해요 | <!-- v:optional.tastemaker.skillsCode -->`tastemaker`<!-- /v --> | `prokit-ui` |
+| `web-design-engineer` | "Linear처럼" 같은 스타일 레시피로 방향을 잡거나, 화면을 5개 차원으로 채점받고 싶을 때 | <!-- v:optional.web-design-engineer.skillsCode -->`web-design-engineer`<!-- /v --> | `prokit-ui` |
+| `awwwards` | 브랜드, 포트폴리오, 행사 페이지를 스크롤 스토리텔링과 모션 중심으로 만들 때 | <!-- v:optional.awwwards.skillsCode -->`build-awwwards-quality-sites`<!-- /v --> | `prokit-ui` |
+| `animation` | 버튼, 드롭다운, 폼 제출 같은 작은 상호작용의 모션을 정하고, 코드베이스의 모션을 점검할 때 | <!-- v:optional.animation.skillsCode -->`emil-design-eng`, `animate`, `improve-animations`, `apple-design`, `animation-vocabulary`<!-- /v --> | `prokit-ui` |
+| `visual-critique` | 화면을 7개 차원(위계, 브랜드, 구성, 타이포, 색, 어포던스, 정보 밀도)으로 비평받고 P1\~P3로 고칠 것을 정할 때 | `critique-*` <!-- v:optional.visual-critique.count.neon -->7<!-- /v -->개 | `prokit-ui` |
+| `ui-design` | 게슈탈트·지각 법칙과 간격, 타입, 그리드, 색 체계로 화면을 설계하고 점검할 때. 화면이 많은 앱에 맞아요 | `law-of-proximity`, `spacing-system` 등 <!-- v:optional.ui-design.count.neon -->19<!-- /v -->개 | `prokit-ui` |
 
 ## 묶음마다 언제, 어떻게
 
@@ -27,11 +34,39 @@
 | `mobile` | 이 웹 앱과 별개로 React Native·Expo 모바일 앱을 만들 때 | "mobile 묶음 더해줘" | 모바일 앱 스킬이 설치돼요. 템플릿 자체는 웹 앱만 만들어요 |
 | `i-have-adhd` | 긴 설명 대신 다음 행동부터 번호 단계로 짧은 답을 받고 싶을 때 | "i-have-adhd 더해줘" | 설치만으로는 답이 바뀌지 않아요. `/i-have-adhd`(Codex는 `$i-have-adhd`)로 켜고 "stop adhd mode"로 꺼요. 파일과 라운드 보고는 프로킷 형식 그대로예요 |
 | `taste` | 랜딩, 소개, 포트폴리오처럼 보여 주는 화면의 완성도를 높이고 싶을 때 | "taste 묶음 더해줘" | `design-taste-frontend`가 설치돼요. 화면 요청에 "taste로"라고 한 화면에만 쓰고, 검사에 Chrome, Edge, Chromium 중 하나가 필요해요. 작업 기록은 `.taste-skill/`에 남고 커밋하지 않아요 |
+| 화면 디자인 보조(`landing` 등 일곱 묶음) | 화면 작업에 랜딩 전략, 레퍼런스 고정, 모션, 화면 비평을 더하고 싶을 때 | "랜딩 조합으로 해줘", "애니메이션 보조 더해줘", "visual-critique 더해줘" | 고른 묶음의 스킬이 설치돼요. `prokit-ui`가 묶음마다 정한 단계(설계, 개발, 리뷰)에서만 써요. 아래 "화면 디자인 보조 조합"을 보세요 |
 
 > [!NOTE]
 > 필요 없어졌으면 "taste 지워줘"처럼 요청하거나 `pnpm skills:setup --drop taste`를 실행해요.
 
 묶음이 없는데 그 분야를 요청하면 에이전트가 설치를 먼저 제안해요. 설치된 묶음이 `pnpm skills:check`의 `선택 스킬:` 줄에 보이는지 확인해요.
+
+## 화면 디자인 보조 조합
+
+`taste`와 위 일곱 묶음은 주 UI 스킬(impeccable, hallmark)의 단계에 더하는 **화면 디자인 보조**예요. 주 UI 스킬을 대신하지 않고, 화면 설계 확인, 리뷰·감사와 통과 기준은 그대로예요.
+
+> [!IMPORTANT]
+> 모두 설치하지 않아요. 방향을 정하는 보조(`landing`, `tastemaker`, `taste`, 레시피로 쓰는 `web-design-engineer`)는 규칙이 서로 달라 **한 화면에 하나만** 써요. 모션과 검수 보조는 함께 써요.
+
+아래 조합 하나로 시작해 필요할 때 묶음을 하나씩 더하고 빼요. 표는 hallmark를 주 UI 스킬로 두고 정했어요. impeccable이 주 UI 스킬이면 `critique`가 비슷한 일을 하므로 `visual-critique`는 빼도 돼요.
+
+| 조합 | 이럴 때 | 묶음 |
+|---|---|---|
+| 기본 | MVP로 시작해 기능 화면을 하나씩 더하고, 따로 원하는 시각 방향이 없을 때 | `visual-critique` |
+| 랜딩 | 주 화면이 가입, 구매, 신청 하나를 이끄는 랜딩일 때 | `landing`, `animation`, `visual-critique` |
+| 레퍼런스 | 레퍼런스 이미지나 좋아하는 사이트를 주고 "이런 느낌"을 원할 때 | `tastemaker`, `visual-critique` |
+| 쇼케이스 | 브랜드 소개, 포트폴리오, 행사처럼 몰입감 있는 페이지를 원할 때 | `awwwards`, `animation`, `visual-critique` |
+| 앱 정돈 | 로그인 뒤 화면이 많고 간격, 타입, 색을 점수로 관리하고 싶을 때 | `ui-design`, `web-design-engineer` |
+
+```bash
+pnpm skills:setup --optional landing,animation,visual-critique   # 랜딩 조합
+pnpm skills:setup --drop animation                               # 묶음 하나만 빼기
+```
+
+처음 들일 때(`prokit-init`)는 UI 스킬을 고른 뒤 PRD에 맞는 조합을 `(추천)`으로 보여 주고 물어요. 화면 브리프에는 그 화면에 쓰는 보조를 `보조:` 줄로 적어요. 묶음마다 어느 단계에서 무엇을 하는지는 템플릿의 `prokit-ui` "화면 디자인 보조"와 묶음마다의 단계 지도(`references/addon-<묶음>.md`)에 있어요.
+
+> [!NOTE]
+> 보조 스킬은 모두 영어로 쓰여 있고, UI 작업이면 스스로 불리게 쓰인 것이 많아요. 프로킷은 브리프의 `보조:` 줄에 없는 화면에서 불리면 따르지 않고, 서체, 색, 의존성은 `DESIGN.md`와 토큰 규칙을 먼저 따라요(예: `landing`의 영문 서체 목록 대신 한글 서체).
 
 ## 설치하기
 

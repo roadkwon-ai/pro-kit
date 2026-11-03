@@ -54,7 +54,7 @@ flowchart TD
   DC -.->|대조표 행이 읽을 스킬을 지정| OFF
   DREQ["배포 요청<br/>develop에 올려줘 · 운영 배포"] --> DEP["prokit-deploy<br/>메인 세션에서 --check → DB → 배포 → 확인"]
   DEP --> OFF
-  LAYER -.->|그 분야일 때| OPT["선택 스킬 묶음<br/>ops · motion · mobile · i-have-adhd · taste<br/>없으면 설치 제안"]
+  LAYER -.->|그 분야일 때| OPT["선택 스킬 묶음<br/>ops · motion · mobile · i-have-adhd<br/>화면 디자인 보조(taste · landing · animation 등)<br/>없으면 설치 제안"]
   DEP -.->|비용·성능 점검| OPT
   DC --> PROC["두뇌 · 과설계 방지 스킬(고른 것만)<br/>없으면 내장 절차와 간결성 규칙"]
   DC --> IMP["전문 수행 에이전트<br/>계층별 builder · runtime-checker · implementer<br/>공식 스킬을 읽고 수행"]

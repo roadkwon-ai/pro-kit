@@ -47,6 +47,12 @@
 | taste-skill(선택 묶음 taste) | MIT | [확인 판 LICENSE](https://github.com/Leonxlnx/taste-skill/blob/63aba5f43b5056758b15bbe7d683da8c86a7a7ad/LICENSE) |
 | Anthropic frontend-design(UI 스킬 none: 기본 AI가 참고) | 해당 skill 경로의 Apache 2.0 | [확인 판 LICENSE](https://github.com/anthropics/skills/blob/41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f/skills/frontend-design/LICENSE.txt). 저장소 전체나 다른 스킬의 조건을 일괄 판정하지 않음 |
 | hallmark(UI 스킬 hallmark) | MIT. 사진 목록(`photos.json`)은 위키미디어 공용 이미지 주소만 담고 그림 파일은 없다. 사진마다 그 사진의 조건을 따른다 | [확인 판 LICENSE](https://github.com/Nutlope/hallmark/blob/4f6a46c6dc325d40ab268c93e25c7b96676ebccd/LICENSE) |
+| landing-page-design(화면 디자인 보조 landing) | MIT | [확인 판 LICENSE](https://github.com/elayadesign/ai-design-skills/blob/456d9e0d3e2d84c748bb143c6ca3d90c45e16213/LICENSE) |
+| tastemaker(화면 디자인 보조 tastemaker) | MIT | [확인 판 LICENSE](https://github.com/codeswithroh/tastemaker/blob/792a28a820ec4e9159ef8621c21a6c88528bbf2e/LICENSE) |
+| garden-skills의 web-design-engineer(화면 디자인 보조 web-design-engineer) | MIT | [확인 판 LICENSE](https://github.com/ConardLi/garden-skills/blob/2b9a89340b70f632d31c0f1c69fce94a7912423e/LICENSE) |
+| MengTo Skills의 build-awwwards-quality-sites(화면 디자인 보조 awwwards) | MIT | [확인 판 LICENSE](https://github.com/MengTo/Skills/blob/1de14e21b2ba8937c0f7f6ddca581cf7cd9d94af/LICENSE) |
+| Emil Kowalski skills(화면 디자인 보조 animation) | MIT | [확인 판 LICENSE](https://github.com/emilkowalski/skills/blob/f1090bec277140d02ed202440185ad9d02ac1490/LICENSE) |
+| designer-skills의 visual-critique·ui-design(화면 디자인 보조 visual-critique, ui-design) | MIT | [확인 판 LICENSE](https://github.com/Owl-Listener/designer-skills/blob/9a6930cf84a822eb458624bd11c61aac5bbdf224/LICENSE) |
 | OpenSpec(두뇌 openspec, 전역 CLI와 프로젝트 init) | MIT | [확인 판 LICENSE](https://github.com/Fission-AI/OpenSpec/blob/c04f30e57817422c1a107ea00a682c1d29a423ca/LICENSE) |
 | Spec Kit(두뇌 spec-kit, 프로젝트 init) | MIT | [확인 판 LICENSE](https://github.com/github/spec-kit/blob/dc2cec4f568d0f6e2cdfb8571c69116bc55c1aaf/LICENSE) |
 | Compound Engineering(두뇌 compound-engineering) | MIT | [확인 판 LICENSE](https://github.com/EveryInc/compound-engineering-plugin/blob/cee312784134a05ac1c1c0c6648000afe7dd60e9/LICENSE) |
@@ -56,16 +62,22 @@
 다음은 두 템플릿의 기본·선택 묶음 스킬, 두뇌·과설계 방지·UI 스킬 후보의 스킬, mattpocock 추가 스킬 출처를 합친 목록이다. 두뇌·과설계 방지 스킬과 추가 스킬은 사용자가 고를 때만, UI 스킬은 고른 것(고르지 않으면 impeccable)만 설치한다. source 이름만으로 라이선스를 정하지 않는다. 두뇌 OpenSpec과 Spec Kit은 매니페스트의 source가 아니라 각 도구의 init 명령이 프로젝트에 스킬을 만들므로 이 목록에 없고 위 라이선스 표에만 있다.
 
 - [CaesiumY/ko-design-md](https://github.com/CaesiumY/ko-design-md)
+- [ConardLi/garden-skills](https://github.com/ConardLi/garden-skills)
 - [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)
 - [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin)
 - [GENEXIS-AI/gpt-image-skill](https://github.com/GENEXIS-AI/gpt-image-skill)
 - [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman)
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)
+- [MengTo/Skills](https://github.com/MengTo/Skills)
 - [Nutlope/hallmark](https://github.com/Nutlope/hallmark)
+- [Owl-Listener/designer-skills](https://github.com/Owl-Listener/designer-skills)
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
 - [anthropics/skills](https://github.com/anthropics/skills)
 - [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)
 - [better-auth/skills](https://github.com/better-auth/skills)
+- [codeswithroh/tastemaker](https://github.com/codeswithroh/tastemaker)
+- [elayadesign/ai-design-skills](https://github.com/elayadesign/ai-design-skills)
+- [emilkowalski/skills](https://github.com/emilkowalski/skills)
 - [mattpocock/skills](https://github.com/mattpocock/skills)
 - [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)
 - [neondatabase/agent-skills](https://github.com/neondatabase/agent-skills)

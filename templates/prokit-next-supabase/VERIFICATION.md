@@ -4,6 +4,10 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 화면 디자인 보조 묶음 일곱 개와 추천 조합 (2026-11-03)
+
+화면 디자인 보조 선택 묶음 일곱 개(`landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design`)와 추천 조합을 더했다. 매니페스트 `optional`, `prokit-ui` 연결 규칙과 guide, 설치기는 두 템플릿이 같다. 실제 설치 확인과 한계는 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#화면-디자인-보조-묶음-일곱-개와-추천-조합-2026-11-03)에 있다.
+
 ## 운영 프로젝트 T24 감사 보고: shell-guard 쓰기 대상, Main 몫 행의 스킬 읽기, 위임 시각 기준, 증거 꼴 세부 (2026-11-03)
 
 - 원인: pro-kit-trader가 템플릿 373cdd82까지 반영한 뒤 T24 라운드를 닫고 감사 기록을 보냈다. 디렉터리 scope, 증거 꼴 안내, 셸 편집 경고는 의도대로 돌았고, 다음을 고쳤다.

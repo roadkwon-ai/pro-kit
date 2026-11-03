@@ -366,9 +366,9 @@ test("계산값 2: 비용 단위, 한글 수사, 케이스 범위, 화면 점수
   const want = {
     "cost.tokensPerUsd": "5.5만", "cost.cachedPerUsd": "275만", "cost.multiplier": "2~3", "cost.multiplierModel": "1~2", "cost.multiplierRefine": "1.1~3",
     "cost.feature.time": "15분", "cost.feature.usd": "7", "cost.date": "2026-10-05", "cost.image.tokens": "1.7만",
-    "templates.count.ko": "두", "prokit.skills.count.ko": "열한", "agents.count.ko": "네", "devCycle.cases.count.ko": "일곱", "optional.count": "5",
+    "templates.count.ko": "두", "prokit.skills.count.ko": "열한", "agents.count.ko": "네", "devCycle.cases.count.ko": "일곱", "optional.count": "12",
     "devCycle.cases.range": "A\\~F·H", "devCycle.ui.auditMin": "16", "devCycle.ui.a11yMin": "3",
-    "optional.names": "ops, motion, mobile, i-have-adhd, taste", "optional.namesCode": "`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`",
+    "optional.names": "ops, motion, mobile, i-have-adhd, taste, landing, tastemaker, web-design-engineer, awwwards, animation, visual-critique, ui-design", "optional.namesCode": "`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`, `landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design`",
     "optional.ops.skillsCode.neon": "`vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway`", "optional.ops.skillsCode.supabase": "`vercel-optimize`",
     "optional.ops.skillsCode.shared": "`vercel-optimize`", "optional.ops.skillsCode.neonOnly": "`neon-functions`, `neon-object-storage`, `neon-ai-gateway`", "optional.ops.count.neon": "4", "optional.ops.count.supabase": "1", "optional.motion.skillsCode": "`vercel-react-view-transitions`", "optional.mobile.skillsCode": "`vercel-react-native-skills`",
     "agent.claude.install": "curl -fsSL https://claude.ai/install.sh | bash", "agent.codex.install": "curl -fsSL https://chatgpt.com/codex/install.sh | sh",
@@ -440,8 +440,13 @@ test("설치본 AGENTS.md의 선택 스킬 묶음 표가 skills.manifest.json op
     const dir = `templates/prokit-next-${t}/files`;
     const optional = JSON.parse(read(`${dir}/skills.manifest.json`)).optional;
     const rows = [...read(`${dir}/AGENTS.md`).matchAll(/^\| `([\w-]+)` \| [^|]* \| ([^|]*) \| `prokit-[\w-]+` \|(?: <!-- edition:pro -->)?$/gm)].map((m) => [m[1], m[2].match(/`([\w-]+)`/g).map((s) => s.slice(1, -1))]);
-    assert.deepEqual([...new Set(rows.map(([b]) => b))], Object.keys(optional), `${t} 묶음 이름`);
+    // 화면 디자인 보조(guide가 있는 묶음)는 AGENTS.md 줄 수 제한 때문에 한 행에 묶는다. 그 행은 묶음 이름만 맞추고 스킬은 guide가 맡는다(템플릿 skills-setup 테스트)
+    const text = read(`${dir}/AGENTS.md`);
+    const grouped = [...text.matchAll(/^\| ((?:`[\w-]+`, )+`[\w-]+`) \| .* \| `prokit-ui` \|$/gm)].flatMap((m) => m[1].match(/`([\w-]+)`/g).map((s) => s.slice(1, -1)));
+    for (const b of grouped) assert.ok(optional[b]?.guide, `${t} ${b}: 묶은 행에는 guide가 있는 묶음만 둔다`);
+    assert.deepEqual([...new Set([...rows.map(([b]) => b), ...grouped])], Object.keys(optional), `${t} 묶음 이름`);
     for (const [b, def] of Object.entries(optional)) {
+      if (grouped.includes(b)) continue;
       const want = def.skills.flatMap((s) => s.skills);
       assert.deepEqual(rows.filter(([name]) => name === b).flatMap(([, skills]) => skills), want, `${t} ${b} 스킬`);
     }

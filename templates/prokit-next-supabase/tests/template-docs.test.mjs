@@ -27,7 +27,8 @@ test("AGENTS.md는 개발 원칙(Workflow Orchestration·Task Management·Core P
 test("AGENTS.md는 모든 prokit 스킬, 선택 스킬 묶음, 문서 정본을 가리킨다", () => {
   const s = read("AGENTS.md");
   // 선택 묶음 표가 매니페스트와 어긋나지 않게 한다(mobile처럼 prokit 스킬이 가리키지 않는 묶음은 이 표가 유일한 안내다)
-  const optional = Object.entries(JSON.parse(read("skills.manifest.json")).optional).flatMap(([k, v]) => [`| \`${k}\` |`, ...v.skills.flatMap((e) => e.skills)]);
+  // 화면 디자인 보조(guide가 있는 묶음)는 한 행에 묶고 이름만 적는다. 스킬 목록은 guide 파일이 맡는다(skills-setup 테스트가 본다)
+  const optional = Object.entries(JSON.parse(read("skills.manifest.json")).optional).flatMap(([k, v]) => (v.guide ? [`\`${k}\``] : [`| \`${k}\` |`, ...v.skills.flatMap((e) => e.skills)]));
   for (const k of ["prokit-dev-cycle", "prokit-web", "prokit-ui", "prokit-api", "prokit-db", "prokit-verify", "prokit-deploy", "prokit-skills-update", ...optional, "GLOSSARY.md", "docs/adr/", "docs/domain/project.md", "docs/dev-workflow.md"]) {
     assert.ok(s.includes(k), k);
   }

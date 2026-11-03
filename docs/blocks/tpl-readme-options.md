@@ -5,7 +5,7 @@
 - `--simplicity <이름|none>`: 과설계 방지 스킬을 하나 고른다(ponytail, caveman, karpathy). 기본은 `none`(하네스 간결성 규칙)이다.
 - `--ui-skill <이름>[,<이름>]|none`: UI 스킬을 고른다(impeccable, hallmark). 여럿이면 쉼표로 잇는다(첫 값이 주 UI 스킬. `.dev-cycle.json`의 `uiSkill`에 배열로 기록한다). 주지 않거나 기록이 없으면 `impeccable`이고, 고른 것만 설치한다. `none`이면 외부 UI 스킬 없이 기본 AI로 가며 Anthropic `frontend-design`을 설치한다(`prokit-ui`의 `references/none-map.md`와 게슈탈트 지침을 따른다). hallmark는 화면을 찍는 검사에 Chrome과 `puppeteer-core`(전역, 또는 프로젝트 밖 폴더와 `HALLMARK_PUPPETEER=<폴더>`)가 필요한데, 설치기는 알리기만 하고 설치하지 않는다.
 - `--matt <스킬>[,<스킬>]`: mattpocock 추가 스킬을 설치한다(tdd, research 등).
-- `--optional <묶음>[,<묶음>]`: 선택 스킬 묶음을 설치한다(ops, motion, mobile, i-have-adhd, taste).
+- `--optional <묶음>[,<묶음>]`: 선택 스킬 묶음을 설치한다(ops, motion, mobile, i-have-adhd, 화면 디자인 보조 taste·landing·tastemaker·web-design-engineer·awwwards·animation·visual-critique·ui-design).
 - 고르는 기준과 선택지 설명은 `.agents/skills/prokit-dev-cycle/references/brains/README.md`에 있다. 모르는 값이면 아무것도 쓰지 않고 exit 1로 멈춘다.
 - `--project-type <new|early|operating|migration>`: 프로젝트 유형을 `.dev-cycle.json`의 `projectType`에 기록한다. 기존 프로젝트 도입 절차(pro-kit 저장소 `AGENTS.md`의 "기존 프로젝트에 도입하기")가 쓴다. early면 `biome.json`에서 `prototype/`을 뺀다.
 - `--legacy <경로>`: 전환(`migration`)에서 기존 코드 경로를 `.dev-cycle.json`의 `legacy.path`에 기록한다. 안내용이고 `pnpm dev-cycle status`가 보여 준다.

@@ -17,7 +17,7 @@
 | 과설계 방지 스킬 | `ponytail (추천)` | 요청하지 않은 기능이 늘어나지 않게 가장 작게 만들어 줘요. 항상 첫 선택지로 나와요 |
 | 응답 방식 | `i-have-adhd (추천)`. 길고 자세한 설명이 좋다면 SKIP | 설치해도 `/i-have-adhd`로 켤 때만 짧은 답으로 바뀌어서 평소 답은 그대로예요 |
 | UI 스킬 | `impeccable (추천)` | 앱 화면과 웹 페이지를 모두 맡고 점수 기준이 있어요. MVP로 시작해 기능을 하나씩 늘리는 서비스이거나, 새로 만드는 공개 웹 페이지(랜딩, 소개, 가격, 행사, 포트폴리오)가 주 화면이고 로그인 뒤 앱 화면이 적으면 `hallmark` 하나를 추천해요 |
-| 화면 디자인 보조 | SKIP | 랜딩, 소개, 포트폴리오처럼 읽고 스크롤하는 공개 페이지가 주 화면이거나 "AI가 만든 티가 나지 않게"를 원할 때만 `taste-skill`을 추천해요. UI 스킬로 `hallmark`를 고르면 같은 일이라 추천하지 않아요 |
+| 화면 디자인 보조 | 추천 조합 | PRD에 맞는 조합(기본, 랜딩, 레퍼런스, 쇼케이스, 앱 정돈) 하나가 `(추천)`으로 나와요. 신호가 약하면 UI 스킬이 hallmark일 때 기본 조합(`visual-critique`), 그 밖이면 SKIP이에요 |
 | mattpocock 추가 스킬 | 아무것도 고르지 않아요 | 필수 3개(`domain-modeling`, `grilling`, `grill-with-docs`)는 늘 설치돼요. 추가 스킬은 PRD에 맞는 것만 `(추천)`이 붙어요 |
 
 뜻을 모르는 말은 [처음 보는 용어](../../tutorials/reference/glossary.md#도구)의 "두뇌", "하네스", "스킬"을 보세요. [선택 스킬 묶음](optional-bundles.md)은 프로젝트가 정해진 뒤에 더해도 늦지 않아요.
@@ -37,15 +37,16 @@
   - 다른 두뇌 보기·여럿 고르기
 [질문 2 과설계 방지]  ponytail (추천) / caveman / andrej-karpathy-skills / SKIP(기본 AI)
 [질문 3 응답 방식]    i-have-adhd (추천) / SKIP
-[질문 4 UI 스킬]      impeccable (추천) / hallmark / taste-skill (화면 보조)
+[질문 4 UI 스킬]      impeccable (추천) / hallmark
 ```
 
 한 번에 네 가지를 묻고, 답에 따라 이어서 더 물어요.
 
 1. **`다른 두뇌 보기·여럿 고르기`를 골랐을 때**: 두뇌 아홉 개를 세 묶음(진행 규율, 스펙 주도, 제품·장기 실행·학습)에서 골라요. 하나만 골라도 되고, 둘 이상 고르면 "주 두뇌는?"을 한 번 더 물어요.
 2. **mattpocock 추가 스킬**: 두뇌가 정해지면 [아래 14개](#mattpocock-추가-스킬-14개)를 네 묶음(구현·설계, 디버깅·검토, 조사·외부 설정, 인계·학습)의 여러 선택으로 물어요. PRD에 맞는 스킬에 `(추천)`이 붙고, 추가하지 않으려면 아무것도 고르지 않거나 Other에 "없음"이라고 적어요.
-3. **UI 스킬**: 여러 개를 고를 수 있어요. impeccable과 hallmark를 둘 다 고르면 "주 UI 스킬은?"을 한 번 더 물어요. taste-skill은 UI 스킬이 아니라 화면 보조 묶음이라, 고르면 `--optional taste`로 들어가요.
-4. **마무리**: 고른 값이 `install.sh`의 `--brain`, `--simplicity`, `--ui-skill`, `--matt`, `--optional`로 들어가고, 끝나면 보고에 `pnpm skills:check`의 해당 줄이 나와요.
+3. **UI 스킬**: 여러 개를 고를 수 있어요. impeccable과 hallmark를 둘 다 고르면 "주 UI 스킬은?"을 한 번 더 물어요.
+4. **화면 디자인 보조**: UI 스킬이 정해지면 PRD에 맞는 조합(`(추천)`), 다음으로 맞는 조합, `직접 고르기(여럿)`, `SKIP` 가운데 하나를 골라요. 직접 고르면 방향·원칙(`landing`, `tastemaker`, `web-design-engineer`, `awwwards`)과 모션·검수(`animation`, `visual-critique`, `ui-design`, `taste`) 두 묶음에서 여러 개를 골라요. 고른 묶음은 `--optional`로 들어가요.
+5. **마무리**: 고른 값이 `install.sh`의 `--brain`, `--simplicity`, `--ui-skill`, `--matt`, `--optional`로 들어가고, 끝나면 보고에 `pnpm skills:check`의 해당 줄이 나와요.
 
 ## 고르는 여섯 가지
 
@@ -56,7 +57,7 @@
 | UI 스킬 | 0개 이상(하나 권장) | impeccable | `pnpm skills:setup --ui-skill <이름>[,<이름>]`, 빼기 `--ui-skill none` |
 | mattpocock 추가 스킬 | 0개 이상 | 설치 안 함 | `pnpm skills:setup --matt <스킬>`, 지우기 `--drop <스킬>` |
 | 응답 방식(i-have-adhd) | 0\~1 | 설치 안 함 | `pnpm skills:setup --optional i-have-adhd` |
-| 화면 디자인 보조(taste-skill) | 0\~1 | 설치 안 함 | `pnpm skills:setup --optional taste` |
+| 화면 디자인 보조 | 0개 이상(추천 조합) | 설치 안 함 | `pnpm skills:setup --optional <묶음>[,<묶음>]`, 빼기 `--drop <묶음>` |
 
 ## 처음 들일 때 고르는 순서
 
@@ -213,16 +214,22 @@ flowchart TD
 
 ## 화면 디자인 보조
 
-**taste-skill**([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill))은 갤러리 사이트를 분석한 라이브러리에서 화면 방향을 뽑고, 공개 아카이브 사진과 실제 브라우저 검사로 AI가 만든 듯한 기본 화면을 피하게 하는 스킬이에요. 선택 묶음 `taste`로 설치해요.
+주 UI 스킬의 단계에 더하는 선택 묶음이에요. 랜딩 전략, 레퍼런스 고정, 스타일 레시피, 쇼케이스 모션, 애니메이션, 화면 비평을 보태요. 기획, 화면 설계 확인, 리뷰·감사와 통과 기준은 그대로이고, 한글 서체와 `DESIGN.md`, 토큰 규칙은 프로킷 쪽이 우선이에요.
 
-- **언제 추천하나**: 기본은 설치하지 않아요. PRD의 주 화면이 랜딩, 소개, 포트폴리오, 행사, 매장처럼 읽고 스크롤하는 공개 페이지이거나 "AI가 만든 티가 나지 않게"처럼 시각 완성도를 따로 요구하면 추천해요. UI 스킬로 hallmark를 골랐다면 같은 일이라 추천하지 않아요.
-- **어떻게 쓰나**: 설치해도 사용자가 고른 화면에만 써요. 화면을 요청할 때 "taste로"라고 하거나, 스타일 고르기 질문에서 "taste-skill로 방향 뽑기"를 고르면 돼요.
-- **주 UI 스킬과의 관계**: 대신하지 않고 보태요. 기획, 화면 설계 확인, 리뷰·감사와 통과 기준은 그대로예요. 한글 서체와 `DESIGN.md`, 토큰 규칙은 프로킷 쪽이 우선이에요.
-- **준비물**: 검사(`inspect.mjs`)에 Chrome, Edge, Chromium 중 하나가 있어야 해요. 기록과 작업 파일은 프로젝트 안 `.taste-skill/`에 남기고 커밋하지 않아요.
+| 종류 | 묶음 | 함께 쓰나 |
+|---|---|---|
+| 방향 | `landing`, `tastemaker`, `taste`(taste-skill), 레시피로 쓰는 `web-design-engineer` | 한 화면에 하나만 써요 |
+| 원칙 | `awwwards`, 채점으로 쓰는 `web-design-engineer` | 함께 써요 |
+| 모션 | `animation` | 함께 써요 |
+| 검수 | `visual-critique`, `ui-design` | 함께 써요 |
+
+- **언제 추천하나**: PRD 신호에 맞는 조합 하나를 추천해요. 조합과 묶음 설명은 [선택 스킬 묶음](optional-bundles.md#화면-디자인-보조-조합)에 있어요.
+- **어떻게 쓰나**: 화면 브리프의 `보조:` 줄에 그 화면에 쓰는 보조가 적혀요. 방향 보조는 화면 성격이 맞거나 사용자가 지목했을 때("landing으로", "taste로", "Linear처럼"), 모션과 검수 보조는 설치되어 있으면 그 단계마다 써요.
+- **준비물**: `tastemaker`는 `python3`이 필요하고 홈 폴더 `~/.tastemaker/`에도 기록을 남겨요. `taste`의 검사(`inspect.mjs`)에는 Chrome, Edge, Chromium 중 하나가 있어야 해요. `taste` 기록은 프로젝트 안 `.taste-skill/`에 남기고 커밋하지 않아요.
 
 ## 바꾸기
 
-진행 중에 언제든 "두뇌를 openspec으로 바꿔줘", "superpowers도 같이 쓰고 싶어", "taste 빼줘", "전부 빼고 기본으로만 해줘"처럼 말하면 `prokit-skills-manage` 스킬이 받아요. 열린 라운드가 없으면 H 라운드를 열어 바꾸고, 열린 라운드가 있으면 닫지 않고 그 라운드에서 바로 바꿔요. 라운드 중에 바꾸면 설치기가 대조표에 바꾼 구성을 적어요. audit은 설치기가 바꾼 파일을 그 라운드의 케이스 판정에서 빼고, 바꾸기 전 두뇌로 채운 단계 행도 그대로 받아요. 남은 단계 행은 새 구성으로 해요.
+진행 중에 언제든 "두뇌를 openspec으로 바꿔줘", "superpowers도 같이 쓰고 싶어", "taste 빼줘", "랜딩 조합으로 해줘", "전부 빼고 기본으로만 해줘"처럼 말하면 `prokit-skills-manage` 스킬이 받아요. 열린 라운드가 없으면 H 라운드를 열어 바꾸고, 열린 라운드가 있으면 닫지 않고 그 라운드에서 바로 바꿔요. 라운드 중에 바꾸면 설치기가 대조표에 바꾼 구성을 적어요. audit은 설치기가 바꾼 파일을 그 라운드의 케이스 판정에서 빼고, 바꾸기 전 두뇌로 채운 단계 행도 그대로 받아요. 남은 단계 행은 새 구성으로 해요.
 
 > [!NOTE]
 > Claude Code는 바꾼 뒤 `/reload-plugins`를 입력하면 지금 세션에 바뀐 플러그인, 스킬, 훅을 불러와요(새 세션을 열어도 돼요). 다시 불러오기 전에는 세션에 남은 이전 스킬 목록이나 훅 안내(예: ponytail 모드)가 아니라 `.dev-cycle.json`을 따라요. Codex는 새 세션을 열어요.
@@ -237,6 +244,7 @@ pnpm skills:setup --brain none --simplicity ponytail   # 두뇌를 빼고 내장
 pnpm skills:setup --ui-skill hallmark                  # UI 스킬을 바꾼다. 고르지 않은 UI 스킬의 설치본은 지운다
 pnpm skills:setup --ui-skill none                      # UI 스킬 없이 간다
 pnpm skills:setup --matt tdd,research                  # 추가 스킬을 더한다(기록하지 않는다)
+pnpm skills:setup --optional landing,animation        # 화면 디자인 보조 묶음을 더한다
 pnpm skills:setup --drop tdd,taste                     # 추가 스킬이나 선택 묶음을 지운다
 pnpm skills:setup --brain none --simplicity none --drop all   # 순수 AI: 두뇌·과설계 방지·추가 스킬·선택 묶음을 모두 뺀다
 pnpm skills:check                                      # 고르지 않은 두뇌·과설계 방지 스킬이 남아 있으면 exit 1

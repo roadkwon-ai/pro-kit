@@ -25,7 +25,7 @@ supabase 템플릿은 `prokit-next-supabase`로 바꿔요. <!-- edition:pro -->
 | `--brain <이름>[,…]` | 두뇌를 골라요. 여러 개는 쉼표로 잇고 첫 번째가 주 두뇌예요(<!-- v:brains.names -->superpowers, agent-skills, pstack, gstack, oh-my, mattpocock, openspec, spec-kit, compound-engineering<!-- /v -->). 기본은 `none`이에요 |
 | `--simplicity <이름>` | 과설계 방지 스킬을 하나 골라요(ponytail, caveman, karpathy). 기본은 `none`이에요 |
 | `--ui-skill <이름>[,…]` | UI 스킬을 골라요(impeccable, hallmark). 여러 개는 쉼표로 잇고 첫 번째가 주 UI 스킬이에요. 주지 않으면 `impeccable`이에요. `none`이면 외부 UI 스킬 없이 기본 AI가 Anthropic `frontend-design`(함께 설치)과 게슈탈트 지침으로 디자인해요 |
-| `--matt <스킬>`, `--optional <묶음>` | mattpocock 추가 스킬과 선택 스킬 묶음(i-have-adhd, taste 포함)을 설치해요. 여러 개는 쉼표로 이어요 |
+| `--matt <스킬>`, `--optional <묶음>` | mattpocock 추가 스킬과 선택 스킬 묶음(i-have-adhd, 화면 디자인 보조 포함)을 설치해요. 여러 개는 쉼표로 이어요 |
 | `--project-type <유형>` | 프로젝트 유형을 `.dev-cycle.json`의 `projectType`에 기록해요. `new`(새 프로젝트), `early`(기획 자료와 프로토타입만 있는 초기), `operating`(운영 중), `migration`(다른 스택에서 전환). `early`는 옮겨 둔 `prototype/`을 Biome 검사에서 빼요 | <!-- edition:pro -->
 | `--legacy <경로>` | `migration`에서만 써요. 기존 코드 폴더를 새 프로젝트 기준 상대 경로로 `legacy.path`에 기록해요. 안내용이라 코드는 읽기만 하고, `pnpm dev-cycle status`에 보여 줘요 | <!-- edition:pro -->
 | `--adopt` | `operating`이면서 Better-T-Stack이 아닌 Next.js 프로젝트에 하네스만 설치해요. 아래 "기존 프로젝트에 설치하기"를 보세요 | <!-- edition:pro -->

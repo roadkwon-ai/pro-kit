@@ -205,7 +205,7 @@ test("도메인 스킬(Claude·Codex 공용): 템플릿 문서가 모두 언급�
 
 test("biome.json: 벤더 스킬, 도구 상태 파일, 생성물을 빼고 shadcn 두 파일에만 a11y 3개를 끈다 (한 번만)", () => {
   const ignores = [
-    "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!**/.hallmark", "!.claude", "!.codex",
+    "!.agents/skills", "!.agents/agents", "!skills-lock.json", "!**/.omc", "!**/.omx", "!**/.prokit", "!**/.impeccable", "!**/.hallmark", "!**/.tastemaker", "!.claude", "!.codex",
     "!tasks/evidence",
     "!packages/db/src/migrations", "!packages/db/src/schema/auth.ts", "!apps/web/src/env.ts", "!packages/db/src/env.ts",
     "!html", "!**/.well-known/workflow", "!**/*.md",
@@ -568,11 +568,14 @@ test("설치기: 고른 값은 복사 전에 확인하고, --skip-skills여도 .
   assert.match(diff.stdout, /^\.dev-cycle\.json 기록 예정: brain superpowers/m);
   assert.deepEqual(snapshot(root), before);
 
-  const r = install(root, "--brain", "superpowers", "--simplicity", "ponytail", "--matt", "tdd,research", "--optional", "i-have-adhd,taste");
+  const r = install(root, "--brain", "superpowers", "--simplicity", "ponytail", "--matt", "tdd,research", "--optional", "i-have-adhd,taste,landing");
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.match(r.stdout, /^\.dev-cycle\.json 기록: brain superpowers, simplicity ponytail$/m);
   assert.match(r.stdout, /i-have-adhd는 \/i-have-adhd/);
-  assert.match(r.stdout, /taste\(design-taste-frontend\)는 화면 작업에서 사용자가 고른 화면에만/);
+  // 화면 디자인 보조는 매니페스트 guide로 안내한다(묶음을 더해도 설치기는 그대로다)
+  assert.match(r.stdout, /화면 디자인 보조 taste: 주 UI 스킬 흐름에 더한다\. 쓰기 전에 \.agents\/skills\/prokit-ui\/references\/taste\.md를 읽는다/);
+  assert.match(r.stdout, /화면 디자인 보조 landing: .*references\/addon-landing\.md를 읽는다/);
+  assert.doesNotMatch(r.stdout, /화면 디자인 보조 i-have-adhd/);
   const text = readFileSync(join(root, ".dev-cycle.json"), "utf8");
   assert.match(text, /^\{\n\s+"brain": "superpowers",\n\s+"simplicity": "ponytail",\n/, "맨 앞 키의 값만 바꾼다");
   assert.equal(install(root, "--simplicity", "caveman").status, 0, "다시 실행해 값만 바꾼다");

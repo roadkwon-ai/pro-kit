@@ -82,7 +82,7 @@
 | `pnpm skills:setup --ui-skill <이름>[,…]` | UI 스킬(`impeccable`, `hallmark`)을 고르거나 바꿔요. 여러 개는 쉼표로 잇고 첫 번째가 주 UI 스킬이에요. 고르지 않은 UI 스킬의 설치본은 정리해요. `--ui-skill none`은 UI 스킬 없이 가고, 기본 AI가 `frontend-design`과 게슈탈트 지침으로 화면을 만들어요. 바꿔도 `PRODUCT.md`, `DESIGN.md`, 화면 설계, 토큰은 그대로 써요. 고르지 않은 UI 스킬이 켠 훅은 `.claude/settings.local.json`과 `.codex/hooks.json`에서 함께 빼요 |
 | `pnpm skills:setup --drop <스킬 또는 묶음>[,…]` | mattpocock 추가 스킬이나 선택 묶음을 지워요. `--drop all`은 설치한 것을 모두 지워요 |
 | `pnpm skills:setup --brain none --simplicity none --drop all` | 순수 AI로 돌아가요. `prokit-*`와 필수·공식 스킬만 남아요 |
-| `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`<!-- /v -->)을 설치해요. 여러 개는 쉼표로 이어요(`ops,motion`) |
+| `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`, `landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design`<!-- /v -->)을 설치해요. 여러 개는 쉼표로 이어요(`ops,motion`) |
 | `pnpm skills:check` | 설치하지 않고 상태만 확인해요. 프로젝트 범위 항목이 빠졌으면 exit 1이에요 |
 | `pnpm skills:update --check` | 설치한 외부 스킬을 GitHub 원본과 비교해 새 버전이 있는지만 알려 줘요 |
 | `pnpm skills:update [<이름>...]` | 바뀐 스킬과 빠진 스킬만(이름을 주면 그 스킬만) 다시 설치해요 |
