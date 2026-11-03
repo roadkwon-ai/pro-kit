@@ -738,7 +738,7 @@ test("두뇌를 고르면 단계 행 증거에 두뇌 방법·추가 스킬·사
     fill(r.root, value);
     return stageProblems(r.root, r.config);
   };
-  for (const ok of ["사용: agent-skills:planning-and-task-breakdown → docs/plans/a.md", "사용: `agent-skills:planning-and-task-breakdown`", "사용: planning-and-task-breakdown", "사용: /planning-and-task-breakdown", "사용: tdd(추가 스킬)", "N/A: 문서만 바꿈"])
+  for (const ok of ["사용: agent-skills:planning-and-task-breakdown → docs/plans/a.md", "사용: `agent-skills:planning-and-task-breakdown`", "사용: planning-and-task-breakdown", "사용: /planning-and-task-breakdown", "사용: tdd(추가 스킬)", "N/A: 문서만 바꿈", "사용: prokit-ui, prokit-web(a.md, b.md, c.md), agent-skills:planning-and-task-breakdown(1단계, 2단계)"])
     assert.deepEqual(withEvidence(ok), [], ok);
   for (const bad of ["사용: superpowers:writing-plans", "사용: superpowers:planning-and-task-breakdown", "사용: research(추가 스킬)", "agent-skills planning-and-task-breakdown 방식", "사용: prokit-implementer", "사용: grilling", "사용: 내장: 단계 없이 사유만", "사용: 내장(계획): 작은 변경이라 생략"])
     assert.ok(withEvidence(bad).length > 0, bad);
@@ -952,12 +952,19 @@ test("셸 실행 전 확인: 계층 파일을 셸(리다이렉션, sed -i, cp·m
   assert.equal(sh(py, "prokit-ui-builder").status, 0, "performers가 없는 옛 판은 막지 않는다");
   write("skills.manifest.json", JSON.stringify({ skills: [{ skills: [] }], performers: { agents: ["prokit-ui-builder", "prokit-db-builder"], skills: {} } }));
   assert.ok(config);
-  for (const bad of [py, "sed -i '' 's/a/b/' apps/web/src/app/page.tsx", "echo x > apps/web/src/app/page.tsx", "cp /tmp/a.ts packages/db/src/schema/todo.ts", `node -e "require('fs').writeFileSync('${join(root, "apps/web/src/app/page.tsx")}', '')"`]) {
+  for (const bad of [py, "sed -i '' 's/a/b/' apps/web/src/app/page.tsx", "echo x > apps/web/src/app/page.tsx", "cp /tmp/a.ts packages/db/src/schema/todo.ts", `node -e "require('fs').writeFileSync('${join(root, "apps/web/src/app/page.tsx")}', '')"`, "python3 - <<'PY'\nfrom pathlib import Path\np = Path('packages/db/src/schema/todo.ts')\np.write_text(p.read_text().replace('a', 'b'))\nPY"]) {
     const r = sh(bad, "prokit-ui-builder");
     assert.equal(r.status, 2, bad);
     assert.match(r.stderr, /계층 파일\(.+\)을 셸 명령/);
   }
-  for (const ok of ["sed -n 1,5p apps/web/src/app/page.tsx", "cat apps/web/src/app/page.tsx > tasks/evidence/x.txt", "pnpm test 2>&1 | tee tasks/evidence/t.txt", "grep -rn foo apps/web/src 2>/dev/null", "pnpm --filter @x/db db:generate", "pnpm exec biome check --write apps/web/src/app/page.tsx", "echo x > AGENTS.md", "apply_patch <<'EOF'\n*** Update File: apps/web/src/app/page.tsx\nnode writeFileSync(\nEOF"]) assert.equal(sh(ok).status, 0, ok);
+  for (const ok of ["sed -n 1,5p apps/web/src/app/page.tsx", "cat apps/web/src/app/page.tsx > tasks/evidence/x.txt", "pnpm test 2>&1 | tee tasks/evidence/t.txt", "grep -rn foo apps/web/src 2>/dev/null", "pnpm --filter @x/db db:generate", "pnpm exec biome check --write apps/web/src/app/page.tsx", "echo x > AGENTS.md", "apply_patch <<'EOF'\n*** Update File: apps/web/src/app/page.tsx\nnode writeFileSync(\nEOF",
+    // 2026-11-03 실측 오탐: 쓰기 대상은 계층 밖이고 계층 경로는 글이나 읽기·불러오기 인자로만 나온다
+    "python3 - <<'PY'\nopen('docs/plans/x.md', 'w').write('apps/web/src/app/page.tsx 를 고친다')\nPY",
+    "cat >> /tmp/notes.md <<'EOF'\npython open('apps/web/src/app/page.tsx','w') 오탐\nEOF",
+    `node -e 'const pg = require("./packages/db/node_modules/pg"); process.stdout.write("1")' | tee tasks/evidence/v.txt`,
+    `git diff HEAD -- packages/db/src/schema/todo.ts > tasks/evidence/d.txt; node -e "process.stdout.write(require('fs').readFileSync('apps/web/src/app/page.tsx', 'utf8'))" > tasks/evidence/e.txt`,
+    "node <<'JS'\nconst fs = require('fs');\nfs.writeFileSync('tasks/todo.md', fs.readFileSync('tasks/todo.md', 'utf8') + '- [ ] packages/db/src/schema/todo.ts 정리')\nJS",
+  ]) assert.equal(sh(ok).status, 0, ok);
 });
 
 test("부른 스킬 기록: Codex는 Bash 명령 속 SKILL.md 경로를, Antigravity는 read_file·view_file 경로를 남긴다", () => {
@@ -1017,6 +1024,12 @@ test("부른 스킬 기록: 모든 행의 사용: 목록, 행 문구의 prokit-*
   assert.deepEqual(usedSkills("사용: prokit-ui(포커스(키보드)), prokit-web."), ["prokit-ui", "prokit-web"]);
   hook({ tool_name: "Read", tool_input: { file_path: join(root, doc) } });
   assert.deepEqual(mine(), []);
+  // 경로 바로 뒤의 콜론은 문장 부호다(2026-11-03 실측)
+  set(`사용: prokit-ui, prokit-web(${doc}: redirect를 씀), vercel-react-best-practices. 변경: a.tsx`);
+  assert.deepEqual(mine(), []);
+  // 기록에 없는 이름이면 기록에 있는 비슷한 이름을 보여 준다
+  set(`사용: agent-skills:incremental, prokit-ui, prokit-web(${doc}). 변경: a.tsx`);
+  assert.match(mine()[0] ?? "", /증거의 agent-skills:incremental를 .* 기록에 있는 비슷한 이름: incremental-implementation\./);
   // 문서 폴더를 적으면 그 아래를 읽은 기록으로 충분하다. Codex는 셸 명령 속 문서 경로가 기록이다
   set("사용: prokit-ui, prokit-web(apps/web/node_modules/next/dist/docs/01-app/). 변경: a.tsx");
   assert.deepEqual(mine(), []);
@@ -1033,7 +1046,7 @@ test("부른 스킬 기록: 서브에이전트가 읽은 것은 Main 기록으�
   const { root, write } = makeRepo();
   for (const s of ["prokit-ui", "prokit-web"]) write(`.agents/skills/${s}/SKILL.md`);
   write(".agents/skills/impeccable/SKILL.md");
-  write(".agents/skills/impeccable/reference/craft-floor.md");
+  write(".agents/skills/impeccable/reference/craft-floor.md", "# 바닥\n1\n2\n3\n");
   const config = loadConfig(root);
   writeTable(root, config, "B", { write: true, title: "화면" });
   const impl = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows.findIndex((r) => /^구현 \(구현 단계, prokit-ui, prokit-web,/.test(r.text));
@@ -1055,6 +1068,9 @@ test("부른 스킬 기록: 서브에이전트가 읽은 것은 Main 기록으�
   // 괄호에 그 스킬 폴더의 참조 파일을 적으면 그 파일을 읽은 기록이 있어야 한다. 폴더에 없는 경로(만든 파일 등)는 보지 않는다
   hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/impeccable/SKILL.md") } });
   set("사용: prokit-ui, prokit-web, impeccable(reference/craft-floor.md, docs/briefs/x.md). Next 문서: N/A: 없음");
+  assert.match(mine()[0] ?? "", /증거의 impeccable\(reference\/craft-floor\.md\)를/);
+  // 앞부분만 읽은 참조 파일은 세지 않는다(2026-11-03 실측)
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/impeccable/reference/craft-floor.md"), limit: 2 } });
   assert.match(mine()[0] ?? "", /증거의 impeccable\(reference\/craft-floor\.md\)를/);
   hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/impeccable/reference/craft-floor.md") } });
   assert.deepEqual(mine(), []);
@@ -1407,7 +1423,7 @@ test("Antigravity 대화 묶기: invoke_subagent로 부른 이름을 다음에 �
   assert.equal(skills(), before + 1, "요청이 있는 Main 읽기는 남긴다");
 });
 
-test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 바뀌면 받지 않고, 맡은 스킬은 그 행에서 위임한 에이전트가 읽은 기록만 세며, 일한 기록은 다른 에이전트에 맡긴 앞 행을 채운 뒤여야 한다", () => {
+test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 바뀌면 받지 않고, 맡은 스킬은 그 행에서 위임한 에이전트가 읽은 기록만 세며, 같은 에이전트에 맡긴 앞 행이 없으면 위임이 끝난 뒤 앞 행을 채워도 그 일을 센다", () => {
   const { root, write } = makeRepo();
   for (const s of ["prokit-ui", "prokit-web", "vercel-react-best-practices", "agent-browser"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n---\n`);
   write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["vercel-react-best-practices", "agent-browser"] }], performers: { agents: ["prokit-ui-builder", "prokit-runtime-checker", "prokit-implementer"], skills: { "vercel-react-best-practices": ["prokit-ui-builder", "prokit-reviewer"], "agent-browser": ["prokit-runtime-checker"] } } }));
@@ -1443,13 +1459,11 @@ test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 �
   assert.match(mine(impl)[0] ?? "", /vercel-react-best-practices를 이 라운드에서.*이 행에서 위임하지 않은 에이전트가 읽은 기록은 세지 않는다/);
   read("vercel-react-best-practices", "prokit-ui-builder");
   assert.deepEqual(mine(impl), []);
-  // 다른 에이전트에 맡기지 않은 앞 행을 처음 채운 뒤에 일한 기록이 있어야 한다
+  // 같은 에이전트에 맡긴 앞 행이 없으면, 위임이 끝난 뒤 Main 몫의 앞 행을 채워도 그 에이전트의 일은 이 행의 일이다(2026-11-03 실측)
   const idle = (n) => mine(n).filter((p) => /일한 기록이 없다/.test(p));
   read("agent-browser", "prokit-runtime-checker");
   set(types, "pnpm check-types exit 0");
   set(runtime, "위임: prokit-runtime-checker(사용: agent-browser) → 오류 0건");
-  assert.match(idle(runtime)[0] ?? "", /prokit-runtime-checker가 이 행을 하면서 일한 기록이 없다\(앞 행을 채운 뒤/);
-  read("agent-browser", "prokit-runtime-checker");
   assert.deepEqual(idle(runtime), []);
   // 같은 에이전트에 한 번 맡겨 이어진 두 행을 채우면 그 일을 함께 센다
   set(scroll, "위임: prokit-runtime-checker(사용: agent-browser) → 측정 결과");
@@ -1458,6 +1472,49 @@ test("행 단위 위임 증거: 구현 행의 N/A·blocked는 계층 코드가 �
   set(types, "pnpm check-types exit 0, lint exit 0");
   set(scroll, "위임: prokit-runtime-checker(사용: agent-browser) → 측정 결과(단위 고침)");
   assert.deepEqual(idle(scroll), []);
+});
+
+test("위임 행의 시각 기준: 같은 에이전트에 맡긴 앞 행 뒤의 다른 행을 채우기 전 일은 세지 않고, 행 문구 스킬은 위임한 에이전트가 이 행 일을 시작하기 전 마지막 앞 행 뒤에 읽으면 된다", () => {
+  const setup = () => {
+    const { root, write } = makeRepo();
+    for (const s of ["prokit-ui", "prokit-web", "vercel-react-best-practices", "agent-browser"]) write(`.agents/skills/${s}/SKILL.md`, `---\nname: ${s}\n---\n`);
+    write("skills.manifest.json", JSON.stringify({ skills: [{ skills: ["vercel-react-best-practices", "agent-browser"] }], performers: { agents: ["prokit-ui-builder", "prokit-runtime-checker", "prokit-implementer"], skills: { "vercel-react-best-practices": ["prokit-ui-builder"], "agent-browser": ["prokit-runtime-checker"] } } }));
+    const config = loadConfig(root);
+    writeTable(root, config, "B", { write: true, title: "화면" });
+    const rows = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
+    const at = (re) => rows.findIndex((r) => re.test(r.text)) + 1;
+    mkdirSync(join(root, "tasks/evidence"), { recursive: true });
+    const set = (n, v) => {
+      writeFileSync(join(root, "tasks/evidence/e.txt"), `${v}\n`);
+      assert.equal(run(root, "evidence", String(n), "--file", "tasks/evidence/e.txt").status, 0);
+    };
+    const mine = (n) => audit(root, config).problems.filter((p) => p.startsWith(`#${n} `)).map((p) => p.replace(/^#\d+ .*?: /, ""));
+    const hook = (cmd, input) => spawnSync(process.execPath, [CLI, cmd], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+    const read = (s, agent) => hook("skill-log", { tool_name: "Read", ...(agent ? { agent_id: `id-${agent}`, agent_type: agent } : {}), tool_input: { file_path: join(root, `.agents/skills/${s}/SKILL.md`) } });
+    return { root, write, hook, read, set, mine, impl: at(/^구현 \(구현 단계,/), runtime: at(/^\[verify\] next-dev-loop 런타임 확인/), scroll: at(/^\[verify\] 휴대폰 스크롤 측정/), types: at(/^\[verify\] 타입·린트·빌드/) };
+  };
+  // Main이 행 문구 스킬을 읽고 맡긴 뒤, 위임이 끝나고 앞 행(#1)을 채워도 구현 행은 받는다
+  const a = setup();
+  assert.ok(a.impl > 1);
+  a.write("apps/web/src/app/page.tsx", "export default 1\n");
+  a.read("prokit-ui");
+  a.read("prokit-web");
+  a.read("vercel-react-best-practices", "prokit-ui-builder");
+  a.hook("edit-guard", { tool_name: "Edit", agent_id: "id-prokit-ui-builder", agent_type: "prokit-ui-builder", tool_input: { file_path: join(a.root, "apps/web/src/app/page.tsx") } });
+  a.set(1, "계획");
+  a.set(a.impl, "사용: prokit-ui, prokit-web; 위임: prokit-ui-builder(사용: vercel-react-best-practices). Next 문서: N/A: 없음");
+  assert.deepEqual(a.mine(a.impl), []);
+  // 같은 에이전트에 맡긴 앞 행(#types) 뒤의 다른 행(#runtime)을 채우기 전의 일은 뒤 행(#scroll)의 일로 세지 않는다
+  const b = setup();
+  assert.ok(b.types < b.runtime && b.runtime < b.scroll);
+  b.read("agent-browser", "prokit-runtime-checker");
+  b.set(b.types, "위임: prokit-runtime-checker(사용: agent-browser) → 측정");
+  b.set(b.runtime, "N/A: 테스트");
+  b.set(b.scroll, "위임: prokit-runtime-checker(사용: agent-browser) → 측정 결과");
+  const idle = () => b.mine(b.scroll).filter((p) => /일한 기록이 없다/.test(p));
+  assert.match(idle()[0] ?? "", new RegExp(`같은 에이전트에 맡긴 앞 행이 있고, 그 뒤의 #${b.runtime}을 채운 뒤에 한 일만`));
+  b.read("agent-browser", "prokit-runtime-checker");
+  assert.deepEqual(idle(), []);
 });
 
 test("행 문구 스킬의 기준은 표에서 앞에 있는 행이다. 뒤 행을 먼저 채워도 바뀌지 않고, 앞 행을 채운 뒤에도 일한 에이전트가 먼저 읽은 기록은 센다", () => {
@@ -1477,8 +1534,9 @@ test("행 문구 스킬의 기준은 표에서 앞에 있는 행이다. 뒤 행�
       assert.equal(run(root, "evidence", String(n), "--file", "tasks/evidence/e.txt").status, 0);
     };
     const stale = () => audit(root, config).problems.filter((p) => p.startsWith(`#${neon} `) && /이 행을 하면서 읽은 기록이 없다/.test(p));
-    const read = (s) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Read", agent_id: "x1", agent_type: "prokit-db-builder", tool_input: { file_path: join(root, `.agents/skills/${s}/SKILL.md`) } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
-    return { neon, mid, after, set, stale, read };
+    const read = (s, main) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify({ tool_name: "Read", ...(main ? {} : { agent_id: "x1", agent_type: "prokit-db-builder" }), tool_input: { file_path: join(root, `.agents/skills/${s}/SKILL.md`) } }), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+    const problems = () => audit(root, config).problems.filter((p) => p.startsWith(`#${neon} `));
+    return { neon, mid, after, set, stale, read, problems };
   };
   // Neon 행은 neon 템플릿에만 있다
   if (setup().neon <= 0) return;
@@ -1499,6 +1557,12 @@ test("행 문구 스킬의 기준은 표에서 앞에 있는 행이다. 뒤 행�
   assert.equal(b.stale().length, 1);
   b.read("prokit-db");
   assert.deepEqual(b.stale(), []);
+  // Neon 적용 행은 Main 몫이다(행 문구에 맡길 에이전트가 없고 위임하지 않았다). neon-postgres를 맡는 에이전트가 있어도 Main이 읽은 기록을 센다(2026-11-03 실측)
+  const c = setup();
+  c.set(1, "계획");
+  c.read("neon-postgres", true);
+  c.set(c.neon, "사용: neon-postgres. 브랜치 dev에 적용");
+  assert.deepEqual(c.problems(), []);
 });
 
 test("행 일 이름의 공식 스킬과 리뷰 focus의 공식 스킬은 맡는 쪽이 읽어야 하고, 맡았지만 읽지 않은 스킬과 Main이 읽은 맡긴 스킬은 경고만 한다", () => {
@@ -1588,6 +1652,8 @@ test("db focus 리뷰는 설치된 Neon 스킬(상위 스킬 포함)을 리뷰�
   assert.ok(row);
   assert.match(out.stdout, new RegExp(`리뷰 지시에 넣을 공식 스킬[^\\n]*\\n(?: {2}#.*\\n)* {2}#${row} prokit-reviewer\\(db\\): \\.agents/skills/neon/SKILL\\.md, \\.agents/skills/neon-postgres/SKILL\\.md`));
   assert.match(out.stdout, /증거 꼴[^\n]*\n {2}전문 에이전트에 맡긴 행: 위임: <에이전트>\(사용: /);
+  // 라운드 중간에 붙은 리뷰 행도 보이게 status가 같은 안내를 낸다
+  assert.match(run(root, "status").stdout, new RegExp(`리뷰 지시에 넣을 공식 스킬[^\\n]*\\n(?: {2}#.*\\n)* {2}#${row} prokit-reviewer\\(db\\)`));
   mkdirSync(join(root, "tasks/evidence"), { recursive: true });
   writeFileSync(join(root, "tasks/evidence/e.txt"), "prokit-reviewer(db): approve, max=none\n");
   const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: tmpdir(), input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });

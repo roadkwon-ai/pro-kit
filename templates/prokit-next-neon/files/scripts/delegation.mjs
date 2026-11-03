@@ -1090,8 +1090,15 @@ export function main(argv = process.argv.slice(2), root = process.cwd()) {
 		}
 		// 기준 파일 자체는 `capture > 파일`이 만든 것이라 변경에서 뺀다.
 		const self = relative(after.bindings.root, beforePath);
+		// 대조표 파일도 뺀다. Main이 위임 중에 다른 행의 증거를 채운다(2026-11-03 실측)
+		let table = "tasks/todo.md";
+		try {
+			table =
+				JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8"))
+					.todoPath ?? table;
+		} catch {}
 		const changed = changedEntries(before, after)
-			.filter(({ path }) => path !== self)
+			.filter(({ path }) => path !== self && path !== table)
 			.map(({ path, kind, after: entry }) => ({
 				path,
 				// 지운 추적 파일은 ls-files에 남아 missing 항목이 된다.

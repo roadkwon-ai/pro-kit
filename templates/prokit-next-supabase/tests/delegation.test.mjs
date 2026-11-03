@@ -444,6 +444,11 @@ test("diff CLI는 기준 snapshot 뒤 배정 밖 변경·커밋을 exit 1로, �
 		assert.equal(r.code, 0);
 		r = diff("before.json", "--scope", "src/", "--scope", "READ");
 		assert.deepEqual(r.result.outside, ["README.md"]);
+		// Main이 위임 중에 채우는 대조표 파일은 변경으로 세지 않는다
+		write("tasks/todo.md", "증거\n");
+		r = diff("before.json", "--scope", "src", "--scope", "README.md");
+		assert.equal(r.code, 0);
+		rmSync(join(root, "tasks/todo.md"));
 		// scope 없이 부르면 리뷰·QA처럼 어떤 변경도 허용하지 않는다.
 		r = diff("before.json");
 		assert.equal(r.code, 1);
