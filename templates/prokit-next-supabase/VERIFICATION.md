@@ -4,6 +4,10 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## `--adopt`에 Antigravity 훅 더하기 (2026-11-03)
+
+공통 `install.mjs`의 `ADOPT_ONLY`에 `.agents/hooks.json`을 더했고 공통 설치 테스트에 단언을 더했다. 실제 설치 확인과 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#--adopt에-antigravity-훅-더하기-2026-11-03)에 있다. 테스트 `install.test.mjs`와 공유 파일 검사 42/0.
+
 ## UI 스킬을 골라 바꾸기: hallmark, 기본 AI, 중간 전환 (2026-11-02)
 
 실측은 neon 프로젝트에서 했고, 고친 파일(공통 스크립트 `skills-setup.mjs`·`dev-cycle.mjs`, `install.mjs`, `skills.manifest.json`, `AGENTS.md`·`CLAUDE.md` 템플릿 블록, `prokit-ui`·`prokit-skills-manage`·`prokit-verify` 스킬 문서, 두뇌 카탈로그 `brains/README.md`, 공통 테스트)은 이 템플릿에도 같게 고쳤다. 결과와 한계는 [prokit-next-neon의 같은 절](../prokit-next-neon/VERIFICATION.md#ui-스킬을-골라-바꾸기-hallmark-기본-ai-중간-전환-2026-11-02)에 있다. 고친 뒤 이 템플릿 테스트도 416 통과·0 실패였다. 같은 확인을 Codex와 Antigravity에서 다시 돌린 결과와, 그때 고친 공통 스크립트 `dev-cycle.mjs`의 스킬 읽기 기록(출력을 버린 Codex 명령, Antigravity 부분 읽기)도 같은 절의 "Codex·Antigravity에서 다시 돌리기"에 있다. 그 뒤 Antigravity를 hallmark로 다시 돌리며 고친 공통 파일(`skills.manifest.json`의 UI 스킬 전역 사본, `prokit-ui`의 한글 제목 규칙과 `hallmark-map.md`, `prokit-reviewer` 정의, 공통 테스트)도 이 템플릿에 같게 고쳤다. 고친 뒤에도 이 템플릿 테스트는 416 통과·0 실패였다.

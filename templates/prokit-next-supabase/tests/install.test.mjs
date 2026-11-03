@@ -787,6 +787,9 @@ test("adopt: 더한 스크립트 명령과 SessionStart 훅이 가리키는 파�
   for (const [k, v] of Object.entries(pkg.scripts))
     for (const m of v.matchAll(/node (scripts\/[\w.-]+\.mjs)/g)) assert.ok(existsSync(join(root, m[1])), `${k}: ${m[1]}`);
   for (const m of readFileSync(join(root, ".claude/settings.json"), "utf8").matchAll(/scripts\/([\w.-]+\.mjs)/g)) assert.ok(existsSync(join(root, "scripts", m[1])), m[1]);
+  // Antigravity 훅(라운드 없는 편집 막기, 스킬 기록, 서브에이전트 묶기)도 하네스라 adopt에 복사한다
+  assert.ok(existsSync(join(root, ".agents/hooks.json")), ".agents/hooks.json");
+  for (const m of readFileSync(join(root, ".agents/hooks.json"), "utf8").matchAll(/scripts\/([\w.-]+\.mjs)/g)) assert.ok(existsSync(join(root, "scripts", m[1])), m[1]);
   assert.equal("release" in pkg.scripts, false, "release.mjs를 복사하지 않으므로 명령도 더하지 않는다");
   assert.ok(existsSync(join(root, ".agents/skills/prokit-skills-manage/SKILL.md")));
   assert.match(readFileSync(join(root, "CLAUDE.md"), "utf8"), /<!-- prokit-template:start -->/);

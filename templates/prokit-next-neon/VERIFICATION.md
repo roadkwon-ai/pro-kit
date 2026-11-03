@@ -4,6 +4,15 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## `--adopt`에 Antigravity 훅 더하기 (2026-11-03)
+
+문서 검토에서 `--adopt`가 `.agents/hooks.json`을 복사하지 않는 것을 찾았다(`ADOPT_ONLY`에 없었다). 그래서 하네스만 설치한 프로젝트는 Antigravity에서 라운드 없는 편집 막기, 스킬 기록, 서브에이전트 묶기 훅이 돌지 않았다. Claude Code(`.claude/settings.json`)와 Codex(`.codex/hooks.json`) 훅은 원래 설치됐다.
+
+- 고친 것: `ADOPT_ONLY`에 `.agents/hooks.json`을 더했다. adopt 설치 테스트에 이 파일과, 훅이 부르는 스크립트가 있는지 보는 단언을 더했다.
+- 실제 설치: scratchpad에 `create-next-app@latest`(Next 16.4.3)로 만든 앱에 `--adopt --project-type operating --brain none --simplicity none --ui-skill none`을 돌려 exit 0, `.agents/hooks.json` 복사를 확인했다. `.agents/`에서 훅 명령(`node ../scripts/dev-cycle.mjs edit-guard`)에 Antigravity 형식 입력(`write_file`, `app/page.tsx`)을 넣으니 열린 라운드가 없다며 `deny`를 냈다.
+- 한계: Antigravity 세션을 실제로 열어 돌리지는 않았다. 이미 `--adopt`로 설치한 프로젝트는 `install.sh --skip-skills`로 다시 실행하면 이 파일이 더해진다.
+- 테스트: neon, supabase `install.test.mjs`와 공유 파일 검사 42/0.
+
 ## UI 스킬을 골라 바꾸기: hallmark, 기본 AI, 중간 전환 (2026-11-02)
 
 UI 스킬이 impeccable 하나에 기대지 않게 바꿨다. `skills.manifest.json`의 `uiSkills`에 hallmark([Nutlope/hallmark](https://github.com/Nutlope/hallmark))와 `none`(기본 AI)을 더했다. `--ui-skill`은 여럿을 받고 첫 값을 주 UI 스킬로 본다. `none`은 Anthropic `frontend-design` 스킬을 설치하고, `prokit-ui`의 `references/none-map.md`가 이 스킬과 게슈탈트 지침(`references/gestalt.md`)으로 단계마다 할 일을 정한다. 스킬마다 할 일은 `references/<이름>-map.md` 한 파일에 두고, 카탈로그의 모든 두뇌와 UI 스킬에 이 파일이 있는지 테스트가 본다.

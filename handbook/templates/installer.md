@@ -85,6 +85,7 @@ my-next-app/
 ├── .agents/skills/               prokit-dev-cycle, prokit-verify, prokit-web,
 │                                 prokit-ui, prokit-skills-update, prokit-skills-manage,
 │                                 prokit-skills-assign
+├── .agents/hooks.json            Antigravity 훅(편집 막기, 스킬 기록)
 ├── .claude/agents/               에이전트 원본 (.codex/agents, .agents/agents는 sync-agents가 생성)
 ├── scripts/                      dev-cycle, delegation, resource-guard,
 │                                 skills-setup, sync-agents, load-keys (.mjs)
