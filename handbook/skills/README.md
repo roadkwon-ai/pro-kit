@@ -6,7 +6,8 @@
 
 | 쪽 | 내용 |
 |---|---|
-| [prokit 스킬](prokit-skills.md) | 먼저 읽어요. 분야마다 일하는 법을 알려 주는 전용 스킬과 일을 맡는 에이전트가 무엇이고, 어떤 말을 하면 쓰이는지 |
+| [스킬 구조 한눈에](skill-map.md) | 먼저 읽어요. 스킬과 에이전트가 어떻게 이어지는지 전체 구조, 라운드 하나의 흐름, 구성을 고르고 바꾸는 흐름을 도식 세 장으로 봐요 |
+| [prokit 스킬](prokit-skills.md) | 분야마다 일하는 법을 알려 주는 전용 스킬과 일을 맡는 에이전트가 무엇이고, 어떤 말을 하면 쓰이는지 |
 | [두뇌와 선택 스킬](brains.md) | 프로젝트를 만들 때 묻는 두뇌(여럿 가능), 과설계 방지 스킬, UI 스킬(impeccable, hallmark), mattpocock 추가 스킬, 응답 방식, 화면 디자인 보조의 설명과 진행 중에 바꾸는 법. 모르겠을 때의 기본값도 있어요 |
 | [두뇌와 과설계 방지 흐름](brain-flow.md) | 고른 두뇌와 과설계 방지 스킬이 대조표의 어느 단계에서 무엇을 하는지, 두뇌가 여럿일 때 단계를 나누는 법, 두뇌마다 단계별 스킬, 늘 지키는 간결성 사다리와 리뷰 지적 처리를 도식으로 봐요 |
 | [선택 스킬 묶음](optional-bundles.md) | 필요할 때만 더하는 <!-- v:optional.names -->ops, motion, mobile, i-have-adhd, taste, landing, tastemaker, web-design-engineer, awwwards, animation, visual-critique, ui-design<!-- /v --> 묶음을 언제, 어떻게 더하는지 |

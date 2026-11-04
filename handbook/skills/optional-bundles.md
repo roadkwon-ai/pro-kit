@@ -31,10 +31,10 @@ config:
 flowchart LR
   Q(["무엇을<br/>더하고 싶나요"])
   Q --> M["화면 전환 애니메이션<br/>motion<br/>prokit-ui가 읽어요"]
-  Q --> MB["웹 앱과 따로<br/>모바일 앱<br/>mobile<br/>prokit-dev-cycle이 읽어요"]
+  Q --> MB["웹 앱과 따로<br/>모바일 앱<br/>mobile<br/>prokit-dev-cycle이<br/>읽어요"]
   Q --> AD["짧은 답<br/>i-have-adhd<br/>켤 때만 대화 답에"]
-  Q --> UI["화면 완성도<br/>화면 디자인 보조<br/>prokit-ui가<br/>주 UI 스킬 단계에 더해요"]
-  UI --> DIR["방향: 한 화면에 하나<br/>landing · tastemaker<br/>taste · web-design-engineer"]
+  Q --> UI["화면 완성도<br/>화면 디자인 보조<br/>prokit-ui가 주 UI 스킬<br/>단계에 더해요"]
+  UI --> DIR["방향: 한 화면에 하나<br/>landing<br/>tastemaker<br/>taste<br/>web-design-engineer"]
   UI --> WITH["함께 써요<br/>원칙 awwwards<br/>모션 animation<br/>검수 visual-critique<br/>ui-design"]
 ```
 

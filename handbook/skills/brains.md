@@ -87,7 +87,7 @@ flowchart TB
 
 - **늘 설치**: [prokit 스킬](prokit-skills.md), [공식 스킬과 연결](official-skills.md). mattpocock 필수 스킬은 `domain-modeling`, `grilling`, `grill-with-docs`예요.
 - **진행 방법**: 두뇌와 과설계 방지 스킬이 단계마다 하는 일은 [두뇌와 과설계 방지 흐름](brain-flow.md), 추가 스킬은 아래 [mattpocock 추가 스킬](#mattpocock-추가-스킬-14개)에 있어요.
-- **화면**: UI 스킬과 화면 디자인 보조가 단계마다 하는 일은 [UI 흐름](../design/ui-flow.md)에 있어요.
+- **화면**: UI 스킬과 화면 디자인 보조가 단계마다 하는 일은 [UI/UX 흐름](../design/ui-flow.md)에 있어요.
 - **필요할 때 더함**: [선택 스킬 묶음](optional-bundles.md). 바꾸기와 올리기는 아래 [바꾸기](#바꾸기)와 [설치와 업데이트 구조](install-and-update.md)에 있어요.
 
 ## 처음 들일 때 고르는 순서
