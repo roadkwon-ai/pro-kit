@@ -11,12 +11,13 @@
 config:
   flowchart:
     wrappingWidth: 220
+    rankSpacing: 25
 ---
 flowchart TB
   subgraph BTS["Better-T-Stack이 생성"]
     direction TB
     B1["apps/web<br/>Next.js App Router"]
-    B2["packages/api · auth · db · ui"]
+    B2["packages/<br/>api · auth · db · ui"]
     B3["Turborepo · Biome · pnpm"]
   end
   subgraph TPL["템플릿이 설치"]
@@ -29,13 +30,13 @@ flowchart TB
   end
   B1 ~~~ B2 ~~~ B3
   T1 ~~~ T2 ~~~ T3 ~~~ T4 ~~~ T5
-  BTS --> APP["에이전트와 바로<br/>개발할 수 있는 프로젝트"]
-  TPL --> APP
+  BTS -->|그 위에 더해요| TPL
+  TPL --> APP["에이전트와 바로<br/>개발할 수 있는 프로젝트"]
 ```
 <!-- /b -->
 <!-- /edition -->
 
-표는 <!-- edition:pro -->위 그림의 오른쪽 상자(템플릿이 설치)를<!-- /edition --><!-- edition:ui Better-T-Stack이 만든 뼈대(`apps/web`, `packages/*`, Turborepo·Biome·pnpm) 위에 템플릿이 설치하는 것을 --> 풀어 쓴 거예요. 처음에는 스킬과 에이전트, dev-cycle만 읽어도 돼요.
+표는 <!-- edition:pro -->위 그림의 “템플릿이 설치” 묶음을<!-- /edition --><!-- edition:ui Better-T-Stack이 만든 뼈대(`apps/web`, `packages/*`, Turborepo·Biome·pnpm) 위에 템플릿이 설치하는 것을 --> 풀어 쓴 거예요. 처음에는 스킬과 에이전트, dev-cycle만 읽어도 돼요.
 
 ### 스킬과 에이전트
 

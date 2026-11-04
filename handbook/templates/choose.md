@@ -21,6 +21,7 @@ flowchart TB
     N1["로컬 개발<br/>compose Postgres<br/>localhost:5432"] -->|병합 전| N2["Neon 개발 브랜치<br/>작업마다 생성<br/>db:migrate"]
     N2 -->|병합 · 배포| N3["Neon 운영 브랜치"]
   end
+  SUPA ~~~ NEON
 ```
 
 | | prokit-next-neon | prokit-next-supabase |
@@ -44,16 +45,18 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 200
+    wrappingWidth: 240
+    rankSpacing: 25
 ---
-flowchart TD
-  Q{"어떤 서비스인가요?"} -->|"DB 없이 화면만"| N0["neon으로 만들어요<br/>묻지 않아요"]
-  Q -->|"DB가 있는 서비스"| D{"이미 Supabase를 쓰나요?"}
-  D -->|"예"| SU["supabase"]
-  D -->|"아니요"| C{"작업마다 DB 테스트<br/>복사본으로 확인하고 싶나요?"}
-  C -->|"예"| NE["neon"]
-  C -->|"모르겠어요"| ASK["에이전트가 비교표로<br/>차이를 설명하고 물어요"]
-  Q -->|"운영 중인 Next.js"| OP["Better-T-Stack + Postgres<br/>+ Drizzle이면<br/>실제 DB에 맞는 템플릿<br/>그 밖에는 --adopt"]
+flowchart TB
+  subgraph Q["어떤 서비스인가요?"]
+    N0["DB 없이 화면만<br/>→ neon, 묻지 않아요"]
+    SU["DB가 있고<br/>이미 Supabase를 써요<br/>→ supabase"]
+    NE["DB가 있고 작업마다 DB 테스트<br/>복사본으로 확인하고 싶어요<br/>→ neon"]
+    ASK["DB가 있고 잘 모르겠어요<br/>→ 에이전트가 비교표로<br/>차이를 설명하고 물어요"]
+    OP["운영 중인 Next.js<br/>→ Better-T-Stack + Postgres<br/>+ Drizzle이면<br/>실제 DB에 맞는 템플릿<br/>그 밖에는 --adopt"]
+    N0 ~~~ SU ~~~ NE ~~~ ASK ~~~ OP
+  end
 ```
 
 - **PR(변경 제안)마다 DB 브랜치(테스트용 복사본)를 만들어 확인하고 싶으면** → neon

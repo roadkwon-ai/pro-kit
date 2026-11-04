@@ -14,23 +14,24 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 220
+    wrappingWidth: 200
+    rankSpacing: 20
 ---
 flowchart TB
   U["브라우저"] --> PAGE
   subgraph WEB["apps/web · Next.js App Router"]
-    PAGE["페이지 · 컴포넌트<br/>RSC와 Client"]
+    PAGE["페이지 · 컴포넌트<br/>RSC와 Client<br/>packages/ui 컴포넌트 사용"]
     RPC["라우트 /api/rpc<br/>context: session, db"]
     AUTHR["라우트 /api/auth"]
   end
   PAGE -->|oRPC 클라이언트| RPC
-  PAGE -.-> UI["packages/ui<br/>shadcn 컴포넌트"]
   RPC --> API["packages/api<br/>oRPC 라우터<br/>protectedProcedure"]
   RPC -->|세션 조회| AUTH["packages/auth<br/>Better Auth"]
   AUTHR --> AUTH
-  API --> DB["packages/db<br/>Drizzle 스키마 · 마이그레이션"]
+  API --> DB["packages/db<br/>Drizzle 스키마<br/>마이그레이션"]
   AUTH --> DB
   DB --> PG[("PostgreSQL<br/>로컬 → 병합 전 → 운영")]
+  RPC ~~~ AUTHR ~~~ API ~~~ AUTH
 ```
 <!-- /edition -->
 

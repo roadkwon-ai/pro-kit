@@ -13,16 +13,17 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 220
+    wrappingWidth: 130
 ---
 flowchart TB
   ME["나"] <--> CO["코디네이터<br/>메인 세션<br/>배정 · 감독 · 통합"]
-  CO -->|"계층별로 파일과<br/>공식 스킬을 정해 맡김"| IM["전문 수행 에이전트<br/>prokit-ui-builder<br/>prokit-api-builder<br/>prokit-db-builder<br/>prokit-runtime-checker<br/>prokit-implementer<br/>공식 스킬을 읽고 따름"]
-  CO -->|"분석을 맡김"| AN["분석<br/>prokit-analyzer<br/>읽기 전용"]
-  IM -.->|"내장 리뷰가 없을 때만"| SR["전문 리뷰<br/>specialist-reviewer<br/>읽기 전용"]
-  IM --> FR["최종 리뷰<br/>prokit-reviewer<br/>읽기 전용"]
+  CO --> AN["분석<br/>읽기 전용"]
+  AN ~~~ IM
+  CO --> IM["전문 수행<br/>에이전트<br/>공식 스킬을<br/>읽고 따름"]
+  IM --> FR["최종 리뷰<br/>읽기 전용"]
+  IM -.->|"내장 리뷰가<br/>없을 때만"| SR["전문 리뷰<br/>읽기 전용"]
   SR --> FR
-  FR -->|"approve 또는 지적"| CO
+  FR --> CO
 ```
 <!-- /edition -->
 <!-- edition:ui
@@ -30,17 +31,23 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 220
+    wrappingWidth: 130
 ---
 flowchart TB
   ME["나"] <==> CO["코디네이터<br/>메인 세션<br/>배정 · 감독 · 통합"]
-  CO ==>|"파일과 공식 스킬을 정해 맡김"| IM["전문 수행 에이전트<br/>prokit-ui-builder<br/>prokit-runtime-checker<br/>prokit-implementer<br/>공식 스킬을 읽고 따름"]
-  IM -.->|"내장 리뷰가 없을 때만"| SR["전문 리뷰<br/>specialist-reviewer<br/>읽기 전용"]
-  IM ==> FR["최종 리뷰<br/>prokit-reviewer<br/>읽기 전용"]
+  CO ==> IM["전문 수행<br/>에이전트<br/>공식 스킬을<br/>읽고 따름"]
+  IM ==> FR["최종 리뷰<br/>읽기 전용"]
+  IM -.->|"내장 리뷰가<br/>없을 때만"| SR["전문 리뷰<br/>읽기 전용"]
   SR ==> FR
-  FR ==>|"approve 또는 지적"| CO
+  FR ==> CO
 ```
 -->
+
+도식의 화살표는 이렇게 읽어요.
+
+- 코디네이터가 수행 에이전트에게 계층별로 파일과 공식 스킬을 정해 맡겨요.
+- 코디네이터가 분석 에이전트에게 분석을 맡겨요. <!-- edition:pro -->
+- 최종 리뷰는 `approve` 또는 지적을 코디네이터에게 돌려줘요.
 
 | 역할 | 파일을 고치나요 | 내가 알아 둘 점 |
 |---|---|---|
@@ -159,6 +166,7 @@ Codex에서는 분석과 리뷰 에이전트를 메인 대화 없이(`spawn_agen
 
 ## 관련 문서
 
+- [스킬 구조 한눈에](../skills/skill-map.md)
 - [하네스 엔지니어링](harness.md)
 - [위임과 자원 관리](delegation-and-resources.md)
 - [dev-cycle 라운드](dev-cycle.md)

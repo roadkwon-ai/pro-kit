@@ -52,13 +52,14 @@ UI 스킬셋은 프로킷에서 화면을 만드는 데 필요한 스킬만 모�
 ---
 config:
   flowchart:
-    wrappingWidth: 300
+    wrappingWidth: 240
 ---
 flowchart TB
-  I["처음 만들 때<br/>PRD로 추천받아 고르기"] --> R["UI 스킬 기록<br/>여럿이면 첫째가 주 UI 스킬"]
-  CH["진행 중에<br/>“hallmark로 바꿔줘”"] --> R
-  R --> MAP["주 UI 스킬의 단계로 진행<br/>impeccable · hallmark · 기본 AI"]
-  MAP --> SUB["다른 UI 스킬은<br/>그 화면에 지목할 때만 더하기"]
+  I["처음 만들 때<br/>PRD로 추천받아 고르기"] --> R["UI 스킬 기록<br/>여럿이면 첫째가<br/>주 UI 스킬"]
+  I ~~~ CH["진행 중에<br/>“hallmark로 바꿔줘”"]
+  CH --> R
+  R --> MAP["주 UI 스킬의 단계로 진행<br/>impeccable · hallmark<br/>기본 AI"]
+  MAP --> SUB["다른 UI 스킬은<br/>그 화면에 지목할 때만<br/>더하기"]
 ```
 
 고르는 기준은 [UI 스킬](../skills/brains.md#ui-스킬), 단계마다 하는 일은 [UI/UX 흐름](ui-flow.md#ui-스킬마다-단계에서-하는-일)에 있어요.
@@ -88,27 +89,29 @@ flowchart TB
 4. **검사하기**: `prokit-runtime-checker`가 페이지마다 데스크톱·모바일 스크린샷을 찍고 모든 링크와 버튼을 눌러 확인해요. 디자인 리뷰와 감사, 그 화면에 쓴 화면 디자인 보조의 리뷰까지 마치고, 실행한 검사를 증거로 남겨요. 스킬과 에이전트가 어떻게 이어지는지는 [UI/UX 흐름의 구조](ui-flow.md#구조)에 있어요.
 5. **내보내고 올리기**: `pnpm export:html`로 HTML을 내보내거나 GitHub Pages·Vercel에 올려요([화면만 프로젝트와 HTML 내보내기](screen-only.md)).
 
-스킬과 에이전트는 이렇게 이어져요. 메인 세션이 `prokit-ui`로 디자인 단계를 정하고, 화면 코드는 `prokit-ui-builder`, 실행 확인은 `prokit-runtime-checker`, 코드 검사는 `prokit-reviewer`(ui)가 맡아요. 점선 상자는 설치했을 때만 쓰는 선택이에요.
+스킬과 에이전트는 이렇게 이어져요. 메인 세션이 `prokit-ui`로 디자인 단계를 정하고, 화면 코드는 `prokit-ui-builder`, 실행 확인은 `prokit-runtime-checker`, 코드 검사는 `prokit-reviewer`(ui)가 맡아요. 점선 테두리는 설치했을 때만 쓰는 선택이에요.
 
 ```mermaid
 ---
 config:
   flowchart:
-    wrappingWidth: 300
+    wrappingWidth: 240
 ---
 flowchart TB
   REQ["평소 말로 요청"] --> DC["대조표 열기<br/>prokit-dev-cycle"]
   DC --> UI["화면 일 정하기<br/>prokit-ui"]
   UI --> DS
   subgraph DS["디자인 단계"]
-    SK["주 UI 스킬<br/>impeccable · hallmark · 기본 AI"]
+    SK["주 UI 스킬<br/>impeccable · hallmark<br/>기본 AI"]
     AD["화면 디자인 보조<br/>설치한 묶음만"]
+    SK ~~~ AD
   end
   DS --> AG
   subgraph AG["전문 에이전트"]
     B["화면 코드 쓰기"]
     RC["실행 확인<br/>스크린샷 · 링크·버튼"]
     RV["코드 검사"]
+    B ~~~ RC ~~~ RV
   end
   AG --> EV["증거 남기고 확인"]
   classDef opt stroke-dasharray: 5 5

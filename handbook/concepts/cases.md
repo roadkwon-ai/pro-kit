@@ -43,18 +43,17 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 240
+    wrappingWidth: 200
 ---
 flowchart TB
-  R(["바뀐 파일이 걸린 rules<br/>기본 브랜치와 갈라진 지점부터"])
-  R --> A["걸린 파일 없음<br/>A 경미"]
-  R --> H["하네스 규칙(H)만<br/>H 하네스"]
-  R --> L["계층 하나<br/>그 계층의 케이스(E · D · B)"]
-  R --> FF["계층 둘 이상<br/>또는 규칙 밖 코드(--adopt)<br/>F 새 기능"]
-  A ~~~ H ~~~ L ~~~ FF
-  L -.->|"작업 중 다른 계층을 건드리면<br/>audit이 알림"| UP["table 새 케이스<br/>--write --upgrade"]
-  D["요청으로 선언<br/>새 기능 F · 버그 C"] -.->|"애매하면 더 무거운 쪽"| FF
+  R(["바뀐 파일이 걸린 rules<br/>기본 브랜치와 갈라진<br/>지점부터"])
+  R --> B
+  subgraph B[" "]
+    A["걸린 파일 없음<br/>A 경미"] ~~~ H["하네스 규칙(H)만<br/>H 하네스"] ~~~ L["계층 하나<br/>그 계층의 케이스<br/>(E · D · B)"] ~~~ FF["계층 둘 이상<br/>또는 규칙 밖 코드(--adopt)<br/>F 새 기능"]
+  end
 ```
+
+도식은 바뀐 파일로 가르는 판정만 보여 줘요. 요청으로 선언하는 일과 상향은 아래에서 설명해요.
 
 - **판정**: `pnpm dev-cycle case`는 지금 바뀐 파일을 `.dev-cycle.json`의 경로 규칙(`rules`)에 맞춰 판정해요. 아직 파일을 바꾸기 전이면 판정이 A로 나오므로 요청을 보고 케이스를 골라 `table`에 적어요.
 - **하네스만 설치한 기존 프로젝트(`--adopt`)의 처음 경로 규칙**: 설치기가 흔한 Next.js 배치로 추정한 규칙을 `.dev-cycle.json`에 적어요. `prisma/`·`drizzle/`·`migrations/`는 E, `app/api/`·`pages/api/`·`server/`·`trpc/`는 D, `app/`·`pages/`·`components/`·`styles/`는 B로 보고, 규칙 밖의 `.ts`·`.tsx`·`.js`·`.jsx`·`.mjs`·`.cjs` 파일은 무거운 F로 봐요. 이 규칙은 추정이라서 정밀 분석 뒤 첫 H Task에서 그 프로젝트의 구조에 맞게 고쳐요([기존 프로젝트에 도입하기](../start/adopt.md), [정밀 분석과 진행 계획](project-plan.md)). 앱의 루트 `package.json` 같은 작업공간 설정은 H 규칙에서 빠져요. <!-- edition:pro -->

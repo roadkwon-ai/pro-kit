@@ -192,6 +192,7 @@ pie showData title 측정 때 neon 공식 도메인 스킬 26개가 연결된 �
 
 ## 관련 문서
 
+- [스킬 구조 한눈에](skill-map.md)
 - [prokit 스킬](prokit-skills.md)
 - [선택 스킬 묶음](optional-bundles.md)
 - [설치와 업데이트 구조](install-and-update.md)

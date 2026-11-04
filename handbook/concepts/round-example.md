@@ -11,20 +11,30 @@
 ## 한눈에 보는 순서
 
 ```mermaid
+---
+config:
+  sequence:
+    width: 70
+    actorMargin: 0
+    messageMargin: 30
+    boxMargin: 4
+    diagramMarginX: 10
+    diagramMarginY: 10
+---
 sequenceDiagram
   actor U as 나
-  participant A as 에이전트(메인 세션)
-  participant R as 리뷰 에이전트
-  U->>A: 할 일에 마감일 붙이고 지난 건 표시해줘
-  A->>A: status, 케이스 판정(F), 대조표 열기
-  A->>U: 대조표와 스펙 요약 보여 주기
-  A->>A: 스펙, 계획, DB, API, 화면 구현과 검사
-  A->>R: 계획 리뷰, 최종 코드 리뷰
-  R-->>A: approve 와 지적 목록
-  A->>U: 주소와 써 볼 순서를 주고 확인 요청
+  participant A as 에이전트<br/>메인 세션
+  participant R as 리뷰<br/>에이전트
+  U->>A: 할 일에<br/>마감일<br/>붙이고<br/>지난 건<br/>표시해줘
+  A->>A: status,<br/>케이스<br/>판정(F),<br/>대조표<br/>열기
+  A->>U: 대조표와<br/>스펙 요약<br/>보여 주기
+  A->>A: 스펙, 계획,<br/>DB, API,<br/>화면 구현과<br/>검사
+  A->>R: 계획 리뷰,<br/>최종<br/>코드 리뷰
+  R-->>A: approve 와<br/>지적 목록
+  A->>U: 주소와<br/>써 볼<br/>순서를<br/>주고<br/>확인 요청
   U->>A: 확인했어
-  A->>A: audit, close, 커밋
-  A->>U: 릴리스할지 질문
+  A->>A: audit,<br/>close,<br/>커밋
+  A->>U: 릴리스<br/>할지<br/>질문
   U->>A: 선택
 ```
 

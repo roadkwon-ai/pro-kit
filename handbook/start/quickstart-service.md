@@ -73,14 +73,18 @@ https://github.com/roadkwon-ai/pro-kit 을 이 폴더에 받고, 그 안의 AGEN
 ---
 config:
   flowchart:
-    wrappingWidth: 260
+    wrappingWidth: 240
+    rankSpacing: 25
 ---
 flowchart TB
-  A["1. 프로젝트 생성<br/>pnpm create<br/>better-t-stack@latest"] --> B["2. 템플릿 설치<br/>bash templates/템플릿/install.sh<br/>프로젝트<br/>--brain<br/>--simplicity<br/>--ui-skill"]
-  B --> B1["파일 복사<br/>스킬 · 에이전트 · dev-cycle<br/>문서 골격"]
-  B --> B2["scripts/skills-setup.mjs<br/>내부 스킬 · 플러그인 설치<br/>OMX 설정<br/>omx가 있을 때"]
-  B1 --> C["3. 로컬 DB 시작"]
-  B2 --> C
+  A["1. 프로젝트 생성<br/>pnpm create<br/>better-t-stack@latest"] --> B["2. 템플릿 설치<br/>bash templates/템플릿/install.sh<br/>프로젝트<br/>--brain · --simplicity<br/>--ui-skill"]
+  B --> SUB
+  subgraph SUB[" "]
+    B1["파일 복사<br/>스킬 · 에이전트 · dev-cycle<br/>문서 골격"]
+    B2["scripts/skills-setup.mjs<br/>내부 스킬 · 플러그인 설치<br/>OMX 설정<br/>omx가 있을 때"]
+    B1 ~~~ B2
+  end
+  SUB --> C["3. 로컬 DB 시작"]
   C --> D["4. 첫 마이그레이션<br/>db:generate → db:migrate"]
   D --> E["5. 포맷 정리 · 커밋<br/>pnpm check → 기본 브랜치"]
   E --> F["6. 새 에이전트 세션<br/>신뢰 질문 동의<br/>impeccable이면 hooks on"]

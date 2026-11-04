@@ -21,22 +21,24 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 220
+    wrappingWidth: 170
 ---
 flowchart TB
   S["status<br/>진행 중 라운드 확인"] --> C["case<br/>케이스 판정"]
   C --> T["table 케이스 --write<br/>대조표 열기"]
   T --> R["행 실행<br/>증거 칸 채우기"]
-  R --> EV["evidence 행 번호 --file<br/>필요하면 한 행만 갱신"]
+  R --> EV["evidence 행 번호<br/>--file<br/>필요하면 한 행만 갱신"]
   EV --> CF["[confirm] 사용자 확인<br/>N/A 불가"]
-  CF --> A{"audit"}
-  A -->|빈 칸 · 실패| R
-  A -->|다른 계층을 건드림| U["table 새 케이스 --upgrade"]
-  U --> R
-  A -->|통과| Q{"마무리 선택"}
-  Q -->|기본| RD["close → 커밋 · push<br/>→ 릴리스 · production 배포"]
-  Q -->|"화면만 · 배포 PASS<br/>준비 안 됨"| CL["close → 커밋 · push"]
+  CF --> A(["audit"])
+  A -->|"빈 칸 · 실패<br/>다른 계층을<br/>건드림<br/>→ table<br/>새 케이스<br/>--upgrade"| R
+  A -->|통과| Q(["마무리 선택"])
+  Q --> M
+  subgraph M[" "]
+    RD["기본<br/>close → 커밋 · push<br/>→ 릴리스<br/>· production 배포"] ~~~ CL["화면만 · 배포 PASS<br/>준비 안 됨<br/>close → 커밋 · push"]
+  end
 ```
+
+audit이 빈 칸이나 실패를 알리면 행 실행으로 돌아가요. 다른 계층을 건드렸다고 알리면 `table <새 케이스> --upgrade`로 행을 더한 뒤 행 실행으로 돌아가요.
 
 | 단계 | 하는 일 |
 |---|---|

@@ -77,7 +77,7 @@ flowchart TB
     A ~~~ P ~~~ O
   end
   K --> DC["prokit-dev-cycle 대조표<br/>행마다 맡은 스킬을 읽어요"]
-  DC -.->|"바꿀 때"| CH["prokit-skills-manage<br/>H 라운드"]
+  DC -.->|"바꿀 때"| CH["prokit-skills-manage"]
   CH ~~~ UP
   DC -.->|"올릴 때"| UP["prokit-skills-update"]
 ```
@@ -355,6 +355,7 @@ pnpm skills:check                                      # 고르지 않은 두뇌
 
 ## 관련 문서
 
+- [스킬 구조 한눈에](skill-map.md)
 - [두뇌와 과설계 방지 흐름](brain-flow.md)
 - [공식 스킬과 연결](official-skills.md)
 - [선택 스킬 묶음](optional-bundles.md)

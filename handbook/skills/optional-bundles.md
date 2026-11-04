@@ -51,7 +51,7 @@ flowchart TB
 > [!TIP]
 > 묶음을 더하려면 프로젝트 세션에서 말로 요청하면 돼요.
 
-`prokit-skills-manage`가 열린 작업을 닫은 뒤 한 번의 작업(케이스 H 라운드)으로 설치하고 커밋해요(진행 방식은 [두뇌와 선택 스킬](brains.md#바꾸기)). 명령으로 직접 하려면 아래 "설치하기"의 `pnpm skills:setup --optional <묶음>`을 써요. 설치한 뒤에는 새 세션을 열어요.
+`prokit-skills-manage`가 설치하고 커밋해요. 열린 라운드가 있으면 그 라운드에서, 없으면 케이스 H 라운드를 하나 열어서 해요(진행 방식은 [두뇌와 선택 스킬](brains.md#바꾸기)). 명령으로 직접 하려면 아래 "설치하기"의 `pnpm skills:setup --optional <묶음>`을 써요. 설치한 뒤에는 새 세션을 열어요.
 
 ```mermaid
 ---
@@ -61,9 +61,9 @@ config:
 ---
 flowchart TB
   accTitle: 묶음을 더하고 빼는 흐름
-  accDescr: 말로 요청하면 prokit-skills-manage가 열린 작업을 닫고 H 라운드에서 pnpm skills:setup으로 더하거나 빼요. pnpm skills:check로 확인하고 라운드를 닫아 커밋한 뒤 새 세션을 열면 관련 prokit 스킬이 그 단계에서 읽어요.
+  accDescr: 말로 요청하면 prokit-skills-manage가 열린 라운드에서, 없으면 H 라운드를 열어 pnpm skills:setup으로 더하거나 빼요. pnpm skills:check로 확인하고 라운드를 닫아 커밋한 뒤 새 세션을 열면 관련 prokit 스킬이 그 단계에서 읽어요.
   N["묶음 없이 그 분야를 요청"] -.->|"에이전트가 설치를<br/>먼저 제안"| R
-  R["“landing 묶음 더해줘”<br/>“taste 지워줘”"] --> SM["prokit-skills-manage<br/>열린 작업을 닫고 H 라운드"]
+  R["“landing 묶음 더해줘”<br/>“taste 지워줘”"] --> SM["prokit-skills-manage<br/>열린 라운드에서,<br/>없으면 H 라운드"]
   SM --> SET["pnpm skills:setup<br/>--optional 묶음 · --drop 묶음"]
   SET --> CK["pnpm skills:check<br/>선택 스킬: 줄에 보이는지 확인"]
   CK --> CM["라운드를 닫고 커밋"]
@@ -151,6 +151,7 @@ pnpm skills:check                         # 기본 스킬만 검사하고, 선�
 
 ## 관련 문서
 
+- [스킬 구조 한눈에](skill-map.md)
 - [공식 스킬과 연결](official-skills.md)
 - [두뇌와 선택 스킬](brains.md)
 - [설치와 업데이트 구조](install-and-update.md)

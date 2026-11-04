@@ -26,7 +26,7 @@
 | `prokit-verify` | 영향 검사 선택, 담당자·재사용 조건 확인과 증거 기록 | 검증해줘, 테스트 돌려, 끝났어? | 실행하지 않은 검사는 통과로 적지 않고, 전문 증거 재사용과 새 최종 검수를 구분 |
 | `prokit-deploy` | Vercel 배포(develop, production)와 되돌리기 | develop에 올려줘, 운영에 배포해줘, 롤백해줘 | 요청하거나 라운드 끝에서 고를 때만 배포, DB 먼저 적용, 로컬 `.env`는 올리지 않고 배포 값은 Vercel 환경변수에만, 운영은 기본 브랜치에서만. 운영 중에 들인 프로젝트는 기존 배포를 이 방식에 맞췄다는 기록(ADR)을 남기기 전까지 라운드 끝에 배포하지 않음 | <!-- edition:pro -->
 | `prokit-skills-update` | 에이전트가 쓰는 이미 고른 외부 스킬을 최신으로 업데이트 | 스킬 업데이트해줘, 스킬 최신이야? | 작업을 시작할 때 하루 한 번 새 버전 확인, 업데이트는 물어보고 한 라운드로 커밋, 원격에서 없어진 스킬은 지우지 않고 알림 |
-| `prokit-skills-manage` | 두뇌, 과설계 방지 스킬, UI 스킬, mattpocock 추가 스킬, 선택 묶음을 진행 중에 바꾸기·더하기·빼기 | 두뇌를 openspec으로 바꿔줘, UI 스킬을 hallmark로 바꿔줘, tdd 스킬 빼줘, 선택 스킬 묶음 더해줘 | 열린 라운드를 닫은 뒤 H 라운드로 처리, 바뀐 구성을 보여 주고 확인받은 뒤 커밋, 필수 mattpocock 3개와 공식 스킬은 지우지 않음 ([두뇌와 선택 스킬](brains.md#바꾸기)) |
+| `prokit-skills-manage` | 두뇌, 과설계 방지 스킬, UI 스킬, mattpocock 추가 스킬, 선택 묶음을 진행 중에 바꾸기·더하기·빼기 | 두뇌를 openspec으로 바꿔줘, UI 스킬을 hallmark로 바꿔줘, tdd 스킬 빼줘, 선택 스킬 묶음 더해줘 | 열린 라운드가 있으면 그 라운드에서, 없으면 H 라운드로 처리, 바뀐 구성을 보여 주고 확인받은 뒤 커밋, 필수 mattpocock 3개와 공식 스킬은 지우지 않음 ([두뇌와 선택 스킬](brains.md#바꾸기)) |
 | `prokit-skills-assign` | 공식 스킬마다 그 스킬로 일할 전문 에이전트를 정하고, 스킬이 더해지거나 바뀌거나 빠지면 다시 배치 | 새 공식 스킬 추가해줘, 이 스킬은 어느 에이전트가 써?, 공식 스킬 배치 다시 해줘 | 스킬 본문을 읽고 맡을 에이전트를 판단해 보여 주고 확인받은 뒤 H 라운드로 매니페스트, 에이전트 정의, 연결 표, 대조표 행을 함께 고침. 업데이트 뒤 배치 점검은 `prokit-skills-update`가 넘김 ([공식 스킬과 연결](official-skills.md#누가-읽고-따르나)) |
 
 프로킷 스킬은 프로젝트 계약과 진행 관리를 맡아요. 일반 기술 지식과 전문 구현·설계·리뷰는 작업에 맞는 외부 스킬에 연결하고, 실제 결과를 확인해 재지시하거나 최종 수용해요. 스킬 선택과 증거 경계는 [위임과 자원 관리](../concepts/delegation-and-resources.md)에 있어요.
@@ -93,30 +93,84 @@
 > [!IMPORTANT]
 > 설치한 뒤 진입점은 `prokit-dev-cycle`이에요. 코드를 바꾸는 요청은 모두 여기서 시작해요. 케이스를 정하고 대조표를 열어요([dev-cycle 라운드](../concepts/dev-cycle.md)).
 
+`prokit-*` 스킬은 코드를 직접 고치지 않아요. 할 일과 읽을 공식 스킬을 정해 전문 에이전트에 맡기고, 결과를 검사와 리뷰로 확인해요. 두뇌와 화면 단계까지 한 장에 담은 그림은 [스킬 구조 한눈에](skill-map.md)에 있어요.
+
 <!-- edition:pro -->
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 200
+---
+flowchart TB
+  accTitle: 스킬끼리 이어지는 방식
+  accDescr: 코드를 바꾸는 요청은 prokit-dev-cycle이 받아 대조표를 열어요. 계층 스킬이 할 일과 공식 스킬을 정해 전문 에이전트에 맡기고, prokit-verify가 검사와 증거를 모은 뒤 prokit-reviewer가 최종 판정하고 audit으로 닫아요. 배포 요청은 라운드 없이 prokit-deploy가 맡아요.
   R["코드를 바꾸는 요청"] --> DC["prokit-dev-cycle<br/>케이스 판정 · 대조표"]
-  DC --> W["prokit-web"]
-  DC --> U["prokit-ui"]
-  DC --> A["prokit-api"]
-  DC --> DB["prokit-db"]
-  DC --> V["prokit-verify<br/>검사 · 증거"]
+  DC --> SK["계층 스킬<br/>prokit-web · prokit-ui<br/>prokit-api · prokit-db"]
+  SK -->|"할 일과 공식 스킬을<br/>정해 맡겨요"| AG["전문 에이전트<br/>화면 · 서버 · DB"]
+  AG --> V["prokit-verify<br/>검사 · 증거"]
+  V --> RV["prokit-reviewer<br/>최종 판정"]
+  RV --> AU["사용자 확인 · audit"]
+  AU ~~~ D
   D["배포 요청"] --> DP["prokit-deploy<br/>라운드 없이 메인 세션"]
 ```
 <!-- /edition -->
+<!-- edition:ui
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 200
+---
+flowchart TB
+  accTitle: 스킬끼리 이어지는 방식
+  accDescr: 코드를 바꾸는 요청은 prokit-dev-cycle이 받아 대조표를 열어요. prokit-ui가 할 일과 공식 스킬을 정해 prokit-ui-builder에 맡기고, prokit-verify가 검사와 증거를 모은 뒤 prokit-reviewer가 최종 판정하고 audit으로 닫아요.
+  R["코드를 바꾸는 요청"] ==> DC["prokit-dev-cycle<br/>케이스 판정 · 대조표"]
+  DC ==> SK["계층 스킬<br/>prokit-ui"]
+  SK ==>|"할 일과 공식 스킬을<br/>정해 맡겨요"| AG["전문 에이전트<br/>prokit-ui-builder"]
+  AG ==> V["prokit-verify<br/>검사 · 증거"]
+  V ==> RV["prokit-reviewer<br/>최종 판정"]
+  RV ==> AU["사용자 확인 · audit"]
+```
+-->
 
 - **큰 일은 진행 계획부터**: 기존 프로젝트 도입, 전환, 큰 기능 묶음은 `prokit-dev-cycle`이 진행 계획 라운드를 먼저 열어요. 기존 프로젝트는 읽기 전용 `prokit-analyzer`가 정밀 분석하고, 주 두뇌(고르지 않았으면 기본 AI)가 계획 문서와 Task 표(`tasks/plan.md`)를 써요. 리뷰와 사용자 확인으로 계획을 확정하면 Task마다 라운드를 하나씩 열어요([정밀 분석과 진행 계획](../concepts/project-plan.md)). <!-- edition:pro -->
 - **두뇌가 단계 방법을 정해요**: `prokit-dev-cycle`은 `.dev-cycle.json`에 기록한 두뇌와 과설계 방지 스킬로 요구 정리, 계획, 구현, 디버깅의 방법을 골라요. 두뇌가 여럿이면 단계마다 그 단계를 맡는 첫 두뇌를 써요. 대조표, 리뷰, audit은 어느 두뇌든 같아요([두뇌와 선택 스킬](brains.md)).
 - **계층 스킬**: 행을 실행할 때 <!-- edition:pro -->화면 동작은 `prokit-web`, <!-- /edition -->화면 모양과 사용 경험은 `prokit-ui`, <!-- edition:pro -->API와 인증은 `prokit-api`, DB는 `prokit-db`, <!-- /edition -->검사와 증거는 `prokit-verify`를 불러요.
-- **공식 스킬 연결**: 분야별 스킬(<!-- edition:pro -->web, <!-- /edition -->ui, <!-- edition:pro -->api, db, <!-- /edition -->verify)과 dev-cycle 대조표의 각 행은 그 단계에서 읽을 공식 스킬(Next.js, React, Better Auth, shadcn, 고른 UI 스킬(impeccable 또는 hallmark), <!-- edition:pro -->Neon 또는 Supabase, <!-- /edition -->Vercel)을 정해 둬요([공식 스킬과 연결](official-skills.md)).
-- **외부 스킬도 연결해요**: 기본 공식 스킬 외에 현재 접근 가능한 사용자 지정·프로젝트별 스킬도 선택할 수 있어요. 문서 작업에는 필요한 문서·글쓰기·한국어 검수 단계를 연결하고, 내장 리뷰와 겹치는 검토는 반복하지 않아요.
+- **맡는 에이전트**: 화면 파일은 `prokit-ui-builder`, <!-- edition:pro -->서버·API 파일은 `prokit-api-builder`, DB 스키마는 `prokit-db-builder`, <!-- /edition -->실행 확인은 `prokit-runtime-checker`, 하네스와 계층 밖 파일은 `prokit-implementer`가 맡아요. 최종 리뷰는 `prokit-reviewer`가 해요([위임 에이전트와 리뷰 에이전트](../concepts/agent-roles.md)).
+- **공식 스킬 연결**: 분야별 스킬(<!-- edition:pro -->web, <!-- /edition -->ui, <!-- edition:pro -->api, db, <!-- /edition -->verify)과 dev-cycle 대조표의 각 행은 그 단계에서 읽을 공식 스킬(Next.js, React, Better Auth, shadcn, 고른 UI 스킬(impeccable 또는 hallmark), <!-- edition:pro -->Neon 또는 Supabase, <!-- /edition -->Vercel)을 정해 둬요. 공식 스킬은 맡은 전문 에이전트가 읽어요([공식 스킬과 연결](official-skills.md)).
+- **다른 스킬도 붙일 수 있어요**: 공식 스킬 말고도 사용자가 지정했거나 프로젝트에 설치한 스킬을 단계에 붙일 수 있어요. 예를 들어 문서 작업이면 문서, 글쓰기, 한국어 검수 스킬을 붙여요. 출처와 범위를 확인한 뒤에만 쓰고, 내장 리뷰와 겹치는 검토는 다시 하지 않아요([위임과 자원 관리](../concepts/delegation-and-resources.md)).
 - **개발 자원을 함께 봐요**: `prokit-dev-cycle`은 관리하는 개발·빌드·설치·검증 작업에서 자원 상태를 확인해요. 명령은 [명령 모음](../reference/commands.md#위임과-자원)에 있어요.
 - **배포는 따로**: 배포 요청은 코드를 바꾸지 않으므로 라운드 없이 `prokit-deploy`가 메인 세션에서 맡아요. <!-- edition:pro -->
 
-완성팩 작업은 `prokit-pack-use`가 다운로드·무결성 확인·복원 계획 검사·실제 복원을 거쳐 개인화와 실전 개발로 연결해요. 화면과 모션은 완성 프리셋을 기준으로 비교해요. 원본 사이트 조사와 COPY 제작은 별도 비공개 저장소 `pro-kit-preset-skills`가 맡아요([담당 구분](../design/preset-publication.md#담당-구분)).
+### 스킬을 관리하는 스킬
 
-`prokit-skills-update`는 이미 고른 스킬을 최신으로 올리는 일만 맡고, 고른 구성을 바꾸는 일은 `prokit-skills-manage`, 공식 스킬을 맡을 에이전트를 정하는 일은 `prokit-skills-assign`이 맡아요. `prokit-skills-update`는 프로젝트 스킬 갱신과 네이티브 플러그인·훅 상태를 [설치와 업데이트 구조](install-and-update.md)대로 따로 확인해요.
+완성팩, 스킬 업데이트, 구성 바꾸기, 공식 스킬 배치는 아래 스킬이 맡아요. 모두 `prokit-dev-cycle`의 라운드 안에서 일하고 결과를 커밋해요.
+
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 200
+---
+flowchart TB
+  accTitle: 스킬을 관리하는 스킬의 흐름
+  accDescr: 스킬 업데이트 요청이나 하루 한 번 새 버전 알림은 prokit-skills-update가 받아요. 새 스킬이 생기거나 하는 일이 바뀌면 prokit-skills-assign이 맡을 에이전트를 정해요. 새 공식 스킬을 더하는 요청도 prokit-skills-assign이 받아요. 두뇌나 묶음을 바꾸는 요청은 prokit-skills-manage가 받아요. 완성팩 요청은 prokit-pack-use가 받아 복원한 뒤 개인화와 실전 개발로 이어 가요.
+  UQ["“스킬 업데이트해줘”<br/>하루 한 번 새 버전 알림"] --> UP["prokit-skills-update<br/>고른 스킬을 최신으로"]
+  UP ~~~ NQ
+  NQ["“새 공식 스킬<br/>추가해줘”"] --> AS["prokit-skills-assign<br/>맡을 에이전트와<br/>대조표 행 정하기"]
+  UP -.->|"새 스킬이<br/>생기면"| AS
+  AS ~~~ CQ
+  CQ["“두뇌 바꿔줘”<br/>“묶음 더해줘”"] --> SM["prokit-skills-manage<br/>고른 구성 바꾸기"]
+  SM ~~~ PQ
+  PQ["“이 팩으로 만들어줘”"] --> PU["prokit-pack-use<br/>받기 · 확인 · 복원"]
+  PU --> PD["개인화 · 실전 개발"]
+```
+
+- **`prokit-skills-update`**: 이미 고른 스킬을 최신으로 올리는 일만 맡아요. 프로젝트 스킬 갱신과 네이티브 플러그인·훅 상태는 [설치와 업데이트 구조](install-and-update.md)대로 따로 확인해요.
+- **`prokit-skills-assign`**: 공식 스킬마다 맡을 에이전트를 정하고, 매니페스트, 에이전트 정의, 연결 표, 대조표 행을 함께 고쳐요. 업데이트로 새 스킬이 생기거나 하는 일이 바뀌면 `prokit-skills-update`가 배치 점검을 넘겨요.
+- **`prokit-skills-manage`**: 두뇌, 과설계 방지 스킬, UI 스킬, 추가 스킬, 선택 묶음을 바꿔요. 열린 라운드가 있으면 그 라운드에서, 없으면 H 라운드를 열어 바꿔요([두뇌와 선택 스킬](brains.md#바꾸기)).
+- **`prokit-pack-use`**: 완성팩을 내려받아 무결성을 확인하고, 복원 계획을 검사한 뒤 실제로 복원해요. 이어서 개인화와 실전 개발로 넘어가고, 화면과 모션은 완성 프리셋을 기준으로 비교해요. 원본 사이트 조사와 COPY 제작은 별도 비공개 저장소 `pro-kit-preset-skills`가 맡아요([담당 구분](../design/preset-publication.md#담당-구분)).
 
 ## 자세히
 
@@ -129,6 +183,7 @@ flowchart LR
 
 ## 관련 문서
 
+- [스킬 구조 한눈에](skill-map.md)
 - [공식 스킬과 연결](official-skills.md)
 - [선택 스킬 묶음](optional-bundles.md)
 - [하네스 엔지니어링](../concepts/harness.md)

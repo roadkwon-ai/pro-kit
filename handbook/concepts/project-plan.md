@@ -101,15 +101,12 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 240
+    wrappingWidth: 200
 ---
 flowchart TB
-  O["table 케이스<br/>--write<br/>--task T#lt;n#gt;"] --> S(["계획에 지문<br/>sig=가 있나"])
-  S -->|없음| X1["거부: 진행 계획<br/>라운드(--plan)로 확정"]
-  S -->|있음| G(["앞 Task가<br/>완료 또는 제외인가"])
-  G -->|아니오| X2["거부: 앞 Task를<br/>먼저 끝내거나 제외"]
-  G -->|예| C(["앞 라운드를<br/>커밋했나"])
-  C -->|아니오| X3["거부: 커밋 먼저"]
+  O["table 케이스<br/>--write<br/>--task T#lt;n#gt;"] --> S(["계획에 지문<br/>sig=가 있나<br/>없으면 거부<br/>진행 계획 라운드(--plan)로<br/>확정해야 함"])
+  S -->|있음| G(["앞 Task가<br/>완료 또는 제외인가<br/>아니면 거부<br/>앞 Task를<br/>먼저 끝내거나 제외"])
+  G -->|예| C(["앞 라운드를<br/>커밋했나<br/>아니면 거부<br/>커밋 먼저"])
   C -->|예| OK["Task 라운드 열림<br/>세부 계획 · 계획 리뷰 행이<br/>맨 앞에"]
   OK --> CL["close: 완료 기록"]
   CL -->|"close --partial"| P["Task는 진행으로 남음"]

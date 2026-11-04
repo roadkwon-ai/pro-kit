@@ -26,20 +26,20 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 420
+    wrappingWidth: 230
 ---
 flowchart TB
-  R["첫 화면·리디자인 요청<br/>리디자인이면 지금 화면 진단"] --> I["기획<br/>PRODUCT.md<br/>주 UI 스킬의 인터뷰"]
-  I --> Q["한 번에 묻기<br/>카탈로그 3곳에서 스타일 1~3위<br/>주 UI 스킬로 정하기(hallmark는 테마 배정) · 방향 보조(설치했을 때) · 대표 색 · 이름·헤드라인 후보<br/>사이트맵 · 화면 설계(브리프의 보조: 줄)"]
+  R["첫 화면·리디자인 요청<br/>리디자인이면<br/>지금 화면 진단"] --> I["기획<br/>PRODUCT.md<br/>주 UI 스킬의 인터뷰"]
+  I --> Q["한 번에 묻기<br/>카탈로그 3곳에서 스타일 1~3위<br/>주 UI 스킬로 정하기<br/>(hallmark는 테마 배정)<br/>방향 보조(설치했을 때)<br/>대표 색 · 이름·헤드라인 후보<br/>사이트맵 · 화면 설계<br/>(브리프의 보조: 줄)"]
   Q --> D["DESIGN.md 받기<br/>curl · agent-browser<br/>명세 lint"]
-  D --> A["시각 자산<br/>서체 파일 받기 · 자체 호스팅<br/>이미지를 그릴 수 있으면 comp 3장 · plate 이미지"]
-  A --> C["구현(prokit-ui-builder)<br/>토큰 → globals.css<br/>shadcn · 바닥 규칙 · 모션<br/>보조 스킬은 위임 지시의 경로로 읽기"]
-  C --> X["실행 확인(prokit-runtime-checker)<br/>스크린샷 · 오류 0 · 링크·버튼 전부 누르기"]
-  X --> V["리뷰(메인 세션)<br/>주 UI 스킬의 리뷰 · 감사<br/>보조: 줄의 보조와 검수 보조의 리뷰<br/>코드 검사 prokit-reviewer(ui)"]
-  V --> P["다듬기 · 재확인<br/>impeccable이면 audit 16/20 · 접근성 3/4"]
+  D --> A["시각 자산<br/>서체 파일 받기 · 자체 호스팅<br/>이미지를 그릴 수 있으면<br/>comp 3장 · plate 이미지"]
+  A --> C["구현<br/>(prokit-ui-builder)<br/>토큰 → globals.css<br/>shadcn · 바닥 규칙 · 모션<br/>보조 스킬은 위임 지시의<br/>경로로 읽기"]
+  C --> X["실행 확인<br/>(prokit-runtime-checker)<br/>스크린샷 · 오류 0<br/>링크·버튼 전부 누르기"]
+  X --> V["리뷰(메인 세션)<br/>주 UI 스킬의 리뷰 · 감사<br/>보조: 줄의 보조와<br/>검수 보조의 리뷰<br/>코드 검사<br/>prokit-reviewer(ui)"]
+  V --> P["다듬기 · 재확인<br/>impeccable이면<br/>audit 16/20 · 접근성 3/4"]
   P --> M["DESIGN.md 기록<br/>merge · diff"]
   M --> U["사용자 확인"]
-  U --> AU["dev-cycle audit · close<br/>리뷰 기록 · 보조 결과 · 읽은 스킬 대조"]
+  U --> AU["dev-cycle audit · close<br/>리뷰 기록 · 보조 결과<br/>읽은 스킬 대조"]
 ```
 <!-- /b -->
 
@@ -60,28 +60,32 @@ flowchart TB
 
 ## 구조
 
-`prokit-ui`는 순서와 규칙, 통과 기준만 정하고, 단계마다 무엇을 할지는 세 갈래의 참고 파일에서 읽어요. 메인 세션은 이 파일들로 화면 일을 정해 전문 에이전트에 맡기고, 모든 결과는 대조표 증거로 모여 `dev-cycle audit`이 확인해요. 점선 상자는 설치했을 때만 쓰는 선택이에요.
+`prokit-ui`는 순서와 규칙, 통과 기준만 정하고, 단계마다 무엇을 할지는 세 갈래의 참고 파일에서 읽어요. 메인 세션은 이 파일들로 화면 일을 정해 전문 에이전트에 맡기고, 모든 결과는 대조표 증거로 모여 `dev-cycle audit`이 확인해요. 점선 테두리는 설치했을 때만 쓰는 선택이에요.
 
 ```mermaid
 ---
 config:
   flowchart:
-    wrappingWidth: 180
+    wrappingWidth: 240
 ---
 flowchart TB
-  DC["prokit-dev-cycle<br/>케이스 B 대조표"] --> UI["prokit-ui<br/>순서 · 규칙 · 통과 기준"]
-  UI --> MAP["주 UI 스킬 지도<br/>impeccable · hallmark<br/>기본 AI"]
-  UI --> FLOW["design-flow<br/>카탈로그 · 사이트맵<br/>자산 · DESIGN.md 검사"]
-  UI --> ADD["보조 guide<br/>설치한 화면 디자인 보조"]
-  MAP --> MAIN["메인 세션<br/>기획 · 시각 방향 · 브리프<br/>리뷰·감사 · 마감 판단"]
-  FLOW --> MAIN
-  ADD --> MAIN
-  MAIN --> B["prokit-ui-builder<br/>화면 코드"]
-  MAIN --> RC["prokit-runtime-checker<br/>스크린샷 · 링크·버튼"]
-  MAIN --> RV["prokit-reviewer(ui)<br/>web-design-guidelines"]
-  B --> EV["대조표 증거<br/>tasks/evidence/"]
-  RC --> EV
-  RV --> EV
+  DC["prokit-dev-cycle<br/>케이스 B 대조표"] --> UI["prokit-ui<br/>순서 · 규칙<br/>통과 기준"]
+  UI --> REF
+  subgraph REF["세 갈래의 참고 파일"]
+    MAP["주 UI 스킬 지도<br/>impeccable · hallmark<br/>기본 AI"]
+    FLOW["design-flow<br/>카탈로그 · 사이트맵<br/>자산 · DESIGN.md 검사"]
+    ADD["보조 guide<br/>설치한 화면 디자인<br/>보조"]
+    MAP ~~~ FLOW ~~~ ADD
+  end
+  REF --> MAIN["메인 세션<br/>기획 · 시각 방향<br/>브리프 · 리뷰·감사<br/>마감 판단"]
+  MAIN --> AGS
+  subgraph AGS["전문 에이전트"]
+    B["prokit-ui-builder<br/>화면 코드"]
+    RC["prokit-runtime-checker<br/>스크린샷 · 링크·버튼"]
+    RV["prokit-reviewer(ui)<br/>web-design-guidelines"]
+    B ~~~ RC ~~~ RV
+  end
+  AGS --> EV["대조표 증거<br/>tasks/evidence/"]
   EV --> AU["dev-cycle audit<br/>기록 파일 · 결과<br/>읽은 스킬 대조"]
   classDef opt stroke-dasharray: 5 5
   class ADD opt
@@ -187,7 +191,7 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 300
+    wrappingWidth: 240
 ---
 flowchart TB
   C["context<br/>맥락 확인"] --> I["init<br/>PRODUCT.md"]
@@ -198,7 +202,8 @@ flowchart TB
   B --> R["critique · audit<br/>+ web-design-guidelines"]
   R --> P["polish"]
   P --> D["document merge<br/>DESIGN.md"]
-  R -.-> G["통과: P0·P1 해결<br/>audit · 접근성 점수 기준 이상"]
+  R -.-> G["통과: P0·P1 해결<br/>audit · 접근성 점수<br/>기준 이상"]
+  D ~~~ G
 ```
 
 **hallmark**: 테마를 한 번 배정하고, 바닥 규칙과 `sloplint`로 지켜요.
@@ -207,7 +212,7 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 300
+    wrappingWidth: 240
 ---
 flowchart TB
   C["0단계 사전 점검"] --> I["Ask once<br/>기획 질문과 한 번에"]
@@ -218,7 +223,8 @@ flowchart TB
   B --> R["sloplint · 마감 리뷰<br/>audit + web-design-guidelines"]
   R --> P["Floor 고침<br/>Reflex 고침이나 사유"]
   P --> D["정한 체계를<br/>DESIGN.md 명세로"]
-  R -.-> G["통과: FAIL 0 · REFLEX 처리<br/>마감 리뷰 ship"]
+  R -.-> G["통과: FAIL 0<br/>REFLEX 처리<br/>마감 리뷰 ship"]
+  D ~~~ G
 ```
 
 **기본 AI**: 외부 UI 스킬 없이 `frontend-design`과 게슈탈트 지침으로 해요.
@@ -227,17 +233,18 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 300
+    wrappingWidth: 240
 ---
 flowchart TB
   C["PRODUCT.md · DESIGN.md<br/>frontend-design 읽기"] --> I["PRODUCT.md 질문"]
-  I --> V["시각 방향<br/>카탈로그 또는 계획과 검토로 직접"]
+  I --> V["시각 방향<br/>카탈로그 또는<br/>계획과 검토로 직접"]
   V --> S["브리프<br/>목적 · 주인공 하나 · 그룹 수"]
-  S --> B["개발(prokit-ui-builder)<br/>frontend-design · 게슈탈트 지침"]
+  S --> B["개발(prokit-ui-builder)<br/>frontend-design<br/>게슈탈트 지침"]
   B --> R["게슈탈트 점검 · 자기 비평<br/>+ web-design-guidelines"]
   R --> P["약한 수단부터 고치기<br/>간격 → 색·모양 → 박스 → 선"]
   P --> D["계획한 토큰을<br/>DESIGN.md 명세로"]
   R -.-> G["통과: 필수 3문항 모두 예<br/>위반은 고치거나 사유"]
+  D ~~~ G
 ```
 
 ### 화면 디자인 보조가 더하는 단계
@@ -248,14 +255,15 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 300
+    wrappingWidth: 240
 ---
 flowchart TB
-  V1["시각 방향<br/>+ 방향 보조"] --> V2["설계(브리프)<br/>+ 방향 · 원칙 · 모션 · 검수(ui-design)"]
+  V1["시각 방향<br/>+ 방향 보조"] --> V2["설계(브리프)<br/>+ 방향 · 원칙 · 모션 ·<br/>검수(ui-design)"]
   V2 --> V3["개발<br/>+ 방향 · 원칙 · 모션"]
   V3 --> V4["리뷰<br/>+ 방향 · 원칙 · 모션 · 검수"]
-  V4 --> V5["마감<br/>+ 모션 · 검수(visual-critique)"]
-  V4 -.-> E["디자인 리뷰 증거<br/>주 UI 스킬 결과 뒤에 보조 결과<br/>못 했으면 미실행 사유"]
+  V4 --> V5["마감<br/>+ 모션 · 검수<br/>(visual-critique)"]
+  V4 -.-> E["디자인 리뷰 증거<br/>주 UI 스킬 결과 뒤에<br/>보조 결과<br/>못 했으면 미실행 사유"]
+  V5 ~~~ E
   E -.-> AU["dev-cycle audit<br/>보조 결과와 읽은 기록 확인"]
 ```
 

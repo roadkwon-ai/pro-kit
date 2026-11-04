@@ -4,12 +4,13 @@
 config:
   flowchart:
     wrappingWidth: 220
+    rankSpacing: 25
 ---
 flowchart TB
   subgraph BTS["Better-T-Stack이 생성"]
     direction TB
     B1["apps/web<br/>Next.js App Router"]
-    B2["packages/api · auth · db · ui"]
+    B2["packages/<br/>api · auth · db · ui"]
     B3["Turborepo · Biome · pnpm"]
   end
   subgraph TPL["템플릿이 설치"]
@@ -22,6 +23,6 @@ flowchart TB
   end
   B1 ~~~ B2 ~~~ B3
   T1 ~~~ T2 ~~~ T3 ~~~ T4 ~~~ T5
-  BTS --> APP["에이전트와 바로<br/>개발할 수 있는 프로젝트"]
-  TPL --> APP
+  BTS -->|그 위에 더해요| TPL
+  TPL --> APP["에이전트와 바로<br/>개발할 수 있는 프로젝트"]
 ```

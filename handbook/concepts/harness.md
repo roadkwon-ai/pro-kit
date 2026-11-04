@@ -49,24 +49,32 @@ AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 �
 ---
 config:
   flowchart:
-    wrappingWidth: 220
+    wrappingWidth: 150
 ---
 flowchart TB
-  REQ["사용자 요청"] --> DC["prokit-dev-cycle<br/>케이스 판정 · 대조표"]
-  RULES["규칙 파일"] -.->|"시작할 때 읽음"| DC
-  REQ -.->|"배포 요청은 라운드 없이"| DEP["prokit-deploy<br/>메인 세션에서 배포"]
-  DC --> PROC["두뇌 · 과설계 방지 스킬<br/>단계 행의 방법"]
-  DC --> LAYER["계층 스킬<br/>분야마다 일하는 법"]
-  LAYER -->|"행마다 읽을 스킬 지정"| OFF["공식 도메인 스킬"]
-  LAYER -.->|"그 분야일 때"| OPT["선택 스킬 묶음"]
-  PROC -->|"위임 지시에 단계 스킬"| IMP["전문 수행 에이전트"]
-  OFF -->|"읽고 따름"| IMP
-  IMP -.->|"내장 리뷰가 없을 때"| SREV["specialist-reviewer<br/>보완 검토"]
+  REQ["사용자 요청"] --> DC["prokit-dev-cycle<br/>케이스 판정<br/>· 대조표"]
+  RULES["규칙 파일"] -.->|"시작할 때<br/>읽음"| DC
+  REQ ~~~ RULES
+  DC --> G
+  subgraph G["일하는 방법"]
+    PROC["두뇌 · 과설계<br/>방지 스킬<br/>단계 행의 방법"] ~~~ LAYER["계층 스킬<br/>분야마다<br/>일하는 법"]
+    LAYER -->|"행마다 읽을<br/>스킬 지정"| OFF["공식 도메인 스킬"]
+    OFF ~~~ OPT["선택 스킬 묶음<br/>그 분야일 때"]
+    LAYER -.-> OPT
+  end
+  G --> IMP["전문 수행 에이전트"]
+  IMP -.->|"내장 리뷰가<br/>없을 때"| SREV["specialist-reviewer<br/>보완 검토"]
   IMP --> REV["prokit-reviewer<br/>최종 통합 리뷰"]
   SREV --> REV
   REV --> AUD["dev-cycle audit"]
   AUD --> CLOSE["dev-cycle close"]
 ```
+
+도식에서 이어지는 관계는 이래요.
+
+- 두뇌 · 과설계 방지 스킬의 단계 스킬은 위임 지시에 넣어 전문 수행 에이전트에 넘겨요.
+- 공식 도메인 스킬은 전문 수행 에이전트가 읽고 따라요.
+- 배포 요청은 이 흐름 밖이에요. 라운드 없이 `prokit-deploy`가 메인 세션에서 배포해요.
 
 - **규칙 파일**: `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`
 - **계층 스킬**: `prokit-web`, `prokit-ui`, `prokit-api`, `prokit-db`, `prokit-verify`
@@ -94,6 +102,7 @@ flowchart TB
 
 ## 관련 문서
 
+- [스킬 구조 한눈에](../skills/skill-map.md)
 - [dev-cycle 라운드](dev-cycle.md)
 - [라운드 한 번 따라가 보기](round-example.md)
 - [위임 에이전트와 리뷰 에이전트](agent-roles.md)
