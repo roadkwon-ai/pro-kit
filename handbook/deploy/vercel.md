@@ -2,7 +2,7 @@
 
 > 한눈에: 서비스 프로젝트는 내 컴퓨터의 Vercel CLI로 확인용(develop)과 운영(production)에 배포해요. 배포 전에 검사를 통과해야 하고, 새 DB 변경이 있으면 DB에 먼저 적용해요. 보고에는 이전 배포로 되돌리는 명령도 들어 있어요.
 
-처음 올린다면 [처음 배포하기](first-deploy.md)를 먼저 보세요. 이 쪽의 낯선 말(Preview, alias, pooler, expand → contract)은 맨 아래 "용어 풀이"에 있어요.
+처음 올린다면 [처음 배포하기](first-deploy.md)를 먼저 보세요. 이 쪽의 낯선 말(Preview, alias, pooler, expand → contract)은 맨 아래 “용어 풀이”에 있어요.
 
 ## 두 가지 배포
 
@@ -14,7 +14,7 @@
 > [!IMPORTANT]
 > production은 기본 브랜치에서 `pnpm release`로 릴리스한 커밋만 배포해요. 릴리스하지 않은 커밋은 스크립트가 막아요.
 
-프로젝트에서 연 세션에 "develop에 배포해줘", "운영에 배포해줘"처럼 요청하면 `prokit-deploy` 스킬이 준비 확인부터 배포 뒤 확인까지 해요. 배포는 사용자가 요청했을 때, 그리고 기능 라운드를 마치고 사용자가 "릴리스하고 production 배포"를 골랐을 때만 해요.
+프로젝트에서 연 세션에 “develop에 배포해줘”, “운영에 배포해줘”처럼 요청하면 `prokit-deploy` 스킬이 준비 확인부터 배포 뒤 확인까지 해요. 배포는 사용자가 요청했을 때, 그리고 기능 라운드를 마치고 사용자가 “릴리스하고 production 배포”를 골랐을 때만 해요.
 
 [기존 프로젝트에 들였다면](../start/adopt.md) 라운드를 마칠 때 이 선택을 묻지 않고 커밋까지만 하는 경우가 있어요. 하네스만 설치해 `vercel:deploy` 스크립트가 없는 `--adopt` 프로젝트, 그리고 배포 방법을 아직 프로킷에 맞추지 않은 운영 중 프로젝트예요.
 
@@ -25,6 +25,8 @@ config:
     wrappingWidth: 220
 ---
 flowchart TB
+  accTitle: 배포 흐름
+  accDescr: production이면 릴리스를 먼저 만들고, 배포 검사를 한 뒤 새 마이그레이션이 있으면 대상 DB에 먼저 적용해요. 이어서 배포하고 고정 주소에서 확인한 뒤 결과를 보고해요.
   R["production만: pnpm release<br/>버전 · release/ 노트 검수<br/>--publish: 태그 · push<br/>GitHub Release"] --> C
   C["--check<br/>CLI · 연결 · 커밋<br/>환경변수 · 릴리스 검사<br/>지난 배포 이후 새 마이그레이션"] --> M{"새 마이그레이션"}
   M -->|있음| DB["대상 DB에 먼저 적용<br/>운영은 사용자 동의 뒤"]
@@ -69,7 +71,7 @@ flowchart TB
 
 ### 처음 한 번 준비
 
-Vercel 계정, 원격 DB, GitHub 저장소가 필요해요. "Vercel 배포 준비해줘"라고 하면 에이전트가 순서를 안내해요. 사용자가 직접 할 일은 Vercel CLI 설치와 `vercel login`, `gh auth login`, GitHub 원격 저장소 만들기예요. 연결 명령과 환경변수(`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`)를 값이 출력되지 않게 넣는 법은 템플릿 README의 "Vercel 배포"([neon](../../templates/prokit-next-neon/README.md#vercel-배포) · [supabase](../../templates/prokit-next-supabase/README.md#vercel-배포))에 있어요.
+Vercel 계정, 원격 DB, GitHub 저장소가 필요해요. “Vercel 배포 준비해줘”라고 하면 에이전트가 순서를 안내해요. 사용자가 직접 할 일은 Vercel CLI 설치와 `vercel login`, `gh auth login`, GitHub 원격 저장소 만들기예요. 연결 명령과 환경변수(`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`)를 값이 출력되지 않게 넣는 법은 템플릿 README의 “Vercel 배포”([neon](../../templates/prokit-next-neon/README.md#vercel-배포) · [supabase](../../templates/prokit-next-supabase/README.md#vercel-배포))에 있어요.
 
 인증이 실패해도 에이전트는 바로 다시 로그인하라고 하지 않아요. 먼저 이 프로젝트와 사용자가 믿고 쓰는 키 설정을 어디서, 어떤 순서로 불러오는지 확인해요. 이 일은 `prokit-deploy`가 `scripts/load-keys.mjs`와 공식 `vercel-cli-with-tokens` 스킬로 해요.
 

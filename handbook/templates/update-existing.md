@@ -2,14 +2,14 @@
 
 > 한눈에: 템플릿이 바뀌어도 이미 만든 프로젝트는 그대로예요. 바뀐 내용을 옮기려면 차이를 미리 보고 옮길 것을 정리한 뒤, 그 프로젝트에서 새 대화를 열어 작업 한 번(라운드)으로 반영해요. **그 프로젝트가 스스로 고친 내용은 덮어쓰지 않아요.**
 
-이 쪽은 이미 프로킷이 설치된 프로젝트를 새 판 템플릿에 맞추는 "갱신 반영"만 다뤄요.<!-- edition:pro --> 프로킷이 없는 프로젝트에 처음 들이는 일은 "도입"이라 [기존 프로젝트에 도입하기](../start/adopt.md)가 맡아요.<!-- /edition -->
+이 쪽은 이미 프로킷이 설치된 프로젝트를 새 판 템플릿에 맞추는 “갱신 반영”만 다뤄요.<!-- edition:pro --> 프로킷이 없는 프로젝트에 처음 들이는 일은 “도입”이라 [기존 프로젝트에 도입하기](../start/adopt.md)가 맡아요.<!-- /edition -->
 
 ## 일반 업데이트 3줄
 
 템플릿이 새 판이 되어도 이미 만든 프로젝트는 저절로 바뀌지 않아요. 대부분은 이 세 가지면 돼요.
 
 1. pro-kit 폴더에서 `git pull --ff-only`로 최신판을 받아요. 로컬 변경이 있어 실패하면 멈추고 알려 달라고 해요.
-2. pro-kit 폴더에서 에이전트에게 요청해요: "템플릿 변경을 my-app에 반영해줘". 에이전트가 차이를 미리 보고 옮길 항목을 정리해 보고해요.
+2. pro-kit 폴더에서 에이전트에게 요청해요: “템플릿 변경을 my-app에 반영해줘”. 에이전트가 차이를 미리 보고 옮길 항목을 정리해 보고해요.
 3. 그 프로젝트 폴더에서 새 세션을 열어 같은 정리를 넘기고, 작업 한 번(H 라운드)으로 반영하고 확인해요.
 
 요청 예시(복사해서 써요):
@@ -19,21 +19,21 @@
 ```
 
 > [!IMPORTANT]
-> 에이전트는 파일을 바로 덮어쓰지 않고 "이 파일들이 바뀌었고, 이 항목은 프로젝트가 직접 고친 거라 뺐어요" 같은 정리를 먼저 보여 줘요(예시). 그 정리를 확인한 뒤 프로젝트 세션에서 반영해요.
+> 에이전트는 파일을 바로 덮어쓰지 않고 “이 파일들이 바뀌었고, 이 항목은 프로젝트가 직접 고친 거라 뺐어요” 같은 정리를 먼저 보여 줘요(예시). 그 정리를 확인한 뒤 프로젝트 세션에서 반영해요.
 
 > [!TIP]
-> 막히면 `--diff` 출력과 에러 메시지를 그대로 에이전트에게 붙여 넣어요. 옛 판에서 올라오는 프로젝트라면 아래 "옛 판에서 올 때"를 먼저 봐요.
+> 막히면 `--diff` 출력과 에러 메시지를 그대로 에이전트에게 붙여 넣어요. 옛 판에서 올라오는 프로젝트라면 아래 “옛 판에서 올 때”를 먼저 봐요.
 
 ## 순서
 
-pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 요청하면 에이전트가 1\~3번을 하고, 4번과 5번은 그 프로젝트에서 연 세션에서 하도록 안내해요([AGENTS.md](../../AGENTS.md) "기존 프로젝트에 템플릿 갱신 반영").
+pro-kit 폴더에서 “템플릿 변경을 <프로젝트>에 반영해줘”처럼 요청하면 에이전트가 1\~3번을 하고, 4번과 5번은 그 프로젝트에서 연 세션에서 하도록 안내해요([AGENTS.md](../../AGENTS.md) “기존 프로젝트에 템플릿 갱신 반영”).
 
 ![갱신 반영 순서예요. --diff로 차이를 보고, .dev-cycle.json을 직접 비교하고, 옮길 항목을 정리해 보고해요. 이어서 프로젝트 세션에서 옛 이름을 옮기고 H 라운드로 반영해요. 프로젝트가 스스로 고친 내용은 덮어쓰지 않아요.](assets/update-existing-steps.webp)
 
-1. **차이 보기**: `bash templates/<템플릿>/install.sh <프로젝트> --diff`로 차이를 봐요. 파일을 쓰지 않고, 템플릿과 다른 파일의 diff, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 줘요. 프로젝트가 채워 가는 파일(`GLOSSARY.md`, `docs/domain/project.md`, `tasks/todo.md`, `tasks/archive/README.md`)은 diff 없이 "프로젝트가 채우는 파일, 유지"로만 나와요.
+1. **차이 보기**: `bash templates/<템플릿>/install.sh <프로젝트> --diff`로 차이를 봐요. 파일을 쓰지 않고, 템플릿과 다른 파일의 diff, 복사할 파일, `package.json`·`.gitignore`·`biome.json`·`turbo.json`·`.claude/settings.json`에 더할 항목을 보여 줘요. 프로젝트가 채워 가는 파일(`GLOSSARY.md`, `docs/domain/project.md`, `tasks/todo.md`, `tasks/archive/README.md`)은 diff 없이 “프로젝트가 채우는 파일, 유지”로만 나와요.
 2. **`.dev-cycle.json` 따로 보기**: 설치기가 값을 채우는 파일이라 `--diff`에 나오지 않아요. 템플릿의 `files/.dev-cycle.json`과 직접 비교해요.
 3. **옮길 항목 정리**: 옮길 항목을 정리해 보고해요. 그 프로젝트가 스스로 고친 내용(예: `DB_PORT` 변수화)은 옮길 항목에서 빼요. 설치 커밋 뒤 한 번도 바뀌지 않은 파일(`git log --oneline <설치 커밋>.. -- <파일>`이 비어 있어요)은 템플릿 판으로 그대로 덮어써도 돼요.
-4. **옛 이름 옮기기** (프로젝트 세션): 아래 "옛 이름이 남아 있을 때"를 먼저 해요.
+4. **옛 이름 옮기기** (프로젝트 세션): 아래 “옛 이름이 남아 있을 때”를 먼저 해요.
 5. **라운드로 반영** (프로젝트 세션): 실제 반영은 그 프로젝트에서 연 세션이 dev-cycle 케이스 H 라운드로 해요(도입한 프로젝트가 아직 진행 계획을 확정하지 않았으면 `--no-task`를 붙여 열어요). 라운드에서는 `install.sh <프로젝트> --skip-skills`로 없는 파일과 설정 항목을 더하고(템플릿 파일은 덮어쓰지 않고 설정 파일에는 항목만 더해요), 템플릿과 다른 파일은 직접 옮겨요. 라운드를 연 뒤 `scripts/dev-cycle.mjs`를 옮겼으면 `pnpm dev-cycle table H --write --upgrade`로 열린 표의 행 문구를 새 판에 맞춰요(문구만 바뀐 행은 증거를 그대로 옮겨요). 위임하는 행이 있으면 설계 행(`[design]`)을 위임 전에 채워요.
 
 ```mermaid
@@ -43,6 +43,8 @@ config:
     wrappingWidth: 220
 ---
 flowchart TB
+  accTitle: 템플릿 갱신 반영
+  accDescr: diff로 차이를 보고, dev-cycle 설정을 비교하고, 옮길 항목을 정리한 뒤, 옛 이름을 옮기고, H 라운드로 반영하는 순서예요.
   D["1. --diff로 차이 보기"] --> J["2. .dev-cycle.json 직접 비교"]
   J --> L["3. 옮길 항목 정리와 보고"]
   L --> N["4. 옛 이름 옮기기<br/>(프로젝트 세션)"]
@@ -110,7 +112,7 @@ UI 스킬 선택(`--ui-skill`, hallmark)을 쓰려면 H 라운드에서 템플�
 
 화면 디자인 보조 선택 묶음 `taste`(2026-10-20)를 쓰려면 H 라운드에서 템플릿의 `skills.manifest.json`과 `prokit-ui`(`SKILL.md`, `references/taste.md`)를 옮긴 뒤 `pnpm skills:setup --optional taste`로 설치해요. `install.sh --skip-skills`가 `.gitignore`에 `/.taste-skill/`을 더해요([화면 디자인 보조](../skills/brains.md#화면-디자인-보조)).
 
-나머지 화면 디자인 보조 묶음(`landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design`. 2026-11-03)을 쓰려면 H 라운드에서 템플릿의 `skills.manifest.json`(`optional`의 그 묶음과 `taste`의 `guide`), `prokit-ui`(`SKILL.md`의 "화면 디자인 보조"와 `references/addon-*.md`), `install.mjs`를 옮긴 뒤 `pnpm skills:setup --optional <묶음>`으로 설치해요. `install.sh --skip-skills`가 `biome.json`에 `!**/.tastemaker`를 더해요.
+나머지 화면 디자인 보조 묶음(`landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design`. 2026-11-03)을 쓰려면 H 라운드에서 템플릿의 `skills.manifest.json`(`optional`의 그 묶음과 `taste`의 `guide`), `prokit-ui`(`SKILL.md`의 “화면 디자인 보조”와 `references/addon-*.md`), `install.mjs`를 옮긴 뒤 `pnpm skills:setup --optional <묶음>`으로 설치해요. `install.sh --skip-skills`가 `biome.json`에 `!**/.tastemaker`를 더해요.
 
 ### 공식 스킬을 전문 에이전트에 맡기게 된 판 이전
 

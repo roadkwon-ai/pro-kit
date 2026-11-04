@@ -1,10 +1,10 @@
 # 하네스 엔지니어링
 
-> 한눈에: 하네스는 에이전트가 정해진 순서와 검사를 지키며 일하게 만드는 규칙, 스킬, 자동 검사의 묶음이에요. 에이전트에게 "잘해 줘"라고 부탁하는 대신 해야 할 일과 확인할 일을 파일과 명령으로 정해 둬요. **그래서 누가 요청하든 에이전트가 같은 순서로 일해요.**
+> 한눈에: 하네스는 에이전트가 정해진 순서와 검사를 지키며 일하게 만드는 규칙, 스킬, 자동 검사의 묶음이에요. 에이전트에게 “잘해 줘”라고 부탁하는 대신 해야 할 일과 확인할 일을 파일과 명령으로 정해 둬요. **그래서 누가 요청하든 에이전트가 같은 순서로 일해요.**
 
 ## 왜 필요한가
 
-AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 검사를 건너뛰거나 "다 됐어요"라고 먼저 말하기도 해요. 순서와 검사를 파일과 명령으로 정해 둔 이 묶음을 하네스라고 불러요([용어](../../tutorials/reference/glossary.md#도구)).
+AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 검사를 건너뛰거나 “다 됐어요”라고 먼저 말하기도 해요. 순서와 검사를 파일과 명령으로 정해 둔 이 묶음을 하네스라고 불러요([용어](../../tutorials/reference/glossary.md#도구)).
 
 > [!IMPORTANT]
 > 프로킷은 에이전트의 기억력이나 성의에 기대지 않고, 순서와 검사를 파일과 명령으로 못 박아 둬요.
@@ -49,18 +49,16 @@ AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 �
 ---
 config:
   flowchart:
-    wrappingWidth: 150
+    wrappingWidth: 120
 ---
 flowchart TB
-  REQ["사용자 요청"] --> DC["prokit-dev-cycle<br/>케이스 판정<br/>· 대조표"]
-  RULES["규칙 파일"] -.->|"시작할 때<br/>읽음"| DC
-  REQ ~~~ RULES
+  accTitle: 하네스 구성
+  accDescr: 사용자 요청은 dev-cycle 스킬이 케이스를 판정하며 시작하고, 규칙 파일은 시작할 때 읽혀요. 일하는 방법 스킬을 읽은 전문 수행 에이전트가 일하고, 점선은 내장 리뷰가 없을 때만 거치는 보완 검토예요. 최종 리뷰 뒤 audit과 close로 끝나요.
+  REQ["사용자 요청"] --> DC["prokit-dev-cycle<br/>규칙 파일 읽기<br/>케이스 판정<br/>· 대조표"]
   DC --> G
   subgraph G["일하는 방법"]
     PROC["두뇌 · 과설계<br/>방지 스킬<br/>단계 행의 방법"] ~~~ LAYER["계층 스킬<br/>분야마다<br/>일하는 법"]
-    LAYER -->|"행마다 읽을<br/>스킬 지정"| OFF["공식 도메인 스킬"]
-    OFF ~~~ OPT["선택 스킬 묶음<br/>그 분야일 때"]
-    LAYER -.-> OPT
+    LAYER --> OFF["공식 도메인 스킬<br/>+ 선택 스킬 묶음<br/>(그 분야일 때)"]
   end
   G --> IMP["전문 수행 에이전트"]
   IMP -.->|"내장 리뷰가<br/>없을 때"| SREV["specialist-reviewer<br/>보완 검토"]
@@ -73,10 +71,10 @@ flowchart TB
 도식에서 이어지는 관계는 이래요.
 
 - 두뇌 · 과설계 방지 스킬의 단계 스킬은 위임 지시에 넣어 전문 수행 에이전트에 넘겨요.
-- 공식 도메인 스킬은 전문 수행 에이전트가 읽고 따라요.
+- 계층 스킬이 대조표의 행마다 읽을 공식 도메인 스킬을 지정하고, 그 스킬은 전문 수행 에이전트가 읽고 따라요.
 - 배포 요청은 이 흐름 밖이에요. 라운드 없이 `prokit-deploy`가 메인 세션에서 배포해요.
 
-- **규칙 파일**: `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`
+- **규칙 파일**: `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`. 시작할 때 읽어요
 - **계층 스킬**: `prokit-web`, `prokit-ui`, `prokit-api`, `prokit-db`, `prokit-verify`
 - **두뇌 · 과설계 방지 스킬**: 고른 것만 써요. 고르지 않았으면 내장 절차와 간결성 규칙으로 해요([두뇌와 과설계 방지 흐름](../skills/brain-flow.md))
 - **공식 도메인 스킬**: Next.js, React, Better Auth, shadcn, UI 스킬(impeccable, hallmark. 고르지 않았으면 기본 AI), Neon 또는 Supabase, Vercel
@@ -89,7 +87,7 @@ flowchart TB
 ## 자세히
 
 - **프로세스 스킬 고르기**: 설계, 계획, 구현, 디버깅, 리뷰, QA, 검증에 쓸 프로세스 스킬은 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`에 표로 정리돼 있어요. 단계마다 1순위 스킬, Claude와 Codex의 대안, 스킬이 없을 때의 절차가 적혀 있어요. 필요한 전문 스킬이 없으면 검증한 대안을 찾고, 대안도 없으면 막힌 이유를 남겨요.
-- **과설계 막기**: 스펙에 "만들지 않는 것" 절을 두고, 계획은 `prokit-reviewer(plan)`이 재사용·설정 결정까지 검토해요. 고른 과설계 방지 스킬이 있으면 그 스킬이, 없으면 내장 간결성 규칙과 `prokit-reviewer`가 이 일을 맡아요. 어떤 스킬의 규칙보다 `prokit-dev-cycle`, `AGENTS.md`, 대조표가 우선해요(스킬별 설명은 [두뇌와 선택 스킬](../skills/brains.md)).
+- **과설계 막기**: 스펙에 “만들지 않는 것” 절을 두고, 계획은 `prokit-reviewer(plan)`이 재사용·설정 결정까지 검토해요. 고른 과설계 방지 스킬이 있으면 그 스킬이, 없으면 내장 간결성 규칙과 `prokit-reviewer`가 이 일을 맡아요. 어떤 스킬의 규칙보다 `prokit-dev-cycle`, `AGENTS.md`, 대조표가 우선해요(스킬별 설명은 [두뇌와 선택 스킬](../skills/brains.md)).
 - **하네스를 고치는 일**: 스킬, 에이전트, dev-cycle 자체와 빌드·배포·작업공간 설정을 바꾸는 작업도 라운드로 해요. 케이스 H예요([케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)). 대조표 행의 정본인 `docs/dev-workflow.md`는 프로젝트에 맞게 고쳐도 되고, 고치는 일 자체가 케이스 H 변경이에요.
 - **일하는 도중에 막는 훅**: 설치기가 Claude Code 설정(`.claude/settings.json`)에 훅을 넣고, Codex(`.codex/hooks.json`)와 Antigravity(`.agents/hooks.json`)에도 비슷한 훅을 넣어요(도구마다 조금 달라요. 아래 괄호와 [지원하는 에이전트](../start/supported-agents.md)). 훅은 audit이 끝에서 잡는 일을 중간에 막거나 기록해요.
   - 편집 막기(`edit-guard`): 열린 라운드 없이 코드나 하네스 파일을 편집 도구로 고치려 하면 막아요. 라운드가 열려 있어도 코디네이터가 계층 코드를, 계층 에이전트가 다른 계층 파일을 고치려 하면 막아요.

@@ -1,6 +1,6 @@
 # 처음 배포하기
 
-> 한눈에: 내 컴퓨터에서만 보이던 서비스를 인터넷에 처음 올리는 순서예요. 화면만 만든 프로젝트는 GitHub Pages나 Vercel에 올려요.<!-- edition:pro --> DB가 있는 서비스는 Vercel에 올려요.<!-- /edition --> 계정과 <!-- edition:pro -->도구를<!-- /edition --><!-- edition:ui 토큰을 --> 준비하고, 에이전트에게 "<!-- edition:pro -->Vercel 배포 준비해줘<!-- /edition --><!-- edition:ui GitHub Pages에 배포해줘 -->" 같은 요청을 <!-- edition:pro -->순서대로 <!-- /edition -->보내면 돼요.
+> 한눈에: 내 컴퓨터에서만 보이던 서비스를 인터넷에 처음 올리는 순서예요. 화면만 만든 프로젝트는 GitHub Pages나 Vercel에 올려요.<!-- edition:pro --> DB가 있는 서비스는 Vercel에 올려요.<!-- /edition --> 계정과 <!-- edition:pro -->도구를<!-- /edition --><!-- edition:ui 토큰을 --> 준비하고, 에이전트에게 “<!-- edition:pro -->Vercel 배포 준비해줘<!-- /edition --><!-- edition:ui GitHub Pages에 배포해줘 -->” 같은 요청을 <!-- edition:pro -->순서대로 <!-- /edition -->보내면 돼요.
 
 ## 왜 따로 준비하나요
 
@@ -14,8 +14,8 @@
 
 | 내 프로젝트 | 올릴 곳 | 읽을 곳 |
 |---|---|---|
-| 화면만 만들었어요(DB 없음) | GitHub Pages 또는 Vercel(정적 HTML) | 아래 "화면만 올리기", [GitHub Pages 배포](github-pages.md) |
-| DB가 있는 서비스예요 | Vercel + 원격 DB(Neon 또는 Supabase) | 아래 "서비스 올리기", [Vercel 배포와 되돌리기](vercel.md) | <!-- edition:pro -->
+| 화면만 만들었어요(DB 없음) | GitHub Pages 또는 Vercel(정적 HTML) | 아래 “화면만 올리기”, [GitHub Pages 배포](github-pages.md) |
+| DB가 있는 서비스예요 | Vercel + 원격 DB(Neon 또는 Supabase) | 아래 “서비스 올리기”, [Vercel 배포와 되돌리기](vercel.md) | <!-- edition:pro -->
 
 배포 비용은 계정과 요금제마다 달라요. 지금 요금은 각 서비스의 공식 페이지에서 확인하세요([비용과 키](../../tutorials/reference/costs-and-keys.md#배포-비용)).
 
@@ -29,14 +29,14 @@
    GitHub Pages에 배포해줘
    ```
 
-   Vercel로 올릴 때는 "Vercel에 배포해줘"라고 해요. 에이전트가 화면을 HTML로 내보내 올리고 주소를 알려 줘요. GitHub Pages는 저장소가 없으면 저장소도 만들어요.
+   Vercel로 올릴 때는 “Vercel에 배포해줘”라고 해요. 에이전트가 화면을 HTML로 내보내 올리고 주소를 알려 줘요. GitHub Pages는 저장소가 없으면 저장소도 만들어요.
 4. 열린 주소에서 화면을 확인해요.
 
 **이렇게 되면 성공**
 
 - 에이전트가 알려 준 주소가 열리고 만든 화면이 보여요.
 
-고친 화면은 "고친 화면을 다시 배포해줘", 내릴 때는 "배포한 사이트를 내려줘"라고 해요. 자세한 순서와 토큰을 다루는 방법은 [GitHub Pages 배포](github-pages.md)에 있어요.
+고친 화면은 “고친 화면을 다시 배포해줘”, 내릴 때는 “배포한 사이트를 내려줘”라고 해요. 자세한 순서와 토큰을 다루는 방법은 [GitHub Pages 배포](github-pages.md)에 있어요.
 
 <!-- edition:pro -->
 ## 서비스 올리기
@@ -48,7 +48,7 @@
 | GitHub 계정과 원격 저장소(`origin`) | 사용자가 만들어요. 요청하면 원격 저장소는 에이전트가 만들어요 | `git remote -v`에 `origin`이 보여요 |
 | `gh auth login` | 사용자가 로그인해요 | `gh auth status`에 로그인한 계정이 보여요 |
 | Vercel 계정과 Vercel CLI, `vercel login` | 사용자가 설치하고 로그인해요 | `vercel whoami`가 내 계정을 보여 줘요 |
-| 원격 DB | 사용자가 계정과 프로젝트를 만들어요(neon 템플릿은 Neon, supabase 템플릿은 Supabase). 병합 전 확인용(develop)과 운영용이 따로 필요해요 | 템플릿 README의 "Vercel 배포"를 따라 준비해요([neon](../../templates/prokit-next-neon/README.md#vercel-배포) · [supabase](../../templates/prokit-next-supabase/README.md#vercel-배포)) |
+| 원격 DB | 사용자가 계정과 프로젝트를 만들어요(neon 템플릿은 Neon, supabase 템플릿은 Supabase). 병합 전 확인용(develop)과 운영용이 따로 필요해요 | 템플릿 README의 “Vercel 배포”를 따라 준비해요([neon](../../templates/prokit-next-neon/README.md#vercel-배포) · [supabase](../../templates/prokit-next-supabase/README.md#vercel-배포)) |
 | Node.js 버전 | Vercel 프로젝트 설정에서 <!-- v:vercel.node -->24.x<!-- /v -->로 둬요 | 20.x면 <!-- v:vercel.node20Stop -->2026-10-01<!-- /v -->부터 새 배포가 실패해요 |
 
 > [!WARNING]
@@ -66,6 +66,8 @@ config:
     wrappingWidth: 220
 ---
 flowchart TB
+  accTitle: 첫 배포 순서
+  accDescr: 배포 준비, 운영 배포, 주소 확인을 차례로 하고, 이후에는 develop과 운영에 배포하는 말로 이어가요.
   P["1. Vercel 배포 준비해줘<br/>연결 · 환경변수"] --> R["2. 운영에 배포해줘<br/>릴리스 v0.1.0 · DB 먼저 · 배포"]
   R --> C["3. 주소에서 확인"]
   C --> D["4. 이후<br/>develop에 배포해줘<br/>운영에 배포해줘"]
@@ -86,12 +88,12 @@ flowchart TB
 
    운영 배포에는 릴리스(버전 번호 붙이기)가 따라와요([버전과 릴리스](release.md)). 첫 버전은 `v0.1.0`이에요. 에이전트는 이렇게 보여 주고 물어요(문구는 다를 수 있어요).
 
-   - "릴리스 `v0.1.0`과 노트예요. 이 노트로 발행할까요?"
-   - "운영 DB에 적용할 마이그레이션은 이 N개예요. 적용할까요?"
+   - “릴리스 `v0.1.0`과 노트예요. 이 노트로 발행할까요?”
+   - “운영 DB에 적용할 마이그레이션은 이 N개예요. 적용할까요?”
 
    **동의하기 전에는 발행도 DB 적용도 하지 않아요.** DB를 먼저 적용하는 이유는 새 코드가 새 컬럼을 쓰기 때문이에요.
 3. **확인**: 에이전트가 배포 주소에서 `/api/auth/get-session`이 200(정상 응답)인지 확인하고 보고해요. 사용자는 그 주소를 열어 로그인 화면이 뜨는지 눈으로 봐요. 운영에서는 가입이나 글쓰기처럼 데이터를 만드는 확인은 하지 않아요.
-4. **그 뒤**: 새 기능을 만들면 병합 전에 확인용으로 "develop에 배포해줘", 실제 사용자에게 공개할 때 "운영에 배포해줘"라고 해요. 기능 라운드가 끝나면 에이전트가 "릴리스하고 production 배포할까요?"라고 물을 때도 있어요.
+4. **그 뒤**: 새 기능을 만들면 병합 전에 확인용으로 “develop에 배포해줘”, 실제 사용자에게 공개할 때 “운영에 배포해줘”라고 해요. 기능 라운드가 끝나면 에이전트가 “릴리스하고 production 배포할까요?”라고 물을 때도 있어요.
 
 **이렇게 되면 성공**
 
@@ -111,7 +113,7 @@ flowchart TB
 
 ## 결과 확인하고 되돌리기
 
-- 확인 결과는 에이전트의 마지막 보고에 있어요. 배포 주소, 릴리스(운영만), DB 적용 결과, 확인 결과, 되돌리기 명령이 들어 있어요. 빠진 내용이 있으면 "배포 결과를 다시 보고해줘"라고 해요.
+- 확인 결과는 에이전트의 마지막 보고에 있어요. 배포 주소, 릴리스(운영만), DB 적용 결과, 확인 결과, 되돌리기 명령이 들어 있어요. 빠진 내용이 있으면 “배포 결과를 다시 보고해줘”라고 해요.
 - 문제가 생기면 이렇게 말해요.
 
   ```text
@@ -128,7 +130,7 @@ flowchart TB
 
 | 증상 | 해볼 것 |
 |---|---|
-| 에이전트가 "준비 안 됨"이라고 해요 | 알려 준 항목(예: CLI 없음, 환경변수 빠짐<!-- edition:pro -->, 릴리스 없음<!-- /edition -->)을 하나씩 해결해요. "무엇이 빠졌는지 정리해줘"라고 해요 |
+| 에이전트가 “준비 안 됨”이라고 해요 | 알려 준 항목(예: CLI 없음, 환경변수 빠짐<!-- edition:pro -->, 릴리스 없음<!-- /edition -->)을 하나씩 해결해요. “무엇이 빠졌는지 정리해줘”라고 해요 |
 | 로그인이나 토큰 오류예요 | 다시 로그인하기 전에, 키를 제대로 불러왔는지 에이전트에게 먼저 확인해 달라고 해요. 값을 대화창에 붙여 넣지 않아요 |
 | 배포 주소에서 로그인이 안 돼요 | 배포마다 생기는 임시 주소에서는 로그인이 실패해요. 고정 주소로 열어요 | <!-- edition:pro -->
 | 그 밖에 | [막혔을 때](../../tutorials/reference/troubleshooting.md) |

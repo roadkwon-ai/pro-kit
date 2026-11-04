@@ -126,7 +126,7 @@ my-app/
 | `apps/web/src/fonts/`, `apps/web/public/images/` | 자체 호스팅 서체와 이미지 |
 | `html/` | `pnpm export:html` 결과(git이 무시해요) |
 
-화면만 프로젝트는 루트 `AGENTS.md` 맨 위에 "화면만 프로젝트" 한 줄이 있고, 작업 폴더에서 시작했다면 `docs/first-request.md`에 첫 요청이 있어요([화면만 프로젝트와 HTML 내보내기](../design/screen-only.md)).
+화면만 프로젝트는 루트 `AGENTS.md` 맨 위에 “화면만 프로젝트” 한 줄이 있고, 작업 폴더에서 시작했다면 `docs/first-request.md`에 첫 요청이 있어요([화면만 프로젝트와 HTML 내보내기](../design/screen-only.md)).
 
 Codex 네이티브 Ponytail 플러그인은 `--with-global`을 줄 때만 사용자 환경에 설치해요. 이 프로젝트의 `.codex/` 생성물과 플러그인 설치·훅 허용 상태는 따로 확인해요([설치와 업데이트 구조](../skills/install-and-update.md)).
 

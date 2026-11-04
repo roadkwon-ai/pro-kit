@@ -2,6 +2,8 @@
 ```mermaid
 %%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2a78d6, #8c929b"}}}}%%
 xychart-beta
+  accTitle: DESIGN.md 효과
+  accDescr: DESIGN.md가 있을 때와 브랜드 이름과 대표 색만 있을 때를 다섯 항목의 일치율로 견줘요. 파랑이 DESIGN.md 있음이에요.
   title "DESIGN.md 있음(파랑)과 브랜드 이름·대표 색만(회색) (%)"
   x-axis ["팔레트 일치", "글자 크기 일치", "반경 일치", "두 번째 화면 색 일관성", "블라인드 종합 승률"]
   y-axis "%" 0 --> 100

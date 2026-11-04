@@ -11,7 +11,7 @@
 
 - **왜 필요한가**: 에이전트는 학습한 시점의 지식으로 일해서 Next.js나 Better Auth처럼 자주 바뀌는 도구는 옛 방식으로 쓰기 쉬워요. 도구를 만든 곳이 직접 쓴 스킬(공식 스킬)을 읽게 하면 최신 방식으로 만들어요.
 - **무엇인가**: 도구 제작사가 공개한 에이전트용 작업 설명서예요([용어](../../tutorials/reference/glossary.md#도구)). 프로킷은 새 프로젝트를 만들 때 그 최신판을 받아 프로젝트 안에 설치해요.
-- **언제 보나**: "이 스킬이 왜 설치됐지?", "이 행에서 어떤 스킬을 누가 읽어야 하지?"가 궁금할 때, 또는 아래 "Ponytail 사용하기"의 규칙을 확인할 때요.
+- **언제 보나**: “이 스킬이 왜 설치됐지?”, “이 행에서 어떤 스킬을 누가 읽어야 하지?”가 궁금할 때, 또는 아래 “Ponytail 사용하기”의 규칙을 확인할 때요.
 - **내가 할 일**: 보통 없어요. 새 버전은 [설치와 업데이트 구조](install-and-update.md#status가-알려-주는-것)대로 에이전트가 알려 줘요. 스킬이 빠졌는지는 `pnpm skills:check`로 확인해요.
 
 ## 설치되는 공식 스킬
@@ -117,12 +117,12 @@ E·D 라운드에서 읽는 스킬이에요.
 - 이 배치의 정본은 프로젝트의 `skills.manifest.json`에 있는 `performers`예요. `performers.agents`는 대조표 행에서 일을 넘겨받는 에이전트, `performers.skills`는 공식 스킬마다 그 스킬을 읽는 에이전트예요. 선택 항목 `performers.layers`에는 계층 에이전트와 함께 그 계층 파일을 고칠 프로젝트 전용 에이전트를 적어요(예: 화면 `B`에 프리셋 구현 에이전트). 여기에 없는 공식 스킬은 메인 세션이 읽어요. 코드에 박아 두지 않아서 공식 스킬이 늘거나 바뀌어도 이 파일만 고치면 돼요. 선택 묶음 `ops`의 스킬은 기본 배치에 없어서, 그 스킬로 코드를 고치는 일을 에이전트에 맡기려면 `prokit-skills-assign`으로 배치해요.
 - 훅이 서브에이전트의 읽기·편집 기록에 에이전트 이름을 남겨요(Claude Code, Codex, Antigravity). audit은 그 스킬을 맡은 에이전트가 프로젝트 판(`.agents/skills/<이름>/SKILL.md`)을 읽은 기록만 세요. 메인 세션이 대신 읽었거나 Skill 도구로 불렀으면(이름이 같은 개인 스킬이 불릴 수 있어요) 세지 않아요. 다만 매니페스트가 Claude 플러그인으로도 설치하는 공식 스킬(`skill-creator`)은 `<플러그인>:<이름>` 형태의 Skill 호출도 읽은 것으로 세요. 하위 스킬은 같은 쪽이 상위 스킬(스킬 머리의 `parent`)도 읽어야 해요. 훅이 돌지 않은 라운드(Codex에서 `/hooks`로 신뢰하기 전 등)는 증거에 적은 이름만 봐요.
 - 구현 단계 행과 행 문구에 전문 에이전트가 적힌 행은 증거에 `위임: <에이전트>(사용: …)`가 있어야 해요. 맡길 에이전트가 없으면 메인 세션이 직접 하지 않고 `blocked`로 남겨요. 그 행에 적은 에이전트가 읽은 기록만 세고, 그 에이전트는 이 라운드에서 일한 기록(스킬 읽기나 파일 편집)이 있어야 해요. 표에서 앞에 같은 에이전트에 맡긴 행이 있으면, 그 행보다 뒤에 있는 다른 행을 처음 채운 뒤의 일만 세요. 맡겨 둔 동안이나 위임이 끝난 뒤 메인 세션이 앞 행을 채워도 그 위임은 무효가 되지 않아요. 증거를 고쳐 다시 채운 행은 처음 채운 순서로 봐요. 화면<!-- edition:pro -->·서버·DB<!-- /edition --> 코드가 바뀌었는데 구현 행을 `N/A`나 `blocked`로 두면 audit이 받지 않아요.
-- 행 이름에 스킬이 나온 행(`[review] 디자인 감사와 web-design-guidelines 코드 검사`, `[verify] next-dev-loop …`)은 그 스킬을 맡은 쪽이 라운드 안에서 읽은 기록이 있어야 해요. 행 이름에 "주 UI 스킬"이 나오는 디자인 행은 고른 주 UI 스킬을 그 라운드에서 읽었는지 봐요. 리뷰어의 ui<!-- edition:pro -->·security·db<!-- /edition --> 리뷰는 리뷰어 정의에서 언제가 붙지 않은 스킬을 리뷰어가 읽어야 해요. 상황이 맞을 때만 읽는 스킬은 막지 않고, 일한 전문 에이전트가 읽지 않은 맡은 스킬(리뷰어는 리뷰 행 검사가 봐요. `turborepo`는 `turbo.json`·`package.json`을 바꾼 라운드에서만, Better Auth 스킬은 인증 파일을 바꾼 라운드에서만 알려요), 메인 세션이 대신 읽은 맡긴 스킬, `SKILL.md`를 앞부분만 읽은 공식 스킬을 audit 경고로 보여 줘요. 캐시·프리패치 스킬은 Next 설정(`cacheComponents`, `partialPrefetching`)을 켠 프로젝트에서만 알려요.
+- 행 이름에 스킬이 나온 행(`[review] 디자인 감사와 web-design-guidelines 코드 검사`, `[verify] next-dev-loop …`)은 그 스킬을 맡은 쪽이 라운드 안에서 읽은 기록이 있어야 해요. 행 이름에 “주 UI 스킬”이 나오는 디자인 행은 고른 주 UI 스킬을 그 라운드에서 읽었는지 봐요. 리뷰어의 ui<!-- edition:pro -->·security·db<!-- /edition --> 리뷰는 리뷰어 정의에서 언제가 붙지 않은 스킬을 리뷰어가 읽어야 해요. 상황이 맞을 때만 읽는 스킬은 막지 않고, 일한 전문 에이전트가 읽지 않은 맡은 스킬(리뷰어는 리뷰 행 검사가 봐요. `turborepo`는 `turbo.json`·`package.json`을 바꾼 라운드에서만, Better Auth 스킬은 인증 파일을 바꾼 라운드에서만 알려요), 메인 세션이 대신 읽은 맡긴 스킬, `SKILL.md`를 앞부분만 읽은 공식 스킬을 audit 경고로 보여 줘요. 캐시·프리패치 스킬은 Next 설정(`cacheComponents`, `partialPrefetching`)을 켠 프로젝트에서만 알려요.
 - 공식 스킬이 업데이트로 새로 생기거나 없어지거나 하는 일이 바뀌면 `prokit-skills-update`가 `prokit-skills-assign`으로 넘겨요. `prokit-skills-assign`은 스킬 본문을 읽고 맡을 에이전트를 판단해 보여 준 뒤, 확인받으면 매니페스트, 에이전트 정의, `prokit-*` 연결 표, 대조표 행을 함께 고쳐요. 새 공식 스킬을 더하거나 빼고 싶을 때도 이 스킬에 요청해요. `pnpm agents:check`가 배치에 적힌 에이전트와 스킬 이름이 실제로 있는지, 에이전트 정의의 공식 스킬 표와 `prokit-*` 연결 표가 배치와 같은지 봐요.
 
 ## 읽을 스킬을 정해 두는 방법
 
-- 어떤 상황에서 어떤 공식 스킬을 누가 읽을지 적은 "공식 스킬 연결" 표는 `prokit-ui`<!-- edition:pro -->, `prokit-web`, `prokit-api`, `prokit-db`, `prokit-deploy`<!-- /edition -->에 있어요. 표마다 맡는 에이전트와 메인 세션이 검수할 것이 함께 있어요. `prokit-verify`는 본문에 실행 확인을 맡기는 법을 적어 둬요.
+- 어떤 상황에서 어떤 공식 스킬을 누가 읽을지 적은 “공식 스킬 연결” 표는 `prokit-ui`<!-- edition:pro -->, `prokit-web`, `prokit-api`, `prokit-db`, `prokit-deploy`<!-- /edition -->에 있어요. 표마다 맡는 에이전트와 메인 세션이 검수할 것이 함께 있어요. `prokit-verify`는 본문에 실행 확인을 맡기는 법을 적어 둬요.
 - dev-cycle 대조표의 행에도 그 단계에서 읽을 스킬 이름이 괄호로 들어가 있어요. 그 행을 맡은 에이전트가 스킬을 실제로 읽고, 메인 세션이 증거 칸에 이름을 남겨요(`위임: prokit-ui-builder(사용: shadcn(button 추가))`).
 - 기본 연결은 프로젝트의 `.agents/skills/<이름>/SKILL.md`를 직접 읽어요. 사용자가 다른 출처를 지정했으면 그 실제 경로를 먼저 확인해요. 같은 이름이라도 경로·출처·내용 해시로 구분해요([선택 순서와 증거](../concepts/delegation-and-resources.md#위임할-때-남기는-근거)).
 - 이 표는 기본 설치와 연결을 설명해요. 접근 가능한 다른 전문 스킬도 작업에 맞으면 선택하고, 한 번 사용한 것만으로 매니페스트에 더하지 않아요. 행동 지침의 기본은 Ponytail을 유지해요.
@@ -139,6 +139,8 @@ E·D 라운드에서 읽는 스킬이에요.
 ```mermaid
 %%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2a78d6, #8c929b"}}}}%%
 xychart-beta
+  accTitle: 기대 스킬 호출률
+  accDescr: 전체, 공식 스킬, 프로세스 스킬, prokit 스킬의 기대 호출률을 before와 after로 비교한 막대 그래프예요. after가 모두 높거나 같아요.
   title "기대 스킬 호출률 (%): 회색 before, 파랑 after"
   x-axis ["전체 110항목", "공식 스킬 36", "프로세스 스킬 20", "prokit 스킬 44"]
   y-axis "호출률 (%)" 0 --> 100
@@ -171,6 +173,8 @@ before에서도 대조표 행에 이름이 있던 스킬은 거의 매번 불렸
 ```mermaid
 %%{init: {"themeVariables": {"pie1": "#6aa5ea", "pie2": "#b9d4f3", "pie3": "#dde1e6", "pieSectionTextColor": "#111418", "pieStrokeColor": "#ffffff"}}}%%
 pie showData title 측정 때 neon 공식 도메인 스킬 26개가 연결된 곳 (after)
+  accTitle: 공식 스킬이 연결된 곳
+  accDescr: 측정 때 neon 공식 도메인 스킬 26개 가운데 대조표 행에 11개, prokit 스킬 연결 표와 에이전트에 14개, 다른 스킬이 안에서 부르는 것이 1개예요.
   "dev-cycle 대조표 행" : 11
   "prokit 스킬 연결 표·에이전트" : 14
   "다른 스킬이 안에서 부름" : 1

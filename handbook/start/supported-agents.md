@@ -13,7 +13,7 @@
 | 처음이고 어떤 것을 쓸지 모르겠어요 | Claude Code나 Codex. 튜토리얼을 이 두 도구로 확인했고 질문에 답하는 법, 멈추는 법, 이어 하는 법이 [에이전트별 차이](../../tutorials/reference/claude-code-and-codex.md)에 표로 있어요 |
 | 이미 ChatGPT 요금제가 있어요 | Codex. 이미지도 자체 도구로 준비 없이 그려요 |
 | 이미 Claude 요금제가 있어요 | Claude Code. 이미지를 그리려면 ChatGPT 요금제와 Codex CLI 또는 OpenAI API 키가 더 필요하고, 없으면 배치도로 구성을 골라요 |
-| Antigravity나 Grok Build를 쓰고 있어요 | 그대로 써도 돼요. 같은 규칙과 스킬을 읽지만 시험한 범위가 좁아요(아래 "확인한 범위") |
+| Antigravity나 Grok Build를 쓰고 있어요 | 그대로 써도 돼요. 같은 규칙과 스킬을 읽지만 시험한 범위가 좁아요(아래 “확인한 범위”) |
 
 요금제 이름과 비용은 [비용과 키](../../tutorials/reference/costs-and-keys.md)에 있어요.
 

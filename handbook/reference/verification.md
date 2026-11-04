@@ -4,7 +4,7 @@
 
 ## 무엇으로 검증했나요
 
-전체 기록은 템플릿마다 `VERIFICATION.md`에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md)). 표는 세 묶음으로 나눴어요. 처음에는 "기본 검증"의 앞쪽 몇 줄만 봐도 어떤 식으로 확인했는지 알 수 있어요.
+전체 기록은 템플릿마다 `VERIFICATION.md`에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md)). 표는 세 묶음으로 나눴어요. 처음에는 “기본 검증”의 앞쪽 몇 줄만 봐도 어떤 식으로 확인했는지 알 수 있어요.
 
 ### 기본 검증
 
@@ -45,7 +45,7 @@
 | 화면 디자인 보조 taste | 선택 묶음 `taste`로 taste-skill을 설치하고, 기록이 프로젝트 안에만 남는지와 브라우저 검사가 도는지 실제 프로젝트에서 확인했어요 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#선택-묶음-taste-taste-skill-화면-디자인-보조-2026-10-20) |
 | DESIGN.md 효과 | `DESIGN.md`가 있을 때와 브랜드 이름과 대표 색만 줬을 때의 디자인 일치율 | [neon](../../templates/prokit-next-neon/VERIFICATION.md#designmd-효과-측정-2026-09-30-추가) |
 
-아직 확인하지 못한 항목은 각 기록의 "미검증 항목" 절에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md#미검증-항목) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#미검증-항목)).
+아직 확인하지 못한 항목은 각 기록의 “미검증 항목” 절에 있어요([neon](../../templates/prokit-next-neon/VERIFICATION.md#미검증-항목) · [supabase](../../templates/prokit-next-supabase/VERIFICATION.md#미검증-항목)).
 
 > [!IMPORTANT]
 > 최근 기록은 내 컴퓨터에서 구현하고 검증한 결과예요. 공개 사이트 배포나 프리셋 팩 재발행과는 따로예요. 앞서 잰 스킬 유무 비교와 제작 시간 수치를 새 기능의 효과로 내세우지 않아요. Ponytail의 `gain`도 Ponytail 원본 쪽에서 잰 벤치마크예요. 현재 지원 범위와 남은 검사는 위 표의 각 기록에서 확인하세요.
@@ -69,6 +69,8 @@
 ```mermaid
 %%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2a78d6, #8c929b"}}}}%%
 xychart-beta
+  accTitle: 스킬 효과
+  accDescr: 여섯 분야의 규칙 준수율을 스킬 있을 때와 없을 때로 견줘요. 파랑이 스킬 있음이에요.
   title "규칙 준수율, 스킬 있음(파랑)과 스킬 없음(회색) (%)"
   x-axis ["dev-cycle", "api", "db", "web", "ui", "verify"]
   y-axis "%" 0 --> 100
@@ -108,7 +110,7 @@ Codex와 Antigravity 시험에서 찾아 고친 것은 이래요.
 
 - CX1은 진행 계획 라운드를 커밋하지 않은 채 T1을 열었어요. 그래서 `tasks/plan.md`에 커밋하지 않은 변경이 있으면 Task를 열지 않게 했어요. CX2는 커밋을 마친 뒤 T1을 열었어요.
 - Codex의 하위 에이전트는 기본값이 메인 대화를 모두 넘겼어요. 분석·리뷰 에이전트는 대화를 넘기지 않는 `fork_turns: "none"`으로 띄우라고 `AGENTS.md`에 적었고, CX2의 하위 에이전트 세 개가 따랐어요.
-- AG1은 스킬을 읽지 않고 `AGENTS.md`만 따라서 Task 게이트를 거치지 않았어요. 그 뒤에는 계획을 보기 전에 받은 "진행해"로 확인 칸을 채우는 문제가 남았어요. 최종 계획을 보여 주고 턴을 끝낸 뒤 받은 답으로만 채우게 바꿔 AG8에서 막았어요.
+- AG1은 스킬을 읽지 않고 `AGENTS.md`만 따라서 Task 게이트를 거치지 않았어요. 그 뒤에는 계획을 보기 전에 받은 “진행해”로 확인 칸을 채우는 문제가 남았어요. 최종 계획을 보여 주고 턴을 끝낸 뒤 받은 답으로만 채우게 바꿔 AG8에서 막았어요.
 - 화면 리뷰 기록 대조 같은 채점 지적 보완은 실제 세션으로 다시 시험하지 않았어요. AG9는 독립 채점 없이 직접 확인했어요.
 - 한계: 리뷰 기록(critique 등)이나 감사 보고서를 지어내 저장하면 `audit`이 통과시켜요(파일이 남아 리뷰어가 볼 수 있어요). Grok Build는 무료 사용량 한도 때문에 대조표를 여는 데까지만 확인했어요([지원하는 에이전트](../start/supported-agents.md)).
 
@@ -120,8 +122,8 @@ Codex와 Antigravity 시험에서 찾아 고친 것은 이래요.
 
 | 항목 | 결과 |
 |---|---|
-| 페이지 | 프리셋당 <!-- v:presets.screen.pages.range -->1\~22<!-- /v -->개, 올곧 프리셋은 <!-- v:preset.olgot.pages -->203<!-- /v -->개(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종), 모두 <!-- v:presets.screen.pages -->373<!-- /v -->개. 링크와 버튼은 모두 실제 페이지나 동작으로 이어지고, 404나 "준비 중" 페이지는 없어요 |
-| 확인 | 공개 주소와 같은 하위 경로로 정적 HTML을 띄우고 페이지의 링크와 버튼을 눌렀어요. 404, 콘솔 오류, 반응 없는 버튼 모두 0이에요. 마루빌드는 처음 공개 때 쇼룸 데모 쪽에서 나온 2건(아이콘 링크가 없어 `/favicon.ico` 자동 요청이 404, "그룹 30회권" 카드가 선택 상태를 보조기기에 알리지 않음)을 고친 뒤 다시 쟀어요 |
+| 페이지 | 프리셋당 <!-- v:presets.screen.pages.range -->1\~22<!-- /v -->개, 올곧 프리셋은 <!-- v:preset.olgot.pages -->203<!-- /v -->개(<!-- v:preset.olgot.pageTypes -->48<!-- /v -->종), 모두 <!-- v:presets.screen.pages -->373<!-- /v -->개. 링크와 버튼은 모두 실제 페이지나 동작으로 이어지고, 404나 “준비 중” 페이지는 없어요 |
+| 확인 | 공개 주소와 같은 하위 경로로 정적 HTML을 띄우고 페이지의 링크와 버튼을 눌렀어요. 404, 콘솔 오류, 반응 없는 버튼 모두 0이에요. 마루빌드는 처음 공개 때 쇼룸 데모 쪽에서 나온 2건(아이콘 링크가 없어 `/favicon.ico` 자동 요청이 404, “그룹 30회권” 카드가 선택 상태를 보조기기에 알리지 않음)을 고친 뒤 다시 쟀어요 |
 | critique (40점 만점) | <!-- v:presets.design.critique.list -->윤슬당한의원 36, 제철상자 35, 하루공부 33, PACECREW 31, 고루 30, 올곧 30, 울림 29, AFTERGLOW 29, 스피커 포트폴리오 29, 핏슬롯 28, Uptrail 28, 슬라이드랩 28, 마루빌드 28, pliko 27<!-- /v -->. 마루빌드와 pliko를 뺀 프리셋은 P0·P1을 모두 고쳤어요 |
 | 추천 | 1위는 <!-- v:presets.design.first.summary -->Refero Styles 6개, awesome-design-md 2개<!-- /v -->예요. 이전 판과 같은 계열(토스, Sequel 등)은 에이전트가 먼저 후보에서 뺐어요. 올곧 프리셋은 추천 없이 입시학원 사이트 한 곳을 실측해 만든 `DESIGN.md`를 썼어요 |
 | comp | gpt-image-2.5-flare로 그렸어요. 첫 화면은 방향 comp 3장 중에서 골랐고, 나머지 페이지는 고른 comp를 참고로 페이지마다 한 장씩 그렸어요. 올곧 프리셋은 첫 화면 comp 3장만 ChatGPT로 로그인한 Codex(`gpt-image` 스킬)로 그렸어요 |

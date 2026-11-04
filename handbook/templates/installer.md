@@ -28,7 +28,7 @@ supabase 템플릿은 `prokit-next-supabase`로 바꿔요. <!-- edition:pro -->
 | `--matt <스킬>`, `--optional <묶음>` | mattpocock 추가 스킬과 선택 스킬 묶음(i-have-adhd, 화면 디자인 보조 포함)을 설치해요. 여러 개는 쉼표로 이어요 |
 | `--project-type <유형>` | 프로젝트 유형을 `.dev-cycle.json`의 `projectType`에 기록해요. `new`(새 프로젝트), `early`(기획 자료와 프로토타입만 있는 초기), `operating`(운영 중), `migration`(다른 스택에서 전환). `early`는 옮겨 둔 `prototype/`을 Biome 검사에서 빼요 | <!-- edition:pro -->
 | `--legacy <경로>` | `migration`에서만 써요. 기존 코드 폴더를 새 프로젝트 기준 상대 경로로 `legacy.path`에 기록해요. 안내용이라 코드는 읽기만 하고, `pnpm dev-cycle status`에 보여 줘요 | <!-- edition:pro -->
-| `--adopt` | `operating`이면서 Better-T-Stack이 아닌 Next.js 프로젝트에 하네스만 설치해요. 아래 "기존 프로젝트에 설치하기"를 보세요 | <!-- edition:pro -->
+| `--adopt` | `operating`이면서 Better-T-Stack이 아닌 Next.js 프로젝트에 하네스만 설치해요. 아래 “기존 프로젝트에 설치하기”를 보세요 | <!-- edition:pro -->
 | `--default-branch <브랜치>` | dev-cycle의 기준 브랜치를 기록해요. 기존 프로젝트를 `prokit/setup` 브랜치에서 들일 때 써요(합칠 기본 브랜치, 또는 도입 브랜치에서 계속하면 `prokit/setup`) | <!-- edition:pro -->
 | `--with-global` | 전역 도구(agent-browser CLI, Vercel CLI, <!-- edition:pro -->Neon CLI 또는 Supabase CLI, <!-- /edition -->고른 두뇌의 gstack·OMX·OpenSpec CLI) 중 없는 것을 설치한 뒤 프로젝트 설치를 이어 가요. ponytail을 골랐으면 네이티브 플러그인을 지원하는 Codex CLI에서 공식 Ponytail marketplace와 플러그인도 선택 설치해요 |
 
@@ -60,6 +60,8 @@ config:
     rankSpacing: 25
 ---
 flowchart TB
+  accTitle: 설치기 흐름
+  accDescr: install.sh가 프로젝트 유형에 따라 전체 템플릿 설치나 하네스만 설치로 갈라진 뒤 공통 설정을 기록하고, 마지막에 스킬과 플러그인을 설치해요.
   S["install.sh<br/>프로젝트 경로 + 옵션"] --> TY
   subgraph TY["프로젝트 유형"]
     B["new, early, migration<br/>Better-T-Stack에<br/>전체 템플릿 설치<br/>래퍼 · Biome 포맷<br/>turbo 설정 포함"]
@@ -116,7 +118,7 @@ my-next-app/
 > [!IMPORTANT]
 > 첫 라운드를 열기 전에 설치 결과를 먼저 커밋해요. 이유는 [첫 커밋이 중요한 이유](#첫-커밋이-중요한-이유)에 있어요.
 
-에이전트가 따르는 규칙의 원문은 [AGENTS.md의 "템플릿으로 새 프로젝트 만들기"](../../AGENTS.md#템플릿으로-새-프로젝트-만들기)<!-- edition:pro -->이고, 명령은 템플릿 README "새 프로젝트 시작"의 "설치한 뒤"([neon](../../templates/prokit-next-neon/README.md#새-프로젝트-시작), [supabase](../../templates/prokit-next-supabase/README.md#새-프로젝트-시작))가 정본이에요.<!-- /edition --><!-- edition:ui 예요. -->
+에이전트가 따르는 규칙의 원문은 [AGENTS.md의 “템플릿으로 새 프로젝트 만들기”](../../AGENTS.md#템플릿으로-새-프로젝트-만들기)<!-- edition:pro -->이고, 명령은 템플릿 README “새 프로젝트 시작”의 “설치한 뒤”([neon](../../templates/prokit-next-neon/README.md#새-프로젝트-시작), [supabase](../../templates/prokit-next-supabase/README.md#새-프로젝트-시작))가 정본이에요.<!-- /edition --><!-- edition:ui 예요. -->
 
 <!-- edition:ui 1. **DB 준비는 건너뛰어요**: 화면만 프로젝트는 DB를 쓰지 않아요. -->
 1. **첫 마이그레이션**: 로컬 DB를 띄우고 `db:generate`로 인증 테이블 마이그레이션을 만든 뒤 `db:migrate`로 적용해요. supabase는 적용 전에 `enable_rls_auth` 커스텀 마이그레이션(인증 테이블의 RLS 켜기)을 더하고, 적용 뒤 `supabase db advisors --local --type security`가 `No issues found`인지 확인해요. Better-T-Stack이 만든 프로젝트 `README.md`의 `db:push` 단계는 따르지 않아요. 화면만 프로젝트는 건너뛰어요. <!-- edition:pro -->
@@ -124,7 +126,7 @@ my-next-app/
 3. **새 세션 열기**: 스킬과 에이전트는 새 세션부터 보여요. 첫 실행 때 묻는 신뢰 질문에 동의해야 프로젝트 설정이 켜져요. Claude Code는 플러그인, Codex는 에이전트와 프로젝트 스킬, Grok Build는 규칙과 스킬이에요(`grok --trust`로 열면 묻지 않고 신뢰해요). `--with-global`로 Codex Ponytail을 선택 설치했다면 `/hooks`에서 별도로 신뢰한 뒤 새 세션을 열어요. Antigravity는 `AGENTS.md`, `.agents/skills`, `.agents/agents`를 그대로 읽어요. 라운드 없는 편집 막기와 스킬 기록 훅은 Codex가 `/hooks`에서 `.codex/hooks.json`을 신뢰해야, Antigravity가 폴더를 신뢰해야 돌아요([지원하는 에이전트](../start/supported-agents.md#신뢰-질문)).
 4. **화면 디자인 검사 켜기**: impeccable을 골랐다면 개발자마다 한 번, 프로젝트 루트에서 `.agents/skills/impeccable/scripts/impeccable hooks on`을 실행해요. 켠 뒤 `.claude/settings.local.json`의 훅 명령이 `…/scripts/impeccable" hook`인지 확인해요. hallmark만 골랐다면 이 단계는 없어요. 대신 첫 화면 라운드가 만드는 `.hallmark/log.json`, `.hallmark/salt`, `.hallmark/.gitignore`는 커밋해요(`shots/`와 `preflight.json`은 설치기가 git 무시에 넣었어요).
 5. **프로젝트 소개 채우기**: `GLOSSARY.md`와 `docs/domain/project.md`를 채워요.
-6. **첫 요청**: "…을 만들어줘"처럼 요청하면 `prokit-dev-cycle`이 라운드를 열어요([dev-cycle 라운드](../concepts/dev-cycle.md)). <!-- edition:pro -->기존 프로젝트를 들였다면 새 세션이 `docs/first-request.md`를 읽고 정밀 분석부터 시작해요([기존 프로젝트에 도입하기](../start/adopt.md)).<!-- /edition -->
+6. **첫 요청**: “…을 만들어줘”처럼 요청하면 `prokit-dev-cycle`이 라운드를 열어요([dev-cycle 라운드](../concepts/dev-cycle.md)). <!-- edition:pro -->기존 프로젝트를 들였다면 새 세션이 `docs/first-request.md`를 읽고 정밀 분석부터 시작해요([기존 프로젝트에 도입하기](../start/adopt.md)).<!-- /edition -->
 
 ## 자세히
 

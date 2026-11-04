@@ -27,14 +27,14 @@ UI 스킬셋은 프로킷에서 화면을 만드는 데 필요한 스킬만 모�
 
 | 스킬 | 하는 일 | 이렇게 말하면 나서요 |
 |---|---|---|
-| `prokit-init` | PRD를 받아 프로젝트를 만들고 스킬 구성을 골라요. DB 없이 화면만 만드는 프로젝트도 이 스킬이 만들어요 | "이 PRD로 화면만 만드는 프로젝트 만들어줘" |
-| `prokit-dev-cycle` | 모든 작업의 시작점이에요. 작업 종류를 정하고 대조표를 열어 순서대로 진행해요 | "랜딩에 요금제 절 추가해줘" |
-| `prokit-ui` | 화면 기획, 디자인 스타일 추천, `DESIGN.md`, 화면 구현과 디자인 리뷰를 맡아요. 고른 UI 스킬(impeccable, hallmark, 기본 AI)의 단계로 진행해요. HTML 내보내기와 GitHub Pages·Vercel 정적 배포도 이 스킬이 해요 | "토스처럼 깔끔하게 바꿔줘", "HTML로 내보내줘" |
-| `prokit-verify` | 끝났다고 말하기 전에 돌릴 검사를 고르고 실행해 결과를 증거로 남겨요 | "잘 되는지 확인해줘" |
-| `prokit-pack-use` | 완성된 프리셋 팩을 복원하고, 품질을 지키며 내 서비스로 바꿔요 | "이 프리셋 팩으로 만들어줘" |
-| `prokit-skills-manage` | 두뇌, 과설계 방지 스킬, UI 스킬 같은 스킬 구성을 진행 중에 바꿔요 | "두뇌 바꿔줘", "UI 스킬을 hallmark로 바꿔줘" |
-| `prokit-skills-update` | 설치한 외부 스킬에 새 판이 있는지 보고 한 번에 올려요 | "스킬 업데이트해줘" |
-| `prokit-skills-assign` | 공식 스킬마다 그 스킬로 일할 에이전트를 정하고, 스킬이 바뀌면 다시 배치해요 | "새 공식 스킬 추가해줘" |
+| `prokit-init` | PRD를 받아 프로젝트를 만들고 스킬 구성을 골라요. DB 없이 화면만 만드는 프로젝트도 이 스킬이 만들어요 | “이 PRD로 화면만 만드는 프로젝트 만들어줘” |
+| `prokit-dev-cycle` | 모든 작업의 시작점이에요. 작업 종류를 정하고 대조표를 열어 순서대로 진행해요 | “랜딩에 요금제 절 추가해줘” |
+| `prokit-ui` | 화면 기획, 디자인 스타일 추천, `DESIGN.md`, 화면 구현과 디자인 리뷰를 맡아요. 고른 UI 스킬(impeccable, hallmark, 기본 AI)의 단계로 진행해요. HTML 내보내기와 GitHub Pages·Vercel 정적 배포도 이 스킬이 해요 | “토스처럼 깔끔하게 바꿔줘”, “HTML로 내보내줘” |
+| `prokit-verify` | 끝났다고 말하기 전에 돌릴 검사를 고르고 실행해 결과를 증거로 남겨요 | “잘 되는지 확인해줘” |
+| `prokit-pack-use` | 완성된 프리셋 팩을 복원하고, 품질을 지키며 내 서비스로 바꿔요 | “이 프리셋 팩으로 만들어줘” |
+| `prokit-skills-manage` | 두뇌, 과설계 방지 스킬, UI 스킬 같은 스킬 구성을 진행 중에 바꿔요 | “두뇌 바꿔줘”, “UI 스킬을 hallmark로 바꿔줘” |
+| `prokit-skills-update` | 설치한 외부 스킬에 새 판이 있는지 보고 한 번에 올려요 | “스킬 업데이트해줘” |
+| `prokit-skills-assign` | 공식 스킬마다 그 스킬로 일할 에이전트를 정하고, 스킬이 바뀌면 다시 배치해요 | “새 공식 스킬 추가해줘” |
 
 ## UI 스킬을 골라요
 
@@ -46,7 +46,7 @@ UI 스킬셋은 프로킷에서 화면을 만드는 데 필요한 스킬만 모�
 | `hallmark` | 새 웹 페이지를 AI가 만든 티 없이 만들고, 정한 디자인을 지키며 화면을 하나씩 더하는 서비스 |
 | 기본 AI (`none`) | 외부 UI 스킬 없이 Anthropic의 `frontend-design`과 게슈탈트 지침으로 만들고 싶을 때 |
 
-고른 UI 스킬은 프로젝트의 UI 스킬 기록(`.dev-cycle.json`의 `uiSkill`)에 남아요. 진행 중에 "hallmark로 바꿔줘"라고 하면 `prokit-skills-manage`가 `pnpm skills:setup --ui-skill <이름>`으로 이 기록을 바꿔요. 여럿을 고르면 첫째가 주 UI 스킬이고, 다른 UI 스킬은 사용자가 그 화면에 지목할 때만 더해요. 바꾸기 전 스킬이 남긴 작업 기록은 지우지 않지만 새 스킬의 근거로도 쓰지 않아요.
+고른 UI 스킬은 프로젝트의 UI 스킬 기록(`.dev-cycle.json`의 `uiSkill`)에 남아요. 진행 중에 “hallmark로 바꿔줘”라고 하면 `prokit-skills-manage`가 `pnpm skills:setup --ui-skill <이름>`으로 이 기록을 바꿔요. 여럿을 고르면 첫째가 주 UI 스킬이고, 다른 UI 스킬은 사용자가 그 화면에 지목할 때만 더해요. 바꾸기 전 스킬이 남긴 작업 기록은 지우지 않지만 새 스킬의 근거로도 쓰지 않아요.
 
 ```mermaid
 ---
@@ -55,6 +55,8 @@ config:
     wrappingWidth: 240
 ---
 flowchart TB
+  accTitle: UI 스킬 고르기
+  accDescr: 처음 만들 때나 진행 중에 UI 스킬을 정해 기록하고, 주 UI 스킬의 단계로 진행해요. 다른 UI 스킬은 그 화면에 지목할 때만 더해요.
   I["처음 만들 때<br/>PRD로 추천받아 고르기"] --> R["UI 스킬 기록<br/>여럿이면 첫째가<br/>주 UI 스킬"]
   I ~~~ CH["진행 중에<br/>“hallmark로 바꿔줘”"]
   CH --> R
@@ -72,8 +74,8 @@ flowchart TB
 |---|---|
 | `landing` | 가입이나 구매 같은 행동 하나로 이끄는 랜딩, 가입, 가격 화면 |
 | `tastemaker` | 사용자가 준 레퍼런스 이미지나 화면의 스타일을 이어 가는 화면 |
-| `taste` | "taste로"라고 했거나 스타일 질문에서 taste 방향을 고른 화면 |
-| `web-design-engineer` | "Linear처럼"처럼 스타일 레시피를 지목한 화면, 다섯 차원 채점 |
+| `taste` | “taste로”라고 했거나 스타일 질문에서 taste 방향을 고른 화면 |
+| `web-design-engineer` | “Linear처럼”처럼 스타일 레시피를 지목한 화면, 다섯 차원 채점 |
 | `awwwards` | 스크롤 연출과 모션이 중심인 브랜드·쇼케이스 화면 |
 | `animation` | 모션을 넣거나 고치는 화면 |
 | `visual-critique` | 디자인 리뷰마다 일곱 차원으로 화면 비평(impeccable이 주 UI 스킬이면 요청할 때만) |
@@ -98,6 +100,8 @@ config:
     wrappingWidth: 240
 ---
 flowchart TB
+  accTitle: UI 스킬의 위임 흐름
+  accDescr: 평소 말 요청이 대조표와 prokit-ui를 거쳐 디자인 단계와 전문 에이전트로 이어지고 증거로 끝나요. 화면 디자인 보조는 설치한 묶음만 쓰는 점선이에요.
   REQ["평소 말로 요청"] --> DC["대조표 열기<br/>prokit-dev-cycle"]
   DC --> UI["화면 일 정하기<br/>prokit-ui"]
   UI --> DS

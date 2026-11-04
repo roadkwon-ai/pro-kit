@@ -14,25 +14,25 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 200
+    wrappingWidth: 150
     rankSpacing: 20
 ---
 flowchart TB
-  U["브라우저"] --> PAGE
-  subgraph WEB["apps/web · Next.js App Router"]
-    PAGE["페이지 · 컴포넌트<br/>RSC와 Client<br/>packages/ui 컴포넌트 사용"]
-    RPC["라우트 /api/rpc<br/>context: session, db"]
-    AUTHR["라우트 /api/auth"]
-  end
-  PAGE -->|oRPC 클라이언트| RPC
-  RPC --> API["packages/api<br/>oRPC 라우터<br/>protectedProcedure"]
-  RPC -->|세션 조회| AUTH["packages/auth<br/>Better Auth"]
-  AUTHR --> AUTH
+  accTitle: 앱 구조
+  accDescr: 브라우저가 apps/web의 페이지로 들어오면 /api/rpc 라우트가 packages/api와 packages/auth를 부르고, 둘 다 packages/db를 거쳐 PostgreSQL로 이어져요.
+  U["브라우저"] --> PAGE["apps/web<br/>페이지 · 컴포넌트<br/>RSC와 Client<br/>packages/ui 사용"]
+  PAGE --> RPC["apps/web<br/>라우트 /api/rpc<br/>context<br/>session, db"]
+  RPC --> API["packages/api<br/>oRPC 라우터"]
+  API ~~~ AUTH
+  RPC --> AUTH["packages/auth<br/>Better Auth"]
   API --> DB["packages/db<br/>Drizzle 스키마<br/>마이그레이션"]
   AUTH --> DB
-  DB --> PG[("PostgreSQL<br/>로컬 → 병합 전 → 운영")]
-  RPC ~~~ AUTHR ~~~ API ~~~ AUTH
+  DB --> PG[("PostgreSQL<br/>로컬 → 병합 전<br/>→ 운영")]
 ```
+
+- **`/api/rpc`**: 화면이 oRPC 클라이언트로 요청을 보내는 곳이에요. `packages/auth`로 세션을 조회해요.
+- **`/api/auth`**: `apps/web`에 있는 인증 라우트예요. 곧바로 `packages/auth`를 불러요.
+
 <!-- /edition -->
 
 | 위치 | 하는 일 | 맡는 prokit 스킬 |
@@ -49,7 +49,7 @@ flowchart TB
 ## 내 요청은 어디를 바꾸나
 
 > [!TIP]
-> 처음에는 폴더 이름을 몰라도 돼요. "할 일에 마감일 붙여줘"처럼 말하면 에이전트가 아래 위치 가운데 필요한 곳을 골라 고치고, 그 위치에 맞는 스킬을 읽어요.
+> 처음에는 폴더 이름을 몰라도 돼요. “할 일에 마감일 붙여줘”처럼 말하면 에이전트가 아래 위치 가운데 필요한 곳을 골라 고치고, 그 위치에 맞는 스킬을 읽어요.
 
 | 이런 요청 | 바뀌는 곳 |
 |---|---|

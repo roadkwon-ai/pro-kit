@@ -14,7 +14,7 @@
 | `pnpm dev-cycle status` | 지금 어디까지 했는지 궁금할 때 | 열린 라운드, 채운 칸 수, 다음 할 일 |
 | `pnpm skills:check` | 스킬이 제대로 설치됐는지 볼 때 | 빠진 스킬이나 플러그인 |
 | `pnpm dev:web` | 화면을 내 브라우저로 볼 때 | 개발 서버 주소(보통 `http://localhost:3001`) |
-| `pnpm export:html` | 화면만 프로젝트를 HTML 파일로 내보낼 때 | `html/` 폴더(보통은 "HTML로 내보내줘"라고 말해요) |
+| `pnpm export:html` | 화면만 프로젝트를 HTML 파일로 내보낼 때 | `html/` 폴더(보통은 “HTML로 내보내줘”라고 말해요) |
 | `.agents/skills/impeccable/scripts/impeccable hooks on` | impeccable을 고른 새 프로젝트에서 처음 한 번(켜 두면 화면을 고칠 때마다 디자인 검사가 돌아요) | 훅이 켜졌다는 출력 |
 
 > [!TIP]
@@ -167,7 +167,7 @@ Codex 네이티브 Ponytail은 `pnpm skills:setup --with-global`을 실행할 �
 
 - 프로젝트마다 실제로 쓰는 검사 명령은 `.dev-cycle.json`의 `commands`(typecheck, lint, build, test, dbGenerate, dbMigrate)에 있어요. 없는 키는 그 프로젝트에서 실행할 수 없는 검사예요.
 - DB 명령은 패키지에서 실행해요. 예: `pnpm --filter @my-app/db db:generate`, `pnpm --filter @my-app/db db:migrate`. <!-- edition:pro -->
-- 명령 표의 정본은 템플릿 README의 "설치된 프로젝트에서 자주 쓰는 명령"([neon](../../templates/prokit-next-neon/README.md#설치된-프로젝트에서-자주-쓰는-명령) · [supabase](../../templates/prokit-next-supabase/README.md#설치된-프로젝트에서-자주-쓰는-명령))이에요. supabase는 `supabase start`, `stop`, `status`와 `supabase db advisors` 같은 DB 명령이 더 있어요. <!-- edition:pro -->
+- 명령 표의 정본은 템플릿 README의 “설치된 프로젝트에서 자주 쓰는 명령”([neon](../../templates/prokit-next-neon/README.md#설치된-프로젝트에서-자주-쓰는-명령) · [supabase](../../templates/prokit-next-supabase/README.md#설치된-프로젝트에서-자주-쓰는-명령))이에요. supabase는 `supabase start`, `stop`, `status`와 `supabase db advisors` 같은 DB 명령이 더 있어요. <!-- edition:pro -->
 - 기존 프로젝트에 도입하는 흐름은 [기존 프로젝트에 도입하기](../start/adopt.md), Task와 진행 계획은 [정밀 분석과 진행 계획](../concepts/project-plan.md)에 있어요. <!-- edition:pro -->
 
 ## 관련 문서

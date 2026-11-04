@@ -2,7 +2,7 @@
 
 > 한눈에: 템플릿은 운영 DB를 어디에 둘지로 골라요. 기능을 바꿀 때마다 DB의 테스트용 복사본을 만들어 확인하고 싶으면 Neon, 이미 Supabase를 쓰고 있으면 Supabase예요. 앱 코드 구성은 <!-- v:templates.count.ko -->두<!-- /v --> 템플릿이 같아요.
 
-**처음이고 정하기 어렵다면** 템플릿을 미리 고르지 않아도 돼요. 만들 서비스만 설명해도 돼요. 설명에 DB 종류가 드러나지 않으면 에이전트가 이 쪽의 비교표로 차이를 설명하고 물어봐요. 프로킷이 정해 둔 기본 템플릿은 없어요. 다만 DB 없이 화면만 만들 때는 묻지 않고 neon으로 만들어요. 이미 Supabase를 쓰고 있다면 supabase를, 그 밖에는 아래 "무엇으로 고르나요"의 두 줄이 기준이에요. Neon과 Supabase는 둘 다 인터넷에 두는 DB 서비스예요([용어](../../tutorials/reference/glossary.md#계정과-비용)).
+**처음이고 정하기 어렵다면** 템플릿을 미리 고르지 않아도 돼요. 만들 서비스만 설명해도 돼요. 설명에 DB 종류가 드러나지 않으면 에이전트가 이 쪽의 비교표로 차이를 설명하고 물어봐요. 프로킷이 정해 둔 기본 템플릿은 없어요. 다만 DB 없이 화면만 만들 때는 묻지 않고 neon으로 만들어요. 이미 Supabase를 쓰고 있다면 supabase를, 그 밖에는 아래 “무엇으로 고르나요”의 두 줄이 기준이에요. Neon과 Supabase는 둘 다 인터넷에 두는 DB 서비스예요([용어](../../tutorials/reference/glossary.md#계정과-비용)).
 
 ## <!-- v:templates.count.ko -->두<!-- /v --> 템플릿 한눈에 보기
 
@@ -13,6 +13,8 @@ config:
     wrappingWidth: 220
 ---
 flowchart TB
+  accTitle: DB 환경 흐름
+  accDescr: 두 템플릿 모두 로컬 개발에서 병합 전 확인 환경을 거쳐 운영으로 이어져요. supabase 템플릿은 Supabase 스테이징과 운영을, neon 템플릿은 Neon 개발 브랜치와 운영 브랜치를 써요.
   subgraph SUPA["prokit-next-supabase"]
     S1["로컬 개발<br/>Supabase 스택 DB만<br/>127.0.0.1:54322"] -->|병합 전| S2["Supabase 스테이징<br/>db:migrate + advisors"]
     S2 -->|병합 · 배포| S3["Supabase 운영<br/>앱은 pooler 6543"]
@@ -45,16 +47,18 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 240
+    wrappingWidth: 150
     rankSpacing: 25
 ---
 flowchart TB
+  accTitle: 템플릿 고르기
+  accDescr: 서비스 상황에 따라 템플릿이 정해져요. 화면만 만들면 neon, 이미 Supabase를 쓰면 supabase, 작업마다 DB 복사본이 필요하면 neon이에요. 잘 모르겠으면 에이전트가 비교표로 설명해요.
   subgraph Q["어떤 서비스인가요?"]
     N0["DB 없이 화면만<br/>→ neon, 묻지 않아요"]
     SU["DB가 있고<br/>이미 Supabase를 써요<br/>→ supabase"]
-    NE["DB가 있고 작업마다 DB 테스트<br/>복사본으로 확인하고 싶어요<br/>→ neon"]
-    ASK["DB가 있고 잘 모르겠어요<br/>→ 에이전트가 비교표로<br/>차이를 설명하고 물어요"]
-    OP["운영 중인 Next.js<br/>→ Better-T-Stack + Postgres<br/>+ Drizzle이면<br/>실제 DB에 맞는 템플릿<br/>그 밖에는 --adopt"]
+    NE["DB가 있고 작업마다<br/>DB 복사본으로<br/>확인하고 싶어요<br/>→ neon"]
+    ASK["DB가 있고 잘 모르겠어요<br/>→ 에이전트가<br/>비교표로 설명하고 물어요"]
+    OP["운영 중인 Next.js<br/>→ Better-T-Stack과<br/>Postgres · Drizzle이면<br/>실제 DB에 맞는 템플릿<br/>그 밖에는 --adopt"]
     N0 ~~~ SU ~~~ NE ~~~ ASK ~~~ OP
   end
 ```

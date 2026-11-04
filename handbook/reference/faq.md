@@ -51,12 +51,12 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 
 ### DB 없이 화면만 만들 수 있나요?
 
-네. 프롬프트에 "화면만", "DB는 쓰지 않아"를 넣으면 DB 없이 예시 데이터로 모든 화면을 만들고, 요청하면 HTML로 내보내요. 컨테이너 엔진도 필요 없어요([빠른 시작: 화면만 만들기](../start/quickstart-screens.md)).
+네. 프롬프트에 “화면만”, “DB는 쓰지 않아”를 넣으면 DB 없이 예시 데이터로 모든 화면을 만들고, 요청하면 HTML로 내보내요. 컨테이너 엔진도 필요 없어요([빠른 시작: 화면만 만들기](../start/quickstart-screens.md)).
 
 <!-- edition:pro -->
 ### 화면만 만든 걸 나중에 실제 서비스로 바꿀 수 있나요?
 
-네. "실제 서비스로 바꿀 거야"라고 하면 로컬 DB와 첫 마이그레이션을 더하고, 로그인과 저장 같은 기능은 dev-cycle 라운드로 이어서 만들어요([화면만 프로젝트와 HTML 내보내기](../design/screen-only.md)).
+네. “실제 서비스로 바꿀 거야”라고 하면 로컬 DB와 첫 마이그레이션을 더하고, 로그인과 저장 같은 기능은 dev-cycle 라운드로 이어서 만들어요([화면만 프로젝트와 HTML 내보내기](../design/screen-only.md)).
 <!-- /edition -->
 
 <!-- edition:pro -->
@@ -83,11 +83,11 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 
 ### 진행 중에 두뇌를 바꿀 수 있나요?
 
-네. "두뇌 바꿔줘", "openspec도 같이 쓰고 싶어"처럼 요청하면 `prokit-skills-manage` 스킬이 `pnpm skills:setup --brain …`으로 바꿔요. 고르지 않은 두뇌의 도구 파일은 지우지만 `openspec/`, `specs/`, `.specify/memory/` 같은 명세 문서는 남겨요([두뇌와 선택 스킬](../skills/brains.md)).
+네. “두뇌 바꿔줘”, “openspec도 같이 쓰고 싶어”처럼 요청하면 `prokit-skills-manage` 스킬이 `pnpm skills:setup --brain …`으로 바꿔요. 고르지 않은 두뇌의 도구 파일은 지우지만 `openspec/`, `specs/`, `.specify/memory/` 같은 명세 문서는 남겨요([두뇌와 선택 스킬](../skills/brains.md)).
 
 ### UI 스킬을 고르거나 바꿀 수 있나요?
 
-네. 화면 디자인 단계를 맡는 UI 스킬은 impeccable(기본)과 hallmark 중에서 고르고, 둘 다 고를 수도 있어요. 첫 번째가 주 UI 스킬이에요. 고르지 않으면 기본 AI가 `frontend-design` 스킬과 게슈탈트 지침으로 화면을 만들어요. "UI 스킬을 hallmark로 바꿔줘"처럼 요청하면 `prokit-skills-manage` 스킬이 `pnpm skills:setup --ui-skill …`으로 바꿔요. 바꿔도 `PRODUCT.md`, `DESIGN.md`, 화면 설계, 토큰은 그대로 쓰고, 다시 디자인해 달라고 하지 않으면 새 시각 방향을 내지 않아요([두뇌와 선택 스킬](../skills/brains.md)).
+네. 화면 디자인 단계를 맡는 UI 스킬은 impeccable(기본)과 hallmark 중에서 고르고, 둘 다 고를 수도 있어요. 첫 번째가 주 UI 스킬이에요. 고르지 않으면 기본 AI가 `frontend-design` 스킬과 게슈탈트 지침으로 화면을 만들어요. “UI 스킬을 hallmark로 바꿔줘”처럼 요청하면 `prokit-skills-manage` 스킬이 `pnpm skills:setup --ui-skill …`으로 바꿔요. 바꿔도 `PRODUCT.md`, `DESIGN.md`, 화면 설계, 토큰은 그대로 쓰고, 다시 디자인해 달라고 하지 않으면 새 시각 방향을 내지 않아요([두뇌와 선택 스킬](../skills/brains.md)).
 
 ### 에이전트가 코드를 직접 고치지 않고 다른 에이전트에게 맡겨요
 
@@ -105,11 +105,11 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 
 ### 새 세션을 열면 프로젝트를 다시 설명해야 하나요?
 
-아니요. 에이전트는 시작할 때 `AGENTS.md`, `GLOSSARY.md`(용어집), `docs/domain/project.md`(프로젝트 소개)를 읽고, `pnpm dev-cycle status`로 진행 중인 작업<!-- edition:pro -->과 진행 계획의 다음 Task를<!-- /edition --><!-- edition:ui 을 --> 이어받아요. "하던 작업 이어서 해줘"라고 하면 돼요([만든 뒤 개발하기](../start/after-create.md)).
+아니요. 에이전트는 시작할 때 `AGENTS.md`, `GLOSSARY.md`(용어집), `docs/domain/project.md`(프로젝트 소개)를 읽고, `pnpm dev-cycle status`로 진행 중인 작업<!-- edition:pro -->과 진행 계획의 다음 Task를<!-- /edition --><!-- edition:ui 을 --> 이어받아요. “하던 작업 이어서 해줘”라고 하면 돼요([만든 뒤 개발하기](../start/after-create.md)).
 
 ### 이미 만든 프로젝트에 템플릿의 새 내용을 넣을 수 있나요?
 
-네. pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"라고 하면 차이를 먼저 보여 주고, 실제 반영은 그 프로젝트의 세션에서 라운드로 해요([기존 프로젝트에 갱신 반영](../templates/update-existing.md)).
+네. pro-kit 폴더에서 “템플릿 변경을 <프로젝트>에 반영해줘”라고 하면 차이를 먼저 보여 주고, 실제 반영은 그 프로젝트의 세션에서 라운드로 해요([기존 프로젝트에 갱신 반영](../templates/update-existing.md)).
 
 ### 실제 서비스에서도 미리보기처럼 디자인을 바꿔 가며 쓸 수 있나요?
 
@@ -152,7 +152,7 @@ Claude Code와 Codex는 각자의 유료 요금제로 써요. Antigravity와 Gro
 Claude Code와 Codex는 **`Esc`를 눌러 하던 일을 바로 멈춰요**([Claude Code와 Codex](../../tutorials/reference/claude-code-and-codex.md)). Antigravity와 Grok Build의 중단 키는 각 도구의 안내를 확인하세요. 프로킷은 운영 DB 적용, 배포, push 같은 큰 일 앞에서는 늘 사용자에게 물어요.
 
 > [!TIP]
-> 멈춘 뒤에 무엇이 바뀌었는지 "방금 바꾼 파일을 알려줘"라고 물어보고, 원치 않는 변경은 "그 변경을 되돌려줘"라고 시켜요. 이미 저장(커밋)한 것은 에이전트가 새 커밋으로 정리해요.
+> 멈춘 뒤에 무엇이 바뀌었는지 “방금 바꾼 파일을 알려줘”라고 물어보고, 원치 않는 변경은 “그 변경을 되돌려줘”라고 시켜요. 이미 저장(커밋)한 것은 에이전트가 새 커밋으로 정리해요.
 
 <!-- edition:pro -->
 ### 에이전트가 운영 DB나 배포를 마음대로 하나요?
@@ -168,7 +168,7 @@ Claude Code와 Codex는 **`Esc`를 눌러 하던 일을 바로 멈춰요**([Clau
 > 운영 DB에 마이그레이션을 적용하기 전에는 목록을, 운영에 배포할 때마다 버전과 릴리스 노트를 보여 주고 동의를 받아요([Vercel 배포와 되돌리기](../deploy/vercel.md)).
 <!-- /edition -->
 
-### "완료했어요"라는 말을 믿어도 되나요?
+### “완료했어요”라는 말을 믿어도 되나요?
 
 **에이전트는 대조표의 모든 칸을 실제로 실행한 명령과 결과로 채우고 `audit`을 통과한 뒤에만 완료라고 해요.** 마지막 칸은 사용자가 결과를 직접 보고 확인하는 칸이라서 그 확인이 끝나야 작업도 끝나요([증거와 audit, 사용자 확인](../concepts/audit-and-confirm.md)).
 

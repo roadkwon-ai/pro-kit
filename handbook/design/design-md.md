@@ -4,7 +4,7 @@
 
 ## 왜 필요하고 언제 쓰나요
 
-에이전트는 대화가 새로 시작되면 이전 대화를 기억하지 못해요. 그래서 "파란색 계열로, 둥근 모서리로"라고 말로만 정하면 화면마다 조금씩 달라져요. `DESIGN.md`에 정확한 값(토큰. 색이나 글자 크기에 이름을 붙인 값)을 적어 두면 새 세션에서도 같은 디자인을 이어 가요. 화면을 처음 만들 때 스타일을 고르면 에이전트가 만들어 주고([UI/UX 흐름](ui-flow.md)), 사용자는 평소에 이 파일을 직접 고치지 않아요.
+에이전트는 대화가 새로 시작되면 이전 대화를 기억하지 못해요. 그래서 “파란색 계열로, 둥근 모서리로”라고 말로만 정하면 화면마다 조금씩 달라져요. `DESIGN.md`에 정확한 값(토큰. 색이나 글자 크기에 이름을 붙인 값)을 적어 두면 새 세션에서도 같은 디자인을 이어 가요. 화면을 처음 만들 때 스타일을 고르면 에이전트가 만들어 주고([UI/UX 흐름](ui-flow.md)), 사용자는 평소에 이 파일을 직접 고치지 않아요.
 
 ## 바꾸고 싶을 때
 
@@ -21,7 +21,7 @@
 | 다크 모드 더하기 | 다크 모드를 더해줘. 라이트와 다크의 색 토큰을 DESIGN.md에 같이 적고 대비 검사도 해줘 |
 | 스타일 통째로 바꾸기 | 다른 스타일로 리디자인하고 싶어. 후보를 추천해줘 |
 
-에이전트는 덮어쓰기 전에 사용자에게 물어요. 바꾼 뒤에는 바뀐 화면을 직접 열어서 보고 "좋아", "여기는 다시"라고 알려 주면 돼요.
+에이전트는 덮어쓰기 전에 사용자에게 물어요. 바꾼 뒤에는 바뀐 화면을 직접 열어서 보고 “좋아”, “여기는 다시”라고 알려 주면 돼요.
 
 ## 파일의 생김새
 
@@ -30,7 +30,7 @@
 | 스펙의 원칙과 규칙 | 프로킷에서 |
 |---|---|
 | 머리말의 YAML 토큰은 정확한 값, 본문 글은 그 값의 이유 | 구현할 때 토큰을 `packages/ui`의 `globals.css` shadcn 변수로 옮겨요. 화면 코드에는 색 코드(hex)나 임의 Tailwind 값을 새로 쓰지 않아요 |
-| 형용사 목록보다 구체적인 레퍼런스 | "토스 느낌"이라고 말로 전하지 않아요. 카탈로그에서 실제 서비스를 분석한 DESIGN.md 원문을 받아 써요 |
+| 형용사 목록보다 구체적인 레퍼런스 | “토스 느낌”이라고 말로 전하지 않아요. 카탈로그에서 실제 서비스를 분석한 DESIGN.md 원문을 받아 써요 |
 | 의도한 Do's and Don'ts | 원문의 금지 목록을 그대로 두고, 로고, 브랜드 이름, 전용 서체를 쓰지 않는 규칙을 더해요 |
 | 정해진 8개 절과 순서 | 고른 UI 스킬(impeccable은 `document`)이 스펙대로 쓰고, lint가 빠진 절과 순서 오류를 알려 줘요. UI 스킬이 없으면 기본 AI가 직접 스펙 형식으로 써요. hallmark도 자기 형식이 아니라 이 스펙 형식으로 써요. Refero 원문은 받은 뒤 토큰 머리말을 붙이고 절 순서를 맞춰요 |
 | 검사기 `lint` | 저장하거나 고칠 때마다 설치 없이 바로 실행해요(`pnpm dlx @google/design.md lint DESIGN.md`). `missing-primary`가 나오면 대표 색을 더하고, `contrast-ratio`가 나오면 구현에서 WCAG AA 기준으로 맞추고 기록해요 |
@@ -78,12 +78,12 @@ DESIGN.md
   - Refero 원문 변환: Refero 원문은 Google 스펙 형식이 아니라서(표와 글뿐이고 맨 위의 YAML 토큰 머리말이 없어요) 본문 표의 값을 그대로 옮겨 토큰 머리말을 붙여요.
   - 지우거나 쓰지 않을 것: 다른 브랜드 이름(`Similar Brands`)과 새 토큰을 만드는 예시(`Quick Start`)는 지우고, robots.txt가 막은 사이트 검색과 `/api/`는 쓰지 않아요.
 - **기존 디자인으로 만들기**: 기존 프로젝트에서 디자인 유지를 골랐을 때 쓰는 길이에요. 아래에서 따로 설명해요. <!-- edition:pro -->
-- **직접 정하기**: "카탈로그 없이 주 UI 스킬로 정하기"(hallmark는 테마 배정, UI 스킬이 없으면 "카탈로그 없이 직접 정하기")를 고르면 시작 전에 `DESIGN.md`를 지어내지 않아요. 만든 화면을 바탕으로 마감 때 주 UI 스킬의 정본 갱신 단계(impeccable은 `document`)로 기록해요. hallmark는 테마로 정한 시각 세계를, 기본 AI는 계획한 토큰(색, 서체, 간격)을 스펙 형식으로 써요.
+- **직접 정하기**: “카탈로그 없이 주 UI 스킬로 정하기”(hallmark는 테마 배정, UI 스킬이 없으면 “카탈로그 없이 직접 정하기”)를 고르면 시작 전에 `DESIGN.md`를 지어내지 않아요. 만든 화면을 바탕으로 마감 때 주 UI 스킬의 정본 갱신 단계(impeccable은 `document`)로 기록해요. hallmark는 테마로 정한 시각 세계를, 기본 AI는 계획한 토큰(색, 서체, 간격)을 스펙 형식으로 써요.
 
 <!-- edition:pro -->
 ### 기존 디자인으로 만들기
 
-기존 프로젝트(초기, 운영 중, 전환)에서 [디자인 방향을 "기존 디자인 유지"로 정했는데](ui-flow.md#기존-프로젝트의-디자인-방향) `DESIGN.md`가 없으면, 카탈로그를 쓰지 않고 지금 있는 디자인으로 만들어요.
+기존 프로젝트(초기, 운영 중, 전환)에서 [디자인 방향을 “기존 디자인 유지”로 정했는데](ui-flow.md#기존-프로젝트의-디자인-방향) `DESIGN.md`가 없으면, 카탈로그를 쓰지 않고 지금 있는 디자인으로 만들어요.
 
 1. 운영 화면의 토큰과 컴포넌트, 디자인 시스템 문서, 프로토타입에서 값을 모아요. 토큰마다 어느 파일에서 왔는지 적어 둬요.
 2. Google 스펙 형식으로 써요. 머리말에 토큰을 두고, 본문은 Overview, Colors, Typography, Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts 순서예요. 근거가 없는 절은 빼요. 화면에서 실제로 쓰는 값만 옮기고 값을 지어내지 않아요.
@@ -105,7 +105,7 @@ DESIGN.md
 
 | 자료 | 내용 |
 |---|---|
-| [DESIGN.md 스펙](https://github.com/google-labs-code/design.md), [PHILOSOPHY](https://github.com/google-labs-code/design.md/blob/main/PHILOSOPHY.md) (Google Labs, 스펙 `alpha`) | 토큰은 정확한 값이고, 글은 그 값의 이유예요. "형용사는 영역을, 구체적인 레퍼런스는 한 점을 가리킨다" |
+| [DESIGN.md 스펙](https://github.com/google-labs-code/design.md), [PHILOSOPHY](https://github.com/google-labs-code/design.md/blob/main/PHILOSOPHY.md) (Google Labs, 스펙 `alpha`) | 토큰은 정확한 값이고, 글은 그 값의 이유예요. “형용사는 영역을, 구체적인 레퍼런스는 한 점을 가리킨다” |
 | [Stitch 발표](https://blog.google/innovation-and-ai/models-and-research/google-labs/stitch-ai-ui-design/) (Google, 2026-03-18) | 디자인 규칙을 다른 디자인·코딩 도구와 주고받는 에이전트용 마크다운 파일로 DESIGN.md를 소개해요 |
 | [SpecifyUI](https://arxiv.org/abs/2509.07334) (arXiv 2509.07334, 2025) | 구조화한 스펙으로 만든 UI가 프롬프트만 쓴 경우보다 레퍼런스의 의도를 더 충실히 담았어요. 디자이너 16명 사용자 연구 |
 | [Measuring the value of design systems](https://www.figma.com/blog/measuring-the-value-of-design-systems/) (Figma) | 디자인 시스템이 있을 때 사람 디자이너가 작업을 34% 빨리 끝냈어요. Figma는 이 값을 실제 환경의 최대치로 봐요 |
@@ -122,7 +122,7 @@ DESIGN.md
 `DESIGN.md`가 결과를 얼마나 바꾸는지 쟀어요. 앱 화면 서비스 중 <!-- v:eval.designMd.services -->4<!-- /v -->개(<!-- v:preset.goru.title -->고루<!-- /v -->, <!-- v:preset.fitslot.title -->핏슬롯<!-- /v -->, <!-- v:preset.uptrail.title -->Uptrail<!-- /v -->, <!-- v:preset.studyday.title -->하루공부<!-- /v -->)의 리디자인 전 첫 판을 같은 `PRODUCT.md`와 화면 설계로 두 번씩 만들었어요.
 
 - A: 카탈로그에서 고른 `DESIGN.md`를 함께 줬어요.
-- B: "토스 느낌으로, 대표 색은 #12805C"처럼 브랜드 이름과 대표 색만 말로 줬어요.
+- B: “토스 느낌으로, 대표 색은 #12805C”처럼 브랜드 이름과 대표 색만 말로 줬어요.
 
 두 조건 모두 프로킷의 `prokit-ui` 규칙을 따랐고, 두 번째 화면은 새 세션에서 만들었어요(<!-- edition:pro -->neon 템플릿, <!-- /edition -->`claude -p`, Opus 5.5, 2026-09-30). 일치율은 두 조건 모두 A가 저장한 `DESIGN.md`의 토큰과 비교했어요.
 
@@ -130,6 +130,8 @@ DESIGN.md
 ```mermaid
 %%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2a78d6, #8c929b"}}}}%%
 xychart-beta
+  accTitle: DESIGN.md 효과
+  accDescr: DESIGN.md가 있을 때와 브랜드 이름과 대표 색만 있을 때를 다섯 항목의 일치율로 견줘요. 파랑이 DESIGN.md 있음이에요.
   title "DESIGN.md 있음(파랑)과 브랜드 이름·대표 색만(회색) (%)"
   x-axis ["팔레트 일치", "글자 크기 일치", "반경 일치", "두 번째 화면 색 일관성", "블라인드 종합 승률"]
   y-axis "%" 0 --> 100

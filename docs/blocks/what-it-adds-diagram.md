@@ -7,6 +7,8 @@ config:
     rankSpacing: 25
 ---
 flowchart TB
+  accTitle: 템플릿이 더하는 것
+  accDescr: Better-T-Stack이 만든 뼈대 위에 템플릿이 규칙 문서, 스킬, 에이전트, dev-cycle, 배포를 더해 에이전트와 바로 개발할 수 있는 프로젝트가 돼요.
   subgraph BTS["Better-T-Stack이 생성"]
     direction TB
     B1["apps/web<br/>Next.js App Router"]

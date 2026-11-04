@@ -8,8 +8,8 @@
 
 | 지금 상황 | 어디서 열까 | 프롬프트 |
 |---|---|---|
-| pro-kit을 아직 받지 않았어요 | 프로젝트를 모아 둘 작업 폴더(예: `~/projects`) | 에이전트가 pro-kit을 받는 일부터 하게 하는 프롬프트(아래 "pro-kit을 아직 받지 않았다면") |
-| pro-kit을 이미 받았어요 | pro-kit 폴더 | 받는 일 없이 바로 프로젝트를 만들어 달라는 프롬프트(아래 "요청하기"의 예) |
+| pro-kit을 아직 받지 않았어요 | 프로젝트를 모아 둘 작업 폴더(예: `~/projects`) | 에이전트가 pro-kit을 받는 일부터 하게 하는 프롬프트(아래 “pro-kit을 아직 받지 않았다면”) |
+| pro-kit을 이미 받았어요 | pro-kit 폴더 | 받는 일 없이 바로 프로젝트를 만들어 달라는 프롬프트(아래 “요청하기”의 예) |
 
 작업 폴더에서 시작하는 프롬프트는 아래 [pro-kit을 아직 받지 않았다면](#pro-kit을-아직-받지-않았다면)에 있어요. 에이전트를 처음 열 때 나오는 질문은 [처음 한 시간](first-hour.md)에 있어요.
 
@@ -77,6 +77,8 @@ config:
     rankSpacing: 25
 ---
 flowchart TB
+  accTitle: 서비스 시작 순서
+  accDescr: 프로젝트 생성, 템플릿 설치, 로컬 DB 시작, 첫 마이그레이션, 포맷 정리와 커밋, 새 에이전트 세션, 기능 요청, 라운드 끝까지 차례로 이어져요. 템플릿 설치는 파일 복사와 스킬 설치로 나뉘어요.
   A["1. 프로젝트 생성<br/>pnpm create<br/>better-t-stack@latest"] --> B["2. 템플릿 설치<br/>bash templates/템플릿/install.sh<br/>프로젝트<br/>--brain · --simplicity<br/>--ui-skill"]
   B --> SUB
   subgraph SUB[" "]
@@ -101,7 +103,7 @@ flowchart TB
 
 ## 에이전트가 물어보는 것
 
-에이전트는 PRD를 읽고 추천을 만든 뒤 아래를 물어요. 요청에 이미 적었거나 "알아서 골라줘"라고 맡긴 항목은 묻지 않고 추천대로 진행하고, 고른 값과 근거를 알려 줘요. **추천은 제안이고 고르는 것은 나예요.** 선택지마다 한 줄 설명이 붙고 추천에는 `(추천)`이 붙어 맨 앞에 있어요.
+에이전트는 PRD를 읽고 추천을 만든 뒤 아래를 물어요. 요청에 이미 적었거나 “알아서 골라줘”라고 맡긴 항목은 묻지 않고 추천대로 진행하고, 고른 값과 근거를 알려 줘요. **추천은 제안이고 고르는 것은 나예요.** 선택지마다 한 줄 설명이 붙고 추천에는 `(추천)`이 붙어 맨 앞에 있어요.
 
 | 질문 | 선택지 | 추천과 기본 | 잘 모르겠으면 | 안 물을 때 |
 |---|---|---|---|---|
@@ -123,7 +125,7 @@ flowchart TB
 
 ### 에이전트가 따르는 절차
 
-에이전트는 [AGENTS.md](../../AGENTS.md)의 "템플릿으로 새 프로젝트 만들기" 1\~10번을 순서대로 따르고, 명령은 템플릿 README의 "새 프로젝트 시작"과 "설치한 뒤"를 그대로 써요.
+에이전트는 [AGENTS.md](../../AGENTS.md)의 “템플릿으로 새 프로젝트 만들기” 1\~10번을 순서대로 따르고, 명령은 템플릿 README의 “새 프로젝트 시작”과 “설치한 뒤”를 그대로 써요.
 
 | 단계 | 하는 일 |
 |---|---|
@@ -141,7 +143,7 @@ flowchart TB
 
 ### 직접 하기
 
-명령 전체는 각 템플릿 README의 "새 프로젝트 시작"에 있어요([neon](../../templates/prokit-next-neon/README.md#새-프로젝트-시작) · [supabase](../../templates/prokit-next-supabase/README.md#새-프로젝트-시작)).
+명령 전체는 각 템플릿 README의 “새 프로젝트 시작”에 있어요([neon](../../templates/prokit-next-neon/README.md#새-프로젝트-시작) · [supabase](../../templates/prokit-next-supabase/README.md#새-프로젝트-시작)).
 
 1. 상위 폴더에서 `pnpm create better-t-stack@latest my-app …`을 실행해요. 옵션은 템플릿 README에 적힌 그대로 써요.
 2. `bash pro-kit/templates/<템플릿>/install.sh my-app --brain <값> --simplicity <값> --ui-skill <값>`으로 설치해요. 두뇌와 과설계 방지 스킬을 고르지 않으면 둘 다 `none`으로 줘요([두뇌와 선택 스킬](../skills/brains.md)).

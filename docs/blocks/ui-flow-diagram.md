@@ -6,6 +6,8 @@ config:
     wrappingWidth: 230
 ---
 flowchart TB
+  accTitle: 화면 작업 순서
+  accDescr: 첫 화면이나 리디자인 요청에서 시작해 기획, 한 번에 묻기, DESIGN.md 받기, 시각 자산, 구현, 실행 확인, 리뷰, 다듬기, DESIGN.md 기록, 사용자 확인을 거쳐 dev-cycle audit과 close로 끝나요.
   R["첫 화면·리디자인 요청<br/>리디자인이면<br/>지금 화면 진단"] --> I["기획<br/>PRODUCT.md<br/>주 UI 스킬의 인터뷰"]
   I --> Q["한 번에 묻기<br/>카탈로그 3곳에서 스타일 1~3위<br/>주 UI 스킬로 정하기<br/>(hallmark는 테마 배정)<br/>방향 보조(설치했을 때)<br/>대표 색 · 이름·헤드라인 후보<br/>사이트맵 · 화면 설계<br/>(브리프의 보조: 줄)"]
   Q --> D["DESIGN.md 받기<br/>curl · agent-browser<br/>명세 lint"]

@@ -4,10 +4,10 @@
 
 ## 왜 라운드로 일하나
 
-에이전트에게 "만들어줘"만 시키면 어디까지 확인했는지 알 수 없어요. 라운드는 이 문제를 체크리스트로 풀어요. 시작할 때 표를 열고, 칸마다 실제로 한 일의 증거를 적고, 마지막에 내가 확인해야 닫혀요. 요청부터 커밋까지 실제 대화로 보고 싶으면 [라운드 한 번 따라가 보기](round-example.md)부터 읽어 보세요. 처음 보는 말은 [용어](../../tutorials/reference/glossary.md#만들기)에서 찾아요.
+에이전트에게 “만들어줘”만 시키면 어디까지 확인했는지 알 수 없어요. 라운드는 이 문제를 체크리스트로 풀어요. 시작할 때 표를 열고, 칸마다 실제로 한 일의 증거를 적고, 마지막에 내가 확인해야 닫혀요. 요청부터 커밋까지 실제 대화로 보고 싶으면 [라운드 한 번 따라가 보기](round-example.md)부터 읽어 보세요. 처음 보는 말은 [용어](../../tutorials/reference/glossary.md#만들기)에서 찾아요.
 
 > [!IMPORTANT]
-> 말로 하는 "다 됐어요"가 아니라 표가 완료의 기준이에요.
+> 말로 하는 “다 됐어요”가 아니라 표가 완료의 기준이에요.
 
 ## 라운드의 흐름
 
@@ -21,21 +21,22 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 170
+    wrappingWidth: 130
 ---
 flowchart TB
-  S["status<br/>진행 중 라운드 확인"] --> C["case<br/>케이스 판정"]
-  C --> T["table 케이스 --write<br/>대조표 열기"]
+  accTitle: dev-cycle 순서
+  accDescr: status로 진행 중 라운드를 보고 케이스를 판정해 대조표를 열어요. 행을 실행해 증거를 채우고 사용자 확인을 거쳐 audit을 해요. 빈 칸이나 실패가 있으면 행 실행으로 돌아가고, 통과하면 마무리를 골라요.
+  S["status<br/>진행 중 라운드<br/>확인"] --> C["case<br/>케이스 판정"]
+  C --> T["table 케이스<br/>--write<br/>대조표 열기"]
   T --> R["행 실행<br/>증거 칸 채우기"]
-  R --> EV["evidence 행 번호<br/>--file<br/>필요하면 한 행만 갱신"]
-  EV --> CF["[confirm] 사용자 확인<br/>N/A 불가"]
+  R --> EV["evidence<br/>행 번호 --file<br/>필요하면 한 행만<br/>갱신"]
+  EV --> CF["[confirm]<br/>사용자 확인<br/>N/A 불가"]
   CF --> A(["audit"])
-  A -->|"빈 칸 · 실패<br/>다른 계층을<br/>건드림<br/>→ table<br/>새 케이스<br/>--upgrade"| R
+  A -->|"미통과"| R
   A -->|통과| Q(["마무리 선택"])
-  Q --> M
-  subgraph M[" "]
-    RD["기본<br/>close → 커밋 · push<br/>→ 릴리스<br/>· production 배포"] ~~~ CL["화면만 · 배포 PASS<br/>준비 안 됨<br/>close → 커밋 · push"]
-  end
+  Q --> RD["기본<br/>close → 커밋<br/>· push → 릴리스<br/>· production<br/>배포"]
+  Q --> CL["화면만 · 배포<br/>PASS 준비 안 됨<br/>close → 커밋<br/>· push"]
+  RD ~~~ CL
 ```
 
 audit이 빈 칸이나 실패를 알리면 행 실행으로 돌아가요. 다른 계층을 건드렸다고 알리면 `table <새 케이스> --upgrade`로 행을 더한 뒤 행 실행으로 돌아가요.
@@ -56,7 +57,7 @@ audit이 빈 칸이나 실패를 알리면 행 실행으로 돌아가요. 다른
 | 시작 | 하고 싶은 것을 평소 말로 보내요. 에이전트가 되물으면 답해요 |
 | 케이스 판정 | 보통 없어요. 새 기능인지 버그인지 분명하게 말해 주면 판정이 빨라요 |
 | 대조표 열기 | 없어요. `tasks/todo.md`에 표가 생겼는지 궁금하면 열어 봐요 |
-| 행 실행 | 스펙의 "만들지 않는 것"과 인수 조건이 맞는지 봐요. 진행이 궁금하면 `pnpm dev-cycle status` 결과를 보여 달라고 해요 |
+| 행 실행 | 스펙의 “만들지 않는 것”과 인수 조건이 맞는지 봐요. 진행이 궁금하면 `pnpm dev-cycle status` 결과를 보여 달라고 해요 |
 | 사용자 확인 | 에이전트가 준 주소나 순서대로 직접 써 보고 `확인했어` 또는 고칠 것을 말해요([확인해 달라고 하면](audit-and-confirm.md#확인해-달라고-하면)) |
 | 마무리 | 릴리스와 production 배포를 할지 물으면 고르고, 운영 DB에 적용할 마이그레이션이 있으면 동의해요 | <!-- edition:ui | 마무리 | 커밋과 push를 할지 물으면 답해요 | --> <!-- edition:pro -->
 
@@ -67,7 +68,7 @@ audit이 빈 칸이나 실패를 알리면 행 실행으로 돌아가요. 다른
 <!-- edition:pro -->
 ## 요청 하나가 흘러가는 모습
 
-"할 일에 마감일 붙이고 지난 건 표시해줘"라는 요청은 화면, API, DB에 모두 걸치는 새 기능이라 케이스 F로 진행돼요.
+“할 일에 마감일 붙이고 지난 건 표시해줘”라는 요청은 화면, API, DB에 모두 걸치는 새 기능이라 케이스 F로 진행돼요.
 
 ```mermaid
 ---
@@ -76,6 +77,8 @@ config:
     wrappingWidth: 220
 ---
 flowchart TB
+  accTitle: 예시 작업 흐름
+  accDescr: 마감일 기능 요청이 케이스 F 대조표로 열려요. 스펙, 계획, DB, API, 화면, 리팩토링, 독립 리뷰, 시나리오 QA, 사용자 확인을 차례로 거쳐 audit 통과 뒤 close하고 커밋으로 끝나요.
   R["할 일에 마감일 붙이고<br/>지난 건 표시해줘"] --> DC["prokit-dev-cycle<br/>케이스 F · 대조표"]
   DC --> SP["스펙 · 테스트 시나리오<br/>용어 기록 GLOSSARY.md"]
   SP --> PLAN["구현 계획 · 재사용과 설정 점검<br/>prokit-reviewer(plan)"]
@@ -132,8 +135,8 @@ flowchart TB
 
 1. audit으로 남은 문제가 표 끝의 `[confirm]` 행뿐인지 봐요. 다른 행이 남았으면 먼저 끝내요.
 2. 사용자 확인을 받아요.
-3. audit이 통과해야 해요. `blocked`나 `미실행` 칸이 있으면 "부분 완료"로 보고하고, 사용자가 그대로 닫자고 할 때만 `close --partial`로 닫아요.
-4. 배포할 수 있는지 봐요. `pnpm vercel:deploy production --check`는 항상 실행해요. <!-- edition:pro -->기본 브랜치, GitHub `origin`, `gh auth status`, 배포 검사(커밋하지 않은 변경과 릴리스 항목은 제외)가 모두 통과하면 한 번 물어요. 선택지는 "릴리스하고 production 배포 (기본)"와 "커밋·push만 (배포 PASS)"예요. 하나라도 빠지면 묻지 않고 커밋·push까지만 해요.<!-- /edition --><!-- edition:ui 결과는 보고에 적어요. --> 화면만 프로젝트는 모두 통과해도 묻지 않고 커밋·push까지만 해요. 화면 배포는 요청할 때 따로 해요([화면만 프로젝트의 배포](../design/screen-only.md#배포)).
+3. audit이 통과해야 해요. `blocked`나 `미실행` 칸이 있으면 “부분 완료”로 보고하고, 사용자가 그대로 닫자고 할 때만 `close --partial`로 닫아요.
+4. 배포할 수 있는지 봐요. `pnpm vercel:deploy production --check`는 항상 실행해요. <!-- edition:pro -->기본 브랜치, GitHub `origin`, `gh auth status`, 배포 검사(커밋하지 않은 변경과 릴리스 항목은 제외)가 모두 통과하면 한 번 물어요. 선택지는 “릴리스하고 production 배포 (기본)”와 “커밋·push만 (배포 PASS)”예요. 하나라도 빠지면 묻지 않고 커밋·push까지만 해요.<!-- /edition --><!-- edition:ui 결과는 보고에 적어요. --> 화면만 프로젝트는 모두 통과해도 묻지 않고 커밋·push까지만 해요. 화면 배포는 요청할 때 따로 해요([화면만 프로젝트의 배포](../design/screen-only.md#배포)).
 5. 이 라운드에서 미룬 지적을 `tasks/todo.md`의 백로그로 옮겨요. 재발 원인이 확인됐으면 `tasks/lessons.md`, 해당 규칙·평가 입력이나 백로그에 반영했는지도 확인하고 `pnpm dev-cycle close`로 닫아요. 이때 대조표와 완료한 일반 할 일·백로그도 함께 보관해요.
 6. 커밋 전에 `pnpm dev-cycle secrets`를 실행하고, 이 라운드에서 바꾼 파일과 `tasks/`만 커밋해요. 제목은 Conventional Commits 접두어(`feat:`, `fix:`, `docs:` …)로 써요. 릴리스 노트의 절이 여기서 정해지고, `!`는 깨지는 변경으로 버전을 올려요. 이어서 push해요. 설치기가 건 git pre-commit 훅(`pnpm dev-cycle guard --staged`)이 이 커밋에 닫은 라운드 기록이 있는지 봐요. 라운드 없이 코드나 하네스를 커밋하려 하면 막고, 훅을 건너뛰는 `git commit --no-verify`는 사용자가 허락할 때만 써요.
 7. 릴리스와 production 배포를 골랐다면 `prokit-deploy`의 배포 순서를 따라요([Vercel 배포와 되돌리기](../deploy/vercel.md)). <!-- edition:pro -->

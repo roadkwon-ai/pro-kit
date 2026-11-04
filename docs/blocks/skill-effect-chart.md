@@ -2,6 +2,8 @@
 ```mermaid
 %%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2a78d6, #8c929b"}}}}%%
 xychart-beta
+  accTitle: 스킬 효과
+  accDescr: 여섯 분야의 규칙 준수율을 스킬 있을 때와 없을 때로 견줘요. 파랑이 스킬 있음이에요.
   title "규칙 준수율, 스킬 있음(파랑)과 스킬 없음(회색) (%)"
   x-axis ["dev-cycle", "api", "db", "web", "ui", "verify"]
   y-axis "%" 0 --> 100

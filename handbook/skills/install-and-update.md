@@ -12,9 +12,9 @@
 | 누가 | 무엇을 |
 |---|---|
 | 프로킷이 자동으로 | 새 프로젝트를 만들 때 최신판을 받아 설치해요. 작업을 시작할 때(`pnpm dev-cycle status`) 하루에 한 번 새 버전이 있는지 확인하고, 있으면 에이전트가 물어봐요 |
-| 내가 | 보통은 에이전트가 물을 때 답하기만 하면 돼요. 직접 하려면 "스킬 업데이트해줘"라고 말하고, 상태만 보려면 `pnpm skills:check`를 실행해요 |
+| 내가 | 보통은 에이전트가 물을 때 답하기만 하면 돼요. 직접 하려면 “스킬 업데이트해줘”라고 말하고, 상태만 보려면 `pnpm skills:check`를 실행해요 |
 
-"스킬 업데이트해줘", "스킬 최신인지 확인해줘"라고 요청하면 `prokit-skills-update` 스킬이 받아서 바뀐 스킬을 확인하고, 한 번의 작업(케이스 H 라운드)으로 올려서 커밋해요. 두뇌나 추가 스킬을 바꾸는 일은 이 스킬이 아니라 `prokit-skills-manage`가 해요([두뇌와 선택 스킬](brains.md#바꾸기)). 에이전트 없이 프로젝트의 `pnpm` 명령으로 하는 방법은 아래 "업데이트"에 있어요.
+“스킬 업데이트해줘”, “스킬 최신인지 확인해줘”라고 요청하면 `prokit-skills-update` 스킬이 받아서 바뀐 스킬을 확인하고, 한 번의 작업(케이스 H 라운드)으로 올려서 커밋해요. 두뇌나 추가 스킬을 바꾸는 일은 이 스킬이 아니라 `prokit-skills-manage`가 해요([두뇌와 선택 스킬](brains.md#바꾸기)). 에이전트 없이 프로젝트의 `pnpm` 명령으로 하는 방법은 아래 “업데이트”에 있어요.
 
 ## status가 알려 주는 것
 
@@ -40,10 +40,10 @@
 
 | 하고 싶은 일 | 말 | 명령 |
 |---|---|---|
-| 지금은 알림을 미루기 | "나중에" | `pnpm skills:update --snooze`. 처음 하루, 그다음 이틀, 그다음 일주일씩 늘어나요. 알림 목록이 바뀌면 미뤘어도 다시 알려요 |
-| 묻지 않고 자동으로 | "항상 자동으로" | `pnpm skills:update --mode auto` |
-| 확인 자체를 끄기 | "다시 묻지 않기" | `pnpm skills:update --mode off`. 다시 켜려면 `--mode ask` |
-| 지금 한 번 확인만 | "스킬 최신인지 확인해줘" | `pnpm skills:update --check` |
+| 지금은 알림을 미루기 | “나중에” | `pnpm skills:update --snooze`. 처음 하루, 그다음 이틀, 그다음 일주일씩 늘어나요. 알림 목록이 바뀌면 미뤘어도 다시 알려요 |
+| 묻지 않고 자동으로 | “항상 자동으로” | `pnpm skills:update --mode auto` |
+| 확인 자체를 끄기 | “다시 묻지 않기” | `pnpm skills:update --mode off`. 다시 켜려면 `--mode ask` |
+| 지금 한 번 확인만 | “스킬 최신인지 확인해줘” | `pnpm skills:update --check` |
 | 하루 한 번 확인(자동으로 불리는 명령) | | `pnpm --silent skills:update --if-due`. 설치하지 않고, 알릴 것이 있을 때만 출력해요 |
 
 > [!NOTE]
@@ -61,6 +61,8 @@ config:
     rankSpacing: 25
 ---
 flowchart TB
+  accTitle: 스킬 설치 구조
+  accDescr: skills-setup.mjs가 매니페스트대로 늘 설치하는 것과, 조건이 맞을 때만 설치하거나 바꾸는 것을 나눠 처리해요. 실선은 늘, 점선은 조건이 맞을 때만이에요.
   S["scripts/skills-setup.mjs<br/>skills.manifest.json<br/>목록대로 설치<br/>install.sh<br/>skills:setup<br/>skills:check<br/>skills:update"]
   S --> ALW
   S -.-> CND
