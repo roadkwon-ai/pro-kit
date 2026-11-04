@@ -49,7 +49,7 @@ AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 �
 ---
 config:
   flowchart:
-    wrappingWidth: 120
+    wrappingWidth: 150
     subGraphTitleMargin:
       top: 8
       bottom: 8
@@ -57,10 +57,10 @@ config:
 flowchart TB
   accTitle: 하네스 구성
   accDescr: 사용자 요청은 dev-cycle 스킬이 케이스를 판정하며 시작하고, 규칙 파일은 시작할 때 읽혀요. 일하는 방법 스킬을 읽은 전문 수행 에이전트가 일하고, 점선은 내장 리뷰가 없을 때만 거치는 보완 검토예요. 최종 리뷰 뒤 audit과 close로 끝나요.
-  REQ["사용자 요청"] --> DC["prokit-dev-cycle<br/>규칙 파일 읽기<br/>케이스 판정<br/>· 대조표"]
+  REQ["사용자 요청"] --> DC["prokit-dev-cycle<br/>규칙 파일 읽기<br/>케이스 판정<br/>대조표 열기"]
   DC --> G
   subgraph G["일하는 방법"]
-    PROC["두뇌 ·<br/>과설계 방지 스킬<br/>단계 행의 방법"] ~~~ LAYER["계층 스킬<br/>분야마다<br/>일하는 법"]
+    PROC["두뇌와<br/>과설계 방지 스킬<br/>단계 행의 방법"] ~~~ LAYER["계층 스킬<br/>분야마다<br/>일하는 법"]
     LAYER --> OFF["공식 도메인 스킬<br/>+ 선택 스킬 묶음<br/>(그 분야일 때)"]
   end
   G --> IMP["전문 수행 에이전트"]
