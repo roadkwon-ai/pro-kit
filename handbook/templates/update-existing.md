@@ -37,7 +37,12 @@ pro-kit 폴더에서 "템플릿 변경을 <프로젝트>에 반영해줘"처럼 
 5. **라운드로 반영** (프로젝트 세션): 실제 반영은 그 프로젝트에서 연 세션이 dev-cycle 케이스 H 라운드로 해요(도입한 프로젝트가 아직 진행 계획을 확정하지 않았으면 `--no-task`를 붙여 열어요). 라운드에서는 `install.sh <프로젝트> --skip-skills`로 없는 파일과 설정 항목을 더하고(템플릿 파일은 덮어쓰지 않고 설정 파일에는 항목만 더해요), 템플릿과 다른 파일은 직접 옮겨요. 라운드를 연 뒤 `scripts/dev-cycle.mjs`를 옮겼으면 `pnpm dev-cycle table H --write --upgrade`로 열린 표의 행 문구를 새 판에 맞춰요(문구만 바뀐 행은 증거를 그대로 옮겨요). 위임하는 행이 있으면 설계 행(`[design]`)을 위임 전에 채워요.
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   D["1. --diff로 차이 보기"] --> J["2. .dev-cycle.json 직접 비교"]
   J --> L["3. 옮길 항목 정리와 보고"]
   L --> N["4. 옛 이름 옮기기<br/>(프로젝트 세션)"]

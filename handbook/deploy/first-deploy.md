@@ -60,7 +60,12 @@
 > production은 기본 브랜치에서 릴리스한 커밋만 올려요. 릴리스가 없으면 배포 스크립트가 production 배포를 멈춰요([버전과 릴리스](release.md)).
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   P["1. Vercel 배포 준비해줘<br/>연결 · 환경변수"] --> R["2. 운영에 배포해줘<br/>릴리스 v0.1.0 · DB 먼저 · 배포"]
   R --> C["3. 주소에서 확인"]
   C --> D["4. 이후<br/>develop에 배포해줘<br/>운영에 배포해줘"]

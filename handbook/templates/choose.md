@@ -7,16 +7,19 @@
 ## <!-- v:templates.count.ko -->두<!-- /v --> 템플릿 한눈에 보기
 
 ```mermaid
-flowchart LR
-  subgraph NEON["prokit-next-neon"]
-    direction LR
-    N1["로컬 개발<br/>compose Postgres<br/>localhost:5432"] -->|병합 전| N2["Neon 개발 브랜치<br/>작업마다 생성<br/>db:migrate"]
-    N2 -->|병합 · 배포| N3["Neon 운영 브랜치"]
-  end
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   subgraph SUPA["prokit-next-supabase"]
-    direction LR
     S1["로컬 개발<br/>Supabase 스택 DB만<br/>127.0.0.1:54322"] -->|병합 전| S2["Supabase 스테이징<br/>db:migrate + advisors"]
     S2 -->|병합 · 배포| S3["Supabase 운영<br/>앱은 pooler 6543"]
+  end
+  subgraph NEON["prokit-next-neon"]
+    N1["로컬 개발<br/>compose Postgres<br/>localhost:5432"] -->|병합 전| N2["Neon 개발 브랜치<br/>작업마다 생성<br/>db:migrate"]
+    N2 -->|병합 · 배포| N3["Neon 운영 브랜치"]
   end
 ```
 
@@ -38,11 +41,16 @@ flowchart LR
 ## 무엇으로 고르나요
 
 ```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 170
+---
 flowchart TD
   Q{"어떤 서비스인가요?"} -->|"DB 없이 화면만"| N0["neon으로 만들어요<br/>묻지 않아요"]
   Q -->|"DB가 있는 서비스"| D{"이미 Supabase를 쓰나요?"}
   D -->|"예"| SU["supabase"]
-  D -->|"아니요"| C{"작업마다 DB 테스트 복사본으로<br/>확인하고 싶나요?"}
+  D -->|"아니요"| C{"작업마다 DB 테스트<br/>복사본으로 확인하고 싶나요?"}
   C -->|"예"| NE["neon"]
   C -->|"모르겠어요"| ASK["에이전트가 비교표로<br/>차이를 설명하고 물어요"]
   Q -->|"운영 중인 Next.js"| OP["Better-T-Stack + Postgres + Drizzle이면<br/>실제 DB에 맞는 템플릿<br/>그 밖에는 --adopt"]

@@ -8,6 +8,7 @@
 |---|---|
 | [prokit 스킬](prokit-skills.md) | 먼저 읽어요. 분야마다 일하는 법을 알려 주는 전용 스킬과 일을 맡는 에이전트가 무엇이고, 어떤 말을 하면 쓰이는지 |
 | [두뇌와 선택 스킬](brains.md) | 프로젝트를 만들 때 묻는 두뇌(여럿 가능), 과설계 방지 스킬, UI 스킬(impeccable, hallmark), mattpocock 추가 스킬, 응답 방식, 화면 디자인 보조의 설명과 진행 중에 바꾸는 법. 모르겠을 때의 기본값도 있어요 |
+| [두뇌와 과설계 방지 흐름](brain-flow.md) | 고른 두뇌와 과설계 방지 스킬이 대조표의 어느 단계에서 무엇을 하는지, 두뇌가 여럿일 때 단계를 나누는 법, 두뇌마다 단계별 스킬, 늘 지키는 간결성 사다리와 리뷰 지적 처리를 도식으로 봐요 |
 | [선택 스킬 묶음](optional-bundles.md) | 필요할 때만 더하는 <!-- v:optional.names -->ops, motion, mobile, i-have-adhd, taste, landing, tastemaker, web-design-engineer, awwwards, animation, visual-critique, ui-design<!-- /v --> 묶음을 언제, 어떻게 더하는지 |
 | [공식 스킬과 연결](official-skills.md) | 참고 쪽이에요. 함께 설치되는 공식 스킬과 prokit 스킬이 읽는 곳, 공식 스킬을 읽는 전문 에이전트 배치와 audit 확인, 늘 설치하는 프로세스 스킬과 전역 도구, Ponytail 사용법 |
 | [설치와 업데이트 구조](install-and-update.md) | 스킬 새 버전 알림(`UPDATE_AVAILABLE` 등)이 뜰 때 할 일, 스킬 목록 파일, 설치 순서, 업데이트 확인 |

@@ -39,7 +39,12 @@ T1을 미루고 T2부터 하자고 해도 에이전트는 바로 따르지 않�
 ## 흐름
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   A["정밀 분석<br/>prokit-analyzer"] --> P["진행 계획<br/>docs/plans · tasks/plan.md"]
   P --> R["계획 리뷰와<br/>사용자 확인"]
   R --> T1["T1 라운드<br/>세부 계획 → 구현 → 검수"]

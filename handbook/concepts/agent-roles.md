@@ -10,7 +10,12 @@
 
 <!-- edition:pro -->
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   ME["나"] <--> CO["코디네이터<br/>메인 세션<br/>배정 · 감독 · 통합"]
   CO -->|"계층별로 파일과 공식 스킬을 정해 맡김"| IM["전문 수행 에이전트<br/>prokit-ui-builder · prokit-api-builder<br/>prokit-db-builder · prokit-runtime-checker<br/>prokit-implementer<br/>공식 스킬을 읽고 따름"]
   CO -->|"분석을 맡김"| AN["분석<br/>prokit-analyzer<br/>읽기 전용"]
@@ -22,7 +27,12 @@ flowchart LR
 <!-- /edition -->
 <!-- edition:ui
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   ME["나"] <==> CO["코디네이터<br/>메인 세션<br/>배정 · 감독 · 통합"]
   CO ==>|"파일과 공식 스킬을 정해 맡김"| IM["전문 수행 에이전트<br/>prokit-ui-builder · prokit-runtime-checker<br/>prokit-implementer<br/>공식 스킬을 읽고 따름"]
   IM -.->|"내장 리뷰가 없을 때만"| SR["전문 리뷰<br/>specialist-reviewer<br/>읽기 전용"]

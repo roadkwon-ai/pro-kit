@@ -19,7 +19,12 @@
 [기존 프로젝트에 들였다면](../start/adopt.md) 라운드를 마칠 때 이 선택을 묻지 않고 커밋까지만 하는 경우가 있어요. 하네스만 설치해 `vercel:deploy` 스크립트가 없는 `--adopt` 프로젝트, 그리고 배포 방법을 아직 프로킷에 맞추지 않은 운영 중 프로젝트예요.
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   R["production만: pnpm release<br/>버전 · release/ 노트 검수<br/>--publish: 태그 · push · GitHub Release"] --> C
   C["--check<br/>CLI · 연결 · 커밋 · 환경변수 · 릴리스 검사<br/>지난 배포 이후 새 마이그레이션"] --> M{"새 마이그레이션"}
   M -->|있음| DB["대상 DB에 먼저 적용<br/>운영은 사용자 동의 뒤"]

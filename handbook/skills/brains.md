@@ -147,19 +147,25 @@
 아래는 추천을 따르지 않고 스스로 고를 때 보는 비교표예요. 처음이라면 위의 "모르겠으면 이렇게 해요"만 읽어도 돼요.
 
 ```mermaid
-flowchart TD
-  Q["두뇌가 필요한가요?"] -->|"모르겠거나 신호가 약해요"| N["없음(기본 AI)<br/>추천을 따라요"]
-  Q -->|"직접 고를래요"| G{"무엇을 강하게 걸고 싶나요?"}
-  G -->|"테스트 먼저, 작업별 리뷰"| SP["superpowers"]
-  G -->|"보안·성능·접근성 단계"| AS["agent-skills"]
-  G -->|"제품 판단, 실사용 QA"| GS["gstack"]
-  G -->|"큰 작업을 자동·병렬로"| OM["oh-my"]
-  G -->|"실행 증거와 적은 코드"| PS["pstack"]
-  G -->|"필요한 기법만 골라 쓰기"| MP["mattpocock"]
-  G -->|"변경마다 제안·설계 합의"| OS["openspec"]
-  G -->|"헌법부터 꼼꼼한 스펙"| SK["spec-kit"]
-  G -->|"배운 것을 쌓아 다음 작업에 쓰기"| CE["compound-engineering"]
+---
+config:
+  flowchart:
+    wrappingWidth: 170
+---
+flowchart LR
+  G(["무엇을 강하게<br/>걸고 싶나요"]) --> N["없음(기본 AI)<br/>모르겠으면 추천을 따라요"]
+  G --> SP["superpowers<br/>테스트 먼저, 작업별 리뷰"]
+  G --> AS["agent-skills<br/>보안·성능·접근성 단계"]
+  G --> PS["pstack<br/>실행 증거와 적은 코드"]
+  G --> MP["mattpocock<br/>필요한 기법만 골라 쓰기"]
+  G --> OS["openspec<br/>변경마다 제안·설계 합의"]
+  G --> SK["spec-kit<br/>헌법부터 꼼꼼한 스펙"]
+  G --> GS["gstack<br/>제품 판단, 실사용 QA"]
+  G --> OM["oh-my<br/>큰 작업을 자동·병렬로"]
+  G --> CE["compound-engineering<br/>배운 것을 쌓아 다음 작업에"]
 ```
+
+고른 두뇌가 단계마다 부르는 스킬은 [두뇌와 과설계 방지 흐름](brain-flow.md#두뇌마다-단계에서-하는-일)에 도식으로 있어요.
 
 | 이름 | 이럴 때 골라요 | 쓰는 도구 |
 |---|---|---|
@@ -185,7 +191,7 @@ flowchart TD
 | `karpathy` (andrej-karpathy-skills) | 카파시의 네 원칙(코딩 전 생각, 단순함, 정밀 수정, 검증 목표)을 담은 지침 하나예요. 가장 유명하지만 최근 갱신은 적어요 |
 | 없음(기본 AI) | 따로 설치하지 않고 프로킷 내장 간결성 규칙(재사용 순서, "만들지 않는 것")으로 진행해요 |
 
-고른 스킬이 계획의 간결성 기준, 구현 diff 보완 검토, 공통화 점검을 맡아요. diff를 검토하는 스킬이 없는 karpathy와 "없음"은 `prokit-reviewer`가 간결성까지 함께 봐요. 어느 쪽이든 스킬이 없다는 이유로 리뷰 행을 막지 않아요.
+고른 스킬이 계획의 간결성 기준, 구현 diff 보완 검토, 공통화 점검을 맡아요. diff를 검토하는 스킬이 없는 karpathy와 "없음"은 `prokit-reviewer`가 간결성까지 함께 봐요. 어느 쪽이든 스킬이 없다는 이유로 리뷰 행을 막지 않아요. 스킬마다 맡는 일과 늘 지키는 간결성 사다리는 [두뇌와 과설계 방지 흐름](brain-flow.md#과설계-방지-스킬이-하는-일)에 도식으로 있어요.
 
 ## mattpocock 스킬과 응답 방식
 
@@ -232,6 +238,22 @@ flowchart TD
 
 진행 중에 언제든 "두뇌를 openspec으로 바꿔줘", "superpowers도 같이 쓰고 싶어", "taste 빼줘", "랜딩 조합으로 해줘", "전부 빼고 기본으로만 해줘"처럼 말하면 `prokit-skills-manage` 스킬이 받아요. 열린 라운드가 없으면 H 라운드를 열어 바꾸고, 열린 라운드가 있으면 닫지 않고 그 라운드에서 바로 바꿔요. 라운드 중에 바꾸면 설치기가 대조표에 바꾼 구성을 적어요. audit은 설치기가 바꾼 파일을 그 라운드의 케이스 판정에서 빼고, 바꾸기 전 두뇌로 채운 단계 행도 그대로 받아요. 남은 단계 행은 새 구성으로 해요.
 
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 260
+---
+flowchart TB
+  I["처음 만들 때<br/>PRD로 추천받아 고르기"] --> INS["install.sh<br/>--brain · --simplicity"]
+  CH["진행 중에<br/>“두뇌를 openspec으로 바꿔줘”"] --> SM["prokit-skills-manage<br/>열린 라운드에서, 없으면 H 라운드"]
+  SM --> SET["pnpm skills:setup<br/>--brain · --simplicity"]
+  INS --> REC[".dev-cycle.json<br/>brain · simplicity 기록"]
+  SET --> REC
+  REC --> CL["고르지 않은 설치본 지우기<br/>전역 플러그인은 이 프로젝트에서만 끄기"]
+  CL --> RL["/reload-plugins 또는 새 세션<br/>남은 단계 행부터 새 구성"]
+```
+
 > [!NOTE]
 > Claude Code는 바꾼 뒤 `/reload-plugins`를 입력하면 지금 세션에 바뀐 플러그인, 스킬, 훅을 불러와요(새 세션을 열어도 돼요). 다시 불러오기 전에는 세션에 남은 이전 스킬 목록이나 훅 안내(예: ponytail 모드)가 아니라 `.dev-cycle.json`을 따라요. Codex는 새 세션을 열어요.
 
@@ -264,6 +286,7 @@ pnpm skills:check                                      # 고르지 않은 두뇌
 
 ## 관련 문서
 
+- [두뇌와 과설계 방지 흐름](brain-flow.md)
 - [공식 스킬과 연결](official-skills.md)
 - [선택 스킬 묶음](optional-bundles.md)
 - [설치와 업데이트 구조](install-and-update.md)

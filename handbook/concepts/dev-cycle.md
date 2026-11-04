@@ -18,7 +18,12 @@
 **요청** → **케이스 판정** → **대조표 열기** → **행마다 증거** → **내 확인** → **audit** → **close**
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   S["status<br/>진행 중 라운드 확인"] --> C["case<br/>케이스 판정"]
   C --> T["table 케이스 --write<br/>대조표 열기"]
   T --> R["행 실행<br/>증거 칸 채우기"]
@@ -63,7 +68,12 @@ flowchart LR
 "할 일에 마감일 붙이고 지난 건 표시해줘"라는 요청은 화면, API, DB에 모두 걸치는 새 기능이라 케이스 F로 진행돼요.
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   R["할 일에 마감일 붙이고<br/>지난 건 표시해줘"] --> DC["prokit-dev-cycle<br/>케이스 F · 대조표"]
   DC --> SP["스펙 · 테스트 시나리오<br/>용어 기록 GLOSSARY.md"]
   SP --> PLAN["구현 계획 · 재사용과 설정 점검<br/>prokit-reviewer(plan)"]

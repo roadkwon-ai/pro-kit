@@ -23,7 +23,12 @@
 | 9 | (선택) 배포할지 정해요 | 배포 준비가 되어 있으면 물어보고, 아니면 커밋까지만 해요 | <!-- edition:ui | 9 | (선택) 인터넷에 올릴지 정해요 | 화면만 프로젝트는 묻지 않고 커밋까지만 해요. 올리려면 "GitHub Pages에 배포해줘"처럼 따로 요청해요 | --> <!-- edition:pro -->
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   A["1 설치와 로그인"] --> B["2 에이전트 열기<br/>폴더 신뢰 질문"]
   B --> C["3 첫 프롬프트"]
   C --> D["4 설정 질문 답하기"]

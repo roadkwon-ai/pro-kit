@@ -46,23 +46,25 @@ AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 �
 
 <!-- edition:pro -->
 ```mermaid
-flowchart TD
+---
+config:
+  flowchart:
+    wrappingWidth: 260
+---
+flowchart TB
   REQ["사용자 요청<br/>…을 만들어줘 · 고쳐줘"] --> DC["prokit-dev-cycle<br/>케이스 판정 · 대조표"]
-  RULES["AGENTS.md · GLOSSARY.md<br/>docs/domain/project.md"] -.->|시작할 때 읽는다| DC
-  DC --> LAYER["계층 스킬<br/>prokit-web · prokit-ui · prokit-api · prokit-db · prokit-verify"]
-  LAYER --> OFF["공식 도메인 스킬<br/>Next.js · React · Better Auth · shadcn<br/>UI 스킬(impeccable · hallmark, 없으면 기본 AI) · Neon 또는 Supabase · Vercel"]
-  DC -.->|대조표 행이 읽을 스킬을 지정| OFF
-  DREQ["배포 요청<br/>develop에 올려줘 · 운영 배포"] --> DEP["prokit-deploy<br/>메인 세션에서 --check → DB → 배포 → 확인"]
-  DEP --> OFF
-  LAYER -.->|그 분야일 때| OPT["선택 스킬 묶음<br/>ops · motion · mobile · i-have-adhd<br/>화면 디자인 보조(taste · landing · animation 등)<br/>없으면 설치 제안"]
-  DEP -.->|비용·성능 점검| OPT
-  DC --> PROC["두뇌 · 과설계 방지 스킬(고른 것만)<br/>없으면 내장 절차와 간결성 규칙"]
-  DC --> IMP["전문 수행 에이전트<br/>계층별 builder · runtime-checker · implementer<br/>공식 스킬을 읽고 수행"]
-  IMP -.->|내장 리뷰 없음| SREV["specialist-reviewer<br/>전문 계약 읽기 전용 검토"]
+  RULES["AGENTS.md · GLOSSARY.md<br/>docs/domain/project.md<br/>시작할 때 읽는다"] -.-> DC
+  DC --> PROC["두뇌 · 과설계 방지 스킬<br/>고른 것만<br/>없으면 내장 절차와 간결성 규칙"]
+  DC --> LAYER["계층 스킬<br/>prokit-web · prokit-ui · prokit-api<br/>prokit-db · prokit-verify"]
+  LAYER --> OFF["공식 도메인 스킬<br/>대조표 행이 읽을 스킬을 지정<br/>Next.js · React · Better Auth · shadcn<br/>UI 스킬(impeccable · hallmark)<br/>없으면 기본 AI<br/>Neon 또는 Supabase · Vercel"]
+  LAYER -.-> OPT["선택 스킬 묶음(그 분야일 때)<br/>ops · motion · mobile<br/>i-have-adhd · 화면 디자인 보조<br/>없으면 설치 제안"]
+  OFF --> IMP["전문 수행 에이전트<br/>계층별 builder · runtime-checker<br/>implementer<br/>공식 스킬을 읽고 수행"]
+  IMP -.-> SREV["specialist-reviewer<br/>내장 리뷰가 없을 때<br/>전문 계약 읽기 전용 검토"]
   IMP --> REV["prokit-reviewer<br/>최종 통합 리뷰<br/>plan · code · ui · security · db"]
   SREV --> REV
-  DC -->|모든 행의 증거를 채운 뒤| AUD["pnpm dev-cycle audit"]
+  REV --> AUD["pnpm dev-cycle audit<br/>모든 행의 증거를 채운 뒤"]
   AUD --> CLOSE["pnpm dev-cycle close"]
+  CLOSE -.-> DEP["prokit-deploy<br/>배포 요청: develop에 올려줘 · 운영 배포<br/>메인 세션에서 --check → DB → 배포 → 확인<br/>비용·성능 점검은 선택 스킬 묶음"]
 ```
 <!-- /edition -->
 

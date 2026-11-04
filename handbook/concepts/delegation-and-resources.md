@@ -77,7 +77,12 @@
 #### 맡기기 전후의 대조
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   A["변경 스냅샷"] --> B["수행자에게 맡김<br/>허용 경로 지정"]
   B --> C["결과를 받고<br/>변경 스냅샷"]
   C --> D{"delegation diff<br/>허용 경로 안인가"}

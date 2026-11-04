@@ -51,25 +51,30 @@
 
 ## 설치되는 길
 
+설치와 확인과 업데이트는 모두 `scripts/skills-setup.mjs` 하나가 해요. `pnpm skills:check`는 설치 없이 상태만 보고(선택 묶음은 설치 여부만), `pnpm skills:update`는 GitHub 원본과 비교해 바뀐 스킬만 다시 설치해요. 실선은 늘, 점선은 조건이 맞을 때만 설치하거나 바꾸는 곳이에요.
+
 ```mermaid
-flowchart TD
-  M["skills.manifest.json"] --> S["scripts/skills-setup.mjs<br/>install.sh와 pnpm skills:setup이 실행"]
-  S --> P1["공식 도메인 스킬<br/>.agents/skills + .claude/skills 링크"]
-  S --> P2["Claude 플러그인<br/>.claude/settings.json<br/>skill-creator"]
-  S -.->|"고른 두뇌·과설계 방지 스킬만<br/>(.dev-cycle.json brain · simplicity)"| SEL["두뇌: superpowers · agent-skills(addyosmani) · gstack · oh-my · pstack · mattpocock · openspec · spec-kit · compound-engineering 중 하나 이상(첫 값이 주 두뇌)<br/>과설계 방지: ponytail · caveman · karpathy 중 하나<br/>플러그인 또는 .agents/skills"]
-  S -.->|"고른 UI 스킬만<br/>(.dev-cycle.json uiSkill, 없으면 impeccable)"| UI["UI 스킬: impeccable · hallmark 중 하나 이상(첫 값이 주 UI 스킬)<br/>하나도 고르지 않으면(none) frontend-design<br/>.agents/skills + .claude/skills 링크"]
-  S -.->|"두뇌가 oh-my이고 omx CLI가 있을 때"| P4["OMX 프로젝트 설정<br/>.codex/skills · agents · prompts"]
-  S -.->|"--matt 스킬일 때만"| MATT["mattpocock 추가 스킬<br/>.agents/skills + .claude/skills 링크"]
-  S -.->|"--drop일 때만"| DROP["추가 스킬·선택 묶음 삭제<br/>skills-lock.json 출처가 맞는 설치본만"]
-  S -.->|"고르지 않은 두뇌·과설계 방지·UI 스킬을 지울 때"| HK["지운 스킬 폴더를 부르는 훅만 뺌<br/>.claude/settings.local.json · .codex/hooks.json"]
-  S -.->|"--optional 묶음일 때만"| OPT["선택 스킬 묶음<br/>ops · motion · mobile · i-have-adhd<br/>화면 디자인 보조(taste · landing · animation 등)<br/>.agents/skills + .claude/skills 링크"]
-  S -->|"없거나 최신판보다 낮으면"| AB["agent-browser CLI<br/>(전역)"]
-  S -.->|"--with-global일 때만"| G["나머지 전역 도구<br/>Vercel CLI<br/>Neon CLI 또는 Supabase CLI"]
-  S -.->|"고른 두뇌가 gstack·oh-my·openspec이고<br/>--brain을 줬거나 --with-global"| BG["두뇌 전역 도구<br/>gstack · OMX CLI · OpenSpec CLI"]
-  S -.->|"ponytail을 고르고 --with-global + 지원 CLI"| CP["Codex 네이티브 Ponytail<br/>공식 marketplace · plugin<br/>선택 항목"]
-  S -.->|"전역에 켜진 고르지 않은 플러그인"| LOC[".claude/settings.local.json<br/>이 프로젝트에서만 끔"]
-  CHK["pnpm skills:check<br/>설치 없이 상태만 확인<br/>선택 묶음은 설치 여부만"] -.->|"같은 스크립트를 --check로 실행"| S
-  UPD["pnpm skills:update<br/>GitHub 원본과 비교해 바뀐 스킬만 다시 설치<br/>prokit-dev-cycle 시작에서 하루 한 번 확인"] -.->|"같은 스크립트를 --update로 실행"| S
+---
+config:
+  flowchart:
+    wrappingWidth: 290
+---
+flowchart LR
+  S["scripts/skills-setup.mjs<br/>skills.manifest.json 목록대로<br/>install.sh<br/>pnpm skills:setup<br/>skills:check · skills:update"]
+  S --> P1["늘: 공식 도메인 스킬<br/>.agents/skills + .claude/skills 링크"]
+  S --> P2["늘: Claude 플러그인<br/>.claude/settings.json · skill-creator"]
+  S --> AB["없거나 최신판보다 낮으면<br/>agent-browser CLI(전역)"]
+  S -.-> SEL["고른 것만(brain · simplicity)<br/>두뇌(하나 이상): superpowers · agent-skills<br/>gstack · oh-my · pstack · mattpocock<br/>openspec · spec-kit · compound-engineering<br/>과설계 방지(하나): ponytail · caveman · karpathy"]
+  S -.-> UI["고른 것만(uiSkill, 없으면 impeccable)<br/>impeccable · hallmark 중 하나 이상<br/>none이면 frontend-design"]
+  S -.-> MATT["--matt일 때<br/>mattpocock 추가 스킬"]
+  S -.-> OPT["--optional일 때<br/>선택 스킬 묶음<br/>ops · motion · mobile · i-have-adhd<br/>화면 디자인 보조<br/>(taste · landing · animation 등)"]
+  S -.-> P4["두뇌가 oh-my이고 omx CLI가 있을 때<br/>OMX 프로젝트 설정<br/>.codex/skills · agents · prompts"]
+  S -.-> BG["gstack · oh-my · openspec을 골랐고<br/>--brain을 줬거나 --with-global일 때<br/>두뇌 전역 도구<br/>gstack · OMX CLI · OpenSpec CLI"]
+  S -.-> G["--with-global일 때<br/>나머지 전역 도구<br/>Vercel CLI · Neon CLI 또는 Supabase CLI"]
+  S -.-> CP["ponytail · --with-global · 지원 CLI일 때<br/>Codex 네이티브 Ponytail<br/>공식 marketplace · plugin"]
+  S -.-> DROP["--drop일 때<br/>추가 스킬·선택 묶음 삭제<br/>skills-lock.json 출처가 맞는 설치본만"]
+  S -.-> HK["고르지 않은 스킬을 지울 때<br/>그 폴더를 부르는 훅만 뺌<br/>.claude/settings.local.json · .codex/hooks.json"]
+  S -.-> LOC["전역에 켜진 고르지 않은 플러그인<br/>.claude/settings.local.json으로<br/>이 프로젝트에서만 끔"]
 ```
 
 ### 설치할 때 알아 둘 것

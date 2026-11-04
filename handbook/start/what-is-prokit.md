@@ -155,7 +155,12 @@ flowchart TD
 
 <!-- edition:pro -->
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   R[요청] --> B[스펙과 화면 설계 확인]
   B --> M[구현]
   M --> V[실행 증거 모으기]

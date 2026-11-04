@@ -11,7 +11,12 @@
 > 데이터 주인은 로그인 세션에서만 알아내요. 입력으로 받은 사용자 ID를 믿지 않고, 계정 두 개로 서로의 데이터에 접근할 수 없는지 테스트해요(2계정 격리 테스트, 케이스 D).
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart TB
   U["브라우저"] --> PAGE
   subgraph WEB["apps/web · Next.js App Router"]
     PAGE["페이지 · 컴포넌트<br/>RSC와 Client"]

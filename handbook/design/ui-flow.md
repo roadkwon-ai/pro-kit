@@ -66,7 +66,7 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 240
+    wrappingWidth: 160
 ---
 flowchart TB
   DC["prokit-dev-cycle<br/>케이스 B 대조표"] --> UI["prokit-ui<br/>순서 · 규칙 · 통과 기준"]
