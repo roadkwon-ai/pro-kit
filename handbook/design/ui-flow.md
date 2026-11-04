@@ -170,9 +170,67 @@ flowchart TB
 
 리뷰와 감사는 어느 쪽이든 메인 세션이 하고, `web-design-guidelines`는 `prokit-reviewer`(ui)가 맡아요. 통과 기준은 위 "지키는 규칙"에 있어요.
 
+**impeccable**: 명령 하나가 단계 하나를 맡고, 리뷰는 점수로 판정해요.
+
+```mermaid
+flowchart LR
+  C["context<br/>맥락 확인"] --> I["init<br/>PRODUCT.md"]
+  I --> V["시각 방향<br/>use-design-md 또는 직접 정하기"]
+  V --> S["shape<br/>사이트맵 · 브리프"]
+  S --> A["시각 자산<br/>generate-image로 comp · plate"]
+  A --> B["개발(prokit-ui-builder)<br/>new-work · craft-floor"]
+  B --> R["critique · audit<br/>+ web-design-guidelines"]
+  R --> P["polish"]
+  P --> D["document merge<br/>DESIGN.md"]
+  R -.-> G["통과: P0·P1 해결<br/>audit · 접근성 점수 기준 이상"]
+```
+
+**hallmark**: 테마를 한 번 배정하고, 바닥 규칙과 `sloplint`로 지켜요.
+
+```mermaid
+flowchart LR
+  C["0단계 사전 점검"] --> I["Ask once<br/>기획 질문과 한 번에"]
+  I --> V["시각 방향<br/>카탈로그 또는 theme.mjs deal"]
+  V --> S["Shape · Picks 블록<br/>사이트맵 · 브리프"]
+  S --> A["시각 자산<br/>theme.mjs photos · capture.mjs"]
+  A --> B["개발(prokit-ui-builder)<br/>Load · Build · The Floor"]
+  B --> R["sloplint · 마감 리뷰<br/>audit + web-design-guidelines"]
+  R --> P["Floor 고침<br/>Reflex 고침이나 사유"]
+  P --> D["정한 체계를<br/>DESIGN.md 명세로"]
+  R -.-> G["통과: FAIL 0 · REFLEX 처리<br/>마감 리뷰 ship"]
+```
+
+**기본 AI**: 외부 UI 스킬 없이 `frontend-design`과 게슈탈트 지침으로 해요.
+
+```mermaid
+flowchart LR
+  C["PRODUCT.md · DESIGN.md<br/>frontend-design 읽기"] --> I["PRODUCT.md 질문"]
+  I --> V["시각 방향<br/>카탈로그 또는 계획과 검토로 직접"]
+  V --> S["브리프<br/>목적 · 주인공 하나 · 그룹 수"]
+  S --> B["개발(prokit-ui-builder)<br/>frontend-design · 게슈탈트 지침"]
+  B --> R["게슈탈트 점검 · 자기 비평<br/>+ web-design-guidelines"]
+  R --> P["약한 수단부터 고치기<br/>간격 → 색·모양 → 박스 → 선"]
+  P --> D["계획한 토큰을<br/>DESIGN.md 명세로"]
+  R -.-> G["통과: 필수 3문항 모두 예<br/>위반은 고치거나 사유"]
+```
+
 ### 화면 디자인 보조가 더하는 단계
 
-[화면 디자인 보조](../skills/brains.md#화면-디자인-보조)는 주 UI 스킬의 단계에 보태는 선택 묶음이에요. 묶음마다 보태는 단계와 리뷰 결과를 남기는 문구가 정해져 있어요. 빈 칸은 그 단계에서 하는 일이 없다는 뜻이에요.
+[화면 디자인 보조](../skills/brains.md#화면-디자인-보조)는 주 UI 스킬의 단계에 보태는 선택 묶음이에요. 묶음마다 보태는 단계와 리뷰 결과를 남기는 문구가 정해져 있어요. 아래 도식은 단계마다 어떤 종류의 보조가 붙는지 그렸어요(점선으로 이은 상자가 그 단계에 보태는 보조예요. 종류마다 묶음은 아래 표에 있어요).
+
+```mermaid
+flowchart LR
+  V1["시각 방향"] --> V2["설계(브리프)"] --> V3["개발"] --> V4["리뷰"] --> V5["마감"]
+  V1 -.- A1["방향 보조"]
+  V2 -.- A2["방향 · 원칙 · 모션<br/>검수(ui-design)"]
+  V3 -.- A3["방향 · 원칙 · 모션"]
+  V4 -.- A4["방향 · 원칙 · 모션 · 검수"]
+  V5 -.- A5["모션<br/>검수(visual-critique)"]
+  V4 --> E["디자인 리뷰 증거<br/>주 UI 스킬 결과 뒤에 보조 결과<br/>못 했으면 미실행 사유"]
+  E --> AU["dev-cycle audit<br/>보조 결과와 읽은 기록 확인"]
+```
+
+표는 묶음마다 보태는 일을 단계별로 적었어요. 빈 칸은 그 단계에서 하는 일이 없다는 뜻이에요.
 
 | 묶음 | 종류 | 시각 방향 | 설계 | 개발 | 리뷰 증거 문구 |
 |---|---|---|---|---|---|

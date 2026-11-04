@@ -46,6 +46,17 @@ UI 스킬셋은 프로킷에서 화면을 만드는 데 필요한 스킬만 모�
 | `hallmark` | 새 웹 페이지를 AI가 만든 티 없이 만들고, 정한 디자인을 지키며 화면을 하나씩 더하는 서비스 |
 | 기본 AI (`none`) | 외부 UI 스킬 없이 Anthropic의 `frontend-design`과 게슈탈트 지침으로 만들고 싶을 때 |
 
+```mermaid
+flowchart TB
+  I["처음 만들 때 prokit-init<br/>PRD에 맞는 UI 스킬 추천"] --> R[".dev-cycle.json의 uiSkill<br/>여럿이면 첫 값이 주 UI 스킬"]
+  CH["진행 중에 'hallmark로 바꿔줘'<br/>prokit-skills-manage"] --> SU["pnpm skills:setup --ui-skill"]
+  SU --> R
+  R --> MAP["주 UI 스킬의 지도로 단계 진행<br/>impeccable · hallmark · 기본 AI"]
+  R -.-> SUB["두 번째 이후 UI 스킬<br/>사용자가 그 화면에 지목할 때만"]
+  SU -.-> KEEP["그대로 이어지는 정본<br/>PRODUCT.md · DESIGN.md<br/>docs/briefs · globals.css 토큰"]
+  SU -.-> OLD["이전 스킬의 작업 기록<br/>지우지 않고 근거로도 쓰지 않음"]
+```
+
 고르는 기준은 [UI 스킬](../skills/brains.md#ui-스킬), 단계마다 하는 일은 [UI/UX 흐름](ui-flow.md#ui-스킬마다-단계에서-하는-일)에 있어요.
 
 ## 화면 디자인 보조를 더해요
@@ -72,6 +83,22 @@ UI 스킬셋은 프로킷에서 화면을 만드는 데 필요한 스킬만 모�
 3. **화면 만들기**: 화면 설계를 확인한 뒤 모든 화면을 같은 디자인으로 만들어요. 작업마다 대조표를 열고 순서대로 해요. 화면 코드는 `prokit-ui-builder`가 쓰고, 메인 세션은 맡기고 검수해요.
 4. **검사하기**: `prokit-runtime-checker`가 페이지마다 데스크톱·모바일 스크린샷을 찍고 모든 링크와 버튼을 눌러 확인해요. 디자인 리뷰와 감사, 그 화면에 쓴 화면 디자인 보조의 리뷰까지 마치고, 실행한 검사를 증거로 남겨요. 스킬과 에이전트가 어떻게 이어지는지는 [UI/UX 흐름의 구조](ui-flow.md#구조)에 있어요.
 5. **내보내고 올리기**: `pnpm export:html`로 HTML을 내보내거나 GitHub Pages·Vercel에 올려요([화면만 프로젝트와 HTML 내보내기](screen-only.md)).
+
+스킬과 에이전트는 이렇게 이어져요. 메인 세션이 `prokit-ui`로 화면 일을 정하고, 코드와 확인은 전문 에이전트가 맡아요.
+
+```mermaid
+flowchart LR
+  REQ["평소 말로 요청"] --> DC["prokit-dev-cycle<br/>대조표"]
+  DC --> UI["prokit-ui<br/>순서 · 규칙 · 통과 기준"]
+  UI --> SK["주 UI 스킬<br/>impeccable · hallmark · 기본 AI"]
+  UI --> AD["화면 디자인 보조<br/>설치한 묶음만"]
+  UI --> B["prokit-ui-builder<br/>화면 코드"]
+  UI --> RC["prokit-runtime-checker<br/>스크린샷 · 링크·버튼"]
+  UI --> RV["prokit-reviewer(ui)<br/>코드 검사"]
+  B --> EV["대조표 증거<br/>dev-cycle audit"]
+  RC --> EV
+  RV --> EV
+```
 
 ## 프리셋 팩으로 시작하기
 
