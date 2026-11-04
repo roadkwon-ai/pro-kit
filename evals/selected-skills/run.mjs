@@ -7,6 +7,9 @@
 //     --go-reply: [confirm]까지 온 뒤에도 진행 지시(reply)를 한 번 더 보낸다. 진행 지시를 확인으로 적지 않는지 본다
 //   node evals/selected-skills/run.mjs grade <회차>
 // WS는 PKSS_WORKSPACE(기본 os.tmpdir()/pro-kit-selected-skills), 모델은 PKSS_MODEL(기본 claude-sonnet-5-5).
+// PKSS_AGENT=agy면 Antigravity CLI(`agy -p`, 이어 가기 `--conversation`)로 돌린다. 모델은 PKSS_AGY_MODEL(기본: agy 기본 모델).
+// PKSS_AGENT=codex면 `codex exec --json`(이어 가기 `exec resume`)으로 돌린다. 실행 파일은 PKSS_CODEX_BIN(기본 codex), 모델은 사용자 설정.
+// 채점은 세션 출력의 도구 호출에 프로젝트 훅 기록(.prokit/skills-used.jsonl)의 읽기를 더해 본다(서브에이전트 읽기 포함).
 import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
@@ -16,7 +19,8 @@ import { grade, rowsOf } from "./checks.mjs";
 const ROOT = resolve(import.meta.dirname, "../..");
 const HERE = import.meta.dirname;
 const WS = resolve(process.env.PKSS_WORKSPACE ?? join(tmpdir(), "pro-kit-selected-skills"));
-const MODEL = process.env.PKSS_MODEL ?? "claude-sonnet-5-5";
+const AGENT = process.env.PKSS_AGENT ?? "claude";
+const MODEL = AGENT === "agy" ? (process.env.PKSS_AGY_MODEL ?? "agy-default") : AGENT === "codex" ? "codex-user-default" : (process.env.PKSS_MODEL ?? "claude-sonnet-5-5");
 const CONF = JSON.parse(readFileSync(join(HERE, "scenarios.json"), "utf8"));
 const [cmd, ...rest] = process.argv.slice(2);
 const opt = (name, def) => {
@@ -147,6 +151,113 @@ function claude(dir, prompt, resume, budget) {
 	});
 }
 
+// Antigravity: stream-json의 step_update(도구)와 result를 Claude 꼴(result.session_id·result·subtype)로 맞춘다
+function agy(dir, prompt, resume) {
+	return new Promise((done) => {
+		const args = ["-p", prompt, "--output-format", "stream-json", "--dangerously-skip-permissions", "--sandbox"];
+		if (process.env.PKSS_AGY_MODEL) args.push("--model", process.env.PKSS_AGY_MODEL);
+		if (resume) args.push("--conversation", resume);
+		const p = spawn("agy", args, { cwd: dir, env, stdio: ["ignore", "pipe", "pipe"] });
+		const events = [];
+		let buf = "";
+		let stop = null;
+		const timer = setTimeout(() => {
+			stop = "timeout";
+			p.kill("SIGTERM");
+		}, 2_400_000);
+		p.stdout.on("data", (d) => {
+			buf += d;
+			for (let i = buf.indexOf("\n"); i >= 0; i = buf.indexOf("\n")) {
+				const line = buf.slice(0, i).trim();
+				buf = buf.slice(i + 1);
+				try {
+					if (line) events.push(JSON.parse(line));
+				} catch {}
+			}
+		});
+		p.stderr.on("data", () => {});
+		p.on("close", () => {
+			clearTimeout(timer);
+			const r = events.findLast((e) => e.event === "result")?.result;
+			const id = r?.conversation_id ?? events.find((e) => e.conversation_id)?.conversation_id;
+			done({ events, stop, result: r && { session_id: id, result: r.response, subtype: r.status === "SUCCESS" ? "success" : String(r.status).toLowerCase(), total_cost_usd: 0, usage: { input_tokens: r.usage?.input_tokens, output_tokens: r.usage?.output_tokens } } });
+		});
+	});
+}
+// Codex: JSONL의 thread.started(id)·item.completed(agent_message)를 Claude 꼴로 맞춘다. stdin을 닫아야 끝난다.
+// 샌드박스: workspace-write에서는 Node의 os.uptime이 EPERM이라 pnpm·turbo·next가 돌지 않는다(0.164.0-alpha.11.1 실측).
+// 그래서 11-03 손 실측처럼 샌드박스 없이 돌리고 격리는 환경 변수(비밀값 빼기)에 맡긴다. 훅 신뢰는 /hooks 대신 --dangerously-bypass-hook-trust
+const rollSeen = new Map();
+function codex(dir, prompt, resume) {
+	return new Promise((done) => {
+		const opts = ["--json", "--dangerously-bypass-hook-trust", "--skip-git-repo-check", "--dangerously-bypass-approvals-and-sandbox"];
+		const args = resume ? ["exec", "resume", ...opts, resume, prompt] : ["exec", ...opts, prompt];
+		const p = spawn(process.env.PKSS_CODEX_BIN ?? "codex", args, { cwd: dir, env, stdio: ["ignore", "pipe", "pipe"] });
+		const events = [];
+		let buf = "";
+		let stop = null;
+		const timer = setTimeout(() => {
+			stop = "timeout";
+			p.kill("SIGTERM");
+		}, 2_400_000);
+		p.stdout.on("data", (d) => {
+			buf += d;
+			for (let i = buf.indexOf("\n"); i >= 0; i = buf.indexOf("\n")) {
+				const line = buf.slice(0, i).trim();
+				buf = buf.slice(i + 1);
+				try {
+					if (line) events.push(JSON.parse(line));
+				} catch {}
+			}
+		});
+		p.stderr.on("data", () => {});
+		p.on("close", () => {
+			clearTimeout(timer);
+			const id = resume ?? events.find((e) => e.type === "thread.started")?.thread_id;
+			// exec --json은 spawn_agent를 내보내지 않는다. 세션 기록(rollout)에서 이번 턴 뒤로 붙은 호출을 가져온다(지시 본문은 암호화돼 이름만)
+			const home = process.env.CODEX_HOME ?? join(homedir(), ".codex");
+			const roll = id && sh(home, "find", ["sessions", "-name", `*${id}.jsonl`]).stdout.split("\n").filter(Boolean)[0];
+			if (roll) for (const l of readFileSync(join(home, roll), "utf8").split("\n").slice(rollSeen.get(id) ?? 0)) {
+				try {
+					const pl = JSON.parse(l).payload;
+					if (pl?.type === "function_call" && pl.name === "spawn_agent") events.push({ codexSpawn: JSON.parse(pl.arguments) });
+				} catch {}
+			}
+			if (roll) rollSeen.set(id, readFileSync(join(home, roll), "utf8").split("\n").length - 1);
+			const msg = events.filter((e) => e.type === "item.completed" && e.item?.type === "agent_message").at(-1)?.item?.text;
+			const failed = events.some((e) => e.type === "turn.failed");
+			const u = events.findLast((e) => e.type === "turn.completed")?.usage ?? {};
+			done({ events, stop, result: id && { session_id: id, result: msg, subtype: failed ? "error" : "success", total_cost_usd: 0, usage: { input_tokens: u.input_tokens, output_tokens: u.output_tokens } } });
+		});
+	});
+}
+const session = (dir, prompt, resume, budget) => (AGENT === "agy" ? agy(dir, prompt, resume) : AGENT === "codex" ? codex(dir, prompt, resume) : claude(dir, prompt, resume, budget));
+
+// 도구 호출을 Claude 꼴({ name, input })로 모은다. checks.mjs는 Read file_path, Bash command, Agent subagent_type·prompt를 본다
+const AGY_TOOL = { read_file: "Read", view_file: "Read", run_command: "Bash", invoke_subagent: "Agent", write_file: "Write", write_to_file: "Write", edit_file: "Edit", replace_file_content: "Edit", multi_replace_file_content: "Edit" };
+function toolsOf(events) {
+	const out = [];
+	for (const e of events) {
+		if (e.type === "assistant") for (const c of e.message?.content ?? []) if (c.type === "tool_use") out.push({ name: c.name, input: c.input });
+		// Codex: 셸 명령(읽기도 셸이다), 파일 바꾸기, 서브에이전트(spawn_agent·collab 도구)
+		const it = e.type === "item.completed" ? e.item : null;
+		if (it?.type === "command_execution") out.push({ name: "Bash", input: { command: it.command } });
+		if (it?.type === "file_change") for (const c of it.changes ?? []) out.push({ name: "Edit", input: { file_path: c.path } });
+		if (e.codexSpawn) out.push({ name: "Agent", input: { subagent_type: e.codexSpawn.agent_type, prompt: "(Codex: 지시 본문은 세션 기록에 암호화돼 있다)" } });
+		const u = e.step_update;
+		// invoke_subagent는 기다리지 않고 돌아와 ACTIVE 줄만 남는다. 다른 도구는 DONE 줄 하나만 센다
+		if (u?.step_type === "tool" && u.tool_info && (u.tool_name === "invoke_subagent" ? u.state === "ACTIVE" : u.state === "DONE")) {
+			const t = u.tool_info.parameters ?? {};
+			const name = AGY_TOOL[u.tool_name] ?? u.tool_name;
+			const file = t.Path ?? t.AbsolutePath ?? t.TargetFile ?? t.file_path;
+			out.push({ name, input: { ...t, ...(file ? { file_path: file } : {}), ...(t.CommandLine ? { command: t.CommandLine } : {}), ...(name === "Agent" ? { subagent_type: t.TypeName, prompt: JSON.stringify(t) } : {}) } });
+		}
+	}
+	return out;
+}
+// 훅이 남긴 스킬 파일 읽기(서브에이전트 포함)를 Read로 더한다. 세션 출력에 서브에이전트 도구가 없는 호스트를 위해
+const hookReads = (copy) => (existsSync(join(copy, ".prokit/skills-used.jsonl")) ? readFileSync(join(copy, ".prokit/skills-used.jsonl"), "utf8").split("\n").filter(Boolean).flatMap((l) => { try { const j = JSON.parse(l); return j.skill ? [{ name: "Read", input: { file_path: `.agents/skills/${j.skill}/${j.ref ?? "SKILL.md"}` }, hook: true, agentType: j.agentType }] : []; } catch { return []; } }) : []);
+
 function reached(dir, stop) {
 	const p = join(dir, "tasks/todo.md");
 	if (!existsSync(p)) return false;
@@ -179,12 +290,14 @@ async function behavior(iter) {
 	for (const sc of scs) json(join(WS, `iteration-${iter}`, `eval-${sc.id}-${sc.name}`, "eval_metadata.json"), { eval_id: sc.id, eval_name: sc.name, prompt: sc.prompt, assertions: [] });
 	await pool(jobs, Number(opt("jobs", 4)), async ({ sc, f }) => {
 		const config = f + suffix;
-		const runDir = runDirOf(iter, sc, config);
-		const copy = join(WS, "runs", `${iter}-${sc.id}-${config}`);
+		// 다른 호스트로 돌린 결과는 결과 폴더와 사본 이름에 호스트를 붙여 Claude 결과와 나란히 둔다
+		const label = AGENT === "claude" ? config : `${config}-${AGENT}`;
+		const runDir = runDirOf(iter, sc, label);
+		const copy = join(WS, "runs", `${iter}-${sc.id}-${label}`);
 		rmSync(copy, { recursive: true, force: true });
 		cpSync(join(WS, "fx", config), copy, { recursive: true, verbatimSymlinks: true });
 		// 이 기기의 3001은 다른 개발 서버가 쓸 수 있고 사본도 동시에 돈다. 사본마다 웹 포트를 따로 준다(인증 주소도 같이)
-		const port = String(3200 + ++portSeq);
+		const port = String(Number(process.env.PKSS_PORT_BASE ?? 3200) + ++portSeq);
 		for (const f of ["apps/web/package.json", "apps/web/.env", "apps/web/src/utils/orpc.ts"]) {
 			const p = join(copy, f);
 			if (existsSync(p)) writeFileSync(p, readFileSync(p, "utf8").replace(/--port 3001\b/g, `--port ${port}`).replace(/localhost:3001\b/g, `localhost:${port}`));
@@ -195,18 +308,18 @@ async function behavior(iter) {
 		const dev = spawn("pnpm", ["dev"], { cwd: join(copy, "apps/web"), env: process.env, detached: true, stdio: "ignore" });
 		for (let i = 0; i < 90 && sh(copy, "curl", ["-s", "-o", "/dev/null", "-m", "5", `http://localhost:${port}/`]).status !== 0; i++) await new Promise((r) => setTimeout(r, 2000));
 		// Claude Code는 project scope 플러그인을 폴더 경로별로 기록한다. 사본 경로에도 등록해야 세션에 켜진다(끝나면 지운다).
-		const plugins = Object.entries(JSON.parse(readFileSync(join(copy, ".claude/settings.json"), "utf8")).enabledPlugins ?? {}).filter(([, v]) => v).map(([k]) => k);
+		const plugins = AGENT === "claude" ? Object.entries(JSON.parse(readFileSync(join(copy, ".claude/settings.json"), "utf8")).enabledPlugins ?? {}).filter(([, v]) => v).map(([k]) => k) : [];
 		await serial(() => { for (const id of plugins) sh(copy, "claude", ["plugin", "install", id, "--scope", "project"]); });
 		const baseSha = git(copy, "rev-parse", "HEAD").trim();
 		const t0 = Date.now();
 		const turns = [];
-		let session;
+		let sid;
 		let goSent = !rest.includes("--go-reply");
 		for (let t = 0; t < CONF.maxTurns; t++) {
-			const r = await claude(copy, t === 0 ? sc.prompt : CONF.reply, session, sc.budgetUsd);
+			const r = await session(copy, t === 0 ? sc.prompt : CONF.reply, sid, sc.budgetUsd);
 			turns.push(r);
-			session = r.result?.session_id ?? r.events.find((e) => e.session_id)?.session_id;
-			if (r.stop || !session || r.result?.subtype === "error_max_budget_usd") break;
+			sid = r.result?.session_id ?? r.events.find((e) => e.session_id)?.session_id;
+			if (r.stop || !sid || r.result?.subtype === "error_max_budget_usd") break;
 			if (reached(copy, sc.stop)) {
 				if (goSent || !sc.stop.confirm) break;
 				goSent = true;
@@ -216,7 +329,7 @@ async function behavior(iter) {
 		try { process.kill(-dev.pid); } catch {}
 		for (const pid of sh(copy, "lsof", ["-t", "-nP", `-iTCP:${port}`, "-sTCP:LISTEN"]).stdout.split("\n").filter(Boolean)) try { process.kill(Number(pid)); } catch {}
 		const events = turns.flatMap((r) => r.events);
-		const tools = events.flatMap((e) => (e.type === "assistant" ? (e.message?.content ?? []) : []).filter((c) => c.type === "tool_use").map((c) => ({ name: c.name, input: c.input })));
+		const tools = [...toolsOf(events), ...hookReads(copy)];
 		// audit·diff는 등록을 지우기 전에 남긴다. 해제가 .claude/settings.json의 enabledPlugins를 바꾼다
 		const audit = sh(copy, "node", ["scripts/dev-cycle.mjs", "audit"]);
 		mkdirSync(join(runDir, "outputs"), { recursive: true });
@@ -235,9 +348,9 @@ async function behavior(iter) {
 		json(join(runDir, "timing.json"), { total_tokens: tok, duration_ms: ms, total_duration_seconds: Math.round(ms / 100) / 10, total_cost_usd: Math.round(cost * 100) / 100, turns: turns.length, stop: turns.at(-1)?.stop ?? turns.at(-1)?.result?.subtype ?? null });
 		const initEv = events.find((e) => e.type === "system" && e.subtype === "init") ?? {};
 		const init = { plugins: (initEv.plugins ?? []).map((p) => p.name ?? p), skills: initEv.skills ?? initEv.slash_commands ?? [] };
-		json(join(runDir, "run.json"), { init, copy, base: baseSha, fixture: f, suffix, scenario: sc.id, model: MODEL, tools, commits: git(copy, "log", "--oneline", `${baseSha}..HEAD`).trim() });
+		json(join(runDir, "run.json"), { init, copy, base: baseSha, fixture: f, suffix, scenario: sc.id, agent: AGENT, model: MODEL, tools, commits: git(copy, "log", "--oneline", `${baseSha}..HEAD`).trim() });
 		const s = gradeRun(sc, runDir);
-		console.log(`eval-${sc.id} ${config}: ${s.passed}/${s.total} (${Math.round(ms / 1000)}s, $${cost.toFixed(2)}, 턴 ${turns.length})`);
+		console.log(`eval-${sc.id} ${label}: ${s.passed}/${s.total} (${Math.round(ms / 1000)}s, $${cost.toFixed(2)}, 턴 ${turns.length})`);
 	});
 }
 
@@ -253,6 +366,13 @@ function regrade(iter) {
 		const d = join(WS, `iteration-${iter}`, `eval-${sc.id}-${sc.name}`);
 		if (!existsSync(d)) continue;
 		for (const config of readdirSync(d).filter((c) => existsSync(join(d, c, "run-1/run.json")))) {
+			// Codex·Antigravity는 도구 호출 정규화를 고친 뒤에도 다시 뽑게 대화 기록에서 새로 만든다(turn으로 이은 회차는 그대로 둔다)
+			const runJson = join(d, config, "run-1/run.json");
+			const meta = JSON.parse(readFileSync(runJson, "utf8"));
+			if (meta.agent && meta.agent !== "claude" && !meta.turnTools) {
+				const events = readFileSync(join(d, config, "run-1/transcript.jsonl"), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l));
+				json(runJson, { ...meta, tools: [...toolsOf(events), ...hookReads(meta.copy)] });
+			}
 			const s = gradeRun(sc, join(d, config, "run-1"));
 			console.log(`eval-${sc.id} ${config}: ${s.passed}/${s.total}`);
 		}
@@ -266,7 +386,7 @@ if (process.argv[1] === import.meta.filename) {
 		const copy = join(WS, "runs", "probe");
 		rmSync(copy, { recursive: true, force: true });
 		cpSync(join(WS, "fx", rest[0]), copy, { recursive: true, verbatimSymlinks: true });
-		const r = await claude(copy, `다음 명령만 실행하고 종료 코드와 마지막 오류 줄을 그대로 보고해. 다른 일은 하지 마: ${rest.slice(1).join(" ")}`);
+		const r = await session(copy, `다음 명령만 실행하고 종료 코드와 마지막 오류 줄을 그대로 보고해. 다른 일은 하지 마: ${rest.slice(1).join(" ")}`);
 		console.log(r.result?.result, r.result?.total_cost_usd);
 		process.exit(0);
 	}
@@ -279,8 +399,8 @@ if (process.argv[1] === import.meta.filename) {
 		const copy = join(WS, "runs", name);
 		const meta0 = JSON.parse(readFileSync(join(WS, `iteration-${name.split("-")[0]}`, `eval-${sc.id}-${sc.name}`, name.split("-").slice(2).join("-"), "run-1", "run.json"), "utf8"));
 		const runDir = runDirOf(iter, sc, meta0.fixture);
-		const r = await claude(copy, prompt, undefined, sc.budgetUsd);
-		const tools = r.events.flatMap((e) => (e.type === "assistant" ? (e.message?.content ?? []) : []).filter((c) => c.type === "tool_use").map((c) => ({ name: c.name, input: c.input })));
+		const r = await session(copy, prompt, undefined, sc.budgetUsd);
+		const tools = toolsOf(r.events);
 		const audit = sh(copy, "node", ["scripts/dev-cycle.mjs", "audit"]);
 		mkdirSync(join(runDir, "outputs"), { recursive: true });
 		writeFileSync(join(runDir, "outputs", "response.md"), r.result?.result ?? "(응답 없음)");
@@ -291,7 +411,7 @@ if (process.argv[1] === import.meta.filename) {
 		json(join(runDir, "eval_prompt.json"), { prompt });
 		json(join(runDir, "timing.json"), { total_duration_seconds: null, total_cost_usd: Math.round((r.result?.total_cost_usd ?? 0) * 100) / 100, stop: r.stop ?? r.result?.subtype ?? null });
 		// 앞 회차 도구 호출도 합쳐 채점한다(브리프·구현 단계는 앞 회차에서 했다)
-		json(join(runDir, "run.json"), { ...meta0, tools: [...meta0.tools, ...tools], turnTools: tools.length });
+		json(join(runDir, "run.json"), { ...meta0, tools: [...meta0.tools.filter((t) => !t.hook), ...tools, ...hookReads(copy)], turnTools: tools.length });
 		const s = gradeRun(sc, runDir);
 		console.log(`eval-${sc.id} ${name} turn: ${s.passed}/${s.total} ($${(r.result?.total_cost_usd ?? 0).toFixed(2)})`);
 		process.exit(0);

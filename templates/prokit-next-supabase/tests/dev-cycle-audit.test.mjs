@@ -841,17 +841,22 @@ test("부른 스킬 기록: skill-log 훅이 Skill 호출과 SKILL.md Read를 �
   assert.ok(p.some((x) => x.includes("agent-skills:planning-and-task-breakdown를 이 라운드에서 부르거나 읽은 기록이 없다")));
   assert.ok(p.some((x) => x.includes("ponytail-review를 이 라운드에서 부른 기록이 없다")));
   hook({ tool_name: "Read", tool_input: { file_path: "/home/u/.claude/plugins/cache/addy/agent-skills/0.6/skills/planning-and-task-breakdown/SKILL.md" } });
+  // prokit-reviewer가 아닌 서브에이전트의 읽기는 세지 않는다. prokit-reviewer가 네이티브 플러그인 판을 읽은 것(Codex)은 센다
+  hook({ tool_name: "Bash", agent_id: "r0", agent_type: "prokit-ui-builder", tool_input: { command: "cat /home/u/.codex/plugins/cache/ponytail/ponytail/5.3.3/skills/ponytail-review/SKILL.md" } });
+  assert.ok(mine().some((x) => x.includes("ponytail-review를 이 라운드에서 부른 기록이 없다")), mine().join("\n"));
+  hook({ tool_name: "Bash", agent_id: "r1", agent_type: "prokit-reviewer", tool_input: { command: "cat /home/u/.codex/plugins/cache/ponytail/ponytail/5.3.3/skills/ponytail-review/SKILL.md" } });
+  assert.deepEqual(mine(), []);
   hook({ tool_name: "Skill", tool_input: { skill: "ponytail:ponytail-review" } });
   assert.deepEqual(mine(), []);
-  // 읽은 기록 3줄. 나머지는 evidence가 행을 채운 시각 줄이다
-  assert.equal(readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").filter((l) => !/"row":/.test(l)).length, 3);
+  // 읽은 기록 5줄. 나머지는 evidence가 행을 채운 시각 줄이다
+  assert.equal(readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").filter((l) => !/"row":/.test(l)).length, 5);
   // 다음 라운드를 기록 없이(Codex 등) 진행하면 앞 라운드 기록과 대조하지 않고 자기 신고로 본다
   write("tasks/todo.md", "# 할 일\n");
   // 새 라운드를 열 때 30일 지난 줄과 깨진 줄은 지운다(감사용으로 한 달만 남긴다)
   write(".prokit/skills-used.jsonl", `{"t":"2000-01-01T00:00:00.000Z","skill":"old"}\n깨진 줄\n${readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8")}`);
   writeTable(root, config, "D", { write: true, title: "Codex 라운드" });
   const kept = readFileSync(join(root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").filter((l) => !/"row":/.test(l));
-  assert.equal(kept.length, 4, "앞 라운드 3줄 + 새 라운드 시작 줄");
+  assert.equal(kept.length, 6, "앞 라운드 5줄 + 새 라운드 시작 줄");
   assert.match(kept.at(-1), /"round":"Codex 라운드"/);
   const rows2 = parseActive(readFileSync(join(root, "tasks/todo.md"), "utf8")).rows;
   set(rows2.findIndex((r) => /구현 단계/.test(r.text)), "사용: agent-skills:incremental-implementation → 위임");
@@ -2015,4 +2020,57 @@ test("주 UI 스킬: 카탈로그 항목의 스킬을 보고, none이면 카탈�
   assert.deepEqual(mainUiSkill({ uiSkill: ["hallmark", "impeccable"] }, catalog), ["hallmark"]);
   assert.deepEqual(mainUiSkill({ uiSkill: "none" }, catalog), ["frontend-design"]);
   assert.deepEqual(mainUiSkill({ uiSkill: "none" }), [], "none 항목이 없는 옛 매니페스트는 읽을 스킬이 없다");
+});
+
+test("화면 디자인 보조: 브리프 보조 줄의 보조마다 디자인 리뷰 증거에 결과나 미실행 사유를 요구하고, 설치한 검수 보조(prokit-ui 표)는 브리프 줄에 없어도 요구한다", () => {
+  const { root, write } = makeRepo();
+  write("skills.manifest.json", readFileSync(join(TEMPLATE_FILES, "skills.manifest.json"), "utf8"));
+  write(".agents/skills/prokit-ui/SKILL.md", readFileSync(join(TEMPLATE_FILES, ".agents/skills/prokit-ui/SKILL.md"), "utf8"));
+  const cfg = JSON.parse(readFileSync(join(root, ".dev-cycle.json"), "utf8"));
+  write(".dev-cycle.json", JSON.stringify({ ...cfg, uiSkill: ["hallmark"] }));
+  const config = loadConfig(root);
+  writeTable(root, config, "B", { write: true, title: "랜딩" });
+  fill(root);
+  const p = join(root, config.todoPath);
+  const active = parseActive(readFileSync(p, "utf8"));
+  const brief = active.rows.findIndex((r) => r.text.startsWith("화면 브리프 확정"));
+  const review = active.rows.findIndex((r) => r.text.startsWith("[review] 디자인 리뷰"));
+  // hallmark 리뷰 행의 기록(sloplint 출력과 마감 리뷰)은 따로 검사하므로 맞는 꼴로 앞에 둔다
+  write("tasks/evidence/ui-review-20261104-1200.md", "sloplint: 0 FAIL, 0 REFLEX, 0 WARN across 1 file(s).\nfinish-review: ship\n");
+  const mine = (b, v) => {
+    const ev = /^blocked/.test(v) ? v : `sloplint 0 FAIL, 마감 리뷰 ship, tasks/evidence/ui-review-20261104-1200.md, ${v}`;
+    const rows = active.rows.map((r, i) => (i === brief ? { ...r, evidence: b } : i === review ? { ...r, evidence: ev } : r));
+    writeFileSync(p, renderBlock({ ...active.meta, title: active.title }, rows));
+    return audit(root, config).problems.filter((x) => /(브리프 )?보조\([^)]*\)의 (리뷰 )?결과/.test(x));
+  };
+  write("docs/briefs/landing.md", "# 랜딩\n보조: landing, animation\n");
+  // 브리프 줄에 적은 보조의 결과가 빠지면 막고, 결과 문구나 미실행 사유가 있으면 받는다
+  assert.match(mine("docs/briefs/landing.md", "landing 체크리스트 미충족 0").join("\n"), /브리프 보조\(animation\)/);
+  assert.deepEqual(mine("docs/briefs/landing.md (보조 둘)", "landing 체크리스트 미충족 0, animation 미실행: 모션 없음"), []);
+  // landing-page-design 같은 이름 조각은 보조 이름으로 세지 않는다
+  assert.equal(mine("docs/briefs/landing.md", "landing-page-design 읽음, motion 지적 0").length, 1);
+  // visual-critique를 설치했으면 브리프 줄에 없어도 요구한다(impeccable이면 요구하지 않는다)
+  for (const n of ["visual-hierarchy", "brand-consistency", "composition", "typography", "color", "affordance", "information-density"]) write(`.agents/skills/critique-${n}/SKILL.md`, "x\n");
+  assert.match(mine("docs/briefs/landing.md", "landing 체크리스트 미충족 0, animation 미실행: 모션 없음").join("\n"), /브리프 보조\(visual-critique\)의 리뷰 결과가 증거에 없다\. visual-critique는 prokit-ui 표에서 종류가 검수인 보조라/);
+  assert.deepEqual(mine("docs/briefs/landing.md", "landing 체크리스트 미충족 0, animation 미실행: 모션 없음, visual-critique P1 0, P2 2, P3 1"), []);
+  // ui-design도 검수 보조다. 설치하면 함께 요구한다(언제 쓰나 칸에 impeccable 예외가 없어 impeccable에서도 요구한다)
+  const manifest = JSON.parse(readFileSync(join(TEMPLATE_FILES, "skills.manifest.json"), "utf8"));
+  for (const n of manifest.optional["ui-design"].skills.flatMap((g) => g.skills)) write(`.agents/skills/${n}/SKILL.md`, "x\n");
+  assert.match(mine("docs/briefs/landing.md", "landing 체크리스트 미충족 0, animation 미실행: 모션 없음, visual-critique P1 0, P2 2, P3 1").join("\n"), /브리프 보조\(ui-design\)/);
+  assert.deepEqual(mine("docs/briefs/landing.md", "landing 체크리스트 미충족 0, animation 미실행: 모션 없음, visual-critique P1 0, P2 2, P3 1, ui-design 지적 3"), []);
+  write(".dev-cycle.json", JSON.stringify({ ...cfg, uiSkill: ["impeccable"] }));
+  assert.deepEqual(audit(root, loadConfig(root)).problems.filter((x) => x.includes("visual-critique)")), []);
+  write(".dev-cycle.json", JSON.stringify({ ...cfg, uiSkill: ["hallmark"] }));
+  // 훅 기록이 있는 라운드는 결과를 적은 보조의 스킬을 읽은 기록도 요구한다(읽지 않고 적은 결과). 미실행 사유는 읽지 않아도 받는다
+  const hook = (input) => spawnSync(process.execPath, [CLI, "skill-log"], { cwd: root, input: JSON.stringify(input), encoding: "utf8", env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/prokit-ui/references/addon-landing.md") } });
+  const full = "landing 체크리스트 미충족 0, animation 미실행: 모션 없음, visual-critique P1 0, P2 2, P3 1, ui-design 지적 3";
+  assert.match(mine("docs/briefs/landing.md", full).join("\n"), /보조\(landing, visual-critique, ui-design\)의 결과를 적었지만 이 라운드에 그 보조 스킬을 읽은 기록이 없다/);
+  hook({ tool_name: "Read", agent_id: "b1", agent_type: "prokit-ui-builder", tool_input: { file_path: join(root, ".agents/skills/landing-page-design/SKILL.md") } });
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/critique-color/SKILL.md") } });
+  hook({ tool_name: "Read", tool_input: { file_path: join(root, ".agents/skills/spacing-system/SKILL.md") } });
+  assert.deepEqual(mine("docs/briefs/landing.md", full), []);
+  // 좁은 개선(브리프 N/A)과 blocked 리뷰는 보지 않는다
+  assert.deepEqual(mine("N/A: 문구만 고침", ""), []);
+  assert.deepEqual(mine("docs/briefs/landing.md", "blocked: 개발 서버가 뜨지 않음"), []);
 });

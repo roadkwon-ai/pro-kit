@@ -4,6 +4,10 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-27에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. fixture는 세션 스크래치에서 만들었으므로 이 문서에는 수치와 판정만 남긴다. 스킬·에이전트·dev-cycle 러너의 공통 부분은 [prokit-next-neon의 VERIFICATION.md](../prokit-next-neon/VERIFICATION.md)에서 검증한 것과 같은 파일이다(`tests/shared-files.test.mjs`가 바이트 동일성을 검사한다).
 
+## 화면 디자인 보조 행동 eval: Codex·Antigravity (2026-11-04)
+
+audit의 보조 리뷰 검사(브리프 `보조:` 줄과 설치한 검수 보조의 결과·읽은 기록), 과설계 방지 보완 검토의 `prokit-reviewer` 기록, `prokit-ui`와 검수 guide의 "언제 쓰나"를 두 템플릿에서 같게 고쳤다. Codex·Antigravity 실측과 한계는 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#화면-디자인-보조-행동-eval-codexantigravity-2026-11-04)에 있다.
+
 ## 화면 디자인 보조 행동 eval과 보완 (2026-11-04)
 
 B 대조표 행 문구, `prokit-ui` 보조 규칙, guide, `prokit-ui-builder`를 두 템플릿에서 같게 고쳤다. 행동 eval과 한계는 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#화면-디자인-보조-행동-eval과-보완-2026-11-04)에 있다.

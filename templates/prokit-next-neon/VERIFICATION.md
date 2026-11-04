@@ -4,6 +4,56 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+## 화면 디자인 보조 행동 eval: Codex·Antigravity (2026-11-04)
+
+바로 아래 절의 Claude Code 행동 eval을 Codex와 Antigravity로 다시 돌렸다. 두 도구 모두 설치한 검수 보조를 빼거나, 결과 문구만 적고 그 스킬을 읽지 않았다. 규칙과 audit을 고친 뒤 다시 돌렸다.
+
+- 조건: 아래 절과 같은 fixture(`u-landing-combo`, `u-app-combo`)와 시나리오 5\~7번이다. eval 실행기에 두 도구를 더했다(`PKSS_AGENT=codex|agy`). 결과 폴더 이름에 도구 이름을 붙인다.
+  - Codex: `codex exec --json`과 `exec resume`으로 돌렸다. 모델은 사용자 설정의 `gpt-6.1-sol`이고, 서브에이전트 일부는 `gpt-6.1-terra`였다. 훅 신뢰는 `--dangerously-bypass-hook-trust`로 건너뛰었다. 지시 본문이 세션 기록에 암호화돼 있어, 위임은 세션 기록의 `spawn_agent` 이름만 모은다.
+  - Antigravity: `agy -p --output-format stream-json`과 `--conversation`으로 돌렸다. CLI 1.4.12, 모델은 지정하지 않고 기본값을 썼다(출력에 모델 이름이 없다). `--sandbox`는 `~/.ssh` 읽기를 막고 npm 레지스트리와 localhost는 열어 두었다.
+  - 채점은 세션 출력의 도구 호출에 프로젝트 훅 기록(`.prokit/skills-used.jsonl`)의 읽기를 더해 본다. 두 도구 모두 서브에이전트의 읽기가 세션 출력에 없어서다. Antigravity `invoke_subagent`는 기다리지 않고 돌아와 `ACTIVE` 줄만 남는다.
+- Codex 실행 파일: Homebrew판 0.166.0은 이 기기에서 셸 도구가 하나도 돌지 않았다(`timed out negotiating with the code-mode host`). 사용자 설정을 빼도, 샌드박스를 꺼도, 짧은 경로에서도 같았다. 11-03 00:21 실행까지는 같은 판으로 돌았다. 그래서 Antigravity IDE 확장에 든 0.164.0-alpha.11.1을 썼다(`PKSS_CODEX_BIN`).
+- Codex 샌드박스: `workspace-write`에서는 Node의 `os.uptime`이 `EPERM`이라 pnpm·turbo·next가 돌지 않았다. 11-03 손 실측처럼 샌드박스 없이 돌리고 격리는 비밀값을 뺀 환경 변수로 했다.
+- 1회차(아래 절의 판):
+
+  | 시나리오 | Codex | Antigravity |
+  |---|---|---|
+  | 5 랜딩 조합 | 14/19 | 12/19 |
+  | 6 앱 정돈 조합 | 14/18 | 12/18 |
+  | 7 물러서기 | 8/8 | 7/8 |
+
+  - 두 도구 모두 랜딩 브리프에 `보조: landing`만 적었다. 설치한 `visual-critique`가 빠져 7개 차원 비평을 하지 않았다. Codex는 앱 브리프에서도 `ui-design`을 뺐다. 표의 "설치되어 있으면" 칸과 "이 화면에 쓰면 넣는다"는 문장이 빼도 되는 여지를 남겼다.
+  - Antigravity는 앱 브리프에 `ui-design`을 적고도 그 guide와 스킬을 읽지 않았다. 리뷰 증거에는 `ui-design` 결과가 없었다. 그래도 audit은 막지 않았다(보조를 보는 검사가 없었다).
+  - Codex `prokit-reviewer`가 `ponytail-review`를 네이티브 플러그인 캐시(`~/.codex/plugins/cache/ponytail/…`)에서 읽었다. `process-routing`이 Codex에 권하는 경로다. 그런데 audit의 과설계 방지 검사는 Main의 기록만 세서 이 라운드를 막았다.
+  - Antigravity 물러서기는 Main이 행 문구의 `prokit-ui`·`prokit-web`을 읽지 않고 구현 행을 채웠고, audit이 막았다. 고르지 않은 화면에서 `landing-page-design`을 쓰지 않은 것은 두 도구 모두 지켰다.
+- 고친 것:
+  - audit(`dev-cycle.mjs`):
+    - 과설계 방지 보완 검토는 Main의 기록과 함께 `prokit-reviewer`의 읽기도 센다.
+    - 디자인 리뷰 행 검사를 더했다. 브리프 `보조:` 줄의 보조마다, 증거에 그 결과 문구(guide의 결과 문구는 묶음 이름으로 시작한다)나 `<보조> 미실행: 사유`가 있어야 한다.
+    - `prokit-ui` 표에서 종류가 검수인 보조는 브리프 줄에 없어도, 설치돼 있으면 같은 것을 요구한다(언제 쓰나 칸이 impeccable 예외를 말하면 그 주 UI 스킬에서는 뺀다). 표를 읽으므로 묶음 이름을 코드에 두지 않는다.
+    - 훅 기록이 있는 라운드에서 결과를 적은 보조는 그 묶음 스킬을 이 라운드에 누군가 읽은 기록이 있어야 한다.
+  - `prokit-ui`: 종류가 검수인 보조(`visual-critique`, `ui-design`)는 설치되어 있으면 브리프를 쓰는 화면마다 넣는다(`visual-critique`는 주 UI 스킬이 impeccable이면 요청할 때만). `ui-design` 표 행의 "언제 쓰나"와 두 guide의 "언제 쓰나"도 맞췄다.
+  - 채점기: 레시피 INDEX를 거치지 않고 `style-recipes/linear.md`를 바로 읽은 것도 센다. Claude 플러그인 로드 검사는 Claude Code 세션만 본다.
+- 2회차(고친 판, 시나리오 5·6):
+
+  | 시나리오 | Codex | Antigravity |
+  |---|---|---|
+  | 5 랜딩 조합 | 18/19 | 16/19 |
+  | 6 앱 정돈 조합 | 18/18 | 15/18 |
+
+  - 두 도구 모두 브리프에 설치한 보조를 모두 적었다(`landing, animation, visual-critique`, `web-design-engineer, ui-design`). 리뷰 증거에도 보조마다 결과가 붙었다.
+  - Codex는 critique 일곱 개, `emil-design-eng`, `critique-guide.md`, ui-design 스킬을 읽고 결과를 냈다. 랜딩 리뷰는 `landing 체크리스트 미충족 3`, `visual-critique P1 0, P2 0, P3 0`, `animation: motion 지적 0`이었다. 앱 리뷰는 `web-design-engineer 철학 8, 위계 8, 완성도 8, 기능성 9, 독창성 7`, `ui-design 지적 0`이었다. 두 사본 모두 audit에는 `[confirm]`만 남았다.
+  - Antigravity는 결과 문구를 적었지만 그 스킬을 읽지 않았다. 랜딩은 critique 일곱 개와 `emil-design-eng`, 앱은 ui-design 스킬과 `critique-guide.md`를 읽은 기록이 없다. 이 2회차는 마지막 audit 검사(읽은 기록)를 더하기 전 판으로 돌렸다. 고친 판의 audit을 두 사본에 돌리니 `보조(visual-critique)`와 `보조(ui-design)`를 "결과를 적었지만 읽은 기록이 없다"로 막았다. Codex 두 사본은 막지 않았다.
+  - 랜딩 메타데이터는 두 도구 모두 넣지 않았다(Claude Code 비교군도 넣지 않았다).
+  - Antigravity 앱은 두 번째 턴이 끝날 때까지 10\~12행을 채우지 못했다. 1회차 앱과 랜딩은 한 턴 40분 제한에 걸렸다.
+- 정리: 두 도구가 사용자 설정(`config.toml`)에 남긴 scratch 경로 신뢰 항목(이번 eval과 이 세션의 앞선 손 실측 것)을 지웠다.
+- 테스트: 두 템플릿 422 통과·0 실패, 문서 검사 80 통과·0 실패.
+- 한계:
+  - 회차마다 한 번씩 돌렸다. 마지막 audit 검사(읽은 기록)를 넣은 판으로 세션을 다시 돌리지는 않았다. 그 검사는 이미 돈 사본에 audit만 다시 돌려 확인했다.
+  - Codex는 Homebrew판 0.166.0이 아니라 IDE 확장의 0.164.0-alpha.11.1로 쟀다. 샌드박스 없이 돌렸고 `/hooks` 신뢰 절차는 거치지 않았다.
+  - Antigravity 모델은 기본값이라 실행마다 확인하지 않았다. 스크린샷은 두 도구 모두 세션 안에서 찍었다. 그 화면의 품질은 사람이 보지 않았다.
+  - 시나리오 7(물러서기)은 1회차만 돌렸다.
+
 ## 화면 디자인 보조 행동 eval과 보완 (2026-11-04)
 
 아래 절의 한계였던 "보조를 쓴 화면 하나를 브리프부터 리뷰까지 잇는 라운드"를 돌렸다. 커밋 1eff168c를 독립 리뷰한 결과와 함께, 찾은 결함을 고쳤다.

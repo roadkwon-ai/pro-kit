@@ -1792,7 +1792,16 @@ const SIMPLICITY_LABEL = {
 function simplicityProblem(root, config, active) {
 	const want = SIMPLICITY_LABEL[config.simplicity];
 	if (!want) return () => null;
-	const logged = skillsLogged(root, active);
+	// 보완 검토는 Main이 부르거나 prokit-reviewer가 읽는다(Codex 리뷰어는 네이티브 ponytail 플러그인을 먼저 읽는다. process-routing)
+	const log = skillLog(root, active);
+	const logged = log?.uses.length
+		? new Set(
+				[
+					...log.uses,
+					...log.agentUses.filter((u) => u.agentType === "prokit-reviewer"),
+				].map((u) => u.name),
+			)
+		: null;
 	return (r) => {
 		if (!/^\[review\] prokit-reviewer\(code\)/.test(r.text)) return null;
 		const value = bare(r.evidence);
@@ -1805,18 +1814,91 @@ function simplicityProblem(root, config, active) {
 	};
 }
 
+// 화면 디자인 보조(skills.manifest.json optional 중 guide가 있는 묶음): 브리프 `보조:` 줄의 보조마다 디자인 리뷰 행 증거에
+// 그 결과(guide의 결과 문구는 묶음 이름으로 시작한다)나 `<보조> 미실행: 사유`가 있어야 한다. prokit-ui 표에서 종류가 검수인 보조는
+// 설치돼 있으면 브리프를 쓰는 화면마다 쓰므로(언제 쓰나 칸이 "impeccable이면"을 말하면 그 주 UI 스킬에서는 빼고) 브리프 줄에 없어도 요구한다.
+function addonProblem(root, config, active) {
+	const optional = readJson(join(root, "skills.manifest.json"))?.optional ?? {};
+	const guides = Object.keys(optional).filter((k) => optional[k].guide);
+	if (!guides.length) return () => null;
+	const installed = (k) =>
+		(optional[k].skills ?? [])
+			.flatMap((g) => g.skills ?? [])
+			.every((n) => existsSync(join(root, ".agents/skills", n, "SKILL.md")));
+	const brief = active.rows.find((x) => x.text.startsWith("화면 브리프 확정"));
+	const path = bare(brief?.evidence ?? "").match(
+		/docs\/briefs\/[^\s)|,;]+\.md/,
+	)?.[0];
+	const line =
+		path && existsSync(join(root, path))
+			? readFileSync(join(root, path), "utf8").match(
+					/^\**보조\**\s*[:：](.*)$/m,
+				)?.[1]
+			: undefined;
+	if (line === undefined) return () => null;
+	const named = guides.filter((k) =>
+		new RegExp(`(^|[^\\w-])${k}(?![\\w-])`).test(line),
+	);
+	const main = [config.uiSkill ?? "impeccable"].flat()[0];
+	const table = existsSync(join(root, ".agents/skills/prokit-ui/SKILL.md"))
+		? readFileSync(join(root, ".agents/skills/prokit-ui/SKILL.md"), "utf8")
+		: "";
+	const always = [...table.matchAll(/^\| `([\w-]+)` \| 검수 \| ([^|]*)\|/gm)]
+		.filter(
+			([, k, when]) =>
+				guides.includes(k) &&
+				!named.includes(k) &&
+				installed(k) &&
+				!(main === "impeccable" && /impeccable이면/.test(when)),
+		)
+		.map(([, k]) => k);
+	const want = [...named, ...always];
+	if (!want.length) return () => null;
+	// 훅 기록이 있는 라운드는 결과를 적은 보조의 스킬을 이 라운드에 누군가(Main이나 맡은 에이전트) 읽었어야 한다(읽지 않고 적은 결과를 막는다)
+	const log = skillLog(root, active);
+	const readNames = log?.uses.length
+		? new Set([...log.uses, ...log.agentUses].map((u) => u.name))
+		: null;
+	const bundleSkills = (k) =>
+		(optional[k].skills ?? []).flatMap((g) => g.skills ?? []);
+	return (r) => {
+		if (!r.text.startsWith("[review] 디자인 리뷰")) return null;
+		const value = bare(r.evidence);
+		if (!value || /^(blocked|n\/a)\s*:/i.test(value)) return null;
+		const missing = want.filter(
+			(k) => !new RegExp(`(^|[^\\w-])${k}(?![\\w-])`).test(value),
+		);
+		if (!missing.length) {
+			const unread = readNames
+				? want.filter(
+						(k) =>
+							!new RegExp(`(^|[^\\w-])${k}\\s*미실행`).test(value) &&
+							!bundleSkills(k).some((n) => readNames.has(n)),
+					)
+				: [];
+			return unread.length
+				? `보조(${unread.join(", ")})의 결과를 적었지만 이 라운드에 그 보조 스킬을 읽은 기록이 없다(${SKILL_LOG}). guide(prokit-ui/references/addon-<묶음>.md) 리뷰 칸이 가리키는 스킬 파일(예: .agents/skills/${bundleSkills(unread[0])[0]}/SKILL.md)을 읽고 그 절차로 리뷰한 뒤 다시 적거나, 못 하면 \`<보조> 미실행: 사유\`를 적는다`
+				: null;
+		}
+		const extra = missing.filter((k) => always.includes(k));
+		return `브리프 보조(${missing.join(", ")})의 리뷰 결과가 증거에 없다${extra.length ? `. ${extra.join(", ")}는 prokit-ui 표에서 종류가 검수인 보조라 설치되어 있으면 브리프를 쓰는 화면마다 쓴다(브리프 ${path}의 보조: 줄에도 넣는다)` : ""}. 그 보조의 guide(prokit-ui/references/addon-<묶음>.md) 리뷰 칸대로 하고 결과 문구(예: visual-critique P1 0, P2 2, P3 1)를 증거 끝에 붙이거나, 못 하면 \`<보조> 미실행: 사유\`를 적는다`;
+	};
+}
+
 // audit과 status가 같은 판정을 쓴다. 진행 계획 라운드의 확인 행은 지문까지 본다.
 const roundRowProblem = (root, config, active) => {
 	const planRound = isPlanRound(active);
 	const brain = brainProblem(root, config, active);
 	const simplicity = simplicityProblem(root, config, active);
 	const usage = usageProblem(root, config, active);
+	const addon = addonProblem(root, config, active);
 	return (r) =>
 		rowProblem(r) ??
 		uiRecordProblem(root, active.meta, r) ??
 		brain(r) ??
 		simplicity(r) ??
 		usage(r) ??
+		addon(r) ??
 		(planRound && isConfirm(r.text)
 			? planConfirmProblem(root, config, r.evidence)
 			: null);

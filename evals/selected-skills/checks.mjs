@@ -70,7 +70,8 @@ export function grade({ sc, meta, runDir }) {
 
 	// 공통
 	const init = meta.init ?? {};
-	if (init.plugins) {
+	// Claude 플러그인 로드는 Claude Code 세션만 본다(Codex·Antigravity는 init에 플러그인 목록이 없다)
+	if (init.plugins && (meta.agent ?? "claude") === "claude") {
 		const want = Object.entries(JSON.parse(read(join(copy, ".claude/settings.json")) || "{}").enabledPlugins ?? {}).filter(([, v]) => v).map(([k]) => k.split("@")[0]);
 		const lacking = want.filter((w) => !init.plugins.includes(w));
 		add("plugins-loaded", "선언한 project 플러그인이 세션에 로드됐다", !lacking.length, lacking.length ? `안 됨: ${lacking.join(", ")}` : init.plugins.filter((p) => want.includes(p)).join(", "));
@@ -175,7 +176,9 @@ export function grade({ sc, meta, runDir }) {
 				add("review-landing", "리뷰 보고서에 landing 체크리스트 결과가 있다", /landing 체크리스트 미충족 \d+/.test(reports), reports.match(/.*landing 체크리스트.*/)?.[0] ?? "없음");
 				add("review-critique", "리뷰 보고서에 visual-critique P1·P2·P3가 있다", /visual-critique P1 \d+, P2 \d+, P3 \d+/.test(reports), reports.match(/.*visual-critique.*/)?.[0] ?? "없음");
 				add("emil-review", "motion 리뷰 전에 emil-design-eng를 읽었다", calls.has("emil-design-eng") || !/motion 지적/.test(reports), calls.has("emil-design-eng") ? "읽음" : "motion 리뷰 없음 또는 안 읽음");
-				add("builder-animate", "위임 지시에 animate SKILL.md 경로를 넣었다", /animate\/SKILL\.md/.test(builder), builder ? "prokit-ui-builder 지시 검색" : "prokit-ui-builder 위임 없음");
+				// 지시 본문을 볼 수 없는 호스트(Codex는 암호화)는 훅 기록의 prokit-ui-builder 읽기로 본다
+				const builderRead = tools.some((t) => t.hook && t.agentType === "prokit-ui-builder" && /\/animate\/SKILL\.md$/.test(t.input.file_path));
+				add("builder-animate", "prokit-ui-builder가 animate SKILL.md를 받아 읽었다(위임 지시의 경로나 훅 기록)", /animate\/SKILL\.md/.test(builder) || builderRead, builderRead ? "훅 기록: prokit-ui-builder가 읽음" : builder ? "prokit-ui-builder 지시 검색" : "prokit-ui-builder 위임 없음");
 				add("no-raw-hex", "화면 코드에 고정 hex를 넣지 않았다(landing Part B)", !hexIn.length, hexIn.slice(0, 3).join(" | ") || "없음");
 			}
 		}
@@ -183,7 +186,9 @@ export function grade({ sc, meta, runDir }) {
 			for (const g of ["ui-design", "web-design-engineer"]) add(`guide-${g}`, `addon-${g}.md를 읽었다`, touched(new RegExp(`addon-${g}\\.md`)), "도구 호출 경로");
 			add("wde-skill", "web-design-engineer SKILL.md를 실제로 읽었다", calls.has("web-design-engineer"), "SKILL.md 읽기");
 			// 지목한 이름이 디자인 카탈로그에도 있으면 카탈로그가 방향이고 레시피는 참고만 한다(addon-web-design-engineer)
-			add("recipe", "Linear 방향을 레시피 INDEX나 디자인 카탈로그(use-design-md)에서 찾았다", touched(/style-recipes\/INDEX\.md/) || calls.has("use-design-md"), touched(/style-recipes\/INDEX\.md/) ? "레시피 INDEX" : calls.has("use-design-md") ? "디자인 카탈로그" : "없음");
+			// INDEX를 거치지 않고 레시피 파일(style-recipes/linear.md)을 바로 읽은 것도 센다(Antigravity 실측)
+			const recipe = touched(/style-recipes\/(INDEX|linear)\.md/);
+			add("recipe", "Linear 방향을 레시피(INDEX나 linear.md)나 디자인 카탈로그(use-design-md)에서 찾았다", recipe || calls.has("use-design-md"), recipe ? "레시피" : calls.has("use-design-md") ? "디자인 카탈로그" : "없음");
 			add("wde-critique", "5개 차원 채점 전에 critique-guide를 읽었다", touched(/web-design-engineer\/references\/critique-guide\.md/), "도구 호출 경로");
 			const laws = [...calls].filter((c) => /^(law-of-|visual-hierarchy|spacing-system|typography-scale|layout-grid|responsive-design|readable-measure|color-system)/.test(c));
 			add("ui-design-skills", "ui-design 스킬을 하나 이상 읽었다", laws.length > 0, laws.join(", ") || "없음");
