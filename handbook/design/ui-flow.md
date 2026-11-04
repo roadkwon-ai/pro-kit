@@ -25,14 +25,16 @@
 ```mermaid
 flowchart LR
   R["첫 화면·리디자인 요청<br/>리디자인이면 지금 화면 진단"] --> I["기획<br/>PRODUCT.md<br/>주 UI 스킬의 인터뷰"]
-  I --> Q["한 번에 묻기<br/>카탈로그 3곳에서 스타일 1~3위<br/>주 UI 스킬로 정하기(hallmark는 테마 배정) · 방향 보조(설치했을 때) · 대표 색 · 이름·헤드라인 후보<br/>사이트맵 · 화면 설계"]
+  I --> Q["한 번에 묻기<br/>카탈로그 3곳에서 스타일 1~3위<br/>주 UI 스킬로 정하기(hallmark는 테마 배정) · 방향 보조(설치했을 때) · 대표 색 · 이름·헤드라인 후보<br/>사이트맵 · 화면 설계(브리프의 보조: 줄)"]
   Q --> D["DESIGN.md 받기<br/>curl · agent-browser<br/>명세 lint"]
   D --> A["시각 자산<br/>서체 파일 받기 · 자체 호스팅<br/>이미지를 그릴 수 있으면 comp 3장 · plate 이미지"]
-  A --> C["구현(prokit-ui-builder)<br/>토큰 → globals.css<br/>shadcn · 바닥 규칙 · 모션"]
-  C --> V["확인<br/>prokit-runtime-checker 스크린샷 · 오류 0 · 링크·버튼 전부 누르기<br/>디자인 리뷰 · 감사 · 코드 검사"]
+  A --> C["구현(prokit-ui-builder)<br/>토큰 → globals.css<br/>shadcn · 바닥 규칙 · 모션<br/>보조 스킬은 위임 지시의 경로로 읽기"]
+  C --> X["실행 확인(prokit-runtime-checker)<br/>스크린샷 · 오류 0 · 링크·버튼 전부 누르기"]
+  X --> V["리뷰(메인 세션)<br/>주 UI 스킬의 리뷰 · 감사<br/>보조: 줄의 보조와 검수 보조의 리뷰<br/>코드 검사 prokit-reviewer(ui)"]
   V --> P["다듬기 · 재확인<br/>impeccable이면 audit 16/20 · 접근성 3/4"]
   P --> M["DESIGN.md 기록<br/>merge · diff"]
   M --> U["사용자 확인"]
+  U --> AU["dev-cycle audit · close<br/>리뷰 기록 · 보조 결과 · 읽은 스킬 대조"]
 ```
 <!-- /b -->
 
@@ -42,7 +44,7 @@ flowchart LR
 | 시각 방향 (첫 화면, 리디자인) | 리디자인이면 지금 화면을 찍어 진단(impeccable은 critique)하고 버릴 것을 적어요. 카탈로그 1\~3위와 "직접 정하기"를 추천하고(hallmark는 테마 배정 셋을 내요. 방향을 정하는 화면 디자인 보조가 있으면 그 방향도), 고른 스타일의 원문을 받아 스펙 검사기(lint)로 확인해요 | `DESIGN.md` | 스타일과 대표 색 고르기 |
 | 설계 (화면마다) | 사이트맵에 링크와 버튼이 이어지는 곳을 모두 적고, 주 UI 스킬의 설계 단계(impeccable은 `shape`)로 화면마다 상호작용, 서체, 이미지, 아이콘, 모션 계획을 세워요. 이름이나 헤드라인을 새로 정하면 비슷한 서비스를 조사해 후보 3\~4개를 내요 | `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` | 화면 설계 확인, 이름·문구 고르기 |
 | 시각 자산 (화면마다) | 서체 파일을 받아 프로젝트에 직접 넣어요. 이미지를 그릴 수 있으면 방향 comp 3장을 그리고, 고른 comp에 맞춰 사진·일러스트(plate)를 만들어요 | `apps/web/src/fonts/`, `apps/web/public/images/`, `.impeccable/mocks/`(impeccable) | comp 고르기 |
-| 개발 | 화면 코드는 `prokit-ui-builder`가 써요. 디자인 토큰을 `globals.css`의 shadcn 변수로 옮기고 컴포넌트를 조합해 화면을 만들어요 | 코드 | |
+| 개발 | 화면 코드는 `prokit-ui-builder`가 써요. 디자인 토큰을 `globals.css`의 shadcn 변수로 옮기고 컴포넌트를 조합해 화면을 만들어요. 그 화면에 쓰는 화면 디자인 보조가 있으면 메인 세션이 위임 지시에 그 보조 스킬의 경로를 넣어 `prokit-ui-builder`가 읽게 해요 | 코드 | |
 | 리뷰 | `prokit-runtime-checker`가 스크린샷을 찍고 모든 링크·버튼을 눌러요(404, "준비 중", 반응 없는 버튼이 없어야 해요). 주 UI 스킬의 리뷰와 감사는 메인 세션이 해요(impeccable은 `critique`·`audit`, hallmark는 `sloplint`와 마감 리뷰, UI 스킬이 없으면 게슈탈트 점검). 코드의 `web-design-guidelines` 검사는 `prokit-reviewer`(ui)가 해요. 브리프의 `보조:` 줄에 적은 화면 디자인 보조와 설치한 검수 보조(`visual-critique`, `ui-design`. impeccable이 주 UI 스킬이면 `visual-critique`는 요청할 때만)의 리뷰도 메인 세션이 이어서 해요 | 점수나 판정(기본 AI는 `게슈탈트 위반 N`), 위반 목록, 리뷰 기록(impeccable은 `.impeccable/critique/…md`, 기록 파일을 남기지 않는 스킬은 `tasks/evidence/ui-review-<시각>.md`), 감사 보고서(`tasks/evidence/ui-audit-<시각>.md`) | |
 | 마감 | 다듬기(impeccable은 `polish`, 마무리 손질). 고칠 것을 한 번에 모아 `prokit-ui-builder`가 적용하고, 재확인은 1회 | 통과 점수나 판정 | 기준에 못 미치면 더 다듬을지 결정 |
 | 기록 | 정본 갱신(impeccable은 `document` merge, 기존 파일에 합치기), lint, diff | 갱신한 `DESIGN.md` | 덮어쓰기 전 확인 |
@@ -50,6 +52,36 @@ flowchart LR
 스타일 선택, 이름·문구 후보, 화면 설계 확인은 한 번에 물어요. 사용자 답을 받기 전에는 코드를 쓰지 않아요.
 
 완성 프리셋 팩이 있으면 이 흐름 대신 `prokit-pack-use`가 복원한 화면을 기준으로 삼아요. 팩의 `PRODUCT.md`, `DESIGN.md`, 사이트맵이 있으면 기획과 스타일 고르기, 브리프 확인을 되풀이하지 않고 바꿀 범위만 기록해요([완성팩 활용과 담당 구분](preset-publication.md)).
+
+## 구조
+
+`prokit-ui`는 순서와 규칙, 통과 기준만 정하고, 단계마다 무엇을 할지는 세 갈래의 참고 파일에서 읽어요. 메인 세션은 이 파일들로 화면 일을 정해 전문 에이전트에 맡기고, 모든 결과는 대조표 증거로 모여 `dev-cycle audit`이 확인해요.
+
+```mermaid
+flowchart TB
+  DC["prokit-dev-cycle<br/>케이스 B 대조표"] --> UI["prokit-ui<br/>순서 · 규칙 · 통과 기준"]
+  UI --> MAP["주 UI 스킬 지도<br/>impeccable-map · hallmark-map · none-map"]
+  UI --> FLOW["design-flow<br/>카탈로그 · 사이트맵 · 시각 자산 · DESIGN.md 검사"]
+  UI --> ADD["화면 디자인 보조 guide<br/>addon-*.md · taste.md"]
+  MAP --> SK["UI 스킬<br/>impeccable · hallmark · frontend-design과 게슈탈트 지침"]
+  ADD --> AS["보조 스킬<br/>landing · tastemaker · taste · web-design-engineer<br/>awwwards · animation · visual-critique · ui-design"]
+  UI --> MAIN["메인 세션<br/>기획 · 시각 방향 · 브리프 · 리뷰·감사 · 마감 판단"]
+  MAIN --> B["prokit-ui-builder<br/>화면 코드 · shadcn · vercel-react-best-practices"]
+  MAIN --> RC["prokit-runtime-checker<br/>스크린샷 · 링크·버튼 누르기"]
+  MAIN --> RV["prokit-reviewer(ui)<br/>web-design-guidelines"]
+  B --> EV["대조표 증거 · tasks/evidence/"]
+  RC --> EV
+  RV --> EV
+  MAIN --> EV
+  EV --> AU["dev-cycle audit<br/>기록 파일 · 결과 · 읽은 스킬 대조"]
+```
+
+| 파일 | 하는 일 |
+|---|---|
+| `prokit-ui`의 `SKILL.md` | 새 작업과 좁은 개선을 가르고, 단계 순서, 지키는 규칙, 통과 기준, 일을 맡는 에이전트를 정해요 |
+| 주 UI 스킬 지도(`references/<이름>-map.md`) | 고른 UI 스킬이 단계마다 쓰는 명령, 남기는 기록, 통과 기준, 대조표 행마다 증거 예시를 적어요. 주 UI 스킬의 지도 하나만 따라요 |
+| `references/design-flow.md` | UI 스킬과 상관없이 따르는 절차예요. 디자인 카탈로그, 리디자인, 사이트맵과 상호작용, 이름과 문구, 시각 자산, `DESIGN.md` 검사가 있어요 |
+| 화면 디자인 보조 guide(`references/addon-<묶음>.md`, `taste.md`) | 설치한 보조가 어느 단계에서 무엇을 더하고 결과를 어떤 문구로 남기는지 적어요. 그 화면에 쓰는 보조는 브리프의 `보조:` 줄에 적고, 설치한 검수 보조는 화면마다 넣어요 |
 
 <!-- edition:pro -->
 ## 기존 프로젝트의 디자인 방향
@@ -120,6 +152,43 @@ flowchart LR
 - **중간에 바꾸기**: "UI 스킬을 hallmark로 바꿔줘"처럼 말하면 `prokit-skills-manage`가 `pnpm skills:setup --ui-skill <이름>`으로 바꿔요([바꾸기](../skills/brains.md#바꾸기)). 고르지 않은 UI 스킬은 이 기기의 전역에 설치돼 있어도 쓰지 않아요.
 - **이어지는 것**: `PRODUCT.md`, `DESIGN.md`(스펙 형식), `docs/briefs/`, `globals.css` 토큰은 어느 스킬에도 묶이지 않은 정본이라 그대로 이어져요. 새 스킬로 시각 방향을 다시 고르거나 테마를 다시 배정하지 않고, 사용자가 리디자인을 요청할 때만 다시 정해요. 이전 스킬의 작업 기록(`.impeccable/`, `.hallmark/` 등)은 지우지 않고 새 스킬의 근거로도 쓰지 않아요.
 
+### UI 스킬마다 단계에서 하는 일
+
+단계와 대조표 행은 어느 UI 스킬이든 같고, 단계마다 쓰는 명령과 기록만 달라요. 아래 표는 주 UI 스킬 지도의 요약이에요.
+
+| 단계 | impeccable | hallmark | 기본 AI(`none`) |
+|---|---|---|---|
+| 맥락 | `impeccable context` 실행 | 0단계 사전 점검 | `PRODUCT.md`, `DESIGN.md`, `frontend-design` 읽기 |
+| 기획 | `init` 인터뷰 | 1단계 "Ask once"를 기획 질문과 한 번에 | design-flow의 `PRODUCT.md` 질문 |
+| 시각 방향 | 카탈로그 스타일이나 직접 정하기 | 카탈로그 스타일이나 테마 배정(`theme.mjs deal`) | 카탈로그 스타일이나 `frontend-design`의 계획과 검토로 직접 정하기 |
+| 설계 | `shape <기능>` | Shape와 Picks 블록 | 브리프에 목적, 주인공 하나, 의도한 그룹 수 적기 |
+| 리뷰 | `critique`(Design Health 점수, P0\~P3) | `sloplint`와 마감 리뷰(`ship`·`fix` 등) | 게슈탈트 점검(`게슈탈트 위반 N`) |
+| 감사 | `audit`(합계 20점, 접근성 4점)과 `web-design-guidelines` | hallmark `audit`과 `web-design-guidelines` | `web-design-guidelines` |
+| 마감 | `polish` | 바닥 규칙(Floor) 지적 고치기, Reflex는 고치거나 사유 적기 | 간격, 색·모양, 박스, 선 순서로 약한 수단부터 고치기 |
+| 정본 갱신 | `document` merge | 정한 체계를 `DESIGN.md` 명세 형식으로 쓰기 | 계획한 토큰을 `DESIGN.md` 명세 형식으로 쓰기 |
+| 남는 기록 | `.impeccable/critique/`, `tasks/evidence/ui-audit-<시각>.md` | `tasks/evidence/ui-review-<시각>.md`, `ui-audit-<시각>.md`, `.hallmark/` | `tasks/evidence/ui-review-<시각>.md`, `ui-audit-<시각>.md` |
+
+리뷰와 감사는 어느 쪽이든 메인 세션이 하고, `web-design-guidelines`는 `prokit-reviewer`(ui)가 맡아요. 통과 기준은 위 "지키는 규칙"에 있어요.
+
+### 화면 디자인 보조가 더하는 단계
+
+[화면 디자인 보조](../skills/brains.md#화면-디자인-보조)는 주 UI 스킬의 단계에 보태는 선택 묶음이에요. 묶음마다 보태는 단계와 리뷰 결과를 남기는 문구가 정해져 있어요. 빈 칸은 그 단계에서 하는 일이 없다는 뜻이에요.
+
+| 묶음 | 종류 | 시각 방향 | 설계 | 개발 | 리뷰 증거 문구 |
+|---|---|---|---|---|---|
+| `landing` | 방향 | | 페이지 구조, 레이아웃, 헤드라인과 CTA 후보(기획 질문에 전환 인테이크를 더해요) | 섹션 순서와 카피, 검색에 나올 랜딩이면 제목과 설명 | `landing 체크리스트 미충족 N` |
+| `tastemaker` | 방향 | 레퍼런스에서 값을 뽑아 "레퍼런스로 스타일 고정" | 고정한 값과 범위 화면 | 고정한 값을 토큰으로 옮기고 그 규칙대로 | `tastemaker audit HIGH N, MEDIUM N` |
+| `taste` | 방향 | 방향 셋을 뽑아 스타일 선택지로 | 그 서비스에만 있는 것, 섹션마다 주장과 증거, 카피 | 고른 방향의 시트대로 | `taste inspect FAIL 0, WARN N` |
+| `web-design-engineer` | 원칙(레시피는 방향) | 지목한 스타일 레시피("Linear처럼") | 화면 읽기와 다섯 다이얼 | 레시피 값을 토큰으로 | `web-design-engineer 철학 N, 위계 N, 완성도 N, 기능성 N, 독창성 N` |
+| `awwwards` | 원칙 | | 모션 서사와 스크롤 계획 | 애니메이션 중에도 CTA를 누를 수 있게, 움직임 줄이기 대응 | `awwwards 거부 목록 걸림 N, 검증 미충족 N` |
+| `animation` | 모션 | | 모션 계획을 "움직여야 하나"로 거르기 | 움직임 줄이기 대응을 처음부터 | `motion 지적 N` |
+| `visual-critique` | 검수 | | | | `visual-critique P1 N, P2 N, P3 N` |
+| `ui-design` | 검수 | | 간격, 타입, 그리드, 색 체계를 새로 정할 때 | | `ui-design 지적 N` |
+
+- 방향 보조는 한 화면에 하나만 써요. 원칙, 모션, 검수 보조는 함께 써요.
+- 보조 결과는 주 UI 스킬의 결과 뒤에 붙여요. 결과가 없으면 `<보조> 미실행: 사유`를 적어요. 둘 다 없거나, 결과를 적었는데 이번 라운드에 그 보조 스킬을 읽은 기록이 없으면 audit이 막아요.
+- 묶음마다 자세한 단계는 템플릿 `prokit-ui`의 `references/addon-<묶음>.md`(taste는 `taste.md`)에 있어요. 추천 조합은 [선택 스킬 묶음](../skills/optional-bundles.md#화면-디자인-보조-조합)에 있어요.
+
 ### 이미지 그리기
 
 사용자 요청이나 승인된 화면 설계에 생성 이미지가 있으면 실제로 생성해 화면에 연결하고 출처·검수 증거를 남겨요. 수행자에 도구가 없으면 코디네이터가 접근 가능한 이미지 도구로 위임해요. 에이전트가 마음대로 "SVG로 충분하다"고 정해서 사용자 승인을 대신하지 않아요.
@@ -184,6 +253,7 @@ flowchart LR
 - [프로킷 UI 스킬셋](ui-skillset.md)
 - [DESIGN.md](design-md.md)
 - [UI 스킬](../skills/brains.md#ui-스킬)
+- [화면 디자인 보조 조합](../skills/optional-bundles.md#화면-디자인-보조-조합)
 - [완성팩 활용과 담당 구분](preset-publication.md)
 - [기존 프로젝트에 도입하기](../start/adopt.md)
 - [화면만 프로젝트와 HTML 내보내기](screen-only.md)
