@@ -6,7 +6,7 @@
 
 ## 화면 디자인 보조 행동 eval: Codex·Antigravity (2026-11-04)
 
-audit의 보조 리뷰 검사(브리프 `보조:` 줄과 설치한 검수 보조의 결과·읽은 기록), 과설계 방지 보완 검토의 `prokit-reviewer` 기록, `prokit-ui`와 검수 guide의 "언제 쓰나"를 두 템플릿에서 같게 고쳤다. Codex·Antigravity 실측과 한계는 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#화면-디자인-보조-행동-eval-codexantigravity-2026-11-04)에 있다.
+audit의 보조 리뷰 검사(브리프 `보조:` 줄과 설치한 검수 보조의 결과·읽은 기록), 과설계 방지 보완 검토의 `prokit-reviewer` 기록, `prokit-ui`와 검수 guide의 "언제 쓰나", `addon-landing`의 메타데이터 단계(원본 A7에 맞춤)를 두 템플릿에서 같게 고쳤다. Codex·Antigravity 실측과 한계는 [neon 검증 기록](../prokit-next-neon/VERIFICATION.md#화면-디자인-보조-행동-eval-codexantigravity-2026-11-04)에 있다.
 
 ## 화면 디자인 보조 행동 eval과 보완 (2026-11-04)
 

@@ -33,18 +33,19 @@
     - `prokit-ui` 표에서 종류가 검수인 보조는 브리프 줄에 없어도, 설치돼 있으면 같은 것을 요구한다(언제 쓰나 칸이 impeccable 예외를 말하면 그 주 UI 스킬에서는 뺀다). 표를 읽으므로 묶음 이름을 코드에 두지 않는다.
     - 훅 기록이 있는 라운드에서 결과를 적은 보조는 그 묶음 스킬을 이 라운드에 누군가 읽은 기록이 있어야 한다.
   - `prokit-ui`: 종류가 검수인 보조(`visual-critique`, `ui-design`)는 설치되어 있으면 브리프를 쓰는 화면마다 넣는다(`visual-critique`는 주 UI 스킬이 impeccable이면 요청할 때만). `ui-design` 표 행의 "언제 쓰나"와 두 guide의 "언제 쓰나"도 맞췄다.
-  - 채점기: 레시피 INDEX를 거치지 않고 `style-recipes/linear.md`를 바로 읽은 것도 센다. Claude 플러그인 로드 검사는 Claude Code 세션만 본다.
+  - 채점기: 레시피 INDEX를 거치지 않고 `style-recipes/linear.md`를 바로 읽은 것도 센다. Claude 플러그인 로드 검사는 Claude Code 세션만 본다. 메타데이터는 기존 metadata를 고친 것도 센다(2회차 아래 항목).
+  - `addon-landing` 개발 단계를 원본 A7에 맞췄다. 색인할 랜딩이면 title과 meta description을 넣고, JSON-LD는 FAQ가 있을 때만 더한다(전에는 늘 넣으라고 적었는데 세 도구 모두 넣지 않았다). 리뷰 단계는 meta tags처럼 코드로 볼 수 있는 항목을 diff에서 확인하고 센다.
 - 2회차(고친 판, 시나리오 5·6):
 
   | 시나리오 | Codex | Antigravity |
   |---|---|---|
-  | 5 랜딩 조합 | 18/19 | 16/19 |
+  | 5 랜딩 조합 | 19/19 | 16/19 |
   | 6 앱 정돈 조합 | 18/18 | 15/18 |
 
   - 두 도구 모두 브리프에 설치한 보조를 모두 적었다(`landing, animation, visual-critique`, `web-design-engineer, ui-design`). 리뷰 증거에도 보조마다 결과가 붙었다.
   - Codex는 critique 일곱 개, `emil-design-eng`, `critique-guide.md`, ui-design 스킬을 읽고 결과를 냈다. 랜딩 리뷰는 `landing 체크리스트 미충족 3`, `visual-critique P1 0, P2 0, P3 0`, `animation: motion 지적 0`이었다. 앱 리뷰는 `web-design-engineer 철학 8, 위계 8, 완성도 8, 기능성 9, 독창성 7`, `ui-design 지적 0`이었다. 두 사본 모두 audit에는 `[confirm]`만 남았다.
   - Antigravity는 결과 문구를 적었지만 그 스킬을 읽지 않았다. 랜딩은 critique 일곱 개와 `emil-design-eng`, 앱은 ui-design 스킬과 `critique-guide.md`를 읽은 기록이 없다. 이 2회차는 마지막 audit 검사(읽은 기록)를 더하기 전 판으로 돌렸다. 고친 판의 audit을 두 사본에 돌리니 `보조(visual-critique)`와 `보조(ui-design)`를 "결과를 적었지만 읽은 기록이 없다"로 막았다. Codex 두 사본은 막지 않았다.
-  - 랜딩 메타데이터는 두 도구 모두 넣지 않았다(Claude Code 비교군도 넣지 않았다).
+  - 랜딩 메타데이터: Codex는 두 회차 모두 `layout.tsx`의 title과 description을 고쳤다. Antigravity는 두 회차 모두 고치지 않았는데, 리뷰에는 `landing 체크리스트 미충족 0`이라고 적었다(체크리스트 마지막 항목이 meta tags다). 처음 채점기는 `export const metadata`를 새로 더한 줄만 세서, 시드 `layout.tsx`에 이미 있던 metadata를 고친 Codex 2회차를 실패로 셌다(18/19). 채점기가 app의 `layout.tsx`·`page.tsx`에서 metadata를 새로 내보내거나 title을 바꾼 것을 세게 고치고, 모든 랜딩 회차의 diff로 이 항목만 다시 쟀다. 사본을 지워 다른 항목은 다시 채점하지 않았다.
   - Antigravity 앱은 두 번째 턴이 끝날 때까지 10\~12행을 채우지 못했다. 1회차 앱과 랜딩은 한 턴 40분 제한에 걸렸다.
 - 정리: 두 도구가 사용자 설정(`config.toml`)에 남긴 scratch 경로 신뢰 항목(이번 eval과 이 세션의 앞선 손 실측 것)을 지웠다.
 - 테스트: 두 템플릿 422 통과·0 실패, 문서 검사 80 통과·0 실패.
@@ -65,7 +66,7 @@
 - 실행: `claude -p`(Sonnet 5.5)를 사용자·프로젝트·로컬 설정과 훅을 켠 채 샌드박스에서 돌렸다. 시나리오는 `scenarios.json` 5\~7번 셋이다. 랜딩 새로 디자인(무료로 시작하기), 할 일 목록 화면 새로 만들기(예시 데이터, "Linear처럼"), 로그인 화면의 간격과 문구만 다듬기(고르지 않은 화면에서 물러서는지)다. 채점은 `checks.mjs`가 도구 호출과 최종 파일로 한다.
 - 1회차(커밋한 판):
   - 브리프에 `보조:` 줄은 썼다(랜딩 `landing, animation`, 앱 `web-design-engineer`, 비교군 `보조: 없음`). 설치된 검수 보조(`visual-critique`, `ui-design`)는 빠졌다.
-  - 랜딩은 `addon-landing`·`addon-animation`과 `landing-page-design`을 읽고 브리프와 구현까지 따랐다. 메타데이터를 넣은 것은 랜딩 조합뿐이다(비교군은 두 회차 모두 넣지 않았다). 리뷰 단계에서는 보조를 잊었고, 위임 지시에 `animate` 경로도 없었다.
+  - 랜딩은 `addon-landing`·`addon-animation`과 `landing-page-design`을 읽고 브리프와 구현까지 따랐다. 메타데이터는 랜딩 조합과 비교군 모두 `layout.tsx`의 title과 description을 고쳤다(처음 채점기는 비교군의 이 수정을 세지 못했다. 위 Codex·Antigravity 절). 리뷰 단계에서는 보조를 잊었고, 위임 지시에 `animate` 경로도 없었다.
   - 앱은 guide를 읽지 않고 디자인 카탈로그의 Linear `DESIGN.md`로 방향을 잡았다.
   - 물러서기 시나리오는 `landing-page-design`을 읽지 않았고 `page.tsx`를 건드리지 않았다.
 - 고친 것:
@@ -91,7 +92,7 @@
   - 3회차(guide에 읽을 파일을 적기 전): 랜딩은 critique 스킬 일곱 개를 읽고 `visual-critique P1 0, P2 6, P3 7`을 냈다. 제목이 "한 / 줄이면"으로 갈라진 것과 Better-T-Stack 기본 영어 헤더를 P2로 잡았다. 앱은 `ui-design 지적 4`와 5개 차원 점수를 냈지만 web-design-engineer `SKILL.md`는 읽지 않았다. 랜딩의 motion 리뷰도 `emil-design-eng`를 읽지 않고 그 형식만 적었다.
   - 5회차(guide에 읽을 파일을 적은 판, 리뷰 전 상태로 다시 만든 사본): 앱은 `SKILL.md`와 `critique-guide.md`를 읽고 채점했다. 랜딩은 hallmark 마감 리뷰가 같은 차원을 다뤘다며 visual-critique를 건너뛰었다.
   - 6회차(행 문구와 규칙을 보강한 판, 랜딩): guide 셋, `emil-design-eng`, critique 일곱 개를 읽고 `landing 체크리스트 미충족 6`, `visual-critique P1 0, P2 6, P3 6`을 냈다.
-- 점수(채점 항목 수는 구성마다 다르다): 랜딩 조합 15/20 → 17/20(2회차) → 19/20(6회차), 앱 조합 11/19 → 17/19 → 18/19(5회차), 비교군 7/9 → 8/9, 물러서기 8/9 → 9/9. 남은 실패는 모두 audit이고 eval 환경에서 생겼다.
+- 점수(채점 항목 수는 구성마다 다르다): 랜딩 조합 15/20 → 17/20(2회차) → 19/20(6회차), 앱 조합 11/19 → 17/19 → 18/19(5회차), 비교군 8/9 → 9/9(메타데이터 항목을 다시 잰 값), 물러서기 8/9 → 9/9. 남은 실패는 모두 audit이고 eval 환경에서 생겼다.
   - 1회차는 개발 서버를 띄우지 못해 런타임 행이 막혔다.
   - 리뷰 턴은 실행기가 플러그인 등록을 풀며 `.claude/settings.json`을 바꿨거나, 다시 만든 사본의 커밋 해시가 라운드 기준과 달랐다.
   - 비용은 모두 약 $60이다.

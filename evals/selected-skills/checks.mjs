@@ -164,7 +164,9 @@ export function grade({ sc, meta, runDir }) {
 		const hexIn = changed.split(/^(?=diff --git )/m).filter((d) => /^diff --git a\/(apps\/web\/src|packages\/ui\/src\/components)\/\S+\.tsx?\s/.test(d)).flatMap((d) => d.split("\n").filter((l) => /^\+(?!\+)/.test(l) && /#[0-9a-fA-F]{6}\b/.test(l) && !/^\+\s*(\/\/|\*)/.test(l)));
 		if (sc.id === 5) {
 			add("cta", "주 행동 버튼 문구(무료로 시작)가 화면에 있다", /무료로 시작/.test(changed), "diff 검색");
-			add("metadata", "랜딩 메타데이터(metadata)를 넣었다", /^\+.*export const metadata/m.test(changed), "diff 검색");
+			// 시드 layout.tsx에 이미 metadata(title "base")가 있어, 새로 내보내거나 그 title을 바꾼 것을 센다
+			const appMeta = changed.split(/^(?=diff --git )/m).filter((d) => /^diff --git a\/apps\/web\/src\/app\/\S*(layout|page)\.tsx\s/.test(d)).join("\n");
+			add("metadata", "랜딩 메타데이터(metadata)를 넣었다", /^\+\s*(export const metadata|title:)/m.test(appMeta), "app의 layout·page diff");
 			if (has("landing-page-design")) {
 				for (const g of ["landing", "visual-critique", "animation"]) add(`guide-${g}`, `addon-${g}.md를 읽었다`, touched(new RegExp(`addon-${g}\\.md`)), "도구 호출 경로");
 				add("landing-skill", "landing-page-design을 실제로 읽었다", calls.has("landing-page-design"), "SKILL.md 읽기");
