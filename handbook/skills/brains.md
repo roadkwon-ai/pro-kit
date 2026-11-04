@@ -150,7 +150,7 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 170
+    wrappingWidth: 185
 ---
 flowchart LR
   G(["무엇을 강하게<br/>걸고 싶나요"]) --> N["없음(기본 AI)<br/>모르겠으면 추천을 따라요"]
@@ -250,7 +250,7 @@ flowchart TB
   SM --> SET["pnpm skills:setup<br/>--brain · --simplicity"]
   INS --> REC[".dev-cycle.json<br/>brain · simplicity 기록"]
   SET --> REC
-  REC --> CL["고르지 않은 설치본 지우기<br/>전역 플러그인은 이 프로젝트에서만 끄기"]
+  REC --> CL["고르지 않은 설치본 지우기<br/>전역 플러그인은<br/>이 프로젝트에서만 끄기"]
   CL --> RL["/reload-plugins 또는 새 세션<br/>남은 단계 행부터 새 구성"]
 ```
 

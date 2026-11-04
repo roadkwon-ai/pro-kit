@@ -44,7 +44,7 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 170
+    wrappingWidth: 200
 ---
 flowchart TD
   Q{"어떤 서비스인가요?"} -->|"DB 없이 화면만"| N0["neon으로 만들어요<br/>묻지 않아요"]
@@ -53,7 +53,7 @@ flowchart TD
   D -->|"아니요"| C{"작업마다 DB 테스트<br/>복사본으로 확인하고 싶나요?"}
   C -->|"예"| NE["neon"]
   C -->|"모르겠어요"| ASK["에이전트가 비교표로<br/>차이를 설명하고 물어요"]
-  Q -->|"운영 중인 Next.js"| OP["Better-T-Stack + Postgres + Drizzle이면<br/>실제 DB에 맞는 템플릿<br/>그 밖에는 --adopt"]
+  Q -->|"운영 중인 Next.js"| OP["Better-T-Stack + Postgres<br/>+ Drizzle이면<br/>실제 DB에 맞는 템플릿<br/>그 밖에는 --adopt"]
 ```
 
 - **PR(변경 제안)마다 DB 브랜치(테스트용 복사본)를 만들어 확인하고 싶으면** → neon

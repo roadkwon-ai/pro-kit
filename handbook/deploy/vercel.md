@@ -25,8 +25,8 @@ config:
     wrappingWidth: 220
 ---
 flowchart TB
-  R["production만: pnpm release<br/>버전 · release/ 노트 검수<br/>--publish: 태그 · push · GitHub Release"] --> C
-  C["--check<br/>CLI · 연결 · 커밋 · 환경변수 · 릴리스 검사<br/>지난 배포 이후 새 마이그레이션"] --> M{"새 마이그레이션"}
+  R["production만: pnpm release<br/>버전 · release/ 노트 검수<br/>--publish: 태그 · push<br/>GitHub Release"] --> C
+  C["--check<br/>CLI · 연결 · 커밋<br/>환경변수 · 릴리스 검사<br/>지난 배포 이후 새 마이그레이션"] --> M{"새 마이그레이션"}
   M -->|있음| DB["대상 DB에 먼저 적용<br/>운영은 사용자 동의 뒤"]
   M -->|없음| D["pnpm vercel:deploy 대상"]
   DB --> D

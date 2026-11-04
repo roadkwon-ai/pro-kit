@@ -35,7 +35,7 @@ flowchart TB
   U --> R
   A -->|통과| Q{"마무리 선택"}
   Q -->|기본| RD["close → 커밋 · push<br/>→ 릴리스 · production 배포"]
-  Q -->|화면만 · 배포 PASS · 준비 안 됨| CL["close → 커밋 · push"]
+  Q -->|"화면만 · 배포 PASS<br/>준비 안 됨"| CL["close → 커밋 · push"]
 ```
 
 | 단계 | 하는 일 |

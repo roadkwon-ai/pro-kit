@@ -43,15 +43,17 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 200
+    wrappingWidth: 240
 ---
-flowchart LR
+flowchart TB
   R(["바뀐 파일이 걸린 rules<br/>기본 브랜치와 갈라진 지점부터"])
   R --> A["걸린 파일 없음<br/>A 경미"]
   R --> H["하네스 규칙(H)만<br/>H 하네스"]
-  R --> L["계층 하나<br/>그 계층의 케이스(E · D · B)<br/>작업 중 다른 계층을 건드리면<br/>audit이 알리고<br/>table 새 케이스 --write --upgrade"]
+  R --> L["계층 하나<br/>그 계층의 케이스(E · D · B)"]
   R --> FF["계층 둘 이상<br/>또는 규칙 밖 코드(--adopt)<br/>F 새 기능"]
-  D["요청으로 선언<br/>새 기능 F · 버그 C<br/>애매하면 더 무거운 쪽"] -.-> FF
+  A ~~~ H ~~~ L ~~~ FF
+  L -.->|"작업 중 다른 계층을 건드리면<br/>audit이 알림"| UP["table 새 케이스<br/>--write --upgrade"]
+  D["요청으로 선언<br/>새 기능 F · 버그 C"] -.->|"애매하면 더 무거운 쪽"| FF
 ```
 
 - **판정**: `pnpm dev-cycle case`는 지금 바뀐 파일을 `.dev-cycle.json`의 경로 규칙(`rules`)에 맞춰 판정해요. 아직 파일을 바꾸기 전이면 판정이 A로 나오므로 요청을 보고 케이스를 골라 `table`에 적어요.

@@ -66,12 +66,12 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 160
+    wrappingWidth: 180
 ---
 flowchart TB
   DC["prokit-dev-cycle<br/>케이스 B 대조표"] --> UI["prokit-ui<br/>순서 · 규칙 · 통과 기준"]
-  UI --> MAP["주 UI 스킬 지도<br/>impeccable · hallmark · 기본 AI"]
-  UI --> FLOW["design-flow<br/>카탈로그 · 사이트맵 · 자산 · DESIGN.md 검사"]
+  UI --> MAP["주 UI 스킬 지도<br/>impeccable · hallmark<br/>기본 AI"]
+  UI --> FLOW["design-flow<br/>카탈로그 · 사이트맵<br/>자산 · DESIGN.md 검사"]
   UI --> ADD["보조 guide<br/>설치한 화면 디자인 보조"]
   MAP --> MAIN["메인 세션<br/>기획 · 시각 방향 · 브리프<br/>리뷰·감사 · 마감 판단"]
   FLOW --> MAIN
@@ -79,10 +79,10 @@ flowchart TB
   MAIN --> B["prokit-ui-builder<br/>화면 코드"]
   MAIN --> RC["prokit-runtime-checker<br/>스크린샷 · 링크·버튼"]
   MAIN --> RV["prokit-reviewer(ui)<br/>web-design-guidelines"]
-  B --> EV["대조표 증거 · tasks/evidence/"]
+  B --> EV["대조표 증거<br/>tasks/evidence/"]
   RC --> EV
   RV --> EV
-  EV --> AU["dev-cycle audit<br/>기록 파일 · 결과 · 읽은 스킬 대조"]
+  EV --> AU["dev-cycle audit<br/>기록 파일 · 결과<br/>읽은 스킬 대조"]
   classDef opt stroke-dasharray: 5 5
   class ADD opt
 ```

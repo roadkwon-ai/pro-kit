@@ -49,23 +49,33 @@ AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 �
 ---
 config:
   flowchart:
-    wrappingWidth: 260
+    wrappingWidth: 220
 ---
 flowchart TB
-  REQ["사용자 요청<br/>…을 만들어줘 · 고쳐줘"] --> DC["prokit-dev-cycle<br/>케이스 판정 · 대조표"]
-  RULES["AGENTS.md · GLOSSARY.md<br/>docs/domain/project.md<br/>시작할 때 읽는다"] -.-> DC
-  DC --> PROC["두뇌 · 과설계 방지 스킬<br/>고른 것만<br/>없으면 내장 절차와 간결성 규칙"]
-  DC --> LAYER["계층 스킬<br/>prokit-web · prokit-ui · prokit-api<br/>prokit-db · prokit-verify"]
-  LAYER --> OFF["공식 도메인 스킬<br/>대조표 행이 읽을 스킬을 지정<br/>Next.js · React · Better Auth · shadcn<br/>UI 스킬(impeccable · hallmark)<br/>없으면 기본 AI<br/>Neon 또는 Supabase · Vercel"]
-  LAYER -.-> OPT["선택 스킬 묶음(그 분야일 때)<br/>ops · motion · mobile<br/>i-have-adhd · 화면 디자인 보조<br/>없으면 설치 제안"]
-  OFF --> IMP["전문 수행 에이전트<br/>계층별 builder · runtime-checker<br/>implementer<br/>공식 스킬을 읽고 수행"]
-  IMP -.-> SREV["specialist-reviewer<br/>내장 리뷰가 없을 때<br/>전문 계약 읽기 전용 검토"]
-  IMP --> REV["prokit-reviewer<br/>최종 통합 리뷰<br/>plan · code · ui · security · db"]
+  REQ["사용자 요청"] --> DC["prokit-dev-cycle<br/>케이스 판정 · 대조표"]
+  RULES["규칙 파일"] -.->|"시작할 때 읽음"| DC
+  REQ -.->|"배포 요청은 라운드 없이"| DEP["prokit-deploy<br/>메인 세션에서 배포"]
+  DC --> PROC["두뇌 · 과설계 방지 스킬<br/>단계 행의 방법"]
+  DC --> LAYER["계층 스킬<br/>분야마다 일하는 법"]
+  LAYER -->|"행마다 읽을 스킬 지정"| OFF["공식 도메인 스킬"]
+  LAYER -.->|"그 분야일 때"| OPT["선택 스킬 묶음"]
+  PROC -->|"위임 지시에 단계 스킬"| IMP["전문 수행 에이전트"]
+  OFF -->|"읽고 따름"| IMP
+  IMP -.->|"내장 리뷰가 없을 때"| SREV["specialist-reviewer<br/>보완 검토"]
+  IMP --> REV["prokit-reviewer<br/>최종 통합 리뷰"]
   SREV --> REV
-  REV --> AUD["pnpm dev-cycle audit<br/>모든 행의 증거를 채운 뒤"]
-  AUD --> CLOSE["pnpm dev-cycle close"]
-  CLOSE -.-> DEP["prokit-deploy<br/>배포 요청: develop에 올려줘 · 운영 배포<br/>메인 세션에서 --check → DB → 배포 → 확인<br/>비용·성능 점검은 선택 스킬 묶음"]
+  REV --> AUD["dev-cycle audit"]
+  AUD --> CLOSE["dev-cycle close"]
 ```
+
+- **규칙 파일**: `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`
+- **계층 스킬**: `prokit-web`, `prokit-ui`, `prokit-api`, `prokit-db`, `prokit-verify`
+- **두뇌 · 과설계 방지 스킬**: 고른 것만 써요. 고르지 않았으면 내장 절차와 간결성 규칙으로 해요([두뇌와 과설계 방지 흐름](../skills/brain-flow.md))
+- **공식 도메인 스킬**: Next.js, React, Better Auth, shadcn, UI 스킬(impeccable, hallmark. 고르지 않았으면 기본 AI), Neon 또는 Supabase, Vercel
+- **전문 수행 에이전트**: 계층별 builder, `prokit-runtime-checker`, `prokit-implementer`
+- **선택 스킬 묶음**: ops, motion, mobile, i-have-adhd, 화면 디자인 보조. 설치되어 있지 않으면 설치를 제안하고, 배포의 비용·성능 점검에도 써요
+- **`prokit-reviewer`**: plan, code, ui, security, db 리뷰를 맡아요. audit은 모든 행의 증거를 채운 뒤 돌려요
+- **`prokit-deploy`**: `--check`, DB 적용, 배포, 확인 순서로 해요
 <!-- /edition -->
 
 ## 자세히
