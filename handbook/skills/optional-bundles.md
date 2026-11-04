@@ -20,12 +20,46 @@
 | `visual-critique` | 화면을 7개 차원(위계, 브랜드, 구성, 타이포, 색, 어포던스, 정보 밀도)으로 비평받고 P1\~P3로 고칠 것을 정할 때 | `critique-*` <!-- v:optional.visual-critique.count.neon -->7<!-- /v -->개 | `prokit-ui` |
 | `ui-design` | 게슈탈트·지각 법칙과 간격, 타입, 그리드, 색 체계로 화면을 설계하고 점검할 때. 화면이 많은 앱에 맞아요 | `law-of-proximity`, `spacing-system` 등 <!-- v:optional.ui-design.count.neon -->19<!-- /v -->개 | `prokit-ui` |
 
+아래 도식은 무엇을 더하고 싶을 때 어느 묶음을 고르는지와 그 묶음을 읽는 스킬을 그렸어요. 화면 디자인 보조 가운데 방향을 정하는 묶음은 한 화면에 하나만 써요.
+
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart LR
+  Q(["무엇을<br/>더하고 싶나요"])
+  Q --> M["화면 전환 애니메이션<br/>motion<br/>prokit-ui가 읽어요"]
+  Q --> MB["웹 앱과 따로<br/>모바일 앱<br/>mobile<br/>prokit-dev-cycle이 읽어요"]
+  Q --> AD["짧은 답<br/>i-have-adhd<br/>켤 때만 대화 답에"]
+  Q --> UI["화면 완성도<br/>화면 디자인 보조<br/>prokit-ui가<br/>주 UI 스킬 단계에 더해요"]
+  UI --> DIR["방향: 한 화면에 하나<br/>landing · tastemaker<br/>taste · web-design-engineer"]
+  UI --> WITH["함께 써요<br/>원칙 awwwards<br/>모션 animation<br/>검수 visual-critique<br/>ui-design"]
+```
+
 ## 묶음마다 언제, 어떻게
 
 > [!TIP]
 > 묶음을 더하려면 프로젝트 세션에서 말로 요청하면 돼요.
 
 `prokit-skills-manage`가 열린 작업을 닫은 뒤 한 번의 작업(케이스 H 라운드)으로 설치하고 커밋해요(진행 방식은 [두뇌와 선택 스킬](brains.md#바꾸기)). 명령으로 직접 하려면 아래 "설치하기"의 `pnpm skills:setup --optional <묶음>`을 써요. 설치한 뒤에는 새 세션을 열어요.
+
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 240
+---
+flowchart TB
+  N["묶음 없이 그 분야를 요청"] -.->|"에이전트가 설치를 먼저 제안"| R
+  R["“landing 묶음 더해줘”<br/>“taste 지워줘”"] --> SM["prokit-skills-manage<br/>열린 작업을 닫고 H 라운드"]
+  SM --> SET["pnpm skills:setup<br/>--optional 묶음 · --drop 묶음"]
+  SET --> CK["pnpm skills:check<br/>선택 스킬: 줄에 보이는지 확인"]
+  CK --> CM["라운드를 닫고 커밋"]
+  CM --> NS["새 세션 열기"]
+  NS --> USE["관련 prokit 스킬이<br/>그 단계에서 읽어요<br/>prokit 규칙이 우선"]
+```
 
 | 묶음 | 더하면 좋을 때 | 이렇게 요청해요(예시) | 바뀌는 것 |
 |---|---|---|---|
@@ -57,6 +91,21 @@
 | 레퍼런스 | 레퍼런스 이미지나 좋아하는 사이트를 주고 "이런 느낌"을 원할 때 | `tastemaker`, `visual-critique` |
 | 쇼케이스 | 브랜드 소개, 포트폴리오, 행사처럼 몰입감 있는 페이지를 원할 때 | `awwwards`, `animation`, `visual-critique` |
 | 앱 정돈 | 로그인 뒤 화면이 많고 간격, 타입, 색을 점수로 관리하고 싶을 때 | `ui-design`, `web-design-engineer` |
+
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 290
+---
+flowchart LR
+  Q(["주 화면이<br/>어떤 성격인가요"])
+  Q --> B["기본<br/>MVP, 따로 원하는 방향 없음<br/>visual-critique"]
+  Q --> L["랜딩<br/>가입 · 구매 · 신청 하나를 이끌어요<br/>landing · animation · visual-critique"]
+  Q --> R["레퍼런스<br/>“이런 느낌”을 줄 이미지나 사이트<br/>tastemaker · visual-critique"]
+  Q --> S["쇼케이스<br/>브랜드 · 포트폴리오 · 행사<br/>awwwards · animation · visual-critique"]
+  Q --> A["앱 정돈<br/>로그인 뒤 화면이 많아요<br/>ui-design · web-design-engineer"]
+```
 
 ```bash
 pnpm skills:setup --optional landing,animation,visual-critique   # 랜딩 조합

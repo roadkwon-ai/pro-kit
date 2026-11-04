@@ -59,6 +59,37 @@
 | 응답 방식(i-have-adhd) | 0\~1 | 설치 안 함 | `pnpm skills:setup --optional i-have-adhd` |
 | 화면 디자인 보조 | 0개 이상(추천 조합) | 설치 안 함 | `pnpm skills:setup --optional <묶음>[,<묶음>]`, 빼기 `--drop <묶음>` |
 
+여섯 가지는 프로젝트의 스킬 구성 가운데 고르는 부분이에요. 아래 도식은 늘 설치되는 것, 처음에 고르는 것, 필요할 때 더하는 것이 어디서 쓰이는지 한 장에 그렸어요.
+
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 240
+---
+flowchart TB
+  A["늘 설치<br/>prokit 스킬과 에이전트<br/>공식 도메인 스킬<br/>skill-creator · 브라우저 도구<br/>mattpocock 필수 스킬"]
+  P(["처음 들일 때 고름<br/>prokit-init"])
+  P --> P1["진행 방법<br/>두뇌 · 과설계 방지 스킬<br/>mattpocock 추가 스킬"]
+  P --> P2["화면<br/>UI 스킬<br/>화면 디자인 보조"]
+  P --> P3["답하는 방식<br/>응답 방식(i-have-adhd)"]
+  O["필요할 때 더함<br/>선택 스킬 묶음<br/>motion · mobile 등"]
+  A ~~~ P
+  O ~~~ P
+  A --> DC["prokit-dev-cycle 대조표<br/>행마다 맡은 스킬을 읽어요"]
+  P1 --> DC
+  P2 --> DC
+  P3 -.->|"켤 때만 대화 답에"| DC
+  O --> DC
+  DC -.-> CH["바꾸기 · 더하기 · 빼기<br/>prokit-skills-manage(H 라운드)"]
+  DC -.-> UP["최신으로 올리기<br/>prokit-skills-update"]
+```
+
+- **늘 설치**: [prokit 스킬](prokit-skills.md), [공식 스킬과 연결](official-skills.md). mattpocock 필수 스킬은 `domain-modeling`, `grilling`, `grill-with-docs`예요.
+- **진행 방법**: 두뇌와 과설계 방지 스킬이 단계마다 하는 일은 [두뇌와 과설계 방지 흐름](brain-flow.md), 추가 스킬은 아래 [mattpocock 추가 스킬](#mattpocock-추가-스킬-14개)에 있어요.
+- **화면**: UI 스킬과 화면 디자인 보조가 단계마다 하는 일은 [UI 흐름](../design/ui-flow.md)에 있어요.
+- **필요할 때 더함**: [선택 스킬 묶음](optional-bundles.md). 바꾸기와 올리기는 아래 [바꾸기](#바꾸기)와 [설치와 업데이트 구조](install-and-update.md)에 있어요.
+
 ## 처음 들일 때 고르는 순서
 
 아래는 새 프로젝트의 순서예요.<!-- edition:pro --> 기존 프로젝트(초기, 운영 중, 전환)를 들일 때는 PRD가 없어도 돼요. 에이전트가 그 프로젝트를 읽기만 하면서 초기 분석을 하고, 그 결과를 PRD와 함께 추천 근거로 써요([기존 프로젝트에 도입하기](../start/adopt.md)).<!-- /edition -->
@@ -139,6 +170,34 @@
 | `handoff` | 사용자 | 세션이나 두뇌를 넘길 때 인계 문서를 만들어요 | 여러 세션에 걸친 큰 범위이거나 여러 사람이 이어받아요 | 없음 |
 | `teach` | 사용자 | 배우면서 만드는 흐름으로 설명해요 | 학습 목적, 입문자, 튜토리얼이에요 | pstack |
 | `wait-what` | 사용자 | 설명이 와닿지 않을 때 다시 설명해 달라고 해요 | `teach`와 같은 신호예요 | pstack |
+
+아래 도식은 필수 3개와 추가 스킬이 대조표의 어느 단계와 케이스에서 쓰이는지 그렸어요. 이름 앞에 `/`가 붙은 스킬은 사용자가 부르는 스킬이라, 에이전트가 그 단계에서 명령을 제안해요. 설치한 스킬만 쓰여요.
+
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 240
+---
+flowchart TB
+  subgraph X["케이스와 필요할 때"]
+    C["C 케이스(버그)<br/>diagnosing-bugs: 재현부터 진단<br/>tdd: 재현 테스트"]
+    F["F 공통화 행<br/>codebase-design<br/>/improve-codebase-architecture"]
+    H["H 라운드(스킬 · 규칙 수정)<br/>writing-for-agents"]
+    ANY["필요할 때<br/>research: 조사 결과를 문서로<br/>wizard: 외부 설정 단계 안내<br/>/to-questionnaire<br/>결정권자 질문지"]
+    T["넘길 때 · 배울 때<br/>/handoff: 인계 문서<br/>/teach · /wait-what"]
+    C ~~~ F ~~~ H ~~~ ANY ~~~ T
+  end
+  subgraph M["대조표 단계"]
+    S1["요구 정리 · 설계 질문 (늘 설치)<br/>grilling · /grill-with-docs<br/>domain-modeling<br/>용어 · ADR 기록"] --> S2["설계<br/>codebase-design: 설계 행<br/>prototype: 버리는 시안(B · F)"]
+    S2 --> S3["구현<br/>tdd: 테스트 먼저"]
+    S3 --> S4["리뷰<br/>code-review: 스펙 대비 추가 관점<br/>최종 판정은 prokit-reviewer"]
+    S4 --> S5["마무리<br/>pr: PR로 병합하는 팀일 때"]
+  end
+```
+
+- 고른 두뇌가 같은 일을 자기 스킬로 맡으면(위 표의 "겹치는 두뇌") 두뇌의 스킬을 먼저 써요. 두뇌가 `mattpocock`이면 고른 스킬이 곧 단계별 기법이에요([두뇌와 과설계 방지 흐름](brain-flow.md)).
+- 처음 들일 때는 위 도식과 같은 네 묶음(구현·설계, 디버깅·검토, 조사·외부 설정, 인계·학습)으로 나눠 물어요.
 
 `code-review`, `prototype`, `research`는 Claude Code 같은 도구의 내장 명령과 이름이 겹쳐요. 어느 쪽이 불렸는지는 증거에 이름을 적어서 구분해요. 설치하지 않는 mattpocock 스킬(`grill-me`, `to-spec`, `implement` 등)과 이유는 설치된 프로젝트의 `brains/README.md`에 있어요.
 
