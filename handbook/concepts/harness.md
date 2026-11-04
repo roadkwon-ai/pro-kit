@@ -21,17 +21,17 @@ AI 에이전트는 똑똑하지만 부탁한 대로만 움직여서, 바쁘면 �
 
 ## 하네스를 이루는 것
 
-템플릿을 설치하면 프로젝트에 다섯 가지가 생겨요.
+템플릿을 설치하면 프로젝트에 다섯 가지가 생겨요. 에이전트는 가운데서 일하고, 바깥 층이 순서와 검사를 지켜요.
 
 ![가운데 AI 에이전트를 규칙 문서, 스킬, 역할 나누기, 대조표와 audit, 자동 검사 다섯 층이 안쪽부터 차례로 감싸고 있어요.](assets/harness-layers@2x.webp)
 
 | 부분 | 파일 | 하는 일 |
 |---|---|---|
-| 규칙 문서 | `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/domain/project.md` | 에이전트가 시작할 때 읽는 개발 원칙과 공통 규칙, 용어집, 프로젝트 소개. `CLAUDE.md`는 `@AGENTS.md`로 같은 지침을 읽어요 |
-| 스킬 | `.agents/skills/prokit-*` <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 7 -->개와 공식 스킬 | 분야마다 일하는 법을 알려 줘요. `prokit-*`는 일을 나누고 맡기고 검수하고, 공식 스킬은 그 일을 맡은 전문 에이전트가 읽고 따라요. 대조표의 행마다 그 단계에서 읽을 공식 스킬과 맡는 에이전트가 정해져 있어요 |
-| 역할 나누기 | `.claude/agents/`의 전문 수행 에이전트(`prokit-ui-builder.md`<!-- edition:pro -->, `prokit-api-builder.md`, `prokit-db-builder.md`<!-- /edition -->, `prokit-runtime-checker.md`, `prokit-implementer.md`), `specialist-reviewer.md`, <!-- edition:pro -->`prokit-analyzer.md`, <!-- /edition -->`prokit-reviewer.md` | 코디네이터는 직접 구현하지 않고 계층별 수행자와 읽기 전용 분석·리뷰에 나눠 맡겨요. `prokit-reviewer(...)` 통합 리뷰 행은 최종 리뷰어만 채울 수 있어요 |
-| 대조표와 audit | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 작업을 케이스로 나누고 케이스별 대조표를 연 뒤 빈칸이 없는지 검사해요. <!-- edition:pro -->큰 일은 `tasks/plan.md`의 진행 계획으로 Task를 나누고, 앞 Task가 끝나야 다음 Task 라운드가 열려요([정밀 분석과 진행 계획](project-plan.md)) <!-- /edition -->|
 | 자동 검사 | `.dev-cycle.json`의 `commands`, `pnpm skills:check`, `pnpm agents:check`, `pnpm dev-cycle secrets`, `pnpm vercel:deploy … --check`, 에이전트 도구의 훅 | 타입, 린트, 빌드, 테스트, 스킬과 에이전트 상태, 비밀값, 배포 준비를 명령으로 확인해요. 실행한 결과가 곧 증거예요. 훅은 라운드 없는 편집 같은 길을 일하는 도중에 막아요 |
+| 대조표와 audit | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 작업을 케이스로 나누고 케이스별 대조표를 연 뒤 빈칸이 없는지 검사해요. <!-- edition:pro -->큰 일은 `tasks/plan.md`의 진행 계획으로 Task를 나누고, 앞 Task가 끝나야 다음 Task 라운드가 열려요([정밀 분석과 진행 계획](project-plan.md)) <!-- /edition -->|
+| 역할 나누기 | `.claude/agents/`의 전문 수행<!-- edition:pro -->, 분석<!-- /edition -->, 리뷰 에이전트([이름과 하는 일](agent-roles.md)) | 코디네이터는 직접 구현하지 않고 계층별 수행자와 읽기 전용 분석·리뷰에 나눠 맡겨요. `prokit-reviewer(...)` 통합 리뷰 행은 최종 리뷰어만 채울 수 있어요 |
+| 스킬 | `.agents/skills/prokit-*` <!-- edition:pro --><!-- v:prokit.skills.count -->11<!-- /v --><!-- /edition --><!-- edition:ui 7 -->개와 공식 스킬 | 분야마다 일하는 법을 알려 줘요. `prokit-*`는 일을 나누고 맡기고 검수하고, 공식 스킬은 그 일을 맡은 전문 에이전트가 읽고 따라요. 대조표의 행마다 그 단계에서 읽을 공식 스킬과 맡는 에이전트가 정해져 있어요 |
+| 규칙 문서 | `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/domain/project.md` | 에이전트가 시작할 때 읽는 개발 원칙과 공통 규칙, 용어집, 프로젝트 소개. `CLAUDE.md`는 `@AGENTS.md`로 같은 지침을 읽어요 |
 
 ## 요청이 흘러가는 길
 
@@ -60,7 +60,7 @@ flowchart TB
   REQ["사용자 요청"] --> DC["prokit-dev-cycle<br/>규칙 파일 읽기<br/>케이스 판정<br/>대조표 열기"]
   DC --> G
   subgraph G["일하는 방법"]
-    PROC["두뇌와<br/>과설계 방지 스킬<br/>단계 행의 방법"] ~~~ LAYER["계층 스킬<br/>분야마다<br/>일하는 법"]
+    PROC["두뇌와<br/>과설계 방지 스킬<br/>단계 행의 방법"] --> LAYER["계층 스킬<br/>분야마다<br/>일하는 법"]
     LAYER --> OFF["공식 도메인 스킬<br/>+ 선택 스킬 묶음<br/>(그 분야일 때)"]
   end
   G --> IMP["전문 수행 에이전트"]
@@ -73,13 +73,13 @@ flowchart TB
 
 도식에서 이어지는 관계는 이래요.
 
-- 두뇌 · 과설계 방지 스킬의 단계 스킬은 위임 지시에 넣어 전문 수행 에이전트에 넘겨요.
+- 두뇌와 과설계 방지 스킬은 단계의 방법을 정해요. 그 단계 스킬은 위임 지시에 넣어 전문 수행 에이전트에 넘겨요.
 - 계층 스킬이 대조표의 행마다 읽을 공식 도메인 스킬을 지정하고, 그 스킬은 전문 수행 에이전트가 읽고 따라요.
 - 배포 요청은 이 흐름 밖이에요. 라운드 없이 `prokit-deploy`가 메인 세션에서 배포해요.
 
 - **규칙 파일**: `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`. 시작할 때 읽어요
 - **계층 스킬**: `prokit-web`, `prokit-ui`, `prokit-api`, `prokit-db`, `prokit-verify`
-- **두뇌 · 과설계 방지 스킬**: 고른 것만 써요. 고르지 않았으면 내장 절차와 간결성 규칙으로 해요([두뇌와 과설계 방지 흐름](../skills/brain-flow.md))
+- **두뇌와 과설계 방지 스킬**: 고른 것만 써요. 고르지 않았으면 내장 절차와 간결성 규칙으로 해요([두뇌와 과설계 방지 흐름](../skills/brain-flow.md))
 - **공식 도메인 스킬**: Next.js, React, Better Auth, shadcn, UI 스킬(impeccable, hallmark. 고르지 않았으면 기본 AI), Neon 또는 Supabase, Vercel
 - **전문 수행 에이전트**: 계층별 builder, `prokit-runtime-checker`, `prokit-implementer`
 - **선택 스킬 묶음**: ops, motion, mobile, i-have-adhd, 화면 디자인 보조. 설치되어 있지 않으면 설치를 제안하고, 배포의 비용·성능 점검에도 써요
