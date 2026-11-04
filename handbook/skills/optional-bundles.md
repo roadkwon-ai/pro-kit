@@ -26,16 +26,24 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 220
+    wrappingWidth: 200
 ---
-flowchart LR
-  Q(["무엇을<br/>더하고 싶나요"])
-  Q --> M["화면 전환 애니메이션<br/>motion<br/>prokit-ui가 읽어요"]
-  Q --> MB["웹 앱과 따로<br/>모바일 앱<br/>mobile<br/>prokit-dev-cycle이<br/>읽어요"]
-  Q --> AD["짧은 답<br/>i-have-adhd<br/>켤 때만 대화 답에"]
-  Q --> UI["화면 완성도<br/>화면 디자인 보조<br/>prokit-ui가 주 UI 스킬<br/>단계에 더해요"]
-  UI --> DIR["방향: 한 화면에 하나<br/>landing<br/>tastemaker<br/>taste<br/>web-design-engineer"]
-  UI --> WITH["함께 써요<br/>원칙 awwwards<br/>모션 animation<br/>검수 visual-critique<br/>ui-design"]
+flowchart TB
+  accTitle: 선택 스킬 묶음 고르기
+  accDescr: 화면 전환 애니메이션은 motion, 따로 만드는 모바일 앱은 mobile, 짧은 답은 i-have-adhd, 화면 완성도는 화면 디자인 보조를 골라요. 화면 디자인 보조 가운데 방향 보조는 한 화면에 하나만, 원칙·모션·검수 보조는 함께 써요.
+  subgraph B["무엇을 더하고 싶나요"]
+    M["화면 전환 애니메이션<br/>motion<br/>prokit-ui가 읽어요"]
+    MB["웹 앱과 따로 모바일 앱<br/>mobile<br/>prokit-dev-cycle이 읽어요"]
+    AD["짧은 답<br/>i-have-adhd<br/>켤 때만 대화 답에"]
+    UI["화면 완성도<br/>화면 디자인 보조<br/>prokit-ui가 주 UI 스킬<br/>단계에 더해요"]
+    M ~~~ MB ~~~ AD ~~~ UI
+  end
+  UI --> C
+  subgraph C[" "]
+    DIR["방향: 한 화면에 하나<br/>landing · tastemaker<br/>taste<br/>web-design-engineer"]
+    WITH["함께 써요<br/>원칙 awwwards<br/>모션 animation<br/>검수 visual-critique<br/>ui-design"]
+    DIR ~~~ WITH
+  end
 ```
 
 ## 묶음마다 언제, 어떻게
@@ -52,7 +60,9 @@ config:
     wrappingWidth: 240
 ---
 flowchart TB
-  N["묶음 없이 그 분야를 요청"] -.->|"에이전트가 설치를 먼저 제안"| R
+  accTitle: 묶음을 더하고 빼는 흐름
+  accDescr: 말로 요청하면 prokit-skills-manage가 열린 작업을 닫고 H 라운드에서 pnpm skills:setup으로 더하거나 빼요. pnpm skills:check로 확인하고 라운드를 닫아 커밋한 뒤 새 세션을 열면 관련 prokit 스킬이 그 단계에서 읽어요.
+  N["묶음 없이 그 분야를 요청"] -.->|"에이전트가 설치를<br/>먼저 제안"| R
   R["“landing 묶음 더해줘”<br/>“taste 지워줘”"] --> SM["prokit-skills-manage<br/>열린 작업을 닫고 H 라운드"]
   SM --> SET["pnpm skills:setup<br/>--optional 묶음 · --drop 묶음"]
   SET --> CK["pnpm skills:check<br/>선택 스킬: 줄에 보이는지 확인"]
@@ -96,15 +106,21 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 290
+    wrappingWidth: 200
+    rankSpacing: 20
 ---
-flowchart LR
-  Q(["주 화면이<br/>어떤 성격인가요"])
-  Q --> B["기본<br/>MVP, 따로 원하는 방향 없음<br/>visual-critique"]
-  Q --> L["랜딩<br/>가입 · 구매 · 신청 하나를 이끌어요<br/>landing · animation · visual-critique"]
-  Q --> R["레퍼런스<br/>“이런 느낌”을 줄 이미지나 사이트<br/>tastemaker · visual-critique"]
-  Q --> S["쇼케이스<br/>브랜드 · 포트폴리오 · 행사<br/>awwwards · animation · visual-critique"]
-  Q --> A["앱 정돈<br/>로그인 뒤 화면이 많아요<br/>ui-design · web-design-engineer"]
+flowchart TB
+  accTitle: 화면 디자인 보조 조합 고르기
+  accDescr: 주 화면의 성격에 따라 기본, 랜딩, 레퍼런스, 쇼케이스, 앱 정돈 조합 가운데 하나를 골라요.
+  Q(["주 화면이<br/>어떤 성격인가요"]) --> B
+  subgraph B[" "]
+    BA["기본<br/>MVP, 따로 원하는 방향 없음<br/>visual-critique"]
+    L["랜딩<br/>가입 · 구매 · 신청 하나<br/>landing · animation<br/>visual-critique"]
+    R["레퍼런스<br/>“이런 느낌”의 이미지나 사이트<br/>tastemaker<br/>visual-critique"]
+    S["쇼케이스<br/>브랜드 · 포트폴리오 · 행사<br/>awwwards · animation<br/>visual-critique"]
+    A["앱 정돈<br/>로그인 뒤 화면이 많아요<br/>ui-design<br/>web-design-engineer"]
+    BA ~~~ L ~~~ R ~~~ S ~~~ A
+  end
 ```
 
 ```bash

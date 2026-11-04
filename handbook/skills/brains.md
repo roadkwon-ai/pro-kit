@@ -65,24 +65,21 @@
 ---
 config:
   flowchart:
-    wrappingWidth: 240
+    wrappingWidth: 200
 ---
 flowchart TB
-  A["늘 설치<br/>prokit 스킬과 에이전트<br/>공식 도메인 스킬<br/>skill-creator · 브라우저 도구<br/>mattpocock 필수 스킬"]
-  P(["처음 들일 때 고름<br/>prokit-init"])
-  P --> P1["진행 방법<br/>두뇌 · 과설계 방지 스킬<br/>mattpocock 추가 스킬"]
-  P --> P2["화면<br/>UI 스킬<br/>화면 디자인 보조"]
-  P --> P3["답하는 방식<br/>응답 방식(i-have-adhd)"]
-  O["필요할 때 더함<br/>선택 스킬 묶음<br/>motion · mobile 등"]
-  A ~~~ P
-  O ~~~ P
-  A --> DC["prokit-dev-cycle 대조표<br/>행마다 맡은 스킬을 읽어요"]
-  P1 --> DC
-  P2 --> DC
-  P3 -.->|"켤 때만 대화 답에"| DC
-  O --> DC
-  DC -.-> CH["바꾸기 · 더하기 · 빼기<br/>prokit-skills-manage(H 라운드)"]
-  DC -.-> UP["최신으로 올리기<br/>prokit-skills-update"]
+  accTitle: 스킬 구성 전체 지도
+  accDescr: 늘 설치하는 것, 처음 들일 때 고르는 것, 필요할 때 더하는 것이 모두 prokit-dev-cycle 대조표로 이어져요. 대조표에서 바꿀 때는 prokit-skills-manage, 올릴 때는 prokit-skills-update로 가요.
+  subgraph K["프로젝트의 스킬 구성"]
+    A["늘 설치<br/>prokit 스킬과 에이전트<br/>공식 도메인 스킬<br/>skill-creator · 브라우저 도구<br/>mattpocock 필수 스킬"]
+    P["처음 들일 때 고름(prokit-init)<br/>두뇌 · 과설계 방지 스킬<br/>mattpocock 추가 스킬<br/>UI 스킬 · 화면 디자인 보조<br/>응답 방식(켤 때만 대화 답에)"]
+    O["필요할 때 더함<br/>선택 스킬 묶음<br/>motion · mobile 등"]
+    A ~~~ P ~~~ O
+  end
+  K --> DC["prokit-dev-cycle 대조표<br/>행마다 맡은 스킬을 읽어요"]
+  DC -.->|"바꿀 때"| CH["prokit-skills-manage<br/>H 라운드"]
+  CH ~~~ UP
+  DC -.->|"올릴 때"| UP["prokit-skills-update"]
 ```
 
 - **늘 설치**: [prokit 스킬](prokit-skills.md), [공식 스킬과 연결](official-skills.md). mattpocock 필수 스킬은 `domain-modeling`, `grilling`, `grill-with-docs`예요.
@@ -177,26 +174,29 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 240
+    wrappingWidth: 200
 ---
 flowchart TB
+  accTitle: mattpocock 스킬이 쓰이는 단계와 케이스
+  accDescr: 대조표 단계는 요구 정리, 설계, 구현, 리뷰, 마무리 순서예요. 그 아래에 C 케이스, F 공통화 행, H 라운드, 필요할 때, 넘길 때와 배울 때 쓰는 스킬이 있어요.
+  subgraph M["대조표 단계"]
+    S1["요구 정리 · 설계 질문<br/>(늘 설치)<br/>grilling · /grill-with-docs<br/>domain-modeling"] --> S2["설계<br/>codebase-design<br/>prototype(B · F)"]
+    S2 --> S3["구현<br/>tdd: 테스트 먼저"]
+    S3 --> S4["리뷰<br/>code-review<br/>최종 판정은<br/>prokit-reviewer"]
+    S4 --> S5["마무리<br/>pr: PR로 병합할 때"]
+  end
   subgraph X["케이스와 필요할 때"]
-    C["C 케이스(버그)<br/>diagnosing-bugs: 재현부터 진단<br/>tdd: 재현 테스트"]
-    F["F 공통화 행<br/>codebase-design<br/>/improve-codebase-architecture"]
-    H["H 라운드(스킬 · 규칙 수정)<br/>writing-for-agents"]
-    ANY["필요할 때<br/>research: 조사 결과를 문서로<br/>wizard: 외부 설정 단계 안내<br/>/to-questionnaire<br/>결정권자 질문지"]
-    T["넘길 때 · 배울 때<br/>/handoff: 인계 문서<br/>/teach · /wait-what"]
+    C["C 케이스(버그)<br/>diagnosing-bugs · tdd"]
+    F["F 공통화 행<br/>codebase-design<br/>구조 개선 명령"]
+    H["H 라운드<br/>writing-for-agents"]
+    ANY["필요할 때<br/>research · wizard<br/>/to-questionnaire"]
+    T["넘길 때 · 배울 때<br/>/handoff<br/>/teach · /wait-what"]
     C ~~~ F ~~~ H ~~~ ANY ~~~ T
   end
-  subgraph M["대조표 단계"]
-    S1["요구 정리 · 설계 질문 (늘 설치)<br/>grilling · /grill-with-docs<br/>domain-modeling<br/>용어 · ADR 기록"] --> S2["설계<br/>codebase-design: 설계 행<br/>prototype: 버리는 시안(B · F)"]
-    S2 --> S3["구현<br/>tdd: 테스트 먼저"]
-    S3 --> S4["리뷰<br/>code-review: 스펙 대비 추가 관점<br/>최종 판정은 prokit-reviewer"]
-    S4 --> S5["마무리<br/>pr: PR로 병합하는 팀일 때"]
-  end
+  M ~~~ X
 ```
 
-- 고른 두뇌가 같은 일을 자기 스킬로 맡으면(위 표의 "겹치는 두뇌") 두뇌의 스킬을 먼저 써요. 두뇌가 `mattpocock`이면 고른 스킬이 곧 단계별 기법이에요([두뇌와 과설계 방지 흐름](brain-flow.md)).
+- 고른 두뇌가 같은 일을 자기 스킬로 맡으면(위 표의 “겹치는 두뇌”) 두뇌의 스킬을 먼저 써요. 두뇌가 `mattpocock`이면 고른 스킬이 곧 단계별 기법이에요([두뇌와 과설계 방지 흐름](brain-flow.md)).
 - 처음 들일 때는 위 도식과 같은 네 묶음(구현·설계, 디버깅·검토, 조사·외부 설정, 인계·학습)으로 나눠 물어요.
 
 `code-review`, `prototype`, `research`는 Claude Code 같은 도구의 내장 명령과 이름이 겹쳐요. 어느 쪽이 불렸는지는 증거에 이름을 적어서 구분해요. 설치하지 않는 mattpocock 스킬(`grill-me`, `to-spec`, `implement` 등)과 이유는 설치된 프로젝트의 `brains/README.md`에 있어요.
@@ -209,19 +209,26 @@ flowchart TB
 ---
 config:
   flowchart:
-    wrappingWidth: 185
+    wrappingWidth: 200
+    rankSpacing: 20
 ---
-flowchart LR
-  G(["무엇을 강하게<br/>걸고 싶나요"]) --> N["없음(기본 AI)<br/>모르겠으면 추천을 따라요"]
-  G --> SP["superpowers<br/>테스트 먼저, 작업별 리뷰"]
-  G --> AS["agent-skills<br/>보안·성능·접근성 단계"]
-  G --> PS["pstack<br/>실행 증거와 적은 코드"]
-  G --> MP["mattpocock<br/>필요한 기법만 골라 쓰기"]
-  G --> OS["openspec<br/>변경마다 제안·설계 합의"]
-  G --> SK["spec-kit<br/>헌법부터 꼼꼼한 스펙"]
-  G --> GS["gstack<br/>제품 판단, 실사용 QA"]
-  G --> OM["oh-my<br/>큰 작업을 자동·병렬로"]
-  G --> CE["compound-engineering<br/>배운 것을 쌓아 다음 작업에"]
+flowchart TB
+  accTitle: 두뇌 비교
+  accDescr: 무엇을 강하게 걸고 싶은지에 따라 없음(기본 AI), superpowers, agent-skills, pstack, mattpocock, openspec, spec-kit, gstack, oh-my, compound-engineering 가운데 골라요.
+  G(["무엇을 강하게<br/>걸고 싶나요"]) --> B
+  subgraph B[" "]
+    N["없음(기본 AI)<br/>모르겠으면 추천을 따라요"]
+    SP["superpowers<br/>테스트 먼저, 작업별 리뷰"]
+    AS["agent-skills<br/>보안·성능·접근성 단계"]
+    PS["pstack<br/>실행 증거와 적은 코드"]
+    MP["mattpocock<br/>필요한 기법만 골라 쓰기"]
+    OS["openspec<br/>변경마다 제안·설계 합의"]
+    SK["spec-kit<br/>헌법부터 꼼꼼한 스펙"]
+    GS["gstack<br/>제품 판단, 실사용 QA"]
+    OM["oh-my<br/>큰 작업을 자동·병렬로"]
+    CE["compound-engineering<br/>배운 것을 쌓아 다음 작업에"]
+    N ~~~ SP ~~~ AS ~~~ PS ~~~ MP ~~~ OS ~~~ SK ~~~ GS ~~~ OM ~~~ CE
+  end
 ```
 
 고른 두뇌가 단계마다 부르는 스킬은 [두뇌와 과설계 방지 흐름](brain-flow.md#두뇌마다-단계에서-하는-일)에 도식으로 있어요.
@@ -301,16 +308,19 @@ flowchart LR
 ---
 config:
   flowchart:
-    wrappingWidth: 260
+    wrappingWidth: 200
 ---
 flowchart TB
+  accTitle: 두뇌와 과설계 방지 스킬 바꾸기
+  accDescr: 처음 만들 때는 install.sh가, 진행 중에는 prokit-skills-manage가 pnpm skills:setup으로 바꿔요. 둘 다 .dev-cycle.json에 기록하고, 고르지 않은 설치본을 지운 뒤 새 세션이나 /reload-plugins부터 새 구성으로 해요.
   I["처음 만들 때<br/>PRD로 추천받아 고르기"] --> INS["install.sh<br/>--brain · --simplicity"]
-  CH["진행 중에<br/>“두뇌를 openspec으로 바꿔줘”"] --> SM["prokit-skills-manage<br/>열린 라운드에서, 없으면 H 라운드"]
+  INS ~~~ CH
+  CH["진행 중에<br/>“두뇌를 openspec으로<br/>바꿔줘”"] --> SM["prokit-skills-manage<br/>열린 라운드에서,<br/>없으면 H 라운드"]
   SM --> SET["pnpm skills:setup<br/>--brain · --simplicity"]
   INS --> REC[".dev-cycle.json<br/>brain · simplicity 기록"]
   SET --> REC
   REC --> CL["고르지 않은 설치본 지우기<br/>전역 플러그인은<br/>이 프로젝트에서만 끄기"]
-  CL --> RL["/reload-plugins 또는 새 세션<br/>남은 단계 행부터 새 구성"]
+  CL --> RL["/reload-plugins<br/>또는 새 세션<br/>남은 단계 행부터<br/>새 구성"]
 ```
 
 > [!NOTE]
