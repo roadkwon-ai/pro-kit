@@ -61,7 +61,7 @@ config:
 ---
 flowchart TB
   accTitle: 묶음을 더하고 빼는 흐름
-  accDescr: 말로 요청하면 prokit-skills-manage가 열린 라운드에서, 없으면 H 라운드를 열어 pnpm skills:setup으로 더하거나 빼요. pnpm skills:check로 확인하고 라운드를 닫아 커밋한 뒤 새 세션을 열면 관련 prokit 스킬이 그 단계에서 읽어요.
+  accDescr: 묶음 없이 그 분야를 요청하면 에이전트가 설치를 먼저 제안해요(점선). 말로 요청하면 prokit-skills-manage가 열린 라운드에서, 없으면 H 라운드를 열어 pnpm skills:setup으로 더하거나 빼요. pnpm skills:check로 확인하고 라운드를 닫아 커밋한 뒤 새 세션을 열면 관련 prokit 스킬이 그 단계에서 읽어요.
   N["묶음 없이 그 분야를 요청"] -.->|"에이전트가 설치를<br/>먼저 제안"| R
   R["“landing 묶음 더해줘”<br/>“taste 지워줘”"] --> SM["prokit-skills-manage<br/>열린 라운드에서,<br/>없으면 H 라운드"]
   SM --> SET["pnpm skills:setup<br/>--optional 묶음 · --drop 묶음"]

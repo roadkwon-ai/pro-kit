@@ -52,7 +52,7 @@ config:
 ---
 flowchart TB
   accTitle: 템플릿 고르기
-  accDescr: 서비스 상황에 따라 템플릿이 정해져요. 화면만 만들면 neon, 이미 Supabase를 쓰면 supabase, 작업마다 DB 복사본이 필요하면 neon이에요. 잘 모르겠으면 에이전트가 비교표로 설명해요.
+  accDescr: 서비스 상황에 따라 템플릿이 정해져요. 화면만 만들면 neon, 이미 Supabase를 쓰면 supabase, 작업마다 DB 복사본이 필요하면 neon이에요. 잘 모르겠으면 에이전트가 비교표로 설명하고 물어요. 운영 중인 Next.js는 Better-T-Stack과 Postgres, Drizzle을 쓰면 실제 DB에 맞는 템플릿이고, 그 밖에는 --adopt예요.
   subgraph Q["어떤 서비스인가요?"]
     N0["DB 없이 화면만<br/>→ neon, 묻지 않아요"]
     SU["DB가 있고<br/>이미 Supabase를 써요<br/>→ supabase"]
