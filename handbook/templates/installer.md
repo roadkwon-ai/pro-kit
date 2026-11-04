@@ -53,15 +53,20 @@ supabase 템플릿은 `prokit-next-supabase`로 바꿔요. <!-- edition:pro -->
 | `migration` | 새 폴더에 Better-T-Stack 프로젝트를 만들고 `--project-type migration --legacy <기존 코드 경로>`로 설치해요 |
 
 ```mermaid
-flowchart TD
-  S["install.sh 프로젝트 경로 + 옵션"] --> T{"프로젝트 유형"}
-  T -->|"new, early, migration"| B["Better-T-Stack 프로젝트에<br/>전체 템플릿 설치<br/>래퍼 · Biome 포맷 · turbo 설정 포함"]
-  T -->|"operating, Better-T-Stack"| O["전체 템플릿 설치<br/>dev · build 래퍼와 제작 표시 컴포넌트는 제외"]
-  T -->|"operating, 그 밖의 Next.js"| A["--adopt: 하네스만 설치<br/>AGENTS.md · CLAUDE.md는 adopt/ 블록"]
-  B --> R["공통: 스킬 링크 · sync-agents · .dev-cycle.json 기록<br/>(projectType, brain, simplicity, uiSkill, legacy.path, defaultBranch)"]
+---
+config:
+  flowchart:
+    wrappingWidth: 230
+---
+flowchart TB
+  S["install.sh 프로젝트 경로 + 옵션"] --> T(["프로젝트 유형"])
+  T --> B["new, early, migration<br/>Better-T-Stack<br/>프로젝트에 전체 템플릿 설치<br/>래퍼 · Biome 포맷<br/>turbo 설정 포함"]
+  T --> O["operating, Better-T-Stack<br/>전체 템플릿 설치<br/>dev · build 래퍼와<br/>제작 표시 컴포넌트는 제외"]
+  T --> A["operating, 그 밖의 Next.js<br/>--adopt: 하네스만 설치<br/>AGENTS.md · CLAUDE.md는<br/>adopt/ 블록"]
+  B --> R["공통: 스킬 링크 · sync-agents<br/>.dev-cycle.json 기록<br/>projectType, brain,<br/>simplicity, uiSkill,<br/>legacy.path, defaultBranch"]
   O --> R
   A --> R
-  R --> K["--skip-skills가 아니면 skills-setup으로 스킬·플러그인 설치"]
+  R --> K["--skip-skills가 아니면<br/>skills-setup으로<br/>스킬 · 플러그인 설치"]
 ```
 
 ### 유형별 설치 범위 한눈에

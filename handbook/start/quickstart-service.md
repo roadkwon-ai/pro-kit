@@ -70,16 +70,21 @@ https://github.com/roadkwon-ai/pro-kit 을 이 폴더에 받고, 그 안의 AGEN
 **원격 DB 연결, Vercel 배포, GitHub에 올리기(push), 전역 도구 설치는 요청할 때만 해요.** 다만 <!-- v:policy.agentBrowser.yo -->agent-browser CLI는 없거나 npm 최신판보다 낮으면 기본으로 최신판을 설치해요<!-- /v -->.
 
 ```mermaid
-flowchart TD
-  A["1. 프로젝트 생성<br/>pnpm create better-t-stack@latest"] --> B["2. 템플릿 설치<br/>bash templates/템플릿/install.sh 프로젝트<br/>--brain · --simplicity · --ui-skill"]
-  B --> B1["파일 복사<br/>스킬 · 에이전트 · dev-cycle · 문서 골격"]
-  B --> B2["scripts/skills-setup.mjs<br/>내부 스킬 · 플러그인 설치<br/>OMX 설정(omx가 있을 때)"]
+---
+config:
+  flowchart:
+    wrappingWidth: 260
+---
+flowchart TB
+  A["1. 프로젝트 생성<br/>pnpm create<br/>better-t-stack@latest"] --> B["2. 템플릿 설치<br/>bash templates/템플릿/install.sh<br/>프로젝트<br/>--brain<br/>--simplicity<br/>--ui-skill"]
+  B --> B1["파일 복사<br/>스킬 · 에이전트 · dev-cycle<br/>문서 골격"]
+  B --> B2["scripts/skills-setup.mjs<br/>내부 스킬 · 플러그인 설치<br/>OMX 설정<br/>omx가 있을 때"]
   B1 --> C["3. 로컬 DB 시작"]
   B2 --> C
   C --> D["4. 첫 마이그레이션<br/>db:generate → db:migrate"]
   D --> E["5. 포맷 정리 · 커밋<br/>pnpm check → 기본 브랜치"]
   E --> F["6. 새 에이전트 세션<br/>신뢰 질문 동의<br/>impeccable이면 hooks on"]
-  F --> G["7. 기능 요청<br/>prokit-dev-cycle이 라운드를 연다"]
+  F --> G["7. 기능 요청<br/>prokit-dev-cycle이<br/>라운드를 연다"]
   G --> H["8. 라운드 끝<br/>사용자 확인 → 커밋 · push<br/>고르면 릴리스 · production 배포"]
 ```
 
