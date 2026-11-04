@@ -12,7 +12,7 @@
 | `mobile` | React Native·Expo 모바일 앱을 따로 만들 때. 템플릿은 웹 앱만 만들어요 | <!-- v:optional.mobile.skillsCode -->`vercel-react-native-skills`<!-- /v --> | `prokit-dev-cycle` |
 | `i-have-adhd` | 다음 행동부터 번호 단계로 짧은 답을 받고 싶을 때. `/i-have-adhd`로 켤 때만 대화 답에 적용해요([두뇌와 선택 스킬](brains.md)) | `i-have-adhd` | `prokit-dev-cycle` |
 | `taste` | 랜딩·소개처럼 보여 주는 화면을 갤러리 사이트에서 뽑은 방향, 공개 아카이브 사진, 실제 브라우저 검사로 만들고 싶을 때. 사용자가 고른 화면에만 쓰고, 검사에는 Chrome이 필요해요([두뇌와 선택 스킬](brains.md#화면-디자인-보조)) | <!-- v:optional.taste.skillsCode -->`design-taste-frontend`<!-- /v --> | `prokit-ui` |
-| `landing` | 가입, 구매, 신청 하나를 이끄는 랜딩을 만들 때. 인테이크 질문, 페이지 구조, 전환 카피, SEO를 함께 정해요 | <!-- v:optional.landing.skillsCode -->`landing-page-design`<!-- /v --> | `prokit-ui` |
+| `landing` | 가입, 구매, 신청 하나를 이끄는 랜딩을 만들 때. 인테이크 질문, 페이지 구조, 전환 카피를 함께 정하고, 검색에 나올 랜딩이면 제목과 설명(메타데이터)을 넣어요 | <!-- v:optional.landing.skillsCode -->`landing-page-design`<!-- /v --> | `prokit-ui` |
 | `tastemaker` | 레퍼런스 이미지나 좋아하는 사이트의 색과 디자인 값을 뽑아 고정하고, 다음 화면도 같은 값으로 만들 때. `python3`이 필요해요 | <!-- v:optional.tastemaker.skillsCode -->`tastemaker`<!-- /v --> | `prokit-ui` |
 | `web-design-engineer` | "Linear처럼" 같은 스타일 레시피로 방향을 잡거나, 화면을 5개 차원으로 채점받고 싶을 때 | <!-- v:optional.web-design-engineer.skillsCode -->`web-design-engineer`<!-- /v --> | `prokit-ui` |
 | `awwwards` | 브랜드, 포트폴리오, 행사 페이지를 스크롤 스토리텔링과 모션 중심으로 만들 때 | <!-- v:optional.awwwards.skillsCode -->`build-awwwards-quality-sites`<!-- /v --> | `prokit-ui` |
@@ -63,7 +63,7 @@ pnpm skills:setup --optional landing,animation,visual-critique   # 랜딩 조합
 pnpm skills:setup --drop animation                               # 묶음 하나만 빼기
 ```
 
-처음 들일 때(`prokit-init`)는 UI 스킬을 고른 뒤 PRD에 맞는 조합을 `(추천)`으로 보여 주고 물어요. 화면 브리프에는 그 화면에 쓰는 보조를 `보조:` 줄로 적어요. 묶음마다 어느 단계에서 무엇을 하는지는 템플릿의 `prokit-ui` "화면 디자인 보조"와 묶음마다의 단계 지도(`references/addon-<묶음>.md`)에 있어요.
+처음 들일 때(`prokit-init`)는 UI 스킬을 고른 뒤 PRD에 맞는 조합을 `(추천)`으로 보여 주고 물어요. 화면 브리프에는 그 화면에 쓰는 보조를 `보조:` 줄로 적어요. 검수 보조(`visual-critique`, `ui-design`)는 설치되어 있으면 브리프를 쓰는 화면마다 리뷰에 써요(impeccable이 주 UI 스킬이면 `visual-critique`는 요청할 때만). 디자인 리뷰 증거에 보조마다 결과나 `<보조> 미실행: 사유`가 없으면 audit이 막아요. 묶음마다 어느 단계에서 무엇을 하는지는 템플릿의 `prokit-ui` "화면 디자인 보조"와 묶음마다의 단계 지도(`references/addon-<묶음>.md`)에 있어요.
 
 > [!NOTE]
 > 보조 스킬은 모두 영어로 쓰여 있고, UI 작업이면 스스로 불리게 쓰인 것이 많아요. 프로킷은 브리프의 `보조:` 줄에 없는 화면에서 불리면 따르지 않고, 서체, 색, 의존성은 `DESIGN.md`와 토큰 규칙을 먼저 따라요(예: `landing`의 영문 서체 목록 대신 한글 서체).
