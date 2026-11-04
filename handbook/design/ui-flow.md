@@ -23,7 +23,12 @@
 
 <!-- b:ui-flow-diagram -->
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 420
+---
+flowchart TB
   R["첫 화면·리디자인 요청<br/>리디자인이면 지금 화면 진단"] --> I["기획<br/>PRODUCT.md<br/>주 UI 스킬의 인터뷰"]
   I --> Q["한 번에 묻기<br/>카탈로그 3곳에서 스타일 1~3위<br/>주 UI 스킬로 정하기(hallmark는 테마 배정) · 방향 보조(설치했을 때) · 대표 색 · 이름·헤드라인 후보<br/>사이트맵 · 화면 설계(브리프의 보조: 줄)"]
   Q --> D["DESIGN.md 받기<br/>curl · agent-browser<br/>명세 lint"]
@@ -55,25 +60,31 @@ flowchart LR
 
 ## 구조
 
-`prokit-ui`는 순서와 규칙, 통과 기준만 정하고, 단계마다 무엇을 할지는 세 갈래의 참고 파일에서 읽어요. 메인 세션은 이 파일들로 화면 일을 정해 전문 에이전트에 맡기고, 모든 결과는 대조표 증거로 모여 `dev-cycle audit`이 확인해요.
+`prokit-ui`는 순서와 규칙, 통과 기준만 정하고, 단계마다 무엇을 할지는 세 갈래의 참고 파일에서 읽어요. 메인 세션은 이 파일들로 화면 일을 정해 전문 에이전트에 맡기고, 모든 결과는 대조표 증거로 모여 `dev-cycle audit`이 확인해요. 점선 상자는 설치했을 때만 쓰는 선택이에요.
 
 ```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 240
+---
 flowchart TB
   DC["prokit-dev-cycle<br/>케이스 B 대조표"] --> UI["prokit-ui<br/>순서 · 규칙 · 통과 기준"]
-  UI --> MAP["주 UI 스킬 지도<br/>impeccable-map · hallmark-map · none-map"]
-  UI --> FLOW["design-flow<br/>카탈로그 · 사이트맵 · 시각 자산 · DESIGN.md 검사"]
-  UI --> ADD["화면 디자인 보조 guide<br/>addon-*.md · taste.md"]
-  MAP --> SK["UI 스킬<br/>impeccable · hallmark · frontend-design과 게슈탈트 지침"]
-  ADD --> AS["보조 스킬<br/>landing · tastemaker · taste · web-design-engineer<br/>awwwards · animation · visual-critique · ui-design"]
-  UI --> MAIN["메인 세션<br/>기획 · 시각 방향 · 브리프 · 리뷰·감사 · 마감 판단"]
-  MAIN --> B["prokit-ui-builder<br/>화면 코드 · shadcn · vercel-react-best-practices"]
-  MAIN --> RC["prokit-runtime-checker<br/>스크린샷 · 링크·버튼 누르기"]
+  UI --> MAP["주 UI 스킬 지도<br/>impeccable · hallmark · 기본 AI"]
+  UI --> FLOW["design-flow<br/>카탈로그 · 사이트맵 · 자산 · DESIGN.md 검사"]
+  UI --> ADD["보조 guide<br/>설치한 화면 디자인 보조"]
+  MAP --> MAIN["메인 세션<br/>기획 · 시각 방향 · 브리프<br/>리뷰·감사 · 마감 판단"]
+  FLOW --> MAIN
+  ADD --> MAIN
+  MAIN --> B["prokit-ui-builder<br/>화면 코드"]
+  MAIN --> RC["prokit-runtime-checker<br/>스크린샷 · 링크·버튼"]
   MAIN --> RV["prokit-reviewer(ui)<br/>web-design-guidelines"]
   B --> EV["대조표 증거 · tasks/evidence/"]
   RC --> EV
   RV --> EV
-  MAIN --> EV
   EV --> AU["dev-cycle audit<br/>기록 파일 · 결과 · 읽은 스킬 대조"]
+  classDef opt stroke-dasharray: 5 5
+  class ADD opt
 ```
 
 | 파일 | 하는 일 |
@@ -173,7 +184,12 @@ flowchart TB
 **impeccable**: 명령 하나가 단계 하나를 맡고, 리뷰는 점수로 판정해요.
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 300
+---
+flowchart TB
   C["context<br/>맥락 확인"] --> I["init<br/>PRODUCT.md"]
   I --> V["시각 방향<br/>use-design-md 또는 직접 정하기"]
   V --> S["shape<br/>사이트맵 · 브리프"]
@@ -188,7 +204,12 @@ flowchart LR
 **hallmark**: 테마를 한 번 배정하고, 바닥 규칙과 `sloplint`로 지켜요.
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 300
+---
+flowchart TB
   C["0단계 사전 점검"] --> I["Ask once<br/>기획 질문과 한 번에"]
   I --> V["시각 방향<br/>카탈로그 또는 theme.mjs deal"]
   V --> S["Shape · Picks 블록<br/>사이트맵 · 브리프"]
@@ -203,7 +224,12 @@ flowchart LR
 **기본 AI**: 외부 UI 스킬 없이 `frontend-design`과 게슈탈트 지침으로 해요.
 
 ```mermaid
-flowchart LR
+---
+config:
+  flowchart:
+    wrappingWidth: 300
+---
+flowchart TB
   C["PRODUCT.md · DESIGN.md<br/>frontend-design 읽기"] --> I["PRODUCT.md 질문"]
   I --> V["시각 방향<br/>카탈로그 또는 계획과 검토로 직접"]
   V --> S["브리프<br/>목적 · 주인공 하나 · 그룹 수"]
@@ -216,18 +242,21 @@ flowchart LR
 
 ### 화면 디자인 보조가 더하는 단계
 
-[화면 디자인 보조](../skills/brains.md#화면-디자인-보조)는 주 UI 스킬의 단계에 보태는 선택 묶음이에요. 묶음마다 보태는 단계와 리뷰 결과를 남기는 문구가 정해져 있어요. 아래 도식은 단계마다 어떤 종류의 보조가 붙는지 그렸어요(점선으로 이은 상자가 그 단계에 보태는 보조예요. 종류마다 묶음은 아래 표에 있어요).
+[화면 디자인 보조](../skills/brains.md#화면-디자인-보조)는 주 UI 스킬의 단계에 보태는 선택 묶음이에요. 묶음마다 보태는 단계와 리뷰 결과를 남기는 문구가 정해져 있어요. 아래 도식은 단계마다 어떤 종류의 보조가 붙는지 그렸어요(`+` 뒤가 그 단계에 보태는 보조예요. 종류마다 묶음은 아래 표에 있어요).
 
 ```mermaid
-flowchart LR
-  V1["시각 방향"] --> V2["설계(브리프)"] --> V3["개발"] --> V4["리뷰"] --> V5["마감"]
-  V1 -.- A1["방향 보조"]
-  V2 -.- A2["방향 · 원칙 · 모션<br/>검수(ui-design)"]
-  V3 -.- A3["방향 · 원칙 · 모션"]
-  V4 -.- A4["방향 · 원칙 · 모션 · 검수"]
-  V5 -.- A5["모션<br/>검수(visual-critique)"]
-  V4 --> E["디자인 리뷰 증거<br/>주 UI 스킬 결과 뒤에 보조 결과<br/>못 했으면 미실행 사유"]
-  E --> AU["dev-cycle audit<br/>보조 결과와 읽은 기록 확인"]
+---
+config:
+  flowchart:
+    wrappingWidth: 300
+---
+flowchart TB
+  V1["시각 방향<br/>+ 방향 보조"] --> V2["설계(브리프)<br/>+ 방향 · 원칙 · 모션 · 검수(ui-design)"]
+  V2 --> V3["개발<br/>+ 방향 · 원칙 · 모션"]
+  V3 --> V4["리뷰<br/>+ 방향 · 원칙 · 모션 · 검수"]
+  V4 --> V5["마감<br/>+ 모션 · 검수(visual-critique)"]
+  V4 -.-> E["디자인 리뷰 증거<br/>주 UI 스킬 결과 뒤에 보조 결과<br/>못 했으면 미실행 사유"]
+  E -.-> AU["dev-cycle audit<br/>보조 결과와 읽은 기록 확인"]
 ```
 
 표는 묶음마다 보태는 일을 단계별로 적었어요. 빈 칸은 그 단계에서 하는 일이 없다는 뜻이에요.
