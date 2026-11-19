@@ -84,6 +84,7 @@
 | `ops` | 배포한 서비스의 비용·성능 점검 | `vercel-optimize` | `prokit-deploy` | <!-- edition:pro -->
 | `ops` | Neon의 오래 도는 함수, 파일 저장, LLM 호출. 새 서비스 의존이라 도입 전에 묻고 `docs/adr/`에 남긴다 | `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | `prokit-db` | <!-- edition:pro -->
 | `motion` | 화면 전환, 공유 요소 애니메이션 | `vercel-react-view-transitions` | `prokit-ui` |
+| `ui-sdk` | `packages/ui`에 없는 상호작용(트리, 토큰 입력, 멘션 메뉴, 재정렬·칸 이동 드래그, 날짜·시간·색 입력)과 에이전트가 화면을 조작하게 하는 일(WebMCP). 베타라 shadcn에 있는 부품은 그대로 쓰고, 패키지 의존성은 처음 쓰는 라운드의 설계 행에서 정한다 | `ui-sdk` | `prokit-ui` |
 | `mobile` | React Native·Expo 모바일 앱. 이 프로젝트는 웹 앱만 있으므로 앱을 더하는 결정은 먼저 묻고 `docs/adr/`에 남긴다 | `vercel-react-native-skills` | `prokit-dev-cycle` |
 | `i-have-adhd` | 행동 중심 짧은 응답(다음 행동 먼저, 번호 단계, 다음 할 일 하나). 사용자가 `/i-have-adhd`로 켤 때만 쓰고 대화 응답에만 적용한다 | `i-have-adhd` | `prokit-dev-cycle` |
 | `taste`, `landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design` | 화면 디자인 보조(taste-skill 방향과 브라우저 검사, 랜딩 전환, 레퍼런스 스타일 고정, 스타일 레시피와 채점, 쇼케이스 모션, 애니메이션, 7개 차원 화면 비평, 게슈탈트·간격·타입 체계). 주 UI 스킬 흐름에 더하고 대신하지 않는다. 한 화면에 방향 보조는 하나만 쓴다. 아래 스킬이 스스로 불려도 쓰기 전에 `prokit-ui`의 "화면 디자인 보조"와 그 묶음의 guide(`prokit-ui/references/addon-<묶음>.md`)를 읽는다. 추천 조합은 `references/brains/README.md` | `design-taste-frontend`, `landing-page-design`, `tastemaker`, `web-design-engineer`, `build-awwwards-quality-sites`, `emil-design-eng`, `animate`, `improve-animations`, `apple-design`, `animation-vocabulary`, `critique-*` 7개, `law-of-*` 등 19개 | `prokit-ui` |
@@ -101,8 +102,7 @@
 ## 에이전트
 - `prokit-analyzer`: 읽기 전용 정밀 분석. 기존 프로젝트를 들일 때와 진행 계획을 세우기 전에 쓴다. <!-- edition:pro -->
 - 전문 수행 에이전트: 코디네이터(메인)가 위임 지시로 지정한 파일과 확인만 하고, 맡은 공식 스킬(정의의 "맡는 공식 스킬" 표)을 반드시 읽고 따른 뒤 읽은 스킬과 적용한 규칙을 보고한다. 화면 `prokit-ui-builder`<!-- edition:pro -->, 서버·API `prokit-api-builder`, DB `prokit-db-builder`(마이그레이션 적용은 메인)<!-- /edition -->, 실행 확인 `prokit-runtime-checker`(코드를 고치지 않는다), 하네스와 계층 밖 파일 `prokit-implementer`(공통 규칙의 정본)다.
-- `prokit-reviewer`: 읽기 전용 통합 리뷰. focus는 plan, code, ui, security, db이고 실제 계약·evidence hash·통합 수용 여부를 JSON으로 응답한다.
-- `specialist-reviewer`: provider에 내장 리뷰가 없을 때만 전문 산출물을 읽기 전용으로 검토한다. 일반 코드 리뷰를 반복하지 않는다.
+- `prokit-reviewer`: 읽기 전용 통합 리뷰. focus는 plan, code, ui, security, db이고 실제 계약·evidence hash·통합 수용 여부를 JSON으로 응답한다. `specialist-reviewer`는 provider에 내장 리뷰가 없을 때만 전문 산출물을 읽기 전용으로 검토한다. 일반 코드 리뷰를 반복하지 않는다.
 - 리뷰는 구현한 쪽이 아니라 `prokit-reviewer`가 한다. Codex는 `spawn_agent`의 `agent_type`으로 부른다. <!-- edition:pro -->`prokit-analyzer`·<!-- /edition -->`prokit-reviewer`·`specialist-reviewer`는 `fork_turns: "none"`으로 띄워 메인 대화를 넘기지 않고(독립 분석·리뷰), 필요한 입력(초점, 기준 SHA, 파일 목록, evidence packet hash)은 메시지에 모두 넣는다. 고른 두뇌 파일(`references/brains/<이름>.md`)의 "에이전트" 절에 있는 에이전트는 읽기 전용 보완 검토로만 쓴다. 쓰는 쪽이 아니고 최종 게이트는 `prokit-reviewer`다.
 - 배포, 릴리스, 운영 DB 적용은 서브에이전트에 맡기지 않는다. 라운드 끝 마무리 선택, 릴리스 발행 동의, 운영 DB 적용 동의처럼 중간에 사용자 확인이 필요하다.
 - 스킬이나 플러그인이 없다고 나오면 `pnpm skills:check`로 확인해 보고한다. 설치(`pnpm skills:setup`, 네트워크와 설정 파일 변경)는 사용자가 요청할 때 한다. 목록 정본은 `skills.manifest.json`이다. 외부 스킬의 새 버전 확인과 업데이트(`pnpm skills:update`)는 `prokit-skills-update`, 공식 스킬을 맡는 에이전트의 배치(더하기·바꾸기·빼기)는 `prokit-skills-assign`을 따른다. 진행 중인 라운드가 없으면 `pnpm dev-cycle status`가 하루 한 번 확인한다.

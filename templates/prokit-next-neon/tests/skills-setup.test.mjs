@@ -1015,7 +1015,14 @@ test("템플릿 매니페스트: 이름 중복 없음, 기본·선택 항목과 
   }
   for (const s of slotEntries.flatMap((e) => e.skills)) assert.ok(!names.includes(s), `${s}: 두뇌·과설계 방지 후보가 기본 설치와 같은 이름을 쓰면 정리할 때 헷갈린다`);
   for (const [k, o] of Object.entries(m.optional)) assert.ok(/^[a-z][a-z-]*$/.test(k) && o.description && o.skills.length, k);
-  for (const k of ["ops", "motion", "mobile", "i-have-adhd"]) assert.ok(m.optional[k], `선택 묶음 ${k}`);
+  for (const k of ["ops", "motion", "ui-sdk", "mobile", "i-have-adhd"]) assert.ok(m.optional[k], `선택 묶음 ${k}`);
+  // UI SDK는 vercel-labs/ui의 ui-sdk 스킬 하나이고, prokit-ui가 지도(references/ui-sdk.md)로 쓰는 때를 정한다
+  assert.deepEqual(m.optional["ui-sdk"].skills.map((e) => [e.source, e.skills]), [["vercel-labs/ui", ["ui-sdk"]]]);
+  const uiMap = readFileSync(join(TEMPLATE_FILES, ".agents/skills/prokit-ui/references/ui-sdk.md"), "utf8");
+  assert.match(uiMap, /## 언제 쓰나/);
+  assert.match(uiMap, /docs\/llms\.txt/);
+  assert.ok(readFileSync(join(TEMPLATE_FILES, ".agents/skills/prokit-ui/SKILL.md"), "utf8").includes("](references/ui-sdk.md)"), "prokit-ui가 UI SDK 지도로 잇는다");
+  assert.ok(readFileSync(join(TEMPLATE_FILES, ".claude/agents/prokit-ui-builder.md"), "utf8").includes(".agents/skills/ui-sdk/SKILL.md"), "ui-builder가 ui-sdk 스킬을 읽는다");
   // 화면 디자인 보조는 guide(단계 대응 문서)가 있는 선택 묶음이다. 묶음 항목, guide 파일, prokit-ui 표 한 줄만 더하거나 빼면 된다(코드와 이 테스트는 그대로)
   const guides = Object.entries(m.optional).filter(([, o]) => o.guide);
   assert.ok(guides.length > 0, "화면 디자인 보조 묶음");

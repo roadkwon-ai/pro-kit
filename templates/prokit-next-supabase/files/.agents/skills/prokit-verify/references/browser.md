@@ -13,7 +13,25 @@ ego-browser는 ego lite 앱(macOS)이 설치하는 CLI와 전역 `ego-browser` �
   - 쿠키·저장소를 지우지 않는다. 지우기는 프로필 전체에 닿을 수 있다. 로그인 상태를 바꿔야 하면 앱의 로그아웃을 쓴다.
 - 로그인이 필요한 화면은 테스트 전용 계정으로 본다. 메일 인증 등으로 가입 화면에서 계정을 만들 수 없으면 `prokit-runtime-checker`는 확인을 멈추고 막힌 이유를 보고한다. Main이 로컬 개발 DB에만 인증을 마친 테스트 계정을 만들어 다시 맡긴다. 비밀번호는 증거, 커밋, 출력에 남기지 않고 프로젝트 밖 파일(권한 600)로 넘긴다. 원격 DB에는 만들지 않는다. <!-- edition:pro -->
 
-## desktop·mobile 스크린샷
+## 검증 증거 묶음
+화면 라운드의 런타임 확인은 묶음을 한 번 찍는다. 디자인 리뷰·감사·리뷰어·재확인이 이 묶음을 읽으므로 각자 다시 찍지 않는다(규칙은 `prokit-dev-cycle`의 `references/execution-efficiency.md` "검증 증거 묶음").
+
+```bash
+pnpm dev-cycle packet capture http://localhost:3001/<경로> tasks/evidence/<라운드 제목>/packet-1
+# 로그인이 필요한 화면: 같은 세션에서 먼저 로그인한 뒤
+#   agent-browser --session prokit-login open http://localhost:3001/login  (테스트 계정으로 로그인)
+#   pnpm dev-cycle packet capture http://localhost:3001/<경로> tasks/evidence/<라운드 제목>/packet-1 --session prokit-login
+```
+
+- agent-browser(깨끗한 프로필)로 1440·1024·768·390·320 너비와 라이트·다크마다 첫 화면(`<너비>-<테마>.png`)과 전체 쪽(`-full.png`)을 찍는다. 같은 화면에서 가로 넘침과 원인 요소, 터치 영역(24px 미만 목록, 44px 미만 수), 글자 대비(WCAG AA 실패 목록과 잴 수 없는 수: 그림·그라데이션·흐림 위 글자), 콘솔 오류·경고와 잡히지 않은 오류를 잰다. 1440·390에서는 처음부터 Tab을 30번 눌러 포커스 순서와 포커스 표시가 없는 수를, 끝으로 `/_next/mcp`의 `get_errors`를 남긴다. 결과는 `measure.json`이고 명령이 바로 봉인한다.
+- 출력 `packet: <경로> sha256=<값>`을 보고와 증거에 그대로 옮긴다. `표준에서 빠진 뷰포트`·`재지 못한 검사` 줄이 나오면 함께 보고한다.
+- 한 묶음은 16\~20초 걸린다(Better-T-Stack 기본 화면 실측). 띄운 세션은 끝나면 닫는다. `--session`으로 준 세션은 닫지 않는다.
+- 찍은 뒤 `measure.json`에서 결함 후보(가로 넘침 `over: true`, `contrast.fail`, `touchTargets.under24`, `console`, `tabOrder.noRing`, `get_errors`의 오류)을 오류 예산과 함께 보고한다. 데스크톱과 휴대폰 너비의 스크린샷은 이미지로 열어 기대한 상태인지 본다. 연 것만 증거에 적는다(아래 audit 경고). 개발 전용 요소(Next 개발 표시 `nextjs-portal`, TanStack Query devtools 버튼)는 결함으로 세지 않는다.
+- 측정은 Chromium 흉내라 Safari 차이와 hover·메뉴·폼 입력·애니메이션 중간 상태는 담지 않는다. 그것은 평가자가 필요할 때 브라우저로 직접 본다.
+- agent-browser가 없으면 명령이 exit 2로 알린다. 설치는 사용자가 요청할 때 한다. 그동안은 아래 ego-browser 촬영으로 desktop·mobile만 찍고, 증거에 `묶음 없음: agent-browser 없음`을 적는다. 다른 도구로 같은 꼴의 `measure.json`과 스크린샷을 만들었으면 `pnpm dev-cycle packet seal <폴더>`로 봉인한다(재지 못한 칸은 `{"skipped": "사유"}`).
+- 평가 쪽은 쓰기 전에 `pnpm dev-cycle packet check <폴더>`로 `fresh`인지 본다. 봉인 뒤 화면 소스가 바뀌었으면 `stale`(exit 1)이다.
+
+## ego-browser로 직접 찍기 (묶음을 만들 수 없을 때)
 라운드마다 TaskSpace 하나를 쓴다. 처음 실행에서 출력한 `spaceId`를 기억해 두고, 다시 찍거나 실패에서 이어 갈 때도 새 TaskSpace를 만들지 말고 `taskSpace(<spaceId>)`로 이어 쓴다.
 
 ```bash

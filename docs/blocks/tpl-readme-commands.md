@@ -5,6 +5,10 @@
 | `pnpm dev-cycle plan` | 진행 계획(`tasks/plan.md`)의 Task 표, 다음에 열 Task, 문제(손으로 고친 완료 등)를 보여 준다. 진행 계획 라운드 중에는 사용자 확인에 적을 Task 구성의 지문(`sig=`)도 보여 준다. 문제가 있으면 exit 1 |
 | `pnpm dev-cycle archive [--title "제목"]` | 활성 라운드는 그대로 두고 완료한 일반 할 일·백로그만 보관 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 활성 대조표의 지정 행 증거 칸을 프로젝트 안 일반 한 줄 파일(끝 줄바꿈 하나는 허용)로 바꿈. 파일·행 밖 내용과 표 구조는 바꾸지 않음 |
+| `pnpm dev-cycle packet capture <http://localhost:3001/경로> <묶음 폴더> [--session 이름]` | 화면 라운드의 검증 증거 묶음을 찍고 봉인. agent-browser로 1440·1024·768·390·320 너비 × 라이트·다크 스크린샷과 가로 넘침·터치 영역·글자 대비·콘솔, Tab 순서·`get_errors`를 잼. 묶음 폴더는 `tasks/evidence/` 아래 |
+| `pnpm dev-cycle packet seal <묶음 폴더>` | 다른 도구로 만든 `measure.json`과 스크린샷을 봉인. 재지 않은 칸이 있으면 봉인하지 않음(못 쟀으면 `{"skipped": "사유"}`). 출력의 `packet: <경로> sha256=<값>`을 행 증거에 적음 |
+| `pnpm dev-cycle packet check <묶음 폴더>` | 봉인한 묶음이 지금 화면 소스(apps·packages·의존성)와 같은지 확인. 같으면 `fresh`(exit 0), 바뀌었으면 `stale`(exit 1) |
+| `pnpm dev-cycle supervise [--scope <배정 경로>]` | 감독. 이 라운드의 훅 기록으로 하위 에이전트마다 경과 시간, 다시 읽은 스킬, 파일 읽기·셸 명령 수, 같은 명령 반복, 배정 밖 편집, 묶음 밖 촬영, 예산 초과를 요약하고 그 에이전트에 보낼 문장을 냄. 검색 도구와 명령의 종료 코드는 보지 못함 |
 | `pnpm dev-cycle secrets` | 라운드 끝 커밋 전에 스테이징한 변경에서 로컬 `.env*`(루트, `apps/web`, `packages/db`. `.env.schema`·`.env.example` 제외)의 비밀값과 흔한 키 형식(개인 키, `sk-`, GitHub 토큰 등)을 찾는다. 값은 출력하지 않는다. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2 |
 | `pnpm dev-cycle guard --staged`, `pnpm dev-cycle guard --since <커밋>` | 라운드 검사. `--staged`는 설치기가 건 git pre-commit 훅이 부른다. 스테이징한 코드·하네스·인증 경로 변경이 있는데 활성 라운드도, 함께 커밋하는 닫은 라운드 기록(`tasks/archive/`)도 없으면 exit 1(프로킷 설치 커밋은 통과). `--since`는 `pnpm release`가 부르고, 그 커밋 뒤의 코드·하네스 변경에 닫은 라운드 기록이 없으면 exit 1 |
 | `pnpm dev-cycle resource check` | 현재 작업에 연결된 관리 자원을 빠르게 재서 JSON으로 보고. 컨테이너 엔진(Podman·Docker)이 보고한 이미지·컨테이너·볼륨 크기도 `containers`로 보여 줌(예산에 넣지 않고 지우지 않음). 정상·경고는 exit 0, 예산 초과는 exit 1(측정이 불완전해도 여유 공간이 차단 한계 이하면 1), 측정 불완전은 exit 2 |

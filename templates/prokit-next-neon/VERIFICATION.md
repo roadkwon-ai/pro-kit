@@ -4,6 +4,30 @@
 
 템플릿을 실제로 설치하고 돌려 본 결과와, 검증하지 못한 한계를 적는다. 초기 검증의 수치는 2026-09-25에 측정했고, 이후 보강은 해당 절에 날짜와 결과를 따로 적었다. 측정 산출물(fixture, eval 작업 공간, 트리거 로그)은 세션 스크래치에 있었으므로 이 문서에는 수치와 판정만 남긴다.
 
+
+
+## UI SDK 선택 묶음 (2026-11-20)
+
+Vercel의 UI SDK(`vercel-labs/ui`, 베타)를 선택 묶음 `ui-sdk`로 들였다. 화면 에이전트(`prokit-ui-builder`)가 `packages/ui`에 없는 상호작용(트리, 토큰 입력, 멘션 메뉴, 재정렬 드래그, 날짜·색 입력)과 에이전트 준비(WebMCP)를 UI SDK로 만들고, shadcn에 있는 종류는 그대로 shadcn을 쓴다. 설계와 결정 근거는 [UI SDK 도입 설계](../../docs/plans/2026-11-20-ui-sdk-adoption.md)다.
+
+- 바꾼 것: `skills.manifest.json`의 `optional.ui-sdk`(source `vercel-labs/ui`)와 `performers.skills.ui-sdk`(`prokit-ui-builder`, `prokit-reviewer`), `prokit-ui/references/ui-sdk.md`(언제 쓰나, 설계 행, 위임 지시, 테스트, 리뷰, 확인한 것), `prokit-ui` 개발 행과 공식 스킬 연결 표, 구현 전 바닥선 10번(위젯을 `role=`로 직접 짜지 않기), 두 에이전트 정의, 템플릿 `AGENTS.md`·handbook 선택 묶음 표, `THIRD_PARTY_NOTICES.md`.
+- 시제품(확인용 Better-T-Stack 프로젝트, `@ui-sdk/core`·`@ui-sdk/react` `0.1.0-beta.10`): `pnpm skills:setup --optional ui-sdk` exit 0, `skills:check`에 `ui-sdk 있음`. `packages/ui`에 Tree와 멘션 토큰 입력을 만들어 shadcn 부품과 한 화면에 두고 `check-types`·`biome check .`·`build` exit 0, 브라우저 콘솔 오류 0, 트리 키보드 조작이 맞았다. vitest·jsdom 설정 약 4분, 에이전트 테스트와 트리 패턴 검사 2/2 통과.
+- 시제품에서 찾아 지도에 적은 것: shadcn의 `data-selected:` 변형(`="true"`)이 UI SDK의 빈 속성과 맞지 않아 `data-[selected]:`를 쓴다. 함수 prop을 넘기는 부품만 `"use client"`가 필요하다. pnpm이 묻는 패키지 내장 스킬 승인은 하지 않는다(스킬 두 벌). 트리·토큰 입력·멘션 메뉴를 쓴 화면의 JS가 gzip 약 68KB 늘었다. 에이전트 브리지는 UI SDK 부품만 본다.
+- 테스트: 두 템플릿 `node --test` 각 427개 통과(묶음 매니페스트·지도 연결 검사 추가), handbook·공통 값·판 검사 80개 통과. 행동 확인(`claude -p` Sonnet, 쓰기 막음, 독립 채점): 트리 사이드바 요청은 UI SDK Tree와 shadcn Button으로 나눠 5/5, 계정 드롭다운 요청은 UI SDK 없이 shadcn DropdownMenu로 4/5(컨트롤 이름 요구를 적지 않음). 채점이 짚은 지도 문구(되돌리는 법에 직접 구현)를 고쳤다.
+- 한계: 베타라 판이 바뀌면 문서 경로·진입점·상태 속성이 바뀔 수 있다. 라이트 테마 대비, 오른쪽에서 왼쪽 배치, `createReorder` 재정렬 목록은 확인하지 않았다. 실제 B 라운드 전체(구현부터 `[confirm]`)를 UI SDK로 돌린 행동 eval은 하지 않았다.
+
+## 화면(B) 라운드 병목 개선: 검증 증거 묶음, 병렬 행, 이어 쓰기 (2026-11-20)
+
+랜딩 한 장을 고친 B 라운드가 63분(도구 호출 500회, 토큰 164만)이 걸린 실측을 근거로, 같은 보증을 더 적은 반복으로 얻게 했다. 상세 수치, 추정 방법, 리뷰 반영, eval 채점은 [B 라운드 병목 개선 보고서](../../docs/reports/2026-11-20-b-round-speedup/README.md)에 있다.
+
+- 바꾼 것: `pnpm dev-cycle packet capture|seal|check`(런타임 확인이 표준 뷰포트×테마 스크린샷과 측정을 한 번 찍어 봉인하고, 리뷰·감사·재확인이 읽는다), audit의 묶음 인용 검사, `table`·`status`의 `함께 시작할 수 있는 행`, 같은 병렬 묶음의 행을 서로 앞 행으로 보지 않는 순서 판정, 위임 프로토콜의 이어 쓰기·나누기·역할별 모델, `prokit-ui/references/build-floor.md`(구현 전 바닥선 9개), 에이전트 정의의 `model`·`effort`, B 행 문구.
+- 실측: 묶음 촬영 16\~19초(스크린샷 20장, Better-T-Stack 기본 화면에서 390·320 너비의 머리글 넘침을 잡았다). audit 429\~631ms → 265\~352ms(기록 파싱 메모, git 목록 한 번). SendMessage로 이어 쓴 서브에이전트는 훅 기록에 같은 agent id를 남겨 audit이 앞선 스킬 읽기를 계속 센다.
+- 리뷰: 독립 리뷰어가 찾은 결함 6개(다시 채운 행의 낡은 묶음, 손으로 쓴 묶음, `..` 경로, 병렬 행 순서, 봉인 시각 기준, 공유 세션)를 고치고 회귀 테스트를 더했다.
+- eval: 시나리오 45\~47(시나리오마다 기대 항목 5개, 블라인드 채점) 기준선 3/15(20%), 새 판 1차 12/15(80%), 보강 뒤 평균 12.5/15(83%). 보증 위반은 모든 답에서 0건이다.
+- 감독: `pnpm dev-cycle supervise`(에이전트마다 경과 시간, 다시 읽기, 파일 읽기, 셸 명령과 같은 명령 반복, 배정 밖 편집, 묶음 밖 촬영, 예산 초과와 보낼 문장), 위임 예산(구현 15분, 실행 확인 5분, 리뷰 8분), 실행 중 지시를 다음 도구 호출 전에 따르기, "핵심만 진행" 생략 판정을 더했다. eval 48(감독, 블라인드 채점)은 기준선 0/5·0/5, 새 판 5/5·5/5다. 활동 기록과 같은 명령 반복 신호를 더한 뒤 다시 돌린 1차는 5/5·4/5(진행 보고 요청에서 막힌 것 누락), 위임 문서에 세 항목을 적게 한 판은 5/5·5/5다. 하위 에이전트의 일반 파일 읽기와 셸 명령은 이미 도는 훅(Read 기록, 셸 막기)이 활동 줄로 남긴다. 새 훅 프로세스는 없고, 명령은 해시와 앞 낱말만 남긴다. 검색 도구(Grep·Glob)와 명령의 종료 코드는 보지 못하고, Antigravity는 셸 훅이 없어 읽기만 보인다.
+- 테스트: 두 템플릿 `node --test` 각 428개 통과(같은 폴더에서 진행한 ui-sdk 도입 변경 포함). 저장소의 handbook·공통 값·판 검사 80개 통과.
+- 한계: 새 판으로 실제 B 라운드 전체를 돌려 시간을 잰 것은 아니다(라운드 시간 57\~67% 단축은 추정). 묶음 측정은 Chromium이라 Safari 차이와 hover·애니메이션 중간 상태는 담지 않는다. Codex 생성 파일에는 모델·노력도를 쓰지 않아 사용자 설정이나 spawn 값으로 준다. 확인용 프로젝트와 측정 스크립트는 세션 스크래치에 두었다.
+
 ## 화면 디자인 보조 행동 eval: Codex·Antigravity (2026-11-04)
 
 바로 아래 절의 Claude Code 행동 eval을 Codex와 Antigravity로 다시 돌렸다. 두 도구 모두 설치한 검수 보조를 빼거나, 결과 문구만 적고 그 스킬을 읽지 않았다. 규칙과 audit을 고친 뒤 다시 돌렸다.

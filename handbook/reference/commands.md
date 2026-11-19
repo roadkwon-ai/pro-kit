@@ -32,7 +32,7 @@
 |---|---|
 | `pnpm dev-cycle status` | 진행 중인 라운드의 케이스, 채운 칸 수, 다음 행<!-- edition:pro -->, 진행 계획의 다음 Task를<!-- /edition --><!-- edition:ui 을 --> 보여 줘요.<!-- edition:pro --> 전환 프로젝트는 기존 코드 경로도 보여 줘요.<!-- /edition --> 라운드가 없으면 여는 법을 알려 주고, 외부 스킬의 새 버전도 하루 한 번 확인해요 |
 | `pnpm dev-cycle case` | 현재 diff의 케이스 판정 |
-| `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표를 열어요. `--upgrade`를 붙이면 더 무거운 케이스로 올려요. D·E·F에서 그 계층 패키지에 `test` 스크립트가 없으면 vitest 도입 행이 맨 앞에 자동으로 들어가요 |
+| `pnpm dev-cycle table <케이스> --write --title "<요약>"` | 대조표를 열어요. `--upgrade`를 붙이면 더 무거운 케이스로 올려요. D·E·F에서 그 계층 패키지에 `test` 스크립트가 없으면 vitest 도입 행이 맨 앞에 자동으로 들어가요. 출력의 `함께 시작할 수 있는 행`은 서로의 결과가 필요 없어 동시에 맡겨도 되는 행이에요(`status`도 다음 행이 그 묶음이면 알려요) |
 | `pnpm dev-cycle table <케이스> --write --title "T1 …" --task T1` | 진행 계획의 Task 라운드를 열어요. 앞 Task가 완료나 제외가 아니면 열리지 않고, 대조표 맨 앞에 세부 계획과 계획 리뷰 행이 붙어요(케이스 F는 세부 계획 행만) | <!-- edition:pro -->
 | `pnpm dev-cycle table A --write --title "정밀 분석과 진행 계획" --plan` | 진행 계획을 세우거나 고치는 라운드를 열어요. 맨 앞에 정밀 분석(기존 프로젝트만), 계획 문서와 Task 표, 계획 리뷰 행이 붙어요. audit은 `tasks/plan.md`에 진행 계획 블록이 있는지 봐요 | <!-- edition:pro -->
 | `pnpm dev-cycle table <케이스> --write --title "<요약>" --no-task` | 진행 계획을 확정하기 전인 기존 프로젝트에서, 사용자가 먼저 하라고 한 급한 버그 수정, 템플릿 갱신 반영, 스킬 구성 변경 라운드를 열어요. 그 밖의 라운드는 진행 계획을 확정해야 열려요 | <!-- edition:pro -->
@@ -40,6 +40,10 @@
 | `pnpm dev-cycle audit` | 빈 칸, 건너뛸 수 없는 칸, 케이스 상향을 검사해요. 행 증거에 적은 스킬은 훅이 남긴 읽은 기록(`.prokit/`)과, 맡긴 행은 그 에이전트가 일한 기록과 맞는지도 봐요. 화면 리뷰 행은 이번 라운드의 리뷰 기록(`.impeccable/critique/` 또는 `tasks/evidence/ui-review-*.md`)과 감사 보고서(`tasks/evidence/ui-audit-*.md`)의 점수나 결과와 맞는지 <!-- edition:pro -->대조하고, 진행 계획의 지문(`sig=`)과 Task 상태도 확인<!-- /edition --><!-- edition:ui 대조 -->해요 |
 | `pnpm dev-cycle archive [--title "제목"]` | 진행 중인 라운드는 그대로 두고, 끝낸 일반 할 일과 백로그만 보관해요. 끝나지 않은 항목과 코드 예시는 남기고, 끝난 하위 항목은 상위 항목의 맥락과 함께 기록해요 |
 | `pnpm dev-cycle evidence <행 번호> --file <증거 파일>` | 진행 중인 대조표에서 지정한 행의 증거 칸을 증거 파일(프로젝트 안의 한 줄짜리 일반 파일) 내용으로 바꿔요(끝 줄바꿈 하나는 허용해요). 표 머리, stage, 다른 행, 메모, 코드 블록은 그대로 둬요 |
+| `pnpm dev-cycle packet capture <http://localhost:3001/경로> <묶음 폴더> [--session 이름]` | 화면 라운드의 검증 증거 묶음을 찍어요. agent-browser로 1440·1024·768·390·320 너비와 라이트·다크마다 스크린샷을 찍고 가로 넘침·터치 영역·글자 대비·콘솔 오류를, 쪽마다 Tab 순서와 `get_errors`를 재서 `measure.json`에 쓴 뒤 봉인해요. 묶음 폴더는 `tasks/evidence/` 아래예요. 리뷰·감사·재확인은 이 묶음을 다시 찍지 않고 읽어요 |
+| `pnpm dev-cycle packet seal <묶음 폴더>` | 다른 도구로 만든 `measure.json`과 스크린샷을 봉인해요. 재지 않은 칸이 있으면 봉인하지 않아요(못 쟀으면 `{"skipped": "사유"}`). 출력의 `packet: <경로> sha256=<값>`을 행 증거에 그대로 적어요 |
+| `pnpm dev-cycle packet check <묶음 폴더>` | 봉인한 묶음이 지금 화면 소스(apps·packages·의존성)와 같은지 봐요. 같으면 `fresh`(exit 0), 소스나 묶음 파일이 바뀌었으면 `stale`(exit 1)이에요 |
+| `pnpm dev-cycle supervise [--scope <배정 경로>]` | 하위 에이전트에 일을 맡긴 동안 이 라운드의 훅 기록으로 에이전트마다 경과 시간, 다시 읽은 스킬, 파일 읽기·셸 명령 수, 같은 명령 반복, 배정 밖 편집, 묶음 밖 촬영, 예산 초과를 요약하고 그 에이전트에 보낼 문장을 알려 줘요. 검색 도구와 명령의 종료 코드는 보이지 않아요 |
 | `pnpm dev-cycle close` | audit과 실제 사용자 확인을 마친 뒤 라운드를 닫아요. 대조표와 끝낸 일반 할 일·백로그는 KST 날짜 파일로 보관해요. `blocked`나 `미실행` 칸이 있으면 사용자가 동의한 뒤 `close --partial`로 닫아요 |
 | `pnpm dev-cycle secrets` | 커밋 전에 스테이징한 변경에서 비밀값을 찾아요. 걸리면 exit 1, 검사를 실행하지 못하면 exit 2예요 |
 | `pnpm dev-cycle guard --staged` | 커밋할 때 설치기가 건 git pre-commit 훅이 불러요. 코드나 하네스를 바꿨는데 진행 중인 라운드도, 함께 커밋하는 닫은 라운드 기록(`tasks/archive/`)도 없으면 커밋을 막아요(exit 1). 프로킷 설치 커밋은 통과해요 |
@@ -82,7 +86,7 @@
 | `pnpm skills:setup --ui-skill <이름>[,…]` | UI 스킬(`impeccable`, `hallmark`)을 고르거나 바꿔요. 여러 개는 쉼표로 잇고 첫 번째가 주 UI 스킬이에요. 고르지 않은 UI 스킬의 설치본은 정리해요. `--ui-skill none`은 UI 스킬 없이 가고, 기본 AI가 `frontend-design`과 게슈탈트 지침으로 화면을 만들어요. 바꿔도 `PRODUCT.md`, `DESIGN.md`, 화면 설계, 토큰은 그대로 써요. 고르지 않은 UI 스킬이 켠 훅은 `.claude/settings.local.json`과 `.codex/hooks.json`에서 함께 빼요 |
 | `pnpm skills:setup --drop <스킬 또는 묶음>[,…]` | mattpocock 추가 스킬이나 선택 묶음을 지워요. `--drop all`은 설치한 것을 모두 지워요 |
 | `pnpm skills:setup --brain none --simplicity none --drop all` | 순수 AI로 돌아가요. `prokit-*`와 필수·공식 스킬만 남아요 |
-| `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `mobile`, `i-have-adhd`, `taste`, `landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design`<!-- /v -->)을 설치해요. 여러 개는 쉼표로 이어요(`ops,motion`) |
+| `pnpm skills:setup --optional <묶음>` | 선택 스킬 묶음(<!-- v:optional.namesCode -->`ops`, `motion`, `ui-sdk`, `mobile`, `i-have-adhd`, `taste`, `landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design`<!-- /v -->)을 설치해요. 여러 개는 쉼표로 이어요(`ops,motion`) |
 | `pnpm skills:check` | 설치하지 않고 상태만 확인해요. 프로젝트 범위 항목이 빠졌으면 exit 1이에요 |
 | `pnpm skills:update --check` | 설치한 외부 스킬을 GitHub 원본과 비교해 새 버전이 있는지만 알려 줘요 |
 | `pnpm skills:update [<이름>...]` | 바뀐 스킬과 빠진 스킬만(이름을 주면 그 스킬만) 다시 설치해요 |

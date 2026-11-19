@@ -597,7 +597,7 @@ function globMatches(path, pattern) {
 }
 
 // 글롭이 없는 scope는 그 파일이거나 그 디렉터리 아래 전체다(apps/web/src → apps/web/src/**).
-const inScope = (path, scope) =>
+export const inScope = (path, scope) =>
 	globMatches(path, scope) ||
 	(!scope.includes("*") &&
 		safePath(scope) &&

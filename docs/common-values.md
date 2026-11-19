@@ -409,9 +409,9 @@
 | `mattpocock.pool.count` | 14 | --matt로 고를 수 있는 mattpocock 추가 스킬 수 | templates/*/files/skills.manifest.json mattpocock.pool | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
 | `cli.<이름>.install` | 3개(`--list`) | 전역 CLI 설치 명령 | templates/*/files/skills.manifest.json global Neon CLI | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `cli.<이름>.installCode` | 3개(`--list`) | 같은 명령의 코드 꼴(백틱 포함) | templates/*/files/skills.manifest.json global Neon CLI | 정본 파일이 바뀌면 따라 바뀐다 | 10 |
-| `optional.names` | ops, motion, mobile, i-have-adhd, taste, landing, tastemaker, web-design-engineer, awwwards, animation, visual-critique, ui-design | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
-| `optional.namesCode` | `ops`, `motion`, `mobile`, `i-have-adhd`, `taste`, `landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
-| `optional.count` | 12 | 선택 스킬 묶음 수 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.names` | ops, motion, ui-sdk, mobile, i-have-adhd, taste, landing, tastemaker, web-design-engineer, awwwards, animation, visual-critique, ui-design | 선택 스킬 묶음 이름 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
+| `optional.namesCode` | `ops`, `motion`, `ui-sdk`, `mobile`, `i-have-adhd`, `taste`, `landing`, `tastemaker`, `web-design-engineer`, `awwwards`, `animation`, `visual-critique`, `ui-design` | 선택 스킬 묶음 이름의 코드 꼴(묶음마다 백틱) | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
+| `optional.count` | 13 | 선택 스킬 묶음 수 | templates/*/files/skills.manifest.json optional | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.ops.skillsCode.neon` | `vercel-optimize`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway` | neon 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.count.neon` | 4 | neon 템플릿 ops 묶음의 스킬 수 | templates/prokit-next-neon/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.ops.skillsCode.supabase` | `vercel-optimize` | supabase 템플릿 ops 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-supabase/files/skills.manifest.json optional.ops | 정본 파일이 바뀌면 따라 바뀐다 | 2 |
@@ -424,6 +424,12 @@
 | `optional.motion.count.supabase` | 1 | supabase 템플릿 motion 묶음의 스킬 수 | templates/prokit-next-supabase/files/skills.manifest.json optional.motion | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.motion.skillsCode.shared` | `vercel-react-view-transitions` | motion 묶음에서 두 템플릿이 함께 가진 스킬(스킬마다 백틱) | templates/*/files/skills.manifest.json optional.motion | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.motion.skillsCode` | `vercel-react-view-transitions` | motion 묶음의 스킬(두 템플릿이 같을 때. 스킬마다 백틱) | templates/*/files/skills.manifest.json optional.motion | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
+| `optional.ui-sdk.skillsCode.neon` | `ui-sdk` | neon 템플릿 ui-sdk 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.ui-sdk | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.ui-sdk.count.neon` | 1 | neon 템플릿 ui-sdk 묶음의 스킬 수 | templates/prokit-next-neon/files/skills.manifest.json optional.ui-sdk | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.ui-sdk.skillsCode.supabase` | `ui-sdk` | supabase 템플릿 ui-sdk 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-supabase/files/skills.manifest.json optional.ui-sdk | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.ui-sdk.count.supabase` | 1 | supabase 템플릿 ui-sdk 묶음의 스킬 수 | templates/prokit-next-supabase/files/skills.manifest.json optional.ui-sdk | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.ui-sdk.skillsCode.shared` | `ui-sdk` | ui-sdk 묶음에서 두 템플릿이 함께 가진 스킬(스킬마다 백틱) | templates/*/files/skills.manifest.json optional.ui-sdk | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `optional.ui-sdk.skillsCode` | `ui-sdk` | ui-sdk 묶음의 스킬(두 템플릿이 같을 때. 스킬마다 백틱) | templates/*/files/skills.manifest.json optional.ui-sdk | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `optional.mobile.skillsCode.neon` | `vercel-react-native-skills` | neon 템플릿 mobile 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-neon/files/skills.manifest.json optional.mobile | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.mobile.count.neon` | 1 | neon 템플릿 mobile 묶음의 스킬 수 | templates/prokit-next-neon/files/skills.manifest.json optional.mobile | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
 | `optional.mobile.skillsCode.supabase` | `vercel-react-native-skills` | supabase 템플릿 mobile 묶음의 스킬(스킬마다 백틱) | templates/prokit-next-supabase/files/skills.manifest.json optional.mobile | 정본 파일이 바뀌면 따라 바뀐다 | 0 |

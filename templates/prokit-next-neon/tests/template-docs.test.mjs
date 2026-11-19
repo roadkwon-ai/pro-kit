@@ -72,13 +72,16 @@ test("DB: 로컬 컨테이너용 pg 드라이버로 생성하고, 로컬 적용�
   assert.match(e, /\[verify\] 병합 전 Neon 개발 브랜치에 dbMigrate/);
 });
 
-test("브라우저 검증: ego-browser를 먼저 쓰고, 없을 때만 agent-browser로 대체하며 대체 사실을 적는다", () => {
+test("브라우저 검증: 런타임 확인이 검증 증거 묶음을 agent-browser로 한 번 찍어 봉인하고, 리뷰·감사·재확인은 묶음을 먼저 읽는다. 상호작용 QA는 ego-browser를 먼저 쓴다", () => {
   const b = read("docs/dev-workflow.md").split("### B.")[1].split("###")[0];
-  assert.match(b, /\[verify\] next-dev-loop 런타임 확인과 ego-browser\(없으면 agent-browser\)로 desktop·mobile 스크린샷/);
+  assert.match(b, /\[verify\] next-dev-loop 런타임 확인과 검증 증거 묶음 \(prokit-runtime-checker에 위임\. pnpm dev-cycle packet capture/);
+  assert.match(b, /\[review\] 디자인 리뷰 \([^)]*묶음을 먼저 읽게 한다/);
+  assert.match(b, /\[verify\] 재확인 1회 \(마감 뒤 검증 증거 묶음을 다시 찍고/);
   const verify = read(".agents/skills/prokit-verify/SKILL.md");
   assert.match(verify, /references\/browser\.md/);
   assert.match(verify, /대안: agent-browser \(ego-browser 없음\)/);
   const recipe = read(".agents/skills/prokit-verify/references/browser.md");
+  assert.match(recipe, /pnpm dev-cycle packet capture/);
   assert.match(recipe, /ego-browser nodejs/);
   assert.match(recipe, /Emulation\.setDeviceMetricsOverride/);
 });

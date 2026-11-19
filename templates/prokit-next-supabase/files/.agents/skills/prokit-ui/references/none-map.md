@@ -25,7 +25,7 @@ UI 스킬을 고르지 않았을 때(`.dev-cycle.json`의 `uiSkill`이 `none`) �
 | 시각 방향 | `DESIGN.md`가 있으면 그것. 없으면 카탈로그 1\~3위와 "카탈로그 없이 직접 정하기"를 낸다. 직접 정하기는 `frontend-design`의 두 단계다. ① 계획: 색 4\~6개(이름과 hex), 서체와 역할, 배치 개념(한 문장과 ASCII 와이어프레임, 정렬), 이 화면만의 원칙. ② 브리프에 비춰 검토: 계획의 축이 흔한 기본값("For calibration"의 다섯 가지)과 겹치면 고치고 무엇을 왜 고쳤는지 적는다 | 브리프의 "시각 방향" 절 |
 | 설계 | 사이트맵과 화면마다 브리프를 쓴다. 브리프에 게슈탈트 0단계(목적, 주인공 하나, 의도한 그룹과 개수)를 적는다 | `docs/briefs/site-map.md`, `docs/briefs/<화면>.md` |
 | 개발 | `prokit-ui-builder`에 맡긴다. 위임 지시에 브리프, `DESIGN.md`, 읽을 파일(`frontend-design` `SKILL.md`, [gestalt.md](gestalt.md) 3절)을 넣는다. 그룹 안쪽 간격은 좁게, 그룹 사이는 2배 이상 넓게 잡는다 | 코드 |
-| 리뷰 | 메인 세션에서 데스크톱·모바일 스크린샷(`prokit-runtime-checker`)을 보고 게슈탈트 1절 작업 순서와 4절 점검표로 진단한다. 이어서 `frontend-design`의 자기 비평을 한다(흔한 기본값이 남았나, 장식 하나를 뺄 수 있나, 대담함을 한 곳에만 썼나). 보고서는 게슈탈트 6절 형식으로 `tasks/evidence/ui-review-<YYYYMMDD-HHmm>.md`에 저장하고 맨 위에 `게슈탈트 위반 N`(발견한 문제 수)을 적는다 | 리뷰 보고서 |
+| 리뷰 | 메인 세션에서 런타임 확인이 봉인한 검증 증거 묶음(`prokit-runtime-checker`의 `packet capture`. 표준 뷰포트·라이트·다크 스크린샷과 측정)을 보고 게슈탈트 1절 작업 순서와 4절 점검표로 진단한다. 이어서 `frontend-design`의 자기 비평을 한다(흔한 기본값이 남았나, 장식 하나를 뺄 수 있나, 대담함을 한 곳에만 썼나). 보고서는 게슈탈트 6절 형식으로 `tasks/evidence/ui-review-<YYYYMMDD-HHmm>.md`에 저장하고 맨 위에 `게슈탈트 위반 N`(발견한 문제 수)을 적는다 | 리뷰 보고서 |
 | 감사 | `web-design-guidelines`를 `prokit-reviewer`(ui)에 맡기고 `tasks/evidence/ui-audit-<YYYYMMDD-HHmm>.md`에 저장한다 | 감사 보고서 |
 | 마감 | 고칠 것을 한 번에 모아 `prokit-ui-builder`에 맡긴다. 고치는 수단은 약한 것부터 쓴다(간격 → 색·모양 → 박스 → 선). 게슈탈트 5절 금지 사항(문구·데이터 임의 변경, 브랜드 색·서체 무시, 주인공 둘)을 지킨다. 재확인은 1회 | 정리된 코드 |
 | 정본 갱신 | 계획의 토큰(색, 서체, 간격)을 `DESIGN.md`에 명세 형식으로 쓰고 design-flow "DESIGN.md 검사"를 한다. 덮어쓰기 전에 묻는다 | `DESIGN.md` |

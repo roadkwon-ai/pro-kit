@@ -13,8 +13,8 @@ impeccable은 화면마다 모드를 고른다. 앱 화면(대시보드, 목록,
 | 설계 | `shape <기능>` | 사이트맵 `docs/briefs/site-map.md`와 확정된 브리프 `docs/briefs/<화면>.md` (코드 없음) | 사용자 확인 또는 한 번의 수정 뒤 멈춘다. [design-flow.md](design-flow.md) "사이트맵과 상호작용"을 따른다 |
 | 시각 자산 | 서체 받기, comp-led면 `generate-image`로 comp와 plate | `apps/web/src/fonts/`, `apps/web/public/images/<화면>/`, `.impeccable/mocks/` | [design-flow.md](design-flow.md) "시각 자산"과 아래 "이미지"를 따른다 |
 | 개발 | new-work, 필요 시 `layout`, `typeset`, `colorize`, `clarify`, `harden`, `onboard`, `adapt`, `animate`, 밋밋하면 `bolder` | 코드 | 편집 직전에 `reference/craft-floor.md`를 로드한다 |
-| 리뷰 | `critique <대상>` | Design Health 점수, P0~P3 지적, `.impeccable/critique/`에 기록 | 독립 평가자 두 명을 서브에이전트로 띄우므로 메인 세션에서 실행한다 |
-| 리뷰 | `audit <대상>` | 접근성, 성능, 테마, 반응형, 일관성 각 0~4점, 합계 20점 | 권장 후속 명령 목록을 준다. 기록을 남기지 않으므로 보고서 전체와 web-design-guidelines 위반 목록을 `tasks/evidence/ui-audit-<YYYYMMDD-HHmm>.md`에 저장하고 증거에 그 경로를 적는다 |
+| 리뷰 | `critique <대상>` | Design Health 점수, P0~P3 지적, `.impeccable/critique/`에 기록 | 독립 평가자 두 명을 서브에이전트로 띄우므로 메인 세션에서 실행한다. Assessment A의 지시에 검증 증거 묶음 경로와 `sha256=`을 넣어 묶음의 스크린샷으로 화면을 보게 하고, 묶음에 없는 상호작용만 새 탭으로 연다. B는 detector를 페이지에 주입해야 하므로 묶음과 별개로 돌린다. 묶음에는 detector 결과가 없어 A·B 격리가 그대로다. Claude Code에서 A는 `model`을 넘기지 않고, B는 사용자 설정이 없으면 `model: "sonnet"`, `effort: "low"`로 띄운다. 재확인은 같은 A를 이어 쓴다(SendMessage) |
+| 리뷰 | `audit <대상>` | 접근성, 성능, 테마, 반응형, 일관성 각 0~4점, 합계 20점 | 권장 후속 명령 목록을 준다. 접근성·반응형·테마는 검증 증거 묶음의 측정(대비, 터치 영역, 가로 넘침, Tab 순서, 라이트·다크)을 먼저 쓰고 묶음에 없는 것만 잰다. 기록을 남기지 않으므로 보고서 전체와 web-design-guidelines 위반 목록을 `tasks/evidence/ui-audit-<YYYYMMDD-HHmm>.md`에 저장하고 증거에 그 경로를 적는다 |
 | 리뷰 | `web-design-guidelines` 스킬 | Vercel Web Interface Guidelines 위반 목록 (`file:line`) | 규칙을 원격에서 받아 온다. 받지 못하면 그렇다고 적는다 |
 | 마감 | `polish <대상>` | 정리된 코드 | critique 결과를 입력으로 쓴다. 검증은 한 번 모아서 하고 재확인은 1회 |
 | 정본 갱신 | `document` | `DESIGN.md` 갱신 | refresh, overwrite, merge 중 무엇을 할지 사용자에게 묻는다. 카탈로그에서 들여온 파일은 merge만 한다. 쓴 뒤 [design-flow.md](design-flow.md) "DESIGN.md 검사"를 한다 |
@@ -40,9 +40,9 @@ Claude Code에서는 `.agents/skills/impeccable/SKILL.md`를 Read로 읽고 그 
 | 화면 브리프 확정 | `shape → docs/briefs/todos.md (사용자 확인 2026-10-01)` 또는 `N/A: 버튼 간격만 조정` |
 | 구현 | `apps/web/src/app/todos/*.tsx 3개, packages/ui 토큰 1개, 서체 Pretendard(local)·Hahmlet(google), plate 3장(gpt-image-2.5-flare), 모션 2개(reduced-motion 끔)` |
 | 타입·린트·빌드 | `pnpm check-types → exit 0, pnpm exec biome check . → exit 0, pnpm build → exit 0` |
-| 런타임·스크린샷 | `next-dev-loop /todos → get_errors 0, tasks/evidence/todo-list/desktop.png, mobile.png, agent-browser로 링크 12개·버튼 20개 누름 → 404 0, 반응 없는 버튼 0` |
+| 런타임·검증 증거 묶음 | `위임: prokit-runtime-checker(사용: next-dev-loop, agent-browser) → /todos get_errors 0, 오류 예산 0, 묶음 tasks/evidence/todo-list/packet-1/packet.json sha256=3f9c0a1b2c3d4e5f(뷰포트 10, 넘침 0, 대비 실패 0), 1440-light·390-dark 열어 봄, 링크 12개·버튼 20개 누름 → 404 0` |
 | 디자인 리뷰 | `Design Health 31/40, P0 0, P1 2 (빈 상태 문구, 대비), .impeccable/critique/2026-10-22T12-30-00Z__apps-web-src-app-todos.md` |
 | 디자인 감사 | `audit 15/20, 접근성 3/4, tasks/evidence/ui-audit-20261022-1230.md → 기준 미달, polish에서 해결` |
 | 수정과 다듬기 | `P1 2건 반영, 대비 토큰 조정` |
-| 재확인 | `audit 17/20, 접근성 4/4, 스크린샷 갱신` |
+| 재확인 | `새 묶음 tasks/evidence/todo-list/packet-2/packet.json sha256=8e1d2c3b4a5f6e7d, critique A 이어 씀 → Design Health 34/40, audit 17/20, 접근성 4/4` |
 | DESIGN.md 갱신 | `document merge → 색 토큰 1개 추가, lint 오류 0, diff removed 없음`(카탈로그에서 들여온 파일) 또는 `N/A: 토큰 변화 없음` |

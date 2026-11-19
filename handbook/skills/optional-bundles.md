@@ -9,6 +9,7 @@
 | `ops` | 배포한 서비스의 비용과 성능을 Vercel 지표로 점검할 때. 경로별 권고에는 유료 Observability Plus가 필요해요 | <!-- v:optional.ops.skillsCode.shared -->`vercel-optimize`<!-- /v --> | `prokit-deploy` | <!-- edition:pro -->
 | `ops` (neon만) | Neon에서 오래 도는 함수, 파일 저장, LLM 호출을 쓸 때. 새 서비스에 의존하게 되므로 도입 전에 사용자에게 묻고 ADR(설계 결정 기록)로 남겨요 | <!-- v:optional.ops.skillsCode.neonOnly -->`neon-functions`, `neon-object-storage`, `neon-ai-gateway`<!-- /v --> | `prokit-db` | <!-- edition:pro -->
 | `motion` | 화면 전환이나 공유 요소 애니메이션(React `<ViewTransition>`)을 만들 때 | <!-- v:optional.motion.skillsCode -->`vercel-react-view-transitions`<!-- /v --> | `prokit-ui` |
+| `ui-sdk` | 트리, 토큰 입력, 멘션 메뉴, 재정렬 드래그, 날짜·색 입력처럼 기본 부품(shadcn)에 없는 상호작용을 만들거나, 에이전트가 화면을 조작하게 할 때(WebMCP). 베타예요 | <!-- v:optional.ui-sdk.skillsCode -->`ui-sdk`<!-- /v --> | `prokit-ui` |
 | `mobile` | React Native·Expo 모바일 앱을 따로 만들 때. 템플릿은 웹 앱만 만들어요 | <!-- v:optional.mobile.skillsCode -->`vercel-react-native-skills`<!-- /v --> | `prokit-dev-cycle` |
 | `i-have-adhd` | 다음 행동부터 번호 단계로 짧은 답을 받고 싶을 때. `/i-have-adhd`로 켤 때만 대화 답에 적용해요([두뇌와 선택 스킬](brains.md)) | `i-have-adhd` | `prokit-dev-cycle` |
 | `taste` | 랜딩·소개처럼 보여 주는 화면을 갤러리 사이트에서 뽑은 방향, 공개 아카이브 사진, 실제 브라우저 검사로 만들고 싶을 때. 사용자가 고른 화면에만 쓰고, 검사에는 Chrome이 필요해요([두뇌와 선택 스킬](brains.md#화면-디자인-보조)) | <!-- v:optional.taste.skillsCode -->`design-taste-frontend`<!-- /v --> | `prokit-ui` |
@@ -30,13 +31,14 @@ config:
 ---
 flowchart TB
   accTitle: 선택 스킬 묶음 고르기
-  accDescr: 화면 전환 애니메이션은 motion, 따로 만드는 모바일 앱은 mobile, 짧은 답은 i-have-adhd, 화면 완성도는 화면 디자인 보조를 골라요. 화면 디자인 보조 가운데 방향 보조는 한 화면에 하나만, 원칙·모션·검수 보조는 함께 써요.
+  accDescr: 화면 전환 애니메이션은 motion, 기본 부품에 없는 상호작용은 ui-sdk, 따로 만드는 모바일 앱은 mobile, 짧은 답은 i-have-adhd, 화면 완성도는 화면 디자인 보조를 골라요. 화면 디자인 보조 가운데 방향 보조는 한 화면에 하나만, 원칙·모션·검수 보조는 함께 써요.
   subgraph B["무엇을 더하고 싶나요"]
     M["화면 전환 애니메이션<br/>motion<br/>prokit-ui가 읽어요"]
+    SDK["기본 부품에 없는 상호작용<br/>ui-sdk<br/>화면 에이전트가 읽어요"]
     MB["웹 앱과 따로 모바일 앱<br/>mobile<br/>prokit-dev-cycle이 읽어요"]
     AD["짧은 답<br/>i-have-adhd<br/>켤 때만 대화 답에"]
     UI["화면 완성도<br/>화면 디자인 보조<br/>prokit-ui가 주 UI 스킬<br/>단계에 더해요"]
-    M ~~~ MB ~~~ AD ~~~ UI
+    M ~~~ SDK ~~~ MB ~~~ AD ~~~ UI
   end
   UI --> C
   subgraph C[" "]
@@ -75,6 +77,7 @@ flowchart TB
 |---|---|---|---|
 | `ops` | 이미 배포한 서비스의 비용과 성능을 점검하고 싶을 때. neon은 오래 도는 함수, 파일 저장, LLM 호출도 쓸 때 | “ops 선택 스킬 묶음 더해줘” | 점검 스킬이 설치돼 `prokit-deploy`(neon의 Neon 스킬은 `prokit-db`)가 읽어요. Neon 서비스를 새로 쓰기 전에는 사용자에게 묻고 ADR로 남겨요 | <!-- edition:pro -->
 | `motion` | 화면 전환이나 요소가 이어지는 애니메이션을 만들고 싶을 때 | “motion 묶음 더해줘” | React `<ViewTransition>` 스킬이 설치돼 `prokit-ui`가 화면 작업에서 읽어요 |
+| `ui-sdk` | 기본 부품에 없는 상호작용(트리, 토큰 입력, 재정렬 드래그 등)을 키보드·포커스·ARIA까지 갖춰 만들고 싶을 때 | “ui-sdk 묶음 더해줘” | UI SDK 스킬이 설치돼 화면 에이전트가 그 상호작용을 UI SDK로 만들어요. 패키지(`@ui-sdk/react`)는 처음 쓰는 라운드에서 `packages/ui`에 더해요 |
 | `mobile` | 이 웹 앱과 별개로 React Native·Expo 모바일 앱을 만들 때 | “mobile 묶음 더해줘” | 모바일 앱 스킬이 설치돼요. 템플릿 자체는 웹 앱만 만들어요 |
 | `i-have-adhd` | 긴 설명 대신 다음 행동부터 번호 단계로 짧은 답을 받고 싶을 때 | “i-have-adhd 더해줘” | 설치만으로는 답이 바뀌지 않아요. `/i-have-adhd`(Codex는 `$i-have-adhd`)로 켜고 “stop adhd mode”로 꺼요. 파일과 라운드 보고는 프로킷 형식 그대로예요 |
 | `taste` | 랜딩, 소개, 포트폴리오처럼 보여 주는 화면의 완성도를 높이고 싶을 때 | “taste 묶음 더해줘” | `design-taste-frontend`가 설치돼요. 화면 요청에 “taste로”라고 한 화면에만 쓰고, 검사에 Chrome, Edge, Chromium 중 하나가 필요해요. 작업 기록은 `.taste-skill/`에 남고 커밋하지 않아요 |

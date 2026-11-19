@@ -165,7 +165,7 @@ pnpm agents:sync    # .claude/agents에서 .codex/agents와 .agents/agents를 �
 pnpm agents:check   # 정본과 생성물이 맞는지 검사한다
 ```
 
-`.claude/agents` 정의 파일에는 쓸 모델도 적혀 있어요. 화면 구현, 하네스 구현, 실행 확인, 전문 리뷰는 `sonnet`, 분석과 최종 리뷰는 `opus`예요.<!-- edition:pro --> 서버·API와 DB 구현은 `inherit`라 코디네이터와 같은 모델로 돌아요. 인증과 마이그레이션은 실수를 되돌리기 어려워서예요.<!-- /edition --> Codex·Antigravity용 파일에는 모델을 적지 않아요. Codex는 사용자 설정(`config.toml`)에 `[agents] default_subagent_model`이 있으면 하위 에이전트를 그 모델로 띄우니, 세션과 같은 모델을 쓰려면 그 값을 확인해요. 읽기 전용 리뷰 에이전트는 파일을 읽고 찾고 명령을 실행하는 도구만 받아요.
+`.claude/agents` 정의 파일에는 쓸 모델과 노력도(`effort`)도 적혀 있어요. 화면·하네스 구현은 `inherit`(코디네이터와 같은 모델)에 `high`, 최종 리뷰<!-- edition:pro -->와 분석<!-- /edition -->은 `opus`에 `high`, 실행 확인은 `sonnet`에 `low`, 전문 리뷰(`specialist-reviewer`)는 `sonnet`이에요. 구현은 첫 결과가 좋을수록 마감 한 바퀴가 줄고, 실행 확인은 측정을 명령(`pnpm dev-cycle packet capture`)이 맡아서예요.<!-- edition:pro --> 서버·API와 DB 구현도 `inherit`예요. 인증과 마이그레이션은 실수를 되돌리기 어려워서예요.<!-- /edition --> 사용자가 정한 값(대화에서 정한 모델, `CLAUDE_CODE_SUBAGENT_MODEL_FORCE`·`CLAUDE_CODE_EFFORT_LEVEL` 같은 환경 변수)이 있으면 그 값이 먼저예요. 코디네이터는 사용자가 정하지 않았으면 에이전트를 부를 때 모델을 넘기지 않아요. 넘기면 정의보다 앞서서 모든 역할이 같은 모델로 돌아요. 같은 라운드의 다음 단계, 리뷰 반영, 마감, 같은 평가자의 재확인은 새로 띄우지 않고 그 에이전트를 이어 써요(Claude Code는 SendMessage). 맡긴 뒤에도 코디네이터는 감독해요. 위임 지시에 시간 예산을 적고, 일하는 동안 `pnpm dev-cycle supervise`로 다시 읽기, 배정 밖 편집, 예산 초과 같은 신호를 보다가 그 에이전트에 줄일 일을 보내요. 줄인 일은 통과가 아니라 사유와 함께 대조표에 남겨요. Codex·Antigravity용 파일에는 모델을 적지 않아요. Codex는 사용자 설정(`config.toml`)에 `[agents] default_subagent_model`이 있으면 하위 에이전트를 그 모델로 띄우니, 세션과 같은 모델을 쓰려면 그 값을 확인해요. 읽기 전용 리뷰 에이전트는 파일을 읽고 찾고 명령을 실행하는 도구만 받아요.
 
 Codex에서는 분석과 리뷰 에이전트를 메인 대화 없이(`spawn_agent`의 `fork_turns: "none"`) 띄워요. 기본값은 메인 대화를 모두 넘겨서, 구현 과정을 본 채로 리뷰하게 되기 때문이에요.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// dev-cycle 경량 러너: case | table | status | audit | close | archive | plan | secrets | guard
+// dev-cycle 경량 러너: case | table | status | supervise | evidence | packet | audit | close | archive | plan | secrets | guard
 // 절차 정본은 docs/dev-workflow.md, 판정 규칙은 .dev-cycle.json이다.
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
@@ -64,12 +64,14 @@ async function helperScript(name, exports) {
 }
 const {
 	captureSnapshot,
+	inScope,
 	main: delegationMain,
 	observeProvider,
 	resolveProvider,
 	validateDelegationPacket,
 } = await helperScript("delegation.mjs", [
 	"captureSnapshot",
+	"inScope",
 	"main",
 	"observeProvider",
 	"resolveProvider",
@@ -592,6 +594,788 @@ function uiRecordProblem(root, meta, r) {
 		file,
 	);
 	return problem && `${problem} (${file})`;
+}
+
+// 검증 증거 묶음(packet): 런타임 확인이 뷰포트·테마별 스크린샷과 측정(가로 넘침, 터치 영역, 대비, 콘솔, Tab 순서,
+// get_errors)을 한 번 찍어 봉인한다. 디자인 리뷰·감사·리뷰어는 다시 찍지 않고 이 묶음을 읽는다(execution-efficiency.md).
+// 묶음은 봉인한 때의 화면 소스 지문에 묶인다. 소스가 바뀌면 check가 stale로 알리고 audit은 낡은 묶음을 쓴 행을 받지 않는다
+export const PACKET_FILE = "packet.json";
+export const PACKET_MEASURE = "measure.json";
+// 화면 결과를 바꾸는 소스: 앱·패키지와 의존성 잠금. 대조표·증거·문서·.impeccable 기록은 채우면서 바뀌므로 넣지 않는다
+const PACKET_SOURCE_RE =
+	/^(?:apps|packages)\/|^(?:package\.json|pnpm-lock\.yaml)$/;
+export const PACKET_VIEWPORTS = [1440, 1024, 768, 390, 320].flatMap((w) =>
+	["light", "dark"].map((t) => `${w}-${t}`),
+);
+const PACKET_VIEW_CHECKS = ["overflow", "touchTargets", "contrast", "console"];
+const PACKET_PAGE_CHECKS = ["tabOrder", "nextErrors"];
+// 경로 조각에 .과 ..은 받지 않는다(다른 저장소의 묶음을 가리키지 못하게)
+const PACKET_CITE_RE =
+	/(?<![\w./-])(tasks\/evidence\/(?:(?!\.\.?\/)[\w.-]+\/)*packet\.json)\s+sha256=([0-9a-f]{12,64})/g;
+const sha256 = (b) => createHash("sha256").update(b).digest("hex");
+
+function packetSource(root) {
+	const snap = captureSnapshot(root);
+	if (!snap.valid)
+		throw new UsageError("화면 소스 지문을 만들 수 없다(git 저장소가 아니다)");
+	const files = snap.entries
+		.filter((e) => PACKET_SOURCE_RE.test(e.path))
+		.map((e) => [e.path, e.kind, e.hash]);
+	return { files: files.length, fingerprint: sha256(JSON.stringify(files)) };
+}
+function packetDir(root, arg) {
+	if (!arg || arg.startsWith("--"))
+		throw new UsageError(
+			"사용법: dev-cycle packet seal|check <tasks/evidence/ 아래 묶음 폴더>",
+		);
+	const base = realpathSync(root);
+	let dir;
+	try {
+		dir = realpathSync(resolve(base, arg));
+	} catch {
+		throw new UsageError(`묶음 폴더가 없다: ${arg}`);
+	}
+	if (basename(dir) === PACKET_FILE) dir = dirname(dir);
+	if (
+		!dir.startsWith(`${join(base, "tasks/evidence")}${sep}`) ||
+		!statSync(dir).isDirectory()
+	)
+		throw new UsageError("묶음 폴더는 tasks/evidence/ 아래 폴더여야 한다");
+	return { base, dir };
+}
+function packetFiles(dir, sub = "") {
+	return readdirSync(join(dir, sub)).flatMap((n) => {
+		const rel = sub ? `${sub}/${n}` : n;
+		const st = lstatSync(join(dir, rel));
+		if (st.isSymbolicLink())
+			throw new UsageError(`묶음에 심볼릭 링크를 넣지 않는다: ${rel}`);
+		if (st.isDirectory()) return packetFiles(dir, rel);
+		return rel === PACKET_FILE ? [] : [rel];
+	});
+}
+const activeRound = (root, config) => {
+	const md = readTodo(root, config);
+	const active = md && parseActive(md);
+	if (!active) throw new UsageError("활성 라운드가 없다");
+	return active;
+};
+const sameRound = (packet, active) =>
+	packet?.round?.title === active.title &&
+	packet.round.opened === active.meta.opened &&
+	(packet.round.base ?? null) === (active.meta.base ?? null);
+
+export function sealPacket(root, config, arg, { before } = {}) {
+	const active = activeRound(root, config);
+	const { base, dir } = packetDir(root, arg);
+	let measure;
+	try {
+		measure = JSON.parse(readFileSync(join(dir, PACKET_MEASURE), "utf8"));
+	} catch (error) {
+		throw new UsageError(
+			`${PACKET_MEASURE}을 읽을 수 없다: ${error.message.split("\n")[0]}`,
+		);
+	}
+	const files = packetFiles(dir);
+	const views = Array.isArray(measure.viewports) ? measure.viewports : [];
+	const problems = views.length ? [] : ["viewports가 비었다"];
+	const skipped = {};
+	// 잰 값이나 {"skipped": "사유"} 중 하나여야 한다. 재지 않은 검사를 통과처럼 남기지 않는다
+	const checked = (where, key, v) => {
+		if (v === undefined || v === null)
+			problems.push(
+				`${where}: ${key} 결과가 없다. 재지 못했으면 {"skipped": "사유"}로 적는다`,
+			);
+		else if (typeof v === "object" && "skipped" in v) {
+			if (!String(v.skipped ?? "").trim())
+				problems.push(`${where}: ${key}의 skipped 사유가 비었다`);
+			else skipped[`${where}.${key}`] = String(v.skipped);
+		}
+	};
+	for (const v of views) {
+		const name = v?.name ?? "?";
+		if (!files.includes(v?.screenshot))
+			problems.push(
+				`${name}: 스크린샷 ${v?.screenshot ?? "(없음)"}이 묶음 폴더에 없다`,
+			);
+		for (const k of PACKET_VIEW_CHECKS) checked(name, k, v?.[k]);
+	}
+	for (const k of PACKET_PAGE_CHECKS) checked("page", k, measure[k]);
+	if (problems.length)
+		throw new UsageError(`묶음을 봉인하지 않았다:\n  ${problems.join("\n  ")}`);
+	// 다크로 찍었는데 라이트로 그려졌으면 그 뷰포트는 잰 것이 아니다
+	const mismatch = views
+		.filter((v) => v.actualTheme && v.theme && v.actualTheme !== v.theme)
+		.map((v) => v.name);
+	const have = views.map((v) => v.name).filter((n) => !mismatch.includes(n));
+	const source = packetSource(root);
+	// capture는 찍기 전 지문을 넘긴다. 찍는 동안 화면 소스가 바뀌면 스크린샷과 지문이 어긋난다
+	if (before && before.fingerprint !== source.fingerprint)
+		throw new UsageError(
+			"찍는 동안 화면 소스(apps·packages·의존성)가 바뀌었다. 편집이 끝난 뒤 다시 찍는다",
+		);
+	const packet = {
+		version: 1,
+		round: {
+			title: active.title,
+			opened: active.meta.opened,
+			base: active.meta.base ?? null,
+		},
+		sealedAt: new Date().toISOString(),
+		// 묶음이 보여 주는 화면의 시각. 손으로 만든 measure.json에 없으면 봉인 시각이다
+		capturedAt: Date.parse(measure.capturedAt)
+			? measure.capturedAt
+			: new Date().toISOString(),
+		url: measure.url ?? null,
+		source,
+		coverage: {
+			viewports: have,
+			missing: PACKET_VIEWPORTS.filter((n) => !have.includes(n)),
+			mismatch,
+			skipped,
+		},
+		files: files.map((f) => {
+			const b = readFileSync(join(dir, f));
+			return { path: f, sha256: sha256(b), bytes: b.length };
+		}),
+	};
+	const text = `${JSON.stringify(packet, null, "\t")}\n`;
+	writeFileSync(join(dir, PACKET_FILE), text);
+	return {
+		path: relative(base, join(dir, PACKET_FILE)),
+		sha256: sha256(text).slice(0, 16),
+		coverage: packet.coverage,
+	};
+}
+
+// 봉인한 그대로인지: 판, 파일 목록(측정 포함), 파일마다 hash. 묶음 폴더 밖이나 심볼릭 링크는 받지 않는다
+function packetIntegrity(dir, packet) {
+	const files = Array.isArray(packet?.files) ? packet.files : [];
+	const problems = [];
+	if (packet?.version !== 1 || !files.some((f) => f.path === PACKET_MEASURE))
+		problems.push(
+			"packet seal이 만든 묶음이 아니다(판이나 measure.json 항목이 없다)",
+		);
+	for (const f of files) {
+		const p = resolve(dir, String(f.path));
+		let ok = false;
+		try {
+			ok =
+				p.startsWith(`${dir}${sep}`) &&
+				!lstatSync(p).isSymbolicLink() &&
+				sha256(readFileSync(p)) === f.sha256;
+		} catch {}
+		if (!ok) problems.push(`${f.path}가 봉인 뒤 바뀌었거나 없다`);
+	}
+	return problems;
+}
+
+export function checkPacket(root, config, arg) {
+	const active = activeRound(root, config);
+	const { base, dir } = packetDir(root, arg);
+	let text;
+	let packet;
+	try {
+		text = readFileSync(join(dir, PACKET_FILE), "utf8");
+		packet = JSON.parse(text);
+	} catch {
+		throw new UsageError(
+			`${PACKET_FILE}이 없거나 깨졌다. pnpm dev-cycle packet seal로 봉인한다`,
+		);
+	}
+	const problems = [];
+	if (!sameRound(packet, active))
+		problems.push("이 라운드의 묶음이 아니다. 이번 라운드에서 다시 찍는다");
+	problems.push(...packetIntegrity(dir, packet));
+	if (packetSource(root).fingerprint !== packet.source?.fingerprint)
+		problems.push(
+			"봉인 뒤 화면 소스(apps·packages·의존성)가 바뀌었다. 바뀐 화면으로 다시 찍고 봉인한다",
+		);
+	return {
+		ok: problems.length === 0,
+		path: relative(base, join(dir, PACKET_FILE)),
+		sha256: sha256(text).slice(0, 16),
+		sealedAt: packet.sealedAt,
+		coverage: packet.coverage,
+		problems,
+	};
+}
+
+// 묶음 찍기: agent-browser(깨끗한 프로필. 로그인이 필요하면 같은 --session에서 먼저 로그인한다)로 표준 뷰포트×테마를
+// 찍고 재서 measure.json을 쓴 뒤 봉인한다. 아래 두 함수는 페이지 안에서 돈다(바깥 변수를 쓰지 않는다)
+const PACKET_HEIGHT = { 1440: 900, 1024: 768, 768: 1024, 390: 844, 320: 640 };
+const PACKET_TABS = 30;
+function pageMeasure() {
+	const sel = (el) =>
+		`${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ""}${
+			typeof el.className === "string"
+				? el.className
+						.trim()
+						.split(/\s+/)
+						.filter(Boolean)
+						.slice(0, 2)
+						.map((c) => `.${c}`)
+						.join("")
+				: ""
+		}`.slice(0, 80);
+	// 계산된 색(lab·oklch 포함)을 캔버스로 sRGB로 바꾼다
+	const ctx = Object.assign(document.createElement("canvas"), {
+		width: 1,
+		height: 1,
+	}).getContext("2d", { willReadFrequently: true });
+	const rgba = (c) => {
+		ctx.clearRect(0, 0, 1, 1);
+		ctx.fillStyle = "#000";
+		ctx.fillStyle = c;
+		ctx.fillRect(0, 0, 1, 1);
+		const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+		return [r, g, b, a / 255];
+	};
+	const over = (top, below) =>
+		[0, 1, 2].map((i) => top[i] * top[3] + below[i] * (1 - top[3]));
+	const lum = (c) => {
+		const [r, g, b] = c.map((v) => {
+			const s = v / 255;
+			return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+		});
+		return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+	};
+	const shown = (el) => {
+		const r = el.getBoundingClientRect();
+		const cs = getComputedStyle(el);
+		return (
+			r.width > 0 &&
+			r.height > 0 &&
+			cs.visibility !== "hidden" &&
+			cs.display !== "none"
+		);
+	};
+	const opacity = (el) => {
+		let o = 1;
+		for (let n = el; n instanceof Element; n = n.parentElement)
+			o *= Number(getComputedStyle(n).opacity);
+		return o;
+	};
+	// 뒤 배경: 위로 올라가며 불투명해질 때까지 쌓는다. 그림·그라데이션·흐림이 끼면 잴 수 없다(unknown)
+	const background = (el) => {
+		const layers = [];
+		for (let n = el; n instanceof Element; n = n.parentElement) {
+			const cs = getComputedStyle(n);
+			if (
+				cs.backgroundImage !== "none" ||
+				(cs.backdropFilter && cs.backdropFilter !== "none")
+			)
+				return null;
+			const c = rgba(cs.backgroundColor);
+			if (c[3] > 0) layers.push(c);
+			if (c[3] >= 1) break;
+		}
+		return layers
+			.reverse()
+			.reduce((below, c) => over(c, below), [255, 255, 255]);
+	};
+	const contrast = { checked: 0, unknown: 0, fail: [] };
+	const texts = new Set();
+	const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+	while (walker.nextNode() && texts.size < 800) {
+		const el = walker.currentNode.parentElement;
+		if (
+			el &&
+			walker.currentNode.textContent.trim() &&
+			!el.closest("script,style,noscript,svg")
+		)
+			texts.add(el);
+	}
+	for (const el of texts) {
+		if (!shown(el)) continue;
+		const cs = getComputedStyle(el);
+		const bg = background(el);
+		if (!bg) {
+			contrast.unknown++;
+			continue;
+		}
+		const c = rgba(cs.color);
+		const fg = over([c[0], c[1], c[2], c[3] * opacity(el)], bg);
+		const [hi, lo] = [lum(fg), lum(bg)].sort((a, b) => b - a);
+		const ratio = Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
+		const size = Number.parseFloat(cs.fontSize);
+		const large = size >= 24 || (size >= 18.66 && Number(cs.fontWeight) >= 700);
+		contrast.checked++;
+		if (ratio < (large ? 3 : 4.5))
+			contrast.fail.push({
+				el: sel(el),
+				text: el.textContent.trim().replace(/\s+/g, " ").slice(0, 30),
+				ratio,
+				need: large ? 3 : 4.5,
+				decorative: Boolean(el.closest('[aria-hidden="true"]')),
+			});
+	}
+	contrast.fail = contrast.fail.slice(0, 40);
+	const touchTargets = { checked: 0, under24: [], under44: 0 };
+	for (const el of document.querySelectorAll(
+		'a[href],button,input:not([type="hidden"]),select,textarea,summary,[role="button"],[role="link"],[role="tab"],[role="checkbox"],[role="switch"],[role="menuitem"],[tabindex]:not([tabindex="-1"])',
+	)) {
+		if (!shown(el)) continue;
+		const r = el.getBoundingClientRect();
+		touchTargets.checked++;
+		// 문장 속 링크는 WCAG 2.5.8 예외다
+		const inline =
+			el.tagName === "A" &&
+			getComputedStyle(el).display === "inline" &&
+			(el.parentElement?.textContent.length ?? 0) > el.textContent.length + 20;
+		if (inline) continue;
+		if (r.width < 44 || r.height < 44) touchTargets.under44++;
+		if (r.width < 24 || r.height < 24)
+			touchTargets.under24.push({
+				el: sel(el),
+				w: Math.round(r.width),
+				h: Math.round(r.height),
+			});
+	}
+	touchTargets.under24 = touchTargets.under24.slice(0, 40);
+	const scrollWidth = document.documentElement.scrollWidth;
+	const culprits = [];
+	for (const el of document.querySelectorAll("body *")) {
+		if (culprits.length >= 10) break;
+		const r = el.getBoundingClientRect();
+		if (r.width > 0 && r.right > innerWidth + 1 && shown(el))
+			culprits.push(`${sel(el)} right=${Math.round(r.right)}`);
+	}
+	return {
+		theme: document.documentElement.classList.contains("dark")
+			? "dark"
+			: "light",
+		overflow: {
+			innerWidth,
+			scrollWidth,
+			over: scrollWidth > innerWidth + 1,
+			culprits,
+		},
+		touchTargets,
+		contrast,
+	};
+}
+function focusStep() {
+	const el = document.activeElement;
+	if (!el || el === document.body) return { el: "body" };
+	const cs = getComputedStyle(el);
+	return {
+		el: `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ""}`,
+		name: (
+			el.getAttribute("aria-label") ||
+			el.textContent ||
+			el.getAttribute("placeholder") ||
+			""
+		)
+			.trim()
+			.replace(/\s+/g, " ")
+			.slice(0, 40),
+		ring:
+			(cs.outlineStyle !== "none" && Number.parseFloat(cs.outlineWidth) > 0) ||
+			cs.boxShadow !== "none",
+	};
+}
+const evalArg = (fn) =>
+	`eval -b ${Buffer.from(`(${fn})()`).toString("base64")}`;
+
+export async function capturePacket(root, config, url, arg, opts = {}) {
+	activeRound(root, config);
+	if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(url ?? ""))
+		throw new UsageError(
+			"사용법: dev-cycle packet capture <http://localhost:3001/경로> <tasks/evidence/ 아래 묶음 폴더> [--session 이름]",
+		);
+	const base = realpathSync(root);
+	const want = resolve(base, arg ?? "");
+	if (!want.startsWith(`${join(base, "tasks/evidence")}${sep}`))
+		throw new UsageError("묶음 폴더는 tasks/evidence/ 아래 폴더여야 한다");
+	mkdirSync(want, { recursive: true });
+	const { dir } = packetDir(root, arg);
+	// 기본 세션은 실행마다 따로 둔다(동시에 찍는 두 실행이 뷰포트를 바꾸거나 서로의 세션을 닫지 않게)
+	const session = opts.session ?? `prokit-packet-${process.pid}`;
+	const ab = (...cmds) => {
+		const r = spawnSync(
+			"agent-browser",
+			["--session", session, "--json", "batch", ...cmds],
+			{ encoding: "utf8", timeout: 120_000, maxBuffer: 64 * 1024 * 1024 },
+		);
+		if (r.error)
+			throw new UsageError(
+				`agent-browser를 실행하지 못했다: ${r.error.message}. 설치기가 전역에 설치한다(npm i -g agent-browser)`,
+			);
+		let out;
+		try {
+			out = JSON.parse(r.stdout);
+		} catch {
+			throw new UsageError(
+				`agent-browser 출력을 읽지 못했다: ${`${r.stderr}${r.stdout}`.trim().slice(0, 300)}`,
+			);
+		}
+		const bad = out.find((x) => !x.success);
+		if (bad)
+			throw new UsageError(
+				`agent-browser ${bad.command.join(" ")} 실패: ${bad.error}`,
+			);
+		return out.map((x) => x.result);
+	};
+	const logs = () => {
+		const [c, e] = ab("console", "errors");
+		return [
+			...(c?.messages ?? [])
+				.filter((m) => ["error", "warning", "warn"].includes(m.type))
+				.map((m) => `${m.type}: ${String(m.text).slice(0, 200)}`),
+			...(e?.errors ?? []).map(
+				(x) => `uncaught: ${String(x.message ?? x.text ?? x).slice(0, 200)}`,
+			),
+		];
+	};
+	// 이 명령이 띄운 세션은 끝나면 닫는다. --session으로 받은 세션(로그인해 둔 세션)은 그대로 둔다
+	try {
+		return await capturePages(root, config, url, arg, dir, ab, logs, {
+			capturedAt: new Date().toISOString(),
+			before: packetSource(root),
+		});
+	} finally {
+		if (!opts.session)
+			spawnSync("agent-browser", ["--session", session, "close"], {
+				timeout: 30_000,
+			});
+	}
+}
+async function capturePages(root, config, url, arg, dir, ab, logs, start) {
+	const viewports = [];
+	for (const w of [1440, 1024, 768, 390, 320])
+		for (const theme of ["light", "dark"]) {
+			const name = `${w}-${theme}`;
+			ab("console --clear", "errors --clear");
+			const r = ab(
+				`set viewport ${w} ${PACKET_HEIGHT[w]}`,
+				`set media ${theme}`,
+				`open ${url}`,
+				"wait 1000",
+				`screenshot ${join(dir, `${name}.png`)}`,
+				`screenshot --full ${join(dir, `${name}-full.png`)}`,
+				evalArg(pageMeasure),
+			);
+			const m = r.at(-1)?.result ?? {};
+			viewports.push({
+				name,
+				width: w,
+				height: PACKET_HEIGHT[w],
+				theme,
+				actualTheme: m.theme,
+				screenshot: `${name}.png`,
+				fullPage: `${name}-full.png`,
+				overflow: m.overflow,
+				touchTargets: m.touchTargets,
+				contrast: m.contrast,
+				console: logs(),
+			});
+		}
+	// Tab 순서: 데스크톱과 휴대폰 너비에서 처음부터 키보드로만 움직인다
+	const tabOrder = {};
+	for (const w of [1440, 390]) {
+		const r = ab(
+			`set viewport ${w} ${PACKET_HEIGHT[w]}`,
+			"set media light",
+			`open ${url}`,
+			"wait 500",
+			...Array.from({ length: PACKET_TABS }, () => [
+				"press Tab",
+				evalArg(focusStep),
+			]).flat(),
+		);
+		const steps = r.filter((x) => x && "result" in x).map((x) => x.result);
+		tabOrder[w] = {
+			steps,
+			noRing: steps.filter((s) => s.el !== "body" && !s.ring).length,
+		};
+	}
+	// 개발 서버 오류(next-dev-loop의 /_next/mcp get_errors). 응답은 SSE의 data: 줄이다
+	let nextErrors;
+	try {
+		const res = await fetch(new URL("/_next/mcp", url), {
+			method: "POST",
+			headers: {
+				"content-type": "application/json",
+				accept: "application/json, text/event-stream",
+			},
+			body: JSON.stringify({
+				jsonrpc: "2.0",
+				id: 1,
+				method: "tools/call",
+				params: { name: "get_errors", arguments: {} },
+			}),
+			signal: AbortSignal.timeout(20_000),
+		});
+		const text = await res.text();
+		const data =
+			text
+				.split("\n")
+				.find((l) => l.startsWith("data: "))
+				?.slice(6) ?? text;
+		nextErrors = JSON.parse(data).result ?? {
+			skipped: `get_errors 응답 오류: ${data.slice(0, 200)}`,
+		};
+	} catch (error) {
+		nextErrors = {
+			skipped: `/_next/mcp get_errors를 부르지 못했다: ${error.message}`,
+		};
+	}
+	writeFileSync(
+		join(dir, PACKET_MEASURE),
+		`${JSON.stringify({ url, capturedAt: start.capturedAt, viewports, tabOrder, nextErrors }, null, "\t")}\n`,
+	);
+	return sealPacket(root, config, arg, { before: start.before });
+}
+
+// 감독: 진행 중인 하위 에이전트의 이 라운드 훅 기록을 에이전트마다 요약하고, 줄일 일을 SendMessage로 보낼 문장으로 알린다
+// (delegation.md "감독"). 훅 기록은 파일 읽기, 셸 명령(시작 시각), 편집, 스크린샷 열기를 담는다. 검색 도구(Grep·Glob)와 명령의 종료 코드는 보지 못한다
+export const SUPERVISE_BUDGET_MIN = {
+	"prokit-ui-builder": 15,
+	"prokit-api-builder": 15,
+	"prokit-db-builder": 15,
+	"prokit-implementer": 15,
+	"prokit-runtime-checker": 5,
+	"prokit-reviewer": 8,
+};
+const SUPERVISE_DEFAULT_MIN = 10;
+const SUPERVISE_IDLE_MIN = 5;
+// 같은 셸 명령을 이만큼 돌리면 알린다. 종료 코드는 모르므로 "같은 오류면 멈추라"고만 한다
+const SUPERVISE_REPEAT = 3;
+function packetDirs(root, sub = "tasks/evidence") {
+	let names;
+	try {
+		names = readdirSync(join(root, sub), { withFileTypes: true });
+	} catch {
+		return [];
+	}
+	return names.flatMap((n) =>
+		n.isDirectory()
+			? packetDirs(root, `${sub}/${n.name}`)
+			: n.name === PACKET_FILE
+				? [sub]
+				: [],
+	);
+}
+export function supervise(root, config, { scope = [], now = Date.now() } = {}) {
+	const active = activeRound(root, config);
+	const log = roundLog(root, active);
+	const by = new Map();
+	const add = (kind, x) => {
+		if (!x.agentId) return;
+		const a = by.get(x.agentId) ?? {
+			id: x.agentId,
+			type: x.agentType,
+			first: x.t,
+			last: x.t,
+			reads: [],
+			edits: [],
+			shots: [],
+			acts: [],
+		};
+		a.first = Math.min(a.first, x.t);
+		a.last = Math.max(a.last, x.t);
+		a[kind].push(x);
+		by.set(x.agentId, a);
+	};
+	for (const u of log?.agentUses ?? []) add("reads", u);
+	for (const e of log?.edits ?? []) if (!e.main) add("edits", e);
+	for (const s of log?.shots ?? []) add("shots", s);
+	for (const x of log?.acts ?? []) add("acts", x);
+	const packets = packetDirs(root);
+	const agents = [...by.values()].map((a) => {
+		const seen = new Map();
+		for (const u of a.reads) {
+			const k = `${u.name}${u.ref ? `/${u.ref}` : ""}`;
+			seen.set(k, (seen.get(k) ?? 0) + 1);
+		}
+		const reread = [...seen]
+			.filter(([, n]) => n > 1)
+			.map(([k, n]) => `${k}×${n}`);
+		const files = [...new Set(a.edits.map((e) => e.file))];
+		const outside = scope.length
+			? files.filter((f) => !scope.some((s) => inScope(f, s)))
+			: [];
+		const loose = a.shots.filter(
+			(s) => !packets.some((d) => s.file.startsWith(`${d}/`)),
+		);
+		const runs = new Map();
+		for (const x of a.acts)
+			if (x.cmd)
+				runs.set(x.cmd, {
+					label: x.label,
+					n: (runs.get(x.cmd)?.n ?? 0) + 1,
+				});
+		const repeat = [...runs.values()]
+			.filter((r) => r.n >= SUPERVISE_REPEAT)
+			.sort((x, y) => y.n - x.n)
+			.slice(0, 3);
+		const minutes = Math.round((now - a.first) / 6000) / 10;
+		const idle = Math.round((now - a.last) / 6000) / 10;
+		const budget = SUPERVISE_BUDGET_MIN[a.type] ?? SUPERVISE_DEFAULT_MIN;
+		const signals = [];
+		if (outside.length)
+			signals.push({
+				kind: "scope",
+				say: `배정 밖 파일(${outside.slice(0, 5).join(", ")})은 고치지 말고 되돌린 뒤 이유를 보고하라`,
+			});
+		if (minutes > budget)
+			signals.push({
+				kind: "budget",
+				say: `예산 ${budget}분을 넘었다(${minutes}분). 하던 일을 멈추고 한 일·남은 일·막힌 것을 보고하라`,
+			});
+		if (reread.length)
+			signals.push({
+				kind: "reread",
+				say: `이미 읽은 스킬(${reread.slice(0, 5).join(", ")})은 다시 읽지 말고 바뀐 지시와 바뀐 파일만 읽어라`,
+			});
+		if (repeat.length)
+			signals.push({
+				kind: "repeat",
+				say: `같은 명령(${repeat.map((r) => `${r.label} ×${r.n}`).join(", ")})을 되풀이했다. 같은 오류로 실패한 것이면 더 돌리지 말고 첫 오류와 원인 추정을 보고하라`,
+			});
+		if (packets.length && loose.length >= 3)
+			signals.push({
+				kind: "packet",
+				say: `묶음(${packets.at(-1)}/${PACKET_FILE})의 스크린샷과 측정을 먼저 써라. 묶음 밖 촬영 ${loose.length}장: 묶음에 없는 상호작용만 직접 찍는다`,
+			});
+		return {
+			id: a.id,
+			type: a.type ?? "?",
+			minutes,
+			idle,
+			budget,
+			reads: a.reads.length,
+			reread,
+			edits: a.edits.length,
+			files: files.length,
+			outside,
+			shots: a.shots.length,
+			loose: loose.length,
+			shell: a.acts.filter((x) => x.cmd).length,
+			fileReads: a.acts.filter((x) => !x.cmd).length,
+			repeat: repeat.map((r) => `${r.label}×${r.n}`),
+			signals,
+		};
+	});
+	return {
+		round: active.title,
+		case: active.meta.case,
+		agents,
+		signals: agents.reduce((n, a) => n + a.signals.length, 0),
+	};
+}
+function superviseText(r) {
+	if (!r.agents.length)
+		return `감독: 라운드 ${r.case} "${r.round}" — 이 라운드에 하위 에이전트 기록이 없다(훅이 도는 호스트에서 위임한 뒤 다시 본다)`;
+	return [
+		`감독: 라운드 ${r.case} "${r.round}" — 하위 에이전트 ${r.agents.length}, 신호 ${r.signals} (훅 기록: 읽기·셸·편집·스크린샷. 검색 도구와 종료 코드는 보지 못한다)`,
+		...r.agents.flatMap((a) => [
+			`- ${a.type} ${a.id}: ${a.minutes}분째(예산 ${a.budget}분), 마지막 기록 ${a.idle}분 전${a.idle >= SUPERVISE_IDLE_MIN ? "(끝났거나 오래 걸리는 명령·검색 중)" : ""}, 스킬 읽기 ${a.reads}(다시 읽기 ${a.reread.length}), 파일 읽기 ${a.fileReads}, 셸 ${a.shell}${a.repeat.length ? `(반복 ${a.repeat.join(", ")})` : ""}, 편집 ${a.edits}(파일 ${a.files}${a.outside.length ? `, 배정 밖 ${a.outside.length}` : ""}), 스크린샷 ${a.shots}${a.loose ? `(묶음 밖 ${a.loose})` : ""}`,
+			...a.signals.map((s) => `  → SendMessage ${a.id}: ${s.say}`),
+		]),
+	].join("\n");
+}
+
+// 행 증거에 적은 묶음(`tasks/evidence/…/packet.json sha256=<값>`)은 봉인한 그대로이고 이 라운드 것이어야 한다.
+// 훅 기록이 있으면 봉인한 뒤 그 행을 처음 채우기 전까지 화면 소스를 고친 편집이 없어야 한다(낡은 묶음으로 평가하지 않는다).
+// 묶음을 쓴 행은 마감 위임 전에 채우고, 고친 뒤의 재확인은 다시 찍어 봉인한 묶음을 쓴다
+function packetProblem(root, active) {
+	const log = roundLog(root, active);
+	// 증거를 고쳐 다시 채웠으면 마지막으로 채운 때가 그 묶음을 적은 때다
+	const lastFill = new Map();
+	for (const f of log?.fills ?? []) if (f.text) lastFill.set(f.text, f.t);
+	const evidenceDir = (() => {
+		try {
+			return `${realpathSync(join(root, "tasks/evidence"))}${sep}`;
+		} catch {
+			return null;
+		}
+	})();
+	return (r) => {
+		const value = bare(r.evidence);
+		if (!value || /^(blocked|미실행|n\/a)\s*:/i.test(value)) return null;
+		const cites = [...value.matchAll(PACKET_CITE_RE)];
+		if (!cites.length)
+			return /tasks\/evidence\/\S*packet\.json/.test(value)
+				? "묶음은 경로 뒤에 sha256=<packet seal 출력의 값>을 함께 적는다"
+				: null;
+		for (const [, file, cited] of cites) {
+			let real;
+			let text;
+			try {
+				real = realpathSync(join(root, file));
+				text = readFileSync(real, "utf8");
+			} catch {
+				return `묶음이 없다: ${file}`;
+			}
+			if (!evidenceDir || !real.startsWith(evidenceDir))
+				return `묶음 ${file}이 이 프로젝트의 tasks/evidence/ 밖을 가리킨다`;
+			if (!sha256(text).startsWith(cited))
+				return `묶음 ${file}이 적은 sha256과 다르다. 봉인한 뒤 바꾸지 않는다`;
+			let packet;
+			try {
+				packet = JSON.parse(text);
+			} catch {
+				return `묶음 ${file}을 읽을 수 없다`;
+			}
+			if (!sameRound(packet, active))
+				return `묶음 ${file}은 이 라운드의 묶음이 아니다. 이번 라운드에서 다시 찍는다`;
+			const broken = packetIntegrity(dirname(real), packet);
+			if (broken.length) return `묶음 ${file}: ${broken[0]}`;
+			// 봉인은 명령이 쓴다. 편집 도구로 packet.json이나 측정을 고친 기록이 있으면 받지 않는다
+			if (
+				(log?.edits ?? []).some((e) => e.file.startsWith(`${dirname(file)}/`))
+			)
+				return `묶음 ${file}을 편집 도구로 고친 기록이 있다. pnpm dev-cycle packet capture로 다시 찍는다`;
+			// 찍기 시작한 때부터 이 행을 마지막으로 채운 때까지 화면 소스를 고친 기록이 없어야 한다
+			const shot = Date.parse(packet.capturedAt ?? packet.sealedAt);
+			const until = lastFill.get(r.text) ?? Number.POSITIVE_INFINITY;
+			const late = (log?.edits ?? []).find(
+				(e) => e.t >= shot && e.t < until && PACKET_SOURCE_RE.test(e.file),
+			);
+			if (late)
+				return `묶음 ${file}을 찍은 뒤 이 행을 채우기 전에 화면 소스(${late.file})를 고쳤다. 고친 화면으로 다시 찍고 봉인한 묶음을 적는다(묶음을 쓴 행은 마감 위임 전에 채운다)`;
+		}
+		return null;
+	};
+}
+
+// 앞 행 결과가 필요 없어 함께 시작할 수 있는 행 묶음(execution-efficiency.md "병렬 행 묶음").
+// audit은 채운 순서가 아니라 표 순서와 위임 기록으로 보므로 묶음 안의 행은 어느 순서로 채워도 받는다
+export const PARALLEL_GROUPS = [
+	{
+		when: "구현 행을 채운 뒤",
+		rows: ["[verify] 타입·린트·빌드", "[verify] next-dev-loop"],
+	},
+	{
+		when: "검증 증거 묶음을 봉인한 뒤(pnpm dev-cycle packet capture가 찍고 봉인한다). web-design-guidelines 코드 검사는 묶음 없이 먼저 시작해도 된다",
+		rows: [
+			"[verify] 휴대폰 스크롤",
+			"[review] 디자인 리뷰",
+			"[review] 디자인 감사",
+		],
+	},
+	{
+		when: "마감 행을 채운 뒤",
+		rows: ["[verify] 재확인", "[review] prokit-reviewer(code)"],
+	},
+];
+export function parallelRows(rows) {
+	return PARALLEL_GROUPS.map((g) => ({
+		when: g.when,
+		rows: rows
+			.map((r, i) => [i + 1, r])
+			.filter(([, r]) => g.rows.some((p) => r.text.startsWith(p)))
+			.map(([n]) => n),
+	})).filter((g) => g.rows.length > 1);
+}
+function parallelGuide(root, config) {
+	const md = readTodo(root, config);
+	const active = md && parseActive(md);
+	const groups = active ? parallelRows(active.rows) : [];
+	return groups.length
+		? `\n함께 시작할 수 있는 행(서로의 결과가 필요 없다. 채운 순서는 audit과 상관없다):\n${groups.map((g) => `  ${g.rows.map((n) => `#${n}`).join(" ")} — ${g.when}`).join("\n")}`
+		: "";
 }
 
 // 두뇌를 고르면 단계 행은 그 두뇌의 방법으로 한다. 증거의 `사용:` 이름이 고른 두뇌 파일에 백틱으로 적혀 있거나,
@@ -1154,9 +1938,43 @@ export function logSkill(root, input) {
 		),
 		...docs.map((doc) => JSON.stringify({ t: at, doc, ...extra })),
 	].map((l) => `${l}\n`);
-	if (!lines.length) return;
+	// 스킬·문서·증거 스크린샷이 아닌 서브에이전트의 읽기는 활동으로만 남긴다(감독이 일하는 중인지 본다).
+	// 셸은 shell-guard가 남긴다(Codex는 Bash가 이 훅에도 와서 두 번 남지 않게 읽기만 본다)
+	if (!lines.length) return read && agent ? logActivity(root, e) : undefined;
 	mkdirSync(join(root, ".prokit"), { recursive: true });
 	appendFileSync(join(root, SKILL_LOG), lines.join(""));
+}
+// 서브에이전트의 도구 호출 하나(act: 도구 이름). 셸 명령은 내용 대신 해시(cmd)와 앞 낱말(label)만 남긴다.
+// 명령에 비밀값이 들어갈 수 있어서다. audit은 이 줄을 일한 기록으로 세지 않는다(supervise만 쓴다)
+export function logActivity(root, input) {
+	const { name, t, agent, agentType } = hookCall(input, root);
+	if (!agent) return;
+	const cmd = String(t.command ?? "")
+		.trim()
+		.replace(/\s+/g, " ");
+	const words = cmd.split(" ").filter((w) => !/^\w+=/.test(w));
+	const label = cmd
+		? [
+				words[0]?.split("/").at(-1),
+				...(/^[a-z][a-z:-]{0,19}$/.test(words[1] ?? "") ? [words[1]] : []),
+			].join(" ")
+		: undefined;
+	mkdirSync(join(root, ".prokit"), { recursive: true });
+	appendFileSync(
+		join(root, SKILL_LOG),
+		`${JSON.stringify({
+			t: new Date().toISOString(),
+			act: String(name),
+			...(cmd
+				? {
+						cmd: createHash("sha256").update(cmd).digest("hex").slice(0, 16),
+						label,
+					}
+				: {}),
+			agent: String(agent),
+			...(agentType ? { agentType: String(agentType) } : {}),
+		})}\n`,
+	);
 }
 // edit-guard가 허락한 편집: 고친 파일(프로젝트 상대 경로)과 고친 쪽(서브에이전트면 agentType)을 남긴다.
 // shortcut: PreToolUse에서 남기므로 다른 훅이나 사용자가 그 편집을 거절해도 남는다. 일한 기록 대조에만 쓴다
@@ -1193,9 +2011,24 @@ function skillLog(root, active) {
 		: null;
 }
 // 이 라운드 기록 전부(훅 기록 없이 행을 채운 시각만 있어도). 기록 파일이 없으면 null
+// 한 명령 안에서 여러 검사가 같은 기록을 읽는다. 기록은 덧붙이기만 하므로 크기·수정 시각·라운드가 같으면 파싱한 결과를 다시 쓴다
+const roundLogCache = new Map();
 function roundLog(root, active) {
 	const p = join(root, SKILL_LOG);
-	if (!existsSync(p)) return null;
+	let st;
+	try {
+		st = statSync(p);
+	} catch {
+		return null;
+	}
+	const key = `${active?.meta.opened}\0${st.ino}\0${st.size}\0${st.mtimeMs}`;
+	const hit = roundLogCache.get(p);
+	if (hit?.key === key) return hit.log;
+	const log = parseRoundLog(p, active);
+	roundLogCache.set(p, { key, log });
+	return log;
+}
+function parseRoundLog(p, active) {
 	const since = Date.parse(
 		`${active?.meta.opened ?? "1970-01-01"}T00:00:00+09:00`,
 	);
@@ -1204,6 +2037,7 @@ function roundLog(root, active) {
 	let fills = [];
 	let edits = [];
 	let shots = [];
+	let acts = [];
 	for (const line of readFileSync(p, "utf8").split("\n")) {
 		try {
 			const e = JSON.parse(line);
@@ -1214,8 +2048,24 @@ function roundLog(root, active) {
 				fills = [];
 				edits = [];
 				shots = [];
+				acts = [];
 			} else if (t >= since) {
-				if ("shot" in e) shots.push({ t, file: e.shot });
+				if ("act" in e)
+					acts.push({
+						t,
+						tool: e.act,
+						cmd: e.cmd,
+						label: e.label,
+						agentId: e.agent,
+						agentType: e.agentType,
+					});
+				else if ("shot" in e)
+					shots.push({
+						t,
+						file: e.shot,
+						agentId: e.agent,
+						agentType: e.agentType,
+					});
 				else if ("row" in e) {
 					if (!e.agent) fills.push({ t, row: e.row, text: e.text });
 				} else if ("edit" in e)
@@ -1249,7 +2099,7 @@ function roundLog(root, active) {
 			}
 		} catch {}
 	}
-	return { uses, agentUses, fills, edits, shots };
+	return { uses, agentUses, fills, edits, shots, acts };
 }
 function skillsLogged(root, active) {
 	const log = skillLog(root, active);
@@ -1425,7 +2275,7 @@ function rowNamedSkills(text) {
 // 이 라운드의 기록이 있으면 `사용:`의 스킬(프로젝트 스킬이나 플러그인 접두어)·괄호에 적은 그 스킬의 참조 파일·적은 Next 문서를
 // 읽은 기록이 있어야 하고, 행 문구의 스킬은 앞 행(다른 행)을 처음 채운 뒤 읽은 기록이어야 한다("그 행을 할 때 부른다").
 // 공식 스킬은 프로젝트 판을 읽은 기록만, performers.skills의 스킬은 맡은 에이전트가 읽은 기록만 센다. 상위 스킬(parent)도 같은 쪽이 읽어야 한다.
-function usageProblem(root, config, active) {
+function usageProblem(root, config, active, files = roundFiles(root, active)) {
 	const log = skillLog(root, active);
 	const all = log
 		? [
@@ -1441,7 +2291,7 @@ function usageProblem(root, config, active) {
 		skills: skillAgents,
 		plugins,
 	} = perf;
-	const { layers, auth } = classify(roundFiles(root, active), config);
+	const { layers, auth } = classify(files, config);
 	const uiMain = mainUiSkill(
 		config,
 		readJson(join(root, "skills.manifest.json"))?.uiSkills,
@@ -1606,14 +2456,20 @@ function usageProblem(root, config, active) {
 			active.rows.find((y, i) =>
 				x.text ? y.text === x.text : i + 1 === x.row,
 			);
-		// 표에서 이 행보다 앞에 있는 행만 기준이 된다(뒤 행을 먼저 채워도 이 행의 기준이 바뀌지 않는다)
+		// 표에서 이 행보다 앞에 있는 행만 기준이 된다(뒤 행을 먼저 채워도 이 행의 기준이 바뀌지 않는다).
+		// 같은 병렬 묶음의 행은 함께 시작한 짝이라 앞 행으로 보지 않는다(재확인을 코드 리뷰보다 먼저 채워도 된다)
+		const sibling = new Set(
+			parallelRows(active.rows)
+				.filter((g) => g.rows.includes(row))
+				.flatMap((g) => g.rows),
+		);
 		const before =
 			mine === undefined
 				? []
-				: first.filter(
-						(x) =>
-							!own(x) && x.t < mine && active.rows.indexOf(rowOf(x)) + 1 < row,
-					);
+				: first.filter((x) => {
+						const n = active.rows.indexOf(rowOf(x)) + 1;
+						return !own(x) && x.t < mine && n < row && !sibling.has(n);
+					});
 		// 호스트가 Main과 서브에이전트를 구별한 기록(seen)이 있는 라운드는 위임한 에이전트가 이 행을 하며 일했는지 본다.
 		// 같은 에이전트에 맡긴 앞 행이 있으면, 표에서 그 행보다 뒤에 있는 다른 행을 처음 채운 뒤의 기록(스킬 읽기나 편집)이어야 한다.
 		// 한 번 맡겨 이어진 행 여럿을 채운 것은 센다. 같은 에이전트에 맡긴 앞 행이 없으면 그 에이전트의 일은 이 행의 일이다
@@ -1886,15 +2742,17 @@ function addonProblem(root, config, active) {
 }
 
 // audit과 status가 같은 판정을 쓴다. 진행 계획 라운드의 확인 행은 지문까지 본다.
-const roundRowProblem = (root, config, active) => {
+const roundRowProblem = (root, config, active, files) => {
 	const planRound = isPlanRound(active);
 	const brain = brainProblem(root, config, active);
 	const simplicity = simplicityProblem(root, config, active);
-	const usage = usageProblem(root, config, active);
+	const usage = usageProblem(root, config, active, files);
 	const addon = addonProblem(root, config, active);
+	const packet = packetProblem(root, active);
 	return (r) =>
 		rowProblem(r) ??
 		uiRecordProblem(root, active.meta, r) ??
+		packet(r) ??
 		brain(r) ??
 		simplicity(r) ??
 		usage(r) ??
@@ -2515,7 +3373,9 @@ export function audit(
 		};
 	const problems = [];
 	const planRound = isPlanRound(active);
-	const problemOf = roundRowProblem(root, config, active);
+	// 라운드 파일 목록(git diff·ls-files)은 행 검사와 케이스 판정이 함께 쓴다
+	const files = roundFiles(root, active);
+	const problemOf = roundRowProblem(root, config, active, files);
 	active.rows.forEach((r, i) => {
 		const p = problemOf(r);
 		if (p)
@@ -2524,7 +3384,6 @@ export function audit(
 			);
 	});
 	const X = active.meta.case;
-	const files = roundFiles(root, active);
 	const cls = classify(files, config);
 	const warnings = [
 		...shellEdits(root, config, active, files),
@@ -2939,7 +3798,18 @@ function statusOfRound(root, config) {
 	const next = active.rows.find(problemOf)?.text ?? null;
 	const cover =
 		next && brainStageSkills(root, brainsOf(config), next, active.rows);
-	const line = `라운드 ${active.meta.case}${active.meta.task ? `(${active.meta.task})` : active.meta.notask === "true" ? "(--no-task)" : ""} "${active.title}" — ${filled}/${active.rows.length}칸 — 다음: ${next ?? "audit 후 close"}${next && isConfirm(next) && isPlanRound(active) ? ` — ${PLAN_CONFIRM_NOTE}` : ""}${cover ? ` — 이 행은 두뇌 ${cover.brain}의 ${cover.names.join(", ")}를 먼저 불러서 한다` : ""}`;
+	// 다음 행이 병렬 묶음에 들면 아직 채우지 않은 같은 묶음의 행을 함께 알린다
+	const group = parallelRows(active.rows)
+		.map((g) => ({
+			...g,
+			rows: g.rows.filter((n) => problemOf(active.rows[n - 1])),
+		}))
+		.find(
+			(g) =>
+				g.rows.length > 1 &&
+				g.rows.includes(active.rows.findIndex((r) => r.text === next) + 1),
+		);
+	const line = `라운드 ${active.meta.case}${active.meta.task ? `(${active.meta.task})` : active.meta.notask === "true" ? "(--no-task)" : ""} "${active.title}" — ${filled}/${active.rows.length}칸 — 다음: ${next ?? "audit 후 close"}${next && isConfirm(next) && isPlanRound(active) ? ` — ${PLAN_CONFIRM_NOTE}` : ""}${cover ? ` — 이 행은 두뇌 ${cover.brain}의 ${cover.names.join(", ")}를 먼저 불러서 한다` : ""}${group ? ` — 함께 시작할 수 있는 행: ${group.rows.map((n) => `#${n}`).join(" ")}(${group.when})` : ""}`;
 	return {
 		active: true,
 		case: active.meta.case,
@@ -4517,6 +5387,7 @@ export function main(argv, root = process.cwd()) {
 			input = JSON.parse(readFileSync(0, "utf8"));
 			why = shellGuard(input);
 			why ??= shellGuard(input, hookRoot, loadConfig(hookRoot));
+			if (!why) logActivity(hookRoot, input);
 		} catch {}
 		if (why) console.error(why);
 		return why ? 2 : 0;
@@ -4556,7 +5427,7 @@ export function main(argv, root = process.cwd()) {
 				noTask: rest.includes("--no-task"),
 			});
 			const text = rest.includes("--write")
-				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}${stageGuide(root, config)}${reviewGuide(root, config)}${formatGuide(config)}`
+				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}${stageGuide(root, config)}${parallelGuide(root, config)}${reviewGuide(root, config)}${formatGuide(config)}`
 				: r.block;
 			print(r, r.warning ? `${text}\n${r.warning}` : text);
 			return 0;
@@ -4585,6 +5456,68 @@ export function main(argv, root = process.cwd()) {
 					...first.map((p) => `먼저 할 일: ${p}`),
 				].join("\n"),
 			);
+			return 0;
+		}
+		case "packet": {
+			const sessionAt = rest.indexOf("--session");
+			const [sub, ...args] = rest.filter(
+				(a, i) =>
+					a !== "--json" &&
+					(sessionAt < 0 || (i !== sessionAt && i !== sessionAt + 1)),
+			);
+			const dir = sub === "capture" ? args[1] : args[0];
+			if (
+				!["capture", "seal", "check"].includes(sub) ||
+				!dir ||
+				args.length !== (sub === "capture" ? 2 : 1) ||
+				(sessionAt >= 0 && !/^[\w-]+$/.test(rest[sessionAt + 1] ?? ""))
+			)
+				throw new UsageError(
+					"사용법: dev-cycle packet capture <http://localhost:3001/경로> <묶음 폴더> [--session 이름] | packet seal|check <묶음 폴더> [--json] (묶음 폴더는 tasks/evidence/ 아래)",
+				);
+			// 봉인 출력: 증거에 옮길 경로·hash, 표준에서 빠진 뷰포트, 재지 못한 검사
+			const sealed = (r) => {
+				const gap = [
+					r.coverage.missing.length &&
+						`표준에서 빠진 뷰포트: ${r.coverage.missing.join(", ")}`,
+					Object.keys(r.coverage.skipped).length &&
+						`재지 못한 검사: ${Object.entries(r.coverage.skipped)
+							.map(([k, v]) => `${k}(${v})`)
+							.join(", ")}`,
+				].filter(Boolean);
+				print(r, [`packet: ${r.path} sha256=${r.sha256}`, ...gap].join("\n"));
+				return 0;
+			};
+			if (sub === "capture")
+				return capturePacket(root, config, args[0], dir, {
+					session: sessionAt >= 0 ? rest[sessionAt + 1] : undefined,
+				}).then(sealed);
+			if (sub === "seal") return sealed(sealPacket(root, config, dir));
+			const r = checkPacket(root, config, dir);
+			print(
+				r,
+				r.ok
+					? `fresh: ${r.path} sha256=${r.sha256}`
+					: [`stale: ${r.path}`, ...r.problems.map((p) => `  ${p}`)].join("\n"),
+			);
+			return r.ok ? 0 : 1;
+		}
+		case "supervise": {
+			const scope = rest.flatMap((a, i) =>
+				rest[i - 1] === "--scope" ? [a] : [],
+			);
+			if (
+				rest.some(
+					(a, i) =>
+						a !== "--json" && a !== "--scope" && rest[i - 1] !== "--scope",
+				) ||
+				scope.length !== rest.filter((a) => a === "--scope").length
+			)
+				throw new UsageError(
+					"사용법: dev-cycle supervise [--scope <배정 경로>]... [--json]",
+				);
+			const r = supervise(root, config, { scope });
+			print(r, superviseText(r));
 			return 0;
 		}
 		case "status": {

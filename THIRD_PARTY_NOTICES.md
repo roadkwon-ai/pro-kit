@@ -45,6 +45,7 @@
 | andrej-karpathy-skills(과설계 방지 karpathy) | 저장소에 LICENSE 파일이 없다. README·`plugin.json`·`SKILL.md`에 MIT 표기만 있다. 표준 라이선스로 확정하지 않는다 | [확인 판 plugin.json](https://github.com/multica-ai/andrej-karpathy-skills/blob/2c606141936f1eeef17fa3043a72095b4765b9c2/.claude-plugin/plugin.json) |
 | i-have-adhd(선택 묶음) | MIT | [확인 판 LICENSE](https://github.com/ayghri/i-have-adhd/blob/1ecea1993b7fce257ffbd686c070948b5e07eda6/LICENSE) |
 | taste-skill(선택 묶음 taste) | MIT | [확인 판 LICENSE](https://github.com/Leonxlnx/taste-skill/blob/63aba5f43b5056758b15bbe7d683da8c86a7a7ad/LICENSE) |
+| UI SDK(선택 묶음 ui-sdk) | Apache 2.0. 베타라 Vercel 베타 약관을 함께 따른다 | [확인 판 LICENSE](https://github.com/vercel-labs/ui/blob/3647512865fe0242b749dd8981c51c75ad5f486b/LICENSE) |
 | Anthropic frontend-design(UI 스킬 none: 기본 AI가 참고) | 해당 skill 경로의 Apache 2.0 | [확인 판 LICENSE](https://github.com/anthropics/skills/blob/41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f/skills/frontend-design/LICENSE.txt). 저장소 전체나 다른 스킬의 조건을 일괄 판정하지 않음 |
 | hallmark(UI 스킬 hallmark) | MIT. 사진 목록(`photos.json`)은 위키미디어 공용 이미지 주소만 담고 그림 파일은 없다. 사진마다 그 사진의 조건을 따른다 | [확인 판 LICENSE](https://github.com/Nutlope/hallmark/blob/4f6a46c6dc325d40ab268c93e25c7b96676ebccd/LICENSE) |
 | landing-page-design(화면 디자인 보조 landing) | MIT | [확인 판 LICENSE](https://github.com/elayadesign/ai-design-skills/blob/456d9e0d3e2d84c748bb143c6ca3d90c45e16213/LICENSE) |
@@ -87,6 +88,7 @@
 - [supabase/agent-skills](https://github.com/supabase/agent-skills)
 - [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser)
 - [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills)
+- [vercel-labs/ui](https://github.com/vercel-labs/ui)
 - [vercel/next.js](https://github.com/vercel/next.js)
 - [vercel/turborepo](https://github.com/vercel/turborepo)
 - [vercel/vercel-plugin](https://github.com/vercel/vercel-plugin)

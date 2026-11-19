@@ -92,7 +92,7 @@ flowchart TB
 <summary>케이스별 행 전체 보기</summary>
 
 - **A. 경미**: 타입·린트 검사.
-- **B. UI**: 디자인 맥락 확인과 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 주 UI 스킬의 기획 단계, `DESIGN.md`가 없고 Better-T-Stack 기본 화면뿐이면 스타일 1\~3위와 직접 정하기 중 사용자 선택) → 화면 브리프 확정 → `[design]` 재사용·설정 설계 점검 → 구현 → 타입·린트·빌드 → 런타임 확인과 desktop·mobile 스크린샷(오류 예산) → 휴대폰 스크롤 측정(스크롤 모션이나 긴 쪽을 바꿨을 때) → 디자인 리뷰 → 디자인 감사와 web-design-guidelines 검사 → 수정과 다듬기 → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
+- **B. UI**: 디자인 맥락 확인과 `PRODUCT.md`·`DESIGN.md` 확인(`PRODUCT.md`가 없으면 주 UI 스킬의 기획 단계, `DESIGN.md`가 없고 Better-T-Stack 기본 화면뿐이면 스타일 1\~3위와 직접 정하기 중 사용자 선택) → 화면 브리프 확정 → `[design]` 재사용·설정 설계 점검 → 구현 → 타입·린트·빌드 → 런타임 확인과 검증 증거 묶음(`pnpm dev-cycle packet capture`로 표준 뷰포트·라이트·다크 스크린샷과 측정을 한 번 찍어요. 오류 예산) → 휴대폰 스크롤 측정(스크롤 모션이나 긴 쪽을 바꿨을 때) → 디자인 리뷰 → 디자인 감사와 web-design-guidelines 검사 → 수정과 다듬기 → 재확인 → `prokit-reviewer(code)` → `DESIGN.md` 갱신 여부.
   - 기존 프로젝트(`early`·`operating`·`migration`)는 첫 화면 작업에서 스타일을 고르기 전에 디자인 방향을 먼저 물어요(`기존 디자인 유지 (추천)` 또는 `리디자인`). <!-- edition:pro -->
   - 디자인 행(맥락, 브리프, 리뷰, 감사, 다듬기, `DESIGN.md` 갱신)은 주 UI 스킬(`.dev-cycle.json`의 `uiSkill`, 첫 값)의 해당 단계예요. 기록이 없으면 `impeccable`이에요.
   - 디자인 리뷰 행의 증거에는 impeccable이 남긴 `.impeccable/critique/<시각>__<대상>.md` 경로와 그 파일 머리의 점수를 적어요. 기록 파일을 남기지 않는 UI 스킬(hallmark)은 결과를 `tasks/evidence/ui-review-<시각>.md`로 저장하고 그 경로와 결과(sloplint `N FAIL`)를 적어요. 디자인 감사 행(web-design-guidelines 검사 포함)은 보고서를 `tasks/evidence/ui-audit-<시각>.md`로 저장하고 그 경로와 결과를 적어요. 결과는 impeccable이 총점(N/20), hallmark가 sloplint `N FAIL`, UI 스킬이 없으면 `web-design-guidelines 위반 N`이에요. 파일은 모두 이번 라운드에 쓴 것이어야 해요([증거와 audit, 사용자 확인](audit-and-confirm.md)).

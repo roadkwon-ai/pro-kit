@@ -28,14 +28,14 @@
 - 디자인 맥락 확인, PRODUCT.md·DESIGN.md 확인 (주 UI 스킬의 맥락 단계. 새 작업이면: PRODUCT.md가 없을 때 기획 단계, <!-- edition:pro -->기존 프로젝트면 prokit-ui 2번의 디자인 방향(기존 디자인 근거가 있을 때만 한 번 묻고, 유지면 기존 디자인으로 DESIGN.md 작성), <!-- /edition -->DESIGN.md가 없고 Better-T-Stack 기본 화면뿐이거나 리디자인이면 디자인 카탈로그 스타일 1~3위와 직접 정하기 중 사용자 선택. 카탈로그는 use-design-md로 받고, 직접 정하면 마감에서 기록) → 출력 요약, <!-- edition:pro -->디자인 방향(기존 프로젝트), <!-- /edition -->고른 스타일, DESIGN.md lint 결과
 - 화면 브리프 확정 (주 UI 스킬의 설계 단계. 설치한 화면 디자인 보조는 guide를 읽고 이 화면에 쓰는 것을 브리프 `보조:` 줄에 적는다. 좁은 개선이면 N/A: 사유) → 브리프 경로
 - [design] 재사용·설정 설계 점검 (prokit-dev-cycle의 references/reuse-design.md와 해당 공식 스킬) → 기존: 경로·소비자; 결정: 재사용·분리; 설정: 환경 변수·설정 영향; 검증: 회귀 검사
-- 구현 (구현 단계, prokit-ui<!-- edition:pro -->, prokit-web<!-- /edition -->, 컴포넌트 조합·추가는 shadcn, 컴포넌트·훅 작성은 vercel-react-best-practices. prokit-ui-builder에 위임하고 공식 스킬은 그 에이전트가 읽는다. 브리프 `보조:` 줄의 보조 스킬은 guide의 개발 단계대로 SKILL.md 경로를 위임 지시에 넣는다) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 변경 파일 요약, 사용한 스킬
+- 구현 (구현 단계, prokit-ui<!-- edition:pro -->, prokit-web<!-- /edition -->, 컴포넌트 조합·추가는 shadcn, 컴포넌트·훅 작성은 vercel-react-best-practices. prokit-ui-builder에 위임하고 공식 스킬은 그 에이전트가 읽는다. 위임 지시에 prokit-ui의 references/build-floor.md(구현 전 바닥선)를 넣고 보고에 항목별 결과를 받는다. 큰 화면은 위임 프로토콜의 나누기 기준으로 나눈다. 브리프 `보조:` 줄의 보조 스킬은 guide의 개발 단계대로 SKILL.md 경로를 위임 지시에 넣는다) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 변경 파일 요약, 사용한 스킬, 바닥선 확인 수
 - [verify] 타입·린트·빌드 → 명령과 결과
-- [verify] next-dev-loop 런타임 확인과 ego-browser(없으면 agent-browser)로 desktop·mobile 스크린샷 (prokit-runtime-checker에 위임) → 위임: prokit-runtime-checker(사용: next-dev-loop), 확인한 경로, 오류 예산(콘솔·개발 오버레이·get_errors·서버 로그, 환경 탓도 빼지 않음) 수, tasks/evidence/ 경로
-- [verify] 휴대폰 스크롤 측정 (prokit-runtime-checker에 위임. prokit-verify의 references/browser.md "휴대폰 스크롤 측정". 스크롤 모션·긴 쪽·반복해서 다시 그리는 요소를 바꾸지 않았으면 N/A: 사유) → 위임: prokit-runtime-checker, 고치기 전·뒤의 50ms 넘는 프레임 수, 스크롤 모션 수, 레이어 수
-- [review] 디자인 리뷰 (주 UI 스킬의 리뷰 단계. 대상은 화면 경로나 주소. 결과의 꼴과 기록 위치는 prokit-ui의 references/<주 UI 스킬>-map.md. 브리프 `보조:` 줄의 보조마다 guide와 그 리뷰 칸이 가리키는 스킬 파일을 읽고 같은 보고서에 절로 더한다. 주 UI 스킬의 리뷰가 비슷한 것을 봤어도 보조를 대신하지 않고, 못 하면 `<보조> 미실행: 사유`로 적는다. guide의 결과 문구는 증거 끝에 붙인다) → 점수나 판정, 막는 지적 목록, 보조 결과, 기록 파일 경로
-- [review] 디자인 감사와 web-design-guidelines 코드 검사 (주 UI 스킬의 감사 단계는 Main이, web-design-guidelines는 prokit-reviewer(ui)가 하고 두 결과를 tasks/evidence/ui-audit-<시각>.md에 저장) → 감사 결과(꼴은 prokit-ui의 references/<주 UI 스킬>-map.md), web-design-guidelines 위반 수, 보고서 경로
-- 수정과 다듬기를 한 번에 (주 UI 스킬의 마감 단계. Main이 고칠 것을 모으고 수정은 prokit-ui-builder에 맡긴다. 고칠 것이 없으면 N/A: 사유) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 반영 내역
-- [verify] 재확인 1회 → 스크린샷 경로와 점수
+- [verify] next-dev-loop 런타임 확인과 검증 증거 묶음 (prokit-runtime-checker에 위임. pnpm dev-cycle packet capture로 표준 뷰포트·라이트·다크 스크린샷과 측정을 한 번 찍어 봉인한다. prokit-verify의 references/browser.md "검증 증거 묶음") → 위임: prokit-runtime-checker(사용: next-dev-loop, agent-browser), 확인한 경로, 오류 예산(콘솔·개발 오버레이·get_errors·서버 로그, 환경 탓도 빼지 않음) 수, 묶음 tasks/evidence/…/packet.json sha256=값
+- [verify] 휴대폰 스크롤 측정 (런타임 확인을 한 prokit-runtime-checker를 이어 써서 리뷰·감사와 함께 한다. prokit-verify의 references/browser.md "휴대폰 스크롤 측정". 스크롤 모션·긴 쪽·반복해서 다시 그리는 요소를 바꾸지 않았으면 N/A: 사유) → 위임: prokit-runtime-checker, 고치기 전·뒤의 50ms 넘는 프레임 수, 스크롤 모션 수, 레이어 수
+- [review] 디자인 리뷰 (주 UI 스킬의 리뷰 단계. 대상은 화면 경로나 주소. 평가자에게 검증 증거 묶음 경로와 hash를 주고 묶음을 먼저 읽게 한다. 브라우저는 묶음에 없는 상호작용에만 연다. 결과의 꼴과 기록 위치는 prokit-ui의 references/<주 UI 스킬>-map.md. 브리프 `보조:` 줄의 보조마다 guide와 그 리뷰 칸이 가리키는 스킬 파일을 읽고 같은 보고서에 절로 더한다. 주 UI 스킬의 리뷰가 비슷한 것을 봤어도 보조를 대신하지 않고, 못 하면 `<보조> 미실행: 사유`로 적는다. guide의 결과 문구는 증거 끝에 붙인다) → 점수나 판정, 막는 지적 목록, 보조 결과, 기록 파일 경로
+- [review] 디자인 감사와 web-design-guidelines 코드 검사 (주 UI 스킬의 감사 단계는 Main이, web-design-guidelines는 prokit-reviewer(ui)가 한다. 감사는 검증 증거 묶음의 측정을 먼저 쓰고 묶음에 없는 것만 잰다. 두 결과를 tasks/evidence/ui-audit-<시각>.md에 저장) → 감사 결과(꼴은 prokit-ui의 references/<주 UI 스킬>-map.md), web-design-guidelines 위반 수, 보고서 경로
+- 수정과 다듬기를 한 번에 (주 UI 스킬의 마감 단계. Main이 고칠 것을 모으고 수정은 구현한 prokit-ui-builder를 이어 써서 맡긴다(위임 프로토콜 "이어 쓰기"). 고칠 것이 없으면 N/A: 사유) → 위임: prokit-ui-builder(사용: 읽은 공식 스킬), 반영 내역
+- [verify] 재확인 1회 (마감 뒤 검증 증거 묶음을 다시 찍고, 리뷰·감사한 평가자를 이어 써서 그 묶음으로 본다) → 새 묶음 tasks/evidence/…/packet.json sha256=값과 점수
 - [review] prokit-reviewer(code) → verdict, max_severity, 반영·기각 내역
 - DESIGN.md 갱신 여부 (주 UI 스킬의 정본 갱신 단계. 카탈로그에서 들여온 파일은 merge와 diff 확인) → 갱신 내역과 lint 결과 또는 N/A: 사유
 

@@ -98,6 +98,7 @@
 			"next-partial-prefetching-adoption": ["prokit-ui-builder"],
 			"next-partial-prefetching-optimizer": ["prokit-ui-builder"],
 			"web-design-guidelines": ["prokit-reviewer"],
+			"ui-sdk": ["prokit-ui-builder", "prokit-reviewer"],
 			"next-dev-loop": ["prokit-runtime-checker", "prokit-ui-builder"],
 			"agent-browser": ["prokit-runtime-checker"],
 			"better-auth-best-practices": ["prokit-api-builder", "prokit-reviewer"],
@@ -160,6 +161,16 @@
 					"agents": ["claude-code", "codex"],
 					"source": "vercel-labs/agent-skills",
 					"skills": ["vercel-react-view-transitions"]
+				}
+			]
+		},
+		"ui-sdk": {
+			"description": "키보드·포커스·선택·드래그와 ARIA 행동 라이브러리 UI SDK(베타). packages/ui에 없는 상호작용(트리, 토큰 입력, 재정렬 드래그, 날짜·색 입력)과 에이전트 준비(WebMCP)",
+			"skills": [
+				{
+					"agents": ["claude-code", "codex"],
+					"source": "vercel-labs/ui",
+					"skills": ["ui-sdk"]
 				}
 			]
 		},
