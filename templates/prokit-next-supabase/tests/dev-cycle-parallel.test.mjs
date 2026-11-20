@@ -196,7 +196,7 @@ test("코드 리뷰를 마감보다 먼저 채우고 마감에서 화면을 고�
   b.set(b.code, "verdict: approve, max_severity: none, 반영 없음");
   b.edit("apps/web/src/app/page.tsx", "prokit-ui-builder", "u1");
   b.set(b.fix, "위임: prokit-ui-builder(사용: vercel-react-best-practices) → 글자 크기");
-  assert.match(b.problems(b.code).join("\n"), /코드 리뷰를 채운 뒤 마감에서 화면 소스\(apps\/web\/src\/app\/page\.tsx\)를 고쳤다/);
+  assert.match(b.problems(b.code).join("\n"), /코드 리뷰를 채운 뒤 마감에서 소스\(apps\/web\/src\/app\/page\.tsx\)를 고쳤다/);
   b.set(b.code, "verdict: approve, max_severity: none, 마감 diff 재확인");
   assert.doesNotMatch(b.problems(b.code).join("\n"), /코드 리뷰를 채운 뒤 마감에서/);
 });

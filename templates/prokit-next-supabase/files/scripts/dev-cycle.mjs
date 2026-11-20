@@ -1378,7 +1378,7 @@ function lateReviewProblem(root, active) {
 			(e) => e.t > at && e.t <= done && PACKET_SOURCE_RE.test(e.file),
 		);
 		return late
-			? `코드 리뷰를 채운 뒤 마감에서 화면 소스(${late.file})를 고쳤다. 코드 리뷰는 마감 행을 채운 뒤에 한다. 같은 리뷰어를 이어 써서(SendMessage) 마감 diff를 다시 보게 하고 이 행을 다시 채운다`
+			? `코드 리뷰를 채운 뒤 마감에서 소스(${late.file})를 고쳤다. 코드 리뷰는 마감 행을 채운 뒤에 한다. 같은 리뷰어를 이어 써서(SendMessage) 마감 diff를 다시 보게 하고 이 행을 다시 채운다`
 			: null;
 	};
 }
