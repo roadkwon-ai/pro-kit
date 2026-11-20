@@ -873,7 +873,7 @@ function pageMeasure() {
 			.reverse()
 			.reduce((below, c) => over(c, below), [255, 255, 255]);
 	};
-	const contrast = { checked: 0, unknown: 0, fail: [] };
+	const contrast = { checked: 0, unknown: 0, hidden: 0, fail: [] };
 	const texts = new Set();
 	const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 	while (walker.nextNode() && texts.size < 800) {
@@ -894,7 +894,13 @@ function pageMeasure() {
 			continue;
 		}
 		const c = rgba(cs.color);
-		const fg = over([c[0], c[1], c[2], c[3] * opacity(el)], bg);
+		const alpha = c[3] * opacity(el);
+		// 투명한 글자(겹친 장식 층)나 나타나기 전(opacity 0)인 글자는 지금 읽히지 않는다. 대비 1로 세지 않고 따로 센다
+		if (alpha < 0.05) {
+			contrast.hidden++;
+			continue;
+		}
+		const fg = over([c[0], c[1], c[2], alpha], bg);
 		const [hi, lo] = [lum(fg), lum(bg)].sort((a, b) => b - a);
 		const ratio = Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
 		const size = Number.parseFloat(cs.fontSize);
@@ -909,7 +915,10 @@ function pageMeasure() {
 				decorative: Boolean(el.closest('[aria-hidden="true"]')),
 			});
 	}
-	contrast.fail = contrast.fail.slice(0, 40);
+	// 40건 한도를 장식(aria-hidden) 글자가 채우지 않게 실제 글자 실패를 앞에 둔다
+	contrast.fail = contrast.fail
+		.sort((a, b) => a.decorative - b.decorative)
+		.slice(0, 40);
 	const touchTargets = { checked: 0, under24: [], under44: 0 };
 	for (const el of document.querySelectorAll(
 		'a[href],button,input:not([type="hidden"]),select,textarea,summary,[role="button"],[role="link"],[role="tab"],[role="checkbox"],[role="switch"],[role="menuitem"],[tabindex]:not([tabindex="-1"])',
@@ -1346,6 +1355,31 @@ function packetProblem(root, active) {
 				return `묶음 ${file}을 찍은 뒤 이 행을 채우기 전에 화면 소스(${late.file})를 고쳤다. 고친 화면으로 다시 찍고 봉인한 묶음을 적는다(묶음을 쓴 행은 마감 위임 전에 채운다)`;
 		}
 		return null;
+	};
+}
+
+// 코드 리뷰는 마감 뒤에 한다(PARALLEL_GROUPS 셋째 묶음). 코드 리뷰를 마감보다 먼저 채우고 마감에서 화면 소스를 고쳤으면
+// 그 diff는 리뷰를 받지 않았다. 같은 리뷰어를 이어 써서 다시 보고 이 행을 다시 채우면(마지막으로 채운 때가 마감 뒤) 받는다
+function lateReviewProblem(root, active) {
+	const log = roundLog(root, active);
+	const lastFill = new Map();
+	for (const f of log?.fills ?? []) if (f.text) lastFill.set(f.text, f.t);
+	const finish = active.rows.find((x) =>
+		x.text.startsWith("수정과 다듬기를 한 번에"),
+	);
+	const done = finish && lastFill.get(finish.text);
+	return (r) => {
+		if (!done || !r.text.startsWith("[review] prokit-reviewer(code)"))
+			return null;
+		if (/^(blocked|미실행|n\/a)\s*:/i.test(bare(r.evidence))) return null;
+		const at = lastFill.get(r.text);
+		if (at === undefined || at >= done) return null;
+		const late = (log?.edits ?? []).find(
+			(e) => e.t > at && e.t <= done && PACKET_SOURCE_RE.test(e.file),
+		);
+		return late
+			? `코드 리뷰를 채운 뒤 마감에서 화면 소스(${late.file})를 고쳤다. 코드 리뷰는 마감 행을 채운 뒤에 한다. 같은 리뷰어를 이어 써서(SendMessage) 마감 diff를 다시 보게 하고 이 행을 다시 채운다`
+			: null;
 	};
 }
 
@@ -2900,6 +2934,7 @@ const roundRowProblem = (root, config, active, files) => {
 	const usage = usageProblem(root, config, active, files);
 	const addon = addonProblem(root, config, active);
 	const packet = packetProblem(root, active);
+	const lateReview = lateReviewProblem(root, active);
 	const copy = copyOnlyProblem(root, active, files);
 	// 두뇌·과설계 방지·사용: 표기는 한 번에 모두 알린다(하나씩 알리면 증거를 여러 번 다시 쓴다)
 	const skillProblems = (r) => {
@@ -2913,6 +2948,7 @@ const roundRowProblem = (root, config, active, files) => {
 		copy(r) ??
 		uiRecordProblem(root, active.meta, r) ??
 		packet(r) ??
+		lateReview(r) ??
 		skillProblems(r) ??
 		addon(r) ??
 		(planRound && isConfirm(r.text)

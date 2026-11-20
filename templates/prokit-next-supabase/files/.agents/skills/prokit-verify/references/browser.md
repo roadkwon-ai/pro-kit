@@ -23,11 +23,12 @@ pnpm dev-cycle packet capture http://localhost:3001/<경로> tasks/evidence/<라
 #   pnpm dev-cycle packet capture http://localhost:3001/<경로> tasks/evidence/<라운드 제목>/packet-1 --session prokit-login
 ```
 
-- agent-browser(깨끗한 프로필)로 1440·1024·768·390·320 너비와 라이트·다크마다 첫 화면(`<너비>-<테마>.png`)과 전체 쪽(`-full.png`)을 찍는다. 같은 화면에서 가로 넘침과 원인 요소, 터치 영역(24px 미만 목록, 44px 미만 수), 글자 대비(WCAG AA 실패 목록과 잴 수 없는 수: 그림·그라데이션·흐림 위 글자), 콘솔 오류·경고와 잡히지 않은 오류를 잰다. 1440·390에서는 처음부터 Tab을 30번 눌러 포커스 순서와 포커스 표시가 없는 수를, 끝으로 `/_next/mcp`의 `get_errors`를 남긴다. 결과는 `measure.json`이고 명령이 바로 봉인한다.
+- agent-browser(깨끗한 프로필)로 1440·1024·768·390·320 너비와 라이트·다크마다 첫 화면(`<너비>-<테마>.png`)과 전체 쪽(`-full.png`)을 찍는다. 같은 화면에서 가로 넘침과 원인 요소, 터치 영역(24px 미만 목록, 44px 미만 수), 글자 대비(WCAG AA 실패 목록, 잴 수 없는 수: 그림·그라데이션·흐림 위 글자, 안 보이는 수 `hidden`: 투명하거나 나타나기 전인 글자), 콘솔 오류·경고와 잡히지 않은 오류를 잰다. 1440·390에서는 처음부터 Tab을 30번 눌러 포커스 순서와 포커스 표시가 없는 수를, 끝으로 `/_next/mcp`의 `get_errors`를 남긴다. 결과는 `measure.json`이고 명령이 바로 봉인한다.
 - 출력 `packet: <경로> sha256=<값>`을 보고와 증거에 그대로 옮긴다. `표준에서 빠진 뷰포트`·`재지 못한 검사` 줄이 나오면 함께 보고한다.
 - 한 묶음은 16\~20초 걸린다(Better-T-Stack 기본 화면 실측). 띄운 세션은 끝나면 닫는다. `--session`으로 준 세션은 닫지 않는다.
 - 찍은 뒤 `measure.json`에서 결함 후보(가로 넘침 `over: true`, `contrast.fail`, `touchTargets.under24`, `console`, `tabOrder.noRing`, `get_errors`의 오류)을 오류 예산과 함께 보고한다. 데스크톱과 휴대폰 너비의 스크린샷은 이미지로 열어 기대한 상태인지 본다. 연 것만 증거에 적는다(아래 audit 경고). 개발 전용 요소(Next 개발 표시 `nextjs-portal`, TanStack Query devtools 버튼)는 결함으로 세지 않는다.
 - 측정은 Chromium 흉내라 Safari 차이와 hover·메뉴·폼 입력·애니메이션 중간 상태는 담지 않는다. 그것은 평가자가 필요할 때 브라우저로 직접 본다.
+- 묶음 밖에서 너비를 정해 볼 때는 너비와 높이를 따로 넘긴다: `agent-browser set viewport 390 844`. `"390 844"`처럼 따옴표로 하나로 묶으면 기본 너비로 열린다. 재기 전에 `agent-browser eval 'innerWidth'`가 그 너비인지 본다. critique B처럼 평가자가 직접 브라우저를 열 때도 위임 지시에 이 두 줄을 넣는다.
 - agent-browser가 없으면 명령이 exit 2로 알린다. 설치는 사용자가 요청할 때 한다. 그동안은 아래 ego-browser 촬영으로 desktop·mobile만 찍고, 증거에 `묶음 없음: agent-browser 없음`을 적는다. 다른 도구로 같은 꼴의 `measure.json`과 스크린샷을 만들었으면 `pnpm dev-cycle packet seal <폴더>`로 봉인한다(재지 못한 칸은 `{"skipped": "사유"}`).
 - 평가 쪽은 쓰기 전에 `pnpm dev-cycle packet check <폴더>`로 `fresh`인지 본다. 봉인 뒤 화면 소스가 바뀌었으면 `stale`(exit 1)이다.
 

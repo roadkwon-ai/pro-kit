@@ -191,6 +191,16 @@ test("묶음 인용의 빈틈: 다시 채운 행은 마지막으로 채운 때�
   assert.ok(sealed.coverage.missing.includes("1440-dark"));
 });
 
+test("코드 리뷰를 마감보다 먼저 채우고 마감에서 화면을 고치면 받지 않고, 리뷰어가 다시 본 뒤 다시 채우면 받는다", () => {
+  const b = round();
+  b.set(b.code, "verdict: approve, max_severity: none, 반영 없음");
+  b.edit("apps/web/src/app/page.tsx", "prokit-ui-builder", "u1");
+  b.set(b.fix, "위임: prokit-ui-builder(사용: vercel-react-best-practices) → 글자 크기");
+  assert.match(b.problems(b.code).join("\n"), /코드 리뷰를 채운 뒤 마감에서 화면 소스\(apps\/web\/src\/app\/page\.tsx\)를 고쳤다/);
+  b.set(b.code, "verdict: approve, max_severity: none, 마감 diff 재확인");
+  assert.doesNotMatch(b.problems(b.code).join("\n"), /코드 리뷰를 채운 뒤 마감에서/);
+});
+
 test("같은 병렬 묶음의 행은 서로 앞 행이 아니다: 재확인을 코드 리뷰보다 먼저 채워도, 마감 뒤 함께 시작한 리뷰어의 일을 센다", () => {
   const b = round();
   b.read("vercel-react-best-practices", "prokit-ui-builder", "u1");
