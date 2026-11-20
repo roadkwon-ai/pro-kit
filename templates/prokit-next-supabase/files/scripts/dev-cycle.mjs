@@ -3417,10 +3417,11 @@ export function setEvidence(root, config, row, evidenceFile) {
 		throw new UsageError(`증거 파일을 읽을 수 없다: ${error.message}`);
 	}
 	if (!file.startsWith(`${base}${sep}`)) {
+		// 셸의 현재 폴더와 상관없게 원본과 복사본은 절대 경로로, --file은 러너가 루트 기준으로 푸는 상대 경로로 적는다
 		const copy = `tasks/evidence/row-${row}.txt`;
-		const quoted = `'${evidenceFile.replaceAll("'", "'\\''")}'`;
+		const q = (x) => `'${x.replaceAll("'", "'\\''")}'`;
 		throw new UsageError(
-			`증거 파일은 프로젝트 밖을 가리킬 수 없다. 프로젝트 안으로 복사해 다시 실행한다: mkdir -p tasks/evidence && cp ${quoted} ${copy} && pnpm dev-cycle evidence ${row} --file ${copy}`,
+			`증거 파일은 프로젝트 밖을 가리킬 수 없다. 프로젝트 안으로 복사해 다시 실행한다: mkdir -p ${q(join(base, "tasks/evidence"))} && cp -- ${q(file)} ${q(join(base, copy))} && pnpm dev-cycle evidence ${row} --file ${copy}`,
 		);
 	}
 	let stat;

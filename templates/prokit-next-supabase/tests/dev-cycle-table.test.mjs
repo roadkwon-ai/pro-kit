@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, truncateSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, realpathSync, rmSync, truncateSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -116,12 +116,15 @@ test("evidence setter는 프로젝트 밖 증거 파일을 거절하며 프로�
 	const outside = mkdtempSync(join(tmpdir(), "ev-out-"));
 	const file = join(outside, "it's.txt");
 	writeFileSync(file, "증거");
+	const q = (x) => `'${x.replaceAll("'", "'\\''")}'`;
+	const base = realpathSync(root);
+	// 셸 현재 폴더와 상관없게 절대 경로로, -로 시작하는 이름도 옵션으로 읽지 않게 cp --로 안내한다
 	assert.throws(
 		() => setEvidence(root, config, 2, file),
 		(e) =>
 			e.message.includes(
-				`cp '${file.replaceAll("'", "'\\''")}' tasks/evidence/row-2.txt && pnpm dev-cycle evidence 2 --file tasks/evidence/row-2.txt`,
-			),
+				`mkdir -p ${q(join(base, "tasks/evidence"))} && cp -- ${q(realpathSync(file))} ${q(join(base, "tasks/evidence/row-2.txt"))} && pnpm dev-cycle evidence 2 --file tasks/evidence/row-2.txt`,
+			) || assert.fail(e.message),
 	);
 	rmSync(outside, { recursive: true, force: true });
 });
