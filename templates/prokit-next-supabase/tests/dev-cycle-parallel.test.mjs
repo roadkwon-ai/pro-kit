@@ -265,7 +265,8 @@ test("감독: 하위 에이전트의 일반 파일 읽기와 셸 명령을 활�
 });
 
 // 앞 라운드의 기록(라운드 시작 줄 앞)을 끼워 넣는다. 스킬 파일은 그보다 먼저 고친 것으로 둔다
-function priorReads(b, lines) {
+// start: 그 세션이 시작한 기록(SessionStart 훅의 compact-log)을 앞에 둔다
+function priorReads(b, lines, { start = true } = {}) {
   const log = join(b.root, ".prokit/skills-used.jsonl");
   const t = new Date(Date.now() - 60_000).toISOString();
   const old = new Date(Date.now() - 3_600_000);
@@ -276,7 +277,8 @@ function priorReads(b, lines) {
   } catch {}
   mkdirSync(join(b.root, ".prokit"), { recursive: true });
   const mark = JSON.stringify({ t: new Date(Date.now() - 30_000).toISOString(), round: "랜딩" });
-  writeFileSync(log, `${lines.map((l) => JSON.stringify({ t, seen: true, project: true, ...l })).join("\n")}\n${mark}\n${cur}`);
+  const began = start ? `${JSON.stringify({ t: new Date(Date.now() - 90_000).toISOString(), start: "startup", session: "s1" })}\n` : "";
+  writeFileSync(log, `${began}${lines.map((l) => JSON.stringify({ t, seen: true, project: true, ...l })).join("\n")}\n${mark}\n${cur}`);
 }
 // 압축 훅은 세션이 시작하기 전에 들어 있었다(설정 파일을 2시간 전에 고쳤다). fresh면 방금 더한 것이다
 const compactHook = (b, fresh = false) => {
@@ -288,8 +290,8 @@ const compactHook = (b, fresh = false) => {
 test("라운드를 넘긴 이어 쓰기: 같은 agent id가 이 라운드에서 명령만 돌려도 앞 라운드에 읽은 스킬을 센다. 압축 훅이 없거나, 그 에이전트가 압축했거나, 스킬 파일이 바뀌었으면 세지 않는다", () => {
   const b = round();
   priorReads(b, [
-    { skill: "next-dev-loop", tool: "Read", agent: "r1", agentType: "prokit-runtime-checker" },
-    { skill: "agent-browser", tool: "Read", agent: "r1", agentType: "prokit-runtime-checker" },
+    { skill: "next-dev-loop", tool: "Read", agent: "r1", agentType: "prokit-runtime-checker", session: "s1" },
+    { skill: "agent-browser", tool: "Read", agent: "r1", agentType: "prokit-runtime-checker", session: "s1" },
   ]);
   // 이 라운드의 다른 기록(훅이 도는 라운드다)
   b.read("prokit-ui");
@@ -336,6 +338,24 @@ test("같은 세션의 Main: 앞 라운드에 Skill로 부른 prokit-ui·prokit-
   assert.notDeepEqual(lost(), []);
 });
 
+test("세션 시작 기록이 없는 세션(옛 러너, 훅을 더하기 전에 연 세션)은 첫 기록이 훅 뒤여도 잇지 않는다. 압축 뒤 이어지는 세션 시작도 압축으로 본다", () => {
+  const b = round();
+  compactHook(b);
+  priorReads(b, [
+    { skill: "prokit-ui", tool: "Skill", session: "s1", project: false },
+    { skill: "prokit-web", tool: "Skill", session: "s1", project: false },
+  ], { start: false });
+  b.read("vercel-react-best-practices", "prokit-ui-builder", "u1");
+  b.edit("apps/web/src/app/page.tsx", "prokit-ui-builder", "u1");
+  b.hook("shell-guard", { tool_name: "Bash", session_id: "s1", tool_input: { command: `pnpm dev-cycle evidence ${b.impl} --file tasks/evidence/e.txt` } });
+  b.set(b.impl, "사용: prokit-ui, prokit-web; 위임: prokit-ui-builder(사용: vercel-react-best-practices(rerender-memo)) → 1개 파일. Next 문서: N/A: 없음");
+  assert.notDeepEqual(b.problems(b.impl).filter((p) => /prokit-ui|prokit-web/.test(p)), []);
+  // 세션 시작 훅이 남기는 줄
+  b.hook("compact-log", { hook_event_name: "SessionStart", source: "compact", session_id: "s9" });
+  const last = readFileSync(join(b.root, ".prokit/skills-used.jsonl"), "utf8").trim().split("\n").at(-1);
+  assert.deepEqual(Object.keys(JSON.parse(last)).sort(), ["session", "start", "t"]);
+});
+
 test("supervise: 마지막 기록이 오래된(끝났을) 에이전트는 예산을 넘어도 멈추라고 하지 않는다. 일하는 중이면 알린다", () => {
   const b = round();
   b.read("vercel-react-best-practices", "prokit-ui-builder", "u1");
@@ -358,8 +378,15 @@ test("문구만 바꾼 화면 라운드: 디자인 감사는 N/A: 문구만으�
   assert.deepEqual(copy(), []);
   b.set(b.review, "N/A: 문구만");
   assert.match(b.problems(b.review).join("\n"), /이 행은 한다/);
+  // 문구 폴더의 JSON은 받고, 설정 JSON·설정 파일·스타일은 받지 않는다
+  b.write("apps/web/messages/ko.json", "{}\n");
+  assert.deepEqual(copy(), []);
+  b.write("apps/web/tsconfig.json", "{}\n");
+  assert.match(copy().join("\n"), /화면 글자가 아닌 소스\(apps\/web\/tsconfig\.json\)/);
+  b.write("apps/web/next.config.ts", "export default {}\n");
+  assert.match(copy().join("\n"), /apps\/web\/next\.config\.ts/);
   b.write("apps/web/src/app/globals.css", "a{}\n");
-  assert.match(copy().join("\n"), /화면 글자가 아닌 소스\(apps\/web\/src\/app\/globals\.css\)/);
+  assert.match(copy().join("\n"), /apps\/web\/src\/app\/globals\.css/);
 });
 
 test("검증 증거 묶음: production 서버의 get_errors는 재지 못한 검사가 아니라 해당 없는 검사로 알린다", () => {

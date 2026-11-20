@@ -2046,15 +2046,18 @@ function compactHooked(root) {
 		hooks.some((g) => g?.hooks?.some((h) => h?.command?.includes(COMPACT_MARK)))
 	);
 }
+// 같은 명령을 SessionStart 훅에도 건다: 세션이 시작한 기록(start: startup·resume·clear·compact)이다.
+// 훅을 더한 뒤 시작한 세션만 압축을 빠짐없이 남기므로 carryReads는 그 기록이 있는 세션만 잇는다
 export function logCompact(root, input) {
 	const e = JSON.parse(input);
 	if (!e?.session_id) return;
+	const start = e.hook_event_name === "SessionStart";
 	mkdirSync(join(root, ".prokit"), { recursive: true });
 	appendFileSync(
 		join(root, SKILL_LOG),
 		`${JSON.stringify({
 			t: new Date().toISOString(),
-			compact: true,
+			...(start ? { start: String(e.source ?? "startup") } : { compact: true }),
 			session: String(e.session_id),
 			...(e.agent_id ? { agent: String(e.agent_id) } : {}),
 		})}\n`,
@@ -2067,22 +2070,19 @@ export function logCompact(root, input) {
 // shortcut: 프로젝트 판이 없는 플러그인 스킬은 파일 변경을 보지 않는다(플러그인 갱신은 세션을 다시 열어야 반영된다)
 function carryReads(root, log) {
 	if (!compactHooked(root)) return log;
-	// 압축 훅을 더하기 전에 시작한 세션은 훅을 모른다(압축해도 기록이 없다). 그 세션·에이전트의 첫 기록이 설정 파일을 고친 뒤여야 잇는다
+	// 압축 훅을 더하기 전에 시작한 세션은 훅을 모른다(압축해도 기록이 없다). 읽기 전 마지막 세션 시작 기록(SessionStart 훅)이
+	// 설정 파일을 고친 뒤여야 잇는다. 세션 시작 기록이 없는 세션(옛 러너, 훅을 더하기 전에 연 세션)은 잇지 않는다.
+	// 서브에이전트 기록도 부모 세션 id로 본다
 	let hookedAt = Number.POSITIVE_INFINITY;
 	try {
 		hookedAt = statSync(join(root, ".claude/settings.json")).mtimeMs;
 	} catch {}
-	const firstAt = {};
-	for (const x of [
-		...log.prior,
-		...log.uses,
-		...log.agentUses,
-		...log.edits,
-		...log.acts,
-	]) {
-		const k = x.agentId ? `a:${x.agentId}` : x.session && `s:${x.session}`;
-		if (k) firstAt[k] = Math.min(firstAt[k] ?? x.t, x.t);
-	}
+	const started = (u) => {
+		const last = log.starts
+			.filter((x) => x.session === u.session && x.t <= u.t)
+			.at(-1);
+		return Boolean(u.session && last && last.t > hookedAt);
+	};
 	const mainAt = {};
 	const agentAt = {};
 	for (const x of [
@@ -2117,8 +2117,7 @@ function carryReads(root, log) {
 				c.t > u.t &&
 				(u.agentId ? c.agent === u.agentId : !c.agent && c.session === u.session),
 		) &&
-		(firstAt[u.agentId ? `a:${u.agentId}` : `s:${u.session}`] ?? 0) >
-			hookedAt &&
+		started(u) &&
 		unchanged(u);
 	const carry = (u) => {
 		const at = u.agentId ? agentAt[u.agentId] : u.session && mainAt[u.session];
@@ -2186,12 +2185,18 @@ function parseRoundLog(p, active) {
 	// 이 라운드 전의 스킬 읽기(carryReads가 이어 센다)와 맥락 압축 기록
 	const prior = [];
 	const compacts = [];
+	const starts = [];
 	for (const line of readFileSync(p, "utf8").split("\n")) {
 		try {
 			const e = JSON.parse(line);
 			const t = Date.parse(e.t);
 			if ("compact" in e)
 				compacts.push({ t, session: e.session, agent: e.agent });
+			else if ("start" in e) {
+				starts.push({ t, session: e.session });
+				// 압축 뒤 이어지는 세션 시작(source compact)도 압축이다
+				if (e.start === "compact") compacts.push({ t, session: e.session });
+			}
 			else if ("round" in e) {
 				prior.push(...uses, ...agentUses);
 				uses = [];
@@ -2236,7 +2241,17 @@ function parseRoundLog(p, active) {
 				prior.push(useOf(e, t));
 		} catch {}
 	}
-	return { uses, agentUses, fills, edits, shots, acts, prior, compacts };
+	return {
+		uses,
+		agentUses,
+		fills,
+		edits,
+		shots,
+		acts,
+		prior,
+		compacts,
+		starts,
+	};
 }
 function skillsLogged(root, active) {
 	const log = skillLog(root, active);
@@ -2913,7 +2928,11 @@ const COPY_ROWS = [
 	"[review] impeccable audit",
 	"[verify] 휴대폰 스크롤",
 ];
-const COPY_SOURCE = /\.(?:tsx?|jsx?|mdx?|json)$/;
+// 화면 글자가 들 수 있는 소스. JSON은 문구 폴더(messages·locales·i18n·lang) 아래만 받는다(tsconfig.json·components.json 같은 설정은 아니다).
+// 설정 파일(*.config.*)은 확장자가 같아도 받지 않는다
+const COPY_SOURCE = (f) =>
+	(/\.(?:tsx?|jsx?|mdx?)$/.test(f) && !/\.config\.[cm]?[jt]s$/.test(f)) ||
+	/(?:^|\/)(?:messages|locales|i18n|lang)\/.+\.json$/.test(f);
 function copyOnlyProblem(root, active, files) {
 	return (r) => {
 		if (!COPY_NA.test(bare(r.evidence))) return null;
@@ -2922,7 +2941,7 @@ function copyOnlyProblem(root, active, files) {
 		const style = (files ?? roundFiles(root, active)).filter(
 			(f) =>
 				PACKET_SOURCE_RE.test(f) &&
-				(!COPY_SOURCE.test(f) || /(?:^|\/)package\.json$/.test(f)),
+				!COPY_SOURCE(f),
 		);
 		if (style.length)
 			return `diff에 화면 글자가 아닌 소스(${style.slice(0, 5).join(", ")})가 있어 문구만 라운드가 아니다. 이 행을 하고 증거를 적는다`;

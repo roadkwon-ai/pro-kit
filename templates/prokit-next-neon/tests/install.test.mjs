@@ -74,7 +74,7 @@ test("설치: 파일·스킬 링크·Codex·Antigravity 에이전트·스크립�
     assert.equal(pkg.scripts[name], `pnpm run prokit:resource:${name}`, name);
   }
   const hooks = JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).hooks.SessionStart;
-  assert.deepEqual(hooks, [{ hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/load-keys.mjs"' }] }]);
+  assert.deepEqual(hooks, [{ hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/load-keys.mjs"' }] }, { hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" compact-log' }] }]);
   // vercel deploy는 .gitignore를 따르지 않는다. 로컬 .env가 배포 소스에 올라가지 않게 한다
   assert.match(readFileSync(join(root, ".vercelignore"), "utf8"), /^\.env$\n^\.env\.\*$\n^!\.env\.schema$/m);
   assert.ok(existsSync(join(root, "skills.manifest.json")));
@@ -341,6 +341,7 @@ test(".claude/settings.json: 프로젝트의 옛 dev-cycle.mjs가 모르는 훅�
   assert.equal(ensureClaudeHook(root), true);
   assert.deepEqual(JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).hooks.PreToolUse.map((g) => g.matcher), ["Edit|Write|MultiEdit|NotebookEdit", "Bash"]);
   assert.match(JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).hooks.PreCompact[0].hooks[0].command, /dev-cycle\.mjs" compact-log$/);
+  assert.ok(JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).hooks.SessionStart.some((g) => /dev-cycle\.mjs" compact-log$/.test(g.hooks[0].command)));
 });
 
 test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 더한다. 읽지 못하면 null", () => {
@@ -356,7 +357,7 @@ test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 �
   const cur = JSON.parse(readFileSync(p, "utf8"));
   assert.deepEqual(cur.enabledPlugins, { "a@b": true });
   assert.deepEqual(cur.hooks.Stop, [other]);
-  assert.equal(cur.hooks.SessionStart.length, 2);
+  assert.equal(cur.hooks.SessionStart.length, 3);
   assert.deepEqual(cur.hooks.SessionStart[0], other);
   assert.deepEqual(cur.hooks.PostToolUse, [{ matcher: "Skill|Read", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" skill-log' }] }]);
   assert.deepEqual(cur.hooks.PreToolUse, [{ matcher: "Edit|Write|MultiEdit|NotebookEdit", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" edit-guard' }] }, { matcher: "Bash", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" shell-guard' }] }]);
@@ -366,7 +367,7 @@ test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 �
   writeFileSync(p, JSON.stringify(cur));
   assert.equal(ensureClaudeHook(root), true);
   const again = JSON.parse(readFileSync(p, "utf8"));
-  assert.equal(again.hooks.SessionStart.length, 2);
+  assert.equal(again.hooks.SessionStart.length, 3);
   assert.equal(again.hooks.PostToolUse.length, 1);
   assert.equal(again.hooks.PreToolUse.length, 2);
   // shell-guard가 없던 설치본에는 그 훅만 더한다
