@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync, truncateSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, truncateSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
@@ -106,6 +107,23 @@ test("evidence setter는 regular·작은 파일과 실제 표 헤더 아래 행�
 	);
 	assert.equal(fifoResult.status, 2, fifoResult.stderr);
 	assert.match(fifoResult.stderr, /일반 파일/);
+});
+
+test("evidence setter는 프로젝트 밖 증거 파일을 거절하며 프로젝트 안으로 복사할 명령을 알려 준다", () => {
+	const { root } = makeRepo();
+	const config = loadConfig(root);
+	writeTable(root, config, "A", { write: true, title: "밖 경로" });
+	const outside = mkdtempSync(join(tmpdir(), "ev-out-"));
+	const file = join(outside, "it's.txt");
+	writeFileSync(file, "증거");
+	assert.throws(
+		() => setEvidence(root, config, 2, file),
+		(e) =>
+			e.message.includes(
+				`cp '${file.replaceAll("'", "'\\''")}' tasks/evidence/row-2.txt && pnpm dev-cycle evidence 2 --file tasks/evidence/row-2.txt`,
+			),
+	);
+	rmSync(outside, { recursive: true, force: true });
 });
 
 test("evidence CLI는 파일 입력만 받아 증거 셀을 갱신한다", () => {

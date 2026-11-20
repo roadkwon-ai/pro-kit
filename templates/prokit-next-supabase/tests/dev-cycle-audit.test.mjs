@@ -750,6 +750,18 @@ test("두뇌를 고르면 단계 행 증거에 두뇌 방법·추가 스킬·사
   assert.equal(status(none.root, noneConfig).line.split("\n")[1], "두뇌: 없음(기본 칸)");
 });
 
+test("단계 행의 두뇌 표기와 행 문구 스킬 표기가 함께 빠지면 한 번에 모두 알린다", () => {
+  const { root, config } = brainRepo("agent-skills");
+  for (const n of ["prokit-ui", "prokit-web"]) {
+    mkdirSync(join(root, ".agents/skills", n), { recursive: true });
+    writeFileSync(join(root, ".agents/skills", n, "SKILL.md"), `# ${n}\n`);
+  }
+  writeTable(root, config, "B", { write: true, title: "한 번에" });
+  fill(root, "위임: prokit-ui-builder(사용: shadcn) → 완료");
+  const both = audit(root, config).problems.filter((p) => /두뇌\(/.test(p) && /\. 또 행 문구의 prokit-ui, prokit-web/.test(p));
+  assert.ok(both.length > 0, audit(root, config).problems.join("\n"));
+});
+
 test("두뇌가 맡는 단계는 내장으로 넘기지 못하고, 맡지 않는 단계의 내장은 사유에 두뇌 스킬 이름이 없을 때만 받는다. status와 table이 부를 스킬을 알려 준다", () => {
   const { root, config } = brainRepo("agent-skills");
   writeFileSync(join(root, BRAINS_DIR, "agent-skills.md"), "| 단계 | Claude Code |\n|---|---|\n| 계획 | `agent-skills:planning-and-task-breakdown`, 산출물 `docs/plans/x.md` |\n| 리뷰 | `agent-skills:code-review-and-quality` |\n");
@@ -1662,6 +1674,8 @@ test("db focus 리뷰는 설치된 Neon 스킬(상위 스킬 포함)을 리뷰�
   assert.ok(row);
   assert.match(out.stdout, new RegExp(`리뷰 지시에 넣을 공식 스킬[^\\n]*\\n(?: {2}#.*\\n)* {2}#${row} prokit-reviewer\\(db\\): \\.agents/skills/neon/SKILL\\.md, \\.agents/skills/neon-postgres/SKILL\\.md`));
   assert.match(out.stdout, /증거 꼴[^\n]*\n {2}전문 에이전트에 맡긴 행: 위임: <에이전트>\(사용: /);
+  assert.match(out.stdout, /증거 파일: 프로젝트 안 한 줄 파일/);
+  assert.match(out.stdout, /스킬 읽기: SKILL\.md는 Read에 limit·offset 없이 처음부터 끝까지 읽는다/);
   // 라운드 중간에 붙은 리뷰 행도 보이게 status가 같은 안내를 낸다
   assert.match(run(root, "status").stdout, new RegExp(`리뷰 지시에 넣을 공식 스킬[^\\n]*\\n(?: {2}#.*\\n)* {2}#${row} prokit-reviewer\\(db\\)`));
   mkdirSync(join(root, "tasks/evidence"), { recursive: true });

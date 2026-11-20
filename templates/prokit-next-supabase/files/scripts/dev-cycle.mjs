@@ -1844,10 +1844,7 @@ function projectSkillRead(root, name, path, cmd, skill, cwd) {
 const NEXT_DOC_RE = /next[/\\]dist[/\\]docs[/\\][^\s'"*;|&]+\.mdx?/g;
 export function logSkill(root, input) {
 	const e = JSON.parse(input);
-	const { name, t, agent, agentType, cwd, seen, session } = hookCall(
-		e,
-		root,
-	);
+	const { name, t, agent, agentType, cwd, seen, session } = hookCall(e, root);
 	// Antigravity Main이 서브에이전트를 불렀다: 곧 시작할 서브에이전트 대화를 이 이름에 묶는다(bindSession)
 	if (name === "invoke_subagent" && t.TypeName && e.conversationId) {
 		mkdirSync(join(root, ".prokit"), { recursive: true });
@@ -2040,7 +2037,8 @@ function skillLog(root, active) {
 // 맥락 압축 기록: Claude Code PreCompact 훅(compact-log)이 남긴다. 압축한 뒤에는 앞서 읽은 스킬이 맥락에 그대로 있다고 보지 않는다
 const COMPACT_MARK = 'dev-cycle.mjs" compact-log';
 function compactHooked(root) {
-	const hooks = readJson(join(root, ".claude/settings.json"))?.hooks?.PreCompact;
+	const hooks = readJson(join(root, ".claude/settings.json"))?.hooks
+		?.PreCompact;
 	return (
 		Array.isArray(hooks) &&
 		hooks.some((g) => g?.hooks?.some((h) => h?.command?.includes(COMPACT_MARK)))
@@ -2092,8 +2090,7 @@ function carryReads(root, log) {
 		...log.acts,
 		...log.shots,
 	]) {
-		if (x.agentId)
-			agentAt[x.agentId] = Math.max(agentAt[x.agentId] ?? 0, x.t);
+		if (x.agentId) agentAt[x.agentId] = Math.max(agentAt[x.agentId] ?? 0, x.t);
 		else if (x.session)
 			mainAt[x.session] = Math.max(mainAt[x.session] ?? 0, x.t);
 	}
@@ -2115,7 +2112,9 @@ function carryReads(root, log) {
 		!log.compacts.some(
 			(c) =>
 				c.t > u.t &&
-				(u.agentId ? c.agent === u.agentId : !c.agent && c.session === u.session),
+				(u.agentId
+					? c.agent === u.agentId
+					: !c.agent && c.session === u.session),
 		) &&
 		started(u) &&
 		unchanged(u);
@@ -2196,8 +2195,7 @@ function parseRoundLog(p, active) {
 				starts.push({ t, session: e.session });
 				// 압축 뒤 이어지는 세션 시작(source compact)도 압축이다
 				if (e.start === "compact") compacts.push({ t, session: e.session });
-			}
-			else if ("round" in e) {
+			} else if ("round" in e) {
 				prior.push(...uses, ...agentUses);
 				uses = [];
 				agentUses = [];
@@ -2903,14 +2901,19 @@ const roundRowProblem = (root, config, active, files) => {
 	const addon = addonProblem(root, config, active);
 	const packet = packetProblem(root, active);
 	const copy = copyOnlyProblem(root, active, files);
+	// 두뇌·과설계 방지·사용: 표기는 한 번에 모두 알린다(하나씩 알리면 증거를 여러 번 다시 쓴다)
+	const skillProblems = (r) => {
+		const all = [
+			...new Set([brain(r), simplicity(r), usage(r)].filter(Boolean)),
+		];
+		return all.length ? all.join(". 또 ") : null;
+	};
 	return (r) =>
 		rowProblem(r) ??
 		copy(r) ??
 		uiRecordProblem(root, active.meta, r) ??
 		packet(r) ??
-		brain(r) ??
-		simplicity(r) ??
-		usage(r) ??
+		skillProblems(r) ??
 		addon(r) ??
 		(planRound && isConfirm(r.text)
 			? planConfirmProblem(root, config, r.evidence)
@@ -2939,16 +2942,16 @@ function copyOnlyProblem(root, active, files) {
 		if (!COPY_ROWS.some((k) => r.text.startsWith(k)))
 			return "문구만 바꾼 라운드도 이 행은 한다. N/A: 문구만은 디자인 감사와 휴대폰 스크롤 행에만 쓴다";
 		const style = (files ?? roundFiles(root, active)).filter(
-			(f) =>
-				PACKET_SOURCE_RE.test(f) &&
-				!COPY_SOURCE(f),
+			(f) => PACKET_SOURCE_RE.test(f) && !COPY_SOURCE(f),
 		);
 		if (style.length)
 			return `diff에 화면 글자가 아닌 소스(${style.slice(0, 5).join(", ")})가 있어 문구만 라운드가 아니다. 이 행을 하고 증거를 적는다`;
 		const review = active.rows.find((x) =>
 			x.text.startsWith("[review] prokit-reviewer(code)"),
 		);
-		const verdict = bare(review?.evidence).match(/문구만\s*:\s*(확인|아님)(?![가-힣])/)?.[1];
+		const verdict = bare(review?.evidence).match(
+			/문구만\s*:\s*(확인|아님)(?![가-힣])/,
+		)?.[1];
 		if (verdict === "아님")
 			return "prokit-reviewer(code)가 문구만이 아니라고 판정했다. 이 행을 하고 증거를 적는다";
 		if (verdict !== "확인")
@@ -3413,10 +3416,13 @@ export function setEvidence(root, config, row, evidenceFile) {
 	} catch (error) {
 		throw new UsageError(`증거 파일을 읽을 수 없다: ${error.message}`);
 	}
-	if (!file.startsWith(`${base}${sep}`))
+	if (!file.startsWith(`${base}${sep}`)) {
+		const copy = `tasks/evidence/row-${row}.txt`;
+		const quoted = `'${evidenceFile.replaceAll("'", "'\\''")}'`;
 		throw new UsageError(
-			"증거 파일은 프로젝트 밖을 가리킬 수 없다. tasks/evidence/에 두고 다시 실행한다",
+			`증거 파일은 프로젝트 밖을 가리킬 수 없다. 프로젝트 안으로 복사해 다시 실행한다: mkdir -p tasks/evidence && cp ${quoted} ${copy} && pnpm dev-cycle evidence ${row} --file ${copy}`,
 		);
+	}
 	let stat;
 	try {
 		stat = statSync(file);
@@ -3958,6 +3964,8 @@ function formatGuide(config) {
 		"  [design] 행: 기존: …; 결정: …; 설정: …; 검증: … (필드는 맨 앞이나 ; 뒤에서 시작)",
 		simple &&
 			`  prokit-reviewer(code) 행: verdict, max_severity, 반영·기각 내역; ${simple}`,
+		"  증거 파일: 프로젝트 안 한 줄 파일(pnpm dev-cycle evidence <행> --file tasks/evidence/row-<행>.txt). scratchpad 같은 프로젝트 밖 경로는 받지 않는다",
+		"  스킬 읽기: SKILL.md는 Read에 limit·offset 없이 처음부터 끝까지 읽는다(앞부분만 읽으면 audit이 알린다)",
 	]
 		.filter(Boolean)
 		.join("\n");
