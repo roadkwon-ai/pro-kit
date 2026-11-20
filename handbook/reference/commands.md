@@ -67,6 +67,7 @@
 - `dev-cycle shell-guard`: Bash 명령 가운데 `pkill`처럼 이름이나 포트로 골라 프로세스를 끄는 명령과, 계층 파일을 셸(리다이렉션, `sed -i`, `cp`·`mv`, 파일을 쓰는 스크립트)로 고치는 명령을 막아요(Claude Code와 Codex).
 - `dev-cycle skill-log`: 읽은 스킬과 에이전트 이름을 `.prokit/`에 기록해 audit이 증거와 대조하게 해요.
 - `dev-cycle agent-start`: Antigravity에서 서브에이전트 대화를 부른 에이전트 이름에 묶어요.
+- `dev-cycle compact-log`: Claude Code가 맥락을 압축할 때 기록해요. audit은 압축하기 전에 읽은 스킬을 다음 라운드로 이어 세지 않아요.
 
 증거 파일은 이렇게 다뤄요.
 

@@ -381,11 +381,14 @@ const LOG_HOOK = 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" skill-log';
 const EDIT_HOOK = 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" edit-guard';
 // PreToolUse 훅: 이름·포트로 골라 끄는 셸 명령(pkill 등)을 막는다. 같은 기기의 다른 프로젝트 서버까지 끄기 때문이다.
 const SHELL_HOOK = 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" shell-guard';
+// PreCompact 훅: 맥락 압축을 남긴다. audit은 압축 전에 읽은 스킬을 다음 라운드로 이어 세지 않는다.
+const COMPACT_HOOK = 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" compact-log';
 const HOOKS = [
   { event: "SessionStart", mark: "scripts/load-keys.mjs", entry: { hooks: [{ type: "command", command: KEY_HOOK }] } },
   { event: "PostToolUse", mark: "dev-cycle.mjs\" skill-log", entry: { matcher: "Skill|Read", hooks: [{ type: "command", command: LOG_HOOK }] } },
   { event: "PreToolUse", mark: "dev-cycle.mjs\" edit-guard", entry: { matcher: "Edit|Write|MultiEdit|NotebookEdit", hooks: [{ type: "command", command: EDIT_HOOK }] } },
   { event: "PreToolUse", mark: "dev-cycle.mjs\" shell-guard", entry: { matcher: "Bash", hooks: [{ type: "command", command: SHELL_HOOK }] } },
+  { event: "PreCompact", mark: "dev-cycle.mjs\" compact-log", entry: { hooks: [{ type: "command", command: COMPACT_HOOK }] } },
 ];
 const isObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
 // 프로젝트의 scripts/dev-cycle.mjs가 모르는 훅 하위 명령. 갱신 반영에서 러너는 덮어쓰지 않으므로, 옛 러너에 새 훅을 넣으면
@@ -425,7 +428,7 @@ export function ensureClaudeHook(target, { dryRun = false } = {}) {
   }
   return true;
 }
-const HOOK_MANUAL = `.claude/settings.json을 읽지 못했다. hooks.SessionStart에 ${KEY_HOOK}, hooks.PostToolUse(matcher "Skill|Read")에 ${LOG_HOOK}, hooks.PreToolUse(matcher "Edit|Write|MultiEdit|NotebookEdit")에 ${EDIT_HOOK}, hooks.PreToolUse(matcher "Bash")에 ${SHELL_HOOK} 명령을 직접 더하세요`;
+const HOOK_MANUAL = `.claude/settings.json을 읽지 못했다. hooks.SessionStart에 ${KEY_HOOK}, hooks.PostToolUse(matcher "Skill|Read")에 ${LOG_HOOK}, hooks.PreToolUse(matcher "Edit|Write|MultiEdit|NotebookEdit")에 ${EDIT_HOOK}, hooks.PreToolUse(matcher "Bash")에 ${SHELL_HOOK}, hooks.PreCompact에 ${COMPACT_HOOK} 명령을 직접 더하세요`;
 
 // git pre-commit 훅: 열린 dev-cycle 라운드나 닫은 라운드 기록 없이 코드·하네스를 커밋하지 못하게 한다(scripts/dev-cycle.mjs guard).
 // 어느 세션·도구가 커밋해도 돈다. 훅은 .git 안에 있어 이 사본에만 있고, 새로 clone한 사본은 release.mjs의 검사가 뒤를 받친다.
@@ -817,7 +820,7 @@ export function main(argv) {
     ...(proxy === "manual" ? [`경고: ${TURBO_PROXY_MANUAL}`] : []),
     ...(Array.isArray(eslint) && eslint.length ? [`ESLint 무시 추가: ${eslint.join(", ")} (벤더 스킬과 하네스 스크립트는 프로젝트 lint에서 뺀다)`] : []),
     ...(eslint === "manual" ? [`경고: ${ESLINT_MANUAL}`] : []),
-    ...(hook ? [".claude/settings.json: SessionStart 훅(scripts/load-keys.mjs: .env의 이미지 키와 배포 토큰을 세션에 불러온다)과 PostToolUse 훅(dev-cycle skill-log: 부른 스킬을 .prokit/skills-used.jsonl에 남겨 audit이 단계 행 증거와 대조한다), PreToolUse 훅(dev-cycle edit-guard: 열린 라운드 없이 코드·하네스 파일을 고치지 못하게 한다. dev-cycle shell-guard: pkill처럼 이름·포트로 골라 프로세스를 끄지 못하게 한다) 중 없는 것을 더함"] : []),
+    ...(hook ? [".claude/settings.json: SessionStart 훅(scripts/load-keys.mjs: .env의 이미지 키와 배포 토큰을 세션에 불러온다)과 PostToolUse 훅(dev-cycle skill-log: 부른 스킬을 .prokit/skills-used.jsonl에 남겨 audit이 단계 행 증거와 대조한다), PreToolUse 훅(dev-cycle edit-guard: 열린 라운드 없이 코드·하네스 파일을 고치지 못하게 한다. dev-cycle shell-guard: pkill처럼 이름·포트로 골라 프로세스를 끄지 못하게 한다), PreCompact 훅(dev-cycle compact-log: 맥락 압축을 남겨 압축 전에 읽은 스킬을 다음 라운드로 잇지 않게 한다) 중 없는 것을 더함"] : []),
     ...(hook === null ? [`경고: ${HOOK_MANUAL}`] : []),
     ...(staleHooks.length ? [STALE_HOOK(staleHooks)] : []),
     ...gitHookLines(gitHook, false),

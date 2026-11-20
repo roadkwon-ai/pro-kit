@@ -330,15 +330,17 @@ test(".claude/settings.json: 프로젝트의 옛 dev-cycle.mjs가 모르는 훅�
   mkdirSync(join(root, "scripts"));
   const runner = join(root, "scripts/dev-cycle.mjs");
   writeFileSync(runner, 'if (cmd === "skill-log") {}\nif (cmd === "edit-guard") {}\n');
-  assert.deepEqual(unknownHookCommands(root), ["shell-guard"]);
+  assert.deepEqual(unknownHookCommands(root), ["shell-guard", "compact-log"]);
   assert.equal(ensureClaudeHook(root), true);
   const cur = JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8"));
   assert.deepEqual(cur.hooks.PreToolUse.map((g) => g.matcher), ["Edit|Write|MultiEdit|NotebookEdit"]);
+  assert.equal(cur.hooks.PreCompact, undefined);
   assert.equal(cur.hooks.PostToolUse.length, 1);
   writeFileSync(runner, readFileSync(join(FILES_DIR, "scripts/dev-cycle.mjs"), "utf8"));
   assert.deepEqual(unknownHookCommands(root), []);
   assert.equal(ensureClaudeHook(root), true);
   assert.deepEqual(JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).hooks.PreToolUse.map((g) => g.matcher), ["Edit|Write|MultiEdit|NotebookEdit", "Bash"]);
+  assert.match(JSON.parse(readFileSync(join(root, ".claude/settings.json"), "utf8")).hooks.PreCompact[0].hooks[0].command, /dev-cycle\.mjs" compact-log$/);
 });
 
 test(".claude/settings.json: 키 훅은 다른 키와 훅을 두고 한 번만 더한다. 읽지 못하면 null", () => {

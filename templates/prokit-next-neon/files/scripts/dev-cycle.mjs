@@ -1107,6 +1107,10 @@ async function capturePages(root, config, url, arg, dir, ab, logs, start) {
 			signal: AbortSignal.timeout(20_000),
 		});
 		const text = await res.text();
+		// production 서버(next start)에는 /_next/mcp가 없다(404나 HTML 쪽). 재지 못한 것이 아니라 해당 없는 검사다.
+		// 통과로 적지 않고 사유를 남긴다. 서버 오류는 next start 출력(서버 로그)으로 본다
+		if (res.status === 404)
+			throw Object.assign(new Error("HTTP 404"), { production: true });
 		const data =
 			text
 				.split("\n")
@@ -1117,7 +1121,9 @@ async function capturePages(root, config, url, arg, dir, ab, logs, start) {
 		};
 	} catch (error) {
 		nextErrors = {
-			skipped: `/_next/mcp get_errors를 부르지 못했다: ${error.message}`,
+			skipped: error.production
+				? `해당 없음: /_next/mcp가 없다(${error.message}. next start로 띄운 서버면 정상이고, 개발 서버면 MCP가 꺼진 것이다). 서버 오류는 서버 출력으로 확인한다`
+				: `/_next/mcp get_errors를 부르지 못했다: ${error.message}`,
 		};
 	}
 	writeFileSync(
@@ -1213,27 +1219,30 @@ export function supervise(root, config, { scope = [], now = Date.now() } = {}) {
 		const idle = Math.round((now - a.last) / 6000) / 10;
 		const budget = SUPERVISE_BUDGET_MIN[a.type] ?? SUPERVISE_DEFAULT_MIN;
 		const signals = [];
+		// 마지막 기록 뒤 SUPERVISE_IDLE_MIN이 지났으면 끝났을 가능성이 크다(훅에 끝남 기록이 없다).
+		// 예산·다시 읽기·반복·묶음 신호는 일하는 중인 에이전트에만 낸다. 배정 밖 편집은 끝났어도 되돌려야 하니 낸다
+		const busy = idle < SUPERVISE_IDLE_MIN;
 		if (outside.length)
 			signals.push({
 				kind: "scope",
 				say: `배정 밖 파일(${outside.slice(0, 5).join(", ")})은 고치지 말고 되돌린 뒤 이유를 보고하라`,
 			});
-		if (minutes > budget)
+		if (busy && minutes > budget)
 			signals.push({
 				kind: "budget",
 				say: `예산 ${budget}분을 넘었다(${minutes}분). 하던 일을 멈추고 한 일·남은 일·막힌 것을 보고하라`,
 			});
-		if (reread.length)
+		if (busy && reread.length)
 			signals.push({
 				kind: "reread",
 				say: `이미 읽은 스킬(${reread.slice(0, 5).join(", ")})은 다시 읽지 말고 바뀐 지시와 바뀐 파일만 읽어라`,
 			});
-		if (repeat.length)
+		if (busy && repeat.length)
 			signals.push({
 				kind: "repeat",
 				say: `같은 명령(${repeat.map((r) => `${r.label} ×${r.n}`).join(", ")})을 되풀이했다. 같은 오류로 실패한 것이면 더 돌리지 말고 첫 오류와 원인 추정을 보고하라`,
 			});
-		if (packets.length && loose.length >= 3)
+		if (busy && packets.length && loose.length >= 3)
 			signals.push({
 				kind: "packet",
 				say: `묶음(${packets.at(-1)}/${PACKET_FILE})의 스크린샷과 측정을 먼저 써라. 묶음 밖 촬영 ${loose.length}장: 묶음에 없는 상호작용만 직접 찍는다`,
@@ -1702,6 +1711,8 @@ const hookCall = (e, root) => {
 		agentType: e?.agent_type ?? bound,
 		cwd: e?.cwd,
 		seen: Boolean(e?.turn_id || conv),
+		// Claude Code·Codex의 세션 id. 앞 라운드에 읽은 스킬을 같은 세션이 이어 쓰는지 본다(carryReads)
+		session: e?.session_id ? String(e.session_id) : undefined,
 	};
 };
 // Antigravity 서브에이전트 대화 묶기: Main이 invoke_subagent(TypeName)를 부르면 call을 남기고(skill-log),
@@ -1833,7 +1844,10 @@ function projectSkillRead(root, name, path, cmd, skill, cwd) {
 const NEXT_DOC_RE = /next[/\\]dist[/\\]docs[/\\][^\s'"*;|&]+\.mdx?/g;
 export function logSkill(root, input) {
 	const e = JSON.parse(input);
-	const { name, t, agent, agentType, cwd, seen } = hookCall(e, root);
+	const { name, t, agent, agentType, cwd, seen, session } = hookCall(
+		e,
+		root,
+	);
 	// Antigravity Main이 서브에이전트를 불렀다: 곧 시작할 서브에이전트 대화를 이 이름에 묶는다(bindSession)
 	if (name === "invoke_subagent" && t.TypeName && e.conversationId) {
 		mkdirSync(join(root, ".prokit"), { recursive: true });
@@ -1913,6 +1927,7 @@ export function logSkill(root, input) {
 		...(agentType ? { agentType: String(agentType) } : {}),
 		...(name ? { tool: String(name) } : {}),
 		...(seen ? { seen: true } : {}),
+		...(session ? { session } : {}),
 	};
 	// 증거 폴더의 스크린샷을 이미지로 연 기록. audit이 증거에 적은 스크린샷과 대조한다
 	const shot =
@@ -1945,13 +1960,23 @@ export function logSkill(root, input) {
 	appendFileSync(join(root, SKILL_LOG), lines.join(""));
 }
 // 서브에이전트의 도구 호출 하나(act: 도구 이름). 셸 명령은 내용 대신 해시(cmd)와 앞 낱말(label)만 남긴다.
-// 명령에 비밀값이 들어갈 수 있어서다. audit은 이 줄을 일한 기록으로 세지 않는다(supervise만 쓴다)
+// 명령에 비밀값이 들어갈 수 있어서다. audit은 이 줄을 그 에이전트가 이 라운드에서 일한 기록으로 센다(스킬 읽기·편집 없이 명령만 돌린 이어 쓰기).
+// Main의 셸은 dev-cycle 명령만 세션 id와 함께 남긴다(carryReads가 이 라운드에서 일한 Main 세션을 찾는다)
 export function logActivity(root, input) {
-	const { name, t, agent, agentType } = hookCall(input, root);
-	if (!agent) return;
+	const { name, t, agent, agentType, session } = hookCall(input, root);
 	const cmd = String(t.command ?? "")
 		.trim()
 		.replace(/\s+/g, " ");
+	if (!agent) {
+		if (session && /(?:^|[\s/])dev-cycle(?:\.mjs)?(?=[\s;&|)]|$)/.test(cmd)) {
+			mkdirSync(join(root, ".prokit"), { recursive: true });
+			appendFileSync(
+				join(root, SKILL_LOG),
+				`${JSON.stringify({ t: new Date().toISOString(), act: String(name), label: "dev-cycle", session })}\n`,
+			);
+		}
+		return;
+	}
 	const words = cmd.split(" ").filter((w) => !/^\w+=/.test(w));
 	const label = cmd
 		? [
@@ -1979,7 +2004,7 @@ export function logActivity(root, input) {
 // edit-guard가 허락한 편집: 고친 파일(프로젝트 상대 경로)과 고친 쪽(서브에이전트면 agentType)을 남긴다.
 // shortcut: PreToolUse에서 남기므로 다른 훅이나 사용자가 그 편집을 거절해도 남는다. 일한 기록 대조에만 쓴다
 export function logEdit(root, input) {
-	const { name, agent, agentType, seen } = hookCall(input, root);
+	const { name, agent, agentType, seen, session } = hookCall(input, root);
 	const files = editFiles(root, input);
 	if (!files.length) return;
 	const at = new Date().toISOString();
@@ -1988,6 +2013,7 @@ export function logEdit(root, input) {
 		...(agentType ? { agentType: String(agentType) } : {}),
 		...(name ? { tool: String(name) } : {}),
 		...(seen ? { seen: true } : {}),
+		...(session ? { session } : {}),
 	};
 	mkdirSync(join(root, ".prokit"), { recursive: true });
 	appendFileSync(
@@ -2005,10 +2031,110 @@ export function logEdit(root, input) {
 const knows = (e) =>
 	e.seen === true || CC_TOOLS.has(e.tool) || CC_EDIT_TOOLS.has(e.tool);
 function skillLog(root, active) {
-	const log = roundLog(root, active);
+	const raw = roundLog(root, active);
+	const log = raw && carryReads(root, raw);
 	return log && (log.uses.length || log.agentUses.length || log.edits.length)
 		? log
 		: null;
+}
+// 맥락 압축 기록: Claude Code PreCompact 훅(compact-log)이 남긴다. 압축한 뒤에는 앞서 읽은 스킬이 맥락에 그대로 있다고 보지 않는다
+const COMPACT_MARK = 'dev-cycle.mjs" compact-log';
+function compactHooked(root) {
+	const hooks = readJson(join(root, ".claude/settings.json"))?.hooks?.PreCompact;
+	return (
+		Array.isArray(hooks) &&
+		hooks.some((g) => g?.hooks?.some((h) => h?.command?.includes(COMPACT_MARK)))
+	);
+}
+export function logCompact(root, input) {
+	const e = JSON.parse(input);
+	if (!e?.session_id) return;
+	mkdirSync(join(root, ".prokit"), { recursive: true });
+	appendFileSync(
+		join(root, SKILL_LOG),
+		`${JSON.stringify({
+			t: new Date().toISOString(),
+			compact: true,
+			session: String(e.session_id),
+			...(e.agent_id ? { agent: String(e.agent_id) } : {}),
+		})}\n`,
+	);
+}
+// 맥락에 남아 있는 앞선 스킬 읽기를 이 라운드 기록으로 이어 센다(이어 쓴 수행자, 같은 세션의 Main).
+// 조건: Claude Code 기록(Skill·Read, seen), 압축 훅을 설치한 프로젝트, 읽은 뒤 그 쪽(Main 세션이나 agent id)의 압축 기록이 없음,
+// 읽은 스킬 파일(SKILL.md나 참조 파일)이 읽은 뒤 바뀌지 않음, 이 라운드에서 같은 Main 세션·같은 agent id가 일함.
+// 이어 센 기록은 그 쪽이 이 라운드에서 마지막으로 일한 시각으로 둔다(그때까지 맥락에 있었다). Next 문서와 다른 호스트는 잇지 않는다.
+// shortcut: 프로젝트 판이 없는 플러그인 스킬은 파일 변경을 보지 않는다(플러그인 갱신은 세션을 다시 열어야 반영된다)
+function carryReads(root, log) {
+	if (!compactHooked(root)) return log;
+	// 압축 훅을 더하기 전에 시작한 세션은 훅을 모른다(압축해도 기록이 없다). 그 세션·에이전트의 첫 기록이 설정 파일을 고친 뒤여야 잇는다
+	let hookedAt = Number.POSITIVE_INFINITY;
+	try {
+		hookedAt = statSync(join(root, ".claude/settings.json")).mtimeMs;
+	} catch {}
+	const firstAt = {};
+	for (const x of [
+		...log.prior,
+		...log.uses,
+		...log.agentUses,
+		...log.edits,
+		...log.acts,
+	]) {
+		const k = x.agentId ? `a:${x.agentId}` : x.session && `s:${x.session}`;
+		if (k) firstAt[k] = Math.min(firstAt[k] ?? x.t, x.t);
+	}
+	const mainAt = {};
+	const agentAt = {};
+	for (const x of [
+		...log.uses,
+		...log.agentUses,
+		...log.edits,
+		...log.acts,
+		...log.shots,
+	]) {
+		if (x.agentId)
+			agentAt[x.agentId] = Math.max(agentAt[x.agentId] ?? 0, x.t);
+		else if (x.session)
+			mainAt[x.session] = Math.max(mainAt[x.session] ?? 0, x.t);
+	}
+	const unchanged = (u) => {
+		try {
+			return (
+				statSync(join(root, ".agents/skills", u.name, u.ref ?? "SKILL.md"))
+					.mtimeMs < u.t
+			);
+		} catch {
+			return Boolean(u.plugin) && !u.ref;
+		}
+	};
+	const fresh = (u) =>
+		u.seen &&
+		CC_TOOLS.has(u.tool) &&
+		!u.part &&
+		!String(u.name).startsWith("next/") &&
+		!log.compacts.some(
+			(c) =>
+				c.t > u.t &&
+				(u.agentId ? c.agent === u.agentId : !c.agent && c.session === u.session),
+		) &&
+		(firstAt[u.agentId ? `a:${u.agentId}` : `s:${u.session}`] ?? 0) >
+			hookedAt &&
+		unchanged(u);
+	const carry = (u) => {
+		const at = u.agentId ? agentAt[u.agentId] : u.session && mainAt[u.session];
+		return at && at > u.t && fresh(u) ? [{ ...u, t: at, carried: true }] : [];
+	};
+	const uses = [...log.prior.filter((u) => !u.agentId), ...log.uses].flatMap(
+		carry,
+	);
+	const agentUses = log.prior.filter((u) => u.agentId).flatMap(carry);
+	return uses.length || agentUses.length
+		? {
+				...log,
+				uses: [...log.uses, ...uses],
+				agentUses: [...log.agentUses, ...agentUses],
+			}
+		: log;
 }
 // 이 라운드 기록 전부(훅 기록 없이 행을 채운 시각만 있어도). 기록 파일이 없으면 null
 // 한 명령 안에서 여러 검사가 같은 기록을 읽는다. 기록은 덧붙이기만 하므로 크기·수정 시각·라운드가 같으면 파싱한 결과를 다시 쓴다
@@ -2028,6 +2154,25 @@ function roundLog(root, active) {
 	roundLogCache.set(p, { key, log });
 	return log;
 }
+// 스킬·문서 읽기 한 줄
+const useOf = (e, t) => ({
+	t,
+	name: e.doc ?? skillName(String(e.skill)),
+	// `<플러그인>:<이름>` Skill 호출의 플러그인 이름
+	plugin: String(e.skill).includes(":")
+		? String(e.skill)
+				.replace(/^[/$]+/, "")
+				.split(":")[0]
+		: undefined,
+	ref: e.ref,
+	part: e.part === true,
+	tool: e.tool,
+	project: e.project === true,
+	agentType: e.agentType,
+	agentId: e.agent,
+	seen: knows(e),
+	session: e.session,
+});
 function parseRoundLog(p, active) {
 	const since = Date.parse(
 		`${active?.meta.opened ?? "1970-01-01"}T00:00:00+09:00`,
@@ -2038,11 +2183,17 @@ function parseRoundLog(p, active) {
 	let edits = [];
 	let shots = [];
 	let acts = [];
+	// 이 라운드 전의 스킬 읽기(carryReads가 이어 센다)와 맥락 압축 기록
+	const prior = [];
+	const compacts = [];
 	for (const line of readFileSync(p, "utf8").split("\n")) {
 		try {
 			const e = JSON.parse(line);
 			const t = Date.parse(e.t);
-			if ("round" in e) {
+			if ("compact" in e)
+				compacts.push({ t, session: e.session, agent: e.agent });
+			else if ("round" in e) {
+				prior.push(...uses, ...agentUses);
 				uses = [];
 				agentUses = [];
 				fills = [];
@@ -2058,6 +2209,7 @@ function parseRoundLog(p, active) {
 						label: e.label,
 						agentId: e.agent,
 						agentType: e.agentType,
+						session: e.session,
 					});
 				else if ("shot" in e)
 					shots.push({
@@ -2077,29 +2229,14 @@ function parseRoundLog(p, active) {
 						agentId: e.agent,
 						main: !e.agent,
 						seen: knows(e),
+						session: e.session,
 					});
-				else
-					(e.agent ? agentUses : uses).push({
-						t,
-						name: e.doc ?? skillName(String(e.skill)),
-						// `<플러그인>:<이름>` Skill 호출의 플러그인 이름
-						plugin: String(e.skill).includes(":")
-							? String(e.skill)
-									.replace(/^[/$]+/, "")
-									.split(":")[0]
-							: undefined,
-						ref: e.ref,
-						part: e.part === true,
-						tool: e.tool,
-						project: e.project === true,
-						agentType: e.agentType,
-						agentId: e.agent,
-						seen: knows(e),
-					});
-			}
+				else (e.agent ? agentUses : uses).push(useOf(e, t));
+			} else if (!("act" in e || "shot" in e || "row" in e || "edit" in e))
+				prior.push(useOf(e, t));
 		} catch {}
 	}
-	return { uses, agentUses, fills, edits, shots, acts };
+	return { uses, agentUses, fills, edits, shots, acts, prior, compacts };
 }
 function skillsLogged(root, active) {
 	const log = skillLog(root, active);
@@ -2326,9 +2463,10 @@ function usageProblem(root, config, active, files = roundFiles(root, active)) {
 		u.name === n &&
 		(!official.has(n) || u.project || plugins.has(u.plugin)) &&
 		(u.main ? main || !u.seen : Boolean(agents?.includes(u.agentType)));
-	// after 뒤에도 일한 서브에이전트(같은 agent_id)가 그 전에 읽은 기록은 센다(위임하는 동안 Main이 다른 행을 채운 경우)
+	// after 뒤에도 일한 서브에이전트(같은 agent_id)가 그 전에 읽은 기록은 센다(위임하는 동안 Main이 다른 행을 채운 경우).
+	// 일한 기록에는 명령 실행(acts)과 스크린샷 열기(shots)도 든다(이어 쓴 수행자가 스킬을 다시 읽지 않고 명령만 돌린 경우)
 	const lastWork = {};
-	for (const u of log ? [...all, ...log.edits] : [])
+	for (const u of log ? [...all, ...log.edits, ...log.acts, ...log.shots] : [])
 		if (u.agentId)
 			lastWork[u.agentId] = Math.max(lastWork[u.agentId] ?? 0, u.t);
 	const read = (n, after, agents, main) =>
@@ -2475,7 +2613,7 @@ function usageProblem(root, config, active, files = roundFiles(root, active)) {
 		// 한 번 맡겨 이어진 행 여럿을 채운 것은 센다. 같은 에이전트에 맡긴 앞 행이 없으면 그 에이전트의 일은 이 행의 일이다
 		// (2026-11-03 실측: 위임이 끝난 뒤 Main 몫의 앞 행(계약)을 채우자 위임 행이 무효가 됐다).
 		// shortcut: 위임: 없이 맡긴 앞 행의 일은 가르지 못한다
-		const work = [...all, ...log.edits];
+		const work = [...all, ...log.edits, ...log.acts, ...log.shots];
 		const cc = seenHost;
 		const pos = (x) => active.rows.indexOf(rowOf(x));
 		const handed = (a) => (x) =>
@@ -2749,8 +2887,10 @@ const roundRowProblem = (root, config, active, files) => {
 	const usage = usageProblem(root, config, active, files);
 	const addon = addonProblem(root, config, active);
 	const packet = packetProblem(root, active);
+	const copy = copyOnlyProblem(root, active, files);
 	return (r) =>
 		rowProblem(r) ??
+		copy(r) ??
 		uiRecordProblem(root, active.meta, r) ??
 		packet(r) ??
 		brain(r) ??
@@ -2761,6 +2901,42 @@ const roundRowProblem = (root, config, active, files) => {
 			? planConfirmProblem(root, config, r.evidence)
 			: null);
 };
+
+// 문구만 바꾼 화면 라운드(execution-efficiency.md "문구만 바꾼 화면 라운드"): 디자인 감사·휴대폰 스크롤처럼 화면 글자로 결과가
+// 바뀌지 않는 행은 `N/A: 문구만(…)`으로 둔다. 런타임 확인·묶음, 디자인 리뷰(critique A), 코드 리뷰는 그대로 하고,
+// prokit-reviewer(code)가 diff가 문구만인지 판정해 증거에 `문구만: 확인`을 적어야 받는다(`문구만: 아님`이면 전체 리뷰로 돌아간다).
+// 러너는 diff에 스타일·의존성 파일이 있으면 문구만으로 보지 않는다
+const COPY_NA = /^n\/a\s*:\s*문구만/i;
+// 문구만으로 줄일 수 있는 행(허용 목록). 나머지 행은 문구만 라운드도 한다
+const COPY_ROWS = [
+	"[review] 디자인 감사",
+	"[review] impeccable audit",
+	"[verify] 휴대폰 스크롤",
+];
+const COPY_SOURCE = /\.(?:tsx?|jsx?|mdx?|json)$/;
+function copyOnlyProblem(root, active, files) {
+	return (r) => {
+		if (!COPY_NA.test(bare(r.evidence))) return null;
+		if (!COPY_ROWS.some((k) => r.text.startsWith(k)))
+			return "문구만 바꾼 라운드도 이 행은 한다. N/A: 문구만은 디자인 감사와 휴대폰 스크롤 행에만 쓴다";
+		const style = (files ?? roundFiles(root, active)).filter(
+			(f) =>
+				PACKET_SOURCE_RE.test(f) &&
+				(!COPY_SOURCE.test(f) || /(?:^|\/)package\.json$/.test(f)),
+		);
+		if (style.length)
+			return `diff에 화면 글자가 아닌 소스(${style.slice(0, 5).join(", ")})가 있어 문구만 라운드가 아니다. 이 행을 하고 증거를 적는다`;
+		const review = active.rows.find((x) =>
+			x.text.startsWith("[review] prokit-reviewer(code)"),
+		);
+		const verdict = bare(review?.evidence).match(/문구만\s*:\s*(확인|아님)(?![가-힣])/)?.[1];
+		if (verdict === "아님")
+			return "prokit-reviewer(code)가 문구만이 아니라고 판정했다. 이 행을 하고 증거를 적는다";
+		if (verdict !== "확인")
+			return "N/A: 문구만은 prokit-reviewer(code)가 diff가 화면 글자만 바꿨는지 판정해 증거에 문구만: 확인을 적어야 받는다(위임 지시에 판정을 넣는다). 리뷰가 끝난 뒤 다시 audit한다";
+		return null;
+	};
+}
 
 // 완료의 증거는 기록 칸의 마지막 보관 파일이다. 보관 마커가 그 Task이고 partial이 아니어야 한다.
 function recordProblem(root, config, t) {
@@ -3555,7 +3731,13 @@ function skillWarnings(root, active, round = { files: [], auth: false }) {
 	const mainRead = [
 		...new Set(
 			log.uses
-				.filter((u) => u.seen && skillAgents[u.name] && !mainRows.has(u.name))
+				.filter(
+					(u) =>
+						u.seen &&
+						!u.carried &&
+						skillAgents[u.name] &&
+						!mainRows.has(u.name),
+				)
 				.map((u) => u.name),
 		),
 	];
@@ -5346,6 +5528,13 @@ export function main(argv, root = process.cwd()) {
 		if (input.includes('"toolCall"')) console.log("{}");
 		return 0;
 	}
+	// PreCompact 훅(Claude Code): 맥락 압축을 남긴다(carryReads가 압축 전에 읽은 스킬을 잇지 않는다). 오류는 세션을 막지 않는다
+	if (cmd === "compact-log") {
+		try {
+			logCompact(hookRoot, readFileSync(0, "utf8"));
+		} catch {}
+		return 0;
+	}
 	// SessionStart 훅(Antigravity): 서브에이전트 대화를 부른 에이전트 이름에 묶는다. 오류는 세션을 막지 않는다
 	if (cmd === "agent-start") {
 		try {
@@ -5475,15 +5664,17 @@ export function main(argv, root = process.cwd()) {
 				throw new UsageError(
 					"사용법: dev-cycle packet capture <http://localhost:3001/경로> <묶음 폴더> [--session 이름] | packet seal|check <묶음 폴더> [--json] (묶음 폴더는 tasks/evidence/ 아래)",
 				);
-			// 봉인 출력: 증거에 옮길 경로·hash, 표준에서 빠진 뷰포트, 재지 못한 검사
+			// 봉인 출력: 증거에 옮길 경로·hash, 표준에서 빠진 뷰포트, 재지 못한 검사, 해당 없는 검사(production 서버의 get_errors)
 			const sealed = (r) => {
+				const all = Object.entries(r.coverage.skipped);
+				const na = all.filter(([, v]) => v.startsWith("해당 없음:"));
+				const list = (xs) => xs.map(([k, v]) => `${k}(${v})`).join(", ");
 				const gap = [
 					r.coverage.missing.length &&
 						`표준에서 빠진 뷰포트: ${r.coverage.missing.join(", ")}`,
-					Object.keys(r.coverage.skipped).length &&
-						`재지 못한 검사: ${Object.entries(r.coverage.skipped)
-							.map(([k, v]) => `${k}(${v})`)
-							.join(", ")}`,
+					all.length > na.length &&
+						`재지 못한 검사: ${list(all.filter((x) => !na.includes(x)))}`,
+					na.length && `해당 없는 검사: ${list(na)}`,
 				].filter(Boolean);
 				print(r, [`packet: ${r.path} sha256=${r.sha256}`, ...gap].join("\n"));
 				return 0;

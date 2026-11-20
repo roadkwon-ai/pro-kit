@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, mkdirSync, readFileSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -56,7 +56,7 @@ function round() {
   const shot = (file, type, id) => hook("skill-log", { tool_name: "Read", ...who(type, id), tool_input: { file_path: join(root, file) } });
   const shell = (command, type, id) => hook("shell-guard", { tool_name: "Bash", ...who(type, id), tool_input: { command } });
   return {
-    root, config, write, read, edit, set, packet, problems, shot, shell,
+    root, config, write, read, edit, set, packet, problems, shot, shell, hook,
     ctx: 1, brief: 2, design: at(/^\[design\]/), impl: at(/^구현 \(구현 단계,/), types: at(/^\[verify\] 타입·린트·빌드/),
     runtime: at(/^\[verify\] next-dev-loop/), scroll: at(/^\[verify\] 휴대폰 스크롤/), review: at(/^\[review\] 디자인 리뷰/),
     uiAudit: at(/^\[review\] 디자인 감사/), fix: at(/^수정과 다듬기/), recheck: at(/^\[verify\] 재확인/), code: at(/^\[review\] prokit-reviewer\(code\)/),
@@ -237,6 +237,8 @@ test("감독: supervise가 하위 에이전트마다 다시 읽기, 배정 밖 �
   assert.doesNotMatch(out, /SendMessage v1/);
   // 예산: 맡은 지 예산보다 오래되면 멈추고 보고하게 한다
   const later = Date.now() + (SUPERVISE_BUDGET_MIN["prokit-ui-builder"] + 1) * 60_000;
+  // 일하는 중이어야 한다(마지막 기록이 1분 전)
+  appendFileSync(join(b.root, ".prokit/skills-used.jsonl"), `${JSON.stringify({ t: new Date(later - 60_000).toISOString(), act: "Read", agent: "u1", agentType: "prokit-ui-builder" })}\n`);
   const u1 = supervise(b.root, b.config, { now: later }).agents.find((a) => a.id === "u1");
   assert.ok(u1.signals.some((s) => s.kind === "budget" && /멈추고 한 일·남은 일·막힌 것을 보고하라/.test(s.say)));
   assert.equal(JSON.parse(run(b.root, "supervise", "--json").stdout).agents.length, 3);
@@ -260,4 +262,110 @@ test("감독: 하위 에이전트의 일반 파일 읽기와 셸 명령을 활�
   // 셸 막기는 그대로다: 막힌 명령은 활동으로 남지 않는다
   assert.equal(b.shell("pkill -f next", "prokit-implementer", "i1").status, 2);
   assert.equal(readFileSync(join(b.root, ".prokit/skills-used.jsonl"), "utf8"), log);
+});
+
+// 앞 라운드의 기록(라운드 시작 줄 앞)을 끼워 넣는다. 스킬 파일은 그보다 먼저 고친 것으로 둔다
+function priorReads(b, lines) {
+  const log = join(b.root, ".prokit/skills-used.jsonl");
+  const t = new Date(Date.now() - 60_000).toISOString();
+  const old = new Date(Date.now() - 3_600_000);
+  for (const s of SKILLS) utimesSync(join(b.root, `.agents/skills/${s}/SKILL.md`), old, old);
+  let cur = "";
+  try {
+    cur = readFileSync(log, "utf8");
+  } catch {}
+  mkdirSync(join(b.root, ".prokit"), { recursive: true });
+  const mark = JSON.stringify({ t: new Date(Date.now() - 30_000).toISOString(), round: "랜딩" });
+  writeFileSync(log, `${lines.map((l) => JSON.stringify({ t, seen: true, project: true, ...l })).join("\n")}\n${mark}\n${cur}`);
+}
+// 압축 훅은 세션이 시작하기 전에 들어 있었다(설정 파일을 2시간 전에 고쳤다). fresh면 방금 더한 것이다
+const compactHook = (b, fresh = false) => {
+  b.write(".claude/settings.json", JSON.stringify({ hooks: { PreCompact: [{ hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/scripts/dev-cycle.mjs" compact-log' }] }] } }));
+  const at = new Date(Date.now() - (fresh ? 0 : 7_200_000));
+  utimesSync(join(b.root, ".claude/settings.json"), at, at);
+};
+
+test("라운드를 넘긴 이어 쓰기: 같은 agent id가 이 라운드에서 명령만 돌려도 앞 라운드에 읽은 스킬을 센다. 압축 훅이 없거나, 그 에이전트가 압축했거나, 스킬 파일이 바뀌었으면 세지 않는다", () => {
+  const b = round();
+  priorReads(b, [
+    { skill: "next-dev-loop", tool: "Read", agent: "r1", agentType: "prokit-runtime-checker" },
+    { skill: "agent-browser", tool: "Read", agent: "r1", agentType: "prokit-runtime-checker" },
+  ]);
+  // 이 라운드의 다른 기록(훅이 도는 라운드다)
+  b.read("prokit-ui");
+  b.shell("pnpm dev-cycle packet capture http://localhost:3001/ tasks/evidence/p1", "prokit-runtime-checker", "r1");
+  const p1 = b.packet("p1");
+  b.set(b.runtime, `위임: prokit-runtime-checker(사용: next-dev-loop, agent-browser) → 오류 0, 묶음 ${p1.cite}`);
+  const lost = () => b.problems(b.runtime).filter((p) => /일한 기록이 없다|읽은 기록/.test(p));
+  // 압축 훅이 없는 프로젝트는 잇지 않는다(압축을 알 수 없다). 그 에이전트가 시작한 뒤에 더한 훅도 그 에이전트는 모른다
+  assert.notDeepEqual(lost(), []);
+  compactHook(b, true);
+  assert.notDeepEqual(lost(), []);
+  compactHook(b);
+  assert.deepEqual(lost(), []);
+  // 그 에이전트의 압축 기록이 있으면 다시 읽어야 한다. Main 세션의 압축은 에이전트 맥락과 상관없다
+  b.hook("compact-log", { session_id: "s1" });
+  assert.deepEqual(lost(), []);
+  b.hook("compact-log", { session_id: "s1", agent_id: "r1" });
+  assert.notDeepEqual(lost(), []);
+  b.read("next-dev-loop", "prokit-runtime-checker", "r1");
+  b.read("agent-browser", "prokit-runtime-checker", "r1");
+  assert.deepEqual(lost(), []);
+});
+
+test("같은 세션의 Main: 앞 라운드에 Skill로 부른 prokit-ui·prokit-web을 이 라운드에서 dev-cycle을 돌린 같은 세션이면 센다. 다른 세션이거나 스킬 파일이 바뀌면 다시 부른다", () => {
+  const b = round();
+  compactHook(b);
+  priorReads(b, [
+    { skill: "prokit-ui", tool: "Skill", session: "s1", project: false },
+    { skill: "prokit-web", tool: "Skill", session: "s1", project: false },
+  ]);
+  b.read("vercel-react-best-practices", "prokit-ui-builder", "u1");
+  b.edit("apps/web/src/app/page.tsx", "prokit-ui-builder", "u1");
+  const main = (session) => b.hook("shell-guard", { tool_name: "Bash", session_id: session, tool_input: { command: `pnpm dev-cycle evidence ${b.impl} --file tasks/evidence/e.txt` } });
+  const fill = () => b.set(b.impl, "사용: prokit-ui, prokit-web; 위임: prokit-ui-builder(사용: vercel-react-best-practices(rerender-memo)) → 1개 파일. Next 문서: N/A: 없음");
+  const lost = () => b.problems(b.impl).filter((p) => /prokit-ui|prokit-web/.test(p));
+  main("s2");
+  fill();
+  assert.notDeepEqual(lost(), []);
+  main("s1");
+  fill();
+  assert.deepEqual(lost(), []);
+  // 압축한 세션은 잇지 않는다
+  b.hook("compact-log", { session_id: "s1" });
+  assert.notDeepEqual(lost(), []);
+});
+
+test("supervise: 마지막 기록이 오래된(끝났을) 에이전트는 예산을 넘어도 멈추라고 하지 않는다. 일하는 중이면 알린다", () => {
+  const b = round();
+  b.read("vercel-react-best-practices", "prokit-ui-builder", "u1");
+  const budget = SUPERVISE_BUDGET_MIN["prokit-ui-builder"];
+  const later = Date.now() + (budget + 3) * 60_000;
+  const kinds = (now) => supervise(b.root, b.config, { now }).agents[0].signals.map((s) => s.kind);
+  assert.ok(!kinds(later).includes("budget"));
+  appendFileSync(join(b.root, ".prokit/skills-used.jsonl"), `${JSON.stringify({ t: new Date(later - 60_000).toISOString(), act: "Bash", cmd: "abc", label: "pnpm", agent: "u1", agentType: "prokit-ui-builder" })}\n`);
+  assert.ok(kinds(later).includes("budget"));
+});
+
+test("문구만 바꾼 화면 라운드: 디자인 감사는 N/A: 문구만으로 두되 코드 리뷰가 문구만: 확인을 적어야 받는다. 지킬 행과 스타일 파일이 든 diff에는 받지 않는다", () => {
+  const b = round();
+  const copy = () => b.problems(b.uiAudit).filter((p) => /문구만/.test(p));
+  b.set(b.uiAudit, "N/A: 문구만(제목 문구 2개)");
+  assert.match(copy().join("\n"), /문구만: 확인을 적어야/);
+  b.set(b.code, "위임: prokit-reviewer → prokit-reviewer(code): approve, max=none, 문구만: 아님");
+  assert.match(copy().join("\n"), /문구만이 아니라고 판정/);
+  b.set(b.code, "위임: prokit-reviewer → prokit-reviewer(code): approve, max=none, 문구만: 확인");
+  assert.deepEqual(copy(), []);
+  b.set(b.review, "N/A: 문구만");
+  assert.match(b.problems(b.review).join("\n"), /이 행은 한다/);
+  b.write("apps/web/src/app/globals.css", "a{}\n");
+  assert.match(copy().join("\n"), /화면 글자가 아닌 소스\(apps\/web\/src\/app\/globals\.css\)/);
+});
+
+test("검증 증거 묶음: production 서버의 get_errors는 재지 못한 검사가 아니라 해당 없는 검사로 알린다", () => {
+  const b = round();
+  const p = b.packet("prod", {}, { nextErrors: { skipped: "해당 없음: production 서버(next start)라 /_next/mcp가 없다(HTTP 404)" } });
+  assert.equal(p.r.status, 0, p.r.stderr);
+  assert.match(p.r.stdout, /해당 없는 검사: page\.nextErrors/);
+  assert.doesNotMatch(p.r.stdout, /재지 못한 검사/);
 });

@@ -21,7 +21,7 @@ Better-T-Stack으로 만든 Next.js 풀스택 프로젝트(oRPC, Drizzle, Better
 | Vercel 배포와 릴리스 | `scripts/vercel-deploy.mjs`, `scripts/release.mjs`, `.vercelignore` | develop·production 배포 전 검사와 배포, production 배포 전 릴리스(버전 태그, `release/` 노트, GitHub Release), 로컬 `.env` 업로드 차단 |
 | 에이전트 <!-- v:prokit.agents.count -->8<!-- /v -->개 | `.claude/agents/`(정본), `.codex/agents/`·`.agents/agents/`(생성물) | 계층별 전문 수행(ui·api·db-builder, 공식 스킬을 읽고 따른다), 실행 확인(runtime-checker), 하네스·계층 밖 구현(implementer), 전문 읽기 전용 리뷰, 최종 읽기 전용 리뷰, 읽기 전용 정밀 분석(analyzer) |
 | dev-cycle | `scripts/dev-cycle.mjs`, `.dev-cycle.json`, `docs/dev-workflow.md`, `tasks/` | 케이스 판정, 대조표, audit, 진행 계획의 Task 게이트(`tasks/plan.md`) |
-| dev-cycle 훅 | `.claude/settings.json`의 PreToolUse·PostToolUse 훅(Claude Code), `.agents/hooks.json`(Antigravity), `.codex/hooks.json`(Codex. 기기마다 `pnpm skills:setup`이 더한다), git pre-commit 훅 | 열린 라운드 없이 코드·하네스 파일을 고치지 못하게 하고(edit-guard), 계층 파일은 그 계층 에이전트만 고치게 하고, `pkill`처럼 이름·포트로 골라 프로세스를 끄는 셸 명령을 막고(shell-guard. Claude Code·Codex), 부른 스킬과 서브에이전트의 일을 `.prokit/`에 기록한다(skill-log. audit이 대조한다). 훅이 도는지 확인하지 못한 도구(Grok Build)는 기록이 없으면 자기 신고로 돈다 |
+| dev-cycle 훅 | `.claude/settings.json`의 PreToolUse·PostToolUse·PreCompact 훅(Claude Code), `.agents/hooks.json`(Antigravity), `.codex/hooks.json`(Codex. 기기마다 `pnpm skills:setup`이 더한다), git pre-commit 훅 | 열린 라운드 없이 코드·하네스 파일을 고치지 못하게 하고(edit-guard), 계층 파일은 그 계층 에이전트만 고치게 하고, `pkill`처럼 이름·포트로 골라 프로세스를 끄는 셸 명령을 막고(shell-guard. Claude Code·Codex), 부른 스킬과 서브에이전트의 일, 맥락 압축을 `.prokit/`에 기록한다(skill-log·compact-log. audit이 대조한다). 훅이 도는지 확인하지 못한 도구(Grok Build)는 기록이 없으면 자기 신고로 돈다 |
 | 문서 골격 | `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/adr/`, `docs/domain/project.md` | 개발 원칙과 공통 규칙(`CLAUDE.md`는 `@AGENTS.md`로 읽음), 용어, 결정, 개관 |
 
 ## 준비물
