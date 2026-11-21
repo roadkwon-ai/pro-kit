@@ -93,7 +93,7 @@ flowchart TB
 
 - **프로세스 스킬 고르기**: 설계, 계획, 구현, 디버깅, 리뷰, QA, 검증에 쓸 프로세스 스킬은 설치된 프로젝트의 `.agents/skills/prokit-dev-cycle/references/process-routing.md`에 표로 정리돼 있어요. 단계마다 1순위 스킬, Claude와 Codex의 대안, 스킬이 없을 때의 절차가 적혀 있어요. 필요한 전문 스킬이 없으면 검증한 대안을 찾고, 대안도 없으면 막힌 이유를 남겨요.
 - **과설계 막기**: 스펙에 “만들지 않는 것” 절을 두고, 계획은 `prokit-reviewer(plan)`이 재사용·설정 결정까지 검토해요. 고른 과설계 방지 스킬이 있으면 그 스킬이, 없으면 내장 간결성 규칙과 `prokit-reviewer`가 이 일을 맡아요. 어떤 스킬의 규칙보다 `prokit-dev-cycle`, `AGENTS.md`, 대조표가 우선해요(스킬별 설명은 [두뇌와 선택 스킬](../skills/brains.md)).
-- **하네스를 고치는 일**: 스킬, 에이전트, dev-cycle 자체와 빌드·배포·작업공간 설정을 바꾸는 작업도 라운드로 해요. 케이스 H예요([케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)). 대조표 행의 정본인 `docs/dev-workflow.md`는 프로젝트에 맞게 고쳐도 되고, 고치는 일 자체가 케이스 H 변경이에요.
+- **하네스를 고치는 일**: 스킬, 에이전트, dev-cycle 자체와 빌드·배포·작업공간 설정을 바꾸는 작업도 라운드로 해요. 케이스 H예요([케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](cases.md)). 대조표 행의 정본인 `docs/dev-workflow.md`는 프로젝트에 맞게 고쳐도 되고, 고치는 일 자체가 케이스 H 변경이에요.
 - **일하는 도중에 막는 훅**: 설치기가 Claude Code 설정(`.claude/settings.json`)에 훅을 넣고, Codex(`.codex/hooks.json`)와 Antigravity(`.agents/hooks.json`)에도 비슷한 훅을 넣어요(도구마다 조금 달라요. 아래 괄호와 [지원하는 에이전트](../start/supported-agents.md)). 훅은 audit이 끝에서 잡는 일을 중간에 막거나 기록해요.
   - 편집 막기(`edit-guard`): 열린 라운드 없이 코드나 하네스 파일을 편집 도구로 고치려 하면 막아요. 라운드가 열려 있어도 코디네이터가 계층 코드를, 계층 에이전트가 다른 계층 파일을 고치려 하면 막아요.
   - 스킬 기록(`skill-log`): 스킬 호출, `SKILL.md` 읽기, 증거 폴더의 스크린샷을 연 일을 `.prokit/skills-used.jsonl`(커밋하지 않는 파일)에 에이전트 이름과 함께 남겨요. audit이 증거에 적은 스킬과 대조해요.

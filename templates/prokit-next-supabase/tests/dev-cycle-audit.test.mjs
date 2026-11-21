@@ -15,6 +15,32 @@ const run = (root, ...args) => spawnSync(process.execPath, [CLI, ...args], { cwd
 
 const CONFIRMED = "사용자가 결과를 확인했다(2026-09-29)";
 
+test("H 빌드 사유는 알려진 하네스 변경만 채우고 나중에 추가된 빌드 입력이나 미분류 경로를 다시 확인한다", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  const todo = join(root, config.todoPath);
+  const build = /^\[verify\] 빌드·검사 \(/;
+  const buildEvidence = () => parseActive(readFileSync(todo, "utf8")).rows.find((r) => build.test(r.text)).evidence;
+  writeTable(root, config, "H", { write: true, title: "하네스" });
+  assert.equal(buildEvidence(), "", "변경 전에는 판단하지 않는다");
+  write("scripts/dev-cycle.mjs");
+  write(".agents/skills/example/SKILL.md");
+  writeTable(root, config, "H", { write: true, upgrade: true });
+  assert.match(buildEvidence(), /^N\/A: 하네스 문서·러너만 변경/);
+  assert.ok(!audit(root, config).problems.some((p) => /빌드·검사 \(/.test(p)));
+  write("docs/custom-input.md");
+  assert.ok(audit(root, config).problems.some((p) => /자동으로 채운 빌드 사유의 범위를 벗어났다/.test(p)));
+  write(".github/workflows/check.yml");
+  assert.ok(audit(root, config).problems.some((p) => /빌드·배포 또는 작업공간 입력이 바뀌었다/.test(p)));
+
+  for (const file of ["apps/web/package.json", "packages/config/tsconfig.base.json"]) {
+    const scoped = makeRepo();
+    scoped.write("scripts/dev-cycle.mjs");
+    scoped.write(file);
+    assert.doesNotMatch(writeTable(scoped.root, loadConfig(scoped.root), "H").block, /N\/A: 하네스 문서·러너만 변경/, file);
+  }
+});
+
 test("audit은 구현 전 설계 행을 지우거나 빈 증거로 남기면 거부한다", () => {
   const { root } = makeRepo();
   const config = loadConfig(root);
@@ -67,7 +93,7 @@ test("CLI close는 packet을 받지 않고, 위임·자원 스크립트가 없�
   const { root } = makeRepo();
   const close = run(root, "close", "--packet", "p.json", "--context", "c.json");
   assert.equal(close.status, 2);
-  assert.match(close.stderr, /사용법: dev-cycle close \[--partial\] \[--json\]/);
+  assert.match(close.stderr, /사용법: dev-cycle close \[--partial\] \[--round-only\] \[--json\]/);
   // dev-cycle.mjs만 있는 프로젝트(갱신 중 일부 파일이 빠진 경우)
   const alone = join(root, "alone");
   mkdirSync(alone);

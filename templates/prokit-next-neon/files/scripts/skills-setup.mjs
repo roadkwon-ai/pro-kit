@@ -48,6 +48,21 @@ const onPath = (cmd) => sh(`command -v ${cmd}`).status === 0;
 const firstLine = (r) =>
 	`${r.stderr ?? ""}${r.stdout ?? ""}`.trim().split("\n")[0] ||
 	(r.error ? r.error.message : `exit ${r.status}`);
+const CHECK_TIMEOUT_MS = 10_000;
+function checkCommand(label, cmd, args, opts = {}) {
+	console.log(`전역 확인 시작: ${label} (제한 ${CHECK_TIMEOUT_MS / 1000}초)`);
+	const start = Date.now();
+	const result = run(cmd, args, { ...opts, timeout: CHECK_TIMEOUT_MS });
+	const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+	const state =
+		result.error?.code === "ETIMEDOUT"
+			? "시간 초과"
+			: result.error
+				? `실행 오류: ${result.error.message}`
+				: `exit ${result.status}`;
+	console.log(`전역 확인 종료: ${label} (${elapsed}초, ${state})`);
+	return result;
+}
 // OMX 프로젝트 설정은 기기마다 한다(.codex/config.toml·hooks.json은 git이 무시). 이 파일이 그 흔적이다.
 const OMX_MARK = ".omx/setup-scope.json";
 // omx uninstall은 --scope도 기록도 없으면 user 범위(전역 ~/.codex)를 지운다. 범위를 늘 명시한다.
@@ -616,11 +631,15 @@ const codexUnsupported = (r) =>
 		`${r.stderr ?? ""}${r.stdout ?? ""}`,
 	);
 
-function codexPluginStatus(root, codex, withGlobal, failures) {
+function codexPluginStatus(root, codex, withGlobal, failures, check) {
 	if (!onPath("codex"))
 		return "Codex 플러그인(global): codex 없음 → Codex를 설치한 뒤 pnpm skills:setup --with-global";
 	const json = (args) => {
-		const r = run("codex", args, { cwd: root });
+		const r = check
+			? checkCommand(`codex ${args.slice(0, -1).join(" ")}`, "codex", args, {
+					cwd: root,
+				})
+			: run("codex", args, { cwd: root });
 		if (r.status !== 0)
 			return { error: firstLine(r), unsupported: codexUnsupported(r) };
 		try {
@@ -718,7 +737,14 @@ function codexPluginStatus(root, codex, withGlobal, failures) {
 
 // mode: "check"는 설치하지 않는다. "auto"는 auto: true인 도구만, "all"(--with-global)은 install이 있는 도구를 모두 설치한다.
 // 끝내 없는 도구는 absent에 담는다.
-function installGlobal(list, mode, failures, warnings, absent = []) {
+function installGlobal(
+	list,
+	mode,
+	failures,
+	warnings,
+	absent = [],
+	report = false,
+) {
 	const lines = [];
 	for (const g of list) {
 		// 그 도구(codex 등)가 없는 기기에는 그 도구용 항목을 설치하지도 누락으로 세지도 않는다.
@@ -726,7 +752,19 @@ function installGlobal(list, mode, failures, warnings, absent = []) {
 			lines.push(`${g.name} 건너뜀(${g.tool} 없음)`);
 			continue;
 		}
-		let ok = sh(g.check).status === 0;
+		const checked = report
+			? checkCommand(g.name, "sh", ["-c", g.check])
+			: sh(g.check);
+		if (report && checked.error) {
+			const reason =
+				checked.error.code === "ETIMEDOUT"
+					? "시간 초과"
+					: `실행 오류: ${checked.error.message}`;
+			failures.push(`전역 ${g.name}: 확인 실패(${reason})`);
+			lines.push(`${g.name} 확인 실패(${reason})`);
+			continue;
+		}
+		let ok = checked.status === 0;
 		if (!ok && g.install && (mode === "all" || (mode === "auto" && g.auto))) {
 			console.log(`전역 설치: ${g.name} → ${g.install}`);
 			const r = sh(g.install, { stdio: "inherit" });
@@ -884,11 +922,20 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 			);
 	}
 
+	if (check) {
+		const projectMissing = entries.flatMap((e) => missingSkills(root, e));
+		const total = entries.reduce((n, e) => n + e.skills.length, 0);
+		console.log(
+			`프로젝트 스킬 사전 확인: ${total}개 중 ${projectMissing.length ? `누락 ${projectMissing.length}개` : "모두 있음"}`,
+		);
+	}
 	const globals = installGlobal(
 		manifest.global,
 		check ? "check" : withGlobal ? "all" : "auto",
 		failures,
 		warnings,
+		undefined,
+		check,
 	);
 	// 고른 두뇌의 전역 도구(gstack, OMX CLI)는 --brain을 줬거나 --with-global일 때만 설치한다.
 	const slotGlobal = chosen.flatMap((c) =>
@@ -903,6 +950,7 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 		failures,
 		warnings,
 		absent,
+		check,
 	);
 	let installed = 0;
 	for (const e of entries) {
@@ -1081,7 +1129,7 @@ export function main(argv, root = process.cwd(), platform = process.platform) {
 	for (const i of mine)
 		if (i.codex)
 			out.push(
-				codexPluginStatus(root, i.codex, withGlobal && !check, failures),
+				codexPluginStatus(root, i.codex, withGlobal && !check, failures, check),
 			);
 
 	const omxArgs = mine.find((i) => i.omx)?.omx;

@@ -364,5 +364,5 @@ flowchart TB
 - [완성팩 활용과 담당 구분](preset-publication.md)
 - [기존 프로젝트에 도입하기](../start/adopt.md)
 - [화면만 프로젝트와 HTML 내보내기](screen-only.md)
-- [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](../concepts/cases.md)
+- [케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](../concepts/cases.md)
 - [공식 스킬과 연결](../skills/official-skills.md)

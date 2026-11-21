@@ -71,7 +71,7 @@ flowchart TB
 
 - **DB는 마이그레이션으로만 바꿔요**: 스키마를 고치면 마이그레이션 파일을 만들어 로컬 → 병합 전 → 운영 순서로 적용해요. <!-- edition:pro -->
 - **같은 드라이버**: <!-- v:templates.count.ko -->두<!-- /v --> 템플릿 모두 일반 Postgres 드라이버(`pg`)를 써서 로컬 DB와 원격 DB(Neon, Supabase)에 같은 코드로 붙어요. <!-- edition:pro -->
-- **로그인 경로는 보안 리뷰**: `packages/auth`, `apps/web/src/app/api/auth/` 같은 인증 경로를 건드리면 대조표에 보안 리뷰 행이 자동으로 붙어요([케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](../concepts/cases.md)). <!-- edition:pro -->
+- **로그인 경로는 보안 리뷰**: `packages/auth`, `apps/web/src/app/api/auth/` 같은 인증 경로를 건드리면 대조표에 보안 리뷰 행이 자동으로 붙어요([케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](../concepts/cases.md)). <!-- edition:pro -->
 - **Next.js 문서**: 에이전트는 설치된 Next.js 판의 문서(`node_modules/next/dist/docs`)를 먼저 읽어요. 학습한 옛 API를 그대로 쓰는 일을 줄이려는 거예요.
 
 ## 관련 문서
@@ -79,4 +79,4 @@ flowchart TB
 - [템플릿이 더하는 것](what-it-adds.md)
 - [prokit 스킬](../skills/prokit-skills.md)
 - [설치된 프로젝트의 폴더 구조](../reference/project-structure.md)
-- [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](../concepts/cases.md)
+- [케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](../concepts/cases.md)

@@ -27,7 +27,7 @@
 > **사용 전에**: 프로킷 자체 코드·스킬·문서는 [MIT License](LICENSE)로 제공합니다. 상업적 이용, 유료 고객 개발, 수정·재판매와 비공개 제품 개발을 허용하며, 재배포할 때 저작권 표시와 허가문을 함께 유지해야 합니다. 외부 스킬에는 [원래 조건](THIRD_PARTY_NOTICES.md)이 적용됩니다.
 
 <p align="center">
-  <strong>PRD로 스킬 추천 &middot; 기존 프로젝트 도입·전환 &middot; 템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->11<!-- /v -->개 &middot; 구현·리뷰·분석 에이전트 <!-- v:prokit.agents.count -->8<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->7<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
+  <strong>PRD로 스킬 추천 &middot; 기존 프로젝트 도입·전환 &middot; 템플릿 <!-- v:templates.count -->2<!-- /v -->종 &middot; 프로젝트 스킬 <!-- v:prokit.skills.count -->11<!-- /v -->개 &middot; 구현·리뷰·분석 에이전트 <!-- v:prokit.agents.count -->8<!-- /v -->개 &middot; dev-cycle 케이스 <!-- v:devCycle.cases.count -->8<!-- /v -->개 &middot; 디자인 스타일 추천·DESIGN.md &middot; 공식 스킬 최신판 자동 설치 &middot; Vercel 배포</strong>
 </p>
 
 <p align="center">

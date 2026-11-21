@@ -392,10 +392,10 @@
 | `prokit.skills.count` | 11 | 프로젝트 스킬(prokit-*) 수 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 18 |
 | `prokit.skills.count.ko` | 열한 | 프로젝트 스킬 수의 한글 수 관형사 | templates/*/files/.agents/skills/prokit-* 수 | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
 | `prokit.agents.count` | 8 | 구현 수행·전문 리뷰·최종 리뷰·정밀 분석 에이전트 수 | templates/*/files/.claude/agents/*.md 수 | 정본 파일이 바뀌면 따라 바뀐다 | 9 |
-| `devCycle.cases.count` | 7 | dev-cycle 케이스 수 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
-| `devCycle.cases.count.ko` | 일곱 | dev-cycle 케이스 수의 한글 수 관형사 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
-| `devCycle.cases.list` | A, B, C, D, E, F, H | dev-cycle 케이스 목록 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
-| `devCycle.cases.range` | A\~F·H | dev-cycle 케이스를 이어지는 구간으로 묶은 글(A\~F·H) | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 19 |
+| `devCycle.cases.count` | 8 | dev-cycle 케이스 수 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `devCycle.cases.count.ko` | 여덟 | dev-cycle 케이스 수의 한글 수 관형사 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 1 |
+| `devCycle.cases.list` | A, B, C, D, E, F, H, L | dev-cycle 케이스 목록 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 0 |
+| `devCycle.cases.range` | A\~F·H·L | dev-cycle 케이스를 이어지는 구간으로 묶은 글 | templates/*/files/scripts/dev-cycle.mjs CASES | 정본 파일이 바뀌면 따라 바뀐다 | 19 |
 | `devCycle.ui.auditMin` | 16 | 화면 작업 audit 점수 하한(20점 만점) | templates/*/files/.dev-cycle.json ui.auditMin | 정본 파일이 바뀌면 따라 바뀐다 | 6 |
 | `devCycle.ui.a11yMin` | 3 | 화면 작업 접근성 점수 하한(4점 만점) | templates/*/files/.dev-cycle.json ui.a11yMin | 정본 파일이 바뀌면 따라 바뀐다 | 5 |
 | `skills.official.neon` | 25 | neon 템플릿 공식 스킬 수(Claude Code와 Codex에 함께 설치) | templates/prokit-next-neon/files/skills.manifest.json | 정본 파일이 바뀌면 따라 바뀐다 | 4 |

@@ -32,8 +32,6 @@ handbook/templates/installer.md | 클론 | 2 | 팀원이 저장소를 git으로 
 handbook/templates/update-existing.md | 기존 프로젝트 | 2 | 이미 만든 UI 프로젝트에 새 판 템플릿을 반영하는 쪽의 제목과 안내라 판에도 맞다.
 tutorials/samples/01-project.md | Docker | 1 | 막히면 목록은 원본 묶음이라 고칠 수 없고 화면만 프로젝트에서는 Docker 없이 진행하라는 안내다.
 tutorials/samples/README.md | Docker | 1 | 막히면 목록은 원본 묶음이라 고칠 수 없고 화면만 프로젝트에서는 Docker 없이 진행하라는 안내다.
-.agents/skills/prokit-init/SKILL.md | Neon | 1 | Vercel과 Neon, Supabase의 외부 agent-skills 이름을 두뇌 agent-skills 선택지와 구분하는 글이다.
-.agents/skills/prokit-init/SKILL.md | Supabase | 1 | Vercel과 Neon, Supabase의 외부 agent-skills 이름을 두뇌 agent-skills 선택지와 구분하는 글이다.
 .agents/skills/prokit-init/SKILL.md | 기존 프로젝트 | 3 | YAML 머리의 스킬 설명이라 표시를 달 수 없고 Pro 스킬셋으로 안내하는 트리거 문구다.
 .agents/skills/prokit-init/SKILL.md | 운영 중 | 1 | YAML 머리의 스킬 설명이라 표시를 달 수 없고 Pro 스킬셋으로 안내하는 트리거 문구다.
 THIRD_PARTY_NOTICES.md | Neon | 2 | 설치하는 외부 스킬의 출처와 라이선스를 알리는 제3자 안내다.

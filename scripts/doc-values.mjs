@@ -466,7 +466,7 @@ export function loadValues(root = ROOT) {
     }
     return out;
   };
-  same("devCycle.cases.range", (t) => runsOf(cases(t)).map((r) => (r.length > 1 ? `${r[0]}\\~${r.at(-1)}` : r[0])).join("·"), "templates/*/files/scripts/dev-cycle.mjs CASES", "dev-cycle 케이스를 이어지는 구간으로 묶은 글(A\\~F·H)");
+  same("devCycle.cases.range", (t) => runsOf(cases(t)).map((r) => (r.length > 1 ? `${r[0]}\\~${r.at(-1)}` : r[0])).join("·"), "templates/*/files/scripts/dev-cycle.mjs CASES", "dev-cycle 케이스를 이어지는 구간으로 묶은 글");
   const ui = (t) => JSON.parse(readFileSync(tpl(t, "files", ".dev-cycle.json"), "utf8")).ui;
   same("devCycle.ui.auditMin", (t) => ui(t).auditMin, "templates/*/files/.dev-cycle.json ui.auditMin", "화면 작업 audit 점수 하한(20점 만점)");
   same("devCycle.ui.a11yMin", (t) => ui(t).a11yMin, "templates/*/files/.dev-cycle.json ui.a11yMin", "화면 작업 접근성 점수 하한(4점 만점)");

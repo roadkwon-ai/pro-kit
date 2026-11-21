@@ -56,7 +56,7 @@ sequenceDiagram
 
 **내가 하는 일**: 위 질문에 답해요(예: “선택 입력이야”). 케이스는 에이전트가 정해요.
 
-**에이전트가 하는 일**: 화면, API, DB에 모두 걸치는 새 기능이라 케이스 F로 정하고 대조표를 열어요([케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)).
+**에이전트가 하는 일**: 화면, API, DB에 모두 걸치는 새 기능이라 케이스 F로 정하고 대조표를 열어요([케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](cases.md)).
 
 ```bash
 pnpm dev-cycle table F --write --title "할 일 마감일"
@@ -143,7 +143,7 @@ pnpm dev-cycle table F --write --title "할 일 마감일"
 
 > 화면 기록(예시): `audit 통과`, `라운드를 닫았다 → tasks/archive/2026-10-23-할-일-마감일.md`
 
-미룬 지적은 `tasks/todo.md`의 백로그로 옮겨요. 커밋 전에 `pnpm dev-cycle secrets`로 비밀값이 섞이지 않았는지 보고, 이 라운드에서 바꾼 파일과 `tasks/`만 `feat:` 같은 접두어 제목으로 커밋해 push해요. `origin`(GitHub 원격 저장소)이 없으면 커밋까지만 해요.
+미룬 지적은 [기록 기준](dev-cycle.md#마무리)에 따라 백로그나 참고 파일에 남겨요. 커밋 전에 `pnpm dev-cycle secrets`로 비밀값이 섞이지 않았는지 보고, 이 라운드에서 바꾼 파일과 `tasks/`만 `feat:` 같은 접두어 제목으로 커밋해 push해요. `origin`(GitHub 원격 저장소)이 없으면 커밋까지만 해요.
 
 **내가 하는 일**: 없어요. 보고에서 실행한 검사와 커밋 내용을 읽어 보세요.
 
@@ -174,6 +174,6 @@ pnpm dev-cycle table F --write --title "할 일 마감일"
 ## 관련 문서
 
 - [dev-cycle 라운드](dev-cycle.md)
-- [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)
+- [케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](cases.md)
 - [증거와 audit, 사용자 확인](audit-and-confirm.md)
 - [위임 에이전트와 리뷰 에이전트](agent-roles.md)

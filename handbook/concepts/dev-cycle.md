@@ -44,7 +44,7 @@ audit이 빈 칸이나 실패를 알리면 행 실행으로 돌아가요. 다른
 | 단계 | 하는 일 |
 |---|---|
 | 시작 | `pnpm dev-cycle status`로 진행 중인 라운드가 있는지 봐요. 있으면 이어서 하고, 없으면 외부 스킬의 새 버전도 확인해요(원격은 하루 한 번). `AGENTS.md`, `GLOSSARY.md`, `docs/domain/project.md`를 읽고, 요청을 한 문장으로 다시 써 보고, 결과가 달라질 만큼 모호한 데가 있으면 먼저 물어요 |
-| 케이스 판정 | 요청이 어떤 종류인지 정해요. 새 기능은 F, 버그는 C이고, 애매하면 더 무거운 쪽을 골라요([케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)) |
+| 케이스 판정 | 요청이 어떤 종류인지 정해요. 새 기능은 F, 버그는 C이고, 애매하면 더 무거운 쪽을 골라요([케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](cases.md)) |
 | 대조표 열기 | `pnpm dev-cycle table <케이스> --write --title "<요청 요약>"`. `--write` 없이 실행하면 미리 보기만 해요.<!-- edition:pro --> 진행 계획의 Task면 `--task T<n>`, 진행 계획 라운드면 `--plan`, 계획 전에 하라고 한 급한 일이면 `--no-task`를 붙여요([정밀 분석과 진행 계획](project-plan.md))<!-- /edition --> |
 | 행 실행 | 위에서부터 순서대로 하고, 끝낸 행마다 증거 칸을 채워요. 행에 적힌 스킬은 실제로 불러 쓰고 증거에 이름을 적어요. 구현과 실행 확인 행은 코디네이터가 직접 하지 않고 전문 에이전트에 맡겨요([위임 에이전트와 리뷰 에이전트](agent-roles.md)) |
 | 사용자 확인 | 결과를 보여 주고, 사용자가 직접 보거나 써 본 뒤 확인을 받아요. 확인을 받으면 다시 묻지 않고 audit, close, 커밋까지 이어서 해요([증거와 audit, 사용자 확인](audit-and-confirm.md)) |
@@ -102,7 +102,7 @@ flowchart TB
 ### 작업 기록 보관
 
 - `pnpm dev-cycle archive [--title "제목"]`은 라운드를 닫지 않아도 쓸 수 있어요. 활성 대조표와 미완료 항목은 건드리지 않고, 대조표 밖에서 끝낸 일반 할 일·백로그만 KST 날짜의 제목 파일로 옮겨요. 끝난 하위 항목은 부모 문맥과 함께 남기며, 코드 예시는 옮기지 않아요.
-- `close`는 audit과 사용자 확인을 모두 통과한 뒤 대조표와 완료한 일반 할 일·백로그를 같은 방식으로 보관해요. 파일 이름이 같으면 `-2`, `-3`을 붙여 기존 파일을 보존하고, 기존 월별 기록도 그대로 둬요.
+- `close`는 audit과 사용자 확인을 모두 통과한 뒤 대조표와 완료한 일반 할 일·백로그를 같은 방식으로 보관해요. 대조표만 보관하려면 `pnpm dev-cycle close --round-only`를 써요. 파일 이름이 같으면 `-2`, `-3`을 붙여 기존 파일을 보존하고, 기존 월별 기록도 그대로 둬요.
 - 기록은 `tasks/archive/README.md`에서 찾아보고, `tasks/todo.md`에는 남은 항목과 그 색인 링크 하나만 남겨요.
 
 <!-- /edition -->
@@ -131,13 +131,15 @@ flowchart TB
 - 서버나 DB 테스트가 필요한데 테스트 러너가 없으면 첫 행 앞에 `vitest 도입(최초 1회)` 행이 들어가고 그것부터 해요. D·E·F 표는 `table`이 넣고(`packages/api`, E는 `packages/db`에 `test` 스크립트가 없을 때), C나 그 폴더가 없는 구조는 에이전트가 더해요. <!-- edition:pro -->
 - 작업 중 다른 계층을 건드리면 audit이 케이스를 올리라고 알려 줘요. `pnpm dev-cycle table <새 케이스> --write --upgrade`로 올려도 이미 채운 증거와 메모는 남아요.
 
+백로그 항목 하나를 고칠 때는 대조표 제목을 `백로그: <항목>`으로 적어요. 리뷰어는 그 항목이 해결됐는지와 새 P0·P1 회귀가 있는지 살펴요.
+
 ### 마무리
 
 1. audit으로 남은 문제가 표 끝의 `[confirm]` 행뿐인지 봐요. 다른 행이 남았으면 먼저 끝내요.
-2. 사용자 확인을 받아요.
+2. 사용자 확인을 받아요. L은 결과 확인과 마무리 선택을 한 번에 물어요.
 3. audit이 통과해야 해요. `blocked`나 `미실행` 칸이 있으면 “부분 완료”로 보고하고, 사용자가 그대로 닫자고 할 때만 `close --partial`로 닫아요.
 4. 배포할 수 있는지 봐요. `pnpm vercel:deploy production --check`는 항상 실행해요. <!-- edition:pro -->기본 브랜치, GitHub `origin`, `gh auth status`, 배포 검사(커밋하지 않은 변경과 릴리스 항목은 제외)가 모두 통과하면 한 번 물어요. 선택지는 “릴리스하고 production 배포 (기본)”와 “커밋·push만 (배포 PASS)”예요. 하나라도 빠지면 묻지 않고 커밋·push까지만 해요.<!-- /edition --><!-- edition:ui 결과는 보고에 적어요. --> 화면만 프로젝트는 모두 통과해도 묻지 않고 커밋·push까지만 해요. 화면 배포는 요청할 때 따로 해요([화면만 프로젝트의 배포](../design/screen-only.md#배포)).
-5. 이 라운드에서 미룬 지적을 `tasks/todo.md`의 백로그로 옮겨요. 재발 원인이 확인됐으면 `tasks/lessons.md`, 해당 규칙·평가 입력이나 백로그에 반영했는지도 확인하고 `pnpm dev-cycle close`로 닫아요. 이때 대조표와 완료한 일반 할 일·백로그도 함께 보관해요.
+5. 미룬 지적 가운데 실제 사용에 걸리는 P1·P2와 사용자 요청을 `tasks/todo.md`의 백로그에 `[P1]`, `[P2]`, `[요청]`을 붙여 적어요. P3와 관찰은 필요할 때 `docs/backlog-notes.md`에 남기고, 보고에 백로그와 참고 항목 수를 적어요. 재발 원인이 확인됐으면 `tasks/lessons.md`, 해당 규칙·평가 입력이나 백로그에 반영했는지도 확인하고 `pnpm dev-cycle close`로 닫아요. `close`는 대조표와 완료한 할 일을 보관하고, 새 백로그 항목에 표시가 빠지면 알려 줘요.
 6. 커밋 전에 `pnpm dev-cycle secrets`를 실행하고, 이 라운드에서 바꾼 파일과 `tasks/`만 커밋해요. 제목은 Conventional Commits 접두어(`feat:`, `fix:`, `docs:` …)로 써요. 릴리스 노트의 절이 여기서 정해지고, `!`는 깨지는 변경으로 버전을 올려요. 이어서 push해요. 설치기가 건 git pre-commit 훅(`pnpm dev-cycle guard --staged`)이 이 커밋에 닫은 라운드 기록이 있는지 봐요. 라운드 없이 코드나 하네스를 커밋하려 하면 막고, 훅을 건너뛰는 `git commit --no-verify`는 사용자가 허락할 때만 써요.
 7. 릴리스와 production 배포를 골랐다면 `prokit-deploy`의 배포 순서를 따라요([Vercel 배포와 되돌리기](../deploy/vercel.md)). <!-- edition:pro -->
 
@@ -160,7 +162,7 @@ flowchart TB
 ## 관련 문서
 
 - [라운드 한 번 따라가 보기](round-example.md)
-- [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](cases.md)
+- [케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](cases.md)
 - [정밀 분석과 진행 계획](project-plan.md)
 - [증거와 audit, 사용자 확인](audit-and-confirm.md)
 - [위임 에이전트와 리뷰 에이전트](agent-roles.md)

@@ -80,6 +80,12 @@ test("브라우저 검증: 런타임 확인이 검증 증거 묶음을 agent-bro
   const verify = read(".agents/skills/prokit-verify/SKILL.md");
   assert.match(verify, /references\/browser\.md/);
   assert.match(verify, /대안: agent-browser \(ego-browser 없음\)/);
+  assert.match(verify, /개발 진단에는 `next-dev-loop`/);
+  assert.match(verify, /빌드 결과 비교만 맡겼으면 .* 대조표가 개발 진단을 요구하면 개발 서버의/);
+  assert.match(verify, /L 라운드는 바뀐 요소.*오류 예산/);
+  assert.match(verify, /정식 화면 라운드는 `pnpm dev-cycle packet capture`로/);
+  const checker = read(".claude/agents/prokit-runtime-checker.md");
+  assert.match(checker, /^4\. L 라운드는 바뀐 요소.*정식 화면 라운드의 런타임 확인은 검증 증거 묶음부터 만든다\./m);
   const recipe = read(".agents/skills/prokit-verify/references/browser.md");
   assert.match(recipe, /pnpm dev-cycle packet capture/);
   assert.match(recipe, /ego-browser nodejs/);

@@ -53,8 +53,8 @@ my-app/
 | `GLOSSARY.md` | 용어집. 새 용어는 라운드에서 바로 기록해요 | [dev-cycle 라운드](../concepts/dev-cycle.md) |
 | `docs/domain/project.md` | 프로젝트 소개. 화면<!-- edition:pro -->, 프로시저, 테이블<!-- /edition --> 표 | [만든 뒤 개발하기](../start/after-create.md) |
 | `docs/adr/` | 설계 결정 기록 | |
-| `docs/dev-workflow.md` | 케이스별 대조표 행의 정본 | [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](../concepts/cases.md) |
-| `.dev-cycle.json` | 케이스 판정 경로, 인증 경로, 검사 명령, 화면 점수 기준 | [케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->와 대조표](../concepts/cases.md) |
+| `docs/dev-workflow.md` | 케이스별 대조표 행의 정본 | [케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](../concepts/cases.md) |
+| `.dev-cycle.json` | 케이스 판정 경로, 인증 경로, 검사 명령, 화면 점수 기준 | [케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->와 대조표](../concepts/cases.md) |
 | `docs/prokit/intake.md`, `docs/prokit/analysis.md`, `docs/first-request.md` | 기존 프로젝트 도입 기록, 정밀 분석 결과, 새 세션에서 이어 갈 첫 요청. 도입했을 때만 생겨요 | [기존 프로젝트에 도입하기](../start/adopt.md) | <!-- edition:pro -->
 | `tasks/plan.md`, `docs/plans/` | 진행 계획의 Task 표와 계획 문서 | [정밀 분석과 진행 계획](../concepts/project-plan.md) | <!-- edition:pro -->
 | `openspec/`, `specs/`, `.specify/` | openspec·spec-kit 두뇌를 골랐을 때만 생기는 명세 문서. 두뇌를 바꿔도 문서는 남겨요 | [두뇌와 선택 스킬](../skills/brains.md) |

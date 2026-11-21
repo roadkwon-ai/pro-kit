@@ -9,7 +9,7 @@
 | 만들 때 | 로컬 DB와 첫 마이그레이션 없이 만들어요. 템플릿은 `prokit-next-neon`이에요 | 로컬 DB를 띄우고 첫 마이그레이션까지 해요 |
 | 표시 | 루트 `AGENTS.md` 맨 위에 “화면만 프로젝트” 한 줄 | 없음 |
 | 데이터 | 예시 데이터(`apps/web/src/lib/`의 `demo.ts` 등) | DB |
-| 작업 방식 | dev-cycle 라운드(대개 케이스 B). `prokit-ui`의 단계와 규칙을 모두 따라요 | dev-cycle 라운드(케이스 <!-- v:devCycle.cases.range -->A\~F·H<!-- /v -->) |
+| 작업 방식 | dev-cycle 라운드(대개 케이스 B). `prokit-ui`의 단계와 규칙을 모두 따라요 | dev-cycle 라운드(케이스 <!-- v:devCycle.cases.range -->A\~F·H·L<!-- /v -->) |
 | 결과물 | `pnpm export:html`로 정적 HTML | Vercel 배포 |
 
 새 프로젝트 `AGENTS.md` 맨 위에 들어가는 한 줄이에요.

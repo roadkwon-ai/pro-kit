@@ -120,6 +120,8 @@ export const SHARED = [
   "tests/dev-cycle-parallel.test.mjs",
   "tests/dev-cycle-classify.test.mjs",
   "tests/dev-cycle-guard.test.mjs",
+  "tests/dev-cycle-lite.test.mjs",
+  "tests/dev-cycle-pure-logic.test.mjs",
   "tests/dev-cycle-plan.test.mjs",
   "tests/dev-cycle-table.test.mjs",
   "tests/install.test.mjs",

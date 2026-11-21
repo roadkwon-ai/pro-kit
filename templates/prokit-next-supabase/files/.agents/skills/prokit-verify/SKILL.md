@@ -26,10 +26,10 @@ description: >-
 | 바뀐 것 | 최소 검사 |
 |---|---|
 | 모든 코드 | `commands.typecheck`, `commands.lint` |
-| 화면과 라우트 | 모든 코드 검사 + `commands.build`, 런타임 확인, 검증 증거 묶음(표준 뷰포트·테마 스크린샷과 측정) |
+| 화면과 라우트 | 모든 코드 검사 + `commands.build`와 런타임 확인. L은 바뀐 요소의 폭·상태와 오류 예산, 정식 화면 라운드는 검증 증거 묶음 |
 | 프로시저와 인증 | 모든 코드 검사 + `commands.test`, **2계정 격리 테스트** | <!-- edition:pro -->
 | 스키마 | 모든 코드 검사 + 로컬 개발 DB에 `commands.dbMigrate` 적용 출력, 병합 전 대상(Neon 개발 브랜치 또는 Supabase 스테이징)에도 적용한 출력. Supabase는 `supabase db advisors` 보안 검사(`No issues found`)도. 대상과 명령은 `prokit-db`의 `references/migration-flow.md`. 사용자 소유 테이블이면 그 테이블을 쓰는 프로시저의 2계정 격리 테스트도(D 행) | <!-- edition:pro -->
-| 스킬, 에이전트, dev-cycle | `pnpm agents:check`, `pnpm skills:check`, `pnpm dev-cycle case`, `pnpm dev-cycle status`. 스킬 본문을 바꿨으면 skill-creator eval 재실행 |
+| 스킬, 에이전트, dev-cycle | `pnpm agents:check`, `pnpm skills:check`, `pnpm dev-cycle case`, `pnpm dev-cycle status`. 평가 범위와 재사용은 실행 효율과 재검증의 H 검증 범위 |
 
 여러 행에 해당하면 해당하는 행의 검사를 모두 한다.
 
@@ -38,11 +38,13 @@ description: >-
 외부 서비스의 API(OAuth 제공자의 토큰 취소·연결 끊기, 결제, 메일 등)를 부르는 코드는 응답을 흉내 낸 테스트만으로는 실제 동작을 증명하지 못한다. 공식 문서의 요청·응답 꼴과 대조하고, 실제 응답을 한 번 본다(사용자가 동의한 테스트 계정으로 부르거나, `[confirm]` 시나리오에 사용자가 직접 해 볼 순서로 넣는다). 보지 못했으면 증거와 `[confirm]` 보고에 `실제 응답 미확인: <API>`로 적는다. 예: 로그인 권한만 받은 Google 액세스 토큰은 취소 API가 400 `Token is not revocable`로 거부한다. 흉내 테스트는 통과했지만 실제로는 연결이 끊기지 않았다.
 
 ## 런타임과 브라우저
-- 런타임 확인과 브라우저 확인은 `prokit-runtime-checker`에 맡긴다. 위임 지시에 확인할 경로·시나리오, 읽을 공식 스킬(`next-dev-loop`, ego-browser가 없거나 깨끗한 프로필이 필요하면 `agent-browser`)과 경로(`.agents/skills/<이름>/SKILL.md`), 이 절의 기준을 넣는다. Main은 보고의 오류 예산, `결함:` 줄, 스크린샷 경로를 검수하고 대조표 증거에 `위임: prokit-runtime-checker(사용: next-dev-loop)`로 적는다. 아래는 그 에이전트가 따르는 기준이다.
-- `pnpm dev`(web은 포트 3001. 띄우기 전 포트 확인은 [references/browser.md](references/browser.md)의 준비)를 띄우고, `next-dev-loop` 스킬의 `/_next/mcp` 절차로 Next 진단을 본다. ego-browser를 쓸 때는 next-dev-loop의 agent-browser 요구 사항, preflight 1단계(agent-browser 열기), 종료 절차를 건너뛰고 `/_next/mcp` 확인과 도구만 쓴다. `get_errors`·`get_page_metadata`에 필요한 브라우저 세션은 ego-browser로 연 페이지가 채운다. 이 경우 agent-browser가 없는 것은 blocked 사유가 아니다. Next.js 16.3 이상(Turbopack)이 필요하다. 못 맞추면 `blocked: next-dev-loop 요구 미달(Next 16.2)`처럼 적는다. 업그레이드는 사용자가 요청할 때만 한다.
+- 런타임 확인과 브라우저 확인은 `prokit-runtime-checker`에 맡긴다. 위임 지시에 서버 모드(개발 서버 또는 빌드 서버), 대상 URL·폭·상태, 개발 진단 포함 여부를 적는다. 개발 진단에는 `next-dev-loop`, ego-browser가 없거나 깨끗한 프로필이 필요할 때는 `agent-browser`를 배정한다. 배정한 스킬의 경로(`.agents/skills/<이름>/SKILL.md`)와 이 절의 기준을 함께 넣는다. Main은 보고의 오류 예산, `결함:` 줄, 스크린샷 경로를 검수하고 대조표 증거에 `위임: prokit-runtime-checker(사용: 실제 읽은 스킬)` 꼴로 적는다. 아래는 그 에이전트가 따르는 기준이다.
+- 개발 진단을 맡겼으면 `pnpm dev`(web은 포트 3001. 띄우기 전 포트 확인은 [references/browser.md](references/browser.md)의 준비)를 띄우고, `next-dev-loop` 스킬의 `/_next/mcp` 절차로 Next 진단을 본다. ego-browser를 쓸 때는 next-dev-loop의 agent-browser 요구 사항, preflight 1단계(agent-browser 열기), 종료 절차를 건너뛰고 `/_next/mcp` 확인과 도구만 쓴다. `get_errors`·`get_page_metadata`에 필요한 브라우저 세션은 ego-browser로 연 페이지가 채운다. 이 경우 agent-browser가 없는 것은 blocked 사유가 아니다. Next.js 16.3 이상(Turbopack)이 필요하다. 못 맞추면 `blocked: next-dev-loop 요구 미달(Next 16.2)`처럼 적는다. 업그레이드는 사용자가 요청할 때만 한다.
 - 실제 화면의 상호작용(누르기, 폼, 로그인 흐름, QA)은 **ego-browser**로 확인한다. 표준 뷰포트 촬영과 측정은 재현되게 agent-browser의 깨끗한 프로필로 찍는 검증 증거 묶음이 맡는다. 절차는 [references/browser.md](references/browser.md).
-- `ego-browser` 명령이 없거나(macOS 외, CI, Codex 샌드박스) 창을 띄울 수 없으면 `agent-browser`와 `next-dev-loop`의 브라우저 절차로 바꾸고, 증거에 `대안: agent-browser (ego-browser 없음)` 또는 `대안: agent-browser (ego-browser 창 표시 불가)`를 적는다. 기록 없이 도구를 바꾸지 않는다. 둘 다 쓸 수 없으면 `blocked: 브라우저 도구 없음(ego-browser·agent-browser)` 또는 `blocked: ego-browser 창 표시 불가, agent-browser 없음`. Linux·WSL에서 agent-browser의 Chrome이 `error while loading shared libraries`로 뜨지 않으면 사용자에게 `agent-browser install --with-deps`(sudo)를 요청하고, 그 전까지는 `blocked: agent-browser Chrome 시스템 라이브러리 없음`으로 적는다.
-- 화면 라운드는 `pnpm dev-cycle packet capture`로 검증 증거 묶음(1440·1024·768·390·320 × 라이트·다크 스크린샷, 가로 넘침·터치 영역·대비·콘솔·Tab 순서·`get_errors`)을 한 번 찍어 봉인하고, 출력의 경로와 `sha256=`을 증거로 적는다([references/browser.md](references/browser.md) "검증 증거 묶음"). 리뷰·감사·재확인은 이 묶음을 다시 찍지 않고 읽는다. 묶음을 만들 수 없을 때만 ego-browser로 desktop(1440px)과 mobile(390px)을 `tasks/evidence/<라운드 제목>/`에 찍는다.
+- `ego-browser` 명령이 없거나(macOS 외, CI, Codex 샌드박스) 창을 띄울 수 없으면 `agent-browser`로 바꾸고, 증거에 `대안: agent-browser (ego-browser 없음)` 또는 `대안: agent-browser (ego-browser 창 표시 불가)`를 적는다. 기록 없이 도구를 바꾸지 않는다. 둘 다 쓸 수 없으면 `blocked: 브라우저 도구 없음(ego-browser·agent-browser)` 또는 `blocked: ego-browser 창 표시 불가, agent-browser 없음`. Linux·WSL에서 agent-browser의 Chrome이 `error while loading shared libraries`로 뜨지 않으면 사용자에게 `agent-browser install --with-deps`(sudo)를 요청하고, 그 전까지는 `blocked: agent-browser Chrome 시스템 라이브러리 없음`으로 적는다.
+- L 라운드는 바뀐 요소가 보이는 폭과 상태를 각각 1\~2개 확인하고 오류 예산과 필요한 증거를 남긴다. 앱 코드를 바꾼 L의 첫 위임은 개발 서버에서 시작한다. 위임 지시에 개발 서버의 대상 URL과 폭·상태를 적고, 한 브라우저 세션에서 화면 확인과 `next-dev-loop`의 `/_next/mcp` 진단 및 오류 예산을 함께 확인하도록 한다. `pnpm build` 결과는 빌드 검사 행에 적는다. 표준 묶음과 묶음용 대체 촬영은 정식 화면 라운드에 적용한다.
+- 정식 화면 라운드는 `pnpm dev-cycle packet capture`로 검증 증거 묶음(1440·1024·768·390·320 × 라이트·다크 스크린샷, 가로 넘침·터치 영역·대비·콘솔·Tab 순서·`get_errors`)을 한 번 찍어 봉인하고, 출력의 경로와 `sha256=`을 증거로 적는다([references/browser.md](references/browser.md) "검증 증거 묶음"). 리뷰·감사·재확인은 이 묶음을 다시 찍지 않고 읽는다. 묶음을 만들 수 없을 때만 ego-browser로 desktop(1440px)과 mobile(390px)을 `tasks/evidence/<라운드 제목>/`에 찍는다.
+- 빌드 결과 비교만 맡겼으면 빌드 서버의 브라우저·요청·서버 로그를 확인하고 개발 MCP와 오버레이는 해당 없음으로 기록한다. 대조표가 개발 진단을 요구하면 개발 서버의 `next-dev-loop`와 `/_next/mcp` 결과를 별도로 남긴다.
 - Next MCP 진단(프레임워크의 시각)과 화면 확인(사용자의 시각)은 다른 증거다. 하나로 다른 하나를 대신하지 않는다.
 - **오류 예산은 0이다.** 확인한 화면마다 브라우저 콘솔의 오류와 경고, 개발 오버레이의 Issues, `/_next/mcp`의 `get_errors`, 개발 서버 로그의 오류를 센다. 서버를 새로 띄운 뒤의 첫 로드도 본다. 느린 첫 컴파일 때만 나는 수화 오류가 있기 때문이다. 브라우저 확장이나 자동화 도구 탓으로 보이는 항목도 빼지 않는다. 깨끗한 프로필(agent-browser)에서 재현해 원인을 가르고, 사용자 브라우저(ego-browser)에서 보이면 고친다. 예를 들어 확장이 수화 전에 `<body>`에 넣는 속성은 `<body suppressHydrationWarning>`로 막는다. 고칠 수 없으면 `[confirm]` 보고에 알려진 문제로 적는다. 결함에서 빼는 것은 하나뿐이다. 시나리오가 일부러 보낸 요청(없는 주소, 권한 없는 호출)이 받은 4xx에 브라우저가 남기는 `Failed to load resource` 줄과 그 거절의 서버 로그다. 이것도 경로와 상태를 따로 적는다. F의 QA는 ego-browser와 agent-browser 양쪽에서 센다.
 

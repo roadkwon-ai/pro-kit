@@ -1,5 +1,7 @@
 # 기본 AI 단계 매핑
 
+
+백로그 라운드(`백로그: <항목>`)에서는 해당 항목의 해소와 새 P0·P1 회귀만 확인하며 디자인 리뷰 행은 `N/A: 백로그`로 적는다. 디자인 감사와 `prokit-reviewer(ui)`의 접근성 회귀 검사는 수행한다.
 UI 스킬을 고르지 않았을 때(`.dev-cycle.json`의 `uiSkill`이 `none`) 기본 AI가 디자인 단계마다 하는 일과 기록이다. 기준은 두 가지다.
 - `frontend-design`([anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/frontend-design), Apache-2.0): 시각 방향과 만드는 법. `pnpm skills:setup --ui-skill none`이 `.agents/skills/frontend-design/`에 설치한다.
 - [gestalt.md](gestalt.md): 화면이 의도한 덩어리로 묶여 보이는지 진단하고 고치는 규칙.

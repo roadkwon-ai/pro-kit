@@ -329,6 +329,38 @@ test("--upgrade 뒤에도 수동 vitest 도입 행은 첫 행을 지킨다", () 
   assert.match(afterMd, /메모: 계속 보존\n<!-- dev-cycle:end -->/);
 });
 
+test("H --upgrade는 옛 평가 행을 새 평가 행으로 옮기고 수동 행과 기존 평가 증거를 보존한다", () => {
+  const legacy = "스킬을 바꿨으면 skill-creator eval 재실행 → 벤치마크 경로 또는 N/A: 사유";
+  for (const currentEvidence of [null, "", "새 벤치마크 tasks/evidence/new.md"]) {
+    const { root, write } = makeRepo();
+    const config = loadConfig(root);
+    const todo = join(root, config.todoPath);
+    writeTable(root, config, "H", { title: "갱신", write: true });
+    const active = parseActive(readFileSync(todo, "utf8"));
+    const at = active.rows.findIndex((r) => r.text.includes("eval 적용 여부 확인"));
+    const current = active.rows[at];
+    const manual = { text: "수동 평가 확인", evidence: "직접 기록" };
+    active.rows.splice(at, 1, { text: legacy, evidence: "" });
+    if (currentEvidence !== null) active.rows.splice(at + 1, 0, { ...current, evidence: currentEvidence });
+    active.rows.splice(-1, 0, manual);
+    writeFileSync(todo, renderBlock({ ...active.meta, title: active.title }, active.rows, ["- 기존 메모"]));
+    const previous = "기존 벤치마크 tasks/evidence/old.md";
+    write("tasks/evidence/eval.txt", previous);
+    setEvidence(root, config, at + 1, "tasks/evidence/eval.txt");
+
+    for (let i = 0; i < 2; i++) {
+      writeTable(root, config, "H", { upgrade: true, write: true });
+      const upgraded = parseActive(readFileSync(todo, "utf8"));
+      assert.equal(upgraded.rows.length, 11);
+      assert.ok(!upgraded.rows.some((r) => r.text === legacy));
+      assert.equal(upgraded.rows.find((r) => r.text === current.text).evidence, currentEvidence || previous);
+      assert.deepEqual(upgraded.rows.find((r) => r.text === manual.text), manual);
+      assert.ok(upgraded.extra.includes("- 기존 메모"));
+      assert.equal(upgraded.extra.filter((line) => line.includes(previous)).length, currentEvidence ? 1 : 0);
+    }
+  }
+});
+
 test("D·E·F 표: 그 계층 패키지에 test 스크립트가 없으면 vitest 도입 행을 맨 앞에 넣고, 있거나 폴더가 없으면 넣지 않는다", () => {
   const { root, write } = makeRepo();
   const config = loadConfig(root);

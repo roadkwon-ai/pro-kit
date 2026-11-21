@@ -1,5 +1,7 @@
 # hallmark 단계 매핑
 
+
+백로그 라운드(`백로그: <항목>`)에서는 해당 항목의 해소와 새 P0·P1 회귀만 확인하며 디자인 리뷰 행은 `N/A: 백로그`로 적는다. 디자인 감사와 `prokit-reviewer(ui)`의 접근성 회귀 검사는 수행한다.
 주 UI 스킬이 hallmark일 때(`.dev-cycle.json`의 `uiSkill` 첫 값이 `hallmark`) 단계마다 쓰는 명령과 기록이다. 원본은 [Nutlope/hallmark](https://github.com/Nutlope/hallmark)(MIT)이고 `.agents/skills/hallmark/`에 설치된다. 스킬과 상관없는 절차(카탈로그, 사이트맵, 시각 자산, DESIGN.md 검사)는 [design-flow.md](design-flow.md)에 있다.
 
 ## 어디에 맞나

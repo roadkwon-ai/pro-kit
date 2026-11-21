@@ -12,6 +12,8 @@ description: >-
 
 # UI/UX
 
+L 라운드는 `docs/dev-workflow.md`의 다섯 행을 따르며 Main이 화면 구현을 직접 고칠 수 있다. 이때 fresh `prokit-reviewer(code)`가 경량 조건과 새 흐름 여부를 확인한다.
+
 ## 위임
 디자인·접근성 전문 스킬이나 수행자를 쓸 때만 [위임과 전문 스킬 프로토콜](../prokit-dev-cycle/references/delegation.md)을 읽는다. 실제 접근 가능한 provider의 범위와 side effect를 확인하고, 사이트맵·상호작용·오류 예산 계약은 유지한다.
 

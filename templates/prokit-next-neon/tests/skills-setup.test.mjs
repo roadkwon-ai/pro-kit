@@ -370,6 +370,33 @@ test("agent-browser 검사: npm 최신판보다 낮으면 없음으로 보고 �
   }
 });
 
+test("--check는 프로젝트 상태를 먼저 출력하고 전역 도구 시간 초과를 확인 실패로 구분한다", () => {
+  const manifest = { ...MANIFEST, skills: [], claude: { marketplaces: {}, plugins: [] }, global: [
+    { name: "느린 검사", check: "exec sleep 11", install: "echo 설치" },
+  ] };
+  const { exec, calls } = setup({ tools: [], manifest });
+  const r = exec(["--check"]);
+  assert.equal(r.status, 2, r.stdout + r.stderr);
+  assert.match(r.stdout, /프로젝트 스킬 사전 확인: 0개 중 모두 있음[\s\S]*전역 확인 시작: 느린 검사 \(제한 10초\)/);
+  assert.match(r.stdout, /전역 확인 종료: 느린 검사 \(\d+\.\d초, 시간 초과\)/);
+  assert.match(r.stdout, /실패: 전역 느린 검사: 확인 실패\(시간 초과\)/);
+  assert.doesNotMatch(r.stdout, /느린 검사 없음/);
+  assert.deepEqual(calls(), []);
+});
+
+test("--check의 Codex 플러그인 조회 시간 초과는 선택 기능의 확인 실패로 표시한다", () => {
+  const { root, exec } = setup({ tools: ["codex"], manifest: CODEX_ONLY, devCycle: { simplicity: "pt" } });
+  const codex = join(root, ".stub-bin/codex");
+  writeFileSync(codex, "#!/bin/sh\nexec sleep 11\n");
+  chmodSync(codex, 0o755);
+  const r = exec(["--check"]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /전역 확인 시작: codex plugin marketplace list \(제한 10초\)/);
+  assert.match(r.stdout, /전역 확인 종료: codex plugin marketplace list \(\d+\.\d초, 시간 초과\)/);
+  assert.match(r.stdout, /Codex 플러그인\(global\): 조회 실패/);
+  assert.doesNotMatch(r.stdout, /Codex 플러그인\(global\): .*설치됨/);
+});
+
 test("플러그인 설치가 실패하면 exit 2이고 실패한 이름을 보여 준다", () => {
   const { exec } = setup();
   const r = exec([], { STUB_FAIL: "p2@mk" });

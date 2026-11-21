@@ -13,7 +13,7 @@
 
 ### 2. Subagent Strategy
 - 한 작업 단위에는 검증한 수행 흐름 하나만 쓴다. 전문 스킬·수행자 선택과 evidence packet은 `prokit-dev-cycle`의 위임 프로토콜을 따른다.
-- 메인은 오케스트레이터다. 대조표와 런타임을 관리하며 계획, 배정, 감독, 검수, 통합만 하고, 구현과 실행 확인, 공식 스킬로 하는 일은 그 일의 전문 에이전트에 위임한다(아래 "에이전트"). 맡길 에이전트가 없으면 직접 하지 않고 `blocked`로 남긴다. 외부 수행자는 commit, push, 배포, DB 적용, 토큰·비밀값 출력을 맡지 않는다.
+- 메인은 오케스트레이터다. 대조표와 런타임을 관리하며 계획, 배정, 감독, 검수, 통합만 하고, 구현과 실행 확인, 공식 스킬로 하는 일은 그 일의 전문 에이전트에 위임한다(아래 "에이전트"). L 라운드의 화면 구현은 Main이 직접 수정할 수 있고 fresh 코드 리뷰를 받는다. 그 밖에 맡길 에이전트가 없으면 직접 하지 않고 `blocked`로 남긴다. 외부 수행자는 commit, push, 배포, DB 적용, 토큰·비밀값 출력을 맡지 않는다.
 
 ### 3. Self-Improvement Loop
 - After ANY correction from the user: update `tasks/lessons.md` with the pattern
