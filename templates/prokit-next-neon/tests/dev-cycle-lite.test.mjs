@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import {
   audit, changedFiles, classify, close, editGuard, loadConfig, parseActive,
-  SKILL_LOG, setEvidence, writeTable,
+  SKILL_LOG, setEvidence, writeTable, parallelRows,
 } from "../files/scripts/dev-cycle.mjs";
 import { makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
 
@@ -115,10 +115,33 @@ test("L 편집 훅: Main은 기존 화면 파일만 고치고 B·공용 UI·새 
 
 test("L audit·close: 실제 검사와 승인 리뷰 및 한 번의 사용자 확인을 요구한다", () => {
   const r = setup();
-  assert.equal(writeTable(r.root, r.config, "L", { write: true, title: "여백" }).rows, 5);
+  const run = (...args) => {
+    const result = spawnSync(process.execPath, [join(TEMPLATE_FILES, "scripts/dev-cycle.mjs"), ...args], {
+      cwd: r.root, encoding: "utf8",
+    });
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    return result.stdout;
+  };
+  const opened = run("table", "L", "--write", "--title", "여백");
+  assert.match(opened, /L 첫 실행 위임에 아래 양식을 붙인다/);
+  const guide = (output) => output.match(/^ *L 런타임 행: (.+)$/m)?.[1];
+  const form = guide(opened);
+  assert.ok(form?.startsWith("위임: prokit-runtime-checker("));
+  assert.equal(guide(run("status")), form);
+  assert.equal(r.table().rows.length, 5);
+  assert.equal(r.table().rows[2].evidence, "");
+  const filled = form
+    .replace("<실제로 읽은 공식 스킬>", "next-dev-loop, agent-browser")
+    .replace("<확인한 폭>", "390px, 1024px")
+    .replace("<확인한 상태>", "기본")
+    .replace("<출처별 실제 오류 수>", "0");
+  assert.equal(filled, runtime);
   r.write(page, "changed\n");
   evidence.forEach((v, i) => r.fill(i + 1, v));
   for (const [row, value, problem] of [
+    [3, form, /폭과 상태/],
+    [3, filled.slice(filled.indexOf("폭:")), /prokit-runtime-checker/],
+    [3, "위임: prokit-runtime-checker(사용: next-dev-loop, agent-browser) 폭: 390px 상태: 기본 오류 예산: 0", /폭과 상태/],
     [3, runtime.replace("390px, 1024px", "320px, 390px, 1024px"), /폭과 상태/],
     [3, "N/A: 작음", /구현·검증·리뷰 증거/],
     [4, "blocked: 리뷰어 시작 실패", /구현·검증·리뷰 증거/],
@@ -203,6 +226,11 @@ test("백로그 제목의 디자인 리뷰만 백로그 사유로 생략하고 �
   const rows = r.table().rows;
   const design = rows.findIndex((row) => row.text.startsWith("[review] 디자인 리뷰")) + 1;
   const accessibility = rows.findIndex((row) => row.text.startsWith("[review] 디자인 감사")) + 1;
+  assert.equal(rows[design - 1].evidence, "N/A: 백로그");
+  assert.equal(rows[accessibility - 1].evidence, "");
+  assert.ok(parallelRows(rows).every((group) => !group.rows.includes(design)));
+  assert.ok(parallelRows(rows).some((group) => group.rows.includes(accessibility)));
+  assert.match(spawnSync(process.execPath, [join(TEMPLATE_FILES, "scripts/dev-cycle.mjs"), "table", "B", "--write", "--upgrade"], { cwd: r.root, encoding: "utf8" }).stdout, /디자인 감사와 prokit-reviewer\(ui\)의 접근성 검사/);
   r.fill(design, "N/A: 백로그");
   r.fill(accessibility, "N/A: 백로그");
   const problems = audit(r.root, r.config).problems;
@@ -220,4 +248,17 @@ test("백로그 제목의 디자인 리뷰만 백로그 사유로 생략하고 �
   const result = close(clean.root, clean.config);
   assert.equal(result.ok, true, result.problems?.join("\n"));
   assert.match(result.warnings?.[0] ?? "", /새 백로그 2건/);
+});
+
+test("C 백로그 상향도 화면 디자인 리뷰만 미리 면제하고 감사는 남긴다", () => {
+  const r = setup();
+  writeTable(r.root, r.config, "C", { write: true, title: "백로그: 화면 버그" });
+  r.write(page, "changed\n");
+  writeTable(r.root, r.config, "C", { write: true, upgrade: true });
+  const rows = r.table().rows;
+  assert.equal(rows.find((row) => row.text.startsWith("[review] 디자인 리뷰")).evidence, "N/A: 백로그");
+  assert.equal(rows.find((row) => row.text.startsWith("[review] 디자인 감사")).evidence, "");
+  const design = rows.findIndex((row) => row.text.startsWith("[review] 디자인 리뷰")) + 1;
+  assert.ok(parallelRows(rows).every((group) => !group.rows.includes(design)));
+  assert.match(spawnSync(process.execPath, [join(TEMPLATE_FILES, "scripts/dev-cycle.mjs"), "table", "C", "--write", "--upgrade"], { cwd: r.root, encoding: "utf8" }).stdout, /디자인 감사와 prokit-reviewer\(ui\)의 접근성 검사/);
 });

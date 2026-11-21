@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
 	chmodSync,
 	mkdirSync,
@@ -143,6 +144,23 @@ test("dev-cycle delegation resolve는 현재 git root의 실제 skill만 관측�
 	assert.equal(observed.executable, false);
 	assert.equal(observed.observation.name, "brainstorming");
 	assert.match(observed.observation.canonicalLocation, /^file:\/\//);
+	assert.equal(observed.observation.realpath, realpathSync(join(root, ".agents/skills/brainstorming/SKILL.md")));
+	assert.equal(observed.observation.contentHash, createHash("sha256").update("# Brainstorming\n").digest("hex"));
+	const agentFile = ".codex/agents/prokit-runtime-checker.toml";
+	mkdirSync(join(root, ".codex/agents"), { recursive: true });
+	const observeAgent = (content) => {
+		writeFileSync(join(root, agentFile), content);
+		const run = spawnSync(process.execPath, [DEV_CYCLE, "delegation", "resolve", agentFile], { cwd: root, encoding: "utf8" });
+		assert.equal(run.status, 1);
+		const result = JSON.parse(run.stdout);
+		assert.equal(result.inspectionOnly, true);
+		assert.equal(result.executable, false);
+		assert.equal(result.observation.realpath, realpathSync(join(root, agentFile)));
+		assert.equal(result.handoff, `수행자 정의: ${result.observation.realpath} sha256=${result.observation.contentHash} (inspection-only)`);
+		assert.equal(result.observation.contentHash, createHash("sha256").update(content).digest("hex"));
+	};
+	observeAgent('name = "prokit-runtime-checker"\n');
+	observeAgent('name = "prokit-runtime-checker"\n# updated\n');
 	assert.equal(
 		spawnSync(
 			process.execPath,

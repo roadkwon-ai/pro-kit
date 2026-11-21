@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import {
-  audit, bindSession, BRAINS_DIR, close, confirmProblem, delegationCompletionProblem, evidenceProblem, loadConfig, mainUiSkill, noteSkillsChange, parseActive, renderBlock, status, usedSkills, writeTable,
+  audit, bindSession, BRAINS_DIR, close, confirmProblem, setEvidence, delegationCompletionProblem, evidenceProblem, loadConfig, mainUiSkill, noteSkillsChange, parseActive, renderBlock, status, usedSkills, writeTable,
 } from "../files/scripts/dev-cycle.mjs";
 import { captureSnapshot } from "../files/scripts/delegation.mjs";
 import { auditRecord, critiqueRecord, makeRepo, TEMPLATE_FILES } from "./helpers.mjs";
@@ -1044,6 +1044,8 @@ test("부른 스킬 기록: 모든 행의 사용: 목록, 행 문구의 prokit-*
   assert.match(mine()[0] ?? "", /행 문구의 prokit-web를 읽고/);
   set("사용: agent-skills:incremental-implementation, prokit-ui(포커스), prokit-web, shadcn은 새 부품 없음(기존 그대로). 변경: a.tsx");
   assert.match(mine()[0] ?? "", /Next 번들 문서 경로/);
+  set("사용: prokit-ui, prokit-web. Next API 변경 없음");
+  assert.match(mine()[0] ?? "", /Next 번들 문서 경로/);
   set("사용: prokit-ui, prokit-web, vercel-react-best-practices(bundle-conditional). Next 문서: N/A: Next API 변경 없음");
   assert.deepEqual(mine(), []);
   set(`사용: prokit-ui, prokit-web(${doc}), vercel-react-best-practices. 변경: a.tsx`);
@@ -1701,6 +1703,9 @@ test("db focus 리뷰는 설치된 Neon 스킬(상위 스킬 포함)을 리뷰�
   assert.match(out.stdout, new RegExp(`리뷰 지시에 넣을 공식 스킬[^\\n]*\\n(?: {2}#.*\\n)* {2}#${row} prokit-reviewer\\(db\\): \\.agents/skills/neon/SKILL\\.md, \\.agents/skills/neon-postgres/SKILL\\.md`));
   assert.match(out.stdout, /증거 꼴[^\n]*\n {2}전문 에이전트에 맡긴 행: 위임: <에이전트>\(사용: /);
   assert.match(out.stdout, /증거 파일: 프로젝트 안 한 줄 파일/);
+  assert.match(out.stdout, /delegation resolve .*handoff/);
+  assert.doesNotMatch(out.stdout, /L 런타임 행:/);
+  assert.doesNotMatch(out.stdout, /prokit-web에서 Next API/);
   assert.match(out.stdout, /스킬 읽기: SKILL\.md는 Read에 limit·offset 없이 처음부터 끝까지 읽는다/);
   // 라운드 중간에 붙은 리뷰 행도 보이게 status가 같은 안내를 낸다
   assert.match(run(root, "status").stdout, new RegExp(`리뷰 지시에 넣을 공식 스킬[^\\n]*\\n(?: {2}#.*\\n)* {2}#${row} prokit-reviewer\\(db\\)`));
@@ -2113,4 +2118,129 @@ test("화면 디자인 보조: 브리프 보조 줄의 보조마다 디자인 �
   // 좁은 개선(브리프 N/A)과 blocked 리뷰는 보지 않는다
   assert.deepEqual(mine("N/A: 문구만 고침", ""), []);
   assert.deepEqual(mine("docs/briefs/landing.md", "blocked: 개발 서버가 뜨지 않음"), []);
+});
+
+test("F DB 미변경 근거는 DB 변경 뒤에는 재사용하지 않고 원격 미연결 예외는 보존한다", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "F", { write: true, title: "DB 범위" });
+  const path = join(root, config.todoPath);
+  const md = readFileSync(path, "utf8");
+  const active = parseActive(md);
+  const rows = active.rows.map((r) => ({ ...r, evidence: /로컬 .*dbMigrate|병합 전 .*dbMigrate|파괴적 변경 여부|prokit-reviewer\(db\)/.test(r.text) ? "N/A: DB 미변경" : r.evidence }));
+  writeFileSync(path, md.slice(0, active.start) + renderBlock({ ...active.meta, title: active.title }, rows) + md.slice(active.end));
+  assert.ok(!audit(root, config).problems.some((p) => p.includes("기존 미변경 사유가 무효")));
+  write("packages/db/src/schema/fixture.ts", "export const title = text('title').notNull();\n");
+  write("packages/db/src/migrations/0001.sql", "ALTER TABLE example ALTER COLUMN title SET NOT NULL;\n");
+  assert.ok(audit(root, config).problems.filter((p) => p.includes("기존 미변경 사유가 무효")).length >= 4);
+  const remote = active.rows.findIndex((r) => r.text.startsWith("[verify] 병합 전")) + 1;
+  const rowProblems = () => audit(root, config).problems.filter((msg) => msg.startsWith(`#${remote} `));
+  const target = active.rows[remote - 1].text.includes("Neon") ? "Neon" : "Supabase";
+  write("tasks/evidence/remote.txt", `N/A: ${target} 미연결`);
+  setEvidence(root, config, remote, "tasks/evidence/remote.txt");
+  assert.deepEqual(rowProblems(), []);
+  write(target === "Neon" ? ".neon/linked" : "packages/db/supabase/.temp/project-ref", "test");
+  assert.ok(rowProblems().length);
+  write("tasks/evidence/remote.txt", "ref: staging; db:migrate exit 0; advisors: No issues found");
+  setEvidence(root, config, remote, "tasks/evidence/remote.txt");
+  assert.deepEqual(rowProblems(), []);
+});
+
+test("F DB 범위 한 번 기록과 스키마 변경 후 필수 증거", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "F", { write: true, title: "DB 근거" });
+  const path = join(root, config.todoPath);
+  let active = parseActive(readFileSync(path, "utf8"));
+  const number = (prefix) => active.rows.findIndex((row) => row.text.startsWith(prefix)) + 1;
+  write("tasks/evidence/db.txt", "N/A: DB 스키마와 마이그레이션 변경 없음");
+  setEvidence(root, config, number("스키마 수정"), "tasks/evidence/db.txt");
+  active = parseActive(readFileSync(path, "utf8"));
+  for (const prefix of ["스키마 수정", "[verify] 로컬", "파괴적 변경", "[review] prokit-reviewer(db)"]) {
+    assert.match(active.rows[number(prefix) - 1].evidence, /^N\/A: DB 스키마와 마이그레이션 변경 없음/);
+  }
+  write("packages/db/src/schema/fixture.ts", "export const x = 1;\n");
+  write("packages/db/src/migrations/001.sql", "ALTER TABLE test ADD COLUMN x integer;\n");
+  let problems = audit(root, config).problems.join("\n");
+  assert.match(problems, /기존 미변경 사유가 무효/);
+  for (const [prefix, value] of [
+    ["스키마 수정", "위임: prokit-db-builder; packages/db/src/migrations/001.sql; 검토: x 컬럼 추가를 확인함"],
+    ["[verify] 로컬", "pnpm db:migrate localhost:5432 exit 0 적용 완료"],
+    ["파괴적 변경", "파괴적 변경 없음"],
+    ["[review] prokit-reviewer(db)", "prokit-reviewer(db): approve, max=none; 리뷰: fresh; SQL: 제약 검토"],
+  ]) {
+    active = parseActive(readFileSync(path, "utf8"));
+    write("tasks/evidence/db.txt", value);
+    setEvidence(root, config, number(prefix), "tasks/evidence/db.txt");
+  }
+  problems = audit(root, config).problems.join("\n");
+  for (const prefix of ["스키마 수정", "[verify] 로컬", "파괴적 변경", "[review] prokit-reviewer(db)"]) {
+    assert.ok(!problems.split("\n").some((line) => line.startsWith(`#${number(prefix)} `)), problems);
+  }
+});
+
+test("F 포맷 스키마와 비DDL 변경은 정확한 사유와 리뷰를 요구한다", () => {
+  const { root, write } = makeRepo();
+  const config = loadConfig(root);
+  writeTable(root, config, "F", { write: true, title: "DB 예외" });
+  const path = join(root, config.todoPath);
+  const put = (prefix, value) => {
+    const active = parseActive(readFileSync(path, "utf8"));
+    const index = active.rows.findIndex((r) => r.text.startsWith(prefix));
+    assert.ok(index >= 0, prefix);
+    write("tasks/evidence/db-exception.txt", value);
+    setEvidence(root, config, index + 1, "tasks/evidence/db-exception.txt");
+  };
+  const problems = () => audit(root, config).problems.join("\n");
+  write("packages/db/src/query.test.ts", "export const test = true;\n");
+  put("스키마 수정", "N/A: 테스트만 수정");
+  assert.doesNotMatch(problems(), /#6 .*기존 미변경 사유가 무효/);
+  put("스키마 수정", "N/A: DB 미변경");
+  assert.match(problems(), /기존 미변경 사유가 무효/);
+  write("packages/db/src/schema.ts", "export const x = 1;\n");
+  put("스키마 수정", "위임: prokit-db-builder; pnpm db:generate exit 0; 생성 SQL 변경 없음; 사유: 공백 정리");
+  put("[verify] 로컬", "N/A: 마이그레이션 불필요");
+  put("파괴적 변경", "없음");
+  put("[review] prokit-reviewer(db)", "prokit-reviewer(db): approve, max=none; 리뷰: fresh; 근거: 공백만 변경");
+  assert.doesNotMatch(problems(), /생성 SQL 경로|로컬 마이그레이션 적용|독립 prokit-reviewer\(db\)의 승인/);
+  put("[review] prokit-reviewer(db)", "N/A: 마이그레이션 불필요");
+  assert.match(problems(), /기존 미변경 사유가 무효/);
+  write("packages/db/src/migrations/new.sql", "ALTER TABLE test ADD COLUMN x integer;\n");
+  assert.match(problems(), /생성 SQL 경로/);
+  for (const suffix of ["", "; 검토:", "; 검토: N/A: 생략", "; 검토: ok"]) {
+    put("스키마 수정", "위임: prokit-db-builder; packages/db/src/migrations/new.sql" + suffix);
+    assert.match(problems(), /생성 SQL을 검토한 결과/);
+  }
+  put("스키마 수정", "위임: prokit-db-builder; packages/db/src/migrations/new.sql; 검토: x 정수 컬럼 추가 확인");
+  assert.doesNotMatch(problems(), /생성 SQL을 검토한 결과/);
+  put("[verify] 로컬", "pnpm db:migrate localhost:5432 exit 0 오류 0건");
+  assert.doesNotMatch(problems(), /로컬 마이그레이션 적용 명령/);
+  put("[verify] 로컬", "pnpm db:migrate localhost:5432 exit 0 아님");
+  assert.match(problems(), /로컬 마이그레이션 적용 명령/);
+});
+
+test("F DB 근거 재사용은 실제 행 번호를 따르고 스테이징에만 남은 DB 변경도 다시 본다", () => {
+  const { root, write, git } = makeRepo();
+  const config = loadConfig(root);
+  const schema = "packages/db/src/schema/title.ts";
+  write(schema, "export const required = false;\n");
+  git("add", schema);
+  git("commit", "-qm", "DB baseline");
+  writeTable(root, config, "F", { write: true });
+  const todo = join(root, config.todoPath);
+  const before = readFileSync(todo, "utf8").replace("| 1 |", "| 0 | 수동 행 | 기존 근거 |\n| 1 |");
+  writeFileSync(todo, before.replace(/(\| \d+ \| 파괴적 변경 여부[^|]+\|)  \|/, "$1 사용자가 기록한 판단 |"));
+  const number = Number(before.match(/\| (\d+) \| 스키마 수정/)[1]);
+  write("tasks/evidence/scope.txt", "N/A: DB 미변경 (API와 화면만 수정)");
+  setEvidence(root, config, number, "tasks/evidence/scope.txt");
+  const after = parseActive(readFileSync(todo, "utf8"));
+  assert.equal(after.rows.find(r => r.text === "수동 행").evidence, "기존 근거");
+  assert.equal(after.rows.find(r => r.text.startsWith("파괴적 변경 여부")).evidence, "사용자가 기록한 판단");
+  assert.equal(after.rows.find(r => r.text.startsWith("[design]")).evidence, "");
+  assert.equal(after.rows.find(r => r.text.startsWith("[verify] 타입·린트")).evidence, "");
+  assert.match(after.rows.find(r => r.text.startsWith("[verify] 로컬")).evidence, /DB 미변경/);
+  write(schema, "export const required = true;\n");
+  git("add", schema);
+  write(schema, "export const required = false;\n");
+  assert.ok(audit(root, config).problems.some(v => v.includes("스테이징과 작업 트리의 DB 내용")));
 });

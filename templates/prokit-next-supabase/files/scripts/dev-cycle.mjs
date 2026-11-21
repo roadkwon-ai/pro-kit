@@ -636,6 +636,8 @@ const isConfirm = (text) => /^\[confirm\]/i.test(text);
 const isBacklog = (active) => /^백로그:\s*\S/.test(active.title);
 const LITE_IMPLEMENTATION = /^구현 \(/;
 const LITE_RUNTIME = /^\[verify\] next-dev-loop 런타임 확인 \(/;
+const LITE_RUNTIME_GUIDE =
+	"L 런타임 행: 위임: prokit-runtime-checker(사용: <실제로 읽은 공식 스킬>); 폭: <확인한 폭>; 상태: <확인한 상태>; 오류 예산: <출처별 실제 오류 수>";
 const CODE_REVIEW = /^\[review\] prokit-reviewer\(code\)/;
 const mainDirect = (value) => /^Main 직접:\s*\S/.test(value);
 const isPlanRound = (active) =>
@@ -1569,7 +1571,14 @@ export function parallelRows(rows) {
 		when: g.when,
 		rows: rows
 			.map((r, i) => [i + 1, r])
-			.filter(([, r]) => g.rows.some((p) => r.text.startsWith(p)))
+			.filter(
+				([, r]) =>
+					g.rows.some((p) => r.text.startsWith(p)) &&
+					!(
+						r.text.startsWith("[review] 디자인 리뷰") &&
+						/^n\/a\s*:\s*백로그/i.test(r.evidence ?? "")
+					),
+			)
 			.map(([n]) => n),
 	})).filter((g) => g.rows.length > 1);
 }
@@ -1577,9 +1586,18 @@ function parallelGuide(root, config) {
 	const md = readTodo(root, config);
 	const active = md && parseActive(md);
 	const groups = active ? parallelRows(active.rows) : [];
-	return groups.length
-		? `\n함께 시작할 수 있는 행(서로의 결과가 필요 없다. 채운 순서는 audit과 상관없다):\n${groups.map((g) => `  ${g.rows.map((n) => `#${n}`).join(" ")} — ${g.when}`).join("\n")}`
-		: "";
+	const backlog =
+		active &&
+		["B", "C"].includes(active.meta.case) &&
+		isBacklog(active) &&
+		active.rows.some((r) => r.text.startsWith("[review] 디자인 감사"))
+			? "\n백로그 화면 검증: 디자인 비평 A·B는 면제한다. 디자인 감사와 prokit-reviewer(ui)의 접근성 검사는 수행해 보고서에 기록한다."
+			: "";
+	return (
+		(groups.length
+			? `\n함께 시작할 수 있는 행(서로의 결과가 필요 없다. 채운 순서는 audit과 상관없다):\n${groups.map((g) => `  ${g.rows.map((n) => `#${n}`).join(" ")} — ${g.when}`).join("\n")}`
+			: "") + backlog
+	);
 }
 
 // 두뇌를 고르면 단계 행은 그 두뇌의 방법으로 한다. 증거의 `사용:` 이름이 고른 두뇌 파일에 백틱으로 적혀 있거나,
@@ -3276,6 +3294,165 @@ function liteRowProblem(root, active, files) {
 	};
 }
 
+// F가 E에서 상속한 DB 전용 행만 같은 범위 근거를 쓴다. 공통 검사와 사용자 추가 행은 따로 평가한다.
+const dbUnchanged =
+	/^n\/a\s*:\s*(?:DB(?: 계층| 스키마와 마이그레이션)?|스키마)\s*(?:미변경|변경\s*없음|없음)(?=$|[ ,;.(])/i;
+function dbOnlyRows(root, config) {
+	return new Set(
+		(readWorkflow(root, config).E ?? [])
+			.map((row) => row.text)
+			.filter((text) =>
+				/^(?:스키마 수정|\[verify\] (?:로컬 .*dbMigrate|병합 전 .*dbMigrate|supabase db advisors)|파괴적 변경 여부|\[review\] prokit-reviewer\(db\))/.test(
+					text,
+				),
+			),
+	);
+}
+
+function dbScope(root, config, active, files) {
+	const eFiles = (paths) =>
+		classify(paths, config)
+			.evidence.filter((item) => item.case === "E")
+			.map((item) => item.file);
+	const staged = eFiles(
+		splitZ(
+			git(root, [
+				"diff",
+				"--cached",
+				"--relative",
+				"--no-renames",
+				"--name-only",
+				"-z",
+				...(active.meta.base ? [active.meta.base] : []),
+				"--",
+			]),
+		),
+	);
+	const dbFiles = [...new Set([...staged, ...eFiles(files)])];
+	const mixedIndex =
+		staged.length > 0 &&
+		git(root, [
+			"--literal-pathspecs",
+			"diff",
+			"--relative",
+			"--name-only",
+			"-z",
+			"--",
+			...staged,
+		]) !== "";
+	return { dbFiles, mixedIndex };
+}
+
+function fDbRowProblem(root, config, active, files) {
+	if (active.meta.case !== "F") return () => null;
+	const { dbFiles, mixedIndex } = dbScope(root, config, active, files);
+	if (!dbFiles.length) return () => null;
+	const schemaChanged = dbFiles.some(
+		(file) =>
+			/(?:^|\/)(?:schema|schemas|migration|migrations|drizzle)(?:\/|\.[cm]?[jt]s$)/.test(
+				file,
+			) || /\.sql$/.test(file),
+	);
+	const sqlFiles = dbFiles.filter((file) => /\.sql$/i.test(file));
+	const rows = dbOnlyRows(root, config);
+	const schemaEvidence = bare(
+		active.rows.find((row) => row.text.startsWith("스키마 수정"))?.evidence,
+	);
+	const noMigration =
+		schemaChanged &&
+		!sqlFiles.length &&
+		(config.commands.dbGenerate
+			? schemaEvidence.includes(config.commands.dbGenerate)
+			: /(?:db:generate|dbGenerate)/i.test(schemaEvidence)) &&
+		/\bexit\s*0\b/i.test(schemaEvidence) &&
+		/(?:생성|마이그레이션|SQL).*변경\s*없/.test(schemaEvidence) &&
+		/사유\s*[:：]\s*[^;\s]/.test(schemaEvidence);
+	return (r) => {
+		if (!rows.has(r.text)) return null;
+		if (mixedIndex)
+			return "스테이징과 작업 트리의 DB 내용이 다르다. 검증할 DB 변경 범위를 일치시킨 뒤 증거를 확인한다";
+		const value = bare(r.evidence);
+		if (!value || /^(blocked|미실행)\s*:/i.test(value)) return null;
+		const remote = /병합 전 .*dbMigrate/.test(r.text);
+		if (/^n\/a\s*:/i.test(value)) {
+			if (dbUnchanged.test(value))
+				return "DB 변경이 생겨 기존 미변경 사유가 무효다. 현재 DB 변경의 검사와 근거를 다시 확인한다";
+			if (!schemaChanged) return null;
+			if (
+				remote &&
+				/Neon/.test(r.text) &&
+				/^n\/a:\s*Neon\s*미연결(?:$|[ (])/i.test(value) &&
+				!existsSync(join(root, ".neon"))
+			)
+				return null;
+			if (
+				remote &&
+				/Supabase/.test(r.text) &&
+				/^n\/a:\s*Supabase\s*미연결(?:$|[ (])/i.test(value) &&
+				!existsSync(join(root, "packages/db/supabase/.temp/project-ref"))
+			)
+				return null;
+			if (
+				noMigration &&
+				/(?:로컬 .*dbMigrate|병합 전 .*dbMigrate)/.test(r.text) &&
+				/^n\/a:\s*마이그레이션 불필요/i.test(value)
+			)
+				return null;
+
+			return "DB 변경이 생겨 기존 미변경 사유가 무효다. 현재 DB 변경의 검사와 근거를 다시 확인한다";
+		}
+		if (!schemaChanged) return null;
+		if (r.text.startsWith("스키마 수정")) {
+			if (noMigration) return null;
+			const paths = value.replaceAll("`", "").split(/[\s;,]+/);
+			if (
+				!sqlFiles.length ||
+				!sqlFiles.every(
+					(file) =>
+						paths.includes(file) &&
+						lstatSync(join(root, file), { throwIfNoEntry: false })?.isFile(),
+				)
+			)
+				return "현재 변경된 생성 SQL 경로와 검토 결과를 적는다";
+			const review = logicEvidenceField(value, "검토");
+			if (!review || evidenceProblem(review) || SKIP_RE.test(review))
+				return "생성 SQL을 검토한 결과를 검토: <확인한 제약·소비자 영향>으로 적는다";
+		}
+		if (
+			/^\[verify\] 로컬 .*dbMigrate/.test(r.text) &&
+			(!(config.commands.dbMigrate
+				? value.includes(config.commands.dbMigrate)
+				: /db[:A-Za-z-]*migrat/i.test(value)) ||
+				!/(?:^|[\s(])(?:localhost|127\.0\.0\.1|\[::1\]):\d+\b/.test(value) ||
+				!/exit\s*(?:code\s*)?0\b/i.test(value) ||
+				/(?:실패|미성공|아님)/.test(value))
+		)
+			return "로컬 마이그레이션 적용 명령과 실제 성공 결과를 적는다";
+		if (
+			remote &&
+			(!/\bexit\s*(?:code\s*)?0\b/i.test(value) ||
+				!/(?:브랜치|branch|ref)\s*[:=]\s*[^;\s]+/i.test(value) ||
+				(/Supabase/.test(r.text) && !/advisors/i.test(value)))
+		)
+			return "원격 적용 대상(브랜치: 이름 또는 ref: 이름)과 실제 종료 결과(exit 0)를 적는다. Supabase는 advisors 결과도 적는다";
+		if (
+			r.text.startsWith("파괴적 변경 여부") &&
+			!/(?:없음|없다|2단계|두 단계)/.test(value)
+		)
+			return "파괴적 변경 여부와 필요한 단계 계획을 적는다";
+		if (
+			r.text.startsWith("[review] prokit-reviewer(db)") &&
+			(!/^prokit-reviewer\(db\):\s*approve,\s*max=(?:none|low|medium)(?=\s*[,;]|$)/.test(
+				value,
+			) ||
+				!freshReview(value, roundLog(root, active), r, 0, dbFiles) ||
+				!/(?:근거|검토|SQL)\s*[:：]\s*[^;\s]/.test(value))
+		)
+			return "독립 prokit-reviewer(db)의 승인과 검토 근거를 적는다";
+		return null;
+	};
+}
+
 // audit과 status가 같은 판정을 쓴다. 진행 계획 라운드의 확인 행은 지문까지 본다.
 const roundRowProblem = (root, config, active, files, logic) => {
 	const planRound = isPlanRound(active);
@@ -3287,6 +3464,7 @@ const roundRowProblem = (root, config, active, files, logic) => {
 	const lateReview = lateReviewProblem(root, active);
 	const lite = liteRowProblem(root, active, files);
 	const copy = copyOnlyProblem(root, active, files);
+	const dbProblem = fDbRowProblem(root, config, active, files);
 	const buildScope =
 		active.meta.case === "H" &&
 		harnessBuildScope(
@@ -3317,6 +3495,7 @@ const roundRowProblem = (root, config, active, files, logic) => {
 	return (r) =>
 		harnessBuildProblem(r) ??
 		rowProblem(r) ??
+		dbProblem(r) ??
 		(/^n\/a\s*:\s*백로그(?![가-힣])/i.test(bare(r.evidence)) &&
 		(!isBacklog(active) || !r.text.startsWith("[review] 디자인 리뷰"))
 			? "N/A: 백로그는 백로그: 제목 라운드의 디자인 리뷰 행에서만 쓴다"
@@ -3776,6 +3955,13 @@ export function writeTable(
 		skills: active?.meta.skills === "true",
 		pure: pureLogic ? (active?.meta.pure ?? randomUUID()) : undefined,
 	};
+	if (["B", "C"].includes(key) && isBacklog(meta)) {
+		const designReview = rows.find((row) =>
+			row.text.startsWith("[review] 디자인 리뷰"),
+		);
+		if (designReview && !bare(designReview.evidence))
+			designReview.evidence = "N/A: 백로그";
+	}
 	const hBuildScope =
 		key === "H" &&
 		(active?.meta.skills === "true"
@@ -3841,7 +4027,7 @@ function splitLines(text) {
 	return lines;
 }
 
-function evidenceRow(block, row) {
+function evidenceRows(block) {
 	const candidates = [];
 	let fence = null;
 	let header = false;
@@ -3868,14 +4054,24 @@ function evidenceRow(block, row) {
 			table = false;
 			continue;
 		}
-		if (table && new RegExp(`^\\|\\s*${row}\\s*\\|.*$`).test(item.line))
-			candidates.push(item);
-	}
-	if (candidates.length !== 1)
-		throw new UsageError(
-			`활성 대조표에 행 번호 ${row}이 정확히 하나 있어야 한다`,
+		const number = table && item.line.match(/^\|\s*(\d+)\s*\|/);
+		if (!number) continue;
+		const marks = [...item.line.matchAll(/(?<!\\)\|/g)].map(
+			(match) => match.index,
 		);
-	return candidates[0];
+		candidates.push({
+			...item,
+			row: Number(number[1]),
+			marks,
+			text: item.line
+				.slice(marks[1] + 1, marks[2])
+				.trim()
+				.replace(/\\\|/g, "|"),
+			empty:
+				marks.length === 4 && !item.line.slice(marks[2] + 1, marks[3]).trim(),
+		});
+	}
+	return candidates;
 }
 
 // 증거 셀은 표 전체를 다시 렌더하지 않고 해당 행의 마지막 셀만 바꾼다.
@@ -3926,14 +4122,16 @@ export function setEvidence(root, config, row, evidenceFile) {
 	)
 		throw new UsageError("증거 파일이 너무 크다");
 	const block = md.slice(active.start, active.end);
-	const { line, offset: lineOffset } = evidenceRow(block, row);
-	const marks = [...line.matchAll(/(?<!\\)\|/g)].map((match) => match.index);
-	if (marks.length < 4)
+	const table = evidenceRows(block);
+	const matches = table.filter((item) => item.row === row);
+	if (matches.length !== 1)
+		throw new UsageError(
+			`활성 대조표에 행 번호 ${row}이 정확히 하나 있어야 한다`,
+		);
+	const target = matches[0];
+	if (target.marks.length < 4)
 		throw new UsageError(`행 번호 ${row}의 표 형식이 올바르지 않다`);
-	if (
-		isPlanRound(active) &&
-		isConfirm(line.slice(marks[1] + 1, marks[2]).trim())
-	) {
+	if (isPlanRound(active) && isConfirm(target.text)) {
 		// 분석·계획·계획 리뷰가 끝나기 전의 확인은 최종 계획을 본 확인이 아니다.
 		const early = active.rows.find(
 			(r) =>
@@ -3951,18 +4149,44 @@ export function setEvidence(root, config, row, evidenceFile) {
 				`진행 계획 라운드의 확인 행: ${p} — ${PLAN_CONFIRM_NOTE}`,
 			);
 	}
-	const replaced = `${line.slice(0, marks[2] + 1)} ${esc(evidence)} ${line.slice(marks.at(-1))}`;
-	const replaceAt = active.start + lineOffset;
+	const edits = [target];
+	if (
+		active.meta.case === "F" &&
+		dbUnchanged.test(evidence) &&
+		!dbScope(root, config, active, roundFiles(root, active)).dbFiles.length
+	) {
+		const dbRows = dbOnlyRows(root, config);
+		if (dbRows.has(target.text)) {
+			edits.push(
+				...table.filter(
+					(item) => item !== target && item.empty && dbRows.has(item.text),
+				),
+			);
+		}
+	}
+	let updated = block;
+	for (const item of edits.sort((a, b) => b.offset - a.offset)) {
+		const replacement = `${item.line.slice(0, item.marks[2] + 1)} ${esc(evidence)} ${item.line.slice(item.marks.at(-1))}`;
+		updated =
+			updated.slice(0, item.offset) +
+			replacement +
+			updated.slice(item.offset + item.line.length);
+	}
 	writeFileSync(
 		join(root, config.todoPath),
-		`${md.slice(0, replaceAt)}${replaced}${md.slice(replaceAt + line.length)}`,
+		md.slice(0, active.start) + updated + md.slice(active.end),
 	);
-	// 행을 채운 시각: audit이 행 문구의 스킬을 그 행을 하면서(앞 행을 채운 뒤) 읽었는지 본다
 	mkdirSync(join(root, ".prokit"), { recursive: true });
 	appendFileSync(
 		join(root, SKILL_LOG),
-		`${JSON.stringify({ t: new Date().toISOString(), row, text: active.rows[row - 1]?.text })}\n`,
+		edits
+			.map(
+				(item) =>
+					`${JSON.stringify({ t: new Date().toISOString(), row: item.row, text: item.text })}\n`,
+			)
+			.join(""),
 	);
+
 	return { row, evidence };
 }
 
@@ -4459,11 +4683,16 @@ function reviewGuide(root, config) {
 }
 
 // table --write 출력: audit이 글자 그대로 읽는 증거 꼴(행 문구에는 예시가 없다)
-function formatGuide(config) {
+function formatGuide(config, caseKey) {
 	const simple = SIMPLICITY_LABEL[config.simplicity]?.label;
 	return [
 		"\n증거 꼴(audit이 이 글자로 읽는다):",
 		"  전문 에이전트에 맡긴 행: 위임: <에이전트>(사용: <그 에이전트가 읽은 공식 스킬>) → 결과",
+		"  첫 위임: pnpm dev-cycle delegation resolve <선택한 수행자 정의의 프로젝트 상대 경로> 출력의 handoff(실제 정의 경로와 SHA-256)를 지시에 넣는다. 실제 호스트와 배정 범위도 적는다. inspectionOnly는 파일 관측만 뜻한다",
+		caseKey === "L" &&
+			`  L 첫 실행 위임에 아래 양식을 붙인다. 수행자가 실제 검사 결과로 빈칸을 채워 증거 한 줄을 돌려준다.\n  ${LITE_RUNTIME_GUIDE}`,
+		["B", "C", "F", "L"].includes(caseKey) &&
+			"  prokit-web에서 Next API를 쓰거나 바꾸지 않았으면: Next 문서: N/A: <변경에 해당하지 않는 이유>",
 		"  [design] 행: 기존: …; 결정: …; 설정: …; 검증: … (필드는 맨 앞이나 ; 뒤에서 시작)",
 		simple &&
 			`  prokit-reviewer(code) 행: verdict, max_severity, 반영·기각 내역; ${simple}`,
@@ -6255,7 +6484,7 @@ export function main(argv, root = process.cwd()) {
 				pureLogic: rest.includes("--pure-logic"),
 			});
 			const text = rest.includes("--write")
-				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}${stageGuide(root, config)}${parallelGuide(root, config)}${reviewGuide(root, config)}${formatGuide(config)}`
+				? `${config.todoPath}에 케이스 ${r.case} 대조표(${r.rows}행)를 썼다\n${brainLine(config)}${stageGuide(root, config)}${parallelGuide(root, config)}${reviewGuide(root, config)}${formatGuide(config, r.case)}`
 				: r.block;
 			print(r, r.warning ? `${text}\n${r.warning}` : text);
 			return 0;
@@ -6378,9 +6607,14 @@ export function main(argv, root = process.cwd()) {
 			const guide = s.active ? reviewGuide(root, config).trim() : "";
 			print(
 				s,
-				[s.line, ...(guide ? [guide] : []), ...(s.skillsUpdate ?? [])].join(
-					"\n",
-				),
+				[
+					s.line,
+					guide,
+					s.case === "L" && LITE_RUNTIME_GUIDE,
+					...(s.skillsUpdate ?? []),
+				]
+					.filter(Boolean)
+					.join("\n"),
 			);
 			return 0;
 		}
@@ -6451,6 +6685,15 @@ export function main(argv, root = process.cwd()) {
 						"사용법: dev-cycle delegation resolve <skill-ref|상대 경로>",
 					);
 				const result = resolveProvider(rest[1], sourceBoundRoot(root));
+				if (
+					result.inspectionOnly &&
+					/^\.(?:(?:claude|agents)\/agents\/[^/]+\.md|codex\/agents\/[^/]+\.toml)$/.test(
+						rest[1],
+					)
+				) {
+					const { realpath, contentHash } = result.observation;
+					result.handoff = `수행자 정의: ${realpath} sha256=${contentHash} (inspection-only)`;
+				}
 				console.log(JSON.stringify(result, null, 2));
 				return result.ok ? 0 : 1;
 			}
